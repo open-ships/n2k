@@ -2,8 +2,7 @@
 //
 // This endpoint connects to a USB-CAN Analyzer device via a serial port and reads CAN frames
 // using the proprietary USB-CAN binary protocol (see the canbus package for protocol details).
-// Received CAN frames are adapted into adapter.Message objects and dispatched to a registered
-// MessageHandler.
+// Received CAN frames are dispatched as *can.Frame objects to a registered MessageHandler.
 //
 // The USB-CAN Analyzer is a cheap, widely-available USB-to-CAN dongle that communicates
 // at 2 Mbaud over a virtual serial port. The CAN bus bitrate is fixed at 250000 bps,
@@ -15,7 +14,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/open-ships/n2k/pkg/adapter"
 	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/pkg/endpoint"
 	"github.com/brutella/can"
@@ -31,7 +29,7 @@ type USBCANEndpoint struct {
 	// the USB-CAN binary protocol framing. It satisfies the canbus.Interface.
 	channel canbus.Interface
 
-	// handler is the registered callback that receives completed adapter.Message objects.
+	// handler is the registered callback that receives *can.Frame objects.
 	// It is set via SetOutput() and must be set before Run() is called.
 	handler endpoint.MessageHandler
 }
@@ -75,7 +73,7 @@ func (c *USBCANEndpoint) Run(ctx context.Context) error {
 	return c.channel.Run(ctx)
 }
 
-// SetOutput registers the MessageHandler callback that will receive completed messages.
+// SetOutput registers the MessageHandler callback that will receive CAN frames.
 // This must be called before Run() so that incoming CAN frames are dispatched to the handler.
 func (c *USBCANEndpoint) SetOutput(mh endpoint.MessageHandler) {
 	c.handler = mh
@@ -94,14 +92,12 @@ func (c *USBCANEndpoint) Close() error {
 }
 
 // frameReady is the internal callback registered with the USB-CAN channel. It is called
-// for each successfully parsed CAN frame. It wraps the raw can.Frame as an adapter.Message
-// and forwards it to the registered MessageHandler.
+// for each successfully parsed CAN frame and forwards the frame pointer to the registered
+// MessageHandler.
 //
 // If no handler has been registered (SetOutput was not called), the frame is silently dropped.
 func (c *USBCANEndpoint) frameReady(frame can.Frame) {
 	if c.handler != nil {
-		// adapter.Message wraps a *can.Frame pointer, providing a common message type
-		// that can be used by upstream processors regardless of the CAN transport backend.
-		c.handler.HandleMessage(adapter.Message(&frame))
+		c.handler.HandleMessage(&frame)
 	}
 }

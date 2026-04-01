@@ -1,4 +1,4 @@
-package canadapter
+package adapter
 
 import (
 	"testing"
@@ -51,21 +51,6 @@ func TestSetOutputAndHandleSingleFrameMessage(t *testing.T) {
 	assert.True(t, p.Complete, "Single-frame packet should be complete")
 	assert.Equal(t, uint32(127501), p.Info.PGN)
 	assert.Equal(t, uint8(224), p.Info.SourceId)
-}
-
-// TestHandleMessageWithNonCanFrame verifies that HandleMessage gracefully handles
-// receiving a message type that is not *can.Frame. It should log a warning but not panic
-// or forward anything to the handler. This tests the type-switch default case.
-func TestHandleMessageWithNonCanFrame(t *testing.T) {
-	a := NewCANAdapter()
-	h := &mockHandler{}
-	a.SetOutput(h)
-
-	// Send a non-can.Frame message type; should just log a warning, no panic.
-	type fakeMessage struct{}
-	a.HandleMessage(fakeMessage{})
-
-	assert.Equal(t, 0, len(h.packets), "Handler should not receive anything for non-can.Frame message")
 }
 
 // TestHandleMessageWithoutHandler verifies that processing a message when no handler is

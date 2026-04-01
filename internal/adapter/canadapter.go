@@ -1,4 +1,4 @@
-// Package canadapter implements the adapter interface for raw CAN bus frame endpoints.
+// Package adapter implements the adapter for raw CAN bus frame endpoints.
 //
 // This package converts raw CAN bus frames (as produced by SocketCAN interfaces or
 // CAN-to-USB gateways) into complete NMEA 2000 packets. It handles both single-frame
@@ -13,15 +13,11 @@
 //	  -> For fast packets: MultiBuilder assembles frames into a complete message
 //	  -> AddDecoders() filters candidates by manufacturer for proprietary PGNs
 //	  -> Complete packet forwarded to PacketHandler
-package canadapter
+package adapter
 
 import (
-	"fmt"
-	"log/slog"
-
 	"github.com/brutella/can"
 
-	"github.com/open-ships/n2k/pkg/adapter"
 	"github.com/open-ships/n2k/pkg/pkt"
 )
 
@@ -67,59 +63,51 @@ func (c *CANAdapter) SetOutput(ph PacketHandler) {
 }
 
 // HandleMessage is the main entry point for processing incoming CAN bus frames.
-// It accepts an adapter.Message, type-asserts it to *can.Frame, extracts the NMEA 2000
-// metadata from the CAN ID, creates a Packet, and processes it through the pipeline.
+// It accepts a *can.Frame, extracts the NMEA 2000 metadata from the CAN ID, creates
+// a Packet, and processes it through the pipeline.
 //
 // Processing flow:
-//  1. Type-assert the message to *can.Frame (logs a warning for unexpected types).
-//  2. Extract PGN, source, priority, and destination from the 29-bit CAN ID.
-//  3. Create a new Packet and look up candidate decoders.
-//  4. If there are parse errors (e.g., unknown PGN), forward immediately as-is.
-//  5. If the PGN is a fast-packet type, pass to MultiBuilder for assembly.
+//  1. Extract PGN, source, priority, and destination from the 29-bit CAN ID.
+//  2. Create a new Packet and look up candidate decoders.
+//  3. If there are parse errors (e.g., unknown PGN), forward immediately as-is.
+//  4. If the PGN is a fast-packet type, pass to MultiBuilder for assembly.
 //     Otherwise, mark as Complete immediately (single-frame message).
-//  6. Once Complete, filter decoders by manufacturer and forward to the handler.
+//  5. Once Complete, filter decoders by manufacturer and forward to the handler.
 //
 // Parameters:
-//   - message: An adapter.Message that should be a *can.Frame from the brutella/can library.
-func (c *CANAdapter) HandleMessage(message adapter.Message) {
-	switch f := message.(type) {
-	case *can.Frame:
-		// Extract NMEA 2000 message metadata (PGN, source, priority, destination) from
-		// the 29-bit extended CAN ID.
-		pInfo := NewPacketInfo(f)
+//   - f: A *can.Frame from the brutella/can library.
+func (c *CANAdapter) HandleMessage(f *can.Frame) {
+	// Extract NMEA 2000 message metadata (PGN, source, priority, destination) from
+	// the 29-bit extended CAN ID.
+	pInfo := NewPacketInfo(f)
 
-		// Create a Packet and look up candidate decoders from the canboat PGN registry.
-		packet := pkt.NewPacket(pInfo, f.Data[:])
+	// Create a Packet and look up candidate decoders from the canboat PGN registry.
+	packet := pkt.NewPacket(pInfo, f.Data[:])
 
-		// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
+	// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
 
-		// If the packet already has parse errors (e.g., PGN not found in registry),
-		// forward it immediately -- it will become an UnknownPGN downstream.
-		if len(packet.ParseErrors) > 0 {
-			c.packetReady(packet)
-			return
-		}
+	// If the packet already has parse errors (e.g., PGN not found in registry),
+	// forward it immediately -- it will become an UnknownPGN downstream.
+	if len(packet.ParseErrors) > 0 {
+		c.packetReady(packet)
+		return
+	}
 
-		if packet.Fast {
-			// Fast-packet PGN: pass to MultiBuilder for multi-frame assembly.
-			// The MultiBuilder tracks in-progress sequences and sets packet.Complete = true
-			// when all frames have arrived.
-			c.multi.Add(packet)
-		} else {
-			// Single-frame PGN: all data fits in one CAN frame, so it's immediately complete.
-			packet.Complete = true
-		}
+	if packet.Fast {
+		// Fast-packet PGN: pass to MultiBuilder for multi-frame assembly.
+		// The MultiBuilder tracks in-progress sequences and sets packet.Complete = true
+		// when all frames have arrived.
+		c.multi.Add(packet)
+	} else {
+		// Single-frame PGN: all data fits in one CAN frame, so it's immediately complete.
+		packet.Complete = true
+	}
 
-		if packet.Complete {
-			// Packet is fully assembled. Filter candidate decoders by manufacturer code
-			// (for proprietary PGNs) and forward to the downstream handler.
-			packet.AddDecoders()
-			c.packetReady(packet)
-		}
-	default:
-		// Received an unexpected message type -- log a warning but don't panic.
-		// This could happen if the adapter is wired to the wrong endpoint type.
-		slog.Warn(fmt.Sprintf("CanAdapter expected *can.Frame, received: %T", f))
+	if packet.Complete {
+		// Packet is fully assembled. Filter candidate decoders by manufacturer code
+		// (for proprietary PGNs) and forward to the downstream handler.
+		packet.AddDecoders()
+		c.packetReady(packet)
 	}
 }
 

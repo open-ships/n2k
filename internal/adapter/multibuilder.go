@@ -1,4 +1,4 @@
-package canadapter
+package adapter
 
 import (
 	"github.com/open-ships/n2k/pkg/pkt"

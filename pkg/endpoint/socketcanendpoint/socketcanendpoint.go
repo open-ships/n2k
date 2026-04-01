@@ -2,7 +2,7 @@
 //
 // This endpoint connects to a SocketCAN network interface (e.g., "can0") and reads CAN frames
 // using the native Linux kernel CAN socket API via the brutella/can library. Received CAN frames
-// are adapted into adapter.Message objects and dispatched to a registered MessageHandler.
+// are dispatched as *can.Frame objects to a registered MessageHandler.
 //
 // SocketCAN interfaces are typically provided by hardware CAN controllers connected via SPI
 // (e.g., MCP2515 chips on Raspberry Pi HATs) or USB (e.g., PEAK PCAN-USB). The kernel exposes
@@ -16,7 +16,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/open-ships/n2k/pkg/adapter"
 	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/pkg/endpoint"
 	"github.com/brutella/can"
@@ -32,7 +31,7 @@ type SocketCANEndpoint struct {
 	// and CAN socket I/O via the brutella/can library. It satisfies the canbus.Interface.
 	channel canbus.Interface
 
-	// handler is the registered callback that receives completed adapter.Message objects.
+	// handler is the registered callback that receives *can.Frame objects.
 	// It is set via SetOutput() and must be set before Run() is called.
 	handler endpoint.MessageHandler
 }
@@ -75,7 +74,7 @@ func (c *SocketCANEndpoint) Run(ctx context.Context) error {
 	return c.channel.Run(ctx)
 }
 
-// SetOutput registers the MessageHandler callback that will receive completed messages.
+// SetOutput registers the MessageHandler callback that will receive CAN frames.
 // This must be called before Run() so that incoming CAN frames are dispatched to the handler.
 func (c *SocketCANEndpoint) SetOutput(mh endpoint.MessageHandler) {
 	c.handler = mh
@@ -95,14 +94,12 @@ func (c *SocketCANEndpoint) Close() error {
 }
 
 // frameReady is the internal callback registered with the SocketCAN channel. It is called
-// for each CAN frame received on the bus. It wraps the raw can.Frame as an adapter.Message
-// and forwards it to the registered MessageHandler.
+// for each CAN frame received on the bus and forwards the frame pointer to the registered
+// MessageHandler.
 //
 // If no handler has been registered (SetOutput was not called), the frame is silently dropped.
 func (c *SocketCANEndpoint) frameReady(frame can.Frame) {
 	if c.handler != nil {
-		// adapter.Message wraps a *can.Frame pointer, providing a common message type
-		// that can be used by upstream processors regardless of the CAN transport backend.
-		c.handler.HandleMessage(adapter.Message(&frame))
+		c.handler.HandleMessage(&frame)
 	}
 }

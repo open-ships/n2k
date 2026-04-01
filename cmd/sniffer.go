@@ -15,7 +15,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/open-ships/n2k/pkg/adapter/canadapter"
+	"github.com/open-ships/n2k/internal/adapter"
 	"github.com/open-ships/n2k/pkg/endpoint/socketcanendpoint"
 	"github.com/open-ships/n2k/pkg/pkt"
 )
@@ -43,11 +43,11 @@ func main() {
 	decoder := pkt.NewPacketStruct()
 	decoder.SetOutput(printer)
 
-	adapter := canadapter.NewCANAdapter()
-	adapter.SetOutput(decoder)
+	a := adapter.NewCANAdapter()
+	a.SetOutput(decoder)
 
 	ep := socketcanendpoint.NewSocketCANEndpoint(log, *iface)
-	ep.SetOutput(adapter)
+	ep.SetOutput(a)
 
 	log.Info("listening", "interface", *iface)
 	if err := ep.Run(ctx); err != nil {
