@@ -3,7 +3,7 @@ package decoder
 import (
 	"fmt"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // Handler is an interface for consuming decoded PGN structs produced by Decoder.

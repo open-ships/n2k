@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // buildUnknownPGN constructs a pgn.UnknownPGN from a Packet whose data could not be

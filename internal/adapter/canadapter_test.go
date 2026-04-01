@@ -3,7 +3,7 @@ package adapter
 import (
 	"testing"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/stretchr/testify/assert"
 )

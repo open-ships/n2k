@@ -10,7 +10,7 @@ package decoder
 import (
 	"fmt"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // Packet is the core data type used in the package.
