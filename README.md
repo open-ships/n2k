@@ -159,6 +159,6 @@ MIT -- see LICENSE.
 
 This project was originally a fork of boatkit-io's n2k work, which built the original Go implementation of this NMEA 2000 decoding pipeline. Much of which has been removed, simplified, or updated for more modern Go paradigms.
 
-### [canboat](https://github.com/canboat/s)
+### [canboat](https://github.com/canboat/)
 
 The PGN definitions and decoders at the core of this library are generated from the canboat project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.
