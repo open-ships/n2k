@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // TestValid verifies that a completely empty Packet fails validation with exactly two errors:

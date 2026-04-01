@@ -18,7 +18,7 @@ package adapter
 import (
 	"github.com/brutella/can"
 
-	"github.com/open-ships/n2k/pkg/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 // CANAdapter reads raw CAN bus frames and outputs complete NMEA 2000 Packets.

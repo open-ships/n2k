@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/cel-go/cel"
 	celast "github.com/google/cel-go/common/ast"
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // metaVars are the CEL variable names that correspond to message header metadata.

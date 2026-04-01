@@ -3,7 +3,7 @@ package adapter
 import (
 	"time"
 
-	"github.com/open-ships/n2k/pkg/pgn"
+	"github.com/open-ships/n2k/pgn"
 	"github.com/brutella/can"
 )
 

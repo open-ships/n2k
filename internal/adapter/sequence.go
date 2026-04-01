@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/open-ships/n2k/pkg/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 // MaxFrameNum is the maximum frame number in a multipart NMEA 2000 fast-packet message.
