@@ -209,3 +209,19 @@ func (c *SocketCANChannel) Close() error {
 func (c *SocketCANChannel) WriteFrame(frame can.Frame) error {
 	return c.bus.Publish(frame)
 }
+
+// RunSocketCAN creates a SocketCAN channel for the given interface and runs it,
+// calling handler for each received CAN frame. Blocks until error or context done.
+func RunSocketCAN(ctx context.Context, log *slog.Logger, iface string, handler func(can.Frame)) error {
+	var frameHandler can.HandlerFunc = func(frame can.Frame) {
+		handler(frame)
+	}
+
+	ch := NewSocketCANChannel(log, SocketCANChannelOptions{
+		InterfaceName:  iface,
+		BitRate:        250000,
+		MessageHandler: frameHandler,
+	})
+
+	return ch.Run(ctx)
+}

@@ -477,6 +477,23 @@ func mapBitRate(bitRate int) (byte, error) {
 	}
 }
 
+// RunUSBCAN creates a USB-CAN channel for the given serial port and runs it,
+// calling handler for each received CAN frame. Blocks until error or context done.
+func RunUSBCAN(ctx context.Context, log *slog.Logger, port string, handler func(can.Frame)) error {
+	var frameHandler can.HandlerFunc = func(frame can.Frame) {
+		handler(frame)
+	}
+
+	ch := NewUSBCANChannel(log, USBCANChannelOptions{
+		SerialPortName: port,
+		SerialBaudRate: 2000000,
+		BitRate:        250000,
+		FrameHandler:   frameHandler,
+	})
+
+	return ch.Run(ctx)
+}
+
 // calcChecksum computes a simple 8-bit additive checksum over a range of bytes in a buffer.
 // This is the checksum algorithm used by the USB-CAN Analyzer protocol for settings frames.
 //

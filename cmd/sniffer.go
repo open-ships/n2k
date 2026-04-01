@@ -1,9 +1,3 @@
-// Command sniffer reads NMEA 2000 messages from a SocketCAN interface and prints
-// each decoded struct as a JSON object to stdout, one per line.
-//
-// Usage:
-//
-//	go run ./cmd/sniffer.go [-i can0]
 package main
 
 import (
@@ -15,8 +9,9 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/adapter"
-	"github.com/open-ships/n2k/pkg/endpoint/socketcanendpoint"
+	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/internal/decoder"
 )
 
@@ -46,11 +41,11 @@ func main() {
 	a := adapter.NewCANAdapter()
 	a.SetOutput(dec)
 
-	ep := socketcanendpoint.NewSocketCANEndpoint(log, *iface)
-	ep.SetOutput(a)
-
 	log.Info("listening", "interface", *iface)
-	if err := ep.Run(ctx); err != nil {
+	err := canbus.RunSocketCAN(ctx, log, *iface, func(frame can.Frame) {
+		a.HandleMessage(&frame)
+	})
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
