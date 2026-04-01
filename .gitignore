@@ -14,5 +14,4 @@ bin
 *.out
 
 .vscode**
-docs**
 sniffer
