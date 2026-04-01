@@ -3,6 +3,7 @@ package n2k
 import (
 	"context"
 	"log/slog"
+	"reflect"
 	"sync"
 
 	"github.com/brutella/can"
@@ -72,14 +73,32 @@ func (s *Scanner) Err() error {
 func (s *Scanner) run() {
 	defer close(s.ch)
 
+	// Compile filter if configured.
+	var f *filter
+	if s.cfg.filterExpr != "" {
+		var err error
+		f, err = compileFilter(s.cfg.filterExpr)
+		if err != nil {
+			s.err = err
+			return
+		}
+	}
+
 	a := adapter.NewCANAdapter()
 	dec := decoder.New()
 
-	dec.SetOutput(&scannerHandler{scanner: s})
+	dec.SetOutput(&scannerHandler{scanner: s, filter: f})
 	a.SetOutput(dec)
 
-	err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, func(f can.Frame) {
-		a.HandleMessage(&f)
+	err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, func(frame can.Frame) {
+		// Pre-filter: skip decoding if metadata doesn't match.
+		if f != nil {
+			info := adapter.NewPacketInfo(&frame)
+			if !f.evalPre(info) {
+				return
+			}
+		}
+		a.HandleMessage(&frame)
 	})
 	if err != nil {
 		s.err = err
@@ -88,6 +107,7 @@ func (s *Scanner) run() {
 
 type scannerHandler struct {
 	scanner *Scanner
+	filter  *filter
 }
 
 func (h *scannerHandler) HandleStruct(msg any) {
@@ -100,13 +120,32 @@ func (h *scannerHandler) HandleStruct(msg any) {
 		msg = &u
 	}
 
-	// Drop unknown PGNs unless IncludeUnknown is set
+	// Drop unknown PGNs unless IncludeUnknown is set.
 	if u, ok := msg.(*pgn.UnknownPGN); ok {
 		if !h.scanner.cfg.includeUnknown {
 			h.scanner.cfg.logger.Debug("dropping unknown PGN",
 				"pgn", u.Info.PGN,
 				"reason", u.Reason,
 			)
+			return
+		}
+	}
+
+	// Post-filter: check decoded struct fields.
+	if h.filter != nil && h.filter.hasPost {
+		fields := structToFilterMap(msg)
+		var info pgn.MessageInfo
+		rv := reflect.ValueOf(msg)
+		if rv.Kind() == reflect.Ptr {
+			rv = rv.Elem()
+		}
+		if rv.Kind() == reflect.Struct {
+			infoField := rv.FieldByName("Info")
+			if infoField.IsValid() {
+				info, _ = infoField.Interface().(pgn.MessageInfo)
+			}
+		}
+		if !h.filter.evalPostWithInfo(info, fields) {
 			return
 		}
 	}

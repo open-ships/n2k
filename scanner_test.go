@@ -88,3 +88,47 @@ func TestScannerIncludeUnknown(t *testing.T) {
 	}
 	assert.Equal(t, 1, count, "unknown PGN should be included when IncludeUnknown is set")
 }
+
+func TestScannerWithFilter(t *testing.T) {
+	// Filter for PGN 127501 only
+	ctx := context.Background()
+	s := NewScanner(ctx,
+		Replay([]can.Frame{testFrame127501}),
+		Filter(`pgn == 127501`),
+		IncludeUnknown(),
+	)
+
+	count := 0
+	for s.Next() {
+		count++
+	}
+	assert.NoError(t, s.Err())
+	assert.GreaterOrEqual(t, count, 1, "should receive the matching PGN")
+}
+
+func TestScannerWithFilterNoMatch(t *testing.T) {
+	ctx := context.Background()
+	s := NewScanner(ctx,
+		Replay([]can.Frame{testFrame127501}),
+		Filter(`pgn == 0`),
+		IncludeUnknown(),
+	)
+
+	count := 0
+	for s.Next() {
+		count++
+	}
+	assert.NoError(t, s.Err())
+	assert.Equal(t, 0, count, "nothing should match pgn == 0")
+}
+
+func TestScannerWithInvalidFilter(t *testing.T) {
+	ctx := context.Background()
+	s := NewScanner(ctx,
+		Replay([]can.Frame{testFrame127501}),
+		Filter(`invalid !!!`),
+	)
+
+	assert.False(t, s.Next())
+	assert.Error(t, s.Err())
+}
