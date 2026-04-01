@@ -1,9 +1,3 @@
-// Command sniffer reads NMEA 2000 messages from a SocketCAN interface and prints
-// each decoded struct as a JSON object to stdout, one per line.
-//
-// Usage:
-//
-//	go run ./cmd/sniffer.go [-i can0]
 package main
 
 import (
@@ -11,47 +5,39 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"log/slog"
-	"os"
+	"log"
+"os"
 	"os/signal"
 
-	"github.com/open-ships/n2k/pkg/adapter/canadapter"
-	"github.com/open-ships/n2k/pkg/endpoint/socketcanendpoint"
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k"
 )
 
-type jsonPrinter struct {
-	enc *json.Encoder
-}
-
-func (j *jsonPrinter) HandleStruct(v any) {
-	if err := j.enc.Encode(v); err != nil {
-		slog.Error(fmt.Sprintf("json encode: %v", err))
-	}
-}
-
 func main() {
-	iface := flag.String("i", "can0", "SocketCAN interface name")
+	iface := flag.String("i", "can0", "CAN interface name")
+	usb := flag.String("u", "", "USB-CAN serial port (e.g., /dev/ttyUSB0)")
+	expr := flag.String("f", "", "CEL filter expression")
 	flag.Parse()
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	log := slog.New(slog.NewTextHandler(os.Stderr, nil))
+	opts := []n2k.Option{n2k.IncludeUnknown()}
+	if *usb != "" {
+		opts = append(opts, n2k.USB(*usb))
+	} else {
+		opts = append(opts, n2k.CAN(*iface))
+	}
+	if *expr != "" {
+		opts = append(opts, n2k.Filter(*expr))
+	}
 
-	printer := &jsonPrinter{enc: json.NewEncoder(os.Stdout)}
-	decoder := pkt.NewPacketStruct()
-	decoder.SetOutput(printer)
-
-	adapter := canadapter.NewCANAdapter()
-	adapter.SetOutput(decoder)
-
-	ep := socketcanendpoint.NewSocketCANEndpoint(log, *iface)
-	ep.SetOutput(adapter)
-
-	log.Info("listening", "interface", *iface)
-	if err := ep.Run(ctx); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
+	enc := json.NewEncoder(os.Stdout)
+	for msg, err := range n2k.Receive(ctx, opts...) {
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := enc.Encode(msg); err != nil {
+			fmt.Fprintf(os.Stderr, "encode error: %v\n", err)
+		}
 	}
 }

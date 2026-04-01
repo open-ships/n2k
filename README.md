@@ -1,93 +1,179 @@
 # n2k
 
-[![Tests](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
-[![Go version](https://img.shields.io/github/go-mod/go-version/open-ships/n2k)](go.mod)
+A Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
 
-A Go library for decoding [NMEA 2000](https://www.nmea.org/content/STANDARDS/NMEA_2000) marine network messages into strongly-typed data structures. Raw CAN bus frames go in, Go structs come out.
-
-## Installation
+## Install
 
 ```bash
 go get github.com/open-ships/n2k
 ```
 
-## How It Works
-
-The library implements a three-stage decoding pipeline:
-
-```
-CAN frames  -->  Endpoint  -->  Adapter  -->  Decoder  -->  Go structs
-(hardware)      (transport)    (assembly)    (typing)      (your code)
-```
-
-**Endpoint** manages the connection to the NMEA 2000 gateway. Two implementations are included:
-- `socketcanendpoint` -- Linux SocketCAN (kernel CAN drivers)
-- `usbcanendpoint` -- USB-CAN Analyzer dongles (serial)
-
-**Adapter** converts raw CAN frames into intermediate packets, handling CAN ID extraction, fast-packet assembly for multi-frame messages, and PGN identification.
-
-**Decoder** translates packets into typed Go structs (e.g. `VesselHeading`, `WindData`, `EngineParametersRapidUpdate`) using the PGN definitions generated from the canboat database.
-
 ## Usage
 
+### Iterator API
+
 ```go
-// Create the pipeline stages
-endpoint := socketcanendpoint.NewSocketCANEndpoint(logger, "can0")
-adapter := canadapter.NewCANAdapter()
-decoder := pkt.NewPacketStruct()
+package main
 
-// Wire them together
-adapter.SetOutput(decoder)
-decoder.SetOutput(yourHandler)
-endpoint.SetOutput(adapter)
+import (
+    "context"
+    "fmt"
+    "os"
+    "os/signal"
 
-// Start receiving
-err := endpoint.Run(ctx)
+    "github.com/open-ships/n2k"
+    "github.com/open-ships/n2k/pgn"
+)
+
+func main() {
+    ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+    defer stop()
+
+    for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
+        if err != nil {
+            panic(err)
+        }
+        switch m := msg.(type) {
+        case *pgn.VesselHeading:
+            fmt.Printf("Heading: %v\n", m.Heading)
+        case *pgn.WindData:
+            fmt.Printf("Wind Speed: %v\n", m.WindSpeed)
+        }
+    }
+}
 ```
 
-## Sniffer
+### Scanner API
 
-A built-in CLI tool that reads from a SocketCAN interface and prints decoded messages as JSON to stdout, one per line.
+```go
+s := n2k.NewScanner(ctx, n2k.CAN("can0"))
+for s.Next() {
+    switch msg := s.Message().(type) {
+    case *pgn.VesselHeading:
+        fmt.Printf("Heading: %v\n", msg.Heading)
+    }
+}
+if err := s.Err(); err != nil {
+    panic(err)
+}
+```
+
+### Multiple Sources
+
+Read from multiple CAN interfaces simultaneously:
+
+```go
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.CAN("can1"),
+    n2k.USB("/dev/ttyUSB0"),
+) {
+    // messages from all sources, interleaved by arrival
+}
+```
+
+### CEL Filtering
+
+Filter messages using [CEL](https://github.com/google/cel-go) expressions. The library automatically optimizes filters -- metadata-only expressions skip decoding entirely.
+
+```go
+// Only vessel heading messages
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`pgn == 127250`),
+) { ... }
+
+// Filter on decoded fields
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`pgn == 127250 && msg.Heading > 3.14`),
+) { ... }
+
+// Filter by source address
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`source == 3`),
+) { ... }
+```
+
+**Filter variables:**
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `pgn` | `int` | Parameter Group Number |
+| `source` | `int` | Source address (0-252) |
+| `priority` | `int` | Message priority (0-7) |
+| `destination` | `int` | Destination address (255 = broadcast) |
+| `msg.<field>` | varies | Decoded struct field (case-insensitive) |
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
+| `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
+| `n2k.Replay(frames)` | Replay source for testing |
+| `n2k.Filter(expr)` | CEL filter expression |
+| `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
+| `n2k.WithLogger(l)` | Override default `slog.Logger` |
+
+### Testing with Replay
+
+```go
+frames := []can.Frame{
+    {ID: 0x09F10D01, Length: 8, Data: [8]uint8{1, 2, 3, 4, 5, 6, 7, 8}},
+}
+
+for msg, err := range n2k.Receive(ctx, n2k.Replay(frames)) {
+    // test your message handling
+}
+```
+
+## Sniffer CLI
+
+Print decoded NMEA 2000 messages as JSON:
 
 ```bash
+# Read from SocketCAN
 go run ./cmd/sniffer.go -i can0
+
+# Read from USB-CAN
+go run ./cmd/sniffer.go -u /dev/ttyUSB0
+
+# With CEL filter
+go run ./cmd/sniffer.go -i can0 -f 'pgn == 127250'
+
+# Include unknown PGNs
+go run ./cmd/sniffer.go -i can0 -unknown
+
+# Pipe to jq
+go run ./cmd/sniffer.go -i can0 | jq .
 ```
 
-Pipe through `jq` for pretty-printing or filtering:
+## PGN Types
 
-```bash
-go run ./cmd/sniffer.go -i can0 | jq 'select(.Info.PGN == 127250)'
+All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. See `pgn/pgninfo_generated.go` for the full list.
+
+Every struct embeds `pgn.MessageInfo`:
+
+```go
+type MessageInfo struct {
+    Timestamp time.Time
+    Priority  uint8
+    PGN       uint32
+    SourceId  uint8
+    TargetId  uint8
+}
 ```
 
-## Packages
+## Unit Types
 
-| Package | Purpose |
-|---------|---------|
-| `pkg/endpoint` | Hardware abstraction for CAN data sources |
-| `pkg/canbus` | Low-level CAN bus I/O (SocketCAN, USB-CAN) |
-| `pkg/adapter` | CAN frame to NMEA 2000 packet conversion |
-| `pkg/pkt` | Packet to typed Go struct decoding |
-| `pkg/pgn` | PGN registry, decoders, and generated type definitions |
-| `pkg/units` | Type-safe physical unit conversions (distance, velocity, temperature, etc.) |
+Physical quantities use type-safe wrappers from the `units` package with built-in conversion methods.
 
-## Development
+## Hardware
 
-Requires [just](https://github.com/casey/just) for running build commands.
+Tested with:
+- **SocketCAN**: MCP2515 (SPI), PEAK PCAN-USB
+- **USB-CAN**: USB-CAN Analyzer dongles (2 Mbaud serial)
 
-```bash
-just test          # run tests
-just test-race     # run tests with race detector
-just test-cover    # generate coverage report
-just lint          # run linter
-just fmt           # format code
-```
-
-## License
-
-Apache 2.0 -- see [LICENSE](./LICENSE).
-
-## Acknowledgments
-
-This project is a fork of [boatkit-io/n2k](https://github.com/boatkit-io/n2k), which built the original Go implementation of this NMEA 2000 decoding pipeline.
-
-The PGN definitions and decoders at the core of this library are generated from the [canboat](https://github.com/canboat/canboat) project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.
+Both use the NMEA 2000 standard bitrate of 250 kbps.
