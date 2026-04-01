@@ -1,8 +1,8 @@
 # n2k
 
-A Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
+N2k is a Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
 
-## Install
+## Installation
 
 ```bash
 go get github.com/open-ships/n2k
@@ -13,33 +13,15 @@ go get github.com/open-ships/n2k
 ### Iterator API
 
 ```go
-package main
 
-import (
-    "context"
-    "fmt"
-    "os"
-    "os/signal"
+ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+defer stop()
 
-    "github.com/open-ships/n2k"
-    "github.com/open-ships/n2k/pgn"
-)
-
-func main() {
-    ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-    defer stop()
-
-    for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
-        if err != nil {
-            panic(err)
-        }
-        switch m := msg.(type) {
-        case *pgn.VesselHeading:
-            fmt.Printf("Heading: %v\n", m.Heading)
-        case *pgn.WindData:
-            fmt.Printf("Wind Speed: %v\n", m.WindSpeed)
-        }
+for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
+    if err != nil {
+        panic(err)
     }
+    fmt.Printf("Msg: %v\n", msg)
 }
 ```
 
@@ -48,13 +30,10 @@ func main() {
 ```go
 s := n2k.NewScanner(ctx, n2k.CAN("can0"))
 for s.Next() {
-    switch msg := s.Message().(type) {
-    case *pgn.VesselHeading:
-        fmt.Printf("Heading: %v\n", msg.Heading)
-    }
+    fmt.Printf("Msg: %v\n", msg)
 }
 if err := s.Err(); err != nil {
-    panic(err)
+    ...
 }
 ```
 
@@ -72,7 +51,7 @@ for msg, err := range n2k.Receive(ctx,
 }
 ```
 
-### CEL Filtering
+### CEL-based Filtering
 
 Filter messages using [CEL](https://github.com/google/cel-go) expressions. The library automatically optimizes filters -- metadata-only expressions skip decoding entirely.
 
@@ -129,6 +108,26 @@ for msg, err := range n2k.Receive(ctx, n2k.Replay(frames)) {
 }
 ```
 
+## PGN Types
+
+All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. See `pgn/pgninfo_generated.go` for the full list.
+
+Every struct embeds `pgn.MessageInfo`:
+
+```go
+type MessageInfo struct {
+    Timestamp time.Time
+    Priority  uint8
+    PGN       uint32
+    SourceId  uint8
+    TargetId  uint8
+}
+```
+
+## Unit Types
+
+Physical quantities use type-safe wrappers from the `units` package with built-in conversion methods.
+
 ## Sniffer CLI
 
 Print decoded NMEA 2000 messages as JSON:
@@ -150,30 +149,12 @@ go run ./cmd/sniffer.go -i can0 -unknown
 go run ./cmd/sniffer.go -i can0 | jq .
 ```
 
-## PGN Types
+## License
 
-All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. See `pgn/pgninfo_generated.go` for the full list.
+Apache 2.0 -- see LICENSE.
 
-Every struct embeds `pgn.MessageInfo`:
+## Acknowledgments
 
-```go
-type MessageInfo struct {
-    Timestamp time.Time
-    Priority  uint8
-    PGN       uint32
-    SourceId  uint8
-    TargetId  uint8
-}
-```
+This project is a fork of boatkit-io/n2k, which built the original Go implementation of this NMEA 2000 decoding pipeline.
 
-## Unit Types
-
-Physical quantities use type-safe wrappers from the `units` package with built-in conversion methods.
-
-## Hardware
-
-Tested with:
-- **SocketCAN**: MCP2515 (SPI), PEAK PCAN-USB
-- **USB-CAN**: USB-CAN Analyzer dongles (2 Mbaud serial)
-
-Both use the NMEA 2000 standard bitrate of 250 kbps.
+The PGN definitions and decoders at the core of this library are generated from the canboat project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.
