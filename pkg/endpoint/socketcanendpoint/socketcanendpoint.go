@@ -17,7 +17,7 @@ import (
 	"log/slog"
 
 	"github.com/open-ships/n2k/pkg/adapter"
-	"github.com/open-ships/n2k/pkg/canbus"
+	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/pkg/endpoint"
 	"github.com/brutella/can"
 )
