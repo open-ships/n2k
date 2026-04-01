@@ -1,48 +1,93 @@
-# Golang NMEA 2000 (N2k) Library
+# n2k
 
 [![Tests](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
 [![Go version](https://img.shields.io/github/go-mod/go-version/open-ships/n2k)](go.mod)
 
-## open-ships/n2k
+A Go library for decoding [NMEA 2000](https://www.nmea.org/content/STANDARDS/NMEA_2000) marine network messages into strongly-typed data structures. Raw CAN bus frames go in, Go structs come out.
 
-open-ships/n2k comprises packages (and associated tools) supporting the exchange of NMEA 2000 messages across a range of transports. Client go code can receive strongly typed [go](https://go.dev) data structures, with the library translating from a stream of NMEA 2000 messages.
+## Installation
 
-[NMEA 2000](https://www.nmea.org/content/STANDARDS/NMEA_2000) is a proprietary industry standard for inter-connecting marine electronic devices. This project leverages the great work of the [canboat](https://github.com/canboat/canboat) open-source project that has "reverse engineered the NMEA 2000 database by network observation and assembling data from public sources."
+```bash
+go get github.com/open-ships/n2k
+```
 
-The canboat project includes and references valuable documentation for potential users of this package. This project's documentation assumes readers are familiar with and can reference that documentation as needed.
+## How It Works
 
-## Processing Overview
+The library implements a three-stage decoding pipeline:
 
-### Endpoint
+```
+CAN frames  -->  Endpoint  -->  Adapter  -->  Decoder  -->  Go structs
+(hardware)      (transport)    (assembly)    (typing)      (your code)
+```
 
-Responsible for managing the interaction with the nmea gateway. To support a new gateway create a new implementation that supports the endpoint interface.
+**Endpoint** manages the connection to the NMEA 2000 gateway. Two implementations are included:
+- `socketcanendpoint` -- Linux SocketCAN (kernel CAN drivers)
+- `usbcanendpoint` -- USB-CAN Analyzer dongles (serial)
 
-The endpoint passes new message frames to the adapter through its input function. The data format is determined by the gateway or other source.
+**Adapter** converts raw CAN frames into intermediate packets, handling CAN ID extraction, fast-packet assembly for multi-frame messages, and PGN identification.
 
-### Frame to Packet Adapter
+**Decoder** translates packets into typed Go structs (e.g. `VesselHeading`, `WindData`, `EngineParametersRapidUpdate`) using the PGN definitions generated from the canboat database.
 
-Responsible for generating a "packet" from frames received through its input function, and passes complete packets on through its output function. The packet is an intermediate format used by subsequent processors.
+## Usage
 
-This adapter can access a number of helper functions:
-- is the PGN known (defined in canboat)?
-- is it Proprietary?
-- is it Fast or Single?
+```go
+// Create the pipeline stages
+endpoint := socketcanendpoint.NewSocketCANEndpoint(logger, "can0")
+adapter := canadapter.NewCANAdapter()
+decoder := pkt.NewPacketStruct()
 
-### Packet to Struct Adapter
+// Wire them together
+adapter.SetOutput(decoder)
+decoder.SetOutput(yourHandler)
+endpoint.SetOutput(adapter)
 
-Receives packet through its input function, decodes it, and passes the resulting Go struct (or an UnknownPGN if it fails to decode the packet) on through its output function.
+// Start receiving
+err := endpoint.Run(ctx)
+```
 
-### Subscribe
+## Sniffer
 
-Subscribe is a separate package that manages subscribers and distributes go structs (in this case n2k-related) to them.
+A built-in CLI tool that reads from a SocketCAN interface and prints decoded messages as JSON to stdout, one per line.
 
-## Version History
+```bash
+go run ./cmd/sniffer.go -i can0
+```
 
-See [CHANGELOG](./CHANGELOG.md)
+Pipe through `jq` for pretty-printing or filtering:
 
-## Related Projects
+```bash
+go run ./cmd/sniffer.go -i can0 | jq 'select(.Info.PGN == 127250)'
+```
 
-* [canboat](https://github.com/canboat/canboat) An open source collection of command line tools and data relevant to NMEA 2000 boat networks
+## Packages
+
+| Package | Purpose |
+|---------|---------|
+| `pkg/endpoint` | Hardware abstraction for CAN data sources |
+| `pkg/canbus` | Low-level CAN bus I/O (SocketCAN, USB-CAN) |
+| `pkg/adapter` | CAN frame to NMEA 2000 packet conversion |
+| `pkg/pkt` | Packet to typed Go struct decoding |
+| `pkg/pgn` | PGN registry, decoders, and generated type definitions |
+| `pkg/units` | Type-safe physical unit conversions (distance, velocity, temperature, etc.) |
+
+## Development
+
+Requires [just](https://github.com/casey/just) for running build commands.
+
+```bash
+just test          # run tests
+just test-race     # run tests with race detector
+just test-cover    # generate coverage report
+just lint          # run linter
+just fmt           # format code
+```
 
 ## License
-[n2k license](./LICENSE)
+
+Apache 2.0 -- see [LICENSE](./LICENSE).
+
+## Acknowledgments
+
+This project is a fork of [boatkit-io/n2k](https://github.com/boatkit-io/n2k), which built the original Go implementation of this NMEA 2000 decoding pipeline.
+
+The PGN definitions and decoders at the core of this library are generated from the [canboat](https://github.com/canboat/canboat) project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.

@@ -19,32 +19,32 @@ import (
 type PgnInfo struct {
 	// Id is a unique string identifier for this PGN variant, needed to distinguish
 	// PGNs that share the same numeric PGN but have different field layouts (KeyValue PGNs).
-	Id string
+	Id string `json:"id"`
 	// Self is a pointer back to this PgnInfo's location in the pgnList slice.
 	// It is set during init() and allows generated code to cheaply reference
 	// the PgnInfo without a map lookup.
-	Self *PgnInfo
+	Self *PgnInfo `json:"self"`
 	// PGN is the NMEA 2000 Parameter Group Number that identifies this message type
 	// on the CAN bus. Values range from 0 to ~131071 (0x1FFFF).
-	PGN uint32
+	PGN uint32 `json:"pgn"`
 	// Description is a human-readable name for this PGN (e.g., "Vessel Heading").
-	Description string
+	Description string `json:"description"`
 	// Fast indicates whether this PGN uses the NMEA 2000 fast-packet protocol.
 	// Fast-packet PGNs can carry more than 8 bytes by spanning multiple CAN frames;
 	// single-frame PGNs are limited to 8 bytes.
-	Fast bool
+	Fast bool `json:"fast"`
 	// ManId is the manufacturer code for proprietary PGNs. It is zero for standard
 	// (non-proprietary) PGNs. Used to select the correct variant when multiple
 	// manufacturers define different payloads for the same proprietary PGN number.
-	ManId ManufacturerCodeConst
+	ManId ManufacturerCodeConst `json:"manId"`
 	// Decoder is the generated function that reads fields from a PGNDataStream and
 	// returns a strongly-typed Go struct (e.g., VesselHeading, RateOfTurn).
 	// The returned any value should be type-asserted by the caller.
-	Decoder func(MessageInfo, *PGNDataStream) (any, error)
+	Decoder func(MessageInfo, *PGNDataStream) (any, error) `json:"decoder"`
 	// Fields maps field index (1-based, matching the canboat field order) to
 	// FieldDescriptor. This is needed at runtime for variable-length and KeyValue
 	// fields where the decoder must inspect field metadata dynamically.
-	Fields map[int]*FieldDescriptor
+	Fields map[int]*FieldDescriptor `json:"fields"`
 }
 
 // FieldDescriptor holds metadata about a single field within a PGN definition.
@@ -52,34 +52,34 @@ type PgnInfo struct {
 // whose type or length cannot be fully resolved at code-generation time.
 type FieldDescriptor struct {
 	// Name is the Canboat field name (e.g., "Heading", "SID", "Manufacturer Code").
-	Name string
+	Name string `json:"name"`
 	// BitLength is the width of this field in bits. For variable-length fields,
 	// this may be a nominal/default length.
-	BitLength uint16
+	BitLength uint16 `json:"bitLength"`
 	// BitOffset is the absolute bit position of this field from the start of the PGN payload.
-	BitOffset uint16
+	BitOffset uint16 `json:"bitOffset"`
 	// BitLengthVariable is true when the field's actual length is determined at runtime
 	// (e.g., STRING_LAU fields whose length is encoded in a preceding byte).
-	BitLengthVariable bool
+	BitLengthVariable bool `json:"bitLengthVariable"`
 	// CanboatType is the Canboat type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
 	// "STRING_LZ", "STRING_FIX"). It drives type-specific decoding logic.
-	CanboatType string
+	CanboatType string `json:"canboatType"`
 	// GolangType is the Go type name used in the generated struct field (e.g., "*uint8", "float32").
-	GolangType string
+	GolangType string `json:"golangType"`
 	// Resolution is the scaling factor applied to integer fields to produce physical units
 	// (e.g., 0.0001 for a heading field stored in units of 1/10000 radian).
-	Resolution float32
+	Resolution float32 `json:"resolution"`
 	// Signed indicates whether this numeric field uses two's-complement signed encoding.
-	Signed bool
+	Signed bool `json:"signed"`
 	// Unit is the physical unit string from canboat (e.g., "rad", "m/s", "K").
-	Unit string
+	Unit string `json:"unit"`
 	// BitLookupName is the name of the bit-enumeration lookup table, if this field
 	// is a bitfield-type enum. Empty for non-lookup fields.
-	BitLookupName string
+	BitLookupName string `json:"bitLookupName"`
 	// Match is non-nil for fields that must match a specific value to select a PGN variant.
 	// For example, proprietary PGN variants use a Match on the manufacturer code field
 	// to distinguish which decoder to use.
-	Match *int
+	Match *int `json:"match"`
 }
 
 // PgnInfoLookup maps PGN numbers to their PgnInfo descriptors. It is the primary

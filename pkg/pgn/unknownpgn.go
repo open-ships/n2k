@@ -11,18 +11,18 @@ package pgn
 // raw Data field to attempt manual or proprietary decoding.
 type UnknownPGN struct {
 	// Info contains the CAN bus header metadata (PGN number, source, priority, etc.).
-	Info MessageInfo
+	Info MessageInfo `json:"info"`
 	// Data holds the raw, undecoded message payload bytes.
-	Data []uint8
+	Data []uint8 `json:"data"`
 	// ManufacturerCode is the manufacturer code extracted from the payload if this was
 	// a proprietary PGN. It is zero if the PGN is not proprietary or if extraction failed.
-	ManufacturerCode ManufacturerCodeConst
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	// IndustryCode is the industry code extracted alongside ManufacturerCode for
 	// proprietary PGNs (e.g., 4 = Marine). Zero if not applicable.
-	IndustryCode IndustryCodeConst
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 	// Reason describes why decoding failed (e.g., "PGN not found", decode error details).
-	Reason error
+	Reason error `json:"reason"`
 	// WasUnseen is true when the PGN exists in the canboat database but has no sample data
 	// in canboat's log files, meaning the decoder is untested and may be unreliable.
-	WasUnseen bool
+	WasUnseen bool `json:"wasUnseen"`
 }

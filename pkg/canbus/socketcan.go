@@ -22,21 +22,21 @@ type SocketCANChannelOptions struct {
 	// InterfaceName is the Linux network interface name for the CAN controller, e.g. "can0".
 	// This corresponds to the interface shown by `ip link show` and is typically assigned
 	// by the kernel when a CAN controller driver (such as MCP2515 over SPI) is loaded.
-	InterfaceName string
+	InterfaceName string `json:"interfaceName"`
 
 	// BitRate is the CAN bus bitrate in bits per second. For NMEA 2000 networks, this is
 	// typically 250000 (250 kbps). The bitrate is configured via netlink when bringing
 	// the interface up, using the equivalent of `ip link set canX up type can bitrate 250000`.
-	BitRate int
+	BitRate int `json:"bitRate"`
 
 	// ForceBounceInterface, when true, forces the CAN interface to be brought down and back up
 	// even if it is already in the OperUp state. This can be useful to reset the CAN controller
 	// after errors or to ensure a clean state on startup.
-	ForceBounceInterface bool
+	ForceBounceInterface bool `json:"forceBounceInterface"`
 
 	// MessageHandler is the callback function invoked for each CAN frame received on the bus.
 	// The handler receives a can.Frame containing the CAN ID and up to 8 bytes of payload.
-	MessageHandler can.HandlerFunc
+	MessageHandler can.HandlerFunc `json:"messageHandler"`
 }
 
 // SocketCANChannel represents a single SocketCAN-based canbus channel for sending/receiving CAN frames.
