@@ -33,61 +33,61 @@ import (
 type Packet struct {
 	// Info provides (for known PGNs), the generic description of the PGN derived from canboat.json.
 	// This includes metadata like PGN number, source address, priority, destination, and timestamp.
-	Info pgn.MessageInfo
+	Info pgn.MessageInfo `json:"info"`
 
 	// Data is (when complete) the data payload for a PGN, ready to decode.
 	// For single-frame messages this is the raw 8-byte CAN frame data.
 	// For fast-packet messages this is the reassembled payload from multiple frames,
 	// with the sequence/frame header bytes stripped and the result trimmed to the
 	// expected length declared in frame 0.
-	Data []uint8
+	Data []uint8 `json:"data"`
 
 	// Fast (when complete) indicates if matching pgn variants are all fast or all slow.
 	// This is determined by looking up the PGN in the canboat-derived PgnInfoLookup table.
 	// A "fast" PGN carries more than 8 bytes and must be split across multiple CAN frames.
 	// Note: PGN 130824 is a special case where some variants are fast and some are slow.
-	Fast bool
+	Fast bool `json:"fast"`
 
 	// SeqId (for fast packets) is the 3-bit sequence identifier (0-7) that connects
 	// partial packets belonging to the same logical message. Multiple in-flight sequences
 	// for the same PGN/source can coexist using different SeqIds.
-	SeqId uint8
+	SeqId uint8 `json:"seqId"`
 
 	// FrameNum (for fast packets) is the 5-bit frame number (0-31) indicating the position
 	// of this partial packet within the complete multi-frame message. Frame 0 carries a
 	// length byte; subsequent frames are continuation frames.
-	FrameNum uint8
+	FrameNum uint8 `json:"frameNum"`
 
 	// Proprietary indicates if the PGN falls in the NMEA 2000 proprietary range.
 	// Proprietary PGNs encode a manufacturer ID and industry code in their first two data
 	// bytes, which is used to select the correct decoder from multiple candidates.
-	Proprietary bool
+	Proprietary bool `json:"proprietary"`
 
 	// Complete is true for single-frame messages and for fast-packet messages when all
 	// frames in the sequence have been received and assembled. Only complete packets are
 	// forwarded downstream for decoding.
-	Complete bool
+	Complete bool `json:"complete"`
 
 	// Manufacturer is the Manufacturer ID extracted from the first two bytes of proprietary
 	// PGN data. Used to filter candidate decoders so only the matching manufacturer's
 	// decoder is applied.
-	Manufacturer pgn.ManufacturerCodeConst
+	Manufacturer pgn.ManufacturerCodeConst `json:"manufacturer"`
 
 	// Candidates is the list of all possible PGN definitions that match this PGN number.
 	// Multiple candidates exist when different manufacturers define their own proprietary
 	// messages under the same PGN number (e.g., PGN 130820 has many vendor-specific variants).
-	Candidates []*pgn.PgnInfo
+	Candidates []*pgn.PgnInfo `json:"candidates"`
 
 	// Decoders is the filtered list of decoder functions derived from Candidates.
 	// After filtering by manufacturer ID (for proprietary PGNs), each remaining candidate's
 	// Decoder function is added here. Each decoder takes a MessageInfo and a PGNDataStream
 	// and returns a typed Go struct or an error if the data doesn't match.
-	Decoders []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error)
+	Decoders []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error) `json:"decoders"`
 
 	// ParseErrors tracks errors encountered during packet processing. Errors accumulate
 	// as validation fails, decoders are attempted, or assembly issues arise. If all decoders
 	// fail, these errors are bundled into the resulting UnknownPGN for debugging.
-	ParseErrors []error
+	ParseErrors []error `json:"parseErrors"`
 }
 
 // NewPacket creates and returns a pointer to an initialized Packet from a MessageInfo and

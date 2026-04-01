@@ -64,20 +64,20 @@ const (
 type USBCANChannelOptions struct {
 	// SerialPortName is the OS path to the serial port device, e.g. "/dev/ttyUSB0" on Linux
 	// or "/dev/cu.usbserial-1234" on macOS.
-	SerialPortName string
+	SerialPortName string `json:"serialPortName"`
 
 	// SerialBaudRate is the baud rate for the serial (UART) connection between the host and
 	// the USB-CAN dongle. This is NOT the CAN bus bitrate -- it controls only the USB serial link.
 	// The USB-CAN Analyzer typically uses 2000000 (2 Mbaud).
-	SerialBaudRate int
+	SerialBaudRate int `json:"serialBaudRate"`
 
 	// BitRate is the CAN bus bitrate in bits per second. Common values for NMEA 2000 are 250000.
 	// This value is mapped to a protocol-specific byte code in the settings frame sent to the device.
-	BitRate int
+	BitRate int `json:"bitRate"`
 
 	// FrameHandler is the callback function invoked for each successfully parsed CAN frame.
 	// The handler receives a can.Frame with the CAN ID and up to 8 bytes of payload data.
-	FrameHandler can.HandlerFunc
+	FrameHandler can.HandlerFunc `json:"frameHandler"`
 }
 
 // USBCANChannel represents a single USB-CAN-based canbus channel for sending/receiving CAN frames.

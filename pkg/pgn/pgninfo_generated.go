@@ -33499,10 +33499,10 @@ var pgnList = []PgnInfo{
 }
 // Build structs for each PGN
 type IsoAcknowledgement struct {
-	Info MessageInfo
-	Control IsoControlConst
-	GroupFunction *uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	Control IsoControlConst `json:"control"`
+	GroupFunction *uint8 `json:"groupFunction"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoAcknowledgement
@@ -33541,8 +33541,8 @@ func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type IsoRequest struct {
-	Info MessageInfo
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoRequest
@@ -33559,9 +33559,9 @@ func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type IsoTransportProtocolDataTransfer struct {
-	Info MessageInfo
-	Sid *uint8
-	Data []uint8
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Data []uint8 `json:"data"`
 }
 func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolDataTransfer
@@ -33587,12 +33587,12 @@ func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type IsoTransportProtocolConnectionManagementRequestToSend struct {
-	Info MessageInfo
-	GroupFunctionCode IsoCommandConst
-	MessageSize *uint16
-	Packets *uint8
-	PacketsReply *uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
+	MessageSize *uint16 `json:"messageSize"`
+	Packets *uint8 `json:"packets"`
+	PacketsReply *uint8 `json:"packetsReply"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolConnectionManagementRequestToSend
@@ -33648,11 +33648,11 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 	return val, nil
 }
 type IsoTransportProtocolConnectionManagementClearToSend struct {
-	Info MessageInfo
-	GroupFunctionCode IsoCommandConst
-	MaxPackets *uint8
-	NextSid *uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
+	MaxPackets *uint8 `json:"maxPackets"`
+	NextSid *uint8 `json:"nextSid"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolConnectionManagementClearToSend
@@ -33703,11 +33703,11 @@ func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo,
 	return val, nil
 }
 type IsoTransportProtocolConnectionManagementEndOfMessage struct {
-	Info MessageInfo
-	GroupFunctionCode IsoCommandConst
-	TotalMessageSize *uint16
-	TotalNumberOfFramesReceived *uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
+	TotalMessageSize *uint16 `json:"totalMessageSize"`
+	TotalNumberOfFramesReceived *uint8 `json:"totalNumberOfFramesReceived"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolConnectionManagementEndOfMessage
@@ -33758,11 +33758,11 @@ func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo
 	return val, nil
 }
 type IsoTransportProtocolConnectionManagementBroadcastAnnounce struct {
-	Info MessageInfo
-	GroupFunctionCode IsoCommandConst
-	MessageSize *uint16
-	Packets *uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
+	MessageSize *uint16 `json:"messageSize"`
+	Packets *uint8 `json:"packets"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolConnectionManagementBroadcastAnnounce
@@ -33813,10 +33813,10 @@ func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info Messag
 	return val, nil
 }
 type IsoTransportProtocolConnectionManagementAbort struct {
-	Info MessageInfo
-	GroupFunctionCode IsoCommandConst
-	Reason []uint8
-	Pgn *uint32
+	Info MessageInfo `json:"info"`
+	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
+	Reason []uint8 `json:"reason"`
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoTransportProtocolConnectionManagementAbort
@@ -33858,16 +33858,16 @@ func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, strea
 	return val, nil
 }
 type IsoAddressClaim struct {
-	Info MessageInfo
-	UniqueNumber *uint32
-	ManufacturerCode ManufacturerCodeConst
-	DeviceInstanceLower *uint8
-	DeviceInstanceUpper *uint8
-	DeviceFunction DeviceFunctionConst
-	DeviceClass DeviceClassConst
-	SystemInstance *uint8
-	IndustryGroup IndustryCodeConst
-	ArbitraryAddressCapable *uint8
+	Info MessageInfo `json:"info"`
+	UniqueNumber *uint32 `json:"uniqueNumber"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	DeviceInstanceLower *uint8 `json:"deviceInstanceLower"`
+	DeviceInstanceUpper *uint8 `json:"deviceInstanceUpper"`
+	DeviceFunction DeviceFunctionConst `json:"deviceFunction"`
+	DeviceClass DeviceClassConst `json:"deviceClass"`
+	SystemInstance *uint8 `json:"systemInstance"`
+	IndustryGroup IndustryCodeConst `json:"industryGroup"`
+	ArbitraryAddressCapable *uint8 `json:"arbitraryAddressCapable"`
 }
 func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoAddressClaim
@@ -33960,13 +33960,13 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SeatalkWirelessKeypadLightControl struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
-	Variant *uint8
-	WirelessSetting *uint8
-	WiredSetting *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
+	Variant *uint8 `json:"variant"`
+	WirelessSetting *uint8 `json:"wirelessSetting"`
+	WiredSetting *uint8 `json:"wiredSetting"`
 }
 func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkWirelessKeypadLightControl
@@ -34045,12 +34045,12 @@ func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataSt
 	return val, nil
 }
 type SeatalkWirelessKeypadControl struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Pid *uint8
-	Variant *uint8
-	BeepControl *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Pid *uint8 `json:"pid"`
+	Variant *uint8 `json:"variant"`
+	BeepControl *uint8 `json:"beepControl"`
 }
 func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkWirelessKeypadControl
@@ -34117,11 +34117,11 @@ func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type VictronBatteryRegister struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	RegisterId *uint16
-	Payload *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	RegisterId *uint16 `json:"registerId"`
+	Payload *uint32 `json:"payload"`
 }
 func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val VictronBatteryRegister
@@ -34175,10 +34175,10 @@ func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type Bus1PhaseCBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
 }
 func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Bus1PhaseCBasicAcQuantities
@@ -34217,10 +34217,10 @@ func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type Bus1PhaseBBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
 }
 func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Bus1PhaseBBasicAcQuantities
@@ -34259,10 +34259,10 @@ func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type Bus1PhaseABasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
 }
 func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Bus1PhaseABasicAcQuantities
@@ -34301,10 +34301,10 @@ func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type Bus1AverageBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
 }
 func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Bus1AverageBasicAcQuantities
@@ -34343,9 +34343,9 @@ func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type UtilityTotalAcEnergy struct {
-	Info MessageInfo
-	TotalEnergyExport *uint32
-	TotalEnergyImport *uint32
+	Info MessageInfo `json:"info"`
+	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
+	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
 func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityTotalAcEnergy
@@ -34371,10 +34371,10 @@ func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type UtilityPhaseCAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *uint16
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *uint16 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseCAcReactivePower
@@ -34413,9 +34413,9 @@ func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type UtilityPhaseCAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseCAcPower
@@ -34441,11 +34441,11 @@ func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type UtilityPhaseCBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseCBasicAcQuantities
@@ -34489,10 +34489,10 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type UtilityPhaseBAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *uint16
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *uint16 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseBAcReactivePower
@@ -34531,9 +34531,9 @@ func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type UtilityPhaseBAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseBAcPower
@@ -34559,11 +34559,11 @@ func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type UtilityPhaseBBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseBBasicAcQuantities
@@ -34607,10 +34607,10 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type UtilityPhaseAAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseAAcReactivePower
@@ -34649,9 +34649,9 @@ func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type UtilityPhaseAAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseAAcPower
@@ -34677,11 +34677,11 @@ func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type UtilityPhaseABasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityPhaseABasicAcQuantities
@@ -34725,10 +34725,10 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type UtilityTotalAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityTotalAcReactivePower
@@ -34767,9 +34767,9 @@ func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type UtilityTotalAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityTotalAcPower
@@ -34795,11 +34795,11 @@ func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type UtilityAverageBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UtilityAverageBasicAcQuantities
@@ -34843,9 +34843,9 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 	return val, nil
 }
 type GeneratorTotalAcEnergy struct {
-	Info MessageInfo
-	TotalEnergyExport *uint32
-	TotalEnergyImport *uint32
+	Info MessageInfo `json:"info"`
+	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
+	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
 func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorTotalAcEnergy
@@ -34871,10 +34871,10 @@ func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type GeneratorPhaseCAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseCAcReactivePower
@@ -34913,9 +34913,9 @@ func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type GeneratorPhaseCAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseCAcPower
@@ -34941,11 +34941,11 @@ func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type GeneratorPhaseCBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseCBasicAcQuantities
@@ -34989,10 +34989,10 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type GeneratorPhaseBAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseBAcReactivePower
@@ -35031,9 +35031,9 @@ func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type GeneratorPhaseBAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseBAcPower
@@ -35059,11 +35059,11 @@ func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type GeneratorPhaseBBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseBBasicAcQuantities
@@ -35107,10 +35107,10 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type GeneratorPhaseAAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseAAcReactivePower
@@ -35149,9 +35149,9 @@ func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type GeneratorPhaseAAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseAAcPower
@@ -35177,11 +35177,11 @@ func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type GeneratorPhaseABasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorPhaseABasicAcQuantities
@@ -35225,10 +35225,10 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type GeneratorTotalAcReactivePower struct {
-	Info MessageInfo
-	ReactivePower *int32
-	PowerFactor *float32
-	PowerFactorLagging PowerFactorConst
+	Info MessageInfo `json:"info"`
+	ReactivePower *int32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
+	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorTotalAcReactivePower
@@ -35267,9 +35267,9 @@ func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type GeneratorTotalAcPower struct {
-	Info MessageInfo
-	RealPower *int32
-	ApparentPower *int32
+	Info MessageInfo `json:"info"`
+	RealPower *int32 `json:"realPower"`
+	ApparentPower *int32 `json:"apparentPower"`
 }
 func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorTotalAcPower
@@ -35295,11 +35295,11 @@ func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type GeneratorAverageBasicAcQuantities struct {
-	Info MessageInfo
-	LineLineAcRmsVoltage *uint16
-	LineNeutralAcRmsVoltage *uint16
-	AcFrequency *float32
-	AcRmsCurrent *uint16
+	Info MessageInfo `json:"info"`
+	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency *float32 `json:"acFrequency"`
+	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
 func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GeneratorAverageBasicAcQuantities
@@ -35343,16 +35343,16 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 	return val, nil
 }
 type IsoCommandedAddress struct {
-	Info MessageInfo
-	UniqueNumber []uint8
-	ManufacturerCode ManufacturerCodeConst
-	DeviceInstanceLower *uint8
-	DeviceInstanceUpper *uint8
-	DeviceFunction DeviceFunctionConst
-	DeviceClass DeviceClassConst
-	SystemInstance *uint8
-	IndustryCode IndustryCodeConst
-	NewSourceAddress *uint8
+	Info MessageInfo `json:"info"`
+	UniqueNumber []uint8 `json:"uniqueNumber"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	DeviceInstanceLower *uint8 `json:"deviceInstanceLower"`
+	DeviceInstanceUpper *uint8 `json:"deviceInstanceUpper"`
+	DeviceFunction DeviceFunctionConst `json:"deviceFunction"`
+	DeviceClass DeviceClassConst `json:"deviceClass"`
+	SystemInstance *uint8 `json:"systemInstance"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	NewSourceAddress *uint8 `json:"newSourceAddress"`
 }
 func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val IsoCommandedAddress
@@ -35449,10 +35449,10 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FurunoHeave struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Heave *units.Distance
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Heave *units.Distance `json:"heave"`
 }
 func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoHeave
@@ -35501,12 +35501,12 @@ func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type MaretronProprietaryDcBreakerCurrent struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	BankInstance *uint8
-	IndicatorNumber *uint8
-	BreakerCurrent *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	BankInstance *uint8 `json:"bankInstance"`
+	IndicatorNumber *uint8 `json:"indicatorNumber"`
+	BreakerCurrent *float32 `json:"breakerCurrent"`
 }
 func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronProprietaryDcBreakerCurrent
@@ -35573,10 +35573,10 @@ func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNData
 	return val, nil
 }
 type AirmarBootStateAcknowledgment struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	BootState BootStateConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	BootState BootStateConst `json:"bootState"`
 }
 func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarBootStateAcknowledgment
@@ -35625,11 +35625,11 @@ func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type LowranceTemperature struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	TemperatureSource TemperatureSourceConst
-	ActualTemperature *units.Temperature
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	TemperatureSource TemperatureSourceConst `json:"temperatureSource"`
+	ActualTemperature *units.Temperature `json:"actualTemperature"`
 }
 func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val LowranceTemperature
@@ -35687,15 +35687,15 @@ func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type ChetcoDimmer struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Instance *uint8
-	Dimmer1 *uint8
-	Dimmer2 *uint8
-	Dimmer3 *uint8
-	Dimmer4 *uint8
-	Control *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Instance *uint8 `json:"instance"`
+	Dimmer1 *uint8 `json:"dimmer1"`
+	Dimmer2 *uint8 `json:"dimmer2"`
+	Dimmer3 *uint8 `json:"dimmer3"`
+	Dimmer4 *uint8 `json:"dimmer4"`
+	Control *uint8 `json:"control"`
 }
 func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ChetcoDimmer
@@ -35785,9 +35785,9 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AirmarBootStateRequest struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarBootStateRequest
@@ -35827,12 +35827,12 @@ func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type AirmarAccessLevel struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	FormatCode *uint8
-	AccessLevel AccessLevelConst
-	AccessSeedKey *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	FormatCode *uint8 `json:"formatCode"`
+	AccessLevel AccessLevelConst `json:"accessLevel"`
+	AccessSeedKey *uint32 `json:"accessSeedKey"`
 }
 func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarAccessLevel
@@ -35899,9 +35899,9 @@ func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type SimnetConfigureTemperatureSensor struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetConfigureTemperatureSensor
@@ -35941,14 +35941,14 @@ func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type SeatalkAlarm struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid []uint8
-	AlarmStatus SeatalkAlarmStatusConst
-	AlarmId SeatalkAlarmIdConst
-	AlarmGroup SeatalkAlarmGroupConst
-	AlarmPriority []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid []uint8 `json:"sid"`
+	AlarmStatus SeatalkAlarmStatusConst `json:"alarmStatus"`
+	AlarmId SeatalkAlarmIdConst `json:"alarmId"`
+	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
+	AlarmPriority []uint8 `json:"alarmPriority"`
 }
 func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkAlarm
@@ -36029,9 +36029,9 @@ func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SimnetTrimTabSensorCalibration struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetTrimTabSensorCalibration
@@ -36071,9 +36071,9 @@ func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type SimnetPaddleWheelSpeedConfiguration struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetPaddleWheelSpeedConfiguration
@@ -36113,9 +36113,9 @@ func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNData
 	return val, nil
 }
 type SimnetClearFluidLevelWarnings struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetClearFluidLevelWarnings
@@ -36155,9 +36155,9 @@ func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type SimnetLgc2000Configuration struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetLgc2000Configuration
@@ -36197,11 +36197,11 @@ func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type DiverseYachtServicesLoadCell struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Instance *uint8
-	LoadCell *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Instance *uint8 `json:"instance"`
+	LoadCell *uint32 `json:"loadCell"`
 }
 func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val DiverseYachtServicesLoadCell
@@ -36259,13 +36259,13 @@ func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type SimnetApUnknown1 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *uint8
-	C *uint16
-	D *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint16 `json:"c"`
+	D *uint8 `json:"d"`
 }
 func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetApUnknown1
@@ -36341,12 +36341,12 @@ func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SimnetDeviceStatus struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Model SimnetDeviceModelConst
-	Report SimnetDeviceReportConst
-	Status SimnetApStatusConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Model SimnetDeviceModelConst `json:"model"`
+	Report SimnetDeviceReportConst `json:"report"`
+	Status SimnetApStatusConst `json:"status"`
 }
 func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetDeviceStatus
@@ -36416,11 +36416,11 @@ func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type SimnetDeviceStatusRequest struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Model SimnetDeviceModelConst
-	Report SimnetDeviceReportConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Model SimnetDeviceModelConst `json:"model"`
+	Report SimnetDeviceReportConst `json:"report"`
 }
 func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetDeviceStatusRequest
@@ -36481,12 +36481,12 @@ func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type SimnetPilotMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Model SimnetDeviceModelConst
-	Report SimnetDeviceReportConst
-	Mode SimnetApModeBitfieldConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Model SimnetDeviceModelConst `json:"model"`
+	Report SimnetDeviceReportConst `json:"report"`
+	Mode SimnetApModeBitfieldConst `json:"mode"`
 }
 func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetPilotMode
@@ -36556,11 +36556,11 @@ func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SimnetDeviceModeRequest struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Model SimnetDeviceModelConst
-	Report SimnetDeviceReportConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Model SimnetDeviceModelConst `json:"model"`
+	Report SimnetDeviceReportConst `json:"report"`
 }
 func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetDeviceModeRequest
@@ -36621,12 +36621,12 @@ func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type SimnetSailingProcessorStatus struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Model SimnetDeviceModelConst
-	Report SimnetDeviceReportConst
-	Data []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Model SimnetDeviceModelConst `json:"model"`
+	Report SimnetDeviceReportConst `json:"report"`
+	Data []uint8 `json:"data"`
 }
 func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetSailingProcessorStatus
@@ -36692,12 +36692,12 @@ func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type NavicoWirelessBatteryStatus struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Status *uint8
-	BatteryStatus *uint8
-	BatteryChargeStatus *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Status *uint8 `json:"status"`
+	BatteryStatus *uint8 `json:"batteryStatus"`
+	BatteryChargeStatus *uint8 `json:"batteryChargeStatus"`
 }
 func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoWirelessBatteryStatus
@@ -36764,11 +36764,11 @@ func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type NavicoWirelessSignalStatus struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Unknown *uint8
-	SignalStrength *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Unknown *uint8 `json:"unknown"`
+	SignalStrength *uint8 `json:"signalStrength"`
 }
 func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoWirelessSignalStatus
@@ -36826,14 +36826,14 @@ func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type SimnetApUnknown2 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *uint8
-	C *uint8
-	D *uint8
-	E *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
 }
 func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetApUnknown2
@@ -36918,11 +36918,11 @@ func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SimnetAutopilotAngle struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Mode SimnetApModeConst
-	Angle *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Mode SimnetApModeConst `json:"mode"`
+	Angle *float32 `json:"angle"`
 }
 func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetAutopilotAngle
@@ -36984,11 +36984,11 @@ func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type SeatalkPilotWindDatum struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	WindDatum *float32
-	RollingAverageWindAngle *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	WindDatum *float32 `json:"windDatum"`
+	RollingAverageWindAngle *float32 `json:"rollingAverageWindAngle"`
 }
 func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkPilotWindDatum
@@ -37046,11 +37046,11 @@ func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type SimnetMagneticField struct {
-	Info MessageInfo
-	A *float32
-	B *uint8
-	C *float32
-	D *float32
+	Info MessageInfo `json:"info"`
+	A *float32 `json:"a"`
+	B *uint8 `json:"b"`
+	C *float32 `json:"c"`
+	D *float32 `json:"d"`
 }
 func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetMagneticField
@@ -37098,12 +37098,12 @@ func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type SeatalkPilotHeading struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid []uint8
-	HeadingTrue *float32
-	HeadingMagnetic *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid []uint8 `json:"sid"`
+	HeadingTrue *float32 `json:"headingTrue"`
+	HeadingMagnetic *float32 `json:"headingMagnetic"`
 }
 func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkPilotHeading
@@ -37170,12 +37170,12 @@ func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type SeatalkPilotLockedHeading struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid []uint8
-	TargetHeadingTrue *float32
-	TargetHeadingMagnetic *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid []uint8 `json:"sid"`
+	TargetHeadingTrue *float32 `json:"targetHeadingTrue"`
+	TargetHeadingMagnetic *float32 `json:"targetHeadingMagnetic"`
 }
 func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkPilotLockedHeading
@@ -37242,11 +37242,11 @@ func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type SeatalkSilenceAlarm struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	AlarmId SeatalkAlarmIdConst
-	AlarmGroup SeatalkAlarmGroupConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	AlarmId SeatalkAlarmIdConst `json:"alarmId"`
+	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
 }
 func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkSilenceAlarm
@@ -37304,15 +37304,15 @@ func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type SeatalkKeypadMessage struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
-	FirstKey *uint8
-	SecondKey *uint8
-	FirstKeyState *uint8
-	SecondKeyState *uint8
-	EncoderPosition *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
+	FirstKey *uint8 `json:"firstKey"`
+	SecondKey *uint8 `json:"secondKey"`
+	FirstKeyState *uint8 `json:"firstKeyState"`
+	SecondKeyState *uint8 `json:"secondKeyState"`
+	EncoderPosition *uint8 `json:"encoderPosition"`
 }
 func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkKeypadMessage
@@ -37410,12 +37410,12 @@ func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type SeatalkKeypadHeartbeat struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
-	Variant *uint8
-	Status *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
+	Variant *uint8 `json:"variant"`
+	Status *uint8 `json:"status"`
 }
 func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkKeypadHeartbeat
@@ -37482,12 +37482,12 @@ func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type SeatalkPilotMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	PilotMode SeatalkPilotMode16Const
-	SubMode []uint8
-	PilotModeData []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	PilotMode SeatalkPilotMode16Const `json:"pilotMode"`
+	SubMode []uint8 `json:"subMode"`
+	PilotModeData []uint8 `json:"pilotModeData"`
 }
 func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SeatalkPilotMode
@@ -37554,11 +37554,11 @@ func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type AirmarDepthQualityFactor struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid *uint8
-	DepthQualityFactor AirmarDepthQualityFactorConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid *uint8 `json:"sid"`
+	DepthQualityFactor AirmarDepthQualityFactorConst `json:"depthQualityFactor"`
 }
 func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarDepthQualityFactor
@@ -37616,12 +37616,12 @@ func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type AirmarSpeedPulseCount struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid *uint8
-	DurationOfInterval *float32
-	NumberOfPulsesReceived *uint16
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid *uint8 `json:"sid"`
+	DurationOfInterval *float32 `json:"durationOfInterval"`
+	NumberOfPulsesReceived *uint16 `json:"numberOfPulsesReceived"`
 }
 func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarSpeedPulseCount
@@ -37688,12 +37688,12 @@ func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type AirmarDeviceInformation struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid *uint8
-	InternalDeviceTemperature *units.Temperature
-	SupplyVoltage *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid *uint8 `json:"sid"`
+	InternalDeviceTemperature *units.Temperature `json:"internalDeviceTemperature"`
+	SupplyVoltage *float32 `json:"supplyVoltage"`
 }
 func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarDeviceInformation
@@ -37760,14 +37760,14 @@ func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type SimnetApUnknown3 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *uint8
-	C *uint8
-	D *uint8
-	E *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
 }
 func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetApUnknown3
@@ -37852,9 +37852,9 @@ func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SimnetAutopilotMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetAutopilotMode
@@ -37894,17 +37894,17 @@ func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type NmeaRequestGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	TransmissionInterval *float32
-	TransmissionIntervalOffset *float32
-	NumberOfParameters *uint8
-	Repeating1 []NmeaRequestGroupFunctionRepeating1
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	TransmissionInterval *float32 `json:"transmissionInterval"`
+	TransmissionIntervalOffset *float32 `json:"transmissionIntervalOffset"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaRequestGroupFunctionRepeating1 `json:"repeating1"`
 }
 type NmeaRequestGroupFunctionRepeating1 struct {
-	Parameter *uint8
-	Value []uint8
+	Parameter *uint8 `json:"parameter"`
+	Value []uint8 `json:"value"`
 }
 func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaRequestGroupFunction
@@ -37998,16 +37998,16 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type NmeaCommandGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	Priority PriorityConst
-	NumberOfParameters *uint8
-	Repeating1 []NmeaCommandGroupFunctionRepeating1
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	Priority PriorityConst `json:"priority"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaCommandGroupFunctionRepeating1 `json:"repeating1"`
 }
 type NmeaCommandGroupFunctionRepeating1 struct {
-	Parameter *uint8
-	Value []uint8
+	Parameter *uint8 `json:"parameter"`
+	Value []uint8 `json:"value"`
 }
 func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaCommandGroupFunction
@@ -38096,16 +38096,16 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type NmeaAcknowledgeGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	PgnErrorCode PgnErrorCodeConst
-	TransmissionIntervalPriorityErrorCode TransmissionIntervalConst
-	NumberOfParameters *uint8
-	Repeating1 []NmeaAcknowledgeGroupFunctionRepeating1
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	PgnErrorCode PgnErrorCodeConst `json:"pgnErrorCode"`
+	TransmissionIntervalPriorityErrorCode TransmissionIntervalConst `json:"transmissionIntervalPriorityErrorCode"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaAcknowledgeGroupFunctionRepeating1 `json:"repeating1"`
 }
 type NmeaAcknowledgeGroupFunctionRepeating1 struct {
-	Parameter ParameterFieldConst
+	Parameter ParameterFieldConst `json:"parameter"`
 }
 func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaAcknowledgeGroupFunction
@@ -38189,23 +38189,23 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type NmeaReadFieldsGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UniqueId *uint8
-	NumberOfSelectionPairs *uint8
-	NumberOfParameters *uint8
-	Repeating1 []NmeaReadFieldsGroupFunctionRepeating1
-	Repeating2 []NmeaReadFieldsGroupFunctionRepeating2
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UniqueId *uint8 `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaReadFieldsGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2 []NmeaReadFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
 type NmeaReadFieldsGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8
-	SelectionValue []uint8
+	SelectionParameter *uint8 `json:"selectionParameter"`
+	SelectionValue []uint8 `json:"selectionValue"`
 }
 type NmeaReadFieldsGroupFunctionRepeating2 struct {
-	Parameter *uint8
+	Parameter *uint8 `json:"parameter"`
 }
 func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaReadFieldsGroupFunction
@@ -38351,24 +38351,24 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type NmeaReadFieldsReplyGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UniqueId *uint8
-	NumberOfSelectionPairs *uint8
-	NumberOfParameters *uint8
-	Repeating1 []NmeaReadFieldsReplyGroupFunctionRepeating1
-	Repeating2 []NmeaReadFieldsReplyGroupFunctionRepeating2
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UniqueId *uint8 `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaReadFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2 []NmeaReadFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
 type NmeaReadFieldsReplyGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8
-	SelectionValue []uint8
+	SelectionParameter *uint8 `json:"selectionParameter"`
+	SelectionValue []uint8 `json:"selectionValue"`
 }
 type NmeaReadFieldsReplyGroupFunctionRepeating2 struct {
-	Parameter *uint8
-	Value []uint8
+	Parameter *uint8 `json:"parameter"`
+	Value []uint8 `json:"value"`
 }
 func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaReadFieldsReplyGroupFunction
@@ -38519,24 +38519,24 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type NmeaWriteFieldsGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UniqueId *uint8
-	NumberOfSelectionPairs *uint8
-	NumberOfParameters *uint8
-	Repeating1 []NmeaWriteFieldsGroupFunctionRepeating1
-	Repeating2 []NmeaWriteFieldsGroupFunctionRepeating2
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UniqueId *uint8 `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaWriteFieldsGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2 []NmeaWriteFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
 type NmeaWriteFieldsGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8
-	SelectionValue []uint8
+	SelectionParameter *uint8 `json:"selectionParameter"`
+	SelectionValue []uint8 `json:"selectionValue"`
 }
 type NmeaWriteFieldsGroupFunctionRepeating2 struct {
-	Parameter *uint8
-	Value []uint8
+	Parameter *uint8 `json:"parameter"`
+	Value []uint8 `json:"value"`
 }
 func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaWriteFieldsGroupFunction
@@ -38687,24 +38687,24 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type NmeaWriteFieldsReplyGroupFunction struct {
-	Info MessageInfo
-	FunctionCode GroupFunctionConst
-	Pgn *uint32
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UniqueId *uint8
-	NumberOfSelectionPairs *uint8
-	NumberOfParameters *uint8
-	Repeating1 []NmeaWriteFieldsReplyGroupFunctionRepeating1
-	Repeating2 []NmeaWriteFieldsReplyGroupFunctionRepeating2
+	Info MessageInfo `json:"info"`
+	FunctionCode GroupFunctionConst `json:"functionCode"`
+	Pgn *uint32 `json:"pgn"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UniqueId *uint8 `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []NmeaWriteFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2 []NmeaWriteFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
 type NmeaWriteFieldsReplyGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8
-	SelectionValue []uint8
+	SelectionParameter *uint8 `json:"selectionParameter"`
+	SelectionValue []uint8 `json:"selectionValue"`
 }
 type NmeaWriteFieldsReplyGroupFunctionRepeating2 struct {
-	Parameter *uint8
-	Value []uint8
+	Parameter *uint8 `json:"parameter"`
+	Value []uint8 `json:"value"`
 }
 func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NmeaWriteFieldsReplyGroupFunction
@@ -38855,12 +38855,12 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 	return val, nil
 }
 type PgnListTransmitAndReceive struct {
-	Info MessageInfo
-	FunctionCode PgnListFunctionConst
-	Repeating1 []PgnListTransmitAndReceiveRepeating1
+	Info MessageInfo `json:"info"`
+	FunctionCode PgnListFunctionConst `json:"functionCode"`
+	Repeating1 []PgnListTransmitAndReceiveRepeating1 `json:"repeating1"`
 }
 type PgnListTransmitAndReceiveRepeating1 struct {
-	Pgn *uint32
+	Pgn *uint32 `json:"pgn"`
 }
 func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val PgnListTransmitAndReceive
@@ -38899,16 +38899,16 @@ func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type Seatalk1PilotMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint16
-	Command *uint8
-	Unknown1 []uint8
-	PilotMode SeatalkPilotModeConst
-	SubMode *uint8
-	PilotModeData []uint8
-	Unknown2 []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint16 `json:"proprietaryId"`
+	Command *uint8 `json:"command"`
+	Unknown1 []uint8 `json:"unknown1"`
+	PilotMode SeatalkPilotModeConst `json:"pilotMode"`
+	SubMode *uint8 `json:"subMode"`
+	PilotModeData []uint8 `json:"pilotModeData"`
+	Unknown2 []uint8 `json:"unknown2"`
 }
 func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Seatalk1PilotMode
@@ -39013,13 +39013,13 @@ func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type FusionMediaControl struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
-	Unknown *uint8
-	SourceId *uint8
-	Command FusionCommandConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
+	SourceId *uint8 `json:"sourceId"`
+	Command FusionCommandConst `json:"command"`
 }
 func DecodeFusionMediaControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionMediaControl
@@ -39094,13 +39094,13 @@ func DecodeFusionMediaControl(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type FusionSiriusControl struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
-	Unknown *uint8
-	SourceId *uint8
-	Command FusionSiriusCommandConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
+	SourceId *uint8 `json:"sourceId"`
+	Command FusionSiriusCommandConst `json:"command"`
 }
 func DecodeFusionSiriusControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSiriusControl
@@ -39175,11 +39175,11 @@ func DecodeFusionSiriusControl(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FusionRequestStatus struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId FusionMessageIdConst
-	Unknown *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
 }
 func DecodeFusionRequestStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionRequestStatus
@@ -39236,12 +39236,12 @@ func DecodeFusionRequestStatus(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FusionSetSource struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId FusionMessageIdConst
-	Unknown *uint8
-	SourceId *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
+	SourceId *uint8 `json:"sourceId"`
 }
 func DecodeFusionSetSource(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSetSource
@@ -39307,11 +39307,11 @@ func DecodeFusionSetSource(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type FusionSetMute struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId FusionMessageIdConst
-	Command FusionMuteCommandConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
+	Command FusionMuteCommandConst `json:"command"`
 }
 func DecodeFusionSetMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSetMute
@@ -39368,13 +39368,13 @@ func DecodeFusionSetMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionSetZoneVolume struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId FusionMessageIdConst
-	Unknown *uint8
-	Zone *uint8
-	Volume *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
+	Zone *uint8 `json:"zone"`
+	Volume *uint8 `json:"volume"`
 }
 func DecodeFusionSetZoneVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSetZoneVolume
@@ -39449,15 +39449,15 @@ func DecodeFusionSetZoneVolume(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FusionSetAllVolumes struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId FusionMessageIdConst
-	Unknown *uint8
-	Zone1 *uint8
-	Zone2 *uint8
-	Zone3 *uint8
-	Zone4 *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
+	Unknown *uint8 `json:"unknown"`
+	Zone1 *uint8 `json:"zone1"`
+	Zone2 *uint8 `json:"zone2"`
+	Zone3 *uint8 `json:"zone3"`
+	Zone4 *uint8 `json:"zone4"`
 }
 func DecodeFusionSetAllVolumes(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSetAllVolumes
@@ -39550,15 +39550,15 @@ func DecodeFusionSetAllVolumes(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type Seatalk1Keystroke struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint16
-	Command *uint8
-	Device *uint8
-	Key SeatalkKeystrokeConst
-	Keyinverted *uint8
-	UnknownData []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint16 `json:"proprietaryId"`
+	Command *uint8 `json:"command"`
+	Device *uint8 `json:"device"`
+	Key SeatalkKeystrokeConst `json:"key"`
+	Keyinverted *uint8 `json:"keyinverted"`
+	UnknownData []uint8 `json:"unknownData"`
 }
 func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Seatalk1Keystroke
@@ -39654,12 +39654,12 @@ func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type Seatalk1DeviceIdentification struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint16
-	Command *uint8
-	Device SeatalkDeviceIdConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint16 `json:"proprietaryId"`
+	Command *uint8 `json:"command"`
+	Device SeatalkDeviceIdConst `json:"device"`
 }
 func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Seatalk1DeviceIdentification
@@ -39732,15 +39732,15 @@ func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type Seatalk1DisplayBrightness struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint16
-	Group SeatalkNetworkGroupConst
-	Unknown1 []uint8
-	Command *uint8
-	Brightness *uint8
-	Unknown2 []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint16 `json:"proprietaryId"`
+	Group SeatalkNetworkGroupConst `json:"group"`
+	Unknown1 []uint8 `json:"unknown1"`
+	Command *uint8 `json:"command"`
+	Brightness *uint8 `json:"brightness"`
+	Unknown2 []uint8 `json:"unknown2"`
 }
 func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Seatalk1DisplayBrightness
@@ -39836,15 +39836,15 @@ func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type Seatalk1DisplayColor struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint16
-	Group SeatalkNetworkGroupConst
-	Unknown1 []uint8
-	Command *uint8
-	Color SeatalkDisplayColorConst
-	Unknown2 []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint16 `json:"proprietaryId"`
+	Group SeatalkNetworkGroupConst `json:"group"`
+	Unknown1 []uint8 `json:"unknown1"`
+	Command *uint8 `json:"command"`
+	Color SeatalkDisplayColorConst `json:"color"`
+	Unknown2 []uint8 `json:"unknown2"`
 }
 func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Seatalk1DisplayColor
@@ -39940,13 +39940,13 @@ func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AirmarAttitudeOffset struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	AzimuthOffset *float32
-	PitchOffset *float32
-	RollOffset *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	AzimuthOffset *float32 `json:"azimuthOffset"`
+	PitchOffset *float32 `json:"pitchOffset"`
+	RollOffset *float32 `json:"rollOffset"`
 }
 func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarAttitudeOffset
@@ -40021,22 +40021,22 @@ func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AirmarCalibrateCompass struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	CalibrateFunction AirmarCalibrateFunctionConst
-	CalibrationStatus AirmarCalibrateStatusConst
-	VerifyScore *uint8
-	XAxisGainValue *float32
-	YAxisGainValue *float32
-	ZAxisGainValue *float32
-	XAxisLinearOffset *float32
-	YAxisLinearOffset *float32
-	ZAxisLinearOffset *float32
-	XAxisAngularOffset *float32
-	PitchAndRollDamping *float32
-	CompassRateGyroDamping *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	CalibrateFunction AirmarCalibrateFunctionConst `json:"calibrateFunction"`
+	CalibrationStatus AirmarCalibrateStatusConst `json:"calibrationStatus"`
+	VerifyScore *uint8 `json:"verifyScore"`
+	XAxisGainValue *float32 `json:"xAxisGainValue"`
+	YAxisGainValue *float32 `json:"yAxisGainValue"`
+	ZAxisGainValue *float32 `json:"zAxisGainValue"`
+	XAxisLinearOffset *float32 `json:"xAxisLinearOffset"`
+	YAxisLinearOffset *float32 `json:"yAxisLinearOffset"`
+	ZAxisLinearOffset *float32 `json:"zAxisLinearOffset"`
+	XAxisAngularOffset *float32 `json:"xAxisAngularOffset"`
+	PitchAndRollDamping *float32 `json:"pitchAndRollDamping"`
+	CompassRateGyroDamping *float32 `json:"compassRateGyroDamping"`
 }
 func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarCalibrateCompass
@@ -40192,11 +40192,11 @@ func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type AirmarTrueWindOptions struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	CogSubstitutionForHdg YesNoConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	CogSubstitutionForHdg YesNoConst `json:"cogSubstitutionForHdg"`
 }
 func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarTrueWindOptions
@@ -40257,11 +40257,11 @@ func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type AirmarSimulateMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	SimulateMode OffOnConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	SimulateMode OffOnConst `json:"simulateMode"`
 }
 func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarSimulateMode
@@ -40322,11 +40322,11 @@ func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type AirmarCalibrateDepth struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	SpeedOfSoundMode *units.Velocity
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	SpeedOfSoundMode *units.Velocity `json:"speedOfSoundMode"`
 }
 func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarCalibrateDepth
@@ -40387,16 +40387,16 @@ func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AirmarCalibrateSpeed struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	NumberOfPairsOfDataPoints *uint8
-	Repeating1 []AirmarCalibrateSpeedRepeating1
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	NumberOfPairsOfDataPoints *uint8 `json:"numberOfPairsOfDataPoints"`
+	Repeating1 []AirmarCalibrateSpeedRepeating1 `json:"repeating1"`
 }
 type AirmarCalibrateSpeedRepeating1 struct {
-	InputFrequency *float32
-	OutputSpeed *units.Velocity
+	InputFrequency *float32 `json:"inputFrequency"`
+	OutputSpeed *units.Velocity `json:"outputSpeed"`
 }
 func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarCalibrateSpeed
@@ -40486,12 +40486,12 @@ func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AirmarCalibrateTemperature struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	TemperatureInstance AirmarTemperatureInstanceConst
-	TemperatureOffset *units.Temperature
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	TemperatureInstance AirmarTemperatureInstanceConst `json:"temperatureInstance"`
+	TemperatureOffset *units.Temperature `json:"temperatureOffset"`
 }
 func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarCalibrateTemperature
@@ -40561,12 +40561,12 @@ func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type AirmarSpeedFilterNone struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	FilterType *uint8
-	SampleInterval *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	FilterType *uint8 `json:"filterType"`
+	SampleInterval *float32 `json:"sampleInterval"`
 }
 func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarSpeedFilterNone
@@ -40639,13 +40639,13 @@ func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type AirmarSpeedFilterIir struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	FilterType *uint8
-	SampleInterval *float32
-	FilterDuration *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	FilterType *uint8 `json:"filterType"`
+	SampleInterval *float32 `json:"sampleInterval"`
+	FilterDuration *float32 `json:"filterDuration"`
 }
 func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarSpeedFilterIir
@@ -40727,12 +40727,12 @@ func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AirmarTemperatureFilterNone struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	FilterType *uint8
-	SampleInterval *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	FilterType *uint8 `json:"filterType"`
+	SampleInterval *float32 `json:"sampleInterval"`
 }
 func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarTemperatureFilterNone
@@ -40805,13 +40805,13 @@ func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type AirmarTemperatureFilterIir struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	FilterType *uint8
-	SampleInterval *float32
-	FilterDuration *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	FilterType *uint8 `json:"filterType"`
+	SampleInterval *float32 `json:"sampleInterval"`
+	FilterDuration *float32 `json:"filterDuration"`
 }
 func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarTemperatureFilterIir
@@ -40893,11 +40893,11 @@ func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type AirmarNmea2000Options struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId AirmarCommandConst
-	TransmissionInterval AirmarTransmissionIntervalConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
+	TransmissionInterval AirmarTransmissionIntervalConst `json:"transmissionInterval"`
 }
 func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarNmea2000Options
@@ -40958,10 +40958,10 @@ func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type AirmarAddressableMultiFrame struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId *uint8 `json:"proprietaryId"`
 }
 func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AirmarAddressableMultiFrame
@@ -41006,13 +41006,13 @@ func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type MaretronSlaveResponse struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProductCode *uint16
-	SoftwareCode *uint16
-	Command *uint8
-	Status *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProductCode *uint16 `json:"productCode"`
+	SoftwareCode *uint16 `json:"softwareCode"`
+	Command *uint8 `json:"command"`
+	Status *uint8 `json:"status"`
 }
 func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronSlaveResponse
@@ -41084,15 +41084,15 @@ func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type GarminDayMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UnknownId1 *uint8
-	UnknownId2 *uint8
-	UnknownId3 *uint8
-	UnknownId4 *uint8
-	Mode GarminColorModeConst
-	Backlight GarminBacklightLevelConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UnknownId1 *uint8 `json:"unknownId1"`
+	UnknownId2 *uint8 `json:"unknownId2"`
+	UnknownId3 *uint8 `json:"unknownId3"`
+	UnknownId4 *uint8 `json:"unknownId4"`
+	Mode GarminColorModeConst `json:"mode"`
+	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
 func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GarminDayMode
@@ -41205,15 +41205,15 @@ func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type GarminNightMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UnknownId1 *uint8
-	UnknownId2 *uint8
-	UnknownId3 *uint8
-	UnknownId4 *uint8
-	Mode GarminColorModeConst
-	Backlight GarminBacklightLevelConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UnknownId1 *uint8 `json:"unknownId1"`
+	UnknownId2 *uint8 `json:"unknownId2"`
+	UnknownId3 *uint8 `json:"unknownId3"`
+	UnknownId4 *uint8 `json:"unknownId4"`
+	Mode GarminColorModeConst `json:"mode"`
+	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
 func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GarminNightMode
@@ -41326,15 +41326,15 @@ func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type GarminColorMode struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	UnknownId1 *uint8
-	UnknownId2 *uint8
-	UnknownId3 *uint8
-	UnknownId4 *uint8
-	Mode GarminColorModeConst
-	Color GarminColorConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	UnknownId1 *uint8 `json:"unknownId1"`
+	UnknownId2 *uint8 `json:"unknownId2"`
+	UnknownId3 *uint8 `json:"unknownId3"`
+	UnknownId4 *uint8 `json:"unknownId4"`
+	Mode GarminColorModeConst `json:"mode"`
+	Color GarminColorConst `json:"color"`
 }
 func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GarminColorMode
@@ -41447,27 +41447,27 @@ func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type Alert struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	TemporarySilenceStatus YesNoConst
-	AcknowledgeStatus YesNoConst
-	EscalationStatus YesNoConst
-	TemporarySilenceSupport YesNoConst
-	AcknowledgeSupport YesNoConst
-	EscalationSupport YesNoConst
-	AcknowledgeSourceNetworkIdName *uint64
-	TriggerCondition AlertTriggerConditionConst
-	ThresholdStatus AlertThresholdStatusConst
-	AlertPriority *uint8
-	AlertState AlertStateConst
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	TemporarySilenceStatus YesNoConst `json:"temporarySilenceStatus"`
+	AcknowledgeStatus YesNoConst `json:"acknowledgeStatus"`
+	EscalationStatus YesNoConst `json:"escalationStatus"`
+	TemporarySilenceSupport YesNoConst `json:"temporarySilenceSupport"`
+	AcknowledgeSupport YesNoConst `json:"acknowledgeSupport"`
+	EscalationSupport YesNoConst `json:"escalationSupport"`
+	AcknowledgeSourceNetworkIdName *uint64 `json:"acknowledgeSourceNetworkIdName"`
+	TriggerCondition AlertTriggerConditionConst `json:"triggerCondition"`
+	ThresholdStatus AlertThresholdStatusConst `json:"thresholdStatus"`
+	AlertPriority *uint8 `json:"alertPriority"`
+	AlertState AlertStateConst `json:"alertState"`
 }
 func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Alert
@@ -41659,18 +41659,18 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AlertResponse struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	AcknowledgeSourceNetworkIdName *uint64
-	ResponseCommand AlertResponseCommandConst
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	AcknowledgeSourceNetworkIdName *uint64 `json:"acknowledgeSourceNetworkIdName"`
+	ResponseCommand AlertResponseCommandConst `json:"responseCommand"`
 }
 func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AlertResponse
@@ -41781,19 +41781,19 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AlertText struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	LanguageId AlertLanguageIdConst
-	AlertTextDescription string
-	AlertLocationTextDescription string
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	LanguageId AlertLanguageIdConst `json:"languageId"`
+	AlertTextDescription string `json:"alertTextDescription"`
+	AlertLocationTextDescription string `json:"alertLocationTextDescription"`
 }
 func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AlertText
@@ -41909,21 +41909,21 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AlertConfiguration struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	AlertControl *uint8
-	UserDefinedAlertAssignment *uint8
-	ReactivationPeriod *uint8
-	TemporarySilencePeriod *uint8
-	EscalationPeriod *uint8
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	AlertControl *uint8 `json:"alertControl"`
+	UserDefinedAlertAssignment *uint8 `json:"userDefinedAlertAssignment"`
+	ReactivationPeriod *uint8 `json:"reactivationPeriod"`
+	TemporarySilencePeriod *uint8 `json:"temporarySilencePeriod"`
+	EscalationPeriod *uint8 `json:"escalationPeriod"`
 }
 func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AlertConfiguration
@@ -42061,24 +42061,24 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type AlertThreshold struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	NumberOfParameters *uint8
-	Repeating1 []AlertThresholdRepeating1
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []AlertThresholdRepeating1 `json:"repeating1"`
 }
 type AlertThresholdRepeating1 struct {
-	ParameterNumber *uint8
-	TriggerMethod *uint8
-	ThresholdDataFormat *uint8
-	ThresholdLevel *uint64
+	ParameterNumber *uint8 `json:"parameterNumber"`
+	TriggerMethod *uint8 `json:"triggerMethod"`
+	ThresholdDataFormat *uint8 `json:"thresholdDataFormat"`
+	ThresholdLevel *uint64 `json:"thresholdLevel"`
 }
 func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AlertThreshold
@@ -42219,23 +42219,23 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type AlertValue struct {
-	Info MessageInfo
-	AlertType AlertTypeConst
-	AlertCategory AlertCategoryConst
-	AlertSystem *uint8
-	AlertSubSystem *uint8
-	AlertId *uint16
-	DataSourceNetworkIdName *uint64
-	DataSourceInstance *uint8
-	DataSourceIndexSource *uint8
-	AlertOccurrenceNumber *uint8
-	NumberOfParameters *uint8
-	Repeating1 []AlertValueRepeating1
+	Info MessageInfo `json:"info"`
+	AlertType AlertTypeConst `json:"alertType"`
+	AlertCategory AlertCategoryConst `json:"alertCategory"`
+	AlertSystem *uint8 `json:"alertSystem"`
+	AlertSubSystem *uint8 `json:"alertSubSystem"`
+	AlertId *uint16 `json:"alertId"`
+	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
+	DataSourceInstance *uint8 `json:"dataSourceInstance"`
+	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
+	NumberOfParameters *uint8 `json:"numberOfParameters"`
+	Repeating1 []AlertValueRepeating1 `json:"repeating1"`
 }
 type AlertValueRepeating1 struct {
-	ValueParameterNumber *uint8
-	ValueDataFormat *uint8
-	ValueData *uint64
+	ValueParameterNumber *uint8 `json:"valueParameterNumber"`
+	ValueDataFormat *uint8 `json:"valueDataFormat"`
+	ValueData *uint64 `json:"valueData"`
 }
 func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AlertValue
@@ -42371,11 +42371,11 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SystemTime struct {
-	Info MessageInfo
-	Sid *uint8
-	Source SystemTimeConst
-	Date *uint16
-	Time *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Source SystemTimeConst `json:"source"`
+	Date *uint16 `json:"date"`
+	Time *float32 `json:"time"`
 }
 func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SystemTime
@@ -42423,12 +42423,12 @@ func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type Heartbeat struct {
-	Info MessageInfo
-	DataTransmitOffset *float32
-	SequenceCounter *uint8
-	Controller1State ControllerStateConst
-	Controller2State ControllerStateConst
-	EquipmentStatus EquipmentStatusConst
+	Info MessageInfo `json:"info"`
+	DataTransmitOffset *float32 `json:"dataTransmitOffset"`
+	SequenceCounter *uint8 `json:"sequenceCounter"`
+	Controller1State ControllerStateConst `json:"controller1State"`
+	Controller2State ControllerStateConst `json:"controller2State"`
+	EquipmentStatus EquipmentStatusConst `json:"equipmentStatus"`
 }
 func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Heartbeat
@@ -42485,15 +42485,15 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type ProductInformation struct {
-	Info MessageInfo
-	Nmea2000Version *float32
-	ProductCode *uint16
-	ModelId string
-	SoftwareVersionCode string
-	ModelVersion string
-	ModelSerialCode string
-	CertificationLevel *uint8
-	LoadEquivalency *uint8
+	Info MessageInfo `json:"info"`
+	Nmea2000Version *float32 `json:"nmea2000Version"`
+	ProductCode *uint16 `json:"productCode"`
+	ModelId string `json:"modelId"`
+	SoftwareVersionCode string `json:"softwareVersionCode"`
+	ModelVersion string `json:"modelVersion"`
+	ModelSerialCode string `json:"modelSerialCode"`
+	CertificationLevel *uint8 `json:"certificationLevel"`
+	LoadEquivalency *uint8 `json:"loadEquivalency"`
 }
 func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ProductInformation
@@ -42573,10 +42573,10 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type ConfigurationInformation struct {
-	Info MessageInfo
-	InstallationDescription1 string
-	InstallationDescription2 string
-	ManufacturerInformation string
+	Info MessageInfo `json:"info"`
+	InstallationDescription1 string `json:"installationDescription1"`
+	InstallationDescription2 string `json:"installationDescription2"`
+	ManufacturerInformation string `json:"manufacturerInformation"`
 }
 func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ConfigurationInformation
@@ -42611,21 +42611,21 @@ func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type ManOverboardNotification struct {
-	Info MessageInfo
-	Sid *uint8
-	MobEmitterId *uint32
-	ManOverboardStatus MobStatusConst
-	ActivationTime *float32
-	PositionSource MobPositionSourceConst
-	PositionDate *uint16
-	PositionTime *float32
-	Latitude *float64
-	Longitude *float64
-	CogReference DirectionReferenceConst
-	Cog *float32
-	Sog *units.Velocity
-	MmsiOfVesselOfOrigin *uint32
-	MobEmitterBatteryLowStatus LowBatteryConst
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	MobEmitterId *uint32 `json:"mobEmitterId"`
+	ManOverboardStatus MobStatusConst `json:"manOverboardStatus"`
+	ActivationTime *float32 `json:"activationTime"`
+	PositionSource MobPositionSourceConst `json:"positionSource"`
+	PositionDate *uint16 `json:"positionDate"`
+	PositionTime *float32 `json:"positionTime"`
+	Latitude *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+	CogReference DirectionReferenceConst `json:"cogReference"`
+	Cog *float32 `json:"cog"`
+	Sog *units.Velocity `json:"sog"`
+	MmsiOfVesselOfOrigin *uint32 `json:"mmsiOfVesselOfOrigin"`
+	MobEmitterBatteryLowStatus LowBatteryConst `json:"mobEmitterBatteryLowStatus"`
 }
 func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ManOverboardNotification
@@ -42775,24 +42775,24 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type HeadingTrackControl struct {
-	Info MessageInfo
-	RudderLimitExceeded YesNoConst
-	OffHeadingLimitExceeded YesNoConst
-	OffTrackLimitExceeded YesNoConst
-	Override YesNoConst
-	SteeringMode SteeringModeConst
-	TurnMode TurnModeConst
-	HeadingReference DirectionReferenceConst
-	CommandedRudderDirection DirectionRudderConst
-	CommandedRudderAngle *float32
-	HeadingToSteerCourse *float32
-	Track *float32
-	RudderLimit *float32
-	OffHeadingLimit *float32
-	RadiusOfTurnOrder *float32
-	RateOfTurnOrder *float32
-	OffTrackLimit *units.Distance
-	VesselHeading *float32
+	Info MessageInfo `json:"info"`
+	RudderLimitExceeded YesNoConst `json:"rudderLimitExceeded"`
+	OffHeadingLimitExceeded YesNoConst `json:"offHeadingLimitExceeded"`
+	OffTrackLimitExceeded YesNoConst `json:"offTrackLimitExceeded"`
+	Override YesNoConst `json:"override"`
+	SteeringMode SteeringModeConst `json:"steeringMode"`
+	TurnMode TurnModeConst `json:"turnMode"`
+	HeadingReference DirectionReferenceConst `json:"headingReference"`
+	CommandedRudderDirection DirectionRudderConst `json:"commandedRudderDirection"`
+	CommandedRudderAngle *float32 `json:"commandedRudderAngle"`
+	HeadingToSteerCourse *float32 `json:"headingToSteerCourse"`
+	Track *float32 `json:"track"`
+	RudderLimit *float32 `json:"rudderLimit"`
+	OffHeadingLimit *float32 `json:"offHeadingLimit"`
+	RadiusOfTurnOrder *float32 `json:"radiusOfTurnOrder"`
+	RateOfTurnOrder *float32 `json:"rateOfTurnOrder"`
+	OffTrackLimit *units.Distance `json:"offTrackLimit"`
+	VesselHeading *float32 `json:"vesselHeading"`
 }
 func DecodeHeadingTrackControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val HeadingTrackControl
@@ -42957,11 +42957,11 @@ func DecodeHeadingTrackControl(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type Rudder struct {
-	Info MessageInfo
-	Instance *uint8
-	DirectionOrder DirectionRudderConst
-	AngleOrder *float32
-	Position *float32
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	DirectionOrder DirectionRudderConst `json:"directionOrder"`
+	AngleOrder *float32 `json:"angleOrder"`
+	Position *float32 `json:"position"`
 }
 func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Rudder
@@ -43013,12 +43013,12 @@ func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type VesselHeading struct {
-	Info MessageInfo
-	Sid *uint8
-	Heading *float32
-	Deviation *float32
-	Variation *float32
-	Reference DirectionReferenceConst
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Heading *float32 `json:"heading"`
+	Deviation *float32 `json:"deviation"`
+	Variation *float32 `json:"variation"`
+	Reference DirectionReferenceConst `json:"reference"`
 }
 func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val VesselHeading
@@ -43075,9 +43075,9 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type RateOfTurn struct {
-	Info MessageInfo
-	Sid *uint8
-	Rate *float64
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Rate *float64 `json:"rate"`
 }
 func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val RateOfTurn
@@ -43107,9 +43107,9 @@ func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type Heave struct {
-	Info MessageInfo
-	Sid *uint8
-	Heave *units.Distance
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Heave *units.Distance `json:"heave"`
 }
 func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Heave
@@ -43139,11 +43139,11 @@ func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type Attitude struct {
-	Info MessageInfo
-	Sid *uint8
-	Yaw *float32
-	Pitch *float32
-	Roll *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Yaw *float32 `json:"yaw"`
+	Pitch *float32 `json:"pitch"`
+	Roll *float32 `json:"roll"`
 }
 func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Attitude
@@ -43191,11 +43191,11 @@ func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type MagneticVariation struct {
-	Info MessageInfo
-	Sid *uint8
-	Source MagneticVariationConst
-	AgeOfService *uint16
-	Variation *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Source MagneticVariationConst `json:"source"`
+	AgeOfService *uint16 `json:"ageOfService"`
+	Variation *float32 `json:"variation"`
 }
 func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MagneticVariation
@@ -43247,11 +43247,11 @@ func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type EngineParametersRapidUpdate struct {
-	Info MessageInfo
-	Instance EngineInstanceConst
-	Speed *float32
-	BoostPressure *units.Pressure
-	TiltTrim *int8
+	Info MessageInfo `json:"info"`
+	Instance EngineInstanceConst `json:"instance"`
+	Speed *float32 `json:"speed"`
+	BoostPressure *units.Pressure `json:"boostPressure"`
+	TiltTrim *int8 `json:"tiltTrim"`
 }
 func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val EngineParametersRapidUpdate
@@ -43299,20 +43299,20 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type EngineParametersDynamic struct {
-	Info MessageInfo
-	Instance EngineInstanceConst
-	OilPressure *units.Pressure
-	OilTemperature *units.Temperature
-	Temperature *units.Temperature
-	AlternatorPotential *float32
-	FuelRate *units.Flow
-	TotalEngineHours *uint32
-	CoolantPressure *units.Pressure
-	FuelPressure *units.Pressure
-	DiscreteStatus1 EngineStatus1Const
-	DiscreteStatus2 EngineStatus2Const
-	EngineLoad *int8
-	EngineTorque *int8
+	Info MessageInfo `json:"info"`
+	Instance EngineInstanceConst `json:"instance"`
+	OilPressure *units.Pressure `json:"oilPressure"`
+	OilTemperature *units.Temperature `json:"oilTemperature"`
+	Temperature *units.Temperature `json:"temperature"`
+	AlternatorPotential *float32 `json:"alternatorPotential"`
+	FuelRate *units.Flow `json:"fuelRate"`
+	TotalEngineHours *uint32 `json:"totalEngineHours"`
+	CoolantPressure *units.Pressure `json:"coolantPressure"`
+	FuelPressure *units.Pressure `json:"fuelPressure"`
+	DiscreteStatus1 EngineStatus1Const `json:"discreteStatus1"`
+	DiscreteStatus2 EngineStatus2Const `json:"discreteStatus2"`
+	EngineLoad *int8 `json:"engineLoad"`
+	EngineTorque *int8 `json:"engineTorque"`
 }
 func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val EngineParametersDynamic
@@ -43441,12 +43441,12 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type TransmissionParametersDynamic struct {
-	Info MessageInfo
-	Instance EngineInstanceConst
-	TransmissionGear GearStatusConst
-	OilPressure *units.Pressure
-	OilTemperature *units.Temperature
-	DiscreteStatus1 *uint8
+	Info MessageInfo `json:"info"`
+	Instance EngineInstanceConst `json:"instance"`
+	TransmissionGear GearStatusConst `json:"transmissionGear"`
+	OilPressure *units.Pressure `json:"oilPressure"`
+	OilTemperature *units.Temperature `json:"oilTemperature"`
+	DiscreteStatus1 *uint8 `json:"discreteStatus1"`
 }
 func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TransmissionParametersDynamic
@@ -43507,11 +43507,11 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type TripParametersVessel struct {
-	Info MessageInfo
-	TimeToEmpty *float32
-	DistanceToEmpty *units.Distance
-	EstimatedFuelRemaining *units.Volume
-	TripRunTime *float32
+	Info MessageInfo `json:"info"`
+	TimeToEmpty *float32 `json:"timeToEmpty"`
+	DistanceToEmpty *units.Distance `json:"distanceToEmpty"`
+	EstimatedFuelRemaining *units.Volume `json:"estimatedFuelRemaining"`
+	TripRunTime *float32 `json:"tripRunTime"`
 }
 func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TripParametersVessel
@@ -43555,12 +43555,12 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type TripParametersEngine struct {
-	Info MessageInfo
-	Instance EngineInstanceConst
-	TripFuelUsed *units.Volume
-	FuelRateAverage *units.Flow
-	FuelRateEconomy *units.Flow
-	InstantaneousFuelEconomy *units.Flow
+	Info MessageInfo `json:"info"`
+	Instance EngineInstanceConst `json:"instance"`
+	TripFuelUsed *units.Volume `json:"tripFuelUsed"`
+	FuelRateAverage *units.Flow `json:"fuelRateAverage"`
+	FuelRateEconomy *units.Flow `json:"fuelRateEconomy"`
+	InstantaneousFuelEconomy *units.Flow `json:"instantaneousFuelEconomy"`
 }
 func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TripParametersEngine
@@ -43613,11 +43613,11 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type EngineParametersStatic struct {
-	Info MessageInfo
-	Instance EngineInstanceConst
-	RatedEngineSpeed *float32
-	Vin string
-	SoftwareId string
+	Info MessageInfo `json:"info"`
+	Instance EngineInstanceConst `json:"instance"`
+	RatedEngineSpeed *float32 `json:"ratedEngineSpeed"`
+	Vin string `json:"vin"`
+	SoftwareId string `json:"softwareId"`
 }
 func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val EngineParametersStatic
@@ -43661,15 +43661,15 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type LoadControllerConnectionStateControl struct {
-	Info MessageInfo
-	SequenceId *uint8
-	ConnectionId *uint8
-	State *uint8
-	Status *uint8
-	OperationalStatusControl *uint8
-	PwmDutyCycle *uint8
-	Timeon *uint8
-	Timeoff *uint8
+	Info MessageInfo `json:"info"`
+	SequenceId *uint8 `json:"sequenceId"`
+	ConnectionId *uint8 `json:"connectionId"`
+	State *uint8 `json:"state"`
+	Status *uint8 `json:"status"`
+	OperationalStatusControl *uint8 `json:"operationalStatusControl"`
+	PwmDutyCycle *uint8 `json:"pwmDutyCycle"`
+	Timeon *uint8 `json:"timeon"`
+	Timeoff *uint8 `json:"timeoff"`
 }
 func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val LoadControllerConnectionStateControl
@@ -43749,36 +43749,36 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 	return val, nil
 }
 type BinarySwitchBankStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	Indicator1 OffOnConst
-	Indicator2 OffOnConst
-	Indicator3 OffOnConst
-	Indicator4 OffOnConst
-	Indicator5 OffOnConst
-	Indicator6 OffOnConst
-	Indicator7 OffOnConst
-	Indicator8 OffOnConst
-	Indicator9 OffOnConst
-	Indicator10 OffOnConst
-	Indicator11 OffOnConst
-	Indicator12 OffOnConst
-	Indicator13 OffOnConst
-	Indicator14 OffOnConst
-	Indicator15 OffOnConst
-	Indicator16 OffOnConst
-	Indicator17 OffOnConst
-	Indicator18 OffOnConst
-	Indicator19 OffOnConst
-	Indicator20 OffOnConst
-	Indicator21 OffOnConst
-	Indicator22 OffOnConst
-	Indicator23 OffOnConst
-	Indicator24 OffOnConst
-	Indicator25 OffOnConst
-	Indicator26 OffOnConst
-	Indicator27 OffOnConst
-	Indicator28 OffOnConst
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	Indicator1 OffOnConst `json:"indicator1"`
+	Indicator2 OffOnConst `json:"indicator2"`
+	Indicator3 OffOnConst `json:"indicator3"`
+	Indicator4 OffOnConst `json:"indicator4"`
+	Indicator5 OffOnConst `json:"indicator5"`
+	Indicator6 OffOnConst `json:"indicator6"`
+	Indicator7 OffOnConst `json:"indicator7"`
+	Indicator8 OffOnConst `json:"indicator8"`
+	Indicator9 OffOnConst `json:"indicator9"`
+	Indicator10 OffOnConst `json:"indicator10"`
+	Indicator11 OffOnConst `json:"indicator11"`
+	Indicator12 OffOnConst `json:"indicator12"`
+	Indicator13 OffOnConst `json:"indicator13"`
+	Indicator14 OffOnConst `json:"indicator14"`
+	Indicator15 OffOnConst `json:"indicator15"`
+	Indicator16 OffOnConst `json:"indicator16"`
+	Indicator17 OffOnConst `json:"indicator17"`
+	Indicator18 OffOnConst `json:"indicator18"`
+	Indicator19 OffOnConst `json:"indicator19"`
+	Indicator20 OffOnConst `json:"indicator20"`
+	Indicator21 OffOnConst `json:"indicator21"`
+	Indicator22 OffOnConst `json:"indicator22"`
+	Indicator23 OffOnConst `json:"indicator23"`
+	Indicator24 OffOnConst `json:"indicator24"`
+	Indicator25 OffOnConst `json:"indicator25"`
+	Indicator26 OffOnConst `json:"indicator26"`
+	Indicator27 OffOnConst `json:"indicator27"`
+	Indicator28 OffOnConst `json:"indicator28"`
 }
 func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val BinarySwitchBankStatus
@@ -44047,36 +44047,36 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type SwitchBankControl struct {
-	Info MessageInfo
-	Instance *uint8
-	Switch1 OffOnConst
-	Switch2 OffOnConst
-	Switch3 OffOnConst
-	Switch4 OffOnConst
-	Switch5 OffOnConst
-	Switch6 OffOnConst
-	Switch7 OffOnConst
-	Switch8 OffOnConst
-	Switch9 OffOnConst
-	Switch10 OffOnConst
-	Switch11 OffOnConst
-	Switch12 OffOnConst
-	Switch13 OffOnConst
-	Switch14 OffOnConst
-	Switch15 OffOnConst
-	Switch16 OffOnConst
-	Switch17 OffOnConst
-	Switch18 OffOnConst
-	Switch19 OffOnConst
-	Switch20 OffOnConst
-	Switch21 OffOnConst
-	Switch22 OffOnConst
-	Switch23 OffOnConst
-	Switch24 OffOnConst
-	Switch25 OffOnConst
-	Switch26 OffOnConst
-	Switch27 OffOnConst
-	Switch28 OffOnConst
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	Switch1 OffOnConst `json:"switch1"`
+	Switch2 OffOnConst `json:"switch2"`
+	Switch3 OffOnConst `json:"switch3"`
+	Switch4 OffOnConst `json:"switch4"`
+	Switch5 OffOnConst `json:"switch5"`
+	Switch6 OffOnConst `json:"switch6"`
+	Switch7 OffOnConst `json:"switch7"`
+	Switch8 OffOnConst `json:"switch8"`
+	Switch9 OffOnConst `json:"switch9"`
+	Switch10 OffOnConst `json:"switch10"`
+	Switch11 OffOnConst `json:"switch11"`
+	Switch12 OffOnConst `json:"switch12"`
+	Switch13 OffOnConst `json:"switch13"`
+	Switch14 OffOnConst `json:"switch14"`
+	Switch15 OffOnConst `json:"switch15"`
+	Switch16 OffOnConst `json:"switch16"`
+	Switch17 OffOnConst `json:"switch17"`
+	Switch18 OffOnConst `json:"switch18"`
+	Switch19 OffOnConst `json:"switch19"`
+	Switch20 OffOnConst `json:"switch20"`
+	Switch21 OffOnConst `json:"switch21"`
+	Switch22 OffOnConst `json:"switch22"`
+	Switch23 OffOnConst `json:"switch23"`
+	Switch24 OffOnConst `json:"switch24"`
+	Switch25 OffOnConst `json:"switch25"`
+	Switch26 OffOnConst `json:"switch26"`
+	Switch27 OffOnConst `json:"switch27"`
+	Switch28 OffOnConst `json:"switch28"`
 }
 func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SwitchBankControl
@@ -44345,21 +44345,21 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type AcInputStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	NumberOfLines *uint8
-	Repeating1 []AcInputStatusRepeating1
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	NumberOfLines *uint8 `json:"numberOfLines"`
+	Repeating1 []AcInputStatusRepeating1 `json:"repeating1"`
 }
 type AcInputStatusRepeating1 struct {
-	Line *uint8
-	Acceptability AcceptabilityConst
-	Voltage *float32
-	Current *float32
-	Frequency *float32
-	BreakerSize *float32
-	RealPower *uint32
-	ReactivePower *uint32
-	PowerFactor *float32
+	Line *uint8 `json:"line"`
+	Acceptability AcceptabilityConst `json:"acceptability"`
+	Voltage *float32 `json:"voltage"`
+	Current *float32 `json:"current"`
+	Frequency *float32 `json:"frequency"`
+	BreakerSize *float32 `json:"breakerSize"`
+	RealPower *uint32 `json:"realPower"`
+	ReactivePower *uint32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
 }
 func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AcInputStatus
@@ -44454,21 +44454,21 @@ func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AcOutputStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	NumberOfLines *uint8
-	Repeating1 []AcOutputStatusRepeating1
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	NumberOfLines *uint8 `json:"numberOfLines"`
+	Repeating1 []AcOutputStatusRepeating1 `json:"repeating1"`
 }
 type AcOutputStatusRepeating1 struct {
-	Line LineConst
-	Waveform WaveformConst
-	Voltage *float32
-	Current *float32
-	Frequency *float32
-	BreakerSize *float32
-	RealPower *uint32
-	ReactivePower *uint32
-	PowerFactor *float32
+	Line LineConst `json:"line"`
+	Waveform WaveformConst `json:"waveform"`
+	Voltage *float32 `json:"voltage"`
+	Current *float32 `json:"current"`
+	Frequency *float32 `json:"frequency"`
+	BreakerSize *float32 `json:"breakerSize"`
+	RealPower *uint32 `json:"realPower"`
+	ReactivePower *uint32 `json:"reactivePower"`
+	PowerFactor *float32 `json:"powerFactor"`
 }
 func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AcOutputStatus
@@ -44563,11 +44563,11 @@ func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type FluidLevel struct {
-	Info MessageInfo
-	Instance *uint8
-	Type TankTypeConst
-	Level *float32
-	Capacity *units.Volume
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	Type TankTypeConst `json:"type"`
+	Level *float32 `json:"level"`
+	Capacity *units.Volume `json:"capacity"`
 }
 func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FluidLevel
@@ -44615,15 +44615,15 @@ func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type DcDetailedStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	DcType DcSourceConst
-	StateOfCharge *uint8
-	StateOfHealth *uint8
-	TimeRemaining *float32
-	RippleVoltage *float32
-	RemainingCapacity *uint16
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	DcType DcSourceConst `json:"dcType"`
+	StateOfCharge *uint8 `json:"stateOfCharge"`
+	StateOfHealth *uint8 `json:"stateOfHealth"`
+	TimeRemaining *float32 `json:"timeRemaining"`
+	RippleVoltage *float32 `json:"rippleVoltage"`
+	RemainingCapacity *uint16 `json:"remainingCapacity"`
 }
 func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val DcDetailedStatus
@@ -44703,14 +44703,14 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type ChargerStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	BatteryInstance *uint8
-	OperatingState ChargerStateConst
-	ChargeMode ChargerModeConst
-	Enabled OffOnConst
-	EqualizationPending OffOnConst
-	EqualizationTimeRemaining *float32
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	BatteryInstance *uint8 `json:"batteryInstance"`
+	OperatingState ChargerStateConst `json:"operatingState"`
+	ChargeMode ChargerModeConst `json:"chargeMode"`
+	Enabled OffOnConst `json:"enabled"`
+	EqualizationPending OffOnConst `json:"equalizationPending"`
+	EqualizationTimeRemaining *float32 `json:"equalizationTimeRemaining"`
 }
 func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ChargerStatus
@@ -44785,12 +44785,12 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type BatteryStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	Voltage *float32
-	Current *float32
-	Temperature *units.Temperature
-	Sid *uint8
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	Voltage *float32 `json:"voltage"`
+	Current *float32 `json:"current"`
+	Temperature *units.Temperature `json:"temperature"`
+	Sid *uint8 `json:"sid"`
 }
 func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val BatteryStatus
@@ -44843,12 +44843,12 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type InverterStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	AcInstance *uint8
-	DcInstance *uint8
-	OperatingState InverterStateConst
-	InverterEnable OffOnConst
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	AcInstance *uint8 `json:"acInstance"`
+	DcInstance *uint8 `json:"dcInstance"`
+	OperatingState InverterStateConst `json:"operatingState"`
+	InverterEnable OffOnConst `json:"inverterEnable"`
 }
 func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val InverterStatus
@@ -44905,15 +44905,15 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type InverterConfigurationStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	AcInstance *uint8
-	DcInstance *uint8
-	InverterEnableDisable *uint8
-	InverterMode *uint8
-	LoadSenseEnableDisable *uint8
-	LoadSensePowerThreshold *uint8
-	LoadSenseInterval *uint8
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	AcInstance *uint8 `json:"acInstance"`
+	DcInstance *uint8 `json:"dcInstance"`
+	InverterEnableDisable *uint8 `json:"inverterEnableDisable"`
+	InverterMode *uint8 `json:"inverterMode"`
+	LoadSenseEnableDisable *uint8 `json:"loadSenseEnableDisable"`
+	LoadSensePowerThreshold *uint8 `json:"loadSensePowerThreshold"`
+	LoadSenseInterval *uint8 `json:"loadSenseInterval"`
 }
 func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val InverterConfigurationStatus
@@ -44997,10 +44997,10 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type AgsConfigurationStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	GeneratorInstance *uint8
-	AgsMode *uint8
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	GeneratorInstance *uint8 `json:"generatorInstance"`
+	AgsMode *uint8 `json:"agsMode"`
 }
 func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AgsConfigurationStatus
@@ -45039,16 +45039,16 @@ func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 type BatteryConfigurationStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	BatteryType BatteryTypeConst
-	SupportsEqualization YesNoConst
-	NominalVoltage BatteryVoltageConst
-	Chemistry BatteryChemistryConst
-	Capacity *uint16
-	TemperatureCoefficient *int8
-	PeukertExponent *float32
-	ChargeEfficiencyFactor *int8
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	BatteryType BatteryTypeConst `json:"batteryType"`
+	SupportsEqualization YesNoConst `json:"supportsEqualization"`
+	NominalVoltage BatteryVoltageConst `json:"nominalVoltage"`
+	Chemistry BatteryChemistryConst `json:"chemistry"`
+	Capacity *uint16 `json:"capacity"`
+	TemperatureCoefficient *int8 `json:"temperatureCoefficient"`
+	PeukertExponent *float32 `json:"peukertExponent"`
+	ChargeEfficiencyFactor *int8 `json:"chargeEfficiencyFactor"`
 }
 func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val BatteryConfigurationStatus
@@ -45141,13 +45141,13 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type AgsStatus struct {
-	Info MessageInfo
-	Instance *uint8
-	GeneratorInstance *uint8
-	AgsOperatingState *uint8
-	GeneratorState *uint8
-	GeneratorOnReason *uint8
-	GeneratorOffReason *uint8
+	Info MessageInfo `json:"info"`
+	Instance *uint8 `json:"instance"`
+	GeneratorInstance *uint8 `json:"generatorInstance"`
+	AgsOperatingState *uint8 `json:"agsOperatingState"`
+	GeneratorState *uint8 `json:"generatorState"`
+	GeneratorOnReason *uint8 `json:"generatorOnReason"`
+	GeneratorOffReason *uint8 `json:"generatorOffReason"`
 }
 func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AgsStatus
@@ -45213,11 +45213,11 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AcPowerCurrentPhaseA struct {
-	Info MessageInfo
-	Sid *uint8
-	ConnectionNumber *uint8
-	AcRmsCurrent *float32
-	Power *int32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	ConnectionNumber *uint8 `json:"connectionNumber"`
+	AcRmsCurrent *float32 `json:"acRmsCurrent"`
+	Power *int32 `json:"power"`
 }
 func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AcPowerCurrentPhaseA
@@ -45261,11 +45261,11 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AcPowerCurrentPhaseB struct {
-	Info MessageInfo
-	Sid *uint8
-	ConnectionNumber *uint8
-	AcRmsCurrent *float32
-	Power *int32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	ConnectionNumber *uint8 `json:"connectionNumber"`
+	AcRmsCurrent *float32 `json:"acRmsCurrent"`
+	Power *int32 `json:"power"`
 }
 func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AcPowerCurrentPhaseB
@@ -45309,11 +45309,11 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AcPowerCurrentPhaseC struct {
-	Info MessageInfo
-	Sid *uint8
-	ConnectionNumber *uint8
-	AcRmsCurrent *float32
-	Power *int32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	ConnectionNumber *uint8 `json:"connectionNumber"`
+	AcRmsCurrent *float32 `json:"acRmsCurrent"`
+	Power *int32 `json:"power"`
 }
 func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AcPowerCurrentPhaseC
@@ -45357,14 +45357,14 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type ConverterStatus struct {
-	Info MessageInfo
-	Sid []uint8
-	ConnectionNumber *uint8
-	OperatingState ConverterStateConst
-	TemperatureState GoodWarningErrorConst
-	OverloadState GoodWarningErrorConst
-	LowDcVoltageState GoodWarningErrorConst
-	RippleState GoodWarningErrorConst
+	Info MessageInfo `json:"info"`
+	Sid []uint8 `json:"sid"`
+	ConnectionNumber *uint8 `json:"connectionNumber"`
+	OperatingState ConverterStateConst `json:"operatingState"`
+	TemperatureState GoodWarningErrorConst `json:"temperatureState"`
+	OverloadState GoodWarningErrorConst `json:"overloadState"`
+	LowDcVoltageState GoodWarningErrorConst `json:"lowDcVoltageState"`
+	RippleState GoodWarningErrorConst `json:"rippleState"`
 }
 func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ConverterStatus
@@ -45439,11 +45439,11 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type DcVoltageCurrent struct {
-	Info MessageInfo
-	Sid []uint8
-	ConnectionNumber *uint8
-	DcVoltage *float32
-	DcCurrent *float32
+	Info MessageInfo `json:"info"`
+	Sid []uint8 `json:"sid"`
+	ConnectionNumber *uint8 `json:"connectionNumber"`
+	DcVoltage *float32 `json:"dcVoltage"`
+	DcCurrent *float32 `json:"dcCurrent"`
 }
 func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val DcVoltageCurrent
@@ -45491,9 +45491,9 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type LeewayAngle struct {
-	Info MessageInfo
-	Sid *uint8
-	LeewayAngle *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	LeewayAngle *float32 `json:"leewayAngle"`
 }
 func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val LeewayAngle
@@ -45523,16 +45523,16 @@ func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type ThrusterControlStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	Identifier *uint8
-	DirectionControl ThrusterDirectionControlConst
-	PowerEnabled OffOnConst
-	RetractControl ThrusterRetractControlConst
-	SpeedControl *uint8
-	ControlEvents ThrusterControlEventsConst
-	CommandTimeout *float32
-	AzimuthControl *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Identifier *uint8 `json:"identifier"`
+	DirectionControl ThrusterDirectionControlConst `json:"directionControl"`
+	PowerEnabled OffOnConst `json:"powerEnabled"`
+	RetractControl ThrusterRetractControlConst `json:"retractControl"`
+	SpeedControl *uint8 `json:"speedControl"`
+	ControlEvents ThrusterControlEventsConst `json:"controlEvents"`
+	CommandTimeout *float32 `json:"commandTimeout"`
+	AzimuthControl *float32 `json:"azimuthControl"`
 }
 func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ThrusterControlStatus
@@ -45621,12 +45621,12 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type ThrusterInformation struct {
-	Info MessageInfo
-	Identifier *uint8
-	MotorType ThrusterMotorTypeConst
-	PowerRating *uint16
-	MaximumTemperatureRating *units.Temperature
-	MaximumRotationalSpeed *float32
+	Info MessageInfo `json:"info"`
+	Identifier *uint8 `json:"identifier"`
+	MotorType ThrusterMotorTypeConst `json:"motorType"`
+	PowerRating *uint16 `json:"powerRating"`
+	MaximumTemperatureRating *units.Temperature `json:"maximumTemperatureRating"`
+	MaximumRotationalSpeed *float32 `json:"maximumRotationalSpeed"`
 }
 func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ThrusterInformation
@@ -45683,13 +45683,13 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type ThrusterMotorStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	Identifier *uint8
-	MotorEvents ThrusterMotorEventsConst
-	Current *uint8
-	Temperature *units.Temperature
-	OperatingTime *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Identifier *uint8 `json:"identifier"`
+	MotorEvents ThrusterMotorEventsConst `json:"motorEvents"`
+	Current *uint8 `json:"current"`
+	Temperature *units.Temperature `json:"temperature"`
+	OperatingTime *float32 `json:"operatingTime"`
 }
 func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ThrusterMotorStatus
@@ -45751,12 +45751,12 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type Speed struct {
-	Info MessageInfo
-	Sid *uint8
-	SpeedWaterReferenced *units.Velocity
-	SpeedGroundReferenced *units.Velocity
-	SpeedWaterReferencedType WaterReferenceConst
-	SpeedDirection *uint8
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	SpeedWaterReferenced *units.Velocity `json:"speedWaterReferenced"`
+	SpeedGroundReferenced *units.Velocity `json:"speedGroundReferenced"`
+	SpeedWaterReferencedType WaterReferenceConst `json:"speedWaterReferencedType"`
+	SpeedDirection *uint8 `json:"speedDirection"`
 }
 func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Speed
@@ -45813,11 +45813,11 @@ func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type WaterDepth struct {
-	Info MessageInfo
-	Sid *uint8
-	Depth *units.Distance
-	Offset *units.Distance
-	Range *units.Distance
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Depth *units.Distance `json:"depth"`
+	Offset *units.Distance `json:"offset"`
+	Range *units.Distance `json:"range"`
 }
 func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val WaterDepth
@@ -45861,11 +45861,11 @@ func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type DistanceLog struct {
-	Info MessageInfo
-	Date *uint16
-	Time *float32
-	Log *units.Distance
-	TripLog *units.Distance
+	Info MessageInfo `json:"info"`
+	Date *uint16 `json:"date"`
+	Time *float32 `json:"time"`
+	Log *units.Distance `json:"log"`
+	TripLog *units.Distance `json:"tripLog"`
 }
 func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val DistanceLog
@@ -45909,21 +45909,21 @@ func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type TrackedTargetData struct {
-	Info MessageInfo
-	Sid *uint8
-	TargetId *uint8
-	TrackStatus TrackingConst
-	ReportedTarget YesNoConst
-	TargetAcquisition TargetAcquisitionConst
-	BearingReference DirectionReferenceConst
-	Bearing *float32
-	Distance *units.Distance
-	Course *float32
-	Speed *units.Velocity
-	Cpa *units.Distance
-	Tcpa *float32
-	UtcOfFix *float32
-	Name string
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	TargetId *uint8 `json:"targetId"`
+	TrackStatus TrackingConst `json:"trackStatus"`
+	ReportedTarget YesNoConst `json:"reportedTarget"`
+	TargetAcquisition TargetAcquisitionConst `json:"targetAcquisition"`
+	BearingReference DirectionReferenceConst `json:"bearingReference"`
+	Bearing *float32 `json:"bearing"`
+	Distance *units.Distance `json:"distance"`
+	Course *float32 `json:"course"`
+	Speed *units.Velocity `json:"speed"`
+	Cpa *units.Distance `json:"cpa"`
+	Tcpa *float32 `json:"tcpa"`
+	UtcOfFix *float32 `json:"utcOfFix"`
+	Name string `json:"name"`
 }
 func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TrackedTargetData
@@ -46061,19 +46061,19 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type WindlassControlStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	WindlassId *uint8
-	WindlassDirectionControl WindlassDirectionConst
-	AnchorDockingControl OffOnConst
-	SpeedControlType SpeedTypeConst
-	SpeedControl []uint8
-	PowerEnable OffOnConst
-	MechanicalLock OffOnConst
-	DeckAndAnchorWash OffOnConst
-	AnchorLight OffOnConst
-	CommandTimeout *float32
-	WindlassControlEvents WindlassControlConst
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	WindlassId *uint8 `json:"windlassId"`
+	WindlassDirectionControl WindlassDirectionConst `json:"windlassDirectionControl"`
+	AnchorDockingControl OffOnConst `json:"anchorDockingControl"`
+	SpeedControlType SpeedTypeConst `json:"speedControlType"`
+	SpeedControl []uint8 `json:"speedControl"`
+	PowerEnable OffOnConst `json:"powerEnable"`
+	MechanicalLock OffOnConst `json:"mechanicalLock"`
+	DeckAndAnchorWash OffOnConst `json:"deckAndAnchorWash"`
+	AnchorLight OffOnConst `json:"anchorLight"`
+	CommandTimeout *float32 `json:"commandTimeout"`
+	WindlassControlEvents WindlassControlConst `json:"windlassControlEvents"`
 }
 func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val WindlassControlStatus
@@ -46197,16 +46197,16 @@ func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type AnchorWindlassOperatingStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	WindlassId *uint8
-	WindlassDirectionControl WindlassDirectionConst
-	WindlassMotionStatus WindlassMotionConst
-	RodeTypeStatus RodeTypeConst
-	RodeCounterValue *units.Distance
-	WindlassLineSpeed *units.Velocity
-	AnchorDockingStatus DockingStatusConst
-	WindlassOperatingEvents WindlassOperationConst
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	WindlassId *uint8 `json:"windlassId"`
+	WindlassDirectionControl WindlassDirectionConst `json:"windlassDirectionControl"`
+	WindlassMotionStatus WindlassMotionConst `json:"windlassMotionStatus"`
+	RodeTypeStatus RodeTypeConst `json:"rodeTypeStatus"`
+	RodeCounterValue *units.Distance `json:"rodeCounterValue"`
+	WindlassLineSpeed *units.Velocity `json:"windlassLineSpeed"`
+	AnchorDockingStatus DockingStatusConst `json:"anchorDockingStatus"`
+	WindlassOperatingEvents WindlassOperationConst `json:"windlassOperatingEvents"`
 }
 func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AnchorWindlassOperatingStatus
@@ -46299,13 +46299,13 @@ func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type AnchorWindlassMonitoringStatus struct {
-	Info MessageInfo
-	Sid *uint8
-	WindlassId *uint8
-	WindlassMonitoringEvents WindlassMonitoringConst
-	ControllerVoltage *float32
-	MotorCurrent *uint8
-	TotalMotorTime *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	WindlassId *uint8 `json:"windlassId"`
+	WindlassMonitoringEvents WindlassMonitoringConst `json:"windlassMonitoringEvents"`
+	ControllerVoltage *float32 `json:"controllerVoltage"`
+	MotorCurrent *uint8 `json:"motorCurrent"`
+	TotalMotorTime *float32 `json:"totalMotorTime"`
 }
 func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AnchorWindlassMonitoringStatus
@@ -46371,9 +46371,9 @@ func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type PositionRapidUpdate struct {
-	Info MessageInfo
-	Latitude *float64
-	Longitude *float64
+	Info MessageInfo `json:"info"`
+	Latitude *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
 }
 func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val PositionRapidUpdate
@@ -46399,11 +46399,11 @@ func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type CogSogRapidUpdate struct {
-	Info MessageInfo
-	Sid *uint8
-	CogReference DirectionReferenceConst
-	Cog *float32
-	Sog *units.Velocity
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	CogReference DirectionReferenceConst `json:"cogReference"`
+	Cog *float32 `json:"cog"`
+	Sog *units.Velocity `json:"sog"`
 }
 func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val CogSogRapidUpdate
@@ -46455,11 +46455,11 @@ func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type PositionDeltaRapidUpdate struct {
-	Info MessageInfo
-	Sid *uint8
-	TimeDelta *uint16
-	LatitudeDelta *int16
-	LongitudeDelta *int16
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	TimeDelta *uint16 `json:"timeDelta"`
+	LatitudeDelta *int16 `json:"latitudeDelta"`
+	LongitudeDelta *int16 `json:"longitudeDelta"`
 }
 func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val PositionDeltaRapidUpdate
@@ -46507,13 +46507,13 @@ func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type AltitudeDeltaRapidUpdate struct {
-	Info MessageInfo
-	Sid *uint8
-	TimeDelta *int16
-	GnssQuality *uint8
-	Direction *uint8
-	Cog *float32
-	AltitudeDelta *int16
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	TimeDelta *int16 `json:"timeDelta"`
+	GnssQuality *uint8 `json:"gnssQuality"`
+	Direction *uint8 `json:"direction"`
+	Cog *float32 `json:"cog"`
+	AltitudeDelta *int16 `json:"altitudeDelta"`
 }
 func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AltitudeDeltaRapidUpdate
@@ -46579,27 +46579,27 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type GnssPositionData struct {
-	Info MessageInfo
-	Sid *uint8
-	Date *uint16
-	Time *float32
-	Latitude *float64
-	Longitude *float64
-	Altitude *units.Distance
-	GnssType GnsConst
-	Method GnsMethodConst
-	Integrity GnsIntegrityConst
-	NumberOfSvs *uint8
-	Hdop *float32
-	Pdop *float32
-	GeoidalSeparation *units.Distance
-	ReferenceStations *uint8
-	Repeating1 []GnssPositionDataRepeating1
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Date *uint16 `json:"date"`
+	Time *float32 `json:"time"`
+	Latitude *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+	Altitude *units.Distance `json:"altitude"`
+	GnssType GnsConst `json:"gnssType"`
+	Method GnsMethodConst `json:"method"`
+	Integrity GnsIntegrityConst `json:"integrity"`
+	NumberOfSvs *uint8 `json:"numberOfSvs"`
+	Hdop *float32 `json:"hdop"`
+	Pdop *float32 `json:"pdop"`
+	GeoidalSeparation *units.Distance `json:"geoidalSeparation"`
+	ReferenceStations *uint8 `json:"referenceStations"`
+	Repeating1 []GnssPositionDataRepeating1 `json:"repeating1"`
 }
 type GnssPositionDataRepeating1 struct {
-	ReferenceStationType GnsConst
-	ReferenceStationId *uint16
-	AgeOfDgnssCorrections *float32
+	ReferenceStationType GnsConst `json:"referenceStationType"`
+	ReferenceStationId *uint16 `json:"referenceStationId"`
+	AgeOfDgnssCorrections *float32 `json:"ageOfDgnssCorrections"`
 }
 func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GnssPositionData
@@ -46775,10 +46775,10 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type TimeDate struct {
-	Info MessageInfo
-	Date *uint16
-	Time *float32
-	LocalOffset *float32
+	Info MessageInfo `json:"info"`
+	Date *uint16 `json:"date"`
+	Time *float32 `json:"time"`
+	LocalOffset *float32 `json:"localOffset"`
 }
 func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TimeDate
@@ -46813,24 +46813,24 @@ func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type AisClassAPositionReport struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Longitude *float64
-	Latitude *float64
-	PositionAccuracy PositionAccuracyConst
-	Raim RaimFlagConst
-	TimeStamp TimeStampConst
-	Cog *float32
-	Sog *units.Velocity
-	CommunicationState []uint8
-	AisTransceiverInformation AisTransceiverConst
-	Heading *float32
-	RateOfTurn *float32
-	NavStatus NavStatusConst
-	SpecialManeuverIndicator AisSpecialManeuverConst
-	SequenceId *uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Longitude *float64 `json:"longitude"`
+	Latitude *float64 `json:"latitude"`
+	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
+	Raim RaimFlagConst `json:"raim"`
+	TimeStamp TimeStampConst `json:"timeStamp"`
+	Cog *float32 `json:"cog"`
+	Sog *units.Velocity `json:"sog"`
+	CommunicationState []uint8 `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	Heading *float32 `json:"heading"`
+	RateOfTurn *float32 `json:"rateOfTurn"`
+	NavStatus NavStatusConst `json:"navStatus"`
+	SpecialManeuverIndicator AisSpecialManeuverConst `json:"specialManeuverIndicator"`
+	SequenceId *uint8 `json:"sequenceId"`
 }
 func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassAPositionReport
@@ -47003,27 +47003,27 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type AisClassBPositionReport struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Longitude *float64
-	Latitude *float64
-	PositionAccuracy PositionAccuracyConst
-	Raim RaimFlagConst
-	TimeStamp TimeStampConst
-	Cog *float32
-	Sog *units.Velocity
-	CommunicationState []uint8
-	AisTransceiverInformation AisTransceiverConst
-	Heading *float32
-	UnitType AisTypeConst
-	IntegratedDisplay YesNoConst
-	Dsc YesNoConst
-	Band AisBandConst
-	CanHandleMsg22 YesNoConst
-	AisMode AisModeConst
-	AisCommunicationState AisCommunicationStateConst
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Longitude *float64 `json:"longitude"`
+	Latitude *float64 `json:"latitude"`
+	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
+	Raim RaimFlagConst `json:"raim"`
+	TimeStamp TimeStampConst `json:"timeStamp"`
+	Cog *float32 `json:"cog"`
+	Sog *units.Velocity `json:"sog"`
+	CommunicationState []uint8 `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	Heading *float32 `json:"heading"`
+	UnitType AisTypeConst `json:"unitType"`
+	IntegratedDisplay YesNoConst `json:"integratedDisplay"`
+	Dsc YesNoConst `json:"dsc"`
+	Band AisBandConst `json:"band"`
+	CanHandleMsg22 YesNoConst `json:"canHandleMsg22"`
+	AisMode AisModeConst `json:"aisMode"`
+	AisCommunicationState AisCommunicationStateConst `json:"aisCommunicationState"`
 }
 func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassBPositionReport
@@ -47223,28 +47223,28 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type AisClassBExtendedPositionReport struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Longitude *float64
-	Latitude *float64
-	PositionAccuracy PositionAccuracyConst
-	Raim RaimFlagConst
-	TimeStamp TimeStampConst
-	Cog *float32
-	Sog *units.Velocity
-	TypeOfShip ShipTypeConst
-	TrueHeading *float32
-	GnssType PositionFixDeviceConst
-	Length *units.Distance
-	Beam *units.Distance
-	PositionReferenceFromStarboard *units.Distance
-	PositionReferenceFromBow *units.Distance
-	Name string
-	Dte AvailableConst
-	AisMode AisModeConst
-	AisTransceiverInformation AisTransceiverConst
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Longitude *float64 `json:"longitude"`
+	Latitude *float64 `json:"latitude"`
+	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
+	Raim RaimFlagConst `json:"raim"`
+	TimeStamp TimeStampConst `json:"timeStamp"`
+	Cog *float32 `json:"cog"`
+	Sog *units.Velocity `json:"sog"`
+	TypeOfShip ShipTypeConst `json:"typeOfShip"`
+	TrueHeading *float32 `json:"trueHeading"`
+	GnssType PositionFixDeviceConst `json:"gnssType"`
+	Length *units.Distance `json:"length"`
+	Beam *units.Distance `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
+	Name string `json:"name"`
+	Dte AvailableConst `json:"dte"`
+	AisMode AisModeConst `json:"aisMode"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
 func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassBExtendedPositionReport
@@ -47465,27 +47465,27 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 	return val, nil
 }
 type AisAidsToNavigationAtonReport struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Longitude *float64
-	Latitude *float64
-	PositionAccuracy PositionAccuracyConst
-	Raim RaimFlagConst
-	TimeStamp TimeStampConst
-	LengthDiameter *units.Distance
-	BeamDiameter *units.Distance
-	PositionReferenceFromStarboardEdge *units.Distance
-	PositionReferenceFromTrueNorthFacingEdge *units.Distance
-	AtonType AtonTypeConst
-	OffPositionIndicator YesNoConst
-	VirtualAtonFlag YesNoConst
-	AssignedModeFlag AisAssignedModeConst
-	PositionFixingDeviceType PositionFixDeviceConst
-	AtonStatus []uint8
-	AisTransceiverInformation AisTransceiverConst
-	AtonName string
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Longitude *float64 `json:"longitude"`
+	Latitude *float64 `json:"latitude"`
+	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
+	Raim RaimFlagConst `json:"raim"`
+	TimeStamp TimeStampConst `json:"timeStamp"`
+	LengthDiameter *units.Distance `json:"lengthDiameter"`
+	BeamDiameter *units.Distance `json:"beamDiameter"`
+	PositionReferenceFromStarboardEdge *units.Distance `json:"positionReferenceFromStarboardEdge"`
+	PositionReferenceFromTrueNorthFacingEdge *units.Distance `json:"positionReferenceFromTrueNorthFacingEdge"`
+	AtonType AtonTypeConst `json:"atonType"`
+	OffPositionIndicator YesNoConst `json:"offPositionIndicator"`
+	VirtualAtonFlag YesNoConst `json:"virtualAtonFlag"`
+	AssignedModeFlag AisAssignedModeConst `json:"assignedModeFlag"`
+	PositionFixingDeviceType PositionFixDeviceConst `json:"positionFixingDeviceType"`
+	AtonStatus []uint8 `json:"atonStatus"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	AtonName string `json:"atonName"`
 }
 func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisAidsToNavigationAtonReport
@@ -47685,12 +47685,12 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type Datum struct {
-	Info MessageInfo
-	LocalDatum string
-	DeltaLatitude *float64
-	DeltaLongitude *float64
-	DeltaAltitude *units.Distance
-	ReferenceDatum string
+	Info MessageInfo `json:"info"`
+	LocalDatum string `json:"localDatum"`
+	DeltaLatitude *float64 `json:"deltaLatitude"`
+	DeltaLongitude *float64 `json:"deltaLongitude"`
+	DeltaAltitude *units.Distance `json:"deltaAltitude"`
+	ReferenceDatum string `json:"referenceDatum"`
 }
 func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Datum
@@ -47743,17 +47743,17 @@ func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type UserDatum struct {
-	Info MessageInfo
-	DeltaX *units.Distance
-	DeltaY *units.Distance
-	DeltaZ *units.Distance
-	RotationInX *float32
-	RotationInY *float32
-	RotationInZ *float32
-	Scale *float32
-	EllipsoidSemiMajorAxis *units.Distance
-	EllipsoidFlatteningInverse *float32
-	DatumName string
+	Info MessageInfo `json:"info"`
+	DeltaX *units.Distance `json:"deltaX"`
+	DeltaY *units.Distance `json:"deltaY"`
+	DeltaZ *units.Distance `json:"deltaZ"`
+	RotationInX *float32 `json:"rotationInX"`
+	RotationInY *float32 `json:"rotationInY"`
+	RotationInZ *float32 `json:"rotationInZ"`
+	Scale *float32 `json:"scale"`
+	EllipsoidSemiMajorAxis *units.Distance `json:"ellipsoidSemiMajorAxis"`
+	EllipsoidFlatteningInverse *float32 `json:"ellipsoidFlatteningInverse"`
+	DatumName string `json:"datumName"`
 }
 func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val UserDatum
@@ -47851,11 +47851,11 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type CrossTrackError struct {
-	Info MessageInfo
-	Sid *uint8
-	XteMode ResidualModeConst
-	NavigationTerminated YesNoConst
-	Xte *units.Distance
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	XteMode ResidualModeConst `json:"xteMode"`
+	NavigationTerminated YesNoConst `json:"navigationTerminated"`
+	Xte *units.Distance `json:"xte"`
 }
 func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val CrossTrackError
@@ -47907,22 +47907,22 @@ func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type NavigationData struct {
-	Info MessageInfo
-	Sid *uint8
-	DistanceToWaypoint *units.Distance
-	CourseBearingReference DirectionReferenceConst
-	PerpendicularCrossed YesNoConst
-	ArrivalCircleEntered YesNoConst
-	CalculationType BearingModeConst
-	EtaTime *float32
-	EtaDate *uint16
-	BearingOriginToDestinationWaypoint *float32
-	BearingPositionToDestinationWaypoint *float32
-	OriginWaypointNumber *uint32
-	DestinationWaypointNumber *uint32
-	DestinationLatitude *float64
-	DestinationLongitude *float64
-	WaypointClosingVelocity *units.Velocity
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	DistanceToWaypoint *units.Distance `json:"distanceToWaypoint"`
+	CourseBearingReference DirectionReferenceConst `json:"courseBearingReference"`
+	PerpendicularCrossed YesNoConst `json:"perpendicularCrossed"`
+	ArrivalCircleEntered YesNoConst `json:"arrivalCircleEntered"`
+	CalculationType BearingModeConst `json:"calculationType"`
+	EtaTime *float32 `json:"etaTime"`
+	EtaDate *uint16 `json:"etaDate"`
+	BearingOriginToDestinationWaypoint *float32 `json:"bearingOriginToDestinationWaypoint"`
+	BearingPositionToDestinationWaypoint *float32 `json:"bearingPositionToDestinationWaypoint"`
+	OriginWaypointNumber *uint32 `json:"originWaypointNumber"`
+	DestinationWaypointNumber *uint32 `json:"destinationWaypointNumber"`
+	DestinationLatitude *float64 `json:"destinationLatitude"`
+	DestinationLongitude *float64 `json:"destinationLongitude"`
+	WaypointClosingVelocity *units.Velocity `json:"waypointClosingVelocity"`
 }
 func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavigationData
@@ -48065,21 +48065,21 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type NavigationRouteWpInformation struct {
-	Info MessageInfo
-	StartRps *uint16
-	Nitems *uint16
-	DatabaseId *uint16
-	RouteId *uint16
-	NavigationDirectionInRoute DirectionConst
-	SupplementaryRouteWpDataAvailable OffOnConst
-	RouteName string
-	Repeating1 []NavigationRouteWpInformationRepeating1
+	Info MessageInfo `json:"info"`
+	StartRps *uint16 `json:"startRps"`
+	Nitems *uint16 `json:"nitems"`
+	DatabaseId *uint16 `json:"databaseId"`
+	RouteId *uint16 `json:"routeId"`
+	NavigationDirectionInRoute DirectionConst `json:"navigationDirectionInRoute"`
+	SupplementaryRouteWpDataAvailable OffOnConst `json:"supplementaryRouteWpDataAvailable"`
+	RouteName string `json:"routeName"`
+	Repeating1 []NavigationRouteWpInformationRepeating1 `json:"repeating1"`
 }
 type NavigationRouteWpInformationRepeating1 struct {
-	WpId *uint16
-	WpName string
-	WpLatitude *float64
-	WpLongitude *float64
+	WpId *uint16 `json:"wpId"`
+	WpName string `json:"wpName"`
+	WpLatitude *float64 `json:"wpLatitude"`
+	WpLongitude *float64 `json:"wpLongitude"`
 }
 func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavigationRouteWpInformation
@@ -48201,11 +48201,11 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type SetDriftRapidUpdate struct {
-	Info MessageInfo
-	Sid *uint8
-	SetReference DirectionReferenceConst
-	Set *float32
-	Drift *units.Velocity
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	SetReference DirectionReferenceConst `json:"setReference"`
+	Set *float32 `json:"set"`
+	Drift *units.Velocity `json:"drift"`
 }
 func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SetDriftRapidUpdate
@@ -48257,13 +48257,13 @@ func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type GnssDops struct {
-	Info MessageInfo
-	Sid *uint8
-	DesiredMode GnssModeConst
-	ActualMode GnssModeConst
-	Hdop *float32
-	Vdop *float32
-	Tdop *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	DesiredMode GnssModeConst `json:"desiredMode"`
+	ActualMode GnssModeConst `json:"actualMode"`
+	Hdop *float32 `json:"hdop"`
+	Vdop *float32 `json:"vdop"`
+	Tdop *float32 `json:"tdop"`
 }
 func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GnssDops
@@ -48329,19 +48329,19 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type GnssSatsInView struct {
-	Info MessageInfo
-	Sid *uint8
-	RangeResidualMode RangeResidualModeConst
-	SatsInView *uint8
-	Repeating1 []GnssSatsInViewRepeating1
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	RangeResidualMode RangeResidualModeConst `json:"rangeResidualMode"`
+	SatsInView *uint8 `json:"satsInView"`
+	Repeating1 []GnssSatsInViewRepeating1 `json:"repeating1"`
 }
 type GnssSatsInViewRepeating1 struct {
-	Prn *uint8
-	Elevation *float32
-	Azimuth *float32
-	Snr *float32
-	RangeResiduals *int32
-	Status SatelliteStatusConst
+	Prn *uint8 `json:"prn"`
+	Elevation *float32 `json:"elevation"`
+	Azimuth *float32 `json:"azimuth"`
+	Snr *float32 `json:"snr"`
+	RangeResiduals *int32 `json:"rangeResiduals"`
+	Status SatelliteStatusConst `json:"status"`
 }
 func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GnssSatsInView
@@ -48434,20 +48434,20 @@ func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type GpsAlmanacData struct {
-	Info MessageInfo
-	Prn *uint8
-	GpsWeekNumber *uint16
-	SvHealthBits []uint8
-	Eccentricity *float32
-	AlmanacReferenceTime *float32
-	InclinationAngle *float32
-	RateOfRightAscension *float64
-	RootOfSemiMajorAxis *float32
-	ArgumentOfPerigee *float32
-	LongitudeOfAscensionNode *float32
-	MeanAnomaly *float32
-	ClockParameter1 *float32
-	ClockParameter2 *float64
+	Info MessageInfo `json:"info"`
+	Prn *uint8 `json:"prn"`
+	GpsWeekNumber *uint16 `json:"gpsWeekNumber"`
+	SvHealthBits []uint8 `json:"svHealthBits"`
+	Eccentricity *float32 `json:"eccentricity"`
+	AlmanacReferenceTime *float32 `json:"almanacReferenceTime"`
+	InclinationAngle *float32 `json:"inclinationAngle"`
+	RateOfRightAscension *float64 `json:"rateOfRightAscension"`
+	RootOfSemiMajorAxis *float32 `json:"rootOfSemiMajorAxis"`
+	ArgumentOfPerigee *float32 `json:"argumentOfPerigee"`
+	LongitudeOfAscensionNode *float32 `json:"longitudeOfAscensionNode"`
+	MeanAnomaly *float32 `json:"meanAnomaly"`
+	ClockParameter1 *float32 `json:"clockParameter1"`
+	ClockParameter2 *float64 `json:"clockParameter2"`
 }
 func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val GpsAlmanacData
@@ -48576,19 +48576,19 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type AisUtcAndDateReport struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Longitude *float64
-	Latitude *float64
-	PositionAccuracy PositionAccuracyConst
-	Raim RaimFlagConst
-	PositionTime *float32
-	CommunicationState []uint8
-	AisTransceiverInformation AisTransceiverConst
-	PositionDate *uint16
-	GnssType PositionFixDeviceConst
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Longitude *float64 `json:"longitude"`
+	Latitude *float64 `json:"latitude"`
+	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
+	Raim RaimFlagConst `json:"raim"`
+	PositionTime *float32 `json:"positionTime"`
+	CommunicationState []uint8 `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	PositionDate *uint16 `json:"positionDate"`
+	GnssType PositionFixDeviceConst `json:"gnssType"`
 }
 func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisUtcAndDateReport
@@ -48716,26 +48716,26 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type AisClassAStaticAndVoyageRelatedData struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	ImoNumber *uint32
-	Callsign string
-	Name string
-	TypeOfShip ShipTypeConst
-	Length *units.Distance
-	Beam *units.Distance
-	PositionReferenceFromStarboard *units.Distance
-	PositionReferenceFromBow *units.Distance
-	EtaDate *uint16
-	EtaTime *float32
-	Draft *units.Distance
-	Destination string
-	AisVersionIndicator AisVersionConst
-	GnssType PositionFixDeviceConst
-	Dte AvailableConst
-	AisTransceiverInformation AisTransceiverConst
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	ImoNumber *uint32 `json:"imoNumber"`
+	Callsign string `json:"callsign"`
+	Name string `json:"name"`
+	TypeOfShip ShipTypeConst `json:"typeOfShip"`
+	Length *units.Distance `json:"length"`
+	Beam *units.Distance `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
+	EtaDate *uint16 `json:"etaDate"`
+	EtaTime *float32 `json:"etaTime"`
+	Draft *units.Distance `json:"draft"`
+	Destination string `json:"destination"`
+	AisVersionIndicator AisVersionConst `json:"aisVersionIndicator"`
+	GnssType PositionFixDeviceConst `json:"gnssType"`
+	Dte AvailableConst `json:"dte"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
 func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassAStaticAndVoyageRelatedData
@@ -48922,16 +48922,16 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 	return val, nil
 }
 type AisAddressedBinaryMessage struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	SequenceNumber *uint8
-	DestinationId *uint32
-	RetransmitFlag *uint8
-	NumberOfBitsInBinaryDataField *uint16
-	BinaryData []uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	SequenceNumber *uint8 `json:"sequenceNumber"`
+	DestinationId *uint32 `json:"destinationId"`
+	RetransmitFlag *uint8 `json:"retransmitFlag"`
+	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
+	BinaryData []uint8 `json:"binaryData"`
 }
 func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisAddressedBinaryMessage
@@ -49036,14 +49036,14 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type AisAcknowledge struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	DestinationId1 *uint32
-	SequenceNumberForId1 []uint8
-	SequenceNumberForIdN []uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	DestinationId1 *uint32 `json:"destinationId1"`
+	SequenceNumberForId1 []uint8 `json:"sequenceNumberForId1"`
+	SequenceNumberForIdN []uint8 `json:"sequenceNumberForIdN"`
 }
 func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisAcknowledge
@@ -49130,13 +49130,13 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type AisBinaryBroadcastMessage struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	NumberOfBitsInBinaryDataField *uint16
-	BinaryData []uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
+	BinaryData []uint8 `json:"binaryData"`
 }
 func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisBinaryBroadcastMessage
@@ -49210,13 +49210,13 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type RadioFrequencyModePower struct {
-	Info MessageInfo
-	RxFrequency *float32
-	TxFrequency *float32
-	RadioChannel string
-	TxPower *uint8
-	Mode *uint16
-	ChannelBandwidth *uint16
+	Info MessageInfo `json:"info"`
+	RxFrequency *float32 `json:"rxFrequency"`
+	TxFrequency *float32 `json:"txFrequency"`
+	RadioChannel string `json:"radioChannel"`
+	TxPower *uint8 `json:"txPower"`
+	Mode *uint16 `json:"mode"`
+	ChannelBandwidth *uint16 `json:"channelBandwidth"`
 }
 func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val RadioFrequencyModePower
@@ -49278,12 +49278,12 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type AisUtcDateInquiry struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	DestinationId *uint32
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	DestinationId *uint32 `json:"destinationId"`
 }
 func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisUtcDateInquiry
@@ -49340,15 +49340,15 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type AisAddressedSafetyRelatedMessage struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	SequenceNumber *uint8
-	DestinationId *uint32
-	RetransmitFlag *uint8
-	SafetyRelatedText string
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	SequenceNumber *uint8 `json:"sequenceNumber"`
+	DestinationId *uint32 `json:"destinationId"`
+	RetransmitFlag *uint8 `json:"retransmitFlag"`
+	SafetyRelatedText string `json:"safetyRelatedText"`
 }
 func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisAddressedSafetyRelatedMessage
@@ -49436,12 +49436,12 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type AisSafetyRelatedBroadcastMessage struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	SafetyRelatedText string
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	SafetyRelatedText string `json:"safetyRelatedText"`
 }
 func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisSafetyRelatedBroadcastMessage
@@ -49498,20 +49498,20 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type AisInterrogation struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	DestinationId1 *uint32
-	MessageId11 AisMessageIdConst
-	SlotOffset11 *uint16
-	MessageId12 AisMessageIdConst
-	SlotOffset12 *uint16
-	DestinationId2 *uint32
-	MessageId21 AisMessageIdConst
-	SlotOffset21 *uint16
-	Sid *uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	DestinationId1 *uint32 `json:"destinationId1"`
+	MessageId11 AisMessageIdConst `json:"messageId11"`
+	SlotOffset11 *uint16 `json:"slotOffset11"`
+	MessageId12 AisMessageIdConst `json:"messageId12"`
+	SlotOffset12 *uint16 `json:"slotOffset12"`
+	DestinationId2 *uint32 `json:"destinationId2"`
+	MessageId21 AisMessageIdConst `json:"messageId21"`
+	SlotOffset21 *uint16 `json:"slotOffset21"`
+	Sid *uint8 `json:"sid"`
 }
 func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisInterrogation
@@ -49660,18 +49660,18 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type AisDataLinkManagementMessage struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	Repeating1 []AisDataLinkManagementMessageRepeating1
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	Repeating1 []AisDataLinkManagementMessageRepeating1 `json:"repeating1"`
 }
 type AisDataLinkManagementMessageRepeating1 struct {
-	Offset *uint16
-	NumberOfSlots *uint8
-	Timeout *uint8
-	Increment *uint16
+	Offset *uint16 `json:"offset"`
+	NumberOfSlots *uint8 `json:"numberOfSlots"`
+	Timeout *uint8 `json:"timeout"`
+	Increment *uint16 `json:"increment"`
 }
 func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisDataLinkManagementMessage
@@ -49756,23 +49756,23 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 	return val, nil
 }
 type AisChannelManagement struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	SourceId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	ChannelA *uint8
-	ChannelB *uint8
-	Power *uint8
-	TxRxMode *uint8
-	NorthEastLongitudeCorner1 *float64
-	NorthEastLatitudeCorner1 *float64
-	SouthWestLongitudeCorner1 *float64
-	SouthWestLatitudeCorner2 *float64
-	AddressedOrBroadcastMessageIndicator *uint8
-	ChannelABandwidth *uint8
-	ChannelBBandwidth *uint8
-	TransitionalZoneSize *uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId *uint32 `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	ChannelA *uint8 `json:"channelA"`
+	ChannelB *uint8 `json:"channelB"`
+	Power *uint8 `json:"power"`
+	TxRxMode *uint8 `json:"txRxMode"`
+	NorthEastLongitudeCorner1 *float64 `json:"northEastLongitudeCorner1"`
+	NorthEastLatitudeCorner1 *float64 `json:"northEastLatitudeCorner1"`
+	SouthWestLongitudeCorner1 *float64 `json:"southWestLongitudeCorner1"`
+	SouthWestLatitudeCorner2 *float64 `json:"southWestLatitudeCorner2"`
+	AddressedOrBroadcastMessageIndicator *uint8 `json:"addressedOrBroadcastMessageIndicator"`
+	ChannelABandwidth *uint8 `json:"channelABandwidth"`
+	ChannelBBandwidth *uint8 `json:"channelBBandwidth"`
+	TransitionalZoneSize *uint8 `json:"transitionalZoneSize"`
 }
 func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisChannelManagement
@@ -49940,13 +49940,13 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (any, e
 	return val, nil
 }
 type AisClassBStaticDataMsg24PartA struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	Name string
-	AisTransceiverInformation AisTransceiverConst
-	SequenceId *uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	Name string `json:"name"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	SequenceId *uint8 `json:"sequenceId"`
 }
 func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassBStaticDataMsg24PartA
@@ -50012,20 +50012,20 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type AisClassBStaticDataMsg24PartB struct {
-	Info MessageInfo
-	MessageId AisMessageIdConst
-	RepeatIndicator RepeatIndicatorConst
-	UserId *uint32
-	TypeOfShip ShipTypeConst
-	VendorId string
-	Callsign string
-	Length *units.Distance
-	Beam *units.Distance
-	PositionReferenceFromStarboard *units.Distance
-	PositionReferenceFromBow *units.Distance
-	MothershipUserId *uint32
-	AisTransceiverInformation AisTransceiverConst
-	SequenceId *uint8
+	Info MessageInfo `json:"info"`
+	MessageId AisMessageIdConst `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId *uint32 `json:"userId"`
+	TypeOfShip ShipTypeConst `json:"typeOfShip"`
+	VendorId string `json:"vendorId"`
+	Callsign string `json:"callsign"`
+	Length *units.Distance `json:"length"`
+	Beam *units.Distance `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
+	MothershipUserId *uint32 `json:"mothershipUserId"`
+	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	SequenceId *uint8 `json:"sequenceId"`
 }
 func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val AisClassBStaticDataMsg24PartB
@@ -50162,11 +50162,11 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type WindData struct {
-	Info MessageInfo
-	Sid *uint8
-	WindSpeed *units.Velocity
-	WindAngle *float32
-	Reference WindReferenceConst
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	WindSpeed *units.Velocity `json:"windSpeed"`
+	WindAngle *float32 `json:"windAngle"`
+	Reference WindReferenceConst `json:"reference"`
 }
 func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val WindData
@@ -50214,11 +50214,11 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type EnvironmentalParametersObsolete struct {
-	Info MessageInfo
-	Sid *uint8
-	WaterTemperature *units.Temperature
-	OutsideAmbientAirTemperature *units.Temperature
-	AtmosphericPressure *units.Pressure
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	WaterTemperature *units.Temperature `json:"waterTemperature"`
+	OutsideAmbientAirTemperature *units.Temperature `json:"outsideAmbientAirTemperature"`
+	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
 func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val EnvironmentalParametersObsolete
@@ -50266,13 +50266,13 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 	return val, nil
 }
 type EnvironmentalParameters struct {
-	Info MessageInfo
-	Sid *uint8
-	TemperatureSource TemperatureSourceConst
-	HumiditySource HumiditySourceConst
-	Temperature *units.Temperature
-	Humidity *float32
-	AtmosphericPressure *units.Pressure
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	TemperatureSource TemperatureSourceConst `json:"temperatureSource"`
+	HumiditySource HumiditySourceConst `json:"humiditySource"`
+	Temperature *units.Temperature `json:"temperature"`
+	Humidity *float32 `json:"humidity"`
+	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
 func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val EnvironmentalParameters
@@ -50334,12 +50334,12 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (any
 	return val, nil
 }
 type Temperature struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	Source TemperatureSourceConst
-	ActualTemperature *units.Temperature
-	SetTemperature *units.Temperature
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source TemperatureSourceConst `json:"source"`
+	ActualTemperature *units.Temperature `json:"actualTemperature"`
+	SetTemperature *units.Temperature `json:"setTemperature"`
 }
 func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Temperature
@@ -50396,12 +50396,12 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type Humidity struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	Source HumiditySourceConst
-	ActualHumidity *float32
-	SetHumidity *float32
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source HumiditySourceConst `json:"source"`
+	ActualHumidity *float32 `json:"actualHumidity"`
+	SetHumidity *float32 `json:"setHumidity"`
 }
 func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val Humidity
@@ -50458,11 +50458,11 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type ActualPressure struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	Source PressureSourceConst
-	Pressure *units.Pressure
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source PressureSourceConst `json:"source"`
+	Pressure *units.Pressure `json:"pressure"`
 }
 func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val ActualPressure
@@ -50510,11 +50510,11 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type SetPressure struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	Source PressureSourceConst
-	Pressure *units.Pressure
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source PressureSourceConst `json:"source"`
+	Pressure *units.Pressure `json:"pressure"`
 }
 func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SetPressure
@@ -50562,12 +50562,12 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type TemperatureExtendedRange struct {
-	Info MessageInfo
-	Sid *uint8
-	Instance *uint8
-	Source TemperatureSourceConst
-	Temperature *units.Temperature
-	SetTemperature *units.Temperature
+	Info MessageInfo `json:"info"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source TemperatureSourceConst `json:"source"`
+	Temperature *units.Temperature `json:"temperature"`
+	SetTemperature *units.Temperature `json:"setTemperature"`
 }
 func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TemperatureExtendedRange
@@ -50620,17 +50620,17 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type TideStationData struct {
-	Info MessageInfo
-	Mode ResidualModeConst
-	TideTendency TideConst
-	MeasurementDate *uint16
-	MeasurementTime *float32
-	StationLatitude *float64
-	StationLongitude *float64
-	TideLevel *units.Distance
-	TideLevelStandardDeviation *units.Distance
-	StationId string
-	StationName string
+	Info MessageInfo `json:"info"`
+	Mode ResidualModeConst `json:"mode"`
+	TideTendency TideConst `json:"tideTendency"`
+	MeasurementDate *uint16 `json:"measurementDate"`
+	MeasurementTime *float32 `json:"measurementTime"`
+	StationLatitude *float64 `json:"stationLatitude"`
+	StationLongitude *float64 `json:"stationLongitude"`
+	TideLevel *units.Distance `json:"tideLevel"`
+	TideLevelStandardDeviation *units.Distance `json:"tideLevelStandardDeviation"`
+	StationId string `json:"stationId"`
+	StationName string `json:"stationName"`
 }
 func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val TideStationData
@@ -50732,16 +50732,16 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SalinityStationData struct {
-	Info MessageInfo
-	Mode ResidualModeConst
-	MeasurementDate *uint16
-	MeasurementTime *float32
-	StationLatitude *float64
-	StationLongitude *float64
-	Salinity *float32
-	WaterTemperature *units.Temperature
-	StationId string
-	StationName string
+	Info MessageInfo `json:"info"`
+	Mode ResidualModeConst `json:"mode"`
+	MeasurementDate *uint16 `json:"measurementDate"`
+	MeasurementTime *float32 `json:"measurementTime"`
+	StationLatitude *float64 `json:"stationLatitude"`
+	StationLongitude *float64 `json:"stationLongitude"`
+	Salinity *float32 `json:"salinity"`
+	WaterTemperature *units.Temperature `json:"waterTemperature"`
+	StationId string `json:"stationId"`
+	StationName string `json:"stationName"`
 }
 func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SalinityStationData
@@ -50834,29 +50834,29 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type WatermakerInputSettingAndStatus struct {
-	Info MessageInfo
-	WatermakerOperatingState WatermakerStateConst
-	ProductionStartStop YesNoConst
-	RinseStartStop YesNoConst
-	LowPressurePumpStatus YesNoConst
-	HighPressurePumpStatus YesNoConst
-	EmergencyStop YesNoConst
-	ProductSolenoidValveStatus OkWarningConst
-	FlushModeStatus YesNoConst
-	SalinityStatus OkWarningConst
-	SensorStatus OkWarningConst
-	OilChangeIndicatorStatus OkWarningConst
-	FilterStatus OkWarningConst
-	SystemStatus OkWarningConst
-	Salinity *uint16
-	ProductWaterTemperature *units.Temperature
-	PreFilterPressure *units.Pressure
-	PostFilterPressure *units.Pressure
-	FeedPressure *units.Pressure
-	SystemHighPressure *units.Pressure
-	ProductWaterFlow *units.Flow
-	BrineWaterFlow *units.Flow
-	RunTime *uint32
+	Info MessageInfo `json:"info"`
+	WatermakerOperatingState WatermakerStateConst `json:"watermakerOperatingState"`
+	ProductionStartStop YesNoConst `json:"productionStartStop"`
+	RinseStartStop YesNoConst `json:"rinseStartStop"`
+	LowPressurePumpStatus YesNoConst `json:"lowPressurePumpStatus"`
+	HighPressurePumpStatus YesNoConst `json:"highPressurePumpStatus"`
+	EmergencyStop YesNoConst `json:"emergencyStop"`
+	ProductSolenoidValveStatus OkWarningConst `json:"productSolenoidValveStatus"`
+	FlushModeStatus YesNoConst `json:"flushModeStatus"`
+	SalinityStatus OkWarningConst `json:"salinityStatus"`
+	SensorStatus OkWarningConst `json:"sensorStatus"`
+	OilChangeIndicatorStatus OkWarningConst `json:"oilChangeIndicatorStatus"`
+	FilterStatus OkWarningConst `json:"filterStatus"`
+	SystemStatus OkWarningConst `json:"systemStatus"`
+	Salinity *uint16 `json:"salinity"`
+	ProductWaterTemperature *units.Temperature `json:"productWaterTemperature"`
+	PreFilterPressure *units.Pressure `json:"preFilterPressure"`
+	PostFilterPressure *units.Pressure `json:"postFilterPressure"`
+	FeedPressure *units.Pressure `json:"feedPressure"`
+	SystemHighPressure *units.Pressure `json:"systemHighPressure"`
+	ProductWaterFlow *units.Flow `json:"productWaterFlow"`
+	BrineWaterFlow *units.Flow `json:"brineWaterFlow"`
+	RunTime *uint32 `json:"runTime"`
 }
 func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val WatermakerInputSettingAndStatus
@@ -51066,9 +51066,9 @@ func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStre
 	return val, nil
 }
 type SmallCraftStatus struct {
-	Info MessageInfo
-	PortTrimTab *int8
-	StarboardTrimTab *int8
+	Info MessageInfo `json:"info"`
+	PortTrimTab *int8 `json:"portTrimTab"`
+	StarboardTrimTab *int8 `json:"starboardTrimTab"`
 }
 func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SmallCraftStatus
@@ -51098,13 +51098,13 @@ func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type VesselSpeedComponents struct {
-	Info MessageInfo
-	LongitudinalSpeedWaterReferenced *units.Velocity
-	TransverseSpeedWaterReferenced *units.Velocity
-	LongitudinalSpeedGroundReferenced *units.Velocity
-	TransverseSpeedGroundReferenced *units.Velocity
-	SternSpeedWaterReferenced *units.Velocity
-	SternSpeedGroundReferenced *units.Velocity
+	Info MessageInfo `json:"info"`
+	LongitudinalSpeedWaterReferenced *units.Velocity `json:"longitudinalSpeedWaterReferenced"`
+	TransverseSpeedWaterReferenced *units.Velocity `json:"transverseSpeedWaterReferenced"`
+	LongitudinalSpeedGroundReferenced *units.Velocity `json:"longitudinalSpeedGroundReferenced"`
+	TransverseSpeedGroundReferenced *units.Velocity `json:"transverseSpeedGroundReferenced"`
+	SternSpeedWaterReferenced *units.Velocity `json:"sternSpeedWaterReferenced"`
+	SternSpeedGroundReferenced *units.Velocity `json:"sternSpeedGroundReferenced"`
 }
 func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val VesselSpeedComponents
@@ -51166,12 +51166,12 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type SonichubZoneInfo struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Zone *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Zone *uint8 `json:"zone"`
 }
 func DecodeSonichubZoneInfo(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubZoneInfo
@@ -51241,12 +51241,12 @@ func DecodeSonichubZoneInfo(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SonichubSource struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Source SonichubSourceConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Source SonichubSourceConst `json:"source"`
 }
 func DecodeSonichubSource(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubSource
@@ -51316,14 +51316,14 @@ func DecodeSonichubSource(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type SonichubSourceList struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	SourceId *uint8
-	A *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	SourceId *uint8 `json:"sourceId"`
+	A *uint8 `json:"a"`
+	Text string `json:"text"`
 }
 func DecodeSonichubSourceList(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubSourceList
@@ -51411,12 +51411,12 @@ func DecodeSonichubSourceList(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type SonichubControl struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item FusionMuteCommandConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item FusionMuteCommandConst `json:"item"`
 }
 func DecodeSonichubControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubControl
@@ -51486,16 +51486,16 @@ func DecodeSonichubControl(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SonichubFmRadio struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item SonichubTuningConst
-	Frequency *uint32
-	NoiseLevel *uint8
-	SignalLevel *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item SonichubTuningConst `json:"item"`
+	Frequency *uint32 `json:"frequency"`
+	NoiseLevel *uint8 `json:"noiseLevel"`
+	SignalLevel *uint8 `json:"signalLevel"`
+	Text string `json:"text"`
 }
 func DecodeSonichubFmRadio(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubFmRadio
@@ -51605,17 +51605,17 @@ func DecodeSonichubFmRadio(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SonichubPlaylist struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item SonichubPlaylistConst
-	A *uint8
-	CurrentTrack *uint32
-	Tracks *uint32
-	Length *float32
-	PositionInTrack *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item SonichubPlaylistConst `json:"item"`
+	A *uint8 `json:"a"`
+	CurrentTrack *uint32 `json:"currentTrack"`
+	Tracks *uint32 `json:"tracks"`
+	Length *float32 `json:"length"`
+	PositionInTrack *float32 `json:"positionInTrack"`
 }
 func DecodeSonichubPlaylist(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubPlaylist
@@ -51730,13 +51730,13 @@ func DecodeSonichubPlaylist(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SonichubTrack struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item *uint32
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item *uint32 `json:"item"`
+	Text string `json:"text"`
 }
 func DecodeSonichubTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubTrack
@@ -51815,13 +51815,13 @@ func DecodeSonichubTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SonichubArtist struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item *uint32
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item *uint32 `json:"item"`
+	Text string `json:"text"`
 }
 func DecodeSonichubArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubArtist
@@ -51900,13 +51900,13 @@ func DecodeSonichubArtist(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type SonichubAlbum struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item *uint32
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item *uint32 `json:"item"`
+	Text string `json:"text"`
 }
 func DecodeSonichubAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubAlbum
@@ -51985,16 +51985,16 @@ func DecodeSonichubAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SonichubMenuItem struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Item *uint32
-	C *uint8
-	D *uint8
-	E *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Item *uint32 `json:"item"`
+	C *uint8 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
+	Text string `json:"text"`
 }
 func DecodeSonichubMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubMenuItem
@@ -52100,12 +52100,12 @@ func DecodeSonichubMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SonichubZones struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Zones *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Zones *uint8 `json:"zones"`
 }
 func DecodeSonichubZones(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubZones
@@ -52175,13 +52175,13 @@ func DecodeSonichubZones(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SonichubMaxVolume struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Zone *uint8
-	Level *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Zone *uint8 `json:"zone"`
+	Level *uint8 `json:"level"`
 }
 func DecodeSonichubMaxVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubMaxVolume
@@ -52260,13 +52260,13 @@ func DecodeSonichubMaxVolume(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type SonichubVolume struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Zone *uint8
-	Level *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Zone *uint8 `json:"zone"`
+	Level *uint8 `json:"level"`
 }
 func DecodeSonichubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubVolume
@@ -52345,11 +52345,11 @@ func DecodeSonichubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type SonichubInit1 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
 }
 func DecodeSonichubInit1(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubInit1
@@ -52410,12 +52410,12 @@ func DecodeSonichubInit1(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SonichubPosition struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SonichubCommandConst
-	Control SonichubControlConst
-	Position *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
+	Control SonichubControlConst `json:"control"`
+	Position *float32 `json:"position"`
 }
 func DecodeSonichubPosition(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SonichubPosition
@@ -52485,16 +52485,16 @@ func DecodeSonichubPosition(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type SimradTextMessage struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SimnetCommandConst
-	A *uint8
-	B *uint8
-	C *uint8
-	Sid *uint8
-	Prio *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SimnetCommandConst `json:"proprietaryId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	Sid *uint8 `json:"sid"`
+	Prio *uint8 `json:"prio"`
+	Text string `json:"text"`
 }
 func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimradTextMessage
@@ -52600,17 +52600,17 @@ func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type NavicoProductInformation struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProductCode *uint16
-	Model string
-	A *uint8
-	B *uint8
-	C *uint8
-	FirmwareVersion string
-	FirmwareDate string
-	FirmwareTime string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProductCode *uint16 `json:"productCode"`
+	Model string `json:"model"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	FirmwareVersion string `json:"firmwareVersion"`
+	FirmwareDate string `json:"firmwareDate"`
+	FirmwareTime string `json:"firmwareTime"`
 }
 func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoProductInformation
@@ -52718,17 +52718,17 @@ func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (an
 	return val, nil
 }
 type LowranceProductInformation struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProductCode *uint16
-	Model string
-	A *uint8
-	B *uint8
-	C *uint8
-	FirmwareVersion string
-	FirmwareDate string
-	FirmwareTime string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProductCode *uint16 `json:"productCode"`
+	Model string `json:"model"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	FirmwareVersion string `json:"firmwareVersion"`
+	FirmwareDate string `json:"firmwareDate"`
+	FirmwareTime string `json:"firmwareTime"`
 }
 func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val LowranceProductInformation
@@ -52836,12 +52836,12 @@ func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (
 	return val, nil
 }
 type SimnetReprogramData struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Version *uint16
-	Sequence *uint16
-	Data []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Version *uint16 `json:"version"`
+	Sequence *uint16 `json:"sequence"`
+	Data []uint8 `json:"data"`
 }
 func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetReprogramData
@@ -52904,14 +52904,14 @@ func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FurunoUnknown130820 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *uint8
-	C *uint8
-	D *uint8
-	E *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
 }
 func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoUnknown130820
@@ -52992,16 +52992,16 @@ func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type FusionSourceName struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	SourceId *uint8
-	CurrentSourceId *uint8
-	D *uint8
-	E *uint8
-	Source string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	SourceId *uint8 `json:"sourceId"`
+	CurrentSourceId *uint8 `json:"currentSourceId"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
+	Source string `json:"source"`
 }
 func DecodeFusionSourceName(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSourceName
@@ -53103,21 +53103,21 @@ func DecodeFusionSourceName(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 type FusionTrackInfo struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint16
-	Transport EntertainmentPlayStatusConst
-	X *uint8
-	B *uint8
-	Track *uint16
-	C *uint16
-	TrackCount *uint16
-	E *uint16
-	Length *float32
-	PositionInTrack *float32
-	H *uint16
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint16 `json:"a"`
+	Transport EntertainmentPlayStatusConst `json:"transport"`
+	X *uint8 `json:"x"`
+	B *uint8 `json:"b"`
+	Track *uint16 `json:"track"`
+	C *uint16 `json:"c"`
+	TrackCount *uint16 `json:"trackCount"`
+	E *uint16 `json:"e"`
+	Length *float32 `json:"length"`
+	PositionInTrack *float32 `json:"positionInTrack"`
+	H *uint16 `json:"h"`
 }
 func DecodeFusionTrackInfo(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionTrackInfo
@@ -53264,13 +53264,13 @@ func DecodeFusionTrackInfo(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type FusionTrack struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint64
-	Track string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint64 `json:"b"`
+	Track string `json:"track"`
 }
 func DecodeFusionTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionTrack
@@ -53345,13 +53345,13 @@ func DecodeFusionTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionArtist struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint64
-	Artist string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint64 `json:"b"`
+	Artist string `json:"artist"`
 }
 func DecodeFusionArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionArtist
@@ -53426,13 +53426,13 @@ func DecodeFusionArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionAlbum struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint64
-	Album string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint64 `json:"b"`
+	Album string `json:"album"`
 }
 func DecodeFusionAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionAlbum
@@ -53507,12 +53507,12 @@ func DecodeFusionAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionUnitName struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	Name string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	Name string `json:"name"`
 }
 func DecodeFusionUnitName(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionUnitName
@@ -53578,13 +53578,13 @@ func DecodeFusionUnitName(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type FusionZoneName struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	Number *uint8
-	Name string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	Number *uint8 `json:"number"`
+	Name string `json:"name"`
 }
 func DecodeFusionZoneName(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionZoneName
@@ -53659,13 +53659,13 @@ func DecodeFusionZoneName(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type FusionPlayProgress struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint8
-	Progress *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Progress *float32 `json:"progress"`
 }
 func DecodeFusionPlayProgress(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionPlayProgress
@@ -53740,16 +53740,16 @@ func DecodeFusionPlayProgress(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type FusionAmFmStation struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	AmFm FusionRadioSourceConst
-	B *uint8
-	Frequency *uint32
-	C *uint8
-	Track string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	AmFm FusionRadioSourceConst `json:"amFm"`
+	B *uint8 `json:"b"`
+	Frequency *uint32 `json:"frequency"`
+	C *uint8 `json:"c"`
+	Track string `json:"track"`
 }
 func DecodeFusionAmFmStation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionAmFmStation
@@ -53851,14 +53851,14 @@ func DecodeFusionAmFmStation(Info MessageInfo, stream *PGNDataStream) (any, erro
 	return val, nil
 }
 type FusionVhf struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint8
-	Channel *uint8
-	D *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Channel *uint8 `json:"channel"`
+	D *uint32 `json:"d"`
 }
 func DecodeFusionVhf(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionVhf
@@ -53942,13 +53942,13 @@ func DecodeFusionVhf(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionSquelch struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint8
-	Squelch *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Squelch *uint8 `json:"squelch"`
 }
 func DecodeFusionSquelch(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSquelch
@@ -54023,14 +54023,14 @@ func DecodeFusionSquelch(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionScan struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint8
-	Scan YesNoConst
-	C *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Scan YesNoConst `json:"scan"`
+	C *uint8 `json:"c"`
 }
 func DecodeFusionScan(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionScan
@@ -54114,19 +54114,19 @@ func DecodeFusionScan(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionMenuItem struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	B *uint8
-	Line *uint8
-	E *uint8
-	F *uint8
-	G *uint8
-	H *uint8
-	I *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Line *uint8 `json:"line"`
+	E *uint8 `json:"e"`
+	F *uint8 `json:"f"`
+	G *uint8 `json:"g"`
+	H *uint8 `json:"h"`
+	I *uint8 `json:"i"`
+	Text string `json:"text"`
 }
 func DecodeFusionMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionMenuItem
@@ -54255,19 +54255,19 @@ func DecodeFusionMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type FusionReplay struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	Mode FusionReplayModeConst
-	C *uint32
-	D *uint8
-	E *uint8
-	Status FusionReplayStatusConst
-	H *uint8
-	I *uint8
-	J *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	Mode FusionReplayModeConst `json:"mode"`
+	C *uint32 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
+	Status FusionReplayStatusConst `json:"status"`
+	H *uint8 `json:"h"`
+	I *uint8 `json:"i"`
+	J *uint8 `json:"j"`
 }
 func DecodeFusionReplay(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionReplay
@@ -54396,12 +54396,12 @@ func DecodeFusionReplay(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionMute struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	Mute FusionMuteCommandConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	Mute FusionMuteCommandConst `json:"mute"`
 }
 func DecodeFusionMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionMute
@@ -54467,15 +54467,15 @@ func DecodeFusionMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type FusionSubVolume struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId FusionMessageIdConst
-	A *uint8
-	Zone1 *uint8
-	Zone2 *uint8
-	Zone3 *uint8
-	Zone4 *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId FusionMessageIdConst `json:"messageId"`
+	A *uint8 `json:"a"`
+	Zone1 *uint8 `json:"zone1"`
+	Zone2 *uint8 `json:"zone2"`
+	Zone3 *uint8 `json:"zone3"`
+	Zone4 *uint8 `json:"zone4"`
 }
 func DecodeFusionSubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FusionSubVolume
@@ -54568,11 +54568,11 @@ func DecodeFusionSubVolume(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type NavicoAsciiData struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	Message string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	Message string `json:"message"`
 }
 func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoAsciiData
@@ -54626,19 +54626,19 @@ func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type FurunoUnknown130821 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid *uint8
-	A *uint8
-	B *uint8
-	C *uint8
-	D *uint8
-	E *uint8
-	F *uint8
-	G *uint8
-	H *uint8
-	I *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid *uint8 `json:"sid"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
+	F *uint8 `json:"f"`
+	G *uint8 `json:"g"`
+	H *uint8 `json:"h"`
+	I *uint8 `json:"i"`
 }
 func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoUnknown130821
@@ -54764,10 +54764,10 @@ func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type NavicoUnknown1 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Data []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Data []uint8 `json:"data"`
 }
 func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoUnknown1
@@ -54812,14 +54812,14 @@ func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type MaretronProprietaryTemperatureHighRange struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Sid *uint8
-	Instance *uint8
-	Source TemperatureSourceConst
-	ActualTemperature *units.Temperature
-	SetTemperature *units.Temperature
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Sid *uint8 `json:"sid"`
+	Instance *uint8 `json:"instance"`
+	Source TemperatureSourceConst `json:"source"`
+	ActualTemperature *units.Temperature `json:"actualTemperature"`
+	SetTemperature *units.Temperature `json:"setTemperature"`
 }
 func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronProprietaryTemperatureHighRange
@@ -54900,15 +54900,15 @@ func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGN
 	return val, nil
 }
 type BGKeyValueData struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Repeating1 []BGKeyValueDataRepeating1
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Repeating1 []BGKeyValueDataRepeating1 `json:"repeating1"`
 }
 type BGKeyValueDataRepeating1 struct {
-	Key BandgKeyValueConst
-	Length *uint8
-	Value []uint8
+	Key BandgKeyValueConst `json:"key"`
+	Length *uint8 `json:"length"`
+	Value []uint8 `json:"value"`
 }
 func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val BGKeyValueData
@@ -54982,14 +54982,14 @@ func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type MaretronAnnunciator struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Field4 *uint8
-	Field5 *uint8
-	Field6 *uint16
-	Field7 *uint8
-	Field8 *uint16
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Field4 *uint8 `json:"field4"`
+	Field5 *uint8 `json:"field5"`
+	Field6 *uint16 `json:"field6"`
+	Field7 *uint8 `json:"field7"`
+	Field8 *uint16 `json:"field8"`
 }
 func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronAnnunciator
@@ -55070,10 +55070,10 @@ func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (any, er
 	return val, nil
 }
 type NavicoUnknown2 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Data []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Data []uint8 `json:"data"`
 }
 func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val NavicoUnknown2
@@ -55118,14 +55118,14 @@ func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type BGUserAndRemoteRename struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	DataType BandgKeyValueConst
-	Length *uint8
-	Decimals BandgDecimalsConst
-	ShortName string
-	LongName string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	DataType BandgKeyValueConst `json:"dataType"`
+	Length *uint8 `json:"length"`
+	Decimals BandgDecimalsConst `json:"decimals"`
+	ShortName string `json:"shortName"`
+	LongName string `json:"longName"`
 }
 func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val BGUserAndRemoteRename
@@ -55210,18 +55210,18 @@ func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (any, 
 	return val, nil
 }
 type SimnetFluidLevelSensorConfiguration struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	C *uint8
-	Device *uint8
-	Instance *uint8
-	F *uint8
-	TankType TankTypeConst
-	Capacity *units.Volume
-	G *uint8
-	H *int16
-	I *int8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	C *uint8 `json:"c"`
+	Device *uint8 `json:"device"`
+	Instance *uint8 `json:"instance"`
+	F *uint8 `json:"f"`
+	TankType TankTypeConst `json:"tankType"`
+	Capacity *units.Volume `json:"capacity"`
+	G *uint8 `json:"g"`
+	H *int16 `json:"h"`
+	I *int8 `json:"i"`
 }
 func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetFluidLevelSensorConfiguration
@@ -55338,17 +55338,17 @@ func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNData
 	return val, nil
 }
 type MaretronSwitchStatusCounter struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Instance *uint8
-	IndicatorNumber *uint8
-	StartDate *uint16
-	StartTime *float32
-	OffCounter *uint8
-	OnCounter *uint8
-	ErrorCounter *uint8
-	SwitchStatus OffOnConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Instance *uint8 `json:"instance"`
+	IndicatorNumber *uint8 `json:"indicatorNumber"`
+	StartDate *uint16 `json:"startDate"`
+	StartTime *float32 `json:"startTime"`
+	OffCounter *uint8 `json:"offCounter"`
+	OnCounter *uint8 `json:"onCounter"`
+	ErrorCounter *uint8 `json:"errorCounter"`
+	SwitchStatus OffOnConst `json:"switchStatus"`
 }
 func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronSwitchStatusCounter
@@ -55460,17 +55460,17 @@ func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type MaretronSwitchStatusTimer struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Instance *uint8
-	IndicatorNumber *uint8
-	StartDate *uint16
-	StartTime *float32
-	AccumulatedOffPeriod *uint32
-	AccumulatedOnPeriod *uint32
-	AccumulatedErrorPeriod *uint32
-	SwitchStatus OffOnConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Instance *uint8 `json:"instance"`
+	IndicatorNumber *uint8 `json:"indicatorNumber"`
+	StartDate *uint16 `json:"startDate"`
+	StartTime *float32 `json:"startTime"`
+	AccumulatedOffPeriod *uint32 `json:"accumulatedOffPeriod"`
+	AccumulatedOnPeriod *uint32 `json:"accumulatedOnPeriod"`
+	AccumulatedErrorPeriod *uint32 `json:"accumulatedErrorPeriod"`
+	SwitchStatus OffOnConst `json:"switchStatus"`
 }
 func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val MaretronSwitchStatusTimer
@@ -55582,18 +55582,18 @@ func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type FurunoSixDegreesOfFreedomMovement struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *int32
-	B *int32
-	C *int32
-	D *int8
-	E *int32
-	F *int32
-	G *int16
-	H *int16
-	I *int16
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *int32 `json:"a"`
+	B *int32 `json:"b"`
+	C *int32 `json:"c"`
+	D *int8 `json:"d"`
+	E *int32 `json:"e"`
+	F *int32 `json:"f"`
+	G *int16 `json:"g"`
+	H *int16 `json:"h"`
+	I *int16 `json:"i"`
 }
 func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoSixDegreesOfFreedomMovement
@@ -55710,22 +55710,22 @@ func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataSt
 	return val, nil
 }
 type SimnetAisClassBStaticDataMsg24PartB struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId *uint8
-	RepeatIndicator RepeatIndicatorConst
-	D *uint8
-	E *uint8
-	UserId *uint32
-	TypeOfShip ShipTypeConst
-	VendorId string
-	Callsign string
-	Length *units.Distance
-	Beam *units.Distance
-	PositionReferenceFromStarboard *units.Distance
-	PositionReferenceFromBow *units.Distance
-	MothershipUserId *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId *uint8 `json:"messageId"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	D *uint8 `json:"d"`
+	E *uint8 `json:"e"`
+	UserId *uint32 `json:"userId"`
+	TypeOfShip ShipTypeConst `json:"typeOfShip"`
+	VendorId string `json:"vendorId"`
+	Callsign string `json:"callsign"`
+	Length *units.Distance `json:"length"`
+	Beam *units.Distance `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
+	MothershipUserId *uint32 `json:"mothershipUserId"`
 }
 func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetAisClassBStaticDataMsg24PartB
@@ -55889,14 +55889,14 @@ func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNData
 	return val, nil
 }
 type FurunoHeelAngleRollInformation struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *uint8
-	Yaw *float32
-	Pitch *float32
-	Roll *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *uint8 `json:"b"`
+	Yaw *float32 `json:"yaw"`
+	Pitch *float32 `json:"pitch"`
+	Roll *float32 `json:"roll"`
 }
 func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoHeelAngleRollInformation
@@ -55977,9 +55977,9 @@ func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 type FurunoMultiSatsInViewExtended struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoMultiSatsInViewExtended
@@ -56015,15 +56015,15 @@ func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 type SimnetKeyValue struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Address *uint8
-	RepeatIndicator RepeatIndicatorConst
-	DisplayGroup SimnetDisplayGroupConst
-	Key SimnetKeyValueConst
-	Minlength *uint8
-	Value []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Address *uint8 `json:"address"`
+	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
+	DisplayGroup SimnetDisplayGroupConst `json:"displayGroup"`
+	Key SimnetKeyValueConst `json:"key"`
+	Minlength *uint8 `json:"minlength"`
+	Value []uint8 `json:"value"`
 }
 func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetKeyValue
@@ -56127,16 +56127,16 @@ func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	return val, nil
 }
 type SimnetParameterSet struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Address *uint8
-	B *uint8
-	DisplayGroup SimnetDisplayGroupConst
-	D *uint16
-	Key SimnetKeyValueConst
-	Length *uint8
-	Value []uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Address *uint8 `json:"address"`
+	B *uint8 `json:"b"`
+	DisplayGroup SimnetDisplayGroupConst `json:"displayGroup"`
+	D *uint16 `json:"d"`
+	Key SimnetKeyValueConst `json:"key"`
+	Length *uint8 `json:"length"`
+	Value []uint8 `json:"value"`
 }
 func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetParameterSet
@@ -56241,9 +56241,9 @@ func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type FurunoMotionSensorStatusExtended struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
 func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val FurunoMotionSensorStatusExtended
@@ -56279,15 +56279,15 @@ func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStr
 	return val, nil
 }
 type SimnetApCommand struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Address *uint8
-	ProprietaryId SimnetEventCommandConst
-	ApStatus SimnetApStatusConst
-	ApCommand SimnetApEventsConst
-	Direction SimnetDirectionConst
-	Angle *float32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Address *uint8 `json:"address"`
+	ProprietaryId SimnetEventCommandConst `json:"proprietaryId"`
+	ApStatus SimnetApStatusConst `json:"apStatus"`
+	ApCommand SimnetApEventsConst `json:"apCommand"`
+	Direction SimnetDirectionConst `json:"direction"`
+	Angle *float32 `json:"angle"`
 }
 func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetApCommand
@@ -56388,17 +56388,17 @@ func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 type SimnetEventCommandApCommand struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SimnetEventCommandConst
-	UnusedA *uint16
-	ControllingDevice *uint8
-	Event SimnetApEventsConst
-	UnusedB *uint8
-	Direction SimnetDirectionConst
-	Angle *float32
-	UnusedC *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SimnetEventCommandConst `json:"proprietaryId"`
+	UnusedA *uint16 `json:"unusedA"`
+	ControllingDevice *uint8 `json:"controllingDevice"`
+	Event SimnetApEventsConst `json:"event"`
+	UnusedB *uint8 `json:"unusedB"`
+	Direction SimnetDirectionConst `json:"direction"`
+	Angle *float32 `json:"angle"`
+	UnusedC *uint8 `json:"unusedC"`
 }
 func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetEventCommandApCommand
@@ -56509,15 +56509,15 @@ func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) 
 	return val, nil
 }
 type SimnetAlarm struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	Address *uint8
-	ProprietaryId SimnetEventCommandConst
-	Alarm SimnetAlarmConst
-	MessageId *uint16
-	F *uint8
-	G *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	Address *uint8 `json:"address"`
+	ProprietaryId SimnetEventCommandConst `json:"proprietaryId"`
+	Alarm SimnetAlarmConst `json:"alarm"`
+	MessageId *uint16 `json:"messageId"`
+	F *uint8 `json:"f"`
+	G *uint8 `json:"g"`
 }
 func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetAlarm
@@ -56618,17 +56618,17 @@ func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 type SimnetEventReplyApCommand struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	ProprietaryId SimnetEventCommandConst
-	B *uint16
-	Address *uint8
-	Event SimnetApEventsConst
-	C *uint8
-	Direction SimnetDirectionConst
-	Angle *float32
-	G *uint8
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	ProprietaryId SimnetEventCommandConst `json:"proprietaryId"`
+	B *uint16 `json:"b"`
+	Address *uint8 `json:"address"`
+	Event SimnetApEventsConst `json:"event"`
+	C *uint8 `json:"c"`
+	Direction SimnetDirectionConst `json:"direction"`
+	Angle *float32 `json:"angle"`
+	G *uint8 `json:"g"`
 }
 func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetEventReplyApCommand
@@ -56739,13 +56739,13 @@ func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (a
 	return val, nil
 }
 type SimnetAlarmMessage struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	MessageId *uint16
-	B *uint8
-	C *uint8
-	Text string
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	MessageId *uint16 `json:"messageId"`
+	B *uint8 `json:"b"`
+	C *uint8 `json:"c"`
+	Text string `json:"text"`
 }
 func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetAlarmMessage
@@ -56817,15 +56817,15 @@ func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (any, err
 	return val, nil
 }
 type SimnetApUnknown4 struct {
-	Info MessageInfo
-	ManufacturerCode ManufacturerCodeConst
-	IndustryCode IndustryCodeConst
-	A *uint8
-	B *int32
-	C *int32
-	D *uint32
-	E *int32
-	F *uint32
+	Info MessageInfo `json:"info"`
+	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
+	IndustryCode IndustryCodeConst `json:"industryCode"`
+	A *uint8 `json:"a"`
+	B *int32 `json:"b"`
+	C *int32 `json:"c"`
+	D *uint32 `json:"d"`
+	E *int32 `json:"e"`
+	F *uint32 `json:"f"`
 }
 func DecodeSimnetApUnknown4(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	var val SimnetApUnknown4
