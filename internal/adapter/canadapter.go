@@ -18,7 +18,7 @@ package adapter
 import (
 	"github.com/brutella/can"
 
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 // CANAdapter reads raw CAN bus frames and outputs complete NMEA 2000 Packets.
@@ -39,9 +39,9 @@ type CANAdapter struct {
 // Implementations receive fully assembled packets (both single-frame and multi-frame)
 // that are ready for decoding into typed PGN structs.
 type PacketHandler interface {
-	// HandlePacket receives a complete Packet for decoding. The packet's Decoders slice
+	// Decode receives a complete Packet for decoding. The packet's Decoders slice
 	// is already populated and filtered by manufacturer for proprietary PGNs.
-	HandlePacket(pkt.Packet)
+	Decode(decoder.Packet)
 }
 
 // NewCANAdapter creates and returns a new CANAdapter with an initialized MultiBuilder
@@ -82,7 +82,7 @@ func (c *CANAdapter) HandleMessage(f *can.Frame) {
 	pInfo := NewPacketInfo(f)
 
 	// Create a Packet and look up candidate decoders from the canboat PGN registry.
-	packet := pkt.NewPacket(pInfo, f.Data[:])
+	packet := decoder.NewPacket(pInfo, f.Data[:])
 
 	// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
 
@@ -117,8 +117,8 @@ func (c *CANAdapter) HandleMessage(f *can.Frame) {
 //
 // Parameters:
 //   - packet: The complete Packet to forward (passed by value via dereference).
-func (c *CANAdapter) packetReady(packet *pkt.Packet) {
+func (c *CANAdapter) packetReady(packet *decoder.Packet) {
 	if c.handler != nil {
-		c.handler.HandlePacket(*packet)
+		c.handler.Decode(*packet)
 	}
 }

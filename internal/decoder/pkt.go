@@ -1,11 +1,11 @@
-// Package pkt converts input messages to an intermediate (Packet) form, and outputs equivalent golang structs.
+// Package decoder converts input messages to an intermediate (Packet) form, and outputs equivalent golang structs.
 //
-// The pkt package sits in the middle of the NMEA 2000 decoding pipeline. It receives raw
+// The decoder package sits in the middle of the NMEA 2000 decoding pipeline. It receives raw
 // frame data from an adapter layer and produces decoded Go structs representing specific
 // PGN (Parameter Group Number) messages. The Packet type is the central data structure
 // that accumulates frame data, tracks fast-packet assembly state, and holds candidate
 // decoders for the final PGN interpretation.
-package pkt
+package decoder
 
 import (
 	"fmt"

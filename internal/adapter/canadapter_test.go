@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/open-ships/n2k/pkg/pgn"
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +16,7 @@ func TestPgn127501(t *testing.T) {
 	raw := "2023-01-21T00:04:17Z,3,127501,224,0,8,00,03,c0,ff,ff,ff,ff,ff"
 	f := CanFrameFromRaw(raw)
 	pInfo := NewPacketInfo(&f)
-	p := pkt.NewPacket(pInfo, f.Data[:])
+	p := decoder.NewPacket(pInfo, f.Data[:])
 	assert.NotEmpty(t, p.Candidates)
 	p.AddDecoders()
 	assert.Equal(t, len(p.Decoders), 1)

@@ -1,4 +1,4 @@
-package pkt
+package decoder
 
 import (
 	"testing"

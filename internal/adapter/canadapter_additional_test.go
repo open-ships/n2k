@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/brutella/can"
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,11 +12,11 @@ import (
 // allowing tests to inspect the output of the processing pipeline.
 type mockHandler struct {
 	// packets accumulates all packets received via HandlePacket, in order.
-	packets []pkt.Packet
+	packets []decoder.Packet
 }
 
-// HandlePacket records the packet for later test verification.
-func (m *mockHandler) HandlePacket(p pkt.Packet) {
+// Decode records the packet for later test verification.
+func (m *mockHandler) Decode(p decoder.Packet) {
 	m.packets = append(m.packets, p)
 }
 

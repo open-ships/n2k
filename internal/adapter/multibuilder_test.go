@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/brutella/can"
 	"github.com/stretchr/testify/assert"
 )
@@ -72,7 +72,7 @@ var testData = `
 func TestBigPacket(t *testing.T) {
 
 	m := NewMultiBuilder()
-	var p *pkt.Packet
+	var p *decoder.Packet
 	lines := strings.Split(testData, "\n")
 	for _, line := range lines {
 		if len(line) == 0 {
@@ -80,7 +80,7 @@ func TestBigPacket(t *testing.T) {
 		}
 		frame := CanFrameFromRaw(line)
 		pInfo := NewPacketInfo(&frame)
-		p = pkt.NewPacket(pInfo, frame.Data[:])
+		p = decoder.NewPacket(pInfo, frame.Data[:])
 		m.Add(p)
 	}
 	assert.True(t, p.Complete)
@@ -113,7 +113,7 @@ func TestFastPacket(t *testing.T) {
 	// Byte 0 = 0xa0: seqId=5, frameNum=0. Byte 1 = 5: expected length.
 	pInfo := NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8})
 	data := []uint8{160, 5, 163, 153, 32, 128, 1, 255}
-	p := pkt.NewPacket(pInfo, data)
+	p := decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.True(t, p.Complete)
 	assert.True(t, p.Valid())
@@ -123,7 +123,7 @@ func TestFastPacket(t *testing.T) {
 	// accept it but the sequence won't be complete. Verify the sequence exists in the map
 	// under source=10, pgn=130820, seqId=5.
 	m = NewMultiBuilder()
-	p = pkt.NewPacket(NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8}), []uint8{161, 5, 163, 153, 32, 128, 1, 255})
+	p = decoder.NewPacket(NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8}), []uint8{161, 5, 163, 153, 32, 128, 1, 255})
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.NotNil(t, m.sequences[10])
@@ -138,24 +138,24 @@ func TestFastPacket(t *testing.T) {
 	m = NewMultiBuilder()
 	pInfo = NewPacketInfo(&can.Frame{ID: 0x09F20183})
 	data = []uint8{0x60, 0x20, 0x00, 0x10, 0x13, 0x80, 0x0C, 0x70}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.Equal(t, 1, len(p.Candidates))
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x62, 0x55, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x7F}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x63, 0x00, 0x00, 0x00, 0x00, 0x10, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.True(t, p.Complete)
 	assert.Equal(t, 32, len(p.Data))
@@ -167,24 +167,24 @@ func TestFastPacket(t *testing.T) {
 	m = NewMultiBuilder()
 	// Frame 0 must be first!
 	data = []uint8{0x60, 0x20, 0x00, 0x10, 0x13, 0x80, 0x0C, 0x70}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x63, 0x00, 0x00, 0x00, 0x00, 0x10, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x62, 0x55, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x7F}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.Equal(t, 1, len(p.Candidates))
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.True(t, p.Complete)
 	assert.Equal(t, 32, len(p.Data))
@@ -193,24 +193,24 @@ func TestFastPacket(t *testing.T) {
 	// --- Another out-of-order test (same order, verifying reproducibility) ---
 	m = NewMultiBuilder()
 	data = []uint8{0x60, 0x20, 0x00, 0x10, 0x13, 0x80, 0x0C, 0x70}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x63, 0x00, 0x00, 0x00, 0x00, 0x10, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x62, 0x55, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x7F}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.Equal(t, 1, len(p.Candidates))
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.True(t, p.Complete)
 	assert.Equal(t, 32, len(p.Data))
@@ -222,29 +222,29 @@ func TestFastPacket(t *testing.T) {
 	// the packet cannot complete. Verify it's NOT complete and differs from correct assembly.
 	m = NewMultiBuilder()
 	data = []uint8{0x60, 0x20, 0x00, 0x10, 0x13, 0x80, 0x0C, 0x70}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x63, 0x00, 0x00, 0x00, 0x00, 0x10, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	// Duplicate frame 1 -- triggers sequence reset.
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	// After reset, sequence is incomplete. Continue with remaining frames.
 	data = []uint8{0x62, 0x55, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x7F}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.Equal(t, 1, len(p.Candidates))
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
-	p = pkt.NewPacket(pInfo, data)
+	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	// Packet should NOT be complete because the reset lost frames 0 and 3.
 	assert.False(t, p.Complete)

@@ -17,7 +17,7 @@ import (
 
 	"github.com/open-ships/n2k/internal/adapter"
 	"github.com/open-ships/n2k/pkg/endpoint/socketcanendpoint"
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 type jsonPrinter struct {
@@ -40,11 +40,11 @@ func main() {
 	log := slog.New(slog.NewTextHandler(os.Stderr, nil))
 
 	printer := &jsonPrinter{enc: json.NewEncoder(os.Stdout)}
-	decoder := pkt.NewPacketStruct()
-	decoder.SetOutput(printer)
+	dec := decoder.New()
+	dec.SetOutput(printer)
 
 	a := adapter.NewCANAdapter()
-	a.SetOutput(decoder)
+	a.SetOutput(dec)
 
 	ep := socketcanendpoint.NewSocketCANEndpoint(log, *iface)
 	ep.SetOutput(a)

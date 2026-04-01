@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 // MultiBuilder manages the assembly of multi-frame NMEA 2000 fast packets into complete
@@ -45,7 +45,7 @@ func NewMultiBuilder() *MultiBuilder {
 //   - p: A pointer to the Packet containing the raw CAN frame data. On return, if the
 //     sequence is complete, p.Data will contain the fully assembled payload and
 //     p.Complete will be true.
-func (m *MultiBuilder) Add(p *pkt.Packet) {
+func (m *MultiBuilder) Add(p *decoder.Packet) {
 	// Extract the 3-bit sequence ID and 5-bit frame number from the first data byte.
 	p.GetSeqFrame()
 	// Find or create the sequence for this source/PGN/seqId combination.
@@ -67,7 +67,7 @@ func (m *MultiBuilder) Add(p *pkt.Packet) {
 //   - p: The Packet whose Info.SourceId, Info.PGN, and SeqId identify the target sequence.
 //
 // Returns a pointer to the sequence for this packet's source/PGN/seqId combination.
-func (m *MultiBuilder) SeqFor(p *pkt.Packet) *sequence {
+func (m *MultiBuilder) SeqFor(p *decoder.Packet) *sequence {
 	// Lazily initialize the source-level map if this is the first packet from this source.
 	if _, t := m.sequences[p.Info.SourceId]; !t {
 		m.sequences[p.Info.SourceId] = make(map[uint32]map[uint8]*sequence)

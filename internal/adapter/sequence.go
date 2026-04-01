@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/open-ships/n2k/pkg/pkt"
+	"github.com/open-ships/n2k/internal/decoder"
 )
 
 // MaxFrameNum is the maximum frame number in a multipart NMEA 2000 fast-packet message.
@@ -31,7 +31,7 @@ const MaxFrameNum = 31
 type sequence struct {
 	// zero holds the initial frame (frame number 0) of this sequence. It must be received
 	// before any continuation frames can be accepted. If nil, no frame 0 has been received yet.
-	zero *pkt.Packet
+	zero *decoder.Packet
 
 	// expected is the total number of payload bytes expected for this message, as declared
 	// in byte 1 of frame 0. This is used to determine when all data has been received and
@@ -67,7 +67,7 @@ type sequence struct {
 //
 // Parameters:
 //   - p: The Packet containing the raw CAN frame data with sequence/frame header in byte 0.
-func (s *sequence) add(p *pkt.Packet) {
+func (s *sequence) add(p *decoder.Packet) {
 	if p.FrameNum == 0 {
 		if s.zero != nil { // we've received frame zero for a new sequence before completing the previous one.
 			slog.Debug("Fast sequence duplicate frame zero detected. Resetting")
@@ -120,7 +120,7 @@ func (s *sequence) add(p *pkt.Packet) {
 //
 // Returns true if the sequence is complete (either successfully or with errors), false
 // if more frames are still needed.
-func (s *sequence) complete(p *pkt.Packet) bool {
+func (s *sequence) complete(p *decoder.Packet) bool {
 	if s.zero != nil {
 		if s.received >= s.expected {
 			// All expected data has been received. Consolidate the per-frame data arrays
