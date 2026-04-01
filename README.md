@@ -5,7 +5,7 @@ A Go library for decoding NMEA 2000 marine network messages from CAN bus hardwar
 ## Install
 
 ```bash
-go get github.com/open-ships/n2k/pkg/n2k
+go get github.com/open-ships/n2k
 ```
 
 ## Usage
@@ -21,8 +21,8 @@ import (
     "os"
     "os/signal"
 
-    "github.com/open-ships/n2k/pkg/n2k"
-    "github.com/open-ships/n2k/pkg/pgn"
+    "github.com/open-ships/n2k"
+    "github.com/open-ships/n2k/pgn"
 )
 
 func main() {
@@ -152,7 +152,7 @@ go run ./cmd/sniffer.go -i can0 | jq .
 
 ## PGN Types
 
-All decoded messages are pointers to generated structs in the `pkg/pgn` package. Use a type switch to handle specific message types. See `pkg/pgn/pgninfo_generated.go` for the full list.
+All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. See `pgn/pgninfo_generated.go` for the full list.
 
 Every struct embeds `pgn.MessageInfo`:
 
@@ -168,7 +168,7 @@ type MessageInfo struct {
 
 ## Unit Types
 
-Physical quantities use type-safe wrappers from the `pkg/units` package with built-in conversion methods.
+Physical quantities use type-safe wrappers from the `units` package with built-in conversion methods.
 
 ## Hardware
 
