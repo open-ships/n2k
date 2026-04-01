@@ -3,7 +3,7 @@ package decoder
 import (
 	"testing"
 
-	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/pkg/pgn"
 	"github.com/stretchr/testify/assert"
 )
 

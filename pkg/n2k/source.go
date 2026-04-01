@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/brutella/can"
-	"github.com/open-ships/n2k/internal/canbus"
+	"github.com/open-ships/n2k/pkg/n2k/internal/canbus"
 )
 
 type source interface {

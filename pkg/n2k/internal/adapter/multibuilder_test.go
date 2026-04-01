@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/pkg/n2k/internal/decoder"
 	"github.com/brutella/can"
 	"github.com/stretchr/testify/assert"
 )

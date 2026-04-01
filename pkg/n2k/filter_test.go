@@ -3,7 +3,7 @@ package n2k
 import (
 	"testing"
 
-	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/pkg/pgn"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -10,7 +10,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/open-ships/n2k"
+	n2k "github.com/open-ships/n2k/pkg/n2k"
 )
 
 func main() {

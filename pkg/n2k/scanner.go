@@ -7,9 +7,9 @@ import (
 	"sync"
 
 	"github.com/brutella/can"
-	"github.com/open-ships/n2k/internal/adapter"
-	"github.com/open-ships/n2k/internal/decoder"
-	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/pkg/n2k/internal/adapter"
+	"github.com/open-ships/n2k/pkg/n2k/internal/decoder"
+	"github.com/open-ships/n2k/pkg/pgn"
 )
 
 // Scanner reads decoded NMEA 2000 messages one at a time.

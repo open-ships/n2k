@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/pkg/n2k/internal/decoder"
 )
 
 // MultiBuilder manages the assembly of multi-frame NMEA 2000 fast packets into complete
