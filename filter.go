@@ -10,14 +10,6 @@ import (
 	"github.com/open-ships/n2k/pgn"
 )
 
-// metaVars are the CEL variable names that correspond to message header metadata.
-var metaVars = map[string]bool{
-	"pgn":         true,
-	"source":      true,
-	"priority":    true,
-	"destination": true,
-}
-
 // filter holds a compiled CEL expression that has been partitioned into
 // pre-decode (metadata-only) and post-decode (struct field) stages.
 type filter struct {
@@ -225,7 +217,7 @@ func (f *filter) evalPostWithInfo(info pgn.MessageInfo, fields map[string]any) b
 // converted to int64 or float64 for CEL compatibility.
 func structToFilterMap(v any) map[string]any {
 	rv := reflect.ValueOf(v)
-	if rv.Kind() == reflect.Ptr {
+	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
 			return nil
 		}
@@ -253,7 +245,7 @@ func structToFilterMap(v any) map[string]any {
 		fv := rv.Field(i)
 
 		// Dereference pointers; skip nil.
-		if fv.Kind() == reflect.Ptr {
+		if fv.Kind() == reflect.Pointer {
 			if fv.IsNil() {
 				continue
 			}

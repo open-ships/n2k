@@ -136,7 +136,7 @@ func (h *scannerHandler) HandleStruct(msg any) {
 		fields := structToFilterMap(msg)
 		var info pgn.MessageInfo
 		rv := reflect.ValueOf(msg)
-		if rv.Kind() == reflect.Ptr {
+		if rv.Kind() == reflect.Pointer {
 			rv = rv.Elem()
 		}
 		if rv.Kind() == reflect.Struct {

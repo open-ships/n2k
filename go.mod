@@ -1,6 +1,6 @@
 module github.com/open-ships/n2k
 
-go 1.25
+go 1.26.2
 
 require (
 	github.com/brutella/can v0.0.2
@@ -8,11 +8,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0
 	go.bug.st/serial v1.6.2
-)
-
-require (
-	github.com/vishvananda/netlink v1.2.1-beta.2.0.20221214185949-378a404a26f0
-	github.com/vishvananda/netns v0.0.4 // indirect
 )
 
 require (

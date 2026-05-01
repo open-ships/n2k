@@ -34,34 +34,8 @@ import (
 //   - Bit  [4]   = 1 for remote frame, 0 for data frame
 //   - Bits [3:0] = data length (0-8 bytes of CAN payload)
 
-// CANUSBMode is an enum for the CANUSB device's operating modes.
-// These modes control how the CAN transceiver behaves on the bus.
-type CANUSBMode byte
-
-const (
-	// ModeNormal is standard operating mode -- the device transmits and receives normally on the CAN bus.
-	ModeNormal CANUSBMode = 0
-	// ModeLoopback causes transmitted frames to be looped back as received frames (for testing without a bus).
-	ModeLoopback CANUSBMode = 1
-	// ModeSilent puts the device in listen-only mode -- it receives but never transmits ACKs or frames.
-	ModeSilent CANUSBMode = 2
-	// ModeLoopbackSilent combines loopback and silent modes (useful for self-test without bus interaction).
-	ModeLoopbackSilent CANUSBMode = 3
-)
-
-// CANUSBFrame is an enum for the CAN frame type used in the settings frame to tell
-// the device whether to operate in standard (11-bit ID) or extended (29-bit ID) mode.
-type CANUSBFrame byte
-
-const (
-	// FrameStandard configures the device for standard 11-bit CAN IDs.
-	FrameStandard CANUSBFrame = 1
-	// FrameExtended configures the device for extended 29-bit CAN IDs (used by NMEA 2000).
-	FrameExtended CANUSBFrame = 2
-)
-
-// USBCANChannelOptions contains the configuration required to open and operate a USB-CAN channel.
-type USBCANChannelOptions struct {
+// usbCANChannelOptions contains the configuration required to open and operate a USB-CAN channel.
+type usbCANChannelOptions struct {
 	// SerialPortName is the OS path to the serial port device, e.g. "/dev/ttyUSB0" on Linux
 	// or "/dev/cu.usbserial-1234" on macOS.
 	SerialPortName string `json:"serialPortName"`
@@ -71,21 +45,17 @@ type USBCANChannelOptions struct {
 	// The USB-CAN Analyzer typically uses 2000000 (2 Mbaud).
 	SerialBaudRate int `json:"serialBaudRate"`
 
-	// BitRate is the CAN bus bitrate in bits per second. Common values for NMEA 2000 are 250000.
-	// This value is mapped to a protocol-specific byte code in the settings frame sent to the device.
-	BitRate int `json:"bitRate"`
-
 	// FrameHandler is the callback function invoked for each successfully parsed CAN frame.
 	// The handler receives a can.Frame with the CAN ID and up to 8 bytes of payload data.
 	FrameHandler can.HandlerFunc `json:"frameHandler"`
 }
 
-// USBCANChannel represents a single USB-CAN-based canbus channel for sending/receiving CAN frames.
+// usbCANChannel represents a single USB-CAN-based canbus channel for sending/receiving CAN frames.
 // It manages the serial port connection, sends the initial configuration frame, and continuously
 // reads and parses the proprietary USB-CAN binary protocol from the serial stream.
-type USBCANChannel struct {
+type usbCANChannel struct {
 	// options holds the user-provided configuration (serial port, bitrate, handler, etc.)
-	options USBCANChannelOptions
+	options usbCANChannelOptions
 
 	// port is the open serial port connection to the USB-CAN dongle.
 	// It is nil until Run() is called.
@@ -95,7 +65,7 @@ type USBCANChannel struct {
 	log *slog.Logger
 }
 
-// NewUSBCANChannel creates and returns a new USBCANChannel configured with the given options.
+// newUSBCANChannel creates and returns a new usbCANChannel configured with the given options.
 // The channel is not opened until Run() is called.
 //
 // Parameters:
@@ -103,8 +73,8 @@ type USBCANChannel struct {
 //   - options: required configuration including serial port path, baud rate, CAN bitrate, and frame handler
 //
 // Returns an Interface so callers can use it polymorphically with SocketCANChannel.
-func NewUSBCANChannel(log *slog.Logger, options USBCANChannelOptions) Interface {
-	c := USBCANChannel{
+func newUSBCANChannel(log *slog.Logger, options usbCANChannelOptions) Interface {
+	c := usbCANChannel{
 		options: options,
 		log:     log,
 	}
@@ -121,7 +91,7 @@ func NewUSBCANChannel(log *slog.Logger, options USBCANChannelOptions) Interface 
 // partial data across iterations.
 //
 // This method blocks indefinitely and only returns on a read error or serial port failure.
-func (c *USBCANChannel) Run(ctx context.Context) error {
+func (c *usbCANChannel) Run(ctx context.Context) error {
 	// Configure and open the serial port at the specified baud rate.
 	// The USB-CAN Analyzer typically runs at 2 Mbaud on the serial link.
 	mode := &serial.Mode{
@@ -133,12 +103,6 @@ func (c *USBCANChannel) Run(ctx context.Context) error {
 	}
 
 	c.port = port
-
-	// Send the 20-byte settings frame to configure the device's CAN bitrate, frame type, and mode.
-	// This must happen before we start reading, as the device won't produce data frames until configured.
-	if err := c.sendSettingsFrame(); err != nil {
-		return err
-	}
 
 	c.log.Info("Opened USBCAN and listening", "portName", c.options.SerialPortName)
 
@@ -180,7 +144,7 @@ func (c *USBCANChannel) Run(ctx context.Context) error {
 //
 // Parameters:
 //   - bufAddr: pointer to the byte slice buffer, modified in-place to remove consumed bytes
-func (c *USBCANChannel) parseFrames(bufAddr *[]byte) error {
+func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 	for {
 		buf := *bufAddr
 
@@ -322,7 +286,7 @@ func (c *USBCANChannel) parseFrames(bufAddr *[]byte) error {
 
 // Close shuts down the USB-CAN channel by closing the underlying serial port.
 // It is safe to call Close() even if the port was never opened (port is nil).
-func (c *USBCANChannel) Close() error {
+func (c *usbCANChannel) Close() error {
 	if c.port != nil {
 		if err := c.port.Close(); err != nil {
 			return err
@@ -345,7 +309,7 @@ func (c *USBCANChannel) Close() error {
 // Note: This currently defaults to standard frames and switches to extended only if the
 // frame ID exceeds 0xFFFF. For NMEA 2000, which always uses 29-bit extended IDs, the
 // frame ID will always exceed 0xFFFF, so extended mode is used automatically.
-func (c *USBCANChannel) WriteFrame(frame can.Frame) error {
+func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 	// Build the frame header: start byte + info byte + 2-byte little-endian ID (standard).
 	buf := []byte{
 		0xaa,
@@ -376,107 +340,6 @@ func (c *USBCANChannel) WriteFrame(frame can.Frame) error {
 	return nil
 }
 
-// sendSettingsFrame sends the initial 20-byte configuration frame to the USB-CAN device.
-// This frame tells the device what CAN bitrate to use, what frame type to expect,
-// and what operating mode to run in.
-//
-// Settings frame format (20 bytes):
-//   - Byte 0:    0xAA (start-of-frame marker)
-//   - Byte 1:    0x55 (identifies this as a command/settings frame)
-//   - Byte 2:    0x12 (settings command identifier)
-//   - Byte 3:    bitrate code (mapped from numeric bitrate via mapBitRate)
-//   - Byte 4:    frame type (FrameStandard=1 or FrameExtended=2)
-//   - Bytes 5-12: reserved/unused (all zeros)
-//   - Byte 13:   operating mode (ModeNormal=0, ModeLoopback=1, etc.)
-//   - Byte 14:   0x01 (unknown purpose, possibly an enable flag)
-//   - Bytes 15-18: reserved/unused (all zeros)
-//   - Byte 19:   checksum (sum of bytes 2 through 18, truncated to a single byte)
-func (c *USBCANChannel) sendSettingsFrame() error {
-	// Map the human-readable bitrate (e.g. 250000) to the protocol's byte code (e.g. 0x05).
-	br, err := mapBitRate(c.options.BitRate)
-	if err != nil {
-		return err
-	}
-
-	buf := []byte{
-		0xaa,                    // Byte 0: start-of-frame
-		0x55,                    // Byte 1: command frame indicator
-		0x12,                    // Byte 2: settings command ID
-		br,                      // Byte 3: CAN bitrate code
-		byte(FrameStandard),     // Byte 4: frame type (standard 11-bit IDs)
-		0,                       // Byte 5: reserved
-		0,                       // Byte 6: reserved
-		0,                       // Byte 7: reserved
-		0,                       // Byte 8: reserved
-		0,                       // Byte 9: reserved
-		0,                       // Byte 10: reserved
-		0,                       // Byte 11: reserved
-		0,                       // Byte 12: reserved
-		byte(ModeNormal),        // Byte 13: operating mode (normal)
-		0x01,                    // Byte 14: possibly an enable flag
-		0,                       // Byte 15: reserved
-		0,                       // Byte 16: reserved
-		0,                       // Byte 17: reserved
-		0,                       // Byte 18: reserved
-		0,                       // Byte 19: placeholder for checksum
-	}
-	// Calculate the checksum over bytes 2-18 (17 bytes starting at index 2).
-	// The checksum is a simple 8-bit sum (overflow wraps around naturally due to byte arithmetic).
-	buf[19] = calcChecksum(buf, 2, 17)
-
-	o, err := c.port.Write(buf)
-	if o != len(buf) {
-		return fmt.Errorf("sendSettingsFrame sent %d of %d bytes", o, len(buf))
-	}
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// mapBitRate converts a numeric CAN bus bitrate (in bits per second) to the corresponding
-// protocol byte code expected by the USB-CAN Analyzer device.
-//
-// The USB-CAN protocol does not accept raw bitrate values -- instead, each supported bitrate
-// is assigned a specific byte code that is sent in the settings frame.
-//
-// Parameters:
-//   - bitRate: the desired CAN bus bitrate in bits per second (e.g. 250000 for NMEA 2000)
-//
-// Returns:
-//   - The corresponding byte code, or an error if the bitrate is not supported by the device.
-func mapBitRate(bitRate int) (byte, error) {
-	switch bitRate {
-	case 1000000:
-		return 0x01, nil
-	case 800000:
-		return 0x02, nil
-	case 500000:
-		return 0x03, nil
-	case 400000:
-		return 0x04, nil
-	case 250000:
-		return 0x05, nil // NMEA 2000 standard bitrate
-	case 200000:
-		return 0x06, nil
-	case 125000:
-		return 0x07, nil
-	case 100000:
-		return 0x08, nil
-	case 50000:
-		return 0x09, nil
-	case 20000:
-		return 0x0a, nil
-	case 10000:
-		return 0x0b, nil
-	case 5000:
-		return 0x0c, nil
-	default:
-		return 0, fmt.Errorf("no matching bitrate setting for %d", bitRate)
-	}
-}
-
 // RunUSBCAN creates a USB-CAN channel for the given serial port and runs it,
 // calling handler for each received CAN frame. Blocks until error or context done.
 func RunUSBCAN(ctx context.Context, log *slog.Logger, port string, handler func(can.Frame)) error {
@@ -484,33 +347,11 @@ func RunUSBCAN(ctx context.Context, log *slog.Logger, port string, handler func(
 		handler(frame)
 	}
 
-	ch := NewUSBCANChannel(log, USBCANChannelOptions{
+	ch := newUSBCANChannel(log, usbCANChannelOptions{
 		SerialPortName: port,
 		SerialBaudRate: 2000000,
-		BitRate:        250000,
 		FrameHandler:   frameHandler,
 	})
 
 	return ch.Run(ctx)
-}
-
-// calcChecksum computes a simple 8-bit additive checksum over a range of bytes in a buffer.
-// This is the checksum algorithm used by the USB-CAN Analyzer protocol for settings frames.
-//
-// The checksum is calculated by summing all bytes in the range [start, start+len) and
-// letting the result overflow naturally (since the return type is a single byte, the sum
-// wraps around modulo 256).
-//
-// Parameters:
-//   - buf: the byte buffer to checksum
-//   - start: the starting index (inclusive) within buf
-//   - len: the number of bytes to include in the checksum
-//
-// Returns the 8-bit checksum value.
-func calcChecksum(buf []byte, start, len int) byte {
-	cs := byte(0)
-	for i := start; i < start+len; i++ {
-		cs += buf[i]
-	}
-	return cs
 }
