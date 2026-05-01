@@ -1,6 +1,17 @@
+golangci_lint_version := "v2.11.4"
+
 # list available recipes
 default:
     @just --list
+
+# ensure golangci-lint is installed at the right version
+setup:
+    @if command -v golangci-lint >/dev/null && golangci-lint --version 2>&1 | grep -q "{{trim_start_match(golangci_lint_version, "v")}}"; then \
+        echo "golangci-lint {{golangci_lint_version}} already installed"; \
+    else \
+        echo "Installing golangci-lint {{golangci_lint_version}}..."; \
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin" {{golangci_lint_version}}; \
+    fi
 
 # run all tests
 test:

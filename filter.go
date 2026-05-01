@@ -10,14 +10,6 @@ import (
 	"github.com/open-ships/n2k/pgn"
 )
 
-// metaVars are the CEL variable names that correspond to message header metadata.
-var metaVars = map[string]bool{
-	"pgn":         true,
-	"source":      true,
-	"priority":    true,
-	"destination": true,
-}
-
 // filter holds a compiled CEL expression that has been partitioned into
 // pre-decode (metadata-only) and post-decode (struct field) stages.
 type filter struct {
