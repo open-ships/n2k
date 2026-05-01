@@ -11,11 +11,6 @@ require (
 )
 
 require (
-	github.com/vishvananda/netlink v1.2.1-beta.2.0.20221214185949-378a404a26f0
-	github.com/vishvananda/netns v0.0.4 // indirect
-)
-
-require (
 	cel.dev/expr v0.25.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/creack/goselect v0.1.2 // indirect

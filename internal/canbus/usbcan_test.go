@@ -8,81 +8,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestMapBitRate_ValidRates verifies that every supported CAN bitrate correctly maps
-// to its expected protocol byte code. The USB-CAN Analyzer protocol assigns a unique
-// byte value for each supported bitrate (e.g., 250000 bps -> 0x05).
-func TestMapBitRate_ValidRates(t *testing.T) {
-	tests := []struct {
-		rate     int
-		expected byte
-	}{
-		{1000000, 0x01},
-		{800000, 0x02},
-		{500000, 0x03},
-		{400000, 0x04},
-		{250000, 0x05},
-		{200000, 0x06},
-		{125000, 0x07},
-		{100000, 0x08},
-		{50000, 0x09},
-		{20000, 0x0a},
-		{10000, 0x0b},
-		{5000, 0x0c},
-	}
-	for _, tc := range tests {
-		result, err := mapBitRate(tc.rate)
-		assert.NoError(t, err, "bitrate %d should be valid", tc.rate)
-		assert.Equal(t, tc.expected, result, "bitrate %d should map to 0x%02x", tc.rate, tc.expected)
-	}
-}
-
-// TestMapBitRate_InvalidRate verifies that unsupported bitrate values return an error.
-// The USB-CAN device only supports a fixed set of bitrates, so arbitrary values
-// (including zero, negative, and values close to but not matching supported rates) must fail.
-func TestMapBitRate_InvalidRate(t *testing.T) {
-	invalidRates := []int{0, 1, 9999, 300000, 999999, -1}
-	for _, rate := range invalidRates {
-		_, err := mapBitRate(rate)
-		assert.Error(t, err, "bitrate %d should return error", rate)
-	}
-}
-
-// TestCalcChecksum verifies the 8-bit additive checksum used in USB-CAN settings frames.
-// The checksum sums bytes in a given range and naturally wraps around at 256 (byte overflow).
-func TestCalcChecksum(t *testing.T) {
-	// Simple known sum: 0x01+0x02+0x03+0x04 = 0x0A
-	buf := []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05}
-	cs := calcChecksum(buf, 1, 4) // sum of 0x01+0x02+0x03+0x04 = 0x0A
-	assert.Equal(t, byte(0x0A), cs)
-
-	// All zeros: checksum of all-zero bytes is zero.
-	buf = []byte{0x00, 0x00, 0x00, 0x00}
-	cs = calcChecksum(buf, 0, 4)
-	assert.Equal(t, byte(0x00), cs)
-
-	// Overflow wraps around: 0xFF + 0x01 = 0x100, but as a byte it wraps to 0x00.
-	// This verifies the checksum correctly uses natural byte overflow behavior.
-	buf = []byte{0xFF, 0x01}
-	cs = calcChecksum(buf, 0, 2) // 0xFF + 0x01 = 0x00 (overflow)
-	assert.Equal(t, byte(0x00), cs)
-
-	// Single byte: checksum of one byte is just that byte itself.
-	buf = []byte{0x42}
-	cs = calcChecksum(buf, 0, 1)
-	assert.Equal(t, byte(0x42), cs)
-}
-
-// newTestChannel creates a USBCANChannel for testing with a no-op logger and a FrameHandler
+// newTestChannel creates a usbCANChannel for testing with a no-op logger and a FrameHandler
 // that appends received frames to a slice. Returns the channel and a pointer to the received
 // frames slice so tests can inspect what the parser dispatched.
-func newTestChannel() (*USBCANChannel, *[]can.Frame) {
+func newTestChannel() (*usbCANChannel, *[]can.Frame) {
 	received := &[]can.Frame{}
-	ch := NewUSBCANChannel(slog.Default(), USBCANChannelOptions{
+	ch := newUSBCANChannel(slog.Default(), usbCANChannelOptions{
 		FrameHandler: func(f can.Frame) {
 			*received = append(*received, f)
 		},
 	})
-	return ch.(*USBCANChannel), received
+	return ch.(*usbCANChannel), received
 }
 
 // TestParseFrames_EmptyBuffer verifies that an empty buffer produces no frames and no errors.

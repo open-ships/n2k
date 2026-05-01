@@ -155,7 +155,7 @@ MIT -- see LICENSE.
 
 ## Acknowledgments
 
-### [boatkit-io/n2k](github.com/boatkit-io/n2k/)
+### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
 
 This project was originally a fork of boatkit-io's work, which built the original Go implementation of this NMEA 2000 decoding pipeline.
 
