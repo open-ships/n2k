@@ -1,4 +1,4 @@
-golangci_lint_version := "v2.11.4"
+golangci_lint_version := "v2.12.0"
 
 # list available recipes
 default:
