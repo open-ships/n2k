@@ -41,6 +41,10 @@ type PgnInfo struct {
 	// returns a strongly-typed Go struct (e.g., VesselHeading, RateOfTurn).
 	// The returned any value should be type-asserted by the caller.
 	Decoder func(MessageInfo, *PGNDataStream) (any, error) `json:"decoder"`
+	// Encoder is the generated function that serializes a strongly-typed Go struct
+	// back into raw NMEA 2000 payload bytes. It is the inverse of Decoder.
+	// Not all PGNs have encoders; this field is nil when no encoder is available.
+	Encoder func(any) ([]byte, error) `json:"encoder"`
 	// Fields maps field index (1-based, matching the canboat field order) to
 	// FieldDescriptor. This is needed at runtime for variable-length and KeyValue
 	// fields where the decoder must inspect field metadata dynamically.
@@ -92,31 +96,6 @@ var PgnInfoLookup map[uint32][]*PgnInfo
 // considered less reliable because they lack test vectors.
 var UnseenLookup map[uint32][]*PgnInfo
 
-// init builds the PgnInfoLookup and UnseenLookup maps from the generated pgnList and
-// unseenList slices (defined in pgninfo_generated.go). It also sets the Self pointer
-// on each PgnInfo so that generated code can reference its own descriptor.
-func init() {
-	PgnInfoLookup = make(map[uint32][]*PgnInfo)
-	UnseenLookup = make(map[uint32][]*PgnInfo)
-
-	// Index every PGN in the generated pgnList (PGNs with sample data / known-good decoders).
-	for i, pi := range pgnList {
-		// Set Self to point back to this entry's address in the slice.
-		pgnList[i].Self = &pgnList[i]
-		if PgnInfoLookup[pi.PGN] == nil {
-			PgnInfoLookup[pi.PGN] = make([]*PgnInfo, 0)
-		}
-		PgnInfoLookup[pi.PGN] = append(PgnInfoLookup[pi.PGN], &pgnList[i])
-	}
-
-	// Index PGNs from the unseen list (defined in canboat but never observed in logs).
-	for i, pi := range unseenList {
-		if UnseenLookup[pi.PGN] == nil {
-			UnseenLookup[pi.PGN] = make([]*PgnInfo, 0)
-		}
-		UnseenLookup[pi.PGN] = append(UnseenLookup[pi.PGN], &unseenList[i])
-	}
-}
 
 // IsProprietaryPGN returns true if the given PGN number falls within one of the four
 // NMEA 2000 proprietary PGN ranges. Proprietary PGNs are manufacturer-specific messages

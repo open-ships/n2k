@@ -12,6 +12,8 @@ type config struct {
 	filterExpr     string
 	includeUnknown bool
 	logger         *slog.Logger
+	sourceAddress  *uint8      // nil = auto mode
+	deviceName     *DeviceName // nil = use default
 }
 
 func (c *config) validate() error {
@@ -71,5 +73,25 @@ func IncludeUnknown() Option {
 func WithLogger(l *slog.Logger) Option {
 	return optionFunc(func(c *config) {
 		c.logger = l
+	})
+}
+
+// WithSourceAddress sets an explicit NMEA 2000 source address for the client.
+// When set, the client uses this address and treats contention as a fatal error.
+// When not set (default), the client uses auto mode — starting at address 253
+// and working downward if contention occurs.
+func WithSourceAddress(addr uint8) Option {
+	return optionFunc(func(c *config) {
+		c.sourceAddress = &addr
+	})
+}
+
+// WithName sets the ISO 11783 device NAME used for address claiming.
+// The NAME is a 64-bit identifier that uniquely identifies this device on the
+// NMEA 2000 network. In address contention, the device with the lower NAME wins.
+// When not set, a default NAME is used (see DefaultDeviceName).
+func WithName(name DeviceName) Option {
+	return optionFunc(func(c *config) {
+		c.deviceName = &name
 	})
 }
