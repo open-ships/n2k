@@ -35,7 +35,7 @@ func TestRoundTrip_EncodeDecodeAisClassAPositionReport(t *testing.T) {
 	decoded, err := DecodeAisClassAPositionReport(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(AisClassAPositionReport)
+	result := decoded.(*AisClassAPositionReport)
 	assert.Equal(t, AisMessageIdConst(1), result.MessageId)
 	assert.Equal(t, RepeatIndicatorConst(0), result.RepeatIndicator)
 	assert.Equal(t, uint32(211234567), *result.UserId)
@@ -83,7 +83,7 @@ func TestRoundTrip_EncodeDecodeAisClassBPositionReport(t *testing.T) {
 	decoded, err := DecodeAisClassBPositionReport(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(AisClassBPositionReport)
+	result := decoded.(*AisClassBPositionReport)
 	assert.Equal(t, AisMessageIdConst(18), result.MessageId)
 	assert.Equal(t, uint32(338123456), *result.UserId)
 	assert.InDelta(t, -122.4194, *result.Longitude, 0.0000001)

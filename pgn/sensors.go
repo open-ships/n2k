@@ -23,8 +23,11 @@ type TrackedTargetData struct {
 	UtcOfFix *float32 `json:"utcOfFix"`
 	Name string `json:"name"`
 }
-func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TrackedTargetData
+
+func (x *TrackedTargetData) PGNNumber() uint32  { return 128520 }
+
+func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TrackedTargetData{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Sid: %w", err)
@@ -158,6 +161,48 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (any, erro
 	}	
 	return val, nil
 }
+
+func EncodeTrackedTargetData(val *TrackedTargetData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.TargetId, 8)
+	w.writeLookupField(uint64(val.TrackStatus), 2)
+	w.writeLookupField(uint64(val.ReportedTarget), 1)
+	w.writeLookupField(uint64(val.TargetAcquisition), 1)
+	w.writeLookupField(uint64(val.BearingReference), 2)
+	w.skipBits(2)
+	w.writeUnsignedResolution(val.Bearing, 16, 0.0001)
+	var distanceRaw *float32
+	if val.Distance != nil {
+		distanceRaw = &val.Distance.Value
+	}
+	w.writeUnsignedResolution(distanceRaw, 32, 0.001)
+	w.writeUnsignedResolution(val.Course, 16, 0.0001)
+	var speedRaw *float32
+	if val.Speed != nil {
+		speedRaw = &val.Speed.Value
+	}
+	w.writeUnsignedResolution(speedRaw, 16, 0.01)
+	var cpaRaw *float32
+	if val.Cpa != nil {
+		cpaRaw = &val.Cpa.Value
+	}
+	w.writeUnsignedResolution(cpaRaw, 32, 0.01)
+	w.writeSignedResolution(val.Tcpa, 32, 0.001)
+	w.writeUnsignedResolution(val.UtcOfFix, 32, 0.0001)
+	w.writeFixedString(val.Name, 1784)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTrackedTargetDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TrackedTargetData)
+	if !ok {
+		return nil, fmt.Errorf("expected *TrackedTargetData, got %T", v)
+	}
+	return EncodeTrackedTargetData(val)
+}
+
 type WindlassControlStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -173,8 +218,11 @@ type WindlassControlStatus struct {
 	CommandTimeout *float32 `json:"commandTimeout"`
 	WindlassControlEvents WindlassControlConst `json:"windlassControlEvents"`
 }
-func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WindlassControlStatus
+
+func (x *WindlassControlStatus) PGNNumber() uint32  { return 128776 }
+
+func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WindlassControlStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for WindlassControlStatus-Sid: %w", err)
@@ -294,6 +342,35 @@ func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (any, 
 		}	
 	return val, nil
 }
+
+func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.WindlassId, 8)
+	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
+	w.writeLookupField(uint64(val.AnchorDockingControl), 2)
+	w.writeLookupField(uint64(val.SpeedControlType), 2)
+	w.skipBits(2)
+	w.writeBinaryData(val.SpeedControl, 8)
+	w.writeLookupField(uint64(val.PowerEnable), 2)
+	w.writeLookupField(uint64(val.MechanicalLock), 2)
+	w.writeLookupField(uint64(val.DeckAndAnchorWash), 2)
+	w.writeLookupField(uint64(val.AnchorLight), 2)
+	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
+	w.writeLookupField(uint64(val.WindlassControlEvents), 4)
+	w.skipBits(12)
+	return w.Bytes(), w.Err()
+}
+
+func encodeWindlassControlStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*WindlassControlStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *WindlassControlStatus, got %T", v)
+	}
+	return EncodeWindlassControlStatus(val)
+}
+
 type AnchorWindlassOperatingStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -306,8 +383,11 @@ type AnchorWindlassOperatingStatus struct {
 	AnchorDockingStatus DockingStatusConst `json:"anchorDockingStatus"`
 	WindlassOperatingEvents WindlassOperationConst `json:"windlassOperatingEvents"`
 }
-func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AnchorWindlassOperatingStatus
+
+func (x *AnchorWindlassOperatingStatus) PGNNumber() uint32  { return 128777 }
+
+func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AnchorWindlassOperatingStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AnchorWindlassOperatingStatus-Sid: %w", err)
@@ -396,6 +476,39 @@ func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream
 	}	
 	return val, nil
 }
+
+func EncodeAnchorWindlassOperatingStatus(val *AnchorWindlassOperatingStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.WindlassId, 8)
+	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
+	w.writeLookupField(uint64(val.WindlassMotionStatus), 2)
+	w.writeLookupField(uint64(val.RodeTypeStatus), 2)
+	w.skipBits(2)
+	var rodeCounterValueRaw *float32
+	if val.RodeCounterValue != nil {
+		rodeCounterValueRaw = &val.RodeCounterValue.Value
+	}
+	w.writeUnsignedResolution(rodeCounterValueRaw, 16, 0.1)
+	var windlassLineSpeedRaw *float32
+	if val.WindlassLineSpeed != nil {
+		windlassLineSpeedRaw = &val.WindlassLineSpeed.Value
+	}
+	w.writeUnsignedResolution(windlassLineSpeedRaw, 16, 0.01)
+	w.writeLookupField(uint64(val.AnchorDockingStatus), 2)
+	w.writeLookupField(uint64(val.WindlassOperatingEvents), 6)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAnchorWindlassOperatingStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AnchorWindlassOperatingStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *AnchorWindlassOperatingStatus, got %T", v)
+	}
+	return EncodeAnchorWindlassOperatingStatus(val)
+}
+
 type AnchorWindlassMonitoringStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -405,8 +518,11 @@ type AnchorWindlassMonitoringStatus struct {
 	MotorCurrent *uint8 `json:"motorCurrent"`
 	TotalMotorTime *float32 `json:"totalMotorTime"`
 }
-func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AnchorWindlassMonitoringStatus
+
+func (x *AnchorWindlassMonitoringStatus) PGNNumber() uint32  { return 128778 }
+
+func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AnchorWindlassMonitoringStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AnchorWindlassMonitoringStatus-Sid: %w", err)
@@ -469,104 +585,6 @@ func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStrea
 	return val, nil
 }
 
-func EncodeTrackedTargetData(val *TrackedTargetData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.TargetId, 8)
-	w.writeLookupField(uint64(val.TrackStatus), 2)
-	w.writeLookupField(uint64(val.ReportedTarget), 1)
-	w.writeLookupField(uint64(val.TargetAcquisition), 1)
-	w.writeLookupField(uint64(val.BearingReference), 2)
-	w.skipBits(2)
-	w.writeUnsignedResolution(val.Bearing, 16, 0.0001)
-	var distanceRaw *float32
-	if val.Distance != nil {
-		distanceRaw = &val.Distance.Value
-	}
-	w.writeUnsignedResolution(distanceRaw, 32, 0.001)
-	w.writeUnsignedResolution(val.Course, 16, 0.0001)
-	var speedRaw *float32
-	if val.Speed != nil {
-		speedRaw = &val.Speed.Value
-	}
-	w.writeUnsignedResolution(speedRaw, 16, 0.01)
-	var cpaRaw *float32
-	if val.Cpa != nil {
-		cpaRaw = &val.Cpa.Value
-	}
-	w.writeUnsignedResolution(cpaRaw, 32, 0.01)
-	w.writeSignedResolution(val.Tcpa, 32, 0.001)
-	w.writeUnsignedResolution(val.UtcOfFix, 32, 0.0001)
-	w.writeFixedString(val.Name, 1784)
-	return w.Bytes(), w.Err()
-}
-func encodeTrackedTargetDataAny(v any) ([]byte, error) {
-	val, ok := v.(*TrackedTargetData)
-	if !ok {
-		return nil, fmt.Errorf("expected *TrackedTargetData, got %T", v)
-	}
-	return EncodeTrackedTargetData(val)
-}
-
-func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.WindlassId, 8)
-	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
-	w.writeLookupField(uint64(val.AnchorDockingControl), 2)
-	w.writeLookupField(uint64(val.SpeedControlType), 2)
-	w.skipBits(2)
-	w.writeBinaryData(val.SpeedControl, 8)
-	w.writeLookupField(uint64(val.PowerEnable), 2)
-	w.writeLookupField(uint64(val.MechanicalLock), 2)
-	w.writeLookupField(uint64(val.DeckAndAnchorWash), 2)
-	w.writeLookupField(uint64(val.AnchorLight), 2)
-	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
-	w.writeLookupField(uint64(val.WindlassControlEvents), 4)
-	w.skipBits(12)
-	return w.Bytes(), w.Err()
-}
-func encodeWindlassControlStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*WindlassControlStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *WindlassControlStatus, got %T", v)
-	}
-	return EncodeWindlassControlStatus(val)
-}
-
-func EncodeAnchorWindlassOperatingStatus(val *AnchorWindlassOperatingStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.WindlassId, 8)
-	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
-	w.writeLookupField(uint64(val.WindlassMotionStatus), 2)
-	w.writeLookupField(uint64(val.RodeTypeStatus), 2)
-	w.skipBits(2)
-	var rodeCounterValueRaw *float32
-	if val.RodeCounterValue != nil {
-		rodeCounterValueRaw = &val.RodeCounterValue.Value
-	}
-	w.writeUnsignedResolution(rodeCounterValueRaw, 16, 0.1)
-	var windlassLineSpeedRaw *float32
-	if val.WindlassLineSpeed != nil {
-		windlassLineSpeedRaw = &val.WindlassLineSpeed.Value
-	}
-	w.writeUnsignedResolution(windlassLineSpeedRaw, 16, 0.01)
-	w.writeLookupField(uint64(val.AnchorDockingStatus), 2)
-	w.writeLookupField(uint64(val.WindlassOperatingEvents), 6)
-	return w.Bytes(), w.Err()
-}
-func encodeAnchorWindlassOperatingStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*AnchorWindlassOperatingStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *AnchorWindlassOperatingStatus, got %T", v)
-	}
-	return EncodeAnchorWindlassOperatingStatus(val)
-}
-
 func EncodeAnchorWindlassMonitoringStatus(val *AnchorWindlassMonitoringStatus) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -579,7 +597,8 @@ func EncodeAnchorWindlassMonitoringStatus(val *AnchorWindlassMonitoringStatus) (
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAnchorWindlassMonitoringStatusAny(v any) ([]byte, error) {
+
+func encodeAnchorWindlassMonitoringStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AnchorWindlassMonitoringStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AnchorWindlassMonitoringStatus, got %T", v)

@@ -18,8 +18,11 @@ type ThrusterControlStatus struct {
 	CommandTimeout *float32 `json:"commandTimeout"`
 	AzimuthControl *float32 `json:"azimuthControl"`
 }
-func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterControlStatus
+
+func (x *ThrusterControlStatus) PGNNumber() uint32  { return 128006 }
+
+func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterControlStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-Sid: %w", err)
@@ -104,6 +107,30 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (any, 
 	}	
 	return val, nil
 }
+
+func EncodeThrusterControlStatus(val *ThrusterControlStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Identifier, 8)
+	w.writeLookupField(uint64(val.DirectionControl), 4)
+	w.writeLookupField(uint64(val.PowerEnabled), 2)
+	w.writeLookupField(uint64(val.RetractControl), 2)
+	w.writeUInt8(val.SpeedControl, 8)
+	w.writeLookupField(uint64(val.ControlEvents), 8)
+	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
+	w.writeUnsignedResolution(val.AzimuthControl, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeThrusterControlStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ThrusterControlStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *ThrusterControlStatus, got %T", v)
+	}
+	return EncodeThrusterControlStatus(val)
+}
+
 type ThrusterInformation struct {
 	Info MessageInfo `json:"info"`
 	Identifier *uint8 `json:"identifier"`
@@ -112,8 +139,11 @@ type ThrusterInformation struct {
 	MaximumTemperatureRating *units.Temperature `json:"maximumTemperatureRating"`
 	MaximumRotationalSpeed *float32 `json:"maximumRotationalSpeed"`
 }
-func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterInformation
+
+func (x *ThrusterInformation) PGNNumber() uint32  { return 128007 }
+
+func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterInformation{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-Identifier: %w", err)
@@ -166,6 +196,31 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeThrusterInformation(val *ThrusterInformation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Identifier, 8)
+	w.writeLookupField(uint64(val.MotorType), 4)
+	w.skipBits(4)
+	w.writeUInt16(val.PowerRating, 16)
+	var maximumTemperatureRatingRaw *float32
+	if val.MaximumTemperatureRating != nil {
+		maximumTemperatureRatingRaw = &val.MaximumTemperatureRating.Value
+	}
+	w.writeUnsignedResolution(maximumTemperatureRatingRaw, 16, 0.01)
+	w.writeUnsignedResolution(val.MaximumRotationalSpeed, 16, 0.25)
+	return w.Bytes(), w.Err()
+}
+
+func encodeThrusterInformationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ThrusterInformation)
+	if !ok {
+		return nil, fmt.Errorf("expected *ThrusterInformation, got %T", v)
+	}
+	return EncodeThrusterInformation(val)
+}
+
 type ThrusterMotorStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -175,8 +230,11 @@ type ThrusterMotorStatus struct {
 	Temperature *units.Temperature `json:"temperature"`
 	OperatingTime *float32 `json:"operatingTime"`
 }
-func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterMotorStatus
+
+func (x *ThrusterMotorStatus) PGNNumber() uint32  { return 128008 }
+
+func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterMotorStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-Sid: %w", err)
@@ -234,6 +292,31 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeThrusterMotorStatus(val *ThrusterMotorStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Identifier, 8)
+	w.writeLookupField(uint64(val.MotorEvents), 8)
+	w.writeUInt8(val.Current, 8)
+	var temperatureRaw *float32
+	if val.Temperature != nil {
+		temperatureRaw = &val.Temperature.Value
+	}
+	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
+	w.writeUnsignedResolution(val.OperatingTime, 16, 60)
+	return w.Bytes(), w.Err()
+}
+
+func encodeThrusterMotorStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ThrusterMotorStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *ThrusterMotorStatus, got %T", v)
+	}
+	return EncodeThrusterMotorStatus(val)
+}
+
 type Speed struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -242,8 +325,11 @@ type Speed struct {
 	SpeedWaterReferencedType WaterReferenceConst `json:"speedWaterReferencedType"`
 	SpeedDirection *uint8 `json:"speedDirection"`
 }
-func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Speed
+
+func (x *Speed) PGNNumber() uint32  { return 128259 }
+
+func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Speed{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Speed-Sid: %w", err)
@@ -296,6 +382,35 @@ func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
 		}	
 	return val, nil
 }
+
+func EncodeSpeed(val *Speed) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var speedWaterReferencedRaw *float32
+	if val.SpeedWaterReferenced != nil {
+		speedWaterReferencedRaw = &val.SpeedWaterReferenced.Value
+	}
+	w.writeUnsignedResolution(speedWaterReferencedRaw, 16, 0.01)
+	var speedGroundReferencedRaw *float32
+	if val.SpeedGroundReferenced != nil {
+		speedGroundReferencedRaw = &val.SpeedGroundReferenced.Value
+	}
+	w.writeUnsignedResolution(speedGroundReferencedRaw, 16, 0.01)
+	w.writeLookupField(uint64(val.SpeedWaterReferencedType), 8)
+	w.writeUInt8(val.SpeedDirection, 4)
+	w.skipBits(12)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSpeedMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Speed)
+	if !ok {
+		return nil, fmt.Errorf("expected *Speed, got %T", v)
+	}
+	return EncodeSpeed(val)
+}
+
 type WaterDepth struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -303,8 +418,11 @@ type WaterDepth struct {
 	Offset *units.Distance `json:"offset"`
 	Range *units.Distance `json:"range"`
 }
-func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WaterDepth
+
+func (x *WaterDepth) PGNNumber() uint32  { return 128267 }
+
+func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WaterDepth{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for WaterDepth-Sid: %w", err)
@@ -344,6 +462,37 @@ func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeWaterDepth(val *WaterDepth) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var depthRaw *float32
+	if val.Depth != nil {
+		depthRaw = &val.Depth.Value
+	}
+	w.writeUnsignedResolution(depthRaw, 32, 0.01)
+	var offsetRaw *float32
+	if val.Offset != nil {
+		offsetRaw = &val.Offset.Value
+	}
+	w.writeSignedResolution(offsetRaw, 16, 0.001)
+	var rangeRaw *float32
+	if val.Range != nil {
+		rangeRaw = &val.Range.Value
+	}
+	w.writeUnsignedResolution(rangeRaw, 8, 10)
+	return w.Bytes(), w.Err()
+}
+
+func encodeWaterDepthMsg(v Message) ([]byte, error) {
+	val, ok := v.(*WaterDepth)
+	if !ok {
+		return nil, fmt.Errorf("expected *WaterDepth, got %T", v)
+	}
+	return EncodeWaterDepth(val)
+}
+
 type DistanceLog struct {
 	Info MessageInfo `json:"info"`
 	Date *uint16 `json:"date"`
@@ -351,8 +500,11 @@ type DistanceLog struct {
 	Log *units.Distance `json:"log"`
 	TripLog *units.Distance `json:"tripLog"`
 }
-func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DistanceLog
+
+func (x *DistanceLog) PGNNumber() uint32  { return 128275 }
+
+func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DistanceLog{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for DistanceLog-Date: %w", err)
@@ -393,130 +545,6 @@ func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	return val, nil
 }
 
-func EncodeThrusterControlStatus(val *ThrusterControlStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Identifier, 8)
-	w.writeLookupField(uint64(val.DirectionControl), 4)
-	w.writeLookupField(uint64(val.PowerEnabled), 2)
-	w.writeLookupField(uint64(val.RetractControl), 2)
-	w.writeUInt8(val.SpeedControl, 8)
-	w.writeLookupField(uint64(val.ControlEvents), 8)
-	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
-	w.writeUnsignedResolution(val.AzimuthControl, 16, 0.0001)
-	return w.Bytes(), w.Err()
-}
-func encodeThrusterControlStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*ThrusterControlStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *ThrusterControlStatus, got %T", v)
-	}
-	return EncodeThrusterControlStatus(val)
-}
-
-func EncodeThrusterInformation(val *ThrusterInformation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Identifier, 8)
-	w.writeLookupField(uint64(val.MotorType), 4)
-	w.skipBits(4)
-	w.writeUInt16(val.PowerRating, 16)
-	var maximumTemperatureRatingRaw *float32
-	if val.MaximumTemperatureRating != nil {
-		maximumTemperatureRatingRaw = &val.MaximumTemperatureRating.Value
-	}
-	w.writeUnsignedResolution(maximumTemperatureRatingRaw, 16, 0.01)
-	w.writeUnsignedResolution(val.MaximumRotationalSpeed, 16, 0.25)
-	return w.Bytes(), w.Err()
-}
-func encodeThrusterInformationAny(v any) ([]byte, error) {
-	val, ok := v.(*ThrusterInformation)
-	if !ok {
-		return nil, fmt.Errorf("expected *ThrusterInformation, got %T", v)
-	}
-	return EncodeThrusterInformation(val)
-}
-
-func EncodeThrusterMotorStatus(val *ThrusterMotorStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Identifier, 8)
-	w.writeLookupField(uint64(val.MotorEvents), 8)
-	w.writeUInt8(val.Current, 8)
-	var temperatureRaw *float32
-	if val.Temperature != nil {
-		temperatureRaw = &val.Temperature.Value
-	}
-	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
-	w.writeUnsignedResolution(val.OperatingTime, 16, 60)
-	return w.Bytes(), w.Err()
-}
-func encodeThrusterMotorStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*ThrusterMotorStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *ThrusterMotorStatus, got %T", v)
-	}
-	return EncodeThrusterMotorStatus(val)
-}
-
-func EncodeSpeed(val *Speed) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	var speedWaterReferencedRaw *float32
-	if val.SpeedWaterReferenced != nil {
-		speedWaterReferencedRaw = &val.SpeedWaterReferenced.Value
-	}
-	w.writeUnsignedResolution(speedWaterReferencedRaw, 16, 0.01)
-	var speedGroundReferencedRaw *float32
-	if val.SpeedGroundReferenced != nil {
-		speedGroundReferencedRaw = &val.SpeedGroundReferenced.Value
-	}
-	w.writeUnsignedResolution(speedGroundReferencedRaw, 16, 0.01)
-	w.writeLookupField(uint64(val.SpeedWaterReferencedType), 8)
-	w.writeUInt8(val.SpeedDirection, 4)
-	w.skipBits(12)
-	return w.Bytes(), w.Err()
-}
-func encodeSpeedAny(v any) ([]byte, error) {
-	val, ok := v.(*Speed)
-	if !ok {
-		return nil, fmt.Errorf("expected *Speed, got %T", v)
-	}
-	return EncodeSpeed(val)
-}
-
-func EncodeWaterDepth(val *WaterDepth) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	var depthRaw *float32
-	if val.Depth != nil {
-		depthRaw = &val.Depth.Value
-	}
-	w.writeUnsignedResolution(depthRaw, 32, 0.01)
-	var offsetRaw *float32
-	if val.Offset != nil {
-		offsetRaw = &val.Offset.Value
-	}
-	w.writeSignedResolution(offsetRaw, 16, 0.001)
-	var rangeRaw *float32
-	if val.Range != nil {
-		rangeRaw = &val.Range.Value
-	}
-	w.writeUnsignedResolution(rangeRaw, 8, 10)
-	return w.Bytes(), w.Err()
-}
-func encodeWaterDepthAny(v any) ([]byte, error) {
-	val, ok := v.(*WaterDepth)
-	if !ok {
-		return nil, fmt.Errorf("expected *WaterDepth, got %T", v)
-	}
-	return EncodeWaterDepth(val)
-}
-
 func EncodeDistanceLog(val *DistanceLog) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -536,7 +564,8 @@ func EncodeDistanceLog(val *DistanceLog) ([]byte, error) {
 	w.writeUInt32(tripLogRaw, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeDistanceLogAny(v any) ([]byte, error) {
+
+func encodeDistanceLogMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DistanceLog)
 	if !ok {
 		return nil, fmt.Errorf("expected *DistanceLog, got %T", v)

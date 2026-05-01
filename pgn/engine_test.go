@@ -22,7 +22,7 @@ func TestRoundTrip_EncodeDecodeEngineParametersRapidUpdate(t *testing.T) {
 	decoded, err := DecodeEngineParametersRapidUpdate(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(EngineParametersRapidUpdate)
+	result := decoded.(*EngineParametersRapidUpdate)
 	assert.Equal(t, EngineInstanceConst(0), result.Instance)
 	assert.InDelta(t, float32(3000.0), *result.Speed, 0.25)
 	assert.NotNil(t, result.BoostPressure)
@@ -44,7 +44,7 @@ func TestRoundTrip_EncodeDecodeRudder(t *testing.T) {
 	decoded, err := DecodeRudder(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(Rudder)
+	result := decoded.(*Rudder)
 	assert.Equal(t, uint8(0), *result.Instance)
 	assert.Equal(t, DirectionRudderConst(1), result.DirectionOrder)
 	assert.InDelta(t, float32(0.1745), *result.AngleOrder, 0.0001)
@@ -81,7 +81,7 @@ func TestRoundTrip_EncodeDecodeEngineParametersDynamic(t *testing.T) {
 	decoded, err := DecodeEngineParametersDynamic(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(EngineParametersDynamic)
+	result := decoded.(*EngineParametersDynamic)
 	assert.Equal(t, EngineInstanceConst(0), result.Instance)
 	assert.NotNil(t, result.OilPressure)
 	assert.InDelta(t, float32(250000), result.OilPressure.Value, 100)

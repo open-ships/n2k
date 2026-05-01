@@ -82,7 +82,7 @@ type Packet struct {
 	// After filtering by manufacturer ID (for proprietary PGNs), each remaining candidate's
 	// Decoder function is added here. Each decoder takes a MessageInfo and a PGNDataStream
 	// and returns a typed Go struct or an error if the data doesn't match.
-	Decoders []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error) `json:"decoders"`
+	Decoders []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error) `json:"decoders"`
 
 	// ParseErrors tracks errors encountered during packet processing. Errors accumulate
 	// as validation fails, decoders are attempted, or assembly issues arise. If all decoders
@@ -165,7 +165,7 @@ func (p *Packet) GetSeqFrame() {
 // UnknownPGN creates a new instance of UnknownPGN from this packet. This is used as a
 // fallback when no decoder can successfully parse the packet data, preserving the raw
 // data and accumulated error information for debugging and logging.
-func (p *Packet) UnknownPGN() pgn.UnknownPGN {
+func (p *Packet) UnknownPGN() *pgn.UnknownPGN {
 	return buildUnknownPGN(p)
 }
 

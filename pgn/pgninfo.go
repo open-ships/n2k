@@ -1,17 +1,15 @@
 // Package pgn uses data from canboat.json to convert NMEA 2000 messages to strongly-typed golang data.
 // It provides the runtime support (stream decoding, PGN lookup, field descriptors) that the
-// generated decoder functions in pgninfo_generated.go and pgn.go rely on. The code generator
-// (pgngen) produces Go structs and decoder functions from canboat's JSON PGN database; this
-// package provides the infrastructure those generated decoders call into.
+// PGN decoder functions rely on.
 package pgn
 
 import (
 	"fmt"
 )
 
-// PgnInfo describes a known NMEA 2000 message type. Instances are produced by the pgngen
-// code generator and collected in the pgnList slice (in pgninfo_generated.go). At init time,
-// they are indexed into PgnInfoLookup for fast access by PGN number.
+// PgnInfo describes a known NMEA 2000 message type. Instances are collected in the pgnList
+// slice (in pgninfo_generated.go) and indexed into PgnInfoLookup at init time for fast
+// access by PGN number.
 //
 // Multiple PgnInfo entries can share the same PGN number. This happens with proprietary PGNs
 // where different manufacturers define different payloads for the same PGN, and also with
@@ -21,7 +19,7 @@ type PgnInfo struct {
 	// PGNs that share the same numeric PGN but have different field layouts (KeyValue PGNs).
 	Id string `json:"id"`
 	// Self is a pointer back to this PgnInfo's location in the pgnList slice.
-	// It is set during init() and allows generated code to cheaply reference
+	// It is set during init() and allows code to cheaply reference
 	// the PgnInfo without a map lookup.
 	Self *PgnInfo `json:"self"`
 	// PGN is the NMEA 2000 Parameter Group Number that identifies this message type
@@ -37,14 +35,13 @@ type PgnInfo struct {
 	// (non-proprietary) PGNs. Used to select the correct variant when multiple
 	// manufacturers define different payloads for the same proprietary PGN number.
 	ManId ManufacturerCodeConst `json:"manId"`
-	// Decoder is the generated function that reads fields from a PGNDataStream and
-	// returns a strongly-typed Go struct (e.g., VesselHeading, RateOfTurn).
-	// The returned any value should be type-asserted by the caller.
-	Decoder func(MessageInfo, *PGNDataStream) (any, error) `json:"decoder"`
-	// Encoder is the generated function that serializes a strongly-typed Go struct
+	// Decoder is the decoder function that reads fields from a PGNDataStream and
+	// returns a strongly-typed Go struct implementing Message (e.g., VesselHeading, RateOfTurn).
+	Decoder func(MessageInfo, *PGNDataStream) (Message, error) `json:"decoder"`
+	// Encoder is the encoder function that serializes a strongly-typed Go struct
 	// back into raw NMEA 2000 payload bytes. It is the inverse of Decoder.
 	// Not all PGNs have encoders; this field is nil when no encoder is available.
-	Encoder func(any) ([]byte, error) `json:"encoder"`
+	Encoder func(Message) ([]byte, error) `json:"encoder"`
 	// Fields maps field index (1-based, matching the canboat field order) to
 	// FieldDescriptor. This is needed at runtime for variable-length and KeyValue
 	// fields where the decoder must inspect field metadata dynamically.
@@ -206,7 +203,7 @@ func GetFieldDescriptor(pgn uint32, manID ManufacturerCodeConst, fieldIndex uint
 
 // SearchUnseenList returns true if the given PGN number appears in the unseen list,
 // meaning it is defined in the canboat database but has never been observed in real
-// CAN bus log files. Unseen PGNs have generated decoders but may be less reliable
+// CAN bus log files. Unseen PGNs have decoders but may be less reliable
 // because their field layouts have not been validated against actual device output.
 func SearchUnseenList(pgn uint32) bool {
 	return UnseenLookup[pgn] != nil

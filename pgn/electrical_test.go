@@ -23,7 +23,7 @@ func TestRoundTrip_EncodeDecodeBatteryStatus(t *testing.T) {
 	decoded, err := DecodeBatteryStatus(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(BatteryStatus)
+	result := decoded.(*BatteryStatus)
 	assert.Equal(t, uint8(1), *result.Instance)
 	assert.InDelta(t, float32(12.8), *result.Voltage, 0.01)
 	assert.InDelta(t, float32(-5.5), *result.Current, 0.1)
@@ -71,7 +71,7 @@ func TestRoundTrip_EncodeDecodeBinarySwitchBankStatus(t *testing.T) {
 	decoded, err := DecodeBinarySwitchBankStatus(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(BinarySwitchBankStatus)
+	result := decoded.(*BinarySwitchBankStatus)
 	assert.Equal(t, uint8(1), *result.Instance)
 	assert.Equal(t, OffOnConst(1), result.Indicator1)
 	assert.Equal(t, OffOnConst(0), result.Indicator2)

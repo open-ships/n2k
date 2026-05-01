@@ -25,8 +25,8 @@ func TestNewPacketInfo_BroadcastPGN(t *testing.T) {
 
 	assert.Equal(t, pgn, info.PGN, "PGN should match for broadcast")
 	assert.Equal(t, source, info.SourceId, "SourceId should match")
-	assert.Equal(t, priority, info.Priority, "Priority should match")
-	assert.Equal(t, uint8(0), info.TargetId, "TargetId should be 0 for broadcast PGN")
+	assert.Equal(t, priority, *info.Priority, "Priority should match")
+	assert.Nil(t, info.TargetId, "TargetId should be nil for broadcast PGN")
 }
 
 // TestNewPacketInfo_AddressedPGN verifies metadata extraction for an addressed (point-to-point)
@@ -50,8 +50,8 @@ func TestNewPacketInfo_AddressedPGN(t *testing.T) {
 
 	assert.Equal(t, uint32(0xEA00), info.PGN, "Addressed PGN should have lower byte masked to 0")
 	assert.Equal(t, source, info.SourceId, "SourceId should match")
-	assert.Equal(t, priority, info.Priority, "Priority should match")
-	assert.Equal(t, uint8(0), info.TargetId, "TargetId should be 0 when destination is 0")
+	assert.Equal(t, priority, *info.Priority, "Priority should match")
+	assert.Equal(t, uint8(0), *info.TargetId, "TargetId should be 0 when destination is 0")
 }
 
 // TestNewPacketInfo_AddressedPGN_WithTarget verifies that TargetId is correctly extracted
@@ -84,9 +84,9 @@ func TestNewPacketInfo_AddressedPGN_WithTarget(t *testing.T) {
 	info := NewPacketInfo(&frame)
 
 	assert.Equal(t, uint32(0xEA00), info.PGN, "Addressed PGN should have lower byte masked")
-	assert.Equal(t, destination, info.TargetId, "TargetId should be the destination")
+	assert.Equal(t, destination, *info.TargetId, "TargetId should be the destination")
 	assert.Equal(t, source, info.SourceId)
-	assert.Equal(t, priority, info.Priority)
+	assert.Equal(t, priority, *info.Priority)
 }
 
 // TestNewPacketInfo_PriorityExtraction verifies that all 8 possible priority values (0-7)
@@ -103,7 +103,7 @@ func TestNewPacketInfo_PriorityExtraction(t *testing.T) {
 		canID := CanIdFromData(127250, 1, tc.priority, 0)
 		frame := can.Frame{ID: canID, Length: 8}
 		info := NewPacketInfo(&frame)
-		assert.Equal(t, tc.priority, info.Priority, "Priority %d should be extracted correctly", tc.priority)
+		assert.Equal(t, tc.priority, *info.Priority, "Priority %d should be extracted correctly", tc.priority)
 	}
 }
 
@@ -136,7 +136,7 @@ func TestCanIdFromData_RoundTrip_Broadcast(t *testing.T) {
 
 	assert.Equal(t, pgn, info.PGN)
 	assert.Equal(t, source, info.SourceId)
-	assert.Equal(t, priority, info.Priority)
+	assert.Equal(t, priority, *info.Priority)
 }
 
 // TestCanIdFromData_RoundTrip_MultipleValues verifies the encode/decode round-trip property
@@ -163,7 +163,7 @@ func TestCanIdFromData_RoundTrip_MultipleValues(t *testing.T) {
 
 		assert.Equal(t, tc.pgn, info.PGN, "PGN round-trip failed for %d", tc.pgn)
 		assert.Equal(t, tc.source, info.SourceId, "Source round-trip failed for %d", tc.source)
-		assert.Equal(t, tc.priority, info.Priority, "Priority round-trip failed for %d", tc.priority)
+		assert.Equal(t, tc.priority, *info.Priority, "Priority round-trip failed for %d", tc.priority)
 	}
 }
 
@@ -204,7 +204,7 @@ func TestCanFrameFromRaw_DecodesCorrectly(t *testing.T) {
 	info := NewPacketInfo(&f)
 	assert.Equal(t, uint32(129540), info.PGN)
 	assert.Equal(t, uint8(22), info.SourceId)
-	assert.Equal(t, uint8(6), info.Priority)
+	assert.Equal(t, uint8(6), *info.Priority)
 	assert.Equal(t, uint8(8), f.Length)
 	assert.Equal(t, uint8(0x20), f.Data[0])
 	assert.Equal(t, uint8(0xdb), f.Data[1])
@@ -229,7 +229,7 @@ func TestCanFrameFromRaw_DestinationBitCollision(t *testing.T) {
 	assert.Equal(t, uint32(129540), info.PGN)
 	// Source 22 (0x16) OR'd with destination 255 (0xFF) = 0xFF.
 	assert.Equal(t, uint8(0xFF), info.SourceId, "Source is OR'd with destination in CanIdFromData")
-	assert.Equal(t, uint8(6), info.Priority)
+	assert.Equal(t, uint8(6), *info.Priority)
 }
 
 // TestCanFrameFromRaw_ShorterLength verifies that frames with fewer than 8 data bytes

@@ -13,8 +13,11 @@ type Rudder struct {
 	AngleOrder *float32 `json:"angleOrder"`
 	Position *float32 `json:"position"`
 }
-func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Rudder
+
+func (x *Rudder) PGNNumber() uint32  { return 127245 }
+
+func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Rudder{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Rudder-Instance: %w", err)
@@ -62,6 +65,27 @@ func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (any, error) {
 		}	
 	return val, nil
 }
+
+func EncodeRudder(val *Rudder) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.DirectionOrder), 3)
+	w.skipBits(5)
+	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
+	w.writeSignedResolution(val.Position, 16, 0.0001)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeRudderMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Rudder)
+	if !ok {
+		return nil, fmt.Errorf("expected *Rudder, got %T", v)
+	}
+	return EncodeRudder(val)
+}
+
 type EngineParametersRapidUpdate struct {
 	Info MessageInfo `json:"info"`
 	Instance EngineInstanceConst `json:"instance"`
@@ -69,8 +93,11 @@ type EngineParametersRapidUpdate struct {
 	BoostPressure *units.Pressure `json:"boostPressure"`
 	TiltTrim *int8 `json:"tiltTrim"`
 }
-func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersRapidUpdate
+
+func (x *EngineParametersRapidUpdate) PGNNumber() uint32  { return 127488 }
+
+func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersRapidUpdate-Instance: %w", err)
@@ -114,6 +141,30 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeEngineParametersRapidUpdate(val *EngineParametersRapidUpdate) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Instance), 8)
+	w.writeUnsignedResolution(val.Speed, 16, 0.25)
+	var boostPressureRaw *float32
+	if val.BoostPressure != nil {
+		boostPressureRaw = &val.BoostPressure.Value
+	}
+	w.writeUnsignedResolution(boostPressureRaw, 16, 100)
+	w.writeInt8(val.TiltTrim, 8)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeEngineParametersRapidUpdateMsg(v Message) ([]byte, error) {
+	val, ok := v.(*EngineParametersRapidUpdate)
+	if !ok {
+		return nil, fmt.Errorf("expected *EngineParametersRapidUpdate, got %T", v)
+	}
+	return EncodeEngineParametersRapidUpdate(val)
+}
+
 type EngineParametersDynamic struct {
 	Info MessageInfo `json:"info"`
 	Instance EngineInstanceConst `json:"instance"`
@@ -130,8 +181,11 @@ type EngineParametersDynamic struct {
 	EngineLoad *int8 `json:"engineLoad"`
 	EngineTorque *int8 `json:"engineTorque"`
 }
-func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersDynamic
+
+func (x *EngineParametersDynamic) PGNNumber() uint32  { return 127489 }
+
+func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersDynamic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-Instance: %w", err)
@@ -256,6 +310,59 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any
 	}	
 	return val, nil
 }
+
+func EncodeEngineParametersDynamic(val *EngineParametersDynamic) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Instance), 8)
+	var oilPressureRaw *float32
+	if val.OilPressure != nil {
+		oilPressureRaw = &val.OilPressure.Value
+	}
+	w.writeUnsignedResolution(oilPressureRaw, 16, 100)
+	var oilTemperatureRaw *float32
+	if val.OilTemperature != nil {
+		oilTemperatureRaw = &val.OilTemperature.Value
+	}
+	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
+	var temperatureRaw *float32
+	if val.Temperature != nil {
+		temperatureRaw = &val.Temperature.Value
+	}
+	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
+	w.writeSignedResolution(val.AlternatorPotential, 16, 0.01)
+	var fuelRateRaw *float32
+	if val.FuelRate != nil {
+		fuelRateRaw = &val.FuelRate.Value
+	}
+	w.writeSignedResolution(fuelRateRaw, 16, 0.1)
+	w.writeUInt32(val.TotalEngineHours, 32)
+	var coolantPressureRaw *float32
+	if val.CoolantPressure != nil {
+		coolantPressureRaw = &val.CoolantPressure.Value
+	}
+	w.writeUnsignedResolution(coolantPressureRaw, 16, 100)
+	var fuelPressureRaw *float32
+	if val.FuelPressure != nil {
+		fuelPressureRaw = &val.FuelPressure.Value
+	}
+	w.writeUnsignedResolution(fuelPressureRaw, 16, 1000)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.DiscreteStatus1), 16)
+	w.writeLookupField(uint64(val.DiscreteStatus2), 16)
+	w.writeInt8(val.EngineLoad, 8)
+	w.writeInt8(val.EngineTorque, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeEngineParametersDynamicMsg(v Message) ([]byte, error) {
+	val, ok := v.(*EngineParametersDynamic)
+	if !ok {
+		return nil, fmt.Errorf("expected *EngineParametersDynamic, got %T", v)
+	}
+	return EncodeEngineParametersDynamic(val)
+}
+
 type TransmissionParametersDynamic struct {
 	Info MessageInfo `json:"info"`
 	Instance EngineInstanceConst `json:"instance"`
@@ -264,8 +371,11 @@ type TransmissionParametersDynamic struct {
 	OilTemperature *units.Temperature `json:"oilTemperature"`
 	DiscreteStatus1 *uint8 `json:"discreteStatus1"`
 }
-func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TransmissionParametersDynamic
+
+func (x *TransmissionParametersDynamic) PGNNumber() uint32  { return 127493 }
+
+func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TransmissionParametersDynamic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-Instance: %w", err)
@@ -322,6 +432,36 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 		}	
 	return val, nil
 }
+
+func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Instance), 8)
+	w.writeLookupField(uint64(val.TransmissionGear), 2)
+	w.skipBits(6)
+	var oilPressureRaw *float32
+	if val.OilPressure != nil {
+		oilPressureRaw = &val.OilPressure.Value
+	}
+	w.writeUnsignedResolution(oilPressureRaw, 16, 100)
+	var oilTemperatureRaw *float32
+	if val.OilTemperature != nil {
+		oilTemperatureRaw = &val.OilTemperature.Value
+	}
+	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
+	w.writeUInt8(val.DiscreteStatus1, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTransmissionParametersDynamicMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TransmissionParametersDynamic)
+	if !ok {
+		return nil, fmt.Errorf("expected *TransmissionParametersDynamic, got %T", v)
+	}
+	return EncodeTransmissionParametersDynamic(val)
+}
+
 type TripParametersVessel struct {
 	Info MessageInfo `json:"info"`
 	TimeToEmpty *float32 `json:"timeToEmpty"`
@@ -329,8 +469,11 @@ type TripParametersVessel struct {
 	EstimatedFuelRemaining *units.Volume `json:"estimatedFuelRemaining"`
 	TripRunTime *float32 `json:"tripRunTime"`
 }
-func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TripParametersVessel
+
+func (x *TripParametersVessel) PGNNumber() uint32  { return 127496 }
+
+func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TripParametersVessel{}
 	val.Info = Info
 	if v, err := stream.readUnsignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersVessel-TimeToEmpty: %w", err)
@@ -370,6 +513,34 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeTripParametersVessel(val *TripParametersVessel) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUnsignedResolution(val.TimeToEmpty, 32, 0.001)
+	var distanceToEmptyRaw *float32
+	if val.DistanceToEmpty != nil {
+		distanceToEmptyRaw = &val.DistanceToEmpty.Value
+	}
+	w.writeUnsignedResolution(distanceToEmptyRaw, 32, 0.01)
+	var estimatedFuelRemainingRaw *uint16
+	if val.EstimatedFuelRemaining != nil {
+		v := uint16(val.EstimatedFuelRemaining.Value)
+		estimatedFuelRemainingRaw = &v
+	}
+	w.writeUInt16(estimatedFuelRemainingRaw, 16)
+	w.writeUnsignedResolution(val.TripRunTime, 32, 0.001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTripParametersVesselMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TripParametersVessel)
+	if !ok {
+		return nil, fmt.Errorf("expected *TripParametersVessel, got %T", v)
+	}
+	return EncodeTripParametersVessel(val)
+}
+
 type TripParametersEngine struct {
 	Info MessageInfo `json:"info"`
 	Instance EngineInstanceConst `json:"instance"`
@@ -378,8 +549,11 @@ type TripParametersEngine struct {
 	FuelRateEconomy *units.Flow `json:"fuelRateEconomy"`
 	InstantaneousFuelEconomy *units.Flow `json:"instantaneousFuelEconomy"`
 }
-func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TripParametersEngine
+
+func (x *TripParametersEngine) PGNNumber() uint32  { return 127497 }
+
+func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TripParametersEngine{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-Instance: %w", err)
@@ -428,6 +602,43 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeTripParametersEngine(val *TripParametersEngine) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Instance), 8)
+	var tripFuelUsedRaw *uint16
+	if val.TripFuelUsed != nil {
+		v := uint16(val.TripFuelUsed.Value)
+		tripFuelUsedRaw = &v
+	}
+	w.writeUInt16(tripFuelUsedRaw, 16)
+	var fuelRateAverageRaw *float32
+	if val.FuelRateAverage != nil {
+		fuelRateAverageRaw = &val.FuelRateAverage.Value
+	}
+	w.writeSignedResolution(fuelRateAverageRaw, 16, 0.1)
+	var fuelRateEconomyRaw *float32
+	if val.FuelRateEconomy != nil {
+		fuelRateEconomyRaw = &val.FuelRateEconomy.Value
+	}
+	w.writeSignedResolution(fuelRateEconomyRaw, 16, 0.1)
+	var instantaneousFuelEconomyRaw *float32
+	if val.InstantaneousFuelEconomy != nil {
+		instantaneousFuelEconomyRaw = &val.InstantaneousFuelEconomy.Value
+	}
+	w.writeSignedResolution(instantaneousFuelEconomyRaw, 16, 0.1)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTripParametersEngineMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TripParametersEngine)
+	if !ok {
+		return nil, fmt.Errorf("expected *TripParametersEngine, got %T", v)
+	}
+	return EncodeTripParametersEngine(val)
+}
+
 type EngineParametersStatic struct {
 	Info MessageInfo `json:"info"`
 	Instance EngineInstanceConst `json:"instance"`
@@ -435,8 +646,11 @@ type EngineParametersStatic struct {
 	Vin string `json:"vin"`
 	SoftwareId string `json:"softwareId"`
 }
-func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersStatic
+
+func (x *EngineParametersStatic) PGNNumber() uint32  { return 127498 }
+
+func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersStatic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersStatic-Instance: %w", err)
@@ -477,187 +691,6 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (any,
 	return val, nil
 }
 
-func EncodeRudder(val *Rudder) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.DirectionOrder), 3)
-	w.skipBits(5)
-	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
-	w.writeSignedResolution(val.Position, 16, 0.0001)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeRudderAny(v any) ([]byte, error) {
-	val, ok := v.(*Rudder)
-	if !ok {
-		return nil, fmt.Errorf("expected *Rudder, got %T", v)
-	}
-	return EncodeRudder(val)
-}
-
-func EncodeEngineParametersRapidUpdate(val *EngineParametersRapidUpdate) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Instance), 8)
-	w.writeUnsignedResolution(val.Speed, 16, 0.25)
-	var boostPressureRaw *float32
-	if val.BoostPressure != nil {
-		boostPressureRaw = &val.BoostPressure.Value
-	}
-	w.writeUnsignedResolution(boostPressureRaw, 16, 100)
-	w.writeInt8(val.TiltTrim, 8)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeEngineParametersRapidUpdateAny(v any) ([]byte, error) {
-	val, ok := v.(*EngineParametersRapidUpdate)
-	if !ok {
-		return nil, fmt.Errorf("expected *EngineParametersRapidUpdate, got %T", v)
-	}
-	return EncodeEngineParametersRapidUpdate(val)
-}
-
-func EncodeEngineParametersDynamic(val *EngineParametersDynamic) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Instance), 8)
-	var oilPressureRaw *float32
-	if val.OilPressure != nil {
-		oilPressureRaw = &val.OilPressure.Value
-	}
-	w.writeUnsignedResolution(oilPressureRaw, 16, 100)
-	var oilTemperatureRaw *float32
-	if val.OilTemperature != nil {
-		oilTemperatureRaw = &val.OilTemperature.Value
-	}
-	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
-	var temperatureRaw *float32
-	if val.Temperature != nil {
-		temperatureRaw = &val.Temperature.Value
-	}
-	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
-	w.writeSignedResolution(val.AlternatorPotential, 16, 0.01)
-	var fuelRateRaw *float32
-	if val.FuelRate != nil {
-		fuelRateRaw = &val.FuelRate.Value
-	}
-	w.writeSignedResolution(fuelRateRaw, 16, 0.1)
-	w.writeUInt32(val.TotalEngineHours, 32)
-	var coolantPressureRaw *float32
-	if val.CoolantPressure != nil {
-		coolantPressureRaw = &val.CoolantPressure.Value
-	}
-	w.writeUnsignedResolution(coolantPressureRaw, 16, 100)
-	var fuelPressureRaw *float32
-	if val.FuelPressure != nil {
-		fuelPressureRaw = &val.FuelPressure.Value
-	}
-	w.writeUnsignedResolution(fuelPressureRaw, 16, 1000)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.DiscreteStatus1), 16)
-	w.writeLookupField(uint64(val.DiscreteStatus2), 16)
-	w.writeInt8(val.EngineLoad, 8)
-	w.writeInt8(val.EngineTorque, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeEngineParametersDynamicAny(v any) ([]byte, error) {
-	val, ok := v.(*EngineParametersDynamic)
-	if !ok {
-		return nil, fmt.Errorf("expected *EngineParametersDynamic, got %T", v)
-	}
-	return EncodeEngineParametersDynamic(val)
-}
-
-func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Instance), 8)
-	w.writeLookupField(uint64(val.TransmissionGear), 2)
-	w.skipBits(6)
-	var oilPressureRaw *float32
-	if val.OilPressure != nil {
-		oilPressureRaw = &val.OilPressure.Value
-	}
-	w.writeUnsignedResolution(oilPressureRaw, 16, 100)
-	var oilTemperatureRaw *float32
-	if val.OilTemperature != nil {
-		oilTemperatureRaw = &val.OilTemperature.Value
-	}
-	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
-	w.writeUInt8(val.DiscreteStatus1, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeTransmissionParametersDynamicAny(v any) ([]byte, error) {
-	val, ok := v.(*TransmissionParametersDynamic)
-	if !ok {
-		return nil, fmt.Errorf("expected *TransmissionParametersDynamic, got %T", v)
-	}
-	return EncodeTransmissionParametersDynamic(val)
-}
-
-func EncodeTripParametersVessel(val *TripParametersVessel) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUnsignedResolution(val.TimeToEmpty, 32, 0.001)
-	var distanceToEmptyRaw *float32
-	if val.DistanceToEmpty != nil {
-		distanceToEmptyRaw = &val.DistanceToEmpty.Value
-	}
-	w.writeUnsignedResolution(distanceToEmptyRaw, 32, 0.01)
-	var estimatedFuelRemainingRaw *uint16
-	if val.EstimatedFuelRemaining != nil {
-		v := uint16(val.EstimatedFuelRemaining.Value)
-		estimatedFuelRemainingRaw = &v
-	}
-	w.writeUInt16(estimatedFuelRemainingRaw, 16)
-	w.writeUnsignedResolution(val.TripRunTime, 32, 0.001)
-	return w.Bytes(), w.Err()
-}
-func encodeTripParametersVesselAny(v any) ([]byte, error) {
-	val, ok := v.(*TripParametersVessel)
-	if !ok {
-		return nil, fmt.Errorf("expected *TripParametersVessel, got %T", v)
-	}
-	return EncodeTripParametersVessel(val)
-}
-
-func EncodeTripParametersEngine(val *TripParametersEngine) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Instance), 8)
-	var tripFuelUsedRaw *uint16
-	if val.TripFuelUsed != nil {
-		v := uint16(val.TripFuelUsed.Value)
-		tripFuelUsedRaw = &v
-	}
-	w.writeUInt16(tripFuelUsedRaw, 16)
-	var fuelRateAverageRaw *float32
-	if val.FuelRateAverage != nil {
-		fuelRateAverageRaw = &val.FuelRateAverage.Value
-	}
-	w.writeSignedResolution(fuelRateAverageRaw, 16, 0.1)
-	var fuelRateEconomyRaw *float32
-	if val.FuelRateEconomy != nil {
-		fuelRateEconomyRaw = &val.FuelRateEconomy.Value
-	}
-	w.writeSignedResolution(fuelRateEconomyRaw, 16, 0.1)
-	var instantaneousFuelEconomyRaw *float32
-	if val.InstantaneousFuelEconomy != nil {
-		instantaneousFuelEconomyRaw = &val.InstantaneousFuelEconomy.Value
-	}
-	w.writeSignedResolution(instantaneousFuelEconomyRaw, 16, 0.1)
-	return w.Bytes(), w.Err()
-}
-func encodeTripParametersEngineAny(v any) ([]byte, error) {
-	val, ok := v.(*TripParametersEngine)
-	if !ok {
-		return nil, fmt.Errorf("expected *TripParametersEngine, got %T", v)
-	}
-	return EncodeTripParametersEngine(val)
-}
-
 func EncodeEngineParametersStatic(val *EngineParametersStatic) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -667,7 +700,8 @@ func EncodeEngineParametersStatic(val *EngineParametersStatic) ([]byte, error) {
 	w.writeFixedString(val.SoftwareId, 256)
 	return w.Bytes(), w.Err()
 }
-func encodeEngineParametersStaticAny(v any) ([]byte, error) {
+
+func encodeEngineParametersStaticMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EngineParametersStatic)
 	if !ok {
 		return nil, fmt.Errorf("expected *EngineParametersStatic, got %T", v)

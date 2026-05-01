@@ -17,7 +17,23 @@ import (
 // Example output: "VesselHeading: PGN=pgn.VesselHeadingPgn(127250), SourceId=..., Heading=1.5"
 func DebugDumpPGN(p any) string {
 	tp := reflect.TypeOf(p)
-	return tp.Name() + ": " + strings.Join(dumpFields(p), ", ")
+	rv := reflect.ValueOf(p)
+	if rv.Kind() == reflect.Pointer {
+		tp = tp.Elem()
+		rv = rv.Elem()
+	}
+
+	// If the struct has an exported Info field (MessageInfo), pull its fields
+	// and prepend them before the other exported struct fields.
+	var infoFields []string
+	if infoField := rv.FieldByName("Info"); infoField.IsValid() {
+		if mi, ok := infoField.Interface().(MessageInfo); ok {
+			infoFields = dumpFields(mi)
+		}
+	}
+
+	fields := append(infoFields, dumpFields(rv.Interface())...)
+	return tp.Name() + ": " + strings.Join(fields, ", ")
 }
 
 // dumpFields recursively extracts field name=value pairs from a struct using reflection.
@@ -36,13 +52,14 @@ func dumpFields(p any) []string {
 	fieldStrs := make([]string, 0)
 	for i := 0; i < tp.NumField(); i++ {
 		tf := tp.Field(i)
-		vf := vp.Field(i)
-		// Flatten the embedded MessageInfo struct so its fields appear alongside the PGN fields.
-		if tf.Name == "Info" && tf.Type.Kind() == reflect.Struct {
-			fieldStrs = append(fieldStrs, dumpFields(vf.Interface())...)
+		// Skip unexported fields.
+		if !tf.IsExported() {
 			continue
 		}
+		vf := vp.Field(i)
 		switch tf.Name {
+		case "Info":
+			// Info (MessageInfo) is handled separately by DebugDumpPGN; skip here to avoid duplication.
 		case "Timestamp":
 			// Omitted from debug output -- timestamps add noise and are available elsewhere.
 		case "PGN":

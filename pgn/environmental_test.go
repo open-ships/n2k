@@ -22,7 +22,7 @@ func TestRoundTrip_EncodeDecodeWindData(t *testing.T) {
 	decoded, err := DecodeWindData(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(WindData)
+	result := decoded.(*WindData)
 	assert.Equal(t, uint8(1), *result.Sid)
 	assert.NotNil(t, result.WindSpeed)
 	assert.InDelta(t, float32(12.5), result.WindSpeed.Value, 0.01)
@@ -47,7 +47,7 @@ func TestRoundTrip_EncodeDecodeTemperature(t *testing.T) {
 	decoded, err := DecodeTemperature(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(Temperature)
+	result := decoded.(*Temperature)
 	assert.Equal(t, uint8(5), *result.Sid)
 	assert.Equal(t, uint8(0), *result.Instance)
 	assert.Equal(t, TemperatureSourceConst(1), result.Source)
@@ -72,7 +72,7 @@ func TestRoundTrip_EncodeDecodeHumidity(t *testing.T) {
 	decoded, err := DecodeHumidity(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(Humidity)
+	result := decoded.(*Humidity)
 	assert.Equal(t, uint8(2), *result.Sid)
 	assert.Equal(t, uint8(0), *result.Instance)
 	assert.Equal(t, HumiditySourceConst(0), result.Source)
@@ -98,7 +98,7 @@ func TestRoundTrip_EncodeDecodeEnvironmentalParameters(t *testing.T) {
 	decoded, err := DecodeEnvironmentalParameters(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(EnvironmentalParameters)
+	result := decoded.(*EnvironmentalParameters)
 	assert.Equal(t, uint8(3), *result.Sid)
 	assert.Equal(t, TemperatureSourceConst(1), result.TemperatureSource)
 	assert.NotNil(t, result.Temperature)

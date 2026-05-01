@@ -12,8 +12,11 @@ type Bus1PhaseCBasicAcQuantities struct {
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseCBasicAcQuantities
+
+func (b *Bus1PhaseCBasicAcQuantities) PGNNumber() uint32  { return 65001 }
+
+func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -48,14 +51,36 @@ func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeBus1PhaseCBasicAcQuantities(val *Bus1PhaseCBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBus1PhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Bus1PhaseCBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *Bus1PhaseCBasicAcQuantities, got %T", v)
+	}
+	return EncodeBus1PhaseCBasicAcQuantities(val)
+}
+
 type Bus1PhaseBBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseBBasicAcQuantities
+
+func (b *Bus1PhaseBBasicAcQuantities) PGNNumber() uint32  { return 65002 }
+
+func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -90,14 +115,36 @@ func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeBus1PhaseBBasicAcQuantities(val *Bus1PhaseBBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBus1PhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Bus1PhaseBBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *Bus1PhaseBBasicAcQuantities, got %T", v)
+	}
+	return EncodeBus1PhaseBBasicAcQuantities(val)
+}
+
 type Bus1PhaseABasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseABasicAcQuantities
+
+func (b *Bus1PhaseABasicAcQuantities) PGNNumber() uint32  { return 65003 }
+
+func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -132,14 +179,36 @@ func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeBus1PhaseABasicAcQuantities(val *Bus1PhaseABasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBus1PhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Bus1PhaseABasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *Bus1PhaseABasicAcQuantities, got %T", v)
+	}
+	return EncodeBus1PhaseABasicAcQuantities(val)
+}
+
 type Bus1AverageBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1AverageBasicAcQuantities
+
+func (b *Bus1AverageBasicAcQuantities) PGNNumber() uint32  { return 65004 }
+
+func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1AverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1AverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -174,13 +243,35 @@ func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream)
 		}	
 	return val, nil
 }
+
+func EncodeBus1AverageBasicAcQuantities(val *Bus1AverageBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBus1AverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Bus1AverageBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *Bus1AverageBasicAcQuantities, got %T", v)
+	}
+	return EncodeBus1AverageBasicAcQuantities(val)
+}
+
 type UtilityTotalAcEnergy struct {
 	Info MessageInfo `json:"info"`
 	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
 	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
-func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcEnergy
+
+func (u *UtilityTotalAcEnergy) PGNNumber() uint32  { return 65005 }
+
+func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcEnergy{}
 	val.Info = Info
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcEnergy-TotalEnergyExport: %w", err)
@@ -202,14 +293,34 @@ func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeUtilityTotalAcEnergy(val *UtilityTotalAcEnergy) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt32(val.TotalEnergyExport, 32)
+	w.writeUInt32(val.TotalEnergyImport, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityTotalAcEnergyMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityTotalAcEnergy)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityTotalAcEnergy, got %T", v)
+	}
+	return EncodeUtilityTotalAcEnergy(val)
+}
+
 type UtilityPhaseCAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *uint16 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCAcReactivePower
+
+func (u *UtilityPhaseCAcReactivePower) PGNNumber() uint32  { return 65006 }
+
+func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcReactivePower-ReactivePower: %w", err)
@@ -244,13 +355,35 @@ func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 		}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseCAcReactivePower(val *UtilityPhaseCAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.ReactivePower, 16)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(30)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseCAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseCAcReactivePower, got %T", v)
+	}
+	return EncodeUtilityPhaseCAcReactivePower(val)
+}
+
 type UtilityPhaseCAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCAcPower
+
+func (u *UtilityPhaseCAcPower) PGNNumber() uint32  { return 65007 }
+
+func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcPower-RealPower: %w", err)
@@ -272,6 +405,23 @@ func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseCAcPower(val *UtilityPhaseCAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseCAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseCAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseCAcPower, got %T", v)
+	}
+	return EncodeUtilityPhaseCAcPower(val)
+}
+
 type UtilityPhaseCBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -279,8 +429,11 @@ type UtilityPhaseCBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCBasicAcQuantities
+
+func (u *UtilityPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65008 }
+
+func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -320,14 +473,36 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseCBasicAcQuantities(val *UtilityPhaseCBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseCBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseCBasicAcQuantities, got %T", v)
+	}
+	return EncodeUtilityPhaseCBasicAcQuantities(val)
+}
+
 type UtilityPhaseBAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *uint16 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBAcReactivePower
+
+func (u *UtilityPhaseBAcReactivePower) PGNNumber() uint32  { return 65009 }
+
+func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcReactivePower-ReactivePower: %w", err)
@@ -362,13 +537,35 @@ func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 		}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseBAcReactivePower(val *UtilityPhaseBAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.ReactivePower, 16)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(30)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseBAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseBAcReactivePower, got %T", v)
+	}
+	return EncodeUtilityPhaseBAcReactivePower(val)
+}
+
 type UtilityPhaseBAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBAcPower
+
+func (u *UtilityPhaseBAcPower) PGNNumber() uint32  { return 65010 }
+
+func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcPower-RealPower: %w", err)
@@ -390,6 +587,23 @@ func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseBAcPower(val *UtilityPhaseBAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseBAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseBAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseBAcPower, got %T", v)
+	}
+	return EncodeUtilityPhaseBAcPower(val)
+}
+
 type UtilityPhaseBBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -397,8 +611,11 @@ type UtilityPhaseBBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBBasicAcQuantities
+
+func (u *UtilityPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65011 }
+
+func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -438,14 +655,36 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseBBasicAcQuantities(val *UtilityPhaseBBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseBBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseBBasicAcQuantities, got %T", v)
+	}
+	return EncodeUtilityPhaseBBasicAcQuantities(val)
+}
+
 type UtilityPhaseAAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseAAcReactivePower
+
+func (u *UtilityPhaseAAcReactivePower) PGNNumber() uint32  { return 65012 }
+
+func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseAAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcReactivePower-ReactivePower: %w", err)
@@ -480,13 +719,35 @@ func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 		}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseAAcReactivePower(val *UtilityPhaseAAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseAAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseAAcReactivePower, got %T", v)
+	}
+	return EncodeUtilityPhaseAAcReactivePower(val)
+}
+
 type UtilityPhaseAAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseAAcPower
+
+func (u *UtilityPhaseAAcPower) PGNNumber() uint32  { return 65013 }
+
+func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseAAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcPower-RealPower: %w", err)
@@ -508,6 +769,23 @@ func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseAAcPower(val *UtilityPhaseAAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseAAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseAAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseAAcPower, got %T", v)
+	}
+	return EncodeUtilityPhaseAAcPower(val)
+}
+
 type UtilityPhaseABasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -515,8 +793,11 @@ type UtilityPhaseABasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseABasicAcQuantities
+
+func (u *UtilityPhaseABasicAcQuantities) PGNNumber() uint32  { return 65014 }
+
+func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -556,14 +837,36 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 	}	
 	return val, nil
 }
+
+func EncodeUtilityPhaseABasicAcQuantities(val *UtilityPhaseABasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityPhaseABasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityPhaseABasicAcQuantities, got %T", v)
+	}
+	return EncodeUtilityPhaseABasicAcQuantities(val)
+}
+
 type UtilityTotalAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcReactivePower
+
+func (u *UtilityTotalAcReactivePower) PGNNumber() uint32  { return 65015 }
+
+func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcReactivePower-ReactivePower: %w", err)
@@ -598,13 +901,35 @@ func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeUtilityTotalAcReactivePower(val *UtilityTotalAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityTotalAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityTotalAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityTotalAcReactivePower, got %T", v)
+	}
+	return EncodeUtilityTotalAcReactivePower(val)
+}
+
 type UtilityTotalAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcPower
+
+func (u *UtilityTotalAcPower) PGNNumber() uint32  { return 65016 }
+
+func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcPower-RealPower: %w", err)
@@ -626,6 +951,23 @@ func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeUtilityTotalAcPower(val *UtilityTotalAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityTotalAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityTotalAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityTotalAcPower, got %T", v)
+	}
+	return EncodeUtilityTotalAcPower(val)
+}
+
 type UtilityAverageBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -633,8 +975,11 @@ type UtilityAverageBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityAverageBasicAcQuantities
+
+func (u *UtilityAverageBasicAcQuantities) PGNNumber() uint32  { return 65017 }
+
+func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityAverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityAverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -674,13 +1019,35 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 	}	
 	return val, nil
 }
+
+func EncodeUtilityAverageBasicAcQuantities(val *UtilityAverageBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeUtilityAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*UtilityAverageBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *UtilityAverageBasicAcQuantities, got %T", v)
+	}
+	return EncodeUtilityAverageBasicAcQuantities(val)
+}
+
 type GeneratorTotalAcEnergy struct {
 	Info MessageInfo `json:"info"`
 	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
 	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
-func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcEnergy
+
+func (g *GeneratorTotalAcEnergy) PGNNumber() uint32  { return 65018 }
+
+func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcEnergy{}
 	val.Info = Info
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcEnergy-TotalEnergyExport: %w", err)
@@ -702,14 +1069,34 @@ func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any,
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorTotalAcEnergy(val *GeneratorTotalAcEnergy) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt32(val.TotalEnergyExport, 32)
+	w.writeUInt32(val.TotalEnergyImport, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorTotalAcEnergyMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorTotalAcEnergy)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorTotalAcEnergy, got %T", v)
+	}
+	return EncodeGeneratorTotalAcEnergy(val)
+}
+
 type GeneratorPhaseCAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCAcReactivePower
+
+func (g *GeneratorPhaseCAcReactivePower) PGNNumber() uint32  { return 65019 }
+
+func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcReactivePower-ReactivePower: %w", err)
@@ -744,13 +1131,35 @@ func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 		}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseCAcReactivePower(val *GeneratorPhaseCAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseCAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseCAcReactivePower, got %T", v)
+	}
+	return EncodeGeneratorPhaseCAcReactivePower(val)
+}
+
 type GeneratorPhaseCAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCAcPower
+
+func (g *GeneratorPhaseCAcPower) PGNNumber() uint32  { return 65020 }
+
+func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcPower-RealPower: %w", err)
@@ -772,6 +1181,23 @@ func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseCAcPower(val *GeneratorPhaseCAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseCAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseCAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseCAcPower, got %T", v)
+	}
+	return EncodeGeneratorPhaseCAcPower(val)
+}
+
 type GeneratorPhaseCBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -779,8 +1205,11 @@ type GeneratorPhaseCBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCBasicAcQuantities
+
+func (g *GeneratorPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65021 }
+
+func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -820,14 +1249,36 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseCBasicAcQuantities(val *GeneratorPhaseCBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseCBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseCBasicAcQuantities, got %T", v)
+	}
+	return EncodeGeneratorPhaseCBasicAcQuantities(val)
+}
+
 type GeneratorPhaseBAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBAcReactivePower
+
+func (g *GeneratorPhaseBAcReactivePower) PGNNumber() uint32  { return 65022 }
+
+func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcReactivePower-ReactivePower: %w", err)
@@ -862,13 +1313,35 @@ func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 		}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseBAcReactivePower(val *GeneratorPhaseBAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseBAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseBAcReactivePower, got %T", v)
+	}
+	return EncodeGeneratorPhaseBAcReactivePower(val)
+}
+
 type GeneratorPhaseBAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBAcPower
+
+func (g *GeneratorPhaseBAcPower) PGNNumber() uint32  { return 65023 }
+
+func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcPower-RealPower: %w", err)
@@ -890,6 +1363,23 @@ func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseBAcPower(val *GeneratorPhaseBAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseBAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseBAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseBAcPower, got %T", v)
+	}
+	return EncodeGeneratorPhaseBAcPower(val)
+}
+
 type GeneratorPhaseBBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -897,8 +1387,11 @@ type GeneratorPhaseBBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBBasicAcQuantities
+
+func (g *GeneratorPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65024 }
+
+func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -938,14 +1431,36 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseBBasicAcQuantities(val *GeneratorPhaseBBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseBBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseBBasicAcQuantities, got %T", v)
+	}
+	return EncodeGeneratorPhaseBBasicAcQuantities(val)
+}
+
 type GeneratorPhaseAAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseAAcReactivePower
+
+func (g *GeneratorPhaseAAcReactivePower) PGNNumber() uint32  { return 65025 }
+
+func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseAAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcReactivePower-ReactivePower: %w", err)
@@ -980,13 +1495,35 @@ func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 		}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseAAcReactivePower(val *GeneratorPhaseAAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseAAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseAAcReactivePower, got %T", v)
+	}
+	return EncodeGeneratorPhaseAAcReactivePower(val)
+}
+
 type GeneratorPhaseAAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseAAcPower
+
+func (g *GeneratorPhaseAAcPower) PGNNumber() uint32  { return 65026 }
+
+func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseAAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcPower-RealPower: %w", err)
@@ -1008,6 +1545,23 @@ func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any,
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseAAcPower(val *GeneratorPhaseAAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseAAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseAAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseAAcPower, got %T", v)
+	}
+	return EncodeGeneratorPhaseAAcPower(val)
+}
+
 type GeneratorPhaseABasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -1015,8 +1569,11 @@ type GeneratorPhaseABasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseABasicAcQuantities
+
+func (g *GeneratorPhaseABasicAcQuantities) PGNNumber() uint32  { return 65027 }
+
+func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -1056,14 +1613,36 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorPhaseABasicAcQuantities(val *GeneratorPhaseABasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorPhaseABasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorPhaseABasicAcQuantities, got %T", v)
+	}
+	return EncodeGeneratorPhaseABasicAcQuantities(val)
+}
+
 type GeneratorTotalAcReactivePower struct {
 	Info MessageInfo `json:"info"`
 	ReactivePower *int32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcReactivePower
+
+func (g *GeneratorTotalAcReactivePower) PGNNumber() uint32  { return 65028 }
+
+func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcReactivePower-ReactivePower: %w", err)
@@ -1098,13 +1677,35 @@ func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream
 		}	
 	return val, nil
 }
+
+func EncodeGeneratorTotalAcReactivePower(val *GeneratorTotalAcReactivePower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.ReactivePower, 32)
+	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
+	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
+	w.skipBits(14)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorTotalAcReactivePowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorTotalAcReactivePower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorTotalAcReactivePower, got %T", v)
+	}
+	return EncodeGeneratorTotalAcReactivePower(val)
+}
+
 type GeneratorTotalAcPower struct {
 	Info MessageInfo `json:"info"`
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcPower
+
+func (g *GeneratorTotalAcPower) PGNNumber() uint32  { return 65029 }
+
+func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcPower-RealPower: %w", err)
@@ -1126,6 +1727,23 @@ func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, 
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorTotalAcPower(val *GeneratorTotalAcPower) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeInt32(val.RealPower, 32)
+	w.writeInt32(val.ApparentPower, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorTotalAcPowerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorTotalAcPower)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorTotalAcPower, got %T", v)
+	}
+	return EncodeGeneratorTotalAcPower(val)
+}
+
 type GeneratorAverageBasicAcQuantities struct {
 	Info MessageInfo `json:"info"`
 	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
@@ -1133,8 +1751,11 @@ type GeneratorAverageBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorAverageBasicAcQuantities
+
+func (g *GeneratorAverageBasicAcQuantities) PGNNumber() uint32  { return 65030 }
+
+func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorAverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorAverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -1174,6 +1795,25 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 	}	
 	return val, nil
 }
+
+func EncodeGeneratorAverageBasicAcQuantities(val *GeneratorAverageBasicAcQuantities) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
+	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
+	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
+	w.writeUInt16(val.AcRmsCurrent, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGeneratorAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GeneratorAverageBasicAcQuantities)
+	if !ok {
+		return nil, fmt.Errorf("expected *GeneratorAverageBasicAcQuantities, got %T", v)
+	}
+	return EncodeGeneratorAverageBasicAcQuantities(val)
+}
+
 type LoadControllerConnectionStateControl struct {
 	Info MessageInfo `json:"info"`
 	SequenceId *uint8 `json:"sequenceId"`
@@ -1185,8 +1825,11 @@ type LoadControllerConnectionStateControl struct {
 	Timeon *uint8 `json:"timeon"`
 	Timeoff *uint8 `json:"timeoff"`
 }
-func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val LoadControllerConnectionStateControl
+
+func (l *LoadControllerConnectionStateControl) PGNNumber() uint32  { return 127500 }
+
+func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LoadControllerConnectionStateControl{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-SequenceId: %w", err)
@@ -1262,6 +1905,29 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 	}	
 	return val, nil
 }
+
+func EncodeLoadControllerConnectionStateControl(val *LoadControllerConnectionStateControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.SequenceId, 8)
+	w.writeUInt8(val.ConnectionId, 8)
+	w.writeUInt8(val.State, 8)
+	w.writeUInt8(val.Status, 8)
+	w.writeUInt8(val.OperationalStatusControl, 8)
+	w.writeUInt8(val.PwmDutyCycle, 8)
+	w.writeUInt8(val.Timeon, 8)
+	w.writeUInt8(val.Timeoff, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeLoadControllerConnectionStateControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*LoadControllerConnectionStateControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *LoadControllerConnectionStateControl, got %T", v)
+	}
+	return EncodeLoadControllerConnectionStateControl(val)
+}
+
 type BinarySwitchBankStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -1294,8 +1960,11 @@ type BinarySwitchBankStatus struct {
 	Indicator27 OffOnConst `json:"indicator27"`
 	Indicator28 OffOnConst `json:"indicator28"`
 }
-func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BinarySwitchBankStatus
+
+func (b *BinarySwitchBankStatus) PGNNumber() uint32  { return 127501 }
+
+func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BinarySwitchBankStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Instance: %w", err)
@@ -1560,6 +2229,50 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (any,
 	}	
 	return val, nil
 }
+
+func EncodeBinarySwitchBankStatus(val *BinarySwitchBankStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Indicator1), 2)
+	w.writeLookupField(uint64(val.Indicator2), 2)
+	w.writeLookupField(uint64(val.Indicator3), 2)
+	w.writeLookupField(uint64(val.Indicator4), 2)
+	w.writeLookupField(uint64(val.Indicator5), 2)
+	w.writeLookupField(uint64(val.Indicator6), 2)
+	w.writeLookupField(uint64(val.Indicator7), 2)
+	w.writeLookupField(uint64(val.Indicator8), 2)
+	w.writeLookupField(uint64(val.Indicator9), 2)
+	w.writeLookupField(uint64(val.Indicator10), 2)
+	w.writeLookupField(uint64(val.Indicator11), 2)
+	w.writeLookupField(uint64(val.Indicator12), 2)
+	w.writeLookupField(uint64(val.Indicator13), 2)
+	w.writeLookupField(uint64(val.Indicator14), 2)
+	w.writeLookupField(uint64(val.Indicator15), 2)
+	w.writeLookupField(uint64(val.Indicator16), 2)
+	w.writeLookupField(uint64(val.Indicator17), 2)
+	w.writeLookupField(uint64(val.Indicator18), 2)
+	w.writeLookupField(uint64(val.Indicator19), 2)
+	w.writeLookupField(uint64(val.Indicator20), 2)
+	w.writeLookupField(uint64(val.Indicator21), 2)
+	w.writeLookupField(uint64(val.Indicator22), 2)
+	w.writeLookupField(uint64(val.Indicator23), 2)
+	w.writeLookupField(uint64(val.Indicator24), 2)
+	w.writeLookupField(uint64(val.Indicator25), 2)
+	w.writeLookupField(uint64(val.Indicator26), 2)
+	w.writeLookupField(uint64(val.Indicator27), 2)
+	w.writeLookupField(uint64(val.Indicator28), 2)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBinarySwitchBankStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*BinarySwitchBankStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *BinarySwitchBankStatus, got %T", v)
+	}
+	return EncodeBinarySwitchBankStatus(val)
+}
+
 type SwitchBankControl struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -1592,8 +2305,11 @@ type SwitchBankControl struct {
 	Switch27 OffOnConst `json:"switch27"`
 	Switch28 OffOnConst `json:"switch28"`
 }
-func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SwitchBankControl
+
+func (s *SwitchBankControl) PGNNumber() uint32  { return 127502 }
+
+func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SwitchBankControl{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Instance: %w", err)
@@ -1858,12 +2574,57 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (any, erro
 	}	
 	return val, nil
 }
+
+func EncodeSwitchBankControl(val *SwitchBankControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Switch1), 2)
+	w.writeLookupField(uint64(val.Switch2), 2)
+	w.writeLookupField(uint64(val.Switch3), 2)
+	w.writeLookupField(uint64(val.Switch4), 2)
+	w.writeLookupField(uint64(val.Switch5), 2)
+	w.writeLookupField(uint64(val.Switch6), 2)
+	w.writeLookupField(uint64(val.Switch7), 2)
+	w.writeLookupField(uint64(val.Switch8), 2)
+	w.writeLookupField(uint64(val.Switch9), 2)
+	w.writeLookupField(uint64(val.Switch10), 2)
+	w.writeLookupField(uint64(val.Switch11), 2)
+	w.writeLookupField(uint64(val.Switch12), 2)
+	w.writeLookupField(uint64(val.Switch13), 2)
+	w.writeLookupField(uint64(val.Switch14), 2)
+	w.writeLookupField(uint64(val.Switch15), 2)
+	w.writeLookupField(uint64(val.Switch16), 2)
+	w.writeLookupField(uint64(val.Switch17), 2)
+	w.writeLookupField(uint64(val.Switch18), 2)
+	w.writeLookupField(uint64(val.Switch19), 2)
+	w.writeLookupField(uint64(val.Switch20), 2)
+	w.writeLookupField(uint64(val.Switch21), 2)
+	w.writeLookupField(uint64(val.Switch22), 2)
+	w.writeLookupField(uint64(val.Switch23), 2)
+	w.writeLookupField(uint64(val.Switch24), 2)
+	w.writeLookupField(uint64(val.Switch25), 2)
+	w.writeLookupField(uint64(val.Switch26), 2)
+	w.writeLookupField(uint64(val.Switch27), 2)
+	w.writeLookupField(uint64(val.Switch28), 2)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSwitchBankControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SwitchBankControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *SwitchBankControl, got %T", v)
+	}
+	return EncodeSwitchBankControl(val)
+}
+
 type AcInputStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
 	NumberOfLines *uint8 `json:"numberOfLines"`
 	Repeating1 []AcInputStatusRepeating1 `json:"repeating1"`
 }
+
 type AcInputStatusRepeating1 struct {
 	Line *uint8 `json:"line"`
 	Acceptability AcceptabilityConst `json:"acceptability"`
@@ -1875,8 +2636,11 @@ type AcInputStatusRepeating1 struct {
 	ReactivePower *uint32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 }
-func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcInputStatus
+
+func (a *AcInputStatus) PGNNumber() uint32  { return 127503 }
+
+func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcInputStatus{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -1967,12 +2731,43 @@ func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeAcInputStatus(val *AcInputStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.NumberOfLines, 8)
+	for _, rep := range val.Repeating1 {
+		w.writeUInt8(rep.Line, 2)
+		w.writeLookupField(uint64(rep.Acceptability), 2)
+		w.skipBits(4)
+		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
+		w.writeUnsignedResolution(rep.Current, 16, 0.1)
+		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
+		w.writeUnsignedResolution(rep.BreakerSize, 16, 0.1)
+		w.writeUInt32(rep.RealPower, 32)
+		w.writeUInt32(rep.ReactivePower, 32)
+		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
+	}
+	w.skipBits(4)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAcInputStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AcInputStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *AcInputStatus, got %T", v)
+	}
+	return EncodeAcInputStatus(val)
+}
+
 type AcOutputStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
 	NumberOfLines *uint8 `json:"numberOfLines"`
 	Repeating1 []AcOutputStatusRepeating1 `json:"repeating1"`
 }
+
 type AcOutputStatusRepeating1 struct {
 	Line LineConst `json:"line"`
 	Waveform WaveformConst `json:"waveform"`
@@ -1984,8 +2779,11 @@ type AcOutputStatusRepeating1 struct {
 	ReactivePower *uint32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 }
-func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcOutputStatus
+
+func (a *AcOutputStatus) PGNNumber() uint32  { return 127504 }
+
+func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcOutputStatus{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -2076,6 +2874,36 @@ func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeAcOutputStatus(val *AcOutputStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.NumberOfLines, 8)
+	for _, rep := range val.Repeating1 {
+		w.writeLookupField(uint64(rep.Line), 2)
+		w.writeLookupField(uint64(rep.Waveform), 3)
+		w.skipBits(3)
+		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
+		w.writeUnsignedResolution(rep.Current, 16, 0.1)
+		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
+		w.writeUnsignedResolution(rep.BreakerSize, 16, 0.1)
+		w.writeUInt32(rep.RealPower, 32)
+		w.writeUInt32(rep.ReactivePower, 32)
+		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
+	}
+	w.skipBits(3)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAcOutputStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AcOutputStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *AcOutputStatus, got %T", v)
+	}
+	return EncodeAcOutputStatus(val)
+}
+
 type FluidLevel struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2083,8 +2911,11 @@ type FluidLevel struct {
 	Level *float32 `json:"level"`
 	Capacity *units.Volume `json:"capacity"`
 }
-func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FluidLevel
+
+func (f *FluidLevel) PGNNumber() uint32  { return 127505 }
+
+func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FluidLevel{}
 	val.Info = Info
 	if v, err := stream.readUInt8(4); err != nil {
 		return nil, fmt.Errorf("parse failed for FluidLevel-Instance: %w", err)
@@ -2128,6 +2959,30 @@ func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
 		}	
 	return val, nil
 }
+
+func EncodeFluidLevel(val *FluidLevel) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 4)
+	w.writeLookupField(uint64(val.Type), 4)
+	w.writeSignedResolution(val.Level, 16, 0.004)
+	var capacityRaw *float32
+	if val.Capacity != nil {
+		capacityRaw = &val.Capacity.Value
+	}
+	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFluidLevelMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FluidLevel)
+	if !ok {
+		return nil, fmt.Errorf("expected *FluidLevel, got %T", v)
+	}
+	return EncodeFluidLevel(val)
+}
+
 type DcDetailedStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -2139,8 +2994,11 @@ type DcDetailedStatus struct {
 	RippleVoltage *float32 `json:"rippleVoltage"`
 	RemainingCapacity *uint16 `json:"remainingCapacity"`
 }
-func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DcDetailedStatus
+
+func (d *DcDetailedStatus) PGNNumber() uint32  { return 127506 }
+
+func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DcDetailedStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-Sid: %w", err)
@@ -2216,6 +3074,29 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeDcDetailedStatus(val *DcDetailedStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.DcType), 8)
+	w.writeUInt8(val.StateOfCharge, 8)
+	w.writeUInt8(val.StateOfHealth, 8)
+	w.writeUnsignedResolution(val.TimeRemaining, 16, 60)
+	w.writeUnsignedResolution(val.RippleVoltage, 16, 0.01)
+	w.writeUInt16(val.RemainingCapacity, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeDcDetailedStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*DcDetailedStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *DcDetailedStatus, got %T", v)
+	}
+	return EncodeDcDetailedStatus(val)
+}
+
 type ChargerStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2226,8 +3107,11 @@ type ChargerStatus struct {
 	EqualizationPending OffOnConst `json:"equalizationPending"`
 	EqualizationTimeRemaining *float32 `json:"equalizationTimeRemaining"`
 }
-func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ChargerStatus
+
+func (c *ChargerStatus) PGNNumber() uint32  { return 127507 }
+
+func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ChargerStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-Instance: %w", err)
@@ -2298,6 +3182,29 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeChargerStatus(val *ChargerStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.BatteryInstance, 8)
+	w.writeLookupField(uint64(val.OperatingState), 4)
+	w.writeLookupField(uint64(val.ChargeMode), 4)
+	w.writeLookupField(uint64(val.Enabled), 2)
+	w.writeLookupField(uint64(val.EqualizationPending), 2)
+	w.skipBits(4)
+	w.writeUnsignedResolution(val.EqualizationTimeRemaining, 16, 60)
+	return w.Bytes(), w.Err()
+}
+
+func encodeChargerStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ChargerStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *ChargerStatus, got %T", v)
+	}
+	return EncodeChargerStatus(val)
+}
+
 type BatteryStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2306,8 +3213,11 @@ type BatteryStatus struct {
 	Temperature *units.Temperature `json:"temperature"`
 	Sid *uint8 `json:"sid"`
 }
-func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BatteryStatus
+
+func (b *BatteryStatus) PGNNumber() uint32  { return 127508 }
+
+func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BatteryStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Instance: %w", err)
@@ -2356,6 +3266,30 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeBatteryStatus(val *BatteryStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUnsignedResolution(val.Voltage, 16, 0.01)
+	w.writeSignedResolution(val.Current, 16, 0.1)
+	var temperatureRaw *float32
+	if val.Temperature != nil {
+		temperatureRaw = &val.Temperature.Value
+	}
+	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
+	w.writeUInt8(val.Sid, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBatteryStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*BatteryStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *BatteryStatus, got %T", v)
+	}
+	return EncodeBatteryStatus(val)
+}
+
 type InverterStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2364,8 +3298,11 @@ type InverterStatus struct {
 	OperatingState InverterStateConst `json:"operatingState"`
 	InverterEnable OffOnConst `json:"inverterEnable"`
 }
-func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val InverterStatus
+
+func (i *InverterStatus) PGNNumber() uint32  { return 127509 }
+
+func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &InverterStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-Instance: %w", err)
@@ -2418,6 +3355,27 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) 
 		}	
 	return val, nil
 }
+
+func EncodeInverterStatus(val *InverterStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.AcInstance, 8)
+	w.writeUInt8(val.DcInstance, 8)
+	w.writeLookupField(uint64(val.OperatingState), 4)
+	w.writeLookupField(uint64(val.InverterEnable), 2)
+	w.skipBits(2)
+	return w.Bytes(), w.Err()
+}
+
+func encodeInverterStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*InverterStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *InverterStatus, got %T", v)
+	}
+	return EncodeInverterStatus(val)
+}
+
 type InverterConfigurationStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2429,8 +3387,11 @@ type InverterConfigurationStatus struct {
 	LoadSensePowerThreshold *uint8 `json:"loadSensePowerThreshold"`
 	LoadSenseInterval *uint8 `json:"loadSenseInterval"`
 }
-func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val InverterConfigurationStatus
+
+func (i *InverterConfigurationStatus) PGNNumber() uint32  { return 127511 }
+
+func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &InverterConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-Instance: %w", err)
@@ -2510,14 +3471,41 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 	}	
 	return val, nil
 }
+
+func EncodeInverterConfigurationStatus(val *InverterConfigurationStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.AcInstance, 8)
+	w.writeUInt8(val.DcInstance, 8)
+	w.writeUInt8(val.InverterEnableDisable, 2)
+	w.skipBits(6)
+	w.writeUInt8(val.InverterMode, 8)
+	w.writeUInt8(val.LoadSenseEnableDisable, 8)
+	w.writeUInt8(val.LoadSensePowerThreshold, 8)
+	w.writeUInt8(val.LoadSenseInterval, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeInverterConfigurationStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*InverterConfigurationStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *InverterConfigurationStatus, got %T", v)
+	}
+	return EncodeInverterConfigurationStatus(val)
+}
+
 type AgsConfigurationStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
 	GeneratorInstance *uint8 `json:"generatorInstance"`
 	AgsMode *uint8 `json:"agsMode"`
 }
-func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AgsConfigurationStatus
+
+func (a *AgsConfigurationStatus) PGNNumber() uint32  { return 127512 }
+
+func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AgsConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsConfigurationStatus-Instance: %w", err)
@@ -2552,6 +3540,25 @@ func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any,
 		}	
 	return val, nil
 }
+
+func EncodeAgsConfigurationStatus(val *AgsConfigurationStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.GeneratorInstance, 8)
+	w.writeUInt8(val.AgsMode, 8)
+	w.skipBits(40)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAgsConfigurationStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AgsConfigurationStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *AgsConfigurationStatus, got %T", v)
+	}
+	return EncodeAgsConfigurationStatus(val)
+}
+
 type BatteryConfigurationStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2564,8 +3571,11 @@ type BatteryConfigurationStatus struct {
 	PeukertExponent *float32 `json:"peukertExponent"`
 	ChargeEfficiencyFactor *int8 `json:"chargeEfficiencyFactor"`
 }
-func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BatteryConfigurationStatus
+
+func (b *BatteryConfigurationStatus) PGNNumber() uint32  { return 127513 }
+
+func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BatteryConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-Instance: %w", err)
@@ -2654,6 +3664,31 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 	}	
 	return val, nil
 }
+
+func EncodeBatteryConfigurationStatus(val *BatteryConfigurationStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.BatteryType), 4)
+	w.writeLookupField(uint64(val.SupportsEqualization), 2)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.NominalVoltage), 4)
+	w.writeLookupField(uint64(val.Chemistry), 4)
+	w.writeUInt16(val.Capacity, 16)
+	w.writeInt8(val.TemperatureCoefficient, 8)
+	w.writeUnsignedResolution(val.PeukertExponent, 8, 0.002)
+	w.writeInt8(val.ChargeEfficiencyFactor, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBatteryConfigurationStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*BatteryConfigurationStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *BatteryConfigurationStatus, got %T", v)
+	}
+	return EncodeBatteryConfigurationStatus(val)
+}
+
 type AgsStatus struct {
 	Info MessageInfo `json:"info"`
 	Instance *uint8 `json:"instance"`
@@ -2663,8 +3698,11 @@ type AgsStatus struct {
 	GeneratorOnReason *uint8 `json:"generatorOnReason"`
 	GeneratorOffReason *uint8 `json:"generatorOffReason"`
 }
-func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AgsStatus
+
+func (a *AgsStatus) PGNNumber() uint32  { return 127514 }
+
+func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AgsStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-Instance: %w", err)
@@ -2726,6 +3764,28 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
 		}	
 	return val, nil
 }
+
+func EncodeAgsStatus(val *AgsStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.GeneratorInstance, 8)
+	w.writeUInt8(val.AgsOperatingState, 8)
+	w.writeUInt8(val.GeneratorState, 8)
+	w.writeUInt8(val.GeneratorOnReason, 8)
+	w.writeUInt8(val.GeneratorOffReason, 8)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAgsStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AgsStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *AgsStatus, got %T", v)
+	}
+	return EncodeAgsStatus(val)
+}
+
 type AcPowerCurrentPhaseA struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -2733,8 +3793,11 @@ type AcPowerCurrentPhaseA struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseA
+
+func (a *AcPowerCurrentPhaseA) PGNNumber() uint32  { return 127744 }
+
+func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseA{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseA-Sid: %w", err)
@@ -2774,6 +3837,25 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeAcPowerCurrentPhaseA(val *AcPowerCurrentPhaseA) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.ConnectionNumber, 8)
+	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
+	w.writeInt32(val.Power, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAcPowerCurrentPhaseAMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AcPowerCurrentPhaseA)
+	if !ok {
+		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseA, got %T", v)
+	}
+	return EncodeAcPowerCurrentPhaseA(val)
+}
+
 type AcPowerCurrentPhaseB struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -2781,8 +3863,11 @@ type AcPowerCurrentPhaseB struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseB
+
+func (a *AcPowerCurrentPhaseB) PGNNumber() uint32  { return 127745 }
+
+func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseB{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseB-Sid: %w", err)
@@ -2822,6 +3907,25 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeAcPowerCurrentPhaseB(val *AcPowerCurrentPhaseB) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.ConnectionNumber, 8)
+	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
+	w.writeInt32(val.Power, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAcPowerCurrentPhaseBMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AcPowerCurrentPhaseB)
+	if !ok {
+		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseB, got %T", v)
+	}
+	return EncodeAcPowerCurrentPhaseB(val)
+}
+
 type AcPowerCurrentPhaseC struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -2829,8 +3933,11 @@ type AcPowerCurrentPhaseC struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseC
+
+func (a *AcPowerCurrentPhaseC) PGNNumber() uint32  { return 127746 }
+
+func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseC{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseC-Sid: %w", err)
@@ -2870,6 +3977,25 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (any, e
 	}	
 	return val, nil
 }
+
+func EncodeAcPowerCurrentPhaseC(val *AcPowerCurrentPhaseC) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.ConnectionNumber, 8)
+	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
+	w.writeInt32(val.Power, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAcPowerCurrentPhaseCMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AcPowerCurrentPhaseC)
+	if !ok {
+		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseC, got %T", v)
+	}
+	return EncodeAcPowerCurrentPhaseC(val)
+}
+
 type ConverterStatus struct {
 	Info MessageInfo `json:"info"`
 	Sid []uint8 `json:"sid"`
@@ -2880,8 +4006,11 @@ type ConverterStatus struct {
 	LowDcVoltageState GoodWarningErrorConst `json:"lowDcVoltageState"`
 	RippleState GoodWarningErrorConst `json:"rippleState"`
 }
-func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ConverterStatus
+
+func (c *ConverterStatus) PGNNumber() uint32  { return 127750 }
+
+func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ConverterStatus{}
 	val.Info = Info
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-Sid: %w", err)
@@ -2952,6 +4081,29 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error)
 		}	
 	return val, nil
 }
+
+func EncodeConverterStatus(val *ConverterStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeBinaryData(val.Sid, 8)
+	w.writeUInt8(val.ConnectionNumber, 8)
+	w.writeLookupField(uint64(val.OperatingState), 8)
+	w.writeLookupField(uint64(val.TemperatureState), 2)
+	w.writeLookupField(uint64(val.OverloadState), 2)
+	w.writeLookupField(uint64(val.LowDcVoltageState), 2)
+	w.writeLookupField(uint64(val.RippleState), 2)
+	w.skipBits(32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeConverterStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ConverterStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *ConverterStatus, got %T", v)
+	}
+	return EncodeConverterStatus(val)
+}
+
 type DcVoltageCurrent struct {
 	Info MessageInfo `json:"info"`
 	Sid []uint8 `json:"sid"`
@@ -2959,8 +4111,11 @@ type DcVoltageCurrent struct {
 	DcVoltage *float32 `json:"dcVoltage"`
 	DcCurrent *float32 `json:"dcCurrent"`
 }
-func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DcVoltageCurrent
+
+func (d *DcVoltageCurrent) PGNNumber() uint32  { return 127751 }
+
+func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DcVoltageCurrent{}
 	val.Info = Info
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcVoltageCurrent-Sid: %w", err)
@@ -3005,916 +4160,6 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (any, error
 	return val, nil
 }
 
-func EncodeBus1PhaseCBasicAcQuantities(val *Bus1PhaseCBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeBus1PhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*Bus1PhaseCBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *Bus1PhaseCBasicAcQuantities, got %T", v)
-	}
-	return EncodeBus1PhaseCBasicAcQuantities(val)
-}
-
-func EncodeBus1PhaseBBasicAcQuantities(val *Bus1PhaseBBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeBus1PhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*Bus1PhaseBBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *Bus1PhaseBBasicAcQuantities, got %T", v)
-	}
-	return EncodeBus1PhaseBBasicAcQuantities(val)
-}
-
-func EncodeBus1PhaseABasicAcQuantities(val *Bus1PhaseABasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeBus1PhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*Bus1PhaseABasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *Bus1PhaseABasicAcQuantities, got %T", v)
-	}
-	return EncodeBus1PhaseABasicAcQuantities(val)
-}
-
-func EncodeBus1AverageBasicAcQuantities(val *Bus1AverageBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeBus1AverageBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*Bus1AverageBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *Bus1AverageBasicAcQuantities, got %T", v)
-	}
-	return EncodeBus1AverageBasicAcQuantities(val)
-}
-
-func EncodeUtilityTotalAcEnergy(val *UtilityTotalAcEnergy) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt32(val.TotalEnergyExport, 32)
-	w.writeUInt32(val.TotalEnergyImport, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityTotalAcEnergyAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityTotalAcEnergy)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityTotalAcEnergy, got %T", v)
-	}
-	return EncodeUtilityTotalAcEnergy(val)
-}
-
-func EncodeUtilityPhaseCAcReactivePower(val *UtilityPhaseCAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.ReactivePower, 16)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(30)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseCAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseCAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseCAcReactivePower, got %T", v)
-	}
-	return EncodeUtilityPhaseCAcReactivePower(val)
-}
-
-func EncodeUtilityPhaseCAcPower(val *UtilityPhaseCAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseCAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseCAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseCAcPower, got %T", v)
-	}
-	return EncodeUtilityPhaseCAcPower(val)
-}
-
-func EncodeUtilityPhaseCBasicAcQuantities(val *UtilityPhaseCBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseCBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseCBasicAcQuantities, got %T", v)
-	}
-	return EncodeUtilityPhaseCBasicAcQuantities(val)
-}
-
-func EncodeUtilityPhaseBAcReactivePower(val *UtilityPhaseBAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.ReactivePower, 16)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(30)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseBAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseBAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseBAcReactivePower, got %T", v)
-	}
-	return EncodeUtilityPhaseBAcReactivePower(val)
-}
-
-func EncodeUtilityPhaseBAcPower(val *UtilityPhaseBAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseBAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseBAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseBAcPower, got %T", v)
-	}
-	return EncodeUtilityPhaseBAcPower(val)
-}
-
-func EncodeUtilityPhaseBBasicAcQuantities(val *UtilityPhaseBBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseBBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseBBasicAcQuantities, got %T", v)
-	}
-	return EncodeUtilityPhaseBBasicAcQuantities(val)
-}
-
-func EncodeUtilityPhaseAAcReactivePower(val *UtilityPhaseAAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseAAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseAAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseAAcReactivePower, got %T", v)
-	}
-	return EncodeUtilityPhaseAAcReactivePower(val)
-}
-
-func EncodeUtilityPhaseAAcPower(val *UtilityPhaseAAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseAAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseAAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseAAcPower, got %T", v)
-	}
-	return EncodeUtilityPhaseAAcPower(val)
-}
-
-func EncodeUtilityPhaseABasicAcQuantities(val *UtilityPhaseABasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityPhaseABasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityPhaseABasicAcQuantities, got %T", v)
-	}
-	return EncodeUtilityPhaseABasicAcQuantities(val)
-}
-
-func EncodeUtilityTotalAcReactivePower(val *UtilityTotalAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityTotalAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityTotalAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityTotalAcReactivePower, got %T", v)
-	}
-	return EncodeUtilityTotalAcReactivePower(val)
-}
-
-func EncodeUtilityTotalAcPower(val *UtilityTotalAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityTotalAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityTotalAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityTotalAcPower, got %T", v)
-	}
-	return EncodeUtilityTotalAcPower(val)
-}
-
-func EncodeUtilityAverageBasicAcQuantities(val *UtilityAverageBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeUtilityAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*UtilityAverageBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *UtilityAverageBasicAcQuantities, got %T", v)
-	}
-	return EncodeUtilityAverageBasicAcQuantities(val)
-}
-
-func EncodeGeneratorTotalAcEnergy(val *GeneratorTotalAcEnergy) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt32(val.TotalEnergyExport, 32)
-	w.writeUInt32(val.TotalEnergyImport, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorTotalAcEnergyAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorTotalAcEnergy)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorTotalAcEnergy, got %T", v)
-	}
-	return EncodeGeneratorTotalAcEnergy(val)
-}
-
-func EncodeGeneratorPhaseCAcReactivePower(val *GeneratorPhaseCAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseCAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseCAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseCAcReactivePower, got %T", v)
-	}
-	return EncodeGeneratorPhaseCAcReactivePower(val)
-}
-
-func EncodeGeneratorPhaseCAcPower(val *GeneratorPhaseCAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseCAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseCAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseCAcPower, got %T", v)
-	}
-	return EncodeGeneratorPhaseCAcPower(val)
-}
-
-func EncodeGeneratorPhaseCBasicAcQuantities(val *GeneratorPhaseCBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseCBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseCBasicAcQuantities, got %T", v)
-	}
-	return EncodeGeneratorPhaseCBasicAcQuantities(val)
-}
-
-func EncodeGeneratorPhaseBAcReactivePower(val *GeneratorPhaseBAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseBAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseBAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseBAcReactivePower, got %T", v)
-	}
-	return EncodeGeneratorPhaseBAcReactivePower(val)
-}
-
-func EncodeGeneratorPhaseBAcPower(val *GeneratorPhaseBAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseBAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseBAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseBAcPower, got %T", v)
-	}
-	return EncodeGeneratorPhaseBAcPower(val)
-}
-
-func EncodeGeneratorPhaseBBasicAcQuantities(val *GeneratorPhaseBBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseBBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseBBasicAcQuantities, got %T", v)
-	}
-	return EncodeGeneratorPhaseBBasicAcQuantities(val)
-}
-
-func EncodeGeneratorPhaseAAcReactivePower(val *GeneratorPhaseAAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseAAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseAAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseAAcReactivePower, got %T", v)
-	}
-	return EncodeGeneratorPhaseAAcReactivePower(val)
-}
-
-func EncodeGeneratorPhaseAAcPower(val *GeneratorPhaseAAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseAAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseAAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseAAcPower, got %T", v)
-	}
-	return EncodeGeneratorPhaseAAcPower(val)
-}
-
-func EncodeGeneratorPhaseABasicAcQuantities(val *GeneratorPhaseABasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorPhaseABasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorPhaseABasicAcQuantities, got %T", v)
-	}
-	return EncodeGeneratorPhaseABasicAcQuantities(val)
-}
-
-func EncodeGeneratorTotalAcReactivePower(val *GeneratorTotalAcReactivePower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.ReactivePower, 32)
-	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
-	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorTotalAcReactivePowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorTotalAcReactivePower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorTotalAcReactivePower, got %T", v)
-	}
-	return EncodeGeneratorTotalAcReactivePower(val)
-}
-
-func EncodeGeneratorTotalAcPower(val *GeneratorTotalAcPower) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeInt32(val.RealPower, 32)
-	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorTotalAcPowerAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorTotalAcPower)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorTotalAcPower, got %T", v)
-	}
-	return EncodeGeneratorTotalAcPower(val)
-}
-
-func EncodeGeneratorAverageBasicAcQuantities(val *GeneratorAverageBasicAcQuantities) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
-	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
-	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeGeneratorAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
-	val, ok := v.(*GeneratorAverageBasicAcQuantities)
-	if !ok {
-		return nil, fmt.Errorf("expected *GeneratorAverageBasicAcQuantities, got %T", v)
-	}
-	return EncodeGeneratorAverageBasicAcQuantities(val)
-}
-
-func EncodeLoadControllerConnectionStateControl(val *LoadControllerConnectionStateControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.SequenceId, 8)
-	w.writeUInt8(val.ConnectionId, 8)
-	w.writeUInt8(val.State, 8)
-	w.writeUInt8(val.Status, 8)
-	w.writeUInt8(val.OperationalStatusControl, 8)
-	w.writeUInt8(val.PwmDutyCycle, 8)
-	w.writeUInt8(val.Timeon, 8)
-	w.writeUInt8(val.Timeoff, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeLoadControllerConnectionStateControlAny(v any) ([]byte, error) {
-	val, ok := v.(*LoadControllerConnectionStateControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *LoadControllerConnectionStateControl, got %T", v)
-	}
-	return EncodeLoadControllerConnectionStateControl(val)
-}
-
-func EncodeBinarySwitchBankStatus(val *BinarySwitchBankStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Indicator1), 2)
-	w.writeLookupField(uint64(val.Indicator2), 2)
-	w.writeLookupField(uint64(val.Indicator3), 2)
-	w.writeLookupField(uint64(val.Indicator4), 2)
-	w.writeLookupField(uint64(val.Indicator5), 2)
-	w.writeLookupField(uint64(val.Indicator6), 2)
-	w.writeLookupField(uint64(val.Indicator7), 2)
-	w.writeLookupField(uint64(val.Indicator8), 2)
-	w.writeLookupField(uint64(val.Indicator9), 2)
-	w.writeLookupField(uint64(val.Indicator10), 2)
-	w.writeLookupField(uint64(val.Indicator11), 2)
-	w.writeLookupField(uint64(val.Indicator12), 2)
-	w.writeLookupField(uint64(val.Indicator13), 2)
-	w.writeLookupField(uint64(val.Indicator14), 2)
-	w.writeLookupField(uint64(val.Indicator15), 2)
-	w.writeLookupField(uint64(val.Indicator16), 2)
-	w.writeLookupField(uint64(val.Indicator17), 2)
-	w.writeLookupField(uint64(val.Indicator18), 2)
-	w.writeLookupField(uint64(val.Indicator19), 2)
-	w.writeLookupField(uint64(val.Indicator20), 2)
-	w.writeLookupField(uint64(val.Indicator21), 2)
-	w.writeLookupField(uint64(val.Indicator22), 2)
-	w.writeLookupField(uint64(val.Indicator23), 2)
-	w.writeLookupField(uint64(val.Indicator24), 2)
-	w.writeLookupField(uint64(val.Indicator25), 2)
-	w.writeLookupField(uint64(val.Indicator26), 2)
-	w.writeLookupField(uint64(val.Indicator27), 2)
-	w.writeLookupField(uint64(val.Indicator28), 2)
-	return w.Bytes(), w.Err()
-}
-func encodeBinarySwitchBankStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*BinarySwitchBankStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *BinarySwitchBankStatus, got %T", v)
-	}
-	return EncodeBinarySwitchBankStatus(val)
-}
-
-func EncodeSwitchBankControl(val *SwitchBankControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Switch1), 2)
-	w.writeLookupField(uint64(val.Switch2), 2)
-	w.writeLookupField(uint64(val.Switch3), 2)
-	w.writeLookupField(uint64(val.Switch4), 2)
-	w.writeLookupField(uint64(val.Switch5), 2)
-	w.writeLookupField(uint64(val.Switch6), 2)
-	w.writeLookupField(uint64(val.Switch7), 2)
-	w.writeLookupField(uint64(val.Switch8), 2)
-	w.writeLookupField(uint64(val.Switch9), 2)
-	w.writeLookupField(uint64(val.Switch10), 2)
-	w.writeLookupField(uint64(val.Switch11), 2)
-	w.writeLookupField(uint64(val.Switch12), 2)
-	w.writeLookupField(uint64(val.Switch13), 2)
-	w.writeLookupField(uint64(val.Switch14), 2)
-	w.writeLookupField(uint64(val.Switch15), 2)
-	w.writeLookupField(uint64(val.Switch16), 2)
-	w.writeLookupField(uint64(val.Switch17), 2)
-	w.writeLookupField(uint64(val.Switch18), 2)
-	w.writeLookupField(uint64(val.Switch19), 2)
-	w.writeLookupField(uint64(val.Switch20), 2)
-	w.writeLookupField(uint64(val.Switch21), 2)
-	w.writeLookupField(uint64(val.Switch22), 2)
-	w.writeLookupField(uint64(val.Switch23), 2)
-	w.writeLookupField(uint64(val.Switch24), 2)
-	w.writeLookupField(uint64(val.Switch25), 2)
-	w.writeLookupField(uint64(val.Switch26), 2)
-	w.writeLookupField(uint64(val.Switch27), 2)
-	w.writeLookupField(uint64(val.Switch28), 2)
-	return w.Bytes(), w.Err()
-}
-func encodeSwitchBankControlAny(v any) ([]byte, error) {
-	val, ok := v.(*SwitchBankControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *SwitchBankControl, got %T", v)
-	}
-	return EncodeSwitchBankControl(val)
-}
-
-func EncodeAcInputStatus(val *AcInputStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.NumberOfLines, 8)
-	for _, rep := range val.Repeating1 {
-		w.writeUInt8(rep.Line, 2)
-		w.writeLookupField(uint64(rep.Acceptability), 2)
-		w.skipBits(4)
-		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
-		w.writeUnsignedResolution(rep.Current, 16, 0.1)
-		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
-		w.writeUnsignedResolution(rep.BreakerSize, 16, 0.1)
-		w.writeUInt32(rep.RealPower, 32)
-		w.writeUInt32(rep.ReactivePower, 32)
-		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
-	}
-	w.skipBits(4)
-	return w.Bytes(), w.Err()
-}
-func encodeAcInputStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*AcInputStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *AcInputStatus, got %T", v)
-	}
-	return EncodeAcInputStatus(val)
-}
-
-func EncodeAcOutputStatus(val *AcOutputStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.NumberOfLines, 8)
-	for _, rep := range val.Repeating1 {
-		w.writeLookupField(uint64(rep.Line), 2)
-		w.writeLookupField(uint64(rep.Waveform), 3)
-		w.skipBits(3)
-		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
-		w.writeUnsignedResolution(rep.Current, 16, 0.1)
-		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
-		w.writeUnsignedResolution(rep.BreakerSize, 16, 0.1)
-		w.writeUInt32(rep.RealPower, 32)
-		w.writeUInt32(rep.ReactivePower, 32)
-		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
-	}
-	w.skipBits(3)
-	return w.Bytes(), w.Err()
-}
-func encodeAcOutputStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*AcOutputStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *AcOutputStatus, got %T", v)
-	}
-	return EncodeAcOutputStatus(val)
-}
-
-func EncodeFluidLevel(val *FluidLevel) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 4)
-	w.writeLookupField(uint64(val.Type), 4)
-	w.writeSignedResolution(val.Level, 16, 0.004)
-	var capacityRaw *float32
-	if val.Capacity != nil {
-		capacityRaw = &val.Capacity.Value
-	}
-	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeFluidLevelAny(v any) ([]byte, error) {
-	val, ok := v.(*FluidLevel)
-	if !ok {
-		return nil, fmt.Errorf("expected *FluidLevel, got %T", v)
-	}
-	return EncodeFluidLevel(val)
-}
-
-func EncodeDcDetailedStatus(val *DcDetailedStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.DcType), 8)
-	w.writeUInt8(val.StateOfCharge, 8)
-	w.writeUInt8(val.StateOfHealth, 8)
-	w.writeUnsignedResolution(val.TimeRemaining, 16, 60)
-	w.writeUnsignedResolution(val.RippleVoltage, 16, 0.01)
-	w.writeUInt16(val.RemainingCapacity, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeDcDetailedStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*DcDetailedStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *DcDetailedStatus, got %T", v)
-	}
-	return EncodeDcDetailedStatus(val)
-}
-
-func EncodeChargerStatus(val *ChargerStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.BatteryInstance, 8)
-	w.writeLookupField(uint64(val.OperatingState), 4)
-	w.writeLookupField(uint64(val.ChargeMode), 4)
-	w.writeLookupField(uint64(val.Enabled), 2)
-	w.writeLookupField(uint64(val.EqualizationPending), 2)
-	w.skipBits(4)
-	w.writeUnsignedResolution(val.EqualizationTimeRemaining, 16, 60)
-	return w.Bytes(), w.Err()
-}
-func encodeChargerStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*ChargerStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *ChargerStatus, got %T", v)
-	}
-	return EncodeChargerStatus(val)
-}
-
-func EncodeBatteryStatus(val *BatteryStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUnsignedResolution(val.Voltage, 16, 0.01)
-	w.writeSignedResolution(val.Current, 16, 0.1)
-	var temperatureRaw *float32
-	if val.Temperature != nil {
-		temperatureRaw = &val.Temperature.Value
-	}
-	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
-	w.writeUInt8(val.Sid, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeBatteryStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*BatteryStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *BatteryStatus, got %T", v)
-	}
-	return EncodeBatteryStatus(val)
-}
-
-func EncodeInverterStatus(val *InverterStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.AcInstance, 8)
-	w.writeUInt8(val.DcInstance, 8)
-	w.writeLookupField(uint64(val.OperatingState), 4)
-	w.writeLookupField(uint64(val.InverterEnable), 2)
-	w.skipBits(2)
-	return w.Bytes(), w.Err()
-}
-func encodeInverterStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*InverterStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *InverterStatus, got %T", v)
-	}
-	return EncodeInverterStatus(val)
-}
-
-func EncodeInverterConfigurationStatus(val *InverterConfigurationStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.AcInstance, 8)
-	w.writeUInt8(val.DcInstance, 8)
-	w.writeUInt8(val.InverterEnableDisable, 2)
-	w.skipBits(6)
-	w.writeUInt8(val.InverterMode, 8)
-	w.writeUInt8(val.LoadSenseEnableDisable, 8)
-	w.writeUInt8(val.LoadSensePowerThreshold, 8)
-	w.writeUInt8(val.LoadSenseInterval, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeInverterConfigurationStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*InverterConfigurationStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *InverterConfigurationStatus, got %T", v)
-	}
-	return EncodeInverterConfigurationStatus(val)
-}
-
-func EncodeAgsConfigurationStatus(val *AgsConfigurationStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.GeneratorInstance, 8)
-	w.writeUInt8(val.AgsMode, 8)
-	w.skipBits(40)
-	return w.Bytes(), w.Err()
-}
-func encodeAgsConfigurationStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*AgsConfigurationStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *AgsConfigurationStatus, got %T", v)
-	}
-	return EncodeAgsConfigurationStatus(val)
-}
-
-func EncodeBatteryConfigurationStatus(val *BatteryConfigurationStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.BatteryType), 4)
-	w.writeLookupField(uint64(val.SupportsEqualization), 2)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.NominalVoltage), 4)
-	w.writeLookupField(uint64(val.Chemistry), 4)
-	w.writeUInt16(val.Capacity, 16)
-	w.writeInt8(val.TemperatureCoefficient, 8)
-	w.writeUnsignedResolution(val.PeukertExponent, 8, 0.002)
-	w.writeInt8(val.ChargeEfficiencyFactor, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeBatteryConfigurationStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*BatteryConfigurationStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *BatteryConfigurationStatus, got %T", v)
-	}
-	return EncodeBatteryConfigurationStatus(val)
-}
-
-func EncodeAgsStatus(val *AgsStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.GeneratorInstance, 8)
-	w.writeUInt8(val.AgsOperatingState, 8)
-	w.writeUInt8(val.GeneratorState, 8)
-	w.writeUInt8(val.GeneratorOnReason, 8)
-	w.writeUInt8(val.GeneratorOffReason, 8)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeAgsStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*AgsStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *AgsStatus, got %T", v)
-	}
-	return EncodeAgsStatus(val)
-}
-
-func EncodeAcPowerCurrentPhaseA(val *AcPowerCurrentPhaseA) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.ConnectionNumber, 8)
-	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
-	w.writeInt32(val.Power, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeAcPowerCurrentPhaseAAny(v any) ([]byte, error) {
-	val, ok := v.(*AcPowerCurrentPhaseA)
-	if !ok {
-		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseA, got %T", v)
-	}
-	return EncodeAcPowerCurrentPhaseA(val)
-}
-
-func EncodeAcPowerCurrentPhaseB(val *AcPowerCurrentPhaseB) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.ConnectionNumber, 8)
-	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
-	w.writeInt32(val.Power, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeAcPowerCurrentPhaseBAny(v any) ([]byte, error) {
-	val, ok := v.(*AcPowerCurrentPhaseB)
-	if !ok {
-		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseB, got %T", v)
-	}
-	return EncodeAcPowerCurrentPhaseB(val)
-}
-
-func EncodeAcPowerCurrentPhaseC(val *AcPowerCurrentPhaseC) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.ConnectionNumber, 8)
-	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
-	w.writeInt32(val.Power, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeAcPowerCurrentPhaseCAny(v any) ([]byte, error) {
-	val, ok := v.(*AcPowerCurrentPhaseC)
-	if !ok {
-		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseC, got %T", v)
-	}
-	return EncodeAcPowerCurrentPhaseC(val)
-}
-
-func EncodeConverterStatus(val *ConverterStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeBinaryData(val.Sid, 8)
-	w.writeUInt8(val.ConnectionNumber, 8)
-	w.writeLookupField(uint64(val.OperatingState), 8)
-	w.writeLookupField(uint64(val.TemperatureState), 2)
-	w.writeLookupField(uint64(val.OverloadState), 2)
-	w.writeLookupField(uint64(val.LowDcVoltageState), 2)
-	w.writeLookupField(uint64(val.RippleState), 2)
-	w.skipBits(32)
-	return w.Bytes(), w.Err()
-}
-func encodeConverterStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*ConverterStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *ConverterStatus, got %T", v)
-	}
-	return EncodeConverterStatus(val)
-}
-
 func EncodeDcVoltageCurrent(val *DcVoltageCurrent) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -3925,7 +4170,8 @@ func EncodeDcVoltageCurrent(val *DcVoltageCurrent) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeDcVoltageCurrentAny(v any) ([]byte, error) {
+
+func encodeDcVoltageCurrentMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DcVoltageCurrent)
 	if !ok {
 		return nil, fmt.Errorf("expected *DcVoltageCurrent, got %T", v)

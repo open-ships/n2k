@@ -108,15 +108,22 @@ if err != nil {
 }
 defer client.Close()
 
-// Write a message
+// Write a message — the struct knows its own PGN number.
+// Priority defaults to 6, destination defaults to broadcast (255).
 heading := &pgn.VesselHeading{
-    Info:    pgn.MessageInfo{PGN: 127250, Priority: 2},
     Heading: ptrFloat32(1.5708),
 }
 result := client.Write(heading)
 if err := result.Wait(); err != nil {
     log.Printf("write failed: %v", err)
 }
+
+// Explicitly set priority and destination
+heading2 := &pgn.VesselHeading{
+    Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
+    Heading: ptrFloat32(1.5708),
+}
+client.Write(heading2)
 
 // Read messages (same as top-level API)
 for msg, err := range client.Receive() {
@@ -154,19 +161,27 @@ for msg, err := range n2k.Receive(ctx, n2k.Replay(frames)) {
 
 ## PGN Types
 
-All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. PGN structs are organized across category files — `system.go`, `navigation.go`, `engine.go`, etc.
+All decoded messages implement the `pgn.Message` interface and are pointers to typed structs in the `pgn` package. Use a type switch to handle specific message types. PGN structs are organized across category files — `system.go`, `navigation.go`, `engine.go`, etc.
 
-Every struct embeds `pgn.MessageInfo`:
+```go
+type Message interface {
+    PGNNumber() uint32
+}
+```
+
+Every struct carries a `pgn.MessageInfo` field with wire metadata:
 
 ```go
 type MessageInfo struct {
     Timestamp time.Time
-    Priority  uint8
+    Priority  *uint8
     PGN       uint32
     SourceId  uint8
-    TargetId  uint8
+    TargetId  *uint8
 }
 ```
+
+When writing, `Priority` and `TargetId` default to 6 and 255 respectively when nil. When reading, they are populated from the wire.
 
 ## Unit Types
 

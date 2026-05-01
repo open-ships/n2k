@@ -13,8 +13,11 @@ type FusionMediaControl struct {
 	SourceId *uint8 `json:"sourceId"`
 	Command FusionCommandConst `json:"command"`
 }
-func DecodeFusionMediaControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionMediaControl
+
+func (x *FusionMediaControl) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionMediaControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionMediaControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionMediaControl-ManufacturerCode: %w", err)
@@ -85,6 +88,28 @@ func DecodeFusionMediaControl(Info MessageInfo, stream *PGNDataStream) (any, err
 	}	
 	return val, nil
 }
+
+func EncodeFusionMediaControl(val *FusionMediaControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.SourceId, 8)
+	w.writeLookupField(uint64(val.Command), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionMediaControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionMediaControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionMediaControl, got %T", v)
+	}
+	return EncodeFusionMediaControl(val)
+}
+
 type FusionSiriusControl struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -94,8 +119,11 @@ type FusionSiriusControl struct {
 	SourceId *uint8 `json:"sourceId"`
 	Command FusionSiriusCommandConst `json:"command"`
 }
-func DecodeFusionSiriusControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSiriusControl
+
+func (x *FusionSiriusControl) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionSiriusControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSiriusControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSiriusControl-ManufacturerCode: %w", err)
@@ -166,6 +194,28 @@ func DecodeFusionSiriusControl(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeFusionSiriusControl(val *FusionSiriusControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.SourceId, 8)
+	w.writeLookupField(uint64(val.Command), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSiriusControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSiriusControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSiriusControl, got %T", v)
+	}
+	return EncodeFusionSiriusControl(val)
+}
+
 type FusionRequestStatus struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -173,8 +223,11 @@ type FusionRequestStatus struct {
 	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
 	Unknown *uint8 `json:"unknown"`
 }
-func DecodeFusionRequestStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionRequestStatus
+
+func (x *FusionRequestStatus) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionRequestStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionRequestStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionRequestStatus-ManufacturerCode: %w", err)
@@ -227,6 +280,26 @@ func DecodeFusionRequestStatus(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeFusionRequestStatus(val *FusionRequestStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.Unknown, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionRequestStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionRequestStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionRequestStatus, got %T", v)
+	}
+	return EncodeFusionRequestStatus(val)
+}
+
 type FusionSetSource struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -235,8 +308,11 @@ type FusionSetSource struct {
 	Unknown *uint8 `json:"unknown"`
 	SourceId *uint8 `json:"sourceId"`
 }
-func DecodeFusionSetSource(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSetSource
+
+func (x *FusionSetSource) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionSetSource(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSetSource{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSetSource-ManufacturerCode: %w", err)
@@ -298,6 +374,27 @@ func DecodeFusionSetSource(Info MessageInfo, stream *PGNDataStream) (any, error)
 	}	
 	return val, nil
 }
+
+func EncodeFusionSetSource(val *FusionSetSource) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.SourceId, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSetSourceMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSetSource)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSetSource, got %T", v)
+	}
+	return EncodeFusionSetSource(val)
+}
+
 type FusionSetMute struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -305,8 +402,11 @@ type FusionSetMute struct {
 	ProprietaryId FusionMessageIdConst `json:"proprietaryId"`
 	Command FusionMuteCommandConst `json:"command"`
 }
-func DecodeFusionSetMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSetMute
+
+func (x *FusionSetMute) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionSetMute(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSetMute{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSetMute-ManufacturerCode: %w", err)
@@ -359,6 +459,26 @@ func DecodeFusionSetMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionSetMute(val *FusionSetMute) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Command), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSetMuteMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSetMute)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSetMute, got %T", v)
+	}
+	return EncodeFusionSetMute(val)
+}
+
 type FusionSetZoneVolume struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -368,8 +488,11 @@ type FusionSetZoneVolume struct {
 	Zone *uint8 `json:"zone"`
 	Volume *uint8 `json:"volume"`
 }
-func DecodeFusionSetZoneVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSetZoneVolume
+
+func (x *FusionSetZoneVolume) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionSetZoneVolume(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSetZoneVolume{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSetZoneVolume-ManufacturerCode: %w", err)
@@ -440,6 +563,28 @@ func DecodeFusionSetZoneVolume(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeFusionSetZoneVolume(val *FusionSetZoneVolume) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.Zone, 8)
+	w.writeUInt8(val.Volume, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSetZoneVolumeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSetZoneVolume)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSetZoneVolume, got %T", v)
+	}
+	return EncodeFusionSetZoneVolume(val)
+}
+
 type FusionSetAllVolumes struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -451,8 +596,11 @@ type FusionSetAllVolumes struct {
 	Zone3 *uint8 `json:"zone3"`
 	Zone4 *uint8 `json:"zone4"`
 }
-func DecodeFusionSetAllVolumes(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSetAllVolumes
+
+func (x *FusionSetAllVolumes) PGNNumber() uint32  { return 126720 }
+
+func DecodeFusionSetAllVolumes(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSetAllVolumes{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSetAllVolumes-ManufacturerCode: %w", err)
@@ -541,6 +689,30 @@ func DecodeFusionSetAllVolumes(Info MessageInfo, stream *PGNDataStream) (any, er
 	}	
 	return val, nil
 }
+
+func EncodeFusionSetAllVolumes(val *FusionSetAllVolumes) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.Zone1, 8)
+	w.writeUInt8(val.Zone2, 8)
+	w.writeUInt8(val.Zone3, 8)
+	w.writeUInt8(val.Zone4, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSetAllVolumesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSetAllVolumes)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSetAllVolumes, got %T", v)
+	}
+	return EncodeFusionSetAllVolumes(val)
+}
+
 type SonichubZoneInfo struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -549,8 +721,11 @@ type SonichubZoneInfo struct {
 	Control SonichubControlConst `json:"control"`
 	Zone *uint8 `json:"zone"`
 }
-func DecodeSonichubZoneInfo(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubZoneInfo
+
+func (x *SonichubZoneInfo) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubZoneInfo(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubZoneInfo{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubZoneInfo-ManufacturerCode: %w", err)
@@ -616,6 +791,28 @@ func DecodeSonichubZoneInfo(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeSonichubZoneInfo(val *SonichubZoneInfo) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt8(val.Zone, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubZoneInfoMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubZoneInfo)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubZoneInfo, got %T", v)
+	}
+	return EncodeSonichubZoneInfo(val)
+}
+
 type SonichubSource struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -624,8 +821,11 @@ type SonichubSource struct {
 	Control SonichubControlConst `json:"control"`
 	Source SonichubSourceConst `json:"source"`
 }
-func DecodeSonichubSource(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubSource
+
+func (x *SonichubSource) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubSource(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubSource{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubSource-ManufacturerCode: %w", err)
@@ -691,6 +891,28 @@ func DecodeSonichubSource(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeSonichubSource(val *SonichubSource) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubSourceMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubSource)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubSource, got %T", v)
+	}
+	return EncodeSonichubSource(val)
+}
+
 type SonichubSourceList struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -701,8 +923,11 @@ type SonichubSourceList struct {
 	A *uint8 `json:"a"`
 	Text string `json:"text"`
 }
-func DecodeSonichubSourceList(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubSourceList
+
+func (x *SonichubSourceList) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubSourceList(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubSourceList{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubSourceList-ManufacturerCode: %w", err)
@@ -786,6 +1011,30 @@ func DecodeSonichubSourceList(Info MessageInfo, stream *PGNDataStream) (any, err
 	}	
 	return val, nil
 }
+
+func EncodeSonichubSourceList(val *SonichubSourceList) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt8(val.SourceId, 8)
+	w.writeUInt8(val.A, 8)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubSourceListMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubSourceList)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubSourceList, got %T", v)
+	}
+	return EncodeSonichubSourceList(val)
+}
+
 type SonichubControl struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -794,8 +1043,11 @@ type SonichubControl struct {
 	Control SonichubControlConst `json:"control"`
 	Item FusionMuteCommandConst `json:"item"`
 }
-func DecodeSonichubControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubControl
+
+func (x *SonichubControl) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubControl-ManufacturerCode: %w", err)
@@ -861,6 +1113,28 @@ func DecodeSonichubControl(Info MessageInfo, stream *PGNDataStream) (any, error)
 	}	
 	return val, nil
 }
+
+func EncodeSonichubControl(val *SonichubControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeLookupField(uint64(val.Item), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubControl, got %T", v)
+	}
+	return EncodeSonichubControl(val)
+}
+
 type SonichubFmRadio struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -873,8 +1147,11 @@ type SonichubFmRadio struct {
 	SignalLevel *uint8 `json:"signalLevel"`
 	Text string `json:"text"`
 }
-func DecodeSonichubFmRadio(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubFmRadio
+
+func (x *SonichubFmRadio) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubFmRadio(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubFmRadio{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubFmRadio-ManufacturerCode: %w", err)
@@ -980,6 +1257,33 @@ func DecodeSonichubFmRadio(Info MessageInfo, stream *PGNDataStream) (any, error)
 	}	
 	return val, nil
 }
+
+func EncodeSonichubFmRadio(val *SonichubFmRadio) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeLookupField(uint64(val.Item), 8)
+	w.writeUInt32(val.Frequency, 32)
+	w.writeUInt8(val.NoiseLevel, 2)
+	w.writeUInt8(val.SignalLevel, 4)
+	w.skipBits(2)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubFmRadioMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubFmRadio)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubFmRadio, got %T", v)
+	}
+	return EncodeSonichubFmRadio(val)
+}
+
 type SonichubPlaylist struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -993,8 +1297,11 @@ type SonichubPlaylist struct {
 	Length *float32 `json:"length"`
 	PositionInTrack *float32 `json:"positionInTrack"`
 }
-func DecodeSonichubPlaylist(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubPlaylist
+
+func (x *SonichubPlaylist) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubPlaylist(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubPlaylist{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubPlaylist-ManufacturerCode: %w", err)
@@ -1105,6 +1412,33 @@ func DecodeSonichubPlaylist(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeSonichubPlaylist(val *SonichubPlaylist) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeLookupField(uint64(val.Item), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt32(val.CurrentTrack, 32)
+	w.writeUInt32(val.Tracks, 32)
+	w.writeUnsignedResolution(val.Length, 32, 0.001)
+	w.writeUnsignedResolution(val.PositionInTrack, 32, 0.001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubPlaylistMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubPlaylist)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubPlaylist, got %T", v)
+	}
+	return EncodeSonichubPlaylist(val)
+}
+
 type SonichubTrack struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1114,8 +1448,11 @@ type SonichubTrack struct {
 	Item *uint32 `json:"item"`
 	Text string `json:"text"`
 }
-func DecodeSonichubTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubTrack
+
+func (x *SonichubTrack) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubTrack(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubTrack{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubTrack-ManufacturerCode: %w", err)
@@ -1190,6 +1527,29 @@ func DecodeSonichubTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeSonichubTrack(val *SonichubTrack) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt32(val.Item, 32)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubTrackMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubTrack)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubTrack, got %T", v)
+	}
+	return EncodeSonichubTrack(val)
+}
+
 type SonichubArtist struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1199,8 +1559,11 @@ type SonichubArtist struct {
 	Item *uint32 `json:"item"`
 	Text string `json:"text"`
 }
-func DecodeSonichubArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubArtist
+
+func (x *SonichubArtist) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubArtist(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubArtist{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubArtist-ManufacturerCode: %w", err)
@@ -1275,6 +1638,29 @@ func DecodeSonichubArtist(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeSonichubArtist(val *SonichubArtist) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt32(val.Item, 32)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubArtistMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubArtist)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubArtist, got %T", v)
+	}
+	return EncodeSonichubArtist(val)
+}
+
 type SonichubAlbum struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1284,8 +1670,11 @@ type SonichubAlbum struct {
 	Item *uint32 `json:"item"`
 	Text string `json:"text"`
 }
-func DecodeSonichubAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubAlbum
+
+func (x *SonichubAlbum) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubAlbum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubAlbum{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubAlbum-ManufacturerCode: %w", err)
@@ -1360,6 +1749,29 @@ func DecodeSonichubAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeSonichubAlbum(val *SonichubAlbum) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt32(val.Item, 32)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubAlbumMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubAlbum)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubAlbum, got %T", v)
+	}
+	return EncodeSonichubAlbum(val)
+}
+
 type SonichubMenuItem struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1372,8 +1784,11 @@ type SonichubMenuItem struct {
 	E *uint8 `json:"e"`
 	Text string `json:"text"`
 }
-func DecodeSonichubMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubMenuItem
+
+func (x *SonichubMenuItem) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubMenuItem(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubMenuItem{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubMenuItem-ManufacturerCode: %w", err)
@@ -1475,6 +1890,32 @@ func DecodeSonichubMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeSonichubMenuItem(val *SonichubMenuItem) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt32(val.Item, 32)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubMenuItemMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubMenuItem)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubMenuItem, got %T", v)
+	}
+	return EncodeSonichubMenuItem(val)
+}
+
 type SonichubZones struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1483,8 +1924,11 @@ type SonichubZones struct {
 	Control SonichubControlConst `json:"control"`
 	Zones *uint8 `json:"zones"`
 }
-func DecodeSonichubZones(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubZones
+
+func (x *SonichubZones) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubZones(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubZones{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubZones-ManufacturerCode: %w", err)
@@ -1550,6 +1994,28 @@ func DecodeSonichubZones(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeSonichubZones(val *SonichubZones) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt8(val.Zones, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubZonesMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubZones)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubZones, got %T", v)
+	}
+	return EncodeSonichubZones(val)
+}
+
 type SonichubMaxVolume struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1559,8 +2025,11 @@ type SonichubMaxVolume struct {
 	Zone *uint8 `json:"zone"`
 	Level *uint8 `json:"level"`
 }
-func DecodeSonichubMaxVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubMaxVolume
+
+func (x *SonichubMaxVolume) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubMaxVolume(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubMaxVolume{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubMaxVolume-ManufacturerCode: %w", err)
@@ -1635,6 +2104,29 @@ func DecodeSonichubMaxVolume(Info MessageInfo, stream *PGNDataStream) (any, erro
 	}	
 	return val, nil
 }
+
+func EncodeSonichubMaxVolume(val *SonichubMaxVolume) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt8(val.Zone, 8)
+	w.writeUInt8(val.Level, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubMaxVolumeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubMaxVolume)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubMaxVolume, got %T", v)
+	}
+	return EncodeSonichubMaxVolume(val)
+}
+
 type SonichubVolume struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1644,8 +2136,11 @@ type SonichubVolume struct {
 	Zone *uint8 `json:"zone"`
 	Level *uint8 `json:"level"`
 }
-func DecodeSonichubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubVolume
+
+func (x *SonichubVolume) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubVolume(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubVolume{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubVolume-ManufacturerCode: %w", err)
@@ -1720,6 +2215,29 @@ func DecodeSonichubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeSonichubVolume(val *SonichubVolume) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUInt8(val.Zone, 8)
+	w.writeUInt8(val.Level, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubVolumeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubVolume)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubVolume, got %T", v)
+	}
+	return EncodeSonichubVolume(val)
+}
+
 type SonichubInit1 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1727,8 +2245,11 @@ type SonichubInit1 struct {
 	ProprietaryId SonichubCommandConst `json:"proprietaryId"`
 	Control SonichubControlConst `json:"control"`
 }
-func DecodeSonichubInit1(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubInit1
+
+func (x *SonichubInit1) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubInit1(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubInit1{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubInit1-ManufacturerCode: %w", err)
@@ -1785,6 +2306,27 @@ func DecodeSonichubInit1(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeSonichubInit1(val *SonichubInit1) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubInit1Msg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubInit1)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubInit1, got %T", v)
+	}
+	return EncodeSonichubInit1(val)
+}
+
 type SonichubPosition struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1793,8 +2335,11 @@ type SonichubPosition struct {
 	Control SonichubControlConst `json:"control"`
 	Position *float32 `json:"position"`
 }
-func DecodeSonichubPosition(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SonichubPosition
+
+func (x *SonichubPosition) PGNNumber() uint32  { return 130816 }
+
+func DecodeSonichubPosition(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SonichubPosition{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SonichubPosition-ManufacturerCode: %w", err)
@@ -1860,6 +2405,28 @@ func DecodeSonichubPosition(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeSonichubPosition(val *SonichubPosition) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.Control), 8)
+	w.writeUnsignedResolution(val.Position, 32, 0.001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSonichubPositionMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SonichubPosition)
+	if !ok {
+		return nil, fmt.Errorf("expected *SonichubPosition, got %T", v)
+	}
+	return EncodeSonichubPosition(val)
+}
+
 type FusionSourceName struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1872,8 +2439,11 @@ type FusionSourceName struct {
 	E *uint8 `json:"e"`
 	Source string `json:"source"`
 }
-func DecodeFusionSourceName(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSourceName
+
+func (x *FusionSourceName) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionSourceName(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSourceName{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSourceName-ManufacturerCode: %w", err)
@@ -1971,6 +2541,31 @@ func DecodeFusionSourceName(Info MessageInfo, stream *PGNDataStream) (any, error
 	}	
 	return val, nil
 }
+
+func EncodeFusionSourceName(val *FusionSourceName) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.SourceId, 8)
+	w.writeUInt8(val.CurrentSourceId, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeStringWithLength(val.Source)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSourceNameMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSourceName)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSourceName, got %T", v)
+	}
+	return EncodeFusionSourceName(val)
+}
+
 type FusionTrackInfo struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1988,8 +2583,11 @@ type FusionTrackInfo struct {
 	PositionInTrack *float32 `json:"positionInTrack"`
 	H *uint16 `json:"h"`
 }
-func DecodeFusionTrackInfo(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionTrackInfo
+
+func (x *FusionTrackInfo) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionTrackInfo(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionTrackInfo{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionTrackInfo-ManufacturerCode: %w", err)
@@ -2132,6 +2730,36 @@ func DecodeFusionTrackInfo(Info MessageInfo, stream *PGNDataStream) (any, error)
 	}	
 	return val, nil
 }
+
+func EncodeFusionTrackInfo(val *FusionTrackInfo) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt16(val.A, 16)
+	w.writeLookupField(uint64(val.Transport), 4)
+	w.writeUInt8(val.X, 4)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt16(val.Track, 16)
+	w.writeUInt16(val.C, 16)
+	w.writeUInt16(val.TrackCount, 16)
+	w.writeUInt16(val.E, 16)
+	w.writeUnsignedResolution(val.Length, 24, 0.001)
+	w.writeUnsignedResolution(val.PositionInTrack, 24, 0.001)
+	w.writeUInt16(val.H, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionTrackInfoMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionTrackInfo)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionTrackInfo, got %T", v)
+	}
+	return EncodeFusionTrackInfo(val)
+}
+
 type FusionTrack struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2141,8 +2769,11 @@ type FusionTrack struct {
 	B *uint64 `json:"b"`
 	Track string `json:"track"`
 }
-func DecodeFusionTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionTrack
+
+func (x *FusionTrack) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionTrack(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionTrack{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionTrack-ManufacturerCode: %w", err)
@@ -2213,6 +2844,28 @@ func DecodeFusionTrack(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionTrack(val *FusionTrack) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt64(val.B, 40)
+	w.writeStringWithLength(val.Track)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionTrackMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionTrack)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionTrack, got %T", v)
+	}
+	return EncodeFusionTrack(val)
+}
+
 type FusionArtist struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2222,8 +2875,11 @@ type FusionArtist struct {
 	B *uint64 `json:"b"`
 	Artist string `json:"artist"`
 }
-func DecodeFusionArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionArtist
+
+func (x *FusionArtist) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionArtist(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionArtist{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionArtist-ManufacturerCode: %w", err)
@@ -2294,6 +2950,28 @@ func DecodeFusionArtist(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionArtist(val *FusionArtist) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt64(val.B, 40)
+	w.writeStringWithLength(val.Artist)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionArtistMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionArtist)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionArtist, got %T", v)
+	}
+	return EncodeFusionArtist(val)
+}
+
 type FusionAlbum struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2303,8 +2981,11 @@ type FusionAlbum struct {
 	B *uint64 `json:"b"`
 	Album string `json:"album"`
 }
-func DecodeFusionAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionAlbum
+
+func (x *FusionAlbum) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionAlbum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionAlbum{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionAlbum-ManufacturerCode: %w", err)
@@ -2375,6 +3056,28 @@ func DecodeFusionAlbum(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionAlbum(val *FusionAlbum) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt64(val.B, 40)
+	w.writeStringWithLength(val.Album)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionAlbumMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionAlbum)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionAlbum, got %T", v)
+	}
+	return EncodeFusionAlbum(val)
+}
+
 type FusionUnitName struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2383,8 +3086,11 @@ type FusionUnitName struct {
 	A *uint8 `json:"a"`
 	Name string `json:"name"`
 }
-func DecodeFusionUnitName(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionUnitName
+
+func (x *FusionUnitName) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionUnitName(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionUnitName{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionUnitName-ManufacturerCode: %w", err)
@@ -2446,6 +3152,27 @@ func DecodeFusionUnitName(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeFusionUnitName(val *FusionUnitName) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeStringWithLength(val.Name)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionUnitNameMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionUnitName)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionUnitName, got %T", v)
+	}
+	return EncodeFusionUnitName(val)
+}
+
 type FusionZoneName struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2455,8 +3182,11 @@ type FusionZoneName struct {
 	Number *uint8 `json:"number"`
 	Name string `json:"name"`
 }
-func DecodeFusionZoneName(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionZoneName
+
+func (x *FusionZoneName) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionZoneName(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionZoneName{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionZoneName-ManufacturerCode: %w", err)
@@ -2527,6 +3257,28 @@ func DecodeFusionZoneName(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeFusionZoneName(val *FusionZoneName) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.Number, 8)
+	w.writeStringWithLength(val.Name)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionZoneNameMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionZoneName)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionZoneName, got %T", v)
+	}
+	return EncodeFusionZoneName(val)
+}
+
 type FusionPlayProgress struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2536,8 +3288,11 @@ type FusionPlayProgress struct {
 	B *uint8 `json:"b"`
 	Progress *float32 `json:"progress"`
 }
-func DecodeFusionPlayProgress(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionPlayProgress
+
+func (x *FusionPlayProgress) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionPlayProgress(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionPlayProgress{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionPlayProgress-ManufacturerCode: %w", err)
@@ -2608,6 +3363,28 @@ func DecodeFusionPlayProgress(Info MessageInfo, stream *PGNDataStream) (any, err
 	}	
 	return val, nil
 }
+
+func EncodeFusionPlayProgress(val *FusionPlayProgress) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUnsignedResolution(val.Progress, 24, 0.001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionPlayProgressMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionPlayProgress)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionPlayProgress, got %T", v)
+	}
+	return EncodeFusionPlayProgress(val)
+}
+
 type FusionAmFmStation struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2620,8 +3397,11 @@ type FusionAmFmStation struct {
 	C *uint8 `json:"c"`
 	Track string `json:"track"`
 }
-func DecodeFusionAmFmStation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionAmFmStation
+
+func (x *FusionAmFmStation) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionAmFmStation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionAmFmStation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionAmFmStation-ManufacturerCode: %w", err)
@@ -2719,6 +3499,31 @@ func DecodeFusionAmFmStation(Info MessageInfo, stream *PGNDataStream) (any, erro
 	}	
 	return val, nil
 }
+
+func EncodeFusionAmFmStation(val *FusionAmFmStation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeLookupField(uint64(val.AmFm), 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt32(val.Frequency, 32)
+	w.writeUInt8(val.C, 8)
+	w.writeStringWithLength(val.Track)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionAmFmStationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionAmFmStation)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionAmFmStation, got %T", v)
+	}
+	return EncodeFusionAmFmStation(val)
+}
+
 type FusionVhf struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2729,8 +3534,11 @@ type FusionVhf struct {
 	Channel *uint8 `json:"channel"`
 	D *uint32 `json:"d"`
 }
-func DecodeFusionVhf(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionVhf
+
+func (x *FusionVhf) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionVhf(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionVhf{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionVhf-ManufacturerCode: %w", err)
@@ -2810,6 +3618,29 @@ func DecodeFusionVhf(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionVhf(val *FusionVhf) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.Channel, 8)
+	w.writeUInt32(val.D, 24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionVhfMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionVhf)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionVhf, got %T", v)
+	}
+	return EncodeFusionVhf(val)
+}
+
 type FusionSquelch struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2819,8 +3650,11 @@ type FusionSquelch struct {
 	B *uint8 `json:"b"`
 	Squelch *uint8 `json:"squelch"`
 }
-func DecodeFusionSquelch(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSquelch
+
+func (x *FusionSquelch) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionSquelch(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSquelch{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSquelch-ManufacturerCode: %w", err)
@@ -2891,6 +3725,28 @@ func DecodeFusionSquelch(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionSquelch(val *FusionSquelch) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.Squelch, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionSquelchMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionSquelch)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionSquelch, got %T", v)
+	}
+	return EncodeFusionSquelch(val)
+}
+
 type FusionScan struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2901,8 +3757,11 @@ type FusionScan struct {
 	Scan YesNoConst `json:"scan"`
 	C *uint8 `json:"c"`
 }
-func DecodeFusionScan(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionScan
+
+func (x *FusionScan) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionScan(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionScan{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionScan-ManufacturerCode: %w", err)
@@ -2982,6 +3841,29 @@ func DecodeFusionScan(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionScan(val *FusionScan) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeLookupField(uint64(val.Scan), 2)
+	w.writeUInt8(val.C, 6)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionScanMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionScan)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionScan, got %T", v)
+	}
+	return EncodeFusionScan(val)
+}
+
 type FusionMenuItem struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2997,8 +3879,11 @@ type FusionMenuItem struct {
 	I *uint8 `json:"i"`
 	Text string `json:"text"`
 }
-func DecodeFusionMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionMenuItem
+
+func (x *FusionMenuItem) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionMenuItem(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionMenuItem{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionMenuItem-ManufacturerCode: %w", err)
@@ -3123,6 +4008,34 @@ func DecodeFusionMenuItem(Info MessageInfo, stream *PGNDataStream) (any, error) 
 	}	
 	return val, nil
 }
+
+func EncodeFusionMenuItem(val *FusionMenuItem) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.Line, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeUInt8(val.F, 8)
+	w.writeUInt8(val.G, 8)
+	w.writeUInt8(val.H, 8)
+	w.writeUInt8(val.I, 8)
+	w.writeStringWithLength(val.Text)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionMenuItemMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionMenuItem)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionMenuItem, got %T", v)
+	}
+	return EncodeFusionMenuItem(val)
+}
+
 type FusionReplay struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3138,8 +4051,11 @@ type FusionReplay struct {
 	I *uint8 `json:"i"`
 	J *uint8 `json:"j"`
 }
-func DecodeFusionReplay(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionReplay
+
+func (x *FusionReplay) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionReplay(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionReplay{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionReplay-ManufacturerCode: %w", err)
@@ -3264,6 +4180,34 @@ func DecodeFusionReplay(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionReplay(val *FusionReplay) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeLookupField(uint64(val.Mode), 8)
+	w.writeUInt32(val.C, 24)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeLookupField(uint64(val.Status), 8)
+	w.writeUInt8(val.H, 8)
+	w.writeUInt8(val.I, 8)
+	w.writeUInt8(val.J, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionReplayMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionReplay)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionReplay, got %T", v)
+	}
+	return EncodeFusionReplay(val)
+}
+
 type FusionMute struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3272,8 +4216,11 @@ type FusionMute struct {
 	A *uint8 `json:"a"`
 	Mute FusionMuteCommandConst `json:"mute"`
 }
-func DecodeFusionMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionMute
+
+func (x *FusionMute) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionMute(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionMute{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionMute-ManufacturerCode: %w", err)
@@ -3335,6 +4282,27 @@ func DecodeFusionMute(Info MessageInfo, stream *PGNDataStream) (any, error) {
 	}	
 	return val, nil
 }
+
+func EncodeFusionMute(val *FusionMute) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.MessageId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeLookupField(uint64(val.Mute), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFusionMuteMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FusionMute)
+	if !ok {
+		return nil, fmt.Errorf("expected *FusionMute, got %T", v)
+	}
+	return EncodeFusionMute(val)
+}
+
 type FusionSubVolume struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3346,8 +4314,11 @@ type FusionSubVolume struct {
 	Zone3 *uint8 `json:"zone3"`
 	Zone4 *uint8 `json:"zone4"`
 }
-func DecodeFusionSubVolume(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FusionSubVolume
+
+func (x *FusionSubVolume) PGNNumber() uint32  { return 130820 }
+
+func DecodeFusionSubVolume(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FusionSubVolume{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FusionSubVolume-ManufacturerCode: %w", err)
@@ -3437,789 +4408,6 @@ func DecodeFusionSubVolume(Info MessageInfo, stream *PGNDataStream) (any, error)
 	return val, nil
 }
 
-func EncodeFusionMediaControl(val *FusionMediaControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.SourceId, 8)
-	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionMediaControlAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionMediaControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionMediaControl, got %T", v)
-	}
-	return EncodeFusionMediaControl(val)
-}
-
-func EncodeFusionSiriusControl(val *FusionSiriusControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.SourceId, 8)
-	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSiriusControlAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSiriusControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSiriusControl, got %T", v)
-	}
-	return EncodeFusionSiriusControl(val)
-}
-
-func EncodeFusionRequestStatus(val *FusionRequestStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.Unknown, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionRequestStatusAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionRequestStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionRequestStatus, got %T", v)
-	}
-	return EncodeFusionRequestStatus(val)
-}
-
-func EncodeFusionSetSource(val *FusionSetSource) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.SourceId, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSetSourceAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSetSource)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSetSource, got %T", v)
-	}
-	return EncodeFusionSetSource(val)
-}
-
-func EncodeFusionSetMute(val *FusionSetMute) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSetMuteAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSetMute)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSetMute, got %T", v)
-	}
-	return EncodeFusionSetMute(val)
-}
-
-func EncodeFusionSetZoneVolume(val *FusionSetZoneVolume) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.Zone, 8)
-	w.writeUInt8(val.Volume, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSetZoneVolumeAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSetZoneVolume)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSetZoneVolume, got %T", v)
-	}
-	return EncodeFusionSetZoneVolume(val)
-}
-
-func EncodeFusionSetAllVolumes(val *FusionSetAllVolumes) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.Zone1, 8)
-	w.writeUInt8(val.Zone2, 8)
-	w.writeUInt8(val.Zone3, 8)
-	w.writeUInt8(val.Zone4, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSetAllVolumesAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSetAllVolumes)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSetAllVolumes, got %T", v)
-	}
-	return EncodeFusionSetAllVolumes(val)
-}
-
-func EncodeSonichubZoneInfo(val *SonichubZoneInfo) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt8(val.Zone, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubZoneInfoAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubZoneInfo)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubZoneInfo, got %T", v)
-	}
-	return EncodeSonichubZoneInfo(val)
-}
-
-func EncodeSonichubSource(val *SonichubSource) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubSourceAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubSource)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubSource, got %T", v)
-	}
-	return EncodeSonichubSource(val)
-}
-
-func EncodeSonichubSourceList(val *SonichubSourceList) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt8(val.SourceId, 8)
-	w.writeUInt8(val.A, 8)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubSourceListAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubSourceList)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubSourceList, got %T", v)
-	}
-	return EncodeSonichubSourceList(val)
-}
-
-func EncodeSonichubControl(val *SonichubControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeLookupField(uint64(val.Item), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubControlAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubControl, got %T", v)
-	}
-	return EncodeSonichubControl(val)
-}
-
-func EncodeSonichubFmRadio(val *SonichubFmRadio) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeLookupField(uint64(val.Item), 8)
-	w.writeUInt32(val.Frequency, 32)
-	w.writeUInt8(val.NoiseLevel, 2)
-	w.writeUInt8(val.SignalLevel, 4)
-	w.skipBits(2)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubFmRadioAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubFmRadio)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubFmRadio, got %T", v)
-	}
-	return EncodeSonichubFmRadio(val)
-}
-
-func EncodeSonichubPlaylist(val *SonichubPlaylist) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeLookupField(uint64(val.Item), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt32(val.CurrentTrack, 32)
-	w.writeUInt32(val.Tracks, 32)
-	w.writeUnsignedResolution(val.Length, 32, 0.001)
-	w.writeUnsignedResolution(val.PositionInTrack, 32, 0.001)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubPlaylistAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubPlaylist)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubPlaylist, got %T", v)
-	}
-	return EncodeSonichubPlaylist(val)
-}
-
-func EncodeSonichubTrack(val *SonichubTrack) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt32(val.Item, 32)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubTrackAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubTrack)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubTrack, got %T", v)
-	}
-	return EncodeSonichubTrack(val)
-}
-
-func EncodeSonichubArtist(val *SonichubArtist) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt32(val.Item, 32)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubArtistAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubArtist)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubArtist, got %T", v)
-	}
-	return EncodeSonichubArtist(val)
-}
-
-func EncodeSonichubAlbum(val *SonichubAlbum) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt32(val.Item, 32)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubAlbumAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubAlbum)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubAlbum, got %T", v)
-	}
-	return EncodeSonichubAlbum(val)
-}
-
-func EncodeSonichubMenuItem(val *SonichubMenuItem) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt32(val.Item, 32)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubMenuItemAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubMenuItem)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubMenuItem, got %T", v)
-	}
-	return EncodeSonichubMenuItem(val)
-}
-
-func EncodeSonichubZones(val *SonichubZones) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt8(val.Zones, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubZonesAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubZones)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubZones, got %T", v)
-	}
-	return EncodeSonichubZones(val)
-}
-
-func EncodeSonichubMaxVolume(val *SonichubMaxVolume) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt8(val.Zone, 8)
-	w.writeUInt8(val.Level, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubMaxVolumeAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubMaxVolume)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubMaxVolume, got %T", v)
-	}
-	return EncodeSonichubMaxVolume(val)
-}
-
-func EncodeSonichubVolume(val *SonichubVolume) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUInt8(val.Zone, 8)
-	w.writeUInt8(val.Level, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubVolumeAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubVolume)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubVolume, got %T", v)
-	}
-	return EncodeSonichubVolume(val)
-}
-
-func EncodeSonichubInit1(val *SonichubInit1) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubInit1Any(v any) ([]byte, error) {
-	val, ok := v.(*SonichubInit1)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubInit1, got %T", v)
-	}
-	return EncodeSonichubInit1(val)
-}
-
-func EncodeSonichubPosition(val *SonichubPosition) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.Control), 8)
-	w.writeUnsignedResolution(val.Position, 32, 0.001)
-	return w.Bytes(), w.Err()
-}
-func encodeSonichubPositionAny(v any) ([]byte, error) {
-	val, ok := v.(*SonichubPosition)
-	if !ok {
-		return nil, fmt.Errorf("expected *SonichubPosition, got %T", v)
-	}
-	return EncodeSonichubPosition(val)
-}
-
-func EncodeFusionSourceName(val *FusionSourceName) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.SourceId, 8)
-	w.writeUInt8(val.CurrentSourceId, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeStringWithLength(val.Source)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSourceNameAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSourceName)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSourceName, got %T", v)
-	}
-	return EncodeFusionSourceName(val)
-}
-
-func EncodeFusionTrackInfo(val *FusionTrackInfo) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt16(val.A, 16)
-	w.writeLookupField(uint64(val.Transport), 4)
-	w.writeUInt8(val.X, 4)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt16(val.Track, 16)
-	w.writeUInt16(val.C, 16)
-	w.writeUInt16(val.TrackCount, 16)
-	w.writeUInt16(val.E, 16)
-	w.writeUnsignedResolution(val.Length, 24, 0.001)
-	w.writeUnsignedResolution(val.PositionInTrack, 24, 0.001)
-	w.writeUInt16(val.H, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionTrackInfoAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionTrackInfo)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionTrackInfo, got %T", v)
-	}
-	return EncodeFusionTrackInfo(val)
-}
-
-func EncodeFusionTrack(val *FusionTrack) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt64(val.B, 40)
-	w.writeStringWithLength(val.Track)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionTrackAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionTrack)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionTrack, got %T", v)
-	}
-	return EncodeFusionTrack(val)
-}
-
-func EncodeFusionArtist(val *FusionArtist) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt64(val.B, 40)
-	w.writeStringWithLength(val.Artist)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionArtistAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionArtist)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionArtist, got %T", v)
-	}
-	return EncodeFusionArtist(val)
-}
-
-func EncodeFusionAlbum(val *FusionAlbum) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt64(val.B, 40)
-	w.writeStringWithLength(val.Album)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionAlbumAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionAlbum)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionAlbum, got %T", v)
-	}
-	return EncodeFusionAlbum(val)
-}
-
-func EncodeFusionUnitName(val *FusionUnitName) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeStringWithLength(val.Name)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionUnitNameAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionUnitName)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionUnitName, got %T", v)
-	}
-	return EncodeFusionUnitName(val)
-}
-
-func EncodeFusionZoneName(val *FusionZoneName) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.Number, 8)
-	w.writeStringWithLength(val.Name)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionZoneNameAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionZoneName)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionZoneName, got %T", v)
-	}
-	return EncodeFusionZoneName(val)
-}
-
-func EncodeFusionPlayProgress(val *FusionPlayProgress) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUnsignedResolution(val.Progress, 24, 0.001)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionPlayProgressAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionPlayProgress)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionPlayProgress, got %T", v)
-	}
-	return EncodeFusionPlayProgress(val)
-}
-
-func EncodeFusionAmFmStation(val *FusionAmFmStation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeLookupField(uint64(val.AmFm), 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt32(val.Frequency, 32)
-	w.writeUInt8(val.C, 8)
-	w.writeStringWithLength(val.Track)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionAmFmStationAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionAmFmStation)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionAmFmStation, got %T", v)
-	}
-	return EncodeFusionAmFmStation(val)
-}
-
-func EncodeFusionVhf(val *FusionVhf) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.Channel, 8)
-	w.writeUInt32(val.D, 24)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionVhfAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionVhf)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionVhf, got %T", v)
-	}
-	return EncodeFusionVhf(val)
-}
-
-func EncodeFusionSquelch(val *FusionSquelch) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.Squelch, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionSquelchAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionSquelch)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionSquelch, got %T", v)
-	}
-	return EncodeFusionSquelch(val)
-}
-
-func EncodeFusionScan(val *FusionScan) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeLookupField(uint64(val.Scan), 2)
-	w.writeUInt8(val.C, 6)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionScanAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionScan)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionScan, got %T", v)
-	}
-	return EncodeFusionScan(val)
-}
-
-func EncodeFusionMenuItem(val *FusionMenuItem) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.Line, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeUInt8(val.F, 8)
-	w.writeUInt8(val.G, 8)
-	w.writeUInt8(val.H, 8)
-	w.writeUInt8(val.I, 8)
-	w.writeStringWithLength(val.Text)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionMenuItemAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionMenuItem)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionMenuItem, got %T", v)
-	}
-	return EncodeFusionMenuItem(val)
-}
-
-func EncodeFusionReplay(val *FusionReplay) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeLookupField(uint64(val.Mode), 8)
-	w.writeUInt32(val.C, 24)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeLookupField(uint64(val.Status), 8)
-	w.writeUInt8(val.H, 8)
-	w.writeUInt8(val.I, 8)
-	w.writeUInt8(val.J, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionReplayAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionReplay)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionReplay, got %T", v)
-	}
-	return EncodeFusionReplay(val)
-}
-
-func EncodeFusionMute(val *FusionMute) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.MessageId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeLookupField(uint64(val.Mute), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFusionMuteAny(v any) ([]byte, error) {
-	val, ok := v.(*FusionMute)
-	if !ok {
-		return nil, fmt.Errorf("expected *FusionMute, got %T", v)
-	}
-	return EncodeFusionMute(val)
-}
-
 func EncodeFusionSubVolume(val *FusionSubVolume) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -4234,7 +4422,8 @@ func EncodeFusionSubVolume(val *FusionSubVolume) ([]byte, error) {
 	w.writeUInt8(val.Zone4, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeFusionSubVolumeAny(v any) ([]byte, error) {
+
+func encodeFusionSubVolumeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FusionSubVolume)
 	if !ok {
 		return nil, fmt.Errorf("expected *FusionSubVolume, got %T", v)

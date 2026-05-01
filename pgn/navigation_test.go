@@ -22,7 +22,7 @@ func TestRoundTrip_EncodeDecodeVesselHeading(t *testing.T) {
 	decoded, err := DecodeVesselHeading(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(VesselHeading)
+	result := decoded.(*VesselHeading)
 	assert.Equal(t, uint8(5), *result.Sid)
 	assert.InDelta(t, float32(1.5708), *result.Heading, 0.0002)
 	assert.InDelta(t, float32(-0.0523), *result.Deviation, 0.0002)
@@ -45,7 +45,7 @@ func TestRoundTrip_EncodeDecodeCogSogRapidUpdate(t *testing.T) {
 	decoded, err := DecodeCogSogRapidUpdate(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(CogSogRapidUpdate)
+	result := decoded.(*CogSogRapidUpdate)
 	assert.Equal(t, uint8(3), *result.Sid)
 	assert.Equal(t, DirectionReferenceConst(0), result.CogReference)
 	assert.InDelta(t, float32(3.1416), *result.Cog, 0.0002)
@@ -65,7 +65,7 @@ func TestRoundTrip_EncodeDecodePositionRapidUpdate(t *testing.T) {
 	decoded, err := DecodePositionRapidUpdate(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(PositionRapidUpdate)
+	result := decoded.(*PositionRapidUpdate)
 	assert.InDelta(t, float64(37.7749), *result.Latitude, 1e-06)
 	assert.InDelta(t, float64(-122.4194), *result.Longitude, 1e-06)
 }
@@ -104,7 +104,7 @@ func TestRoundTrip_EncodeDecodeGnssPositionData(t *testing.T) {
 	decoded, err := DecodeGnssPositionData(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(GnssPositionData)
+	result := decoded.(*GnssPositionData)
 	assert.Equal(t, uint8(7), *result.Sid)
 	assert.Equal(t, uint16(19724), *result.Date)
 	assert.InDelta(t, float32(43200.5), *result.Time, 0.001)
@@ -141,7 +141,7 @@ func TestRoundTrip_EncodeDecodeAttitude(t *testing.T) {
 	decoded, err := DecodeAttitude(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(Attitude)
+	result := decoded.(*Attitude)
 	assert.Equal(t, uint8(1), *result.Sid)
 	assert.InDelta(t, float32(0.5236), *result.Yaw, 0.0002)
 	assert.InDelta(t, float32(-0.1745), *result.Pitch, 0.0002)
@@ -160,7 +160,7 @@ func TestRoundTrip_EncodeDecodeSmallCraftStatus(t *testing.T) {
 	decoded, err := DecodeSmallCraftStatus(MessageInfo{}, NewPgnDataStream(data))
 	assert.NoError(t, err)
 
-	result := decoded.(SmallCraftStatus)
+	result := decoded.(*SmallCraftStatus)
 	assert.Equal(t, int8(-50), *result.PortTrimTab)
 	assert.Equal(t, int8(75), *result.StarboardTrimTab)
 }

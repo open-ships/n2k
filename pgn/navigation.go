@@ -14,8 +14,9 @@ type VesselHeading struct {
 	Variation *float32 `json:"variation"`
 	Reference DirectionReferenceConst `json:"reference"`
 }
-func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val VesselHeading
+func (v *VesselHeading) PGNNumber() uint32  { return 127250 }
+func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &VesselHeading{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselHeading-Sid: %w", err)
@@ -80,7 +81,7 @@ func EncodeVesselHeading(val *VesselHeading) ([]byte, error) {
 	w.skipBits(6)
 	return w.Bytes(), w.Err()
 }
-func encodeVesselHeadingAny(v any) ([]byte, error) {
+func encodeVesselHeadingMsg(v Message) ([]byte, error) {
 	val, ok := v.(*VesselHeading)
 	if !ok {
 		return nil, fmt.Errorf("expected *VesselHeading, got %T", v)
@@ -92,8 +93,9 @@ type RateOfTurn struct {
 	Sid *uint8 `json:"sid"`
 	Rate *float64 `json:"rate"`
 }
-func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val RateOfTurn
+func (r *RateOfTurn) PGNNumber() uint32  { return 127251 }
+func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &RateOfTurn{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for RateOfTurn-Sid: %w", err)
@@ -128,7 +130,7 @@ func EncodeRateOfTurn(val *RateOfTurn) ([]byte, error) {
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeRateOfTurnAny(v any) ([]byte, error) {
+func encodeRateOfTurnMsg(v Message) ([]byte, error) {
 	val, ok := v.(*RateOfTurn)
 	if !ok {
 		return nil, fmt.Errorf("expected *RateOfTurn, got %T", v)
@@ -140,8 +142,9 @@ type Heave struct {
 	Sid *uint8 `json:"sid"`
 	Heave *units.Distance `json:"heave"`
 }
-func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Heave
+func (h *Heave) PGNNumber() uint32  { return 127252 }
+func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Heave{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Heave-Sid: %w", err)
@@ -180,7 +183,7 @@ func EncodeHeave(val *Heave) ([]byte, error) {
 	w.skipBits(40)
 	return w.Bytes(), w.Err()
 }
-func encodeHeaveAny(v any) ([]byte, error) {
+func encodeHeaveMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Heave)
 	if !ok {
 		return nil, fmt.Errorf("expected *Heave, got %T", v)
@@ -194,8 +197,9 @@ type Attitude struct {
 	Pitch *float32 `json:"pitch"`
 	Roll *float32 `json:"roll"`
 }
-func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Attitude
+func (a *Attitude) PGNNumber() uint32  { return 127257 }
+func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Attitude{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Attitude-Sid: %w", err)
@@ -250,7 +254,7 @@ func EncodeAttitude(val *Attitude) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAttitudeAny(v any) ([]byte, error) {
+func encodeAttitudeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Attitude)
 	if !ok {
 		return nil, fmt.Errorf("expected *Attitude, got %T", v)
@@ -264,8 +268,9 @@ type MagneticVariation struct {
 	AgeOfService *uint16 `json:"ageOfService"`
 	Variation *float32 `json:"variation"`
 }
-func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MagneticVariation
+func (m *MagneticVariation) PGNNumber() uint32  { return 127258 }
+func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MagneticVariation{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for MagneticVariation-Sid: %w", err)
@@ -325,7 +330,7 @@ func EncodeMagneticVariation(val *MagneticVariation) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeMagneticVariationAny(v any) ([]byte, error) {
+func encodeMagneticVariationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MagneticVariation)
 	if !ok {
 		return nil, fmt.Errorf("expected *MagneticVariation, got %T", v)
@@ -337,8 +342,9 @@ type PositionRapidUpdate struct {
 	Latitude *float64 `json:"latitude"`
 	Longitude *float64 `json:"longitude"`
 }
-func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val PositionRapidUpdate
+func (p *PositionRapidUpdate) PGNNumber() uint32  { return 129025 }
+func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &PositionRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionRapidUpdate-Latitude: %w", err)
@@ -368,7 +374,7 @@ func EncodePositionRapidUpdate(val *PositionRapidUpdate) ([]byte, error) {
 	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
 	return w.Bytes(), w.Err()
 }
-func encodePositionRapidUpdateAny(v any) ([]byte, error) {
+func encodePositionRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*PositionRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *PositionRapidUpdate, got %T", v)
@@ -382,8 +388,9 @@ type CogSogRapidUpdate struct {
 	Cog *float32 `json:"cog"`
 	Sog *units.Velocity `json:"sog"`
 }
-func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val CogSogRapidUpdate
+func (c *CogSogRapidUpdate) PGNNumber() uint32  { return 129026 }
+func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &CogSogRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for CogSogRapidUpdate-Sid: %w", err)
@@ -447,7 +454,7 @@ func EncodeCogSogRapidUpdate(val *CogSogRapidUpdate) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeCogSogRapidUpdateAny(v any) ([]byte, error) {
+func encodeCogSogRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*CogSogRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *CogSogRapidUpdate, got %T", v)
@@ -461,8 +468,9 @@ type PositionDeltaRapidUpdate struct {
 	LatitudeDelta *int16 `json:"latitudeDelta"`
 	LongitudeDelta *int16 `json:"longitudeDelta"`
 }
-func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val PositionDeltaRapidUpdate
+func (p *PositionDeltaRapidUpdate) PGNNumber() uint32  { return 129027 }
+func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &PositionDeltaRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionDeltaRapidUpdate-Sid: %w", err)
@@ -517,7 +525,7 @@ func EncodePositionDeltaRapidUpdate(val *PositionDeltaRapidUpdate) ([]byte, erro
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodePositionDeltaRapidUpdateAny(v any) ([]byte, error) {
+func encodePositionDeltaRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*PositionDeltaRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *PositionDeltaRapidUpdate, got %T", v)
@@ -533,8 +541,9 @@ type AltitudeDeltaRapidUpdate struct {
 	Cog *float32 `json:"cog"`
 	AltitudeDelta *int16 `json:"altitudeDelta"`
 }
-func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AltitudeDeltaRapidUpdate
+func (a *AltitudeDeltaRapidUpdate) PGNNumber() uint32  { return 129028 }
+func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AltitudeDeltaRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-Sid: %w", err)
@@ -609,7 +618,7 @@ func EncodeAltitudeDeltaRapidUpdate(val *AltitudeDeltaRapidUpdate) ([]byte, erro
 	w.writeInt16(val.AltitudeDelta, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeAltitudeDeltaRapidUpdateAny(v any) ([]byte, error) {
+func encodeAltitudeDeltaRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AltitudeDeltaRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *AltitudeDeltaRapidUpdate, got %T", v)
@@ -639,8 +648,9 @@ type GnssPositionDataRepeating1 struct {
 	ReferenceStationId *uint16 `json:"referenceStationId"`
 	AgeOfDgnssCorrections *float32 `json:"ageOfDgnssCorrections"`
 }
-func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GnssPositionData
+func (g *GnssPositionData) PGNNumber() uint32  { return 129029 }
+func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GnssPositionData{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -846,7 +856,7 @@ func EncodeGnssPositionData(val *GnssPositionData) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeGnssPositionDataAny(v any) ([]byte, error) {
+func encodeGnssPositionDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GnssPositionData)
 	if !ok {
 		return nil, fmt.Errorf("expected *GnssPositionData, got %T", v)
@@ -859,8 +869,9 @@ type TimeDate struct {
 	Time *float32 `json:"time"`
 	LocalOffset *float32 `json:"localOffset"`
 }
-func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TimeDate
+func (t *TimeDate) PGNNumber() uint32  { return 129033 }
+func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TimeDate{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for TimeDate-Date: %w", err)
@@ -900,7 +911,7 @@ func EncodeTimeDate(val *TimeDate) ([]byte, error) {
 	w.writeSignedResolution(val.LocalOffset, 16, 60)
 	return w.Bytes(), w.Err()
 }
-func encodeTimeDateAny(v any) ([]byte, error) {
+func encodeTimeDateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TimeDate)
 	if !ok {
 		return nil, fmt.Errorf("expected *TimeDate, got %T", v)
@@ -915,8 +926,9 @@ type Datum struct {
 	DeltaAltitude *units.Distance `json:"deltaAltitude"`
 	ReferenceDatum string `json:"referenceDatum"`
 }
-func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Datum
+func (d *Datum) PGNNumber() uint32  { return 129044 }
+func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Datum{}
 	val.Info = Info
 	if v, err := stream.readFixedString(32); err != nil {
 		return nil, fmt.Errorf("parse failed for Datum-LocalDatum: %w", err)
@@ -980,7 +992,7 @@ func EncodeDatum(val *Datum) ([]byte, error) {
 	w.writeFixedString(val.ReferenceDatum, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeDatumAny(v any) ([]byte, error) {
+func encodeDatumMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Datum)
 	if !ok {
 		return nil, fmt.Errorf("expected *Datum, got %T", v)
@@ -1000,8 +1012,9 @@ type UserDatum struct {
 	EllipsoidFlatteningInverse *float32 `json:"ellipsoidFlatteningInverse"`
 	DatumName string `json:"datumName"`
 }
-func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UserDatum
+func (u *UserDatum) PGNNumber() uint32  { return 129045 }
+func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UserDatum{}
 	val.Info = Info
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-DeltaX: %w", err)
@@ -1127,7 +1140,7 @@ func EncodeUserDatum(val *UserDatum) ([]byte, error) {
 	w.writeFixedString(val.DatumName, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUserDatumAny(v any) ([]byte, error) {
+func encodeUserDatumMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UserDatum)
 	if !ok {
 		return nil, fmt.Errorf("expected *UserDatum, got %T", v)
@@ -1141,8 +1154,9 @@ type CrossTrackError struct {
 	NavigationTerminated YesNoConst `json:"navigationTerminated"`
 	Xte *units.Distance `json:"xte"`
 }
-func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val CrossTrackError
+func (c *CrossTrackError) PGNNumber() uint32  { return 129283 }
+func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &CrossTrackError{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for CrossTrackError-Sid: %w", err)
@@ -1206,7 +1220,7 @@ func EncodeCrossTrackError(val *CrossTrackError) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeCrossTrackErrorAny(v any) ([]byte, error) {
+func encodeCrossTrackErrorMsg(v Message) ([]byte, error) {
 	val, ok := v.(*CrossTrackError)
 	if !ok {
 		return nil, fmt.Errorf("expected *CrossTrackError, got %T", v)
@@ -1231,8 +1245,9 @@ type NavigationData struct {
 	DestinationLongitude *float64 `json:"destinationLongitude"`
 	WaypointClosingVelocity *units.Velocity `json:"waypointClosingVelocity"`
 }
-func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavigationData
+func (n *NavigationData) PGNNumber() uint32  { return 129284 }
+func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavigationData{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-Sid: %w", err)
@@ -1400,7 +1415,7 @@ func EncodeNavigationData(val *NavigationData) ([]byte, error) {
 	w.writeSignedResolution(waypointClosingVelocityRaw, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeNavigationDataAny(v any) ([]byte, error) {
+func encodeNavigationDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavigationData)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavigationData, got %T", v)
@@ -1424,8 +1439,9 @@ type NavigationRouteWpInformationRepeating1 struct {
 	WpLatitude *float64 `json:"wpLatitude"`
 	WpLongitude *float64 `json:"wpLongitude"`
 }
-func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavigationRouteWpInformation
+func (n *NavigationRouteWpInformation) PGNNumber() uint32  { return 129285 }
+func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavigationRouteWpInformation{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt16(16); err != nil {
@@ -1564,7 +1580,7 @@ func EncodeNavigationRouteWpInformation(val *NavigationRouteWpInformation) ([]by
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNavigationRouteWpInformationAny(v any) ([]byte, error) {
+func encodeNavigationRouteWpInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavigationRouteWpInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavigationRouteWpInformation, got %T", v)
@@ -1578,8 +1594,9 @@ type SetDriftRapidUpdate struct {
 	Set *float32 `json:"set"`
 	Drift *units.Velocity `json:"drift"`
 }
-func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SetDriftRapidUpdate
+func (s *SetDriftRapidUpdate) PGNNumber() uint32  { return 129291 }
+func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SetDriftRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SetDriftRapidUpdate-Sid: %w", err)
@@ -1643,7 +1660,7 @@ func EncodeSetDriftRapidUpdate(val *SetDriftRapidUpdate) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeSetDriftRapidUpdateAny(v any) ([]byte, error) {
+func encodeSetDriftRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SetDriftRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *SetDriftRapidUpdate, got %T", v)
@@ -1659,8 +1676,9 @@ type GnssDops struct {
 	Vdop *float32 `json:"vdop"`
 	Tdop *float32 `json:"tdop"`
 }
-func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GnssDops
+func (g *GnssDops) PGNNumber() uint32  { return 129539 }
+func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GnssDops{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-Sid: %w", err)
@@ -1735,7 +1753,7 @@ func EncodeGnssDops(val *GnssDops) ([]byte, error) {
 	w.writeSignedResolution(val.Tdop, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeGnssDopsAny(v any) ([]byte, error) {
+func encodeGnssDopsMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GnssDops)
 	if !ok {
 		return nil, fmt.Errorf("expected *GnssDops, got %T", v)
@@ -1757,8 +1775,9 @@ type GnssSatsInViewRepeating1 struct {
 	RangeResiduals *int32 `json:"rangeResiduals"`
 	Status SatelliteStatusConst `json:"status"`
 }
-func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GnssSatsInView
+func (g *GnssSatsInView) PGNNumber() uint32  { return 129540 }
+func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GnssSatsInView{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -1866,7 +1885,7 @@ func EncodeGnssSatsInView(val *GnssSatsInView) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeGnssSatsInViewAny(v any) ([]byte, error) {
+func encodeGnssSatsInViewMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GnssSatsInView)
 	if !ok {
 		return nil, fmt.Errorf("expected *GnssSatsInView, got %T", v)
@@ -1889,8 +1908,9 @@ type GpsAlmanacData struct {
 	ClockParameter1 *float32 `json:"clockParameter1"`
 	ClockParameter2 *float64 `json:"clockParameter2"`
 }
-func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GpsAlmanacData
+func (g *GpsAlmanacData) PGNNumber() uint32  { return 129541 }
+func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GpsAlmanacData{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-Prn: %w", err)
@@ -2035,7 +2055,7 @@ func EncodeGpsAlmanacData(val *GpsAlmanacData) ([]byte, error) {
 	w.skipBits(2)
 	return w.Bytes(), w.Err()
 }
-func encodeGpsAlmanacDataAny(v any) ([]byte, error) {
+func encodeGpsAlmanacDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GpsAlmanacData)
 	if !ok {
 		return nil, fmt.Errorf("expected *GpsAlmanacData, got %T", v)
@@ -2047,8 +2067,9 @@ type SmallCraftStatus struct {
 	PortTrimTab *int8 `json:"portTrimTab"`
 	StarboardTrimTab *int8 `json:"starboardTrimTab"`
 }
-func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SmallCraftStatus
+func (s *SmallCraftStatus) PGNNumber() uint32  { return 130576 }
+func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SmallCraftStatus{}
 	val.Info = Info
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SmallCraftStatus-PortTrimTab: %w", err)
@@ -2083,7 +2104,7 @@ func EncodeSmallCraftStatus(val *SmallCraftStatus) ([]byte, error) {
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSmallCraftStatusAny(v any) ([]byte, error) {
+func encodeSmallCraftStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SmallCraftStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *SmallCraftStatus, got %T", v)
@@ -2099,8 +2120,9 @@ type VesselSpeedComponents struct {
 	SternSpeedWaterReferenced *units.Velocity `json:"sternSpeedWaterReferenced"`
 	SternSpeedGroundReferenced *units.Velocity `json:"sternSpeedGroundReferenced"`
 }
-func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val VesselSpeedComponents
+func (v *VesselSpeedComponents) PGNNumber() uint32  { return 130578 }
+func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &VesselSpeedComponents{}
 	val.Info = Info
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-LongitudinalSpeedWaterReferenced: %w", err)
@@ -2194,7 +2216,7 @@ func EncodeVesselSpeedComponents(val *VesselSpeedComponents) ([]byte, error) {
 	w.writeSignedResolution(sternSpeedGroundReferencedRaw, 16, 0.001)
 	return w.Bytes(), w.Err()
 }
-func encodeVesselSpeedComponentsAny(v any) ([]byte, error) {
+func encodeVesselSpeedComponentsMsg(v Message) ([]byte, error) {
 	val, ok := v.(*VesselSpeedComponents)
 	if !ok {
 		return nil, fmt.Errorf("expected *VesselSpeedComponents, got %T", v)
