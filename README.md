@@ -1,6 +1,10 @@
 # n2k
 
-N2k is a Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
+[![Test](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
+[![Lint](https://github.com/open-ships/n2k/actions/workflows/lint.yml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/lint.yml)
+[![Secure](https://github.com/open-ships/n2k/actions/workflows/security.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/security.yaml)
+
+`n2k` is a Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
 
 ## Installation
 
@@ -51,9 +55,11 @@ for msg, err := range n2k.Receive(ctx,
 }
 ```
 
-### CEL-based Filtering
+### Common Expression Language Filtering
 
-Filter messages using [CEL](https://github.com/google/cel-go) expressions. The library automatically optimizes filters -- metadata-only expressions skip decoding entirely.
+Filter messages using [CEL](https://github.com/google/cel-go) expressions.
+
+`n2k` automatically optimizes filters for max performance -- metadata-only expressions skip decoding entirely.
 
 ```go
 // Only vessel heading messages

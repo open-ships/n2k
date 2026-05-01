@@ -1,4 +1,4 @@
-name: Security
+name: Secure
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  security:
+  secure:
     runs-on: ubuntu-latest
 
     steps:
