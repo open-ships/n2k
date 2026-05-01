@@ -253,8 +253,7 @@ func TestIsEOF_PartialRead(t *testing.T) {
 func TestSkipBits_Normal(t *testing.T) {
 	data := []uint8{0x01, 0x02, 0x03, 0x04}
 	s := NewPgnDataStream(data)
-	err := s.skipBits(8)
-	assert.NoError(t, err)
+	s.skipBits(8)
 	assert.Equal(t, uint32(8), s.getBitOffset())
 }
 
@@ -262,18 +261,17 @@ func TestSkipBits_Normal(t *testing.T) {
 func TestSkipBits_SubByte(t *testing.T) {
 	data := []uint8{0xFF, 0xFF}
 	s := NewPgnDataStream(data)
-	err := s.skipBits(3)
-	assert.NoError(t, err)
+	s.skipBits(3)
 	assert.Equal(t, uint32(3), s.getBitOffset())
 }
 
-// TestSkipBits_PastEnd verifies that skipping past the end of the data returns an error.
+// TestSkipBits_PastEnd verifies that skipping past the end causes the next read to fail.
 func TestSkipBits_PastEnd(t *testing.T) {
 	data := []uint8{0x01}
 	s := NewPgnDataStream(data)
-	err := s.skipBits(16)
+	s.skipBits(16)
+	_, err := s.readUInt8(8)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "off end")
 }
 
 // TestSkipBits_MultipleByteCrossing verifies that two consecutive sub-byte skips that
@@ -281,11 +279,9 @@ func TestSkipBits_PastEnd(t *testing.T) {
 func TestSkipBits_MultipleByteCrossing(t *testing.T) {
 	data := []uint8{0x01, 0x02, 0x03, 0x04}
 	s := NewPgnDataStream(data)
-	err := s.skipBits(5)
-	assert.NoError(t, err)
+	s.skipBits(5)
 	assert.Equal(t, uint32(5), s.getBitOffset())
-	err = s.skipBits(11)
-	assert.NoError(t, err)
+	s.skipBits(11)
 	assert.Equal(t, uint32(16), s.getBitOffset())
 }
 

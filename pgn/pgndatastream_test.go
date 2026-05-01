@@ -13,16 +13,13 @@ func TestOffset(t *testing.T) {
 	s := NewPgnDataStream([]uint8{0xff, 0xff, 0xff, 0x7f})
 	assert.Equal(t, uint32(0), s.getBitOffset())
 	// Skip 7 bits (sub-byte, stays within first byte).
-	err := s.skipBits(7)
-	assert.NoError(t, err)
+	s.skipBits(7)
 	assert.Equal(t, uint32(7), s.getBitOffset())
 	// Skip 2 more bits -- crosses a byte boundary (bit 7 -> bit 9).
-	err = s.skipBits(2)
-	assert.NoError(t, err)
+	s.skipBits(2)
 	assert.Equal(t, uint32(9), s.getBitOffset())
 	// Skip 16 bits -- multi-byte skip from a non-aligned position.
-	err = s.skipBits(16)
-	assert.NoError(t, err)
+	s.skipBits(16)
 	assert.Equal(t, uint32(25), s.getBitOffset())
 }
 
@@ -64,7 +61,7 @@ func TestNumerics(t *testing.T) {
 	for _, tst := range uintTests {
 		p := NewPgnDataStream(tst.data)
 		if tst.offset > 0 {
-			_ = p.skipBits(uint16(tst.offset))
+			p.skipBits(uint16(tst.offset))
 		}
 		v, err := p.readUInt64(tst.length)
 		assert.NoError(t, err)

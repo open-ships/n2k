@@ -1,0 +1,98 @@
+package framer_test
+
+import (
+	"testing"
+
+	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/adapter"
+	"github.com/open-ships/n2k/internal/framer"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestBuildCANID_PDU2Broadcast(t *testing.T) {
+	// VesselHeading PGN 127250 = 0x1F112, PDU Format = 0xF1 (241 >= 240 -> broadcast)
+	canID := framer.BuildCANID(127250, 2, 42, 255)
+
+	frame := can.Frame{ID: canID}
+	info := adapter.NewPacketInfo(&frame)
+
+	assert.Equal(t, uint32(127250), info.PGN, "PGN should be 127250")
+	assert.Equal(t, uint8(42), info.SourceId, "Source should be 42")
+	assert.Equal(t, uint8(2), info.Priority, "Priority should be 2")
+}
+
+func TestBuildCANID_PDU1Addressed(t *testing.T) {
+	// IsoRequest PGN 59904 = 0xEA00, PDU Format = 0xEA (234 < 240 -> addressed)
+	canID := framer.BuildCANID(59904, 6, 0, 255)
+
+	frame := can.Frame{ID: canID}
+	info := adapter.NewPacketInfo(&frame)
+
+	assert.Equal(t, uint32(59904), info.PGN, "PGN should be 59904")
+	assert.Equal(t, uint8(0), info.SourceId, "Source should be 0")
+	assert.Equal(t, uint8(6), info.Priority, "Priority should be 6")
+	assert.Equal(t, uint8(255), info.TargetId, "TargetId should be 255")
+}
+
+func TestBuildCANID_PDU1AddressedSpecificTarget(t *testing.T) {
+	// AddressClaimPGN 60928 = 0xEE00, PDU Format = 0xEE (238 < 240 -> addressed)
+	canID := framer.BuildCANID(60928, 3, 10, 20)
+
+	frame := can.Frame{ID: canID}
+	info := adapter.NewPacketInfo(&frame)
+
+	assert.Equal(t, uint32(60928), info.PGN, "PGN should be 60928")
+	assert.Equal(t, uint8(10), info.SourceId, "Source should be 10")
+	assert.Equal(t, uint8(3), info.Priority, "Priority should be 3")
+	assert.Equal(t, uint8(20), info.TargetId, "TargetId should be 20")
+}
+
+func TestBuildCANID_PriorityRange(t *testing.T) {
+	for priority := uint8(0); priority <= 7; priority++ {
+		canID := framer.BuildCANID(127250, priority, 1, 255)
+
+		frame := can.Frame{ID: canID}
+		info := adapter.NewPacketInfo(&frame)
+
+		assert.Equal(t, priority, info.Priority, "Priority %d should round-trip", priority)
+		assert.Equal(t, uint32(127250), info.PGN, "PGN should be preserved for priority %d", priority)
+		assert.Equal(t, uint8(1), info.SourceId, "Source should be preserved for priority %d", priority)
+	}
+}
+
+func TestBuildCANID_PDU2VariousPGNs(t *testing.T) {
+	// Test several well-known broadcast PGNs
+	tests := []struct {
+		name     string
+		pgn      uint32
+		priority uint8
+		source   uint8
+	}{
+		{"WindData", 130306, 2, 100},
+		{"SystemTime", 126992, 3, 0},
+		{"WaterDepth", 128267, 2, 55},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			canID := framer.BuildCANID(tt.pgn, tt.priority, tt.source, 255)
+
+			frame := can.Frame{ID: canID}
+			info := adapter.NewPacketInfo(&frame)
+
+			assert.Equal(t, tt.pgn, info.PGN)
+			assert.Equal(t, tt.source, info.SourceId)
+			assert.Equal(t, tt.priority, info.Priority)
+		})
+	}
+}
+
+func TestBuildCANID_PriorityClampedTo3Bits(t *testing.T) {
+	// Priorities above 7 should be masked to 3 bits
+	canID := framer.BuildCANID(127250, 0xFF, 1, 255)
+
+	frame := can.Frame{ID: canID}
+	info := adapter.NewPacketInfo(&frame)
+
+	assert.Equal(t, uint8(7), info.Priority, "Priority 0xFF should be masked to 7")
+}

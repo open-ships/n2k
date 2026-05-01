@@ -15,3 +15,6 @@ bin
 
 .vscode**
 sniffer
+
+# Internal docs
+docs/*

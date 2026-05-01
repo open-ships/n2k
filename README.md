@@ -4,7 +4,7 @@
 [![Lint](https://github.com/open-ships/n2k/actions/workflows/lint.yml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/lint.yml)
 [![Secure](https://github.com/open-ships/n2k/actions/workflows/security.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/security.yaml)
 
-`n2k` is a Go library for decoding NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
+`n2k` is a Go library for reading and writing NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
 
 ## Installation
 
@@ -91,6 +91,42 @@ for msg, err := range n2k.Receive(ctx,
 | `destination` | `int` | Destination address (255 = broadcast) |
 | `msg.<field>` | varies | Decoded struct field (case-insensitive) |
 
+### Client API
+
+`Client` provides read and write access to NMEA 2000. Use it when you need to transmit messages in addition to receiving them.
+
+```go
+ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+defer stop()
+
+client, err := n2k.NewClient(ctx,
+    n2k.CAN("can0"),
+    n2k.WithSourceAddress(42),
+)
+if err != nil {
+    panic(err)
+}
+defer client.Close()
+
+// Write a message
+heading := &pgn.VesselHeading{
+    Info:    pgn.MessageInfo{PGN: 127250, Priority: 2},
+    Heading: ptrFloat32(1.5708),
+}
+result := client.Write(heading)
+if err := result.Wait(); err != nil {
+    log.Printf("write failed: %v", err)
+}
+
+// Read messages (same as top-level API)
+for msg, err := range client.Receive() {
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("Msg: %v\n", msg)
+}
+```
+
 ### Options
 
 | Option | Description |
@@ -101,6 +137,8 @@ for msg, err := range n2k.Receive(ctx,
 | `n2k.Filter(expr)` | CEL filter expression |
 | `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
 | `n2k.WithLogger(l)` | Override default `slog.Logger` |
+| `n2k.WithSourceAddress(addr)` | Explicit source address for writes (contention is fatal) |
+| `n2k.WithName(name)` | ISO 11783 device NAME for address claiming |
 
 ### Testing with Replay
 
@@ -116,7 +154,7 @@ for msg, err := range n2k.Receive(ctx, n2k.Replay(frames)) {
 
 ## PGN Types
 
-All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. See `pgn/pgninfo_generated.go` for the full list.
+All decoded messages are pointers to generated structs in the `pgn` package. Use a type switch to handle specific message types. PGN structs are organized across category files — `system.go`, `navigation.go`, `engine.go`, etc.
 
 Every struct embeds `pgn.MessageInfo`:
 
@@ -155,16 +193,23 @@ go run ./cmd/sniffer.go -i can0 -unknown
 go run ./cmd/sniffer.go -i can0 | jq .
 ```
 
+## Known Limitations
+
+- Cross-field validation is not yet implemented (stubs exist for future work).
+- One physical bus per client.
+- Real bus (CAN/USB) write support is in progress; use `Replay` for testing writes.
+- Transport Protocol BAM writes are supported; RTS/CTS writes for addressed messages are coming soon.
+
 ## License
 
 MIT -- see LICENSE.
 
 ## Acknowledgments
 
-### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
-
-This project was originally a fork of boatkit-io's work, which built the original Go implementation of this NMEA 2000 decoding pipeline.
-
 ### [canboat](https://github.com/canboat/)
 
 The PGN definitions and decoders at the core of this library are generated from the canboat project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.
+
+### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
+
+This project was originally inspired by [boatkit-io/n2k](https://github.com/boatkit-io/n2k/).
