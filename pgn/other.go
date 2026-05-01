@@ -15,7 +15,9 @@ type SeatalkWirelessKeypadLightControl struct {
 	WirelessSetting *uint8 `json:"wirelessSetting"`
 	WiredSetting *uint8 `json:"wiredSetting"`
 }
+
 func (s *SeatalkWirelessKeypadLightControl) PGNNumber() uint32  { return 61184 }
+
 func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkWirelessKeypadLightControl{}
 	val.Info = Info
@@ -92,6 +94,29 @@ func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataSt
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkWirelessKeypadLightControl(val *SeatalkWirelessKeypadLightControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	w.writeUInt8(val.Variant, 8)
+	w.writeUInt8(val.WirelessSetting, 8)
+	w.writeUInt8(val.WiredSetting, 8)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkWirelessKeypadLightControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkWirelessKeypadLightControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadLightControl, got %T", v)
+	}
+	return EncodeSeatalkWirelessKeypadLightControl(val)
+}
+
 type SeatalkWirelessKeypadControl struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -100,7 +125,9 @@ type SeatalkWirelessKeypadControl struct {
 	Variant *uint8 `json:"variant"`
 	BeepControl *uint8 `json:"beepControl"`
 }
+
 func (s *SeatalkWirelessKeypadControl) PGNNumber() uint32  { return 61184 }
+
 func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkWirelessKeypadControl{}
 	val.Info = Info
@@ -165,6 +192,28 @@ func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream)
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkWirelessKeypadControl(val *SeatalkWirelessKeypadControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Pid, 8)
+	w.writeUInt8(val.Variant, 8)
+	w.writeUInt8(val.BeepControl, 8)
+	w.skipBits(24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkWirelessKeypadControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkWirelessKeypadControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadControl, got %T", v)
+	}
+	return EncodeSeatalkWirelessKeypadControl(val)
+}
+
 type VictronBatteryRegister struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -172,7 +221,9 @@ type VictronBatteryRegister struct {
 	RegisterId *uint16 `json:"registerId"`
 	Payload *uint32 `json:"payload"`
 }
+
 func (v *VictronBatteryRegister) PGNNumber() uint32  { return 61184 }
+
 func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &VictronBatteryRegister{}
 	val.Info = Info
@@ -224,13 +275,35 @@ func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (Mess
 	}	
 	return val, nil
 }
+
+func EncodeVictronBatteryRegister(val *VictronBatteryRegister) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.RegisterId, 16)
+	w.writeUInt32(val.Payload, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeVictronBatteryRegisterMsg(v Message) ([]byte, error) {
+	val, ok := v.(*VictronBatteryRegister)
+	if !ok {
+		return nil, fmt.Errorf("expected *VictronBatteryRegister, got %T", v)
+	}
+	return EncodeVictronBatteryRegister(val)
+}
+
 type FurunoHeave struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Heave *units.Distance `json:"heave"`
 }
+
 func (f *FurunoHeave) PGNNumber() uint32  { return 65280 }
+
 func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoHeave{}
 	val.Info = Info
@@ -277,6 +350,30 @@ func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (Message, error)
 		}	
 	return val, nil
 }
+
+func EncodeFurunoHeave(val *FurunoHeave) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	var heaveRaw *float32
+	if val.Heave != nil {
+		heaveRaw = &val.Heave.Value
+	}
+	w.writeSignedResolution(heaveRaw, 32, 0.001)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoHeaveMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoHeave)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoHeave, got %T", v)
+	}
+	return EncodeFurunoHeave(val)
+}
+
 type MaretronProprietaryDcBreakerCurrent struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -285,7 +382,9 @@ type MaretronProprietaryDcBreakerCurrent struct {
 	IndicatorNumber *uint8 `json:"indicatorNumber"`
 	BreakerCurrent *float32 `json:"breakerCurrent"`
 }
+
 func (m *MaretronProprietaryDcBreakerCurrent) PGNNumber() uint32  { return 65284 }
+
 func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronProprietaryDcBreakerCurrent{}
 	val.Info = Info
@@ -350,13 +449,37 @@ func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNData
 		}	
 	return val, nil
 }
+
+func EncodeMaretronProprietaryDcBreakerCurrent(val *MaretronProprietaryDcBreakerCurrent) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.BankInstance, 8)
+	w.writeUInt8(val.IndicatorNumber, 8)
+	w.writeUnsignedResolution(val.BreakerCurrent, 16, 0.1)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronProprietaryDcBreakerCurrentMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronProprietaryDcBreakerCurrent)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronProprietaryDcBreakerCurrent, got %T", v)
+	}
+	return EncodeMaretronProprietaryDcBreakerCurrent(val)
+}
+
 type AirmarBootStateAcknowledgment struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	BootState BootStateConst `json:"bootState"`
 }
+
 func (a *AirmarBootStateAcknowledgment) PGNNumber() uint32  { return 65285 }
+
 func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarBootStateAcknowledgment{}
 	val.Info = Info
@@ -403,6 +526,26 @@ func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream
 		}	
 	return val, nil
 }
+
+func EncodeAirmarBootStateAcknowledgment(val *AirmarBootStateAcknowledgment) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.BootState), 3)
+	w.skipBits(45)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarBootStateAcknowledgmentMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarBootStateAcknowledgment)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarBootStateAcknowledgment, got %T", v)
+	}
+	return EncodeAirmarBootStateAcknowledgment(val)
+}
+
 type LowranceTemperature struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -410,7 +553,9 @@ type LowranceTemperature struct {
 	TemperatureSource TemperatureSourceConst `json:"temperatureSource"`
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 }
+
 func (l *LowranceTemperature) PGNNumber() uint32  { return 65285 }
+
 func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &LowranceTemperature{}
 	val.Info = Info
@@ -466,12 +611,39 @@ func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.TemperatureSource), 8)
+	var actualTemperatureRaw *float32
+	if val.ActualTemperature != nil {
+		actualTemperatureRaw = &val.ActualTemperature.Value
+	}
+	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
+	w.skipBits(24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeLowranceTemperatureMsg(v Message) ([]byte, error) {
+	val, ok := v.(*LowranceTemperature)
+	if !ok {
+		return nil, fmt.Errorf("expected *LowranceTemperature, got %T", v)
+	}
+	return EncodeLowranceTemperature(val)
+}
+
 type AirmarBootStateRequest struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (a *AirmarBootStateRequest) PGNNumber() uint32  { return 65286 }
+
 func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarBootStateRequest{}
 	val.Info = Info
@@ -509,6 +681,25 @@ func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (Mess
 		}	
 	return val, nil
 }
+
+func EncodeAirmarBootStateRequest(val *AirmarBootStateRequest) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarBootStateRequestMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarBootStateRequest)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarBootStateRequest, got %T", v)
+	}
+	return EncodeAirmarBootStateRequest(val)
+}
+
 type AirmarAccessLevel struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -517,7 +708,9 @@ type AirmarAccessLevel struct {
 	AccessLevel AccessLevelConst `json:"accessLevel"`
 	AccessSeedKey *uint32 `json:"accessSeedKey"`
 }
+
 func (a *AirmarAccessLevel) PGNNumber() uint32  { return 65287 }
+
 func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarAccessLevel{}
 	val.Info = Info
@@ -582,12 +775,36 @@ func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (Message, 
 	}	
 	return val, nil
 }
+
+func EncodeAirmarAccessLevel(val *AirmarAccessLevel) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.FormatCode, 8)
+	w.writeLookupField(uint64(val.AccessLevel), 3)
+	w.skipBits(5)
+	w.writeUInt32(val.AccessSeedKey, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarAccessLevelMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarAccessLevel)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarAccessLevel, got %T", v)
+	}
+	return EncodeAirmarAccessLevel(val)
+}
+
 type SimnetConfigureTemperatureSensor struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetConfigureTemperatureSensor) PGNNumber() uint32  { return 65287 }
+
 func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetConfigureTemperatureSensor{}
 	val.Info = Info
@@ -625,6 +842,25 @@ func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStr
 		}	
 	return val, nil
 }
+
+func EncodeSimnetConfigureTemperatureSensor(val *SimnetConfigureTemperatureSensor) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetConfigureTemperatureSensorMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetConfigureTemperatureSensor)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetConfigureTemperatureSensor, got %T", v)
+	}
+	return EncodeSimnetConfigureTemperatureSensor(val)
+}
+
 type SeatalkAlarm struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -635,7 +871,9 @@ type SeatalkAlarm struct {
 	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
 	AlarmPriority []uint8 `json:"alarmPriority"`
 }
+
 func (s *SeatalkAlarm) PGNNumber() uint32  { return 65288 }
+
 func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkAlarm{}
 	val.Info = Info
@@ -714,12 +952,37 @@ func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error
 	}	
 	return val, nil
 }
+
+func EncodeSeatalkAlarm(val *SeatalkAlarm) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeBinaryData(val.Sid, 8)
+	w.writeLookupField(uint64(val.AlarmStatus), 8)
+	w.writeLookupField(uint64(val.AlarmId), 8)
+	w.writeLookupField(uint64(val.AlarmGroup), 8)
+	w.writeBinaryData(val.AlarmPriority, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkAlarmMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkAlarm)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkAlarm, got %T", v)
+	}
+	return EncodeSeatalkAlarm(val)
+}
+
 type SimnetTrimTabSensorCalibration struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetTrimTabSensorCalibration) PGNNumber() uint32  { return 65289 }
+
 func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetTrimTabSensorCalibration{}
 	val.Info = Info
@@ -757,12 +1020,33 @@ func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStrea
 		}	
 	return val, nil
 }
+
+func EncodeSimnetTrimTabSensorCalibration(val *SimnetTrimTabSensorCalibration) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetTrimTabSensorCalibrationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetTrimTabSensorCalibration)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetTrimTabSensorCalibration, got %T", v)
+	}
+	return EncodeSimnetTrimTabSensorCalibration(val)
+}
+
 type SimnetPaddleWheelSpeedConfiguration struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetPaddleWheelSpeedConfiguration) PGNNumber() uint32  { return 65290 }
+
 func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetPaddleWheelSpeedConfiguration{}
 	val.Info = Info
@@ -800,12 +1084,33 @@ func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNData
 		}	
 	return val, nil
 }
+
+func EncodeSimnetPaddleWheelSpeedConfiguration(val *SimnetPaddleWheelSpeedConfiguration) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetPaddleWheelSpeedConfigurationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetPaddleWheelSpeedConfiguration)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetPaddleWheelSpeedConfiguration, got %T", v)
+	}
+	return EncodeSimnetPaddleWheelSpeedConfiguration(val)
+}
+
 type SimnetClearFluidLevelWarnings struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetClearFluidLevelWarnings) PGNNumber() uint32  { return 65292 }
+
 func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetClearFluidLevelWarnings{}
 	val.Info = Info
@@ -843,12 +1148,33 @@ func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream
 		}	
 	return val, nil
 }
+
+func EncodeSimnetClearFluidLevelWarnings(val *SimnetClearFluidLevelWarnings) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetClearFluidLevelWarningsMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetClearFluidLevelWarnings)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetClearFluidLevelWarnings, got %T", v)
+	}
+	return EncodeSimnetClearFluidLevelWarnings(val)
+}
+
 type SimnetLgc2000Configuration struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetLgc2000Configuration) PGNNumber() uint32  { return 65293 }
+
 func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetLgc2000Configuration{}
 	val.Info = Info
@@ -886,6 +1212,25 @@ func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (
 		}	
 	return val, nil
 }
+
+func EncodeSimnetLgc2000Configuration(val *SimnetLgc2000Configuration) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetLgc2000ConfigurationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetLgc2000Configuration)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetLgc2000Configuration, got %T", v)
+	}
+	return EncodeSimnetLgc2000Configuration(val)
+}
+
 type DiverseYachtServicesLoadCell struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -893,7 +1238,9 @@ type DiverseYachtServicesLoadCell struct {
 	Instance *uint8 `json:"instance"`
 	LoadCell *uint32 `json:"loadCell"`
 }
+
 func (d *DiverseYachtServicesLoadCell) PGNNumber() uint32  { return 65293 }
+
 func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &DiverseYachtServicesLoadCell{}
 	val.Info = Info
@@ -949,6 +1296,27 @@ func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream)
 	}	
 	return val, nil
 }
+
+func EncodeDiverseYachtServicesLoadCell(val *DiverseYachtServicesLoadCell) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Instance, 8)
+	w.skipBits(8)
+	w.writeUInt32(val.LoadCell, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeDiverseYachtServicesLoadCellMsg(v Message) ([]byte, error) {
+	val, ok := v.(*DiverseYachtServicesLoadCell)
+	if !ok {
+		return nil, fmt.Errorf("expected *DiverseYachtServicesLoadCell, got %T", v)
+	}
+	return EncodeDiverseYachtServicesLoadCell(val)
+}
+
 type SimnetApUnknown1 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -958,7 +1326,9 @@ type SimnetApUnknown1 struct {
 	C *uint16 `json:"c"`
 	D *uint8 `json:"d"`
 }
+
 func (s *SimnetApUnknown1) PGNNumber() uint32  { return 65302 }
+
 func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetApUnknown1{}
 	val.Info = Info
@@ -1032,6 +1402,29 @@ func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, e
 		}	
 	return val, nil
 }
+
+func EncodeSimnetApUnknown1(val *SimnetApUnknown1) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt16(val.C, 16)
+	w.writeUInt8(val.D, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetApUnknown1Msg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetApUnknown1)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetApUnknown1, got %T", v)
+	}
+	return EncodeSimnetApUnknown1(val)
+}
+
 type SimnetDeviceStatus struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1040,7 +1433,9 @@ type SimnetDeviceStatus struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Status SimnetApStatusConst `json:"status"`
 }
+
 func (s *SimnetDeviceStatus) PGNNumber() uint32  { return 65305 }
+
 func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetDeviceStatus{}
 	val.Info = Info
@@ -1108,6 +1503,28 @@ func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (Message,
 		}	
 	return val, nil
 }
+
+func EncodeSimnetDeviceStatus(val *SimnetDeviceStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.Model), 8)
+	w.writeLookupField(uint64(val.Report), 8)
+	w.writeLookupField(uint64(val.Status), 8)
+	w.skipBits(24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetDeviceStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetDeviceStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetDeviceStatus, got %T", v)
+	}
+	return EncodeSimnetDeviceStatus(val)
+}
+
 type SimnetDeviceStatusRequest struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1115,7 +1532,9 @@ type SimnetDeviceStatusRequest struct {
 	Model SimnetDeviceModelConst `json:"model"`
 	Report SimnetDeviceReportConst `json:"report"`
 }
+
 func (s *SimnetDeviceStatusRequest) PGNNumber() uint32  { return 65305 }
+
 func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetDeviceStatusRequest{}
 	val.Info = Info
@@ -1174,6 +1593,27 @@ func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (M
 		}	
 	return val, nil
 }
+
+func EncodeSimnetDeviceStatusRequest(val *SimnetDeviceStatusRequest) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.Model), 8)
+	w.writeLookupField(uint64(val.Report), 8)
+	w.skipBits(32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetDeviceStatusRequestMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetDeviceStatusRequest)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetDeviceStatusRequest, got %T", v)
+	}
+	return EncodeSimnetDeviceStatusRequest(val)
+}
+
 type SimnetPilotMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1182,7 +1622,9 @@ type SimnetPilotMode struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Mode SimnetApModeBitfieldConst `json:"mode"`
 }
+
 func (s *SimnetPilotMode) PGNNumber() uint32  { return 65305 }
+
 func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetPilotMode{}
 	val.Info = Info
@@ -1250,6 +1692,28 @@ func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, er
 		}	
 	return val, nil
 }
+
+func EncodeSimnetPilotMode(val *SimnetPilotMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.Model), 8)
+	w.writeLookupField(uint64(val.Report), 8)
+	w.writeLookupField(uint64(val.Mode), 16)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetPilotModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetPilotMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetPilotMode, got %T", v)
+	}
+	return EncodeSimnetPilotMode(val)
+}
+
 type SimnetDeviceModeRequest struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1257,7 +1721,9 @@ type SimnetDeviceModeRequest struct {
 	Model SimnetDeviceModelConst `json:"model"`
 	Report SimnetDeviceReportConst `json:"report"`
 }
+
 func (s *SimnetDeviceModeRequest) PGNNumber() uint32  { return 65305 }
+
 func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetDeviceModeRequest{}
 	val.Info = Info
@@ -1316,6 +1782,27 @@ func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (Mes
 		}	
 	return val, nil
 }
+
+func EncodeSimnetDeviceModeRequest(val *SimnetDeviceModeRequest) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.Model), 8)
+	w.writeLookupField(uint64(val.Report), 8)
+	w.skipBits(32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetDeviceModeRequestMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetDeviceModeRequest)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetDeviceModeRequest, got %T", v)
+	}
+	return EncodeSimnetDeviceModeRequest(val)
+}
+
 type SimnetSailingProcessorStatus struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1324,7 +1811,9 @@ type SimnetSailingProcessorStatus struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Data []uint8 `json:"data"`
 }
+
 func (s *SimnetSailingProcessorStatus) PGNNumber() uint32  { return 65305 }
+
 func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetSailingProcessorStatus{}
 	val.Info = Info
@@ -1388,6 +1877,27 @@ func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream)
 	}	
 	return val, nil
 }
+
+func EncodeSimnetSailingProcessorStatus(val *SimnetSailingProcessorStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.Model), 8)
+	w.writeLookupField(uint64(val.Report), 8)
+	w.writeBinaryData(val.Data, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetSailingProcessorStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetSailingProcessorStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetSailingProcessorStatus, got %T", v)
+	}
+	return EncodeSimnetSailingProcessorStatus(val)
+}
+
 type NavicoWirelessBatteryStatus struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1396,7 +1906,9 @@ type NavicoWirelessBatteryStatus struct {
 	BatteryStatus *uint8 `json:"batteryStatus"`
 	BatteryChargeStatus *uint8 `json:"batteryChargeStatus"`
 }
+
 func (n *NavicoWirelessBatteryStatus) PGNNumber() uint32  { return 65309 }
+
 func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoWirelessBatteryStatus{}
 	val.Info = Info
@@ -1461,6 +1973,28 @@ func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeNavicoWirelessBatteryStatus(val *NavicoWirelessBatteryStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Status, 8)
+	w.writeUInt8(val.BatteryStatus, 8)
+	w.writeUInt8(val.BatteryChargeStatus, 8)
+	w.skipBits(24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoWirelessBatteryStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoWirelessBatteryStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoWirelessBatteryStatus, got %T", v)
+	}
+	return EncodeNavicoWirelessBatteryStatus(val)
+}
+
 type NavicoWirelessSignalStatus struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1468,7 +2002,9 @@ type NavicoWirelessSignalStatus struct {
 	Unknown *uint8 `json:"unknown"`
 	SignalStrength *uint8 `json:"signalStrength"`
 }
+
 func (n *NavicoWirelessSignalStatus) PGNNumber() uint32  { return 65312 }
+
 func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoWirelessSignalStatus{}
 	val.Info = Info
@@ -1524,6 +2060,27 @@ func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (
 		}	
 	return val, nil
 }
+
+func EncodeNavicoWirelessSignalStatus(val *NavicoWirelessSignalStatus) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Unknown, 8)
+	w.writeUInt8(val.SignalStrength, 8)
+	w.skipBits(32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoWirelessSignalStatusMsg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoWirelessSignalStatus)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoWirelessSignalStatus, got %T", v)
+	}
+	return EncodeNavicoWirelessSignalStatus(val)
+}
+
 type SimnetApUnknown2 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1534,7 +2091,9 @@ type SimnetApUnknown2 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
+
 func (s *SimnetApUnknown2) PGNNumber() uint32  { return 65340 }
+
 func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetApUnknown2{}
 	val.Info = Info
@@ -1617,6 +2176,30 @@ func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, e
 		}	
 	return val, nil
 }
+
+func EncodeSimnetApUnknown2(val *SimnetApUnknown2) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetApUnknown2Msg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetApUnknown2)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetApUnknown2, got %T", v)
+	}
+	return EncodeSimnetApUnknown2(val)
+}
+
 type SimnetAutopilotAngle struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1624,7 +2207,9 @@ type SimnetAutopilotAngle struct {
 	Mode SimnetApModeConst `json:"mode"`
 	Angle *float32 `json:"angle"`
 }
+
 func (s *SimnetAutopilotAngle) PGNNumber() uint32  { return 65341 }
+
 func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetAutopilotAngle{}
 	val.Info = Info
@@ -1684,6 +2269,28 @@ func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeSimnetAutopilotAngle(val *SimnetAutopilotAngle) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(16)
+	w.writeLookupField(uint64(val.Mode), 8)
+	w.skipBits(8)
+	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetAutopilotAngleMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetAutopilotAngle)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetAutopilotAngle, got %T", v)
+	}
+	return EncodeSimnetAutopilotAngle(val)
+}
+
 type SeatalkPilotWindDatum struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1691,7 +2298,9 @@ type SeatalkPilotWindDatum struct {
 	WindDatum *float32 `json:"windDatum"`
 	RollingAverageWindAngle *float32 `json:"rollingAverageWindAngle"`
 }
+
 func (s *SeatalkPilotWindDatum) PGNNumber() uint32  { return 65345 }
+
 func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkPilotWindDatum{}
 	val.Info = Info
@@ -1747,6 +2356,27 @@ func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (Messa
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkPilotWindDatum(val *SeatalkPilotWindDatum) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUnsignedResolution(val.WindDatum, 16, 0.0001)
+	w.writeUnsignedResolution(val.RollingAverageWindAngle, 16, 0.0001)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkPilotWindDatumMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkPilotWindDatum)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkPilotWindDatum, got %T", v)
+	}
+	return EncodeSeatalkPilotWindDatum(val)
+}
+
 type SimnetMagneticField struct {
 	Info MessageInfo `json:"info"`
 	A *float32 `json:"a"`
@@ -1754,7 +2384,9 @@ type SimnetMagneticField struct {
 	C *float32 `json:"c"`
 	D *float32 `json:"d"`
 }
+
 func (s *SimnetMagneticField) PGNNumber() uint32  { return 65350 }
+
 func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetMagneticField{}
 	val.Info = Info
@@ -1800,6 +2432,26 @@ func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeSimnetMagneticField(val *SimnetMagneticField) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeSignedResolution(val.A, 16, 0.0001)
+	w.writeUInt8(val.B, 8)
+	w.writeSignedResolution(val.C, 16, 0.0001)
+	w.writeSignedResolution(val.D, 16, 0.0001)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetMagneticFieldMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetMagneticField)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetMagneticField, got %T", v)
+	}
+	return EncodeSimnetMagneticField(val)
+}
+
 type SeatalkPilotHeading struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1808,7 +2460,9 @@ type SeatalkPilotHeading struct {
 	HeadingTrue *float32 `json:"headingTrue"`
 	HeadingMagnetic *float32 `json:"headingMagnetic"`
 }
+
 func (s *SeatalkPilotHeading) PGNNumber() uint32  { return 65359 }
+
 func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkPilotHeading{}
 	val.Info = Info
@@ -1873,6 +2527,28 @@ func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkPilotHeading(val *SeatalkPilotHeading) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeBinaryData(val.Sid, 8)
+	w.writeUnsignedResolution(val.HeadingTrue, 16, 0.0001)
+	w.writeUnsignedResolution(val.HeadingMagnetic, 16, 0.0001)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkPilotHeadingMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkPilotHeading)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkPilotHeading, got %T", v)
+	}
+	return EncodeSeatalkPilotHeading(val)
+}
+
 type SeatalkPilotLockedHeading struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1881,7 +2557,9 @@ type SeatalkPilotLockedHeading struct {
 	TargetHeadingTrue *float32 `json:"targetHeadingTrue"`
 	TargetHeadingMagnetic *float32 `json:"targetHeadingMagnetic"`
 }
+
 func (s *SeatalkPilotLockedHeading) PGNNumber() uint32  { return 65360 }
+
 func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkPilotLockedHeading{}
 	val.Info = Info
@@ -1946,6 +2624,28 @@ func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (M
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkPilotLockedHeading(val *SeatalkPilotLockedHeading) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeBinaryData(val.Sid, 8)
+	w.writeUnsignedResolution(val.TargetHeadingTrue, 16, 0.0001)
+	w.writeUnsignedResolution(val.TargetHeadingMagnetic, 16, 0.0001)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkPilotLockedHeadingMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkPilotLockedHeading)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkPilotLockedHeading, got %T", v)
+	}
+	return EncodeSeatalkPilotLockedHeading(val)
+}
+
 type SeatalkSilenceAlarm struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -1953,7 +2653,9 @@ type SeatalkSilenceAlarm struct {
 	AlarmId SeatalkAlarmIdConst `json:"alarmId"`
 	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
 }
+
 func (s *SeatalkSilenceAlarm) PGNNumber() uint32  { return 65361 }
+
 func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkSilenceAlarm{}
 	val.Info = Info
@@ -2009,6 +2711,27 @@ func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkSilenceAlarm(val *SeatalkSilenceAlarm) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.AlarmId), 8)
+	w.writeLookupField(uint64(val.AlarmGroup), 8)
+	w.skipBits(32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkSilenceAlarmMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkSilenceAlarm)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkSilenceAlarm, got %T", v)
+	}
+	return EncodeSeatalkSilenceAlarm(val)
+}
+
 type SeatalkKeypadMessage struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2020,7 +2743,9 @@ type SeatalkKeypadMessage struct {
 	SecondKeyState *uint8 `json:"secondKeyState"`
 	EncoderPosition *uint8 `json:"encoderPosition"`
 }
+
 func (s *SeatalkKeypadMessage) PGNNumber() uint32  { return 65371 }
+
 func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkKeypadMessage{}
 	val.Info = Info
@@ -2116,6 +2841,32 @@ func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (Messag
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkKeypadMessage(val *SeatalkKeypadMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	w.writeUInt8(val.FirstKey, 8)
+	w.writeUInt8(val.SecondKey, 8)
+	w.writeUInt8(val.FirstKeyState, 2)
+	w.writeUInt8(val.SecondKeyState, 2)
+	w.skipBits(4)
+	w.writeUInt8(val.EncoderPosition, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkKeypadMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkKeypadMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkKeypadMessage, got %T", v)
+	}
+	return EncodeSeatalkKeypadMessage(val)
+}
+
 type SeatalkKeypadHeartbeat struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2124,7 +2875,9 @@ type SeatalkKeypadHeartbeat struct {
 	Variant *uint8 `json:"variant"`
 	Status *uint8 `json:"status"`
 }
+
 func (s *SeatalkKeypadHeartbeat) PGNNumber() uint32  { return 65374 }
+
 func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkKeypadHeartbeat{}
 	val.Info = Info
@@ -2189,6 +2942,28 @@ func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (Mess
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkKeypadHeartbeat(val *SeatalkKeypadHeartbeat) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	w.writeUInt8(val.Variant, 8)
+	w.writeUInt8(val.Status, 8)
+	w.skipBits(24)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkKeypadHeartbeatMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkKeypadHeartbeat)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkKeypadHeartbeat, got %T", v)
+	}
+	return EncodeSeatalkKeypadHeartbeat(val)
+}
+
 type SeatalkPilotMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2197,7 +2972,9 @@ type SeatalkPilotMode struct {
 	SubMode []uint8 `json:"subMode"`
 	PilotModeData []uint8 `json:"pilotModeData"`
 }
+
 func (s *SeatalkPilotMode) PGNNumber() uint32  { return 65379 }
+
 func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SeatalkPilotMode{}
 	val.Info = Info
@@ -2262,6 +3039,28 @@ func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, e
 		}	
 	return val, nil
 }
+
+func EncodeSeatalkPilotMode(val *SeatalkPilotMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.PilotMode), 16)
+	w.writeBinaryData(val.SubMode, 16)
+	w.writeBinaryData(val.PilotModeData, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalkPilotModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SeatalkPilotMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *SeatalkPilotMode, got %T", v)
+	}
+	return EncodeSeatalkPilotMode(val)
+}
+
 type AirmarDepthQualityFactor struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2269,7 +3068,9 @@ type AirmarDepthQualityFactor struct {
 	Sid *uint8 `json:"sid"`
 	DepthQualityFactor AirmarDepthQualityFactorConst `json:"depthQualityFactor"`
 }
+
 func (a *AirmarDepthQualityFactor) PGNNumber() uint32  { return 65408 }
+
 func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarDepthQualityFactor{}
 	val.Info = Info
@@ -2325,6 +3126,27 @@ func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (Me
 		}	
 	return val, nil
 }
+
+func EncodeAirmarDepthQualityFactor(val *AirmarDepthQualityFactor) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Sid, 8)
+	w.writeLookupField(uint64(val.DepthQualityFactor), 4)
+	w.skipBits(36)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarDepthQualityFactorMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarDepthQualityFactor)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarDepthQualityFactor, got %T", v)
+	}
+	return EncodeAirmarDepthQualityFactor(val)
+}
+
 type AirmarSpeedPulseCount struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2333,7 +3155,9 @@ type AirmarSpeedPulseCount struct {
 	DurationOfInterval *float32 `json:"durationOfInterval"`
 	NumberOfPulsesReceived *uint16 `json:"numberOfPulsesReceived"`
 }
+
 func (a *AirmarSpeedPulseCount) PGNNumber() uint32  { return 65409 }
+
 func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarSpeedPulseCount{}
 	val.Info = Info
@@ -2398,6 +3222,28 @@ func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (Messa
 		}	
 	return val, nil
 }
+
+func EncodeAirmarSpeedPulseCount(val *AirmarSpeedPulseCount) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Sid, 8)
+	w.writeUnsignedResolution(val.DurationOfInterval, 16, 0.001)
+	w.writeUInt16(val.NumberOfPulsesReceived, 16)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarSpeedPulseCountMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarSpeedPulseCount)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarSpeedPulseCount, got %T", v)
+	}
+	return EncodeAirmarSpeedPulseCount(val)
+}
+
 type AirmarDeviceInformation struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2406,7 +3252,9 @@ type AirmarDeviceInformation struct {
 	InternalDeviceTemperature *units.Temperature `json:"internalDeviceTemperature"`
 	SupplyVoltage *float32 `json:"supplyVoltage"`
 }
+
 func (a *AirmarDeviceInformation) PGNNumber() uint32  { return 65410 }
+
 func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarDeviceInformation{}
 	val.Info = Info
@@ -2471,6 +3319,32 @@ func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (Mes
 		}	
 	return val, nil
 }
+
+func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Sid, 8)
+	var internalDeviceTemperatureRaw *float32
+	if val.InternalDeviceTemperature != nil {
+		internalDeviceTemperatureRaw = &val.InternalDeviceTemperature.Value
+	}
+	w.writeUnsignedResolution(internalDeviceTemperatureRaw, 16, 0.01)
+	w.writeUnsignedResolution(val.SupplyVoltage, 16, 0.01)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarDeviceInformationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarDeviceInformation)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarDeviceInformation, got %T", v)
+	}
+	return EncodeAirmarDeviceInformation(val)
+}
+
 type SimnetApUnknown3 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2481,7 +3355,9 @@ type SimnetApUnknown3 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
+
 func (s *SimnetApUnknown3) PGNNumber() uint32  { return 65420 }
+
 func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetApUnknown3{}
 	val.Info = Info
@@ -2564,12 +3440,38 @@ func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (Message, e
 		}	
 	return val, nil
 }
+
+func EncodeSimnetApUnknown3(val *SimnetApUnknown3) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetApUnknown3Msg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetApUnknown3)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetApUnknown3, got %T", v)
+	}
+	return EncodeSimnetApUnknown3(val)
+}
+
 type SimnetAutopilotMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (s *SimnetAutopilotMode) PGNNumber() uint32  { return 65480 }
+
 func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetAutopilotMode{}
 	val.Info = Info
@@ -2607,6 +3509,25 @@ func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeSimnetAutopilotMode(val *SimnetAutopilotMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(48)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetAutopilotModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetAutopilotMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetAutopilotMode, got %T", v)
+	}
+	return EncodeSimnetAutopilotMode(val)
+}
+
 type Seatalk1PilotMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2619,7 +3540,9 @@ type Seatalk1PilotMode struct {
 	PilotModeData []uint8 `json:"pilotModeData"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
+
 func (s *Seatalk1PilotMode) PGNNumber() uint32  { return 126720 }
+
 func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Seatalk1PilotMode{}
 	val.Info = Info
@@ -2722,6 +3645,31 @@ func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (Message, 
 	}	
 	return val, nil
 }
+
+func EncodeSeatalk1PilotMode(val *Seatalk1PilotMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProprietaryId, 16)
+	w.writeUInt8(val.Command, 8)
+	w.writeBinaryData(val.Unknown1, 24)
+	w.writeLookupField(uint64(val.PilotMode), 8)
+	w.writeUInt8(val.SubMode, 8)
+	w.writeBinaryData(val.PilotModeData, 8)
+	w.writeBinaryData(val.Unknown2, 80)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalk1PilotModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Seatalk1PilotMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *Seatalk1PilotMode, got %T", v)
+	}
+	return EncodeSeatalk1PilotMode(val)
+}
+
 type Seatalk1Keystroke struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2733,7 +3681,9 @@ type Seatalk1Keystroke struct {
 	Keyinverted *uint8 `json:"keyinverted"`
 	UnknownData []uint8 `json:"unknownData"`
 }
+
 func (s *Seatalk1Keystroke) PGNNumber() uint32  { return 126720 }
+
 func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Seatalk1Keystroke{}
 	val.Info = Info
@@ -2827,6 +3777,30 @@ func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (Message, 
 	}	
 	return val, nil
 }
+
+func EncodeSeatalk1Keystroke(val *Seatalk1Keystroke) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProprietaryId, 16)
+	w.writeUInt8(val.Command, 8)
+	w.writeUInt8(val.Device, 8)
+	w.writeLookupField(uint64(val.Key), 8)
+	w.writeUInt8(val.Keyinverted, 8)
+	w.writeBinaryData(val.UnknownData, 112)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalk1KeystrokeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Seatalk1Keystroke)
+	if !ok {
+		return nil, fmt.Errorf("expected *Seatalk1Keystroke, got %T", v)
+	}
+	return EncodeSeatalk1Keystroke(val)
+}
+
 type Seatalk1DeviceIdentification struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2835,7 +3809,9 @@ type Seatalk1DeviceIdentification struct {
 	Command *uint8 `json:"command"`
 	Device SeatalkDeviceIdConst `json:"device"`
 }
+
 func (s *Seatalk1DeviceIdentification) PGNNumber() uint32  { return 126720 }
+
 func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Seatalk1DeviceIdentification{}
 	val.Info = Info
@@ -2906,6 +3882,28 @@ func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream)
 	}	
 	return val, nil
 }
+
+func EncodeSeatalk1DeviceIdentification(val *Seatalk1DeviceIdentification) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProprietaryId, 16)
+	w.writeUInt8(val.Command, 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Device), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalk1DeviceIdentificationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Seatalk1DeviceIdentification)
+	if !ok {
+		return nil, fmt.Errorf("expected *Seatalk1DeviceIdentification, got %T", v)
+	}
+	return EncodeSeatalk1DeviceIdentification(val)
+}
+
 type Seatalk1DisplayBrightness struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -2917,7 +3915,9 @@ type Seatalk1DisplayBrightness struct {
 	Brightness *uint8 `json:"brightness"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
+
 func (s *Seatalk1DisplayBrightness) PGNNumber() uint32  { return 126720 }
+
 func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Seatalk1DisplayBrightness{}
 	val.Info = Info
@@ -3011,6 +4011,30 @@ func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (M
 	}	
 	return val, nil
 }
+
+func EncodeSeatalk1DisplayBrightness(val *Seatalk1DisplayBrightness) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProprietaryId, 16)
+	w.writeLookupField(uint64(val.Group), 8)
+	w.writeBinaryData(val.Unknown1, 8)
+	w.writeUInt8(val.Command, 8)
+	w.writeUInt8(val.Brightness, 8)
+	w.writeBinaryData(val.Unknown2, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalk1DisplayBrightnessMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Seatalk1DisplayBrightness)
+	if !ok {
+		return nil, fmt.Errorf("expected *Seatalk1DisplayBrightness, got %T", v)
+	}
+	return EncodeSeatalk1DisplayBrightness(val)
+}
+
 type Seatalk1DisplayColor struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3022,7 +4046,9 @@ type Seatalk1DisplayColor struct {
 	Color SeatalkDisplayColorConst `json:"color"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
+
 func (s *Seatalk1DisplayColor) PGNNumber() uint32  { return 126720 }
+
 func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Seatalk1DisplayColor{}
 	val.Info = Info
@@ -3116,6 +4142,30 @@ func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeSeatalk1DisplayColor(val *Seatalk1DisplayColor) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProprietaryId, 16)
+	w.writeLookupField(uint64(val.Group), 8)
+	w.writeBinaryData(val.Unknown1, 8)
+	w.writeUInt8(val.Command, 8)
+	w.writeLookupField(uint64(val.Color), 8)
+	w.writeBinaryData(val.Unknown2, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSeatalk1DisplayColorMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Seatalk1DisplayColor)
+	if !ok {
+		return nil, fmt.Errorf("expected *Seatalk1DisplayColor, got %T", v)
+	}
+	return EncodeSeatalk1DisplayColor(val)
+}
+
 type AirmarAttitudeOffset struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3125,7 +4175,9 @@ type AirmarAttitudeOffset struct {
 	PitchOffset *float32 `json:"pitchOffset"`
 	RollOffset *float32 `json:"rollOffset"`
 }
+
 func (a *AirmarAttitudeOffset) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarAttitudeOffset{}
 	val.Info = Info
@@ -3198,6 +4250,28 @@ func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeAirmarAttitudeOffset(val *AirmarAttitudeOffset) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeSignedResolution(val.AzimuthOffset, 16, 0.0001)
+	w.writeSignedResolution(val.PitchOffset, 16, 0.0001)
+	w.writeSignedResolution(val.RollOffset, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarAttitudeOffsetMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarAttitudeOffset)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarAttitudeOffset, got %T", v)
+	}
+	return EncodeAirmarAttitudeOffset(val)
+}
+
 type AirmarCalibrateCompass struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3216,7 +4290,9 @@ type AirmarCalibrateCompass struct {
 	PitchAndRollDamping *float32 `json:"pitchAndRollDamping"`
 	CompassRateGyroDamping *float32 `json:"compassRateGyroDamping"`
 }
+
 func (a *AirmarCalibrateCompass) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarCalibrateCompass{}
 	val.Info = Info
@@ -3370,6 +4446,37 @@ func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (Mess
 	}	
 	return val, nil
 }
+
+func EncodeAirmarCalibrateCompass(val *AirmarCalibrateCompass) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.CalibrateFunction), 8)
+	w.writeLookupField(uint64(val.CalibrationStatus), 8)
+	w.writeUInt8(val.VerifyScore, 8)
+	w.writeSignedResolution(val.XAxisGainValue, 16, 0.01)
+	w.writeSignedResolution(val.YAxisGainValue, 16, 0.01)
+	w.writeSignedResolution(val.ZAxisGainValue, 16, 0.01)
+	w.writeSignedResolution(val.XAxisLinearOffset, 16, 0.01)
+	w.writeSignedResolution(val.YAxisLinearOffset, 16, 0.01)
+	w.writeSignedResolution(val.ZAxisLinearOffset, 16, 0.01)
+	w.writeSignedResolution(val.XAxisAngularOffset, 16, 0.1)
+	w.writeSignedResolution(val.PitchAndRollDamping, 16, 0.05)
+	w.writeSignedResolution(val.CompassRateGyroDamping, 16, 0.05)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarCalibrateCompassMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarCalibrateCompass)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarCalibrateCompass, got %T", v)
+	}
+	return EncodeAirmarCalibrateCompass(val)
+}
+
 type AirmarTrueWindOptions struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3377,7 +4484,9 @@ type AirmarTrueWindOptions struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	CogSubstitutionForHdg YesNoConst `json:"cogSubstitutionForHdg"`
 }
+
 func (a *AirmarTrueWindOptions) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarTrueWindOptions{}
 	val.Info = Info
@@ -3436,6 +4545,27 @@ func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (Messa
 		}	
 	return val, nil
 }
+
+func EncodeAirmarTrueWindOptions(val *AirmarTrueWindOptions) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.CogSubstitutionForHdg), 2)
+	w.skipBits(22)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarTrueWindOptionsMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarTrueWindOptions)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarTrueWindOptions, got %T", v)
+	}
+	return EncodeAirmarTrueWindOptions(val)
+}
+
 type AirmarSimulateMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3443,7 +4573,9 @@ type AirmarSimulateMode struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	SimulateMode OffOnConst `json:"simulateMode"`
 }
+
 func (a *AirmarSimulateMode) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarSimulateMode{}
 	val.Info = Info
@@ -3502,6 +4634,27 @@ func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (Message,
 		}	
 	return val, nil
 }
+
+func EncodeAirmarSimulateMode(val *AirmarSimulateMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.SimulateMode), 2)
+	w.skipBits(22)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarSimulateModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarSimulateMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarSimulateMode, got %T", v)
+	}
+	return EncodeAirmarSimulateMode(val)
+}
+
 type AirmarCalibrateDepth struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3509,7 +4662,9 @@ type AirmarCalibrateDepth struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	SpeedOfSoundMode *units.Velocity `json:"speedOfSoundMode"`
 }
+
 func (a *AirmarCalibrateDepth) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarCalibrateDepth{}
 	val.Info = Info
@@ -3568,6 +4723,31 @@ func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (Messag
 		}	
 	return val, nil
 }
+
+func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	var speedOfSoundModeRaw *float32
+	if val.SpeedOfSoundMode != nil {
+		speedOfSoundModeRaw = &val.SpeedOfSoundMode.Value
+	}
+	w.writeUnsignedResolution(speedOfSoundModeRaw, 16, 0.1)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarCalibrateDepthMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarCalibrateDepth)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarCalibrateDepth, got %T", v)
+	}
+	return EncodeAirmarCalibrateDepth(val)
+}
+
 type AirmarCalibrateSpeed struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3576,11 +4756,14 @@ type AirmarCalibrateSpeed struct {
 	NumberOfPairsOfDataPoints *uint8 `json:"numberOfPairsOfDataPoints"`
 	Repeating1 []AirmarCalibrateSpeedRepeating1 `json:"repeating1"`
 }
+
 type AirmarCalibrateSpeedRepeating1 struct {
 	InputFrequency *float32 `json:"inputFrequency"`
 	OutputSpeed *units.Velocity `json:"outputSpeed"`
 }
+
 func (a *AirmarCalibrateSpeed) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarCalibrateSpeed{}
 	val.Info = Info
@@ -3668,6 +4851,34 @@ func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeAirmarCalibrateSpeed(val *AirmarCalibrateSpeed) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.NumberOfPairsOfDataPoints, 8)
+	for _, rep := range val.Repeating1 {
+		w.writeUnsignedResolution(rep.InputFrequency, 16, 0.1)
+		var outputSpeedRaw *float32
+		if rep.OutputSpeed != nil {
+			outputSpeedRaw = &rep.OutputSpeed.Value
+		}
+		w.writeUnsignedResolution(outputSpeedRaw, 16, 0.01)
+	}
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarCalibrateSpeedMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarCalibrateSpeed)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarCalibrateSpeed, got %T", v)
+	}
+	return EncodeAirmarCalibrateSpeed(val)
+}
+
 type AirmarCalibrateTemperature struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3676,7 +4887,9 @@ type AirmarCalibrateTemperature struct {
 	TemperatureInstance AirmarTemperatureInstanceConst `json:"temperatureInstance"`
 	TemperatureOffset *units.Temperature `json:"temperatureOffset"`
 }
+
 func (a *AirmarCalibrateTemperature) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarCalibrateTemperature{}
 	val.Info = Info
@@ -3744,6 +4957,32 @@ func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (
 	}	
 	return val, nil
 }
+
+func EncodeAirmarCalibrateTemperature(val *AirmarCalibrateTemperature) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.TemperatureInstance), 2)
+	w.skipBits(6)
+	var temperatureOffsetRaw *float32
+	if val.TemperatureOffset != nil {
+		temperatureOffsetRaw = &val.TemperatureOffset.Value
+	}
+	w.writeSignedResolution(temperatureOffsetRaw, 16, 0.001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarCalibrateTemperatureMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarCalibrateTemperature)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarCalibrateTemperature, got %T", v)
+	}
+	return EncodeAirmarCalibrateTemperature(val)
+}
+
 type AirmarSpeedFilterNone struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3752,7 +4991,9 @@ type AirmarSpeedFilterNone struct {
 	FilterType *uint8 `json:"filterType"`
 	SampleInterval *float32 `json:"sampleInterval"`
 }
+
 func (a *AirmarSpeedFilterNone) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarSpeedFilterNone{}
 	val.Info = Info
@@ -3823,6 +5064,28 @@ func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (Messa
 	}	
 	return val, nil
 }
+
+func EncodeAirmarSpeedFilterNone(val *AirmarSpeedFilterNone) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.FilterType, 4)
+	w.skipBits(4)
+	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarSpeedFilterNoneMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarSpeedFilterNone)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarSpeedFilterNone, got %T", v)
+	}
+	return EncodeAirmarSpeedFilterNone(val)
+}
+
 type AirmarSpeedFilterIir struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3832,7 +5095,9 @@ type AirmarSpeedFilterIir struct {
 	SampleInterval *float32 `json:"sampleInterval"`
 	FilterDuration *float32 `json:"filterDuration"`
 }
+
 func (a *AirmarSpeedFilterIir) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarSpeedFilterIir{}
 	val.Info = Info
@@ -3912,6 +5177,29 @@ func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeAirmarSpeedFilterIir(val *AirmarSpeedFilterIir) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.FilterType, 4)
+	w.skipBits(4)
+	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
+	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarSpeedFilterIirMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarSpeedFilterIir)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarSpeedFilterIir, got %T", v)
+	}
+	return EncodeAirmarSpeedFilterIir(val)
+}
+
 type AirmarTemperatureFilterNone struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -3920,7 +5208,9 @@ type AirmarTemperatureFilterNone struct {
 	FilterType *uint8 `json:"filterType"`
 	SampleInterval *float32 `json:"sampleInterval"`
 }
+
 func (a *AirmarTemperatureFilterNone) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarTemperatureFilterNone{}
 	val.Info = Info
@@ -3991,6 +5281,28 @@ func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) 
 	}	
 	return val, nil
 }
+
+func EncodeAirmarTemperatureFilterNone(val *AirmarTemperatureFilterNone) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.FilterType, 4)
+	w.skipBits(4)
+	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarTemperatureFilterNoneMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarTemperatureFilterNone)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarTemperatureFilterNone, got %T", v)
+	}
+	return EncodeAirmarTemperatureFilterNone(val)
+}
+
 type AirmarTemperatureFilterIir struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4000,7 +5312,9 @@ type AirmarTemperatureFilterIir struct {
 	SampleInterval *float32 `json:"sampleInterval"`
 	FilterDuration *float32 `json:"filterDuration"`
 }
+
 func (a *AirmarTemperatureFilterIir) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarTemperatureFilterIir{}
 	val.Info = Info
@@ -4080,6 +5394,29 @@ func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (
 	}	
 	return val, nil
 }
+
+func EncodeAirmarTemperatureFilterIir(val *AirmarTemperatureFilterIir) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.FilterType, 4)
+	w.skipBits(4)
+	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
+	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarTemperatureFilterIirMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarTemperatureFilterIir)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarTemperatureFilterIir, got %T", v)
+	}
+	return EncodeAirmarTemperatureFilterIir(val)
+}
+
 type AirmarNmea2000Options struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4087,7 +5424,9 @@ type AirmarNmea2000Options struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	TransmissionInterval AirmarTransmissionIntervalConst `json:"transmissionInterval"`
 }
+
 func (a *AirmarNmea2000Options) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarNmea2000Options{}
 	val.Info = Info
@@ -4146,13 +5485,36 @@ func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (Messa
 		}	
 	return val, nil
 }
+
+func EncodeAirmarNmea2000Options(val *AirmarNmea2000Options) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.TransmissionInterval), 2)
+	w.skipBits(22)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarNmea2000OptionsMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarNmea2000Options)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarNmea2000Options, got %T", v)
+	}
+	return EncodeAirmarNmea2000Options(val)
+}
+
 type AirmarAddressableMultiFrame struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	ProprietaryId *uint8 `json:"proprietaryId"`
 }
+
 func (a *AirmarAddressableMultiFrame) PGNNumber() uint32  { return 126720 }
+
 func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AirmarAddressableMultiFrame{}
 	val.Info = Info
@@ -4195,6 +5557,25 @@ func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) 
 	}	
 	return val, nil
 }
+
+func EncodeAirmarAddressableMultiFrame(val *AirmarAddressableMultiFrame) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.ProprietaryId, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAirmarAddressableMultiFrameMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AirmarAddressableMultiFrame)
+	if !ok {
+		return nil, fmt.Errorf("expected *AirmarAddressableMultiFrame, got %T", v)
+	}
+	return EncodeAirmarAddressableMultiFrame(val)
+}
+
 type MaretronSlaveResponse struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4204,7 +5585,9 @@ type MaretronSlaveResponse struct {
 	Command *uint8 `json:"command"`
 	Status *uint8 `json:"status"`
 }
+
 func (m *MaretronSlaveResponse) PGNNumber() uint32  { return 126720 }
+
 func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronSlaveResponse{}
 	val.Info = Info
@@ -4274,6 +5657,28 @@ func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (Messa
 	}	
 	return val, nil
 }
+
+func EncodeMaretronSlaveResponse(val *MaretronSlaveResponse) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProductCode, 16)
+	w.writeUInt16(val.SoftwareCode, 16)
+	w.writeUInt8(val.Command, 8)
+	w.writeUInt8(val.Status, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronSlaveResponseMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronSlaveResponse)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronSlaveResponse, got %T", v)
+	}
+	return EncodeMaretronSlaveResponse(val)
+}
+
 type GarminDayMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4285,7 +5690,9 @@ type GarminDayMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
+
 func (g *GarminDayMode) PGNNumber() uint32  { return 126720 }
+
 func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GarminDayMode{}
 	val.Info = Info
@@ -4396,6 +5803,32 @@ func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (Message, erro
 	}	
 	return val, nil
 }
+
+func EncodeGarminDayMode(val *GarminDayMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.UnknownId1, 8)
+	w.writeUInt8(val.UnknownId2, 8)
+	w.writeUInt8(val.UnknownId3, 8)
+	w.writeUInt8(val.UnknownId4, 8)
+	w.skipBits(16)
+	w.writeLookupField(uint64(val.Mode), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Backlight), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGarminDayModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GarminDayMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *GarminDayMode, got %T", v)
+	}
+	return EncodeGarminDayMode(val)
+}
+
 type GarminNightMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4407,7 +5840,9 @@ type GarminNightMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
+
 func (g *GarminNightMode) PGNNumber() uint32  { return 126720 }
+
 func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GarminNightMode{}
 	val.Info = Info
@@ -4518,6 +5953,32 @@ func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (Message, er
 	}	
 	return val, nil
 }
+
+func EncodeGarminNightMode(val *GarminNightMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.UnknownId1, 8)
+	w.writeUInt8(val.UnknownId2, 8)
+	w.writeUInt8(val.UnknownId3, 8)
+	w.writeUInt8(val.UnknownId4, 8)
+	w.skipBits(16)
+	w.writeLookupField(uint64(val.Mode), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Backlight), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGarminNightModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GarminNightMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *GarminNightMode, got %T", v)
+	}
+	return EncodeGarminNightMode(val)
+}
+
 type GarminColorMode struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4529,7 +5990,9 @@ type GarminColorMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Color GarminColorConst `json:"color"`
 }
+
 func (g *GarminColorMode) PGNNumber() uint32  { return 126720 }
+
 func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GarminColorMode{}
 	val.Info = Info
@@ -4640,6 +6103,32 @@ func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (Message, er
 	}	
 	return val, nil
 }
+
+func EncodeGarminColorMode(val *GarminColorMode) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.UnknownId1, 8)
+	w.writeUInt8(val.UnknownId2, 8)
+	w.writeUInt8(val.UnknownId3, 8)
+	w.writeUInt8(val.UnknownId4, 8)
+	w.skipBits(16)
+	w.writeLookupField(uint64(val.Mode), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Color), 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeGarminColorModeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*GarminColorMode)
+	if !ok {
+		return nil, fmt.Errorf("expected *GarminColorMode, got %T", v)
+	}
+	return EncodeGarminColorMode(val)
+}
+
 type SimradTextMessage struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4652,7 +6141,9 @@ type SimradTextMessage struct {
 	Prio *uint8 `json:"prio"`
 	Text string `json:"text"`
 }
+
 func (s *SimradTextMessage) PGNNumber() uint32  { return 130816 }
+
 func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimradTextMessage{}
 	val.Info = Info
@@ -4756,6 +6247,32 @@ func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (Message, 
 	}	
 	return val, nil
 }
+
+func EncodeSimradTextMessage(val *SimradTextMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Prio, 8)
+	w.writeFixedString(val.Text, 256)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimradTextMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimradTextMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimradTextMessage, got %T", v)
+	}
+	return EncodeSimradTextMessage(val)
+}
+
 type NavicoProductInformation struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4769,7 +6286,9 @@ type NavicoProductInformation struct {
 	FirmwareDate string `json:"firmwareDate"`
 	FirmwareTime string `json:"firmwareTime"`
 }
+
 func (n *NavicoProductInformation) PGNNumber() uint32  { return 130817 }
+
 func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoProductInformation{}
 	val.Info = Info
@@ -4875,6 +6394,32 @@ func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (Me
 	}	
 	return val, nil
 }
+
+func EncodeNavicoProductInformation(val *NavicoProductInformation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProductCode, 16)
+	w.writeFixedString(val.Model, 256)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeFixedString(val.FirmwareVersion, 80)
+	w.writeFixedString(val.FirmwareDate, 256)
+	w.writeFixedString(val.FirmwareTime, 256)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoProductInformationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoProductInformation)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoProductInformation, got %T", v)
+	}
+	return EncodeNavicoProductInformation(val)
+}
+
 type LowranceProductInformation struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -4888,7 +6433,9 @@ type LowranceProductInformation struct {
 	FirmwareDate string `json:"firmwareDate"`
 	FirmwareTime string `json:"firmwareTime"`
 }
+
 func (l *LowranceProductInformation) PGNNumber() uint32  { return 130817 }
+
 func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &LowranceProductInformation{}
 	val.Info = Info
@@ -4994,6 +6541,32 @@ func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (
 	}	
 	return val, nil
 }
+
+func EncodeLowranceProductInformation(val *LowranceProductInformation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.ProductCode, 16)
+	w.writeFixedString(val.Model, 256)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeFixedString(val.FirmwareVersion, 80)
+	w.writeFixedString(val.FirmwareDate, 256)
+	w.writeFixedString(val.FirmwareTime, 256)
+	return w.Bytes(), w.Err()
+}
+
+func encodeLowranceProductInformationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*LowranceProductInformation)
+	if !ok {
+		return nil, fmt.Errorf("expected *LowranceProductInformation, got %T", v)
+	}
+	return EncodeLowranceProductInformation(val)
+}
+
 type SimnetReprogramData struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5002,7 +6575,9 @@ type SimnetReprogramData struct {
 	Sequence *uint16 `json:"sequence"`
 	Data []uint8 `json:"data"`
 }
+
 func (s *SimnetReprogramData) PGNNumber() uint32  { return 130818 }
+
 func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetReprogramData{}
 	val.Info = Info
@@ -5063,6 +6638,27 @@ func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (Message
 	}	
 	return val, nil
 }
+
+func EncodeSimnetReprogramData(val *SimnetReprogramData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.Version, 16)
+	w.writeUInt16(val.Sequence, 16)
+	w.writeBinaryData(val.Data, 1736)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetReprogramDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetReprogramData)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetReprogramData, got %T", v)
+	}
+	return EncodeSimnetReprogramData(val)
+}
+
 type FurunoUnknown130820 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5073,7 +6669,9 @@ type FurunoUnknown130820 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
+
 func (f *FurunoUnknown130820) PGNNumber() uint32  { return 130820 }
+
 func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoUnknown130820{}
 	val.Info = Info
@@ -5152,6 +6750,29 @@ func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (Message
 	}	
 	return val, nil
 }
+
+func EncodeFurunoUnknown130820(val *FurunoUnknown130820) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoUnknown130820Msg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoUnknown130820)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoUnknown130820, got %T", v)
+	}
+	return EncodeFurunoUnknown130820(val)
+}
+
 type NavicoAsciiData struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5159,7 +6780,9 @@ type NavicoAsciiData struct {
 	A *uint8 `json:"a"`
 	Message string `json:"message"`
 }
+
 func (n *NavicoAsciiData) PGNNumber() uint32  { return 130821 }
+
 func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoAsciiData{}
 	val.Info = Info
@@ -5211,6 +6834,26 @@ func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (Message, er
 	}	
 	return val, nil
 }
+
+func EncodeNavicoAsciiData(val *NavicoAsciiData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeFixedString(val.Message, 2048)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoAsciiDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoAsciiData)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoAsciiData, got %T", v)
+	}
+	return EncodeNavicoAsciiData(val)
+}
+
 type FurunoUnknown130821 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5226,7 +6869,9 @@ type FurunoUnknown130821 struct {
 	H *uint8 `json:"h"`
 	I *uint8 `json:"i"`
 }
+
 func (f *FurunoUnknown130821) PGNNumber() uint32  { return 130821 }
+
 func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoUnknown130821{}
 	val.Info = Info
@@ -5350,13 +6995,43 @@ func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (Message
 	}	
 	return val, nil
 }
+
+func EncodeFurunoUnknown130821(val *FurunoUnknown130821) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeUInt8(val.F, 8)
+	w.writeUInt8(val.G, 8)
+	w.writeUInt8(val.H, 8)
+	w.writeUInt8(val.I, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoUnknown130821Msg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoUnknown130821)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoUnknown130821, got %T", v)
+	}
+	return EncodeFurunoUnknown130821(val)
+}
+
 type NavicoUnknown1 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Data []uint8 `json:"data"`
 }
+
 func (n *NavicoUnknown1) PGNNumber() uint32  { return 130822 }
+
 func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoUnknown1{}
 	val.Info = Info
@@ -5399,6 +7074,25 @@ func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, err
 	}	
 	return val, nil
 }
+
+func EncodeNavicoUnknown1(val *NavicoUnknown1) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeBinaryData(val.Data, 1848)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoUnknown1Msg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoUnknown1)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoUnknown1, got %T", v)
+	}
+	return EncodeNavicoUnknown1(val)
+}
+
 type MaretronProprietaryTemperatureHighRange struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5409,7 +7103,9 @@ type MaretronProprietaryTemperatureHighRange struct {
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
+
 func (m *MaretronProprietaryTemperatureHighRange) PGNNumber() uint32  { return 130823 }
+
 func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronProprietaryTemperatureHighRange{}
 	val.Info = Info
@@ -5488,18 +7184,52 @@ func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGN
 	}	
 	return val, nil
 }
+
+func EncodeMaretronProprietaryTemperatureHighRange(val *MaretronProprietaryTemperatureHighRange) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	var actualTemperatureRaw *float32
+	if val.ActualTemperature != nil {
+		actualTemperatureRaw = &val.ActualTemperature.Value
+	}
+	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.1)
+	var setTemperatureRaw *float32
+	if val.SetTemperature != nil {
+		setTemperatureRaw = &val.SetTemperature.Value
+	}
+	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronProprietaryTemperatureHighRangeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronProprietaryTemperatureHighRange)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronProprietaryTemperatureHighRange, got %T", v)
+	}
+	return EncodeMaretronProprietaryTemperatureHighRange(val)
+}
+
 type BGKeyValueData struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Repeating1 []BGKeyValueDataRepeating1 `json:"repeating1"`
 }
+
 type BGKeyValueDataRepeating1 struct {
 	Key BandgKeyValueConst `json:"key"`
 	Length *uint8 `json:"length"`
 	Value []uint8 `json:"value"`
 }
+
 func (b *BGKeyValueData) PGNNumber() uint32  { return 130824 }
+
 func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &BGKeyValueData{}
 	val.Info = Info
@@ -5571,6 +7301,33 @@ func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (Message, err
 	}	
 	return val, nil
 }
+
+func EncodeBGKeyValueData(val *BGKeyValueData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	for _, rep := range val.Repeating1 {
+		w.writeLookupField(uint64(rep.Key), 12)
+		w.writeUInt8(rep.Length, 4)
+		var valueLength uint16
+		if rep.Length != nil {
+			valueLength = uint16(*rep.Length) * 8
+		}
+		w.writeBinaryData(rep.Value, valueLength)
+	}
+	return w.Bytes(), w.Err()
+}
+
+func encodeBGKeyValueDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*BGKeyValueData)
+	if !ok {
+		return nil, fmt.Errorf("expected *BGKeyValueData, got %T", v)
+	}
+	return EncodeBGKeyValueData(val)
+}
+
 type MaretronAnnunciator struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5581,7 +7338,9 @@ type MaretronAnnunciator struct {
 	Field7 *uint8 `json:"field7"`
 	Field8 *uint16 `json:"field8"`
 }
+
 func (m *MaretronAnnunciator) PGNNumber() uint32  { return 130824 }
+
 func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronAnnunciator{}
 	val.Info = Info
@@ -5660,13 +7419,38 @@ func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (Message
 	}	
 	return val, nil
 }
+
+func EncodeMaretronAnnunciator(val *MaretronAnnunciator) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Field4, 8)
+	w.writeUInt8(val.Field5, 8)
+	w.writeUInt16(val.Field6, 16)
+	w.writeUInt8(val.Field7, 8)
+	w.writeUInt16(val.Field8, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronAnnunciatorMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronAnnunciator)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronAnnunciator, got %T", v)
+	}
+	return EncodeMaretronAnnunciator(val)
+}
+
 type NavicoUnknown2 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Data []uint8 `json:"data"`
 }
+
 func (n *NavicoUnknown2) PGNNumber() uint32  { return 130825 }
+
 func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavicoUnknown2{}
 	val.Info = Info
@@ -5709,6 +7493,25 @@ func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, err
 	}	
 	return val, nil
 }
+
+func EncodeNavicoUnknown2(val *NavicoUnknown2) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeBinaryData(val.Data, 80)
+	return w.Bytes(), w.Err()
+}
+
+func encodeNavicoUnknown2Msg(v Message) ([]byte, error) {
+	val, ok := v.(*NavicoUnknown2)
+	if !ok {
+		return nil, fmt.Errorf("expected *NavicoUnknown2, got %T", v)
+	}
+	return EncodeNavicoUnknown2(val)
+}
+
 type BGUserAndRemoteRename struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5719,7 +7522,9 @@ type BGUserAndRemoteRename struct {
 	ShortName string `json:"shortName"`
 	LongName string `json:"longName"`
 }
+
 func (b *BGUserAndRemoteRename) PGNNumber() uint32  { return 130833 }
+
 func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &BGUserAndRemoteRename{}
 	val.Info = Info
@@ -5802,6 +7607,30 @@ func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (Messa
 	}	
 	return val, nil
 }
+
+func EncodeBGUserAndRemoteRename(val *BGUserAndRemoteRename) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.DataType), 12)
+	w.writeUInt8(val.Length, 4)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Decimals), 8)
+	w.writeFixedString(val.ShortName, 64)
+	w.writeFixedString(val.LongName, 128)
+	return w.Bytes(), w.Err()
+}
+
+func encodeBGUserAndRemoteRenameMsg(v Message) ([]byte, error) {
+	val, ok := v.(*BGUserAndRemoteRename)
+	if !ok {
+		return nil, fmt.Errorf("expected *BGUserAndRemoteRename, got %T", v)
+	}
+	return EncodeBGUserAndRemoteRename(val)
+}
+
 type SimnetFluidLevelSensorConfiguration struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5816,7 +7645,9 @@ type SimnetFluidLevelSensorConfiguration struct {
 	H *int16 `json:"h"`
 	I *int8 `json:"i"`
 }
+
 func (s *SimnetFluidLevelSensorConfiguration) PGNNumber() uint32  { return 130836 }
+
 func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetFluidLevelSensorConfiguration{}
 	val.Info = Info
@@ -5931,6 +7762,37 @@ func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNData
 	}	
 	return val, nil
 }
+
+func EncodeSimnetFluidLevelSensorConfiguration(val *SimnetFluidLevelSensorConfiguration) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.C, 8)
+	w.writeUInt8(val.Device, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.F, 4)
+	w.writeLookupField(uint64(val.TankType), 4)
+	var capacityRaw *float32
+	if val.Capacity != nil {
+		capacityRaw = &val.Capacity.Value
+	}
+	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
+	w.writeUInt8(val.G, 8)
+	w.writeInt16(val.H, 16)
+	w.writeInt8(val.I, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetFluidLevelSensorConfigurationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetFluidLevelSensorConfiguration)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetFluidLevelSensorConfiguration, got %T", v)
+	}
+	return EncodeSimnetFluidLevelSensorConfiguration(val)
+}
+
 type MaretronSwitchStatusCounter struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -5944,7 +7806,9 @@ type MaretronSwitchStatusCounter struct {
 	ErrorCounter *uint8 `json:"errorCounter"`
 	SwitchStatus OffOnConst `json:"switchStatus"`
 }
+
 func (m *MaretronSwitchStatusCounter) PGNNumber() uint32  { return 130836 }
+
 func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronSwitchStatusCounter{}
 	val.Info = Info
@@ -6054,6 +7918,33 @@ func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) 
 		}	
 	return val, nil
 }
+
+func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.IndicatorNumber, 8)
+	w.writeUInt16(val.StartDate, 16)
+	w.writeUnsignedResolution(val.StartTime, 32, 0.0001)
+	w.writeUInt8(val.OffCounter, 8)
+	w.writeUInt8(val.OnCounter, 8)
+	w.writeUInt8(val.ErrorCounter, 8)
+	w.writeLookupField(uint64(val.SwitchStatus), 2)
+	w.skipBits(6)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronSwitchStatusCounterMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronSwitchStatusCounter)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronSwitchStatusCounter, got %T", v)
+	}
+	return EncodeMaretronSwitchStatusCounter(val)
+}
+
 type MaretronSwitchStatusTimer struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6067,7 +7958,9 @@ type MaretronSwitchStatusTimer struct {
 	AccumulatedErrorPeriod *uint32 `json:"accumulatedErrorPeriod"`
 	SwitchStatus OffOnConst `json:"switchStatus"`
 }
+
 func (m *MaretronSwitchStatusTimer) PGNNumber() uint32  { return 130837 }
+
 func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MaretronSwitchStatusTimer{}
 	val.Info = Info
@@ -6177,6 +8070,33 @@ func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (M
 		}	
 	return val, nil
 }
+
+func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Instance, 8)
+	w.writeUInt8(val.IndicatorNumber, 8)
+	w.writeUInt16(val.StartDate, 16)
+	w.writeUnsignedResolution(val.StartTime, 32, 0.0001)
+	w.writeUInt32(val.AccumulatedOffPeriod, 32)
+	w.writeUInt32(val.AccumulatedOnPeriod, 32)
+	w.writeUInt32(val.AccumulatedErrorPeriod, 32)
+	w.writeLookupField(uint64(val.SwitchStatus), 2)
+	w.skipBits(6)
+	return w.Bytes(), w.Err()
+}
+
+func encodeMaretronSwitchStatusTimerMsg(v Message) ([]byte, error) {
+	val, ok := v.(*MaretronSwitchStatusTimer)
+	if !ok {
+		return nil, fmt.Errorf("expected *MaretronSwitchStatusTimer, got %T", v)
+	}
+	return EncodeMaretronSwitchStatusTimer(val)
+}
+
 type FurunoSixDegreesOfFreedomMovement struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6191,7 +8111,9 @@ type FurunoSixDegreesOfFreedomMovement struct {
 	H *int16 `json:"h"`
 	I *int16 `json:"i"`
 }
+
 func (f *FurunoSixDegreesOfFreedomMovement) PGNNumber() uint32  { return 130842 }
+
 func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoSixDegreesOfFreedomMovement{}
 	val.Info = Info
@@ -6306,6 +8228,33 @@ func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataSt
 	}	
 	return val, nil
 }
+
+func EncodeFurunoSixDegreesOfFreedomMovement(val *FurunoSixDegreesOfFreedomMovement) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeInt32(val.A, 32)
+	w.writeInt32(val.B, 32)
+	w.writeInt32(val.C, 32)
+	w.writeInt8(val.D, 8)
+	w.writeInt32(val.E, 32)
+	w.writeInt32(val.F, 32)
+	w.writeInt16(val.G, 16)
+	w.writeInt16(val.H, 16)
+	w.writeInt16(val.I, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoSixDegreesOfFreedomMovementMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoSixDegreesOfFreedomMovement)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoSixDegreesOfFreedomMovement, got %T", v)
+	}
+	return EncodeFurunoSixDegreesOfFreedomMovement(val)
+}
+
 type SimnetAisClassBStaticDataMsg24PartB struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6324,7 +8273,9 @@ type SimnetAisClassBStaticDataMsg24PartB struct {
 	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
 	MothershipUserId *uint32 `json:"mothershipUserId"`
 }
+
 func (s *SimnetAisClassBStaticDataMsg24PartB) PGNNumber() uint32  { return 130842 }
+
 func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetAisClassBStaticDataMsg24PartB{}
 	val.Info = Info
@@ -6486,6 +8437,55 @@ func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNData
 		}	
 	return val, nil
 }
+
+func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg24PartB) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.MessageId, 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt8(val.D, 8)
+	w.writeUInt8(val.E, 8)
+	w.writeUInt32(val.UserId, 32)
+	w.writeLookupField(uint64(val.TypeOfShip), 8)
+	w.writeFixedString(val.VendorId, 56)
+	w.writeFixedString(val.Callsign, 56)
+	var lengthRaw *float32
+	if val.Length != nil {
+		lengthRaw = &val.Length.Value
+	}
+	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
+	var beamRaw *float32
+	if val.Beam != nil {
+		beamRaw = &val.Beam.Value
+	}
+	w.writeUnsignedResolution(beamRaw, 16, 0.1)
+	var positionReferenceFromStarboardRaw *float32
+	if val.PositionReferenceFromStarboard != nil {
+		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
+	var positionReferenceFromBowRaw *float32
+	if val.PositionReferenceFromBow != nil {
+		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
+	w.writeUInt32(val.MothershipUserId, 32)
+	w.skipBits(6)
+	w.skipBits(2)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetAisClassBStaticDataMsg24PartBMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetAisClassBStaticDataMsg24PartB)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetAisClassBStaticDataMsg24PartB, got %T", v)
+	}
+	return EncodeSimnetAisClassBStaticDataMsg24PartB(val)
+}
+
 type FurunoHeelAngleRollInformation struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6496,7 +8496,9 @@ type FurunoHeelAngleRollInformation struct {
 	Pitch *float32 `json:"pitch"`
 	Roll *float32 `json:"roll"`
 }
+
 func (f *FurunoHeelAngleRollInformation) PGNNumber() uint32  { return 130843 }
+
 func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoHeelAngleRollInformation{}
 	val.Info = Info
@@ -6575,12 +8577,37 @@ func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStrea
 	}	
 	return val, nil
 }
+
+func EncodeFurunoHeelAngleRollInformation(val *FurunoHeelAngleRollInformation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.A, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeSignedResolution(val.Yaw, 16, 0.0001)
+	w.writeSignedResolution(val.Pitch, 16, 0.0001)
+	w.writeSignedResolution(val.Roll, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoHeelAngleRollInformationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoHeelAngleRollInformation)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoHeelAngleRollInformation, got %T", v)
+	}
+	return EncodeFurunoHeelAngleRollInformation(val)
+}
+
 type FurunoMultiSatsInViewExtended struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (f *FurunoMultiSatsInViewExtended) PGNNumber() uint32  { return 130845 }
+
 func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoMultiSatsInViewExtended{}
 	val.Info = Info
@@ -6614,6 +8641,24 @@ func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream
 	}	
 	return val, nil
 }
+
+func EncodeFurunoMultiSatsInViewExtended(val *FurunoMultiSatsInViewExtended) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoMultiSatsInViewExtendedMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoMultiSatsInViewExtended)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoMultiSatsInViewExtended, got %T", v)
+	}
+	return EncodeFurunoMultiSatsInViewExtended(val)
+}
+
 type SimnetKeyValue struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6625,7 +8670,9 @@ type SimnetKeyValue struct {
 	Minlength *uint8 `json:"minlength"`
 	Value []uint8 `json:"value"`
 }
+
 func (s *SimnetKeyValue) PGNNumber() uint32  { return 130845 }
+
 func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetKeyValue{}
 	val.Info = Info
@@ -6727,6 +8774,31 @@ func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (Message, err
 	}	
 	return val, nil
 }
+
+func EncodeSimnetKeyValue(val *SimnetKeyValue) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Address, 8)
+	w.writeLookupField(uint64(val.RepeatIndicator), 8)
+	w.writeLookupField(uint64(val.DisplayGroup), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Key), 16)
+	w.skipBits(8)
+	w.writeUInt8(val.Minlength, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetKeyValueMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetKeyValue)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetKeyValue, got %T", v)
+	}
+	return EncodeSimnetKeyValue(val)
+}
+
 type SimnetParameterSet struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6739,7 +8811,9 @@ type SimnetParameterSet struct {
 	Length *uint8 `json:"length"`
 	Value []uint8 `json:"value"`
 }
+
 func (s *SimnetParameterSet) PGNNumber() uint32  { return 130846 }
+
 func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetParameterSet{}
 	val.Info = Info
@@ -6842,12 +8916,39 @@ func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (Message,
 	}	
 	return val, nil
 }
+
+func EncodeSimnetParameterSet(val *SimnetParameterSet) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Address, 8)
+	w.writeUInt8(val.B, 8)
+	w.writeLookupField(uint64(val.DisplayGroup), 8)
+	w.writeUInt16(val.D, 16)
+	w.writeLookupField(uint64(val.Key), 16)
+	w.skipBits(8)
+	w.writeUInt8(val.Length, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetParameterSetMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetParameterSet)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetParameterSet, got %T", v)
+	}
+	return EncodeSimnetParameterSet(val)
+}
+
 type FurunoMotionSensorStatusExtended struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
+
 func (f *FurunoMotionSensorStatusExtended) PGNNumber() uint32  { return 130846 }
+
 func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &FurunoMotionSensorStatusExtended{}
 	val.Info = Info
@@ -6881,6 +8982,24 @@ func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeFurunoMotionSensorStatusExtended(val *FurunoMotionSensorStatusExtended) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	return w.Bytes(), w.Err()
+}
+
+func encodeFurunoMotionSensorStatusExtendedMsg(v Message) ([]byte, error) {
+	val, ok := v.(*FurunoMotionSensorStatusExtended)
+	if !ok {
+		return nil, fmt.Errorf("expected *FurunoMotionSensorStatusExtended, got %T", v)
+	}
+	return EncodeFurunoMotionSensorStatusExtended(val)
+}
+
 type SimnetApCommand struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -6892,7 +9011,9 @@ type SimnetApCommand struct {
 	Direction SimnetDirectionConst `json:"direction"`
 	Angle *float32 `json:"angle"`
 }
+
 func (s *SimnetApCommand) PGNNumber() uint32  { return 130850 }
+
 func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetApCommand{}
 	val.Info = Info
@@ -6991,6 +9112,32 @@ func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (Message, er
 	}	
 	return val, nil
 }
+
+func EncodeSimnetApCommand(val *SimnetApCommand) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Address, 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeLookupField(uint64(val.ApStatus), 8)
+	w.writeLookupField(uint64(val.ApCommand), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Direction), 8)
+	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetApCommandMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetApCommand)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetApCommand, got %T", v)
+	}
+	return EncodeSimnetApCommand(val)
+}
+
 type SimnetEventCommandApCommand struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -7004,7 +9151,9 @@ type SimnetEventCommandApCommand struct {
 	Angle *float32 `json:"angle"`
 	UnusedC *uint8 `json:"unusedC"`
 }
+
 func (s *SimnetEventCommandApCommand) PGNNumber() uint32  { return 130850 }
+
 func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetEventCommandApCommand{}
 	val.Info = Info
@@ -7113,6 +9262,32 @@ func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) 
 	}	
 	return val, nil
 }
+
+func EncodeSimnetEventCommandApCommand(val *SimnetEventCommandApCommand) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt16(val.UnusedA, 16)
+	w.writeUInt8(val.ControllingDevice, 8)
+	w.writeLookupField(uint64(val.Event), 8)
+	w.writeUInt8(val.UnusedB, 8)
+	w.writeLookupField(uint64(val.Direction), 8)
+	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
+	w.writeUInt8(val.UnusedC, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetEventCommandApCommandMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetEventCommandApCommand)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetEventCommandApCommand, got %T", v)
+	}
+	return EncodeSimnetEventCommandApCommand(val)
+}
+
 type SimnetAlarm struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -7124,7 +9299,9 @@ type SimnetAlarm struct {
 	F *uint8 `json:"f"`
 	G *uint8 `json:"g"`
 }
+
 func (s *SimnetAlarm) PGNNumber() uint32  { return 130850 }
+
 func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetAlarm{}
 	val.Info = Info
@@ -7223,6 +9400,32 @@ func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error)
 	}	
 	return val, nil
 }
+
+func EncodeSimnetAlarm(val *SimnetAlarm) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt8(val.Address, 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.skipBits(8)
+	w.writeLookupField(uint64(val.Alarm), 16)
+	w.writeUInt16(val.MessageId, 16)
+	w.writeUInt8(val.F, 8)
+	w.writeUInt8(val.G, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetAlarmMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetAlarm)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetAlarm, got %T", v)
+	}
+	return EncodeSimnetAlarm(val)
+}
+
 type SimnetEventReplyApCommand struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -7236,7 +9439,9 @@ type SimnetEventReplyApCommand struct {
 	Angle *float32 `json:"angle"`
 	G *uint8 `json:"g"`
 }
+
 func (s *SimnetEventReplyApCommand) PGNNumber() uint32  { return 130851 }
+
 func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetEventReplyApCommand{}
 	val.Info = Info
@@ -7345,6 +9550,32 @@ func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (M
 	}	
 	return val, nil
 }
+
+func EncodeSimnetEventReplyApCommand(val *SimnetEventReplyApCommand) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeLookupField(uint64(val.ProprietaryId), 8)
+	w.writeUInt16(val.B, 16)
+	w.writeUInt8(val.Address, 8)
+	w.writeLookupField(uint64(val.Event), 8)
+	w.writeUInt8(val.C, 8)
+	w.writeLookupField(uint64(val.Direction), 8)
+	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
+	w.writeUInt8(val.G, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetEventReplyApCommandMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetEventReplyApCommand)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetEventReplyApCommand, got %T", v)
+	}
+	return EncodeSimnetEventReplyApCommand(val)
+}
+
 type SimnetAlarmMessage struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -7354,7 +9585,9 @@ type SimnetAlarmMessage struct {
 	C *uint8 `json:"c"`
 	Text string `json:"text"`
 }
+
 func (s *SimnetAlarmMessage) PGNNumber() uint32  { return 130856 }
+
 func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetAlarmMessage{}
 	val.Info = Info
@@ -7424,6 +9657,28 @@ func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (Message,
 	}	
 	return val, nil
 }
+
+func EncodeSimnetAlarmMessage(val *SimnetAlarmMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.ManufacturerCode), 11)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.IndustryCode), 3)
+	w.writeUInt16(val.MessageId, 16)
+	w.writeUInt8(val.B, 8)
+	w.writeUInt8(val.C, 8)
+	w.writeFixedString(val.Text, 1784)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSimnetAlarmMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SimnetAlarmMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *SimnetAlarmMessage, got %T", v)
+	}
+	return EncodeSimnetAlarmMessage(val)
+}
+
 type SimnetApUnknown4 struct {
 	Info MessageInfo `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
@@ -7435,7 +9690,9 @@ type SimnetApUnknown4 struct {
 	E *int32 `json:"e"`
 	F *uint32 `json:"f"`
 }
+
 func (s *SimnetApUnknown4) PGNNumber() uint32  { return 130860 }
+
 func DecodeSimnetApUnknown4(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SimnetApUnknown4{}
 	val.Info = Info
@@ -7524,1903 +9781,6 @@ func DecodeSimnetApUnknown4(Info MessageInfo, stream *PGNDataStream) (Message, e
 	return val, nil
 }
 
-func EncodeSeatalkWirelessKeypadLightControl(val *SeatalkWirelessKeypadLightControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	w.writeUInt8(val.Variant, 8)
-	w.writeUInt8(val.WirelessSetting, 8)
-	w.writeUInt8(val.WiredSetting, 8)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkWirelessKeypadLightControlMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkWirelessKeypadLightControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadLightControl, got %T", v)
-	}
-	return EncodeSeatalkWirelessKeypadLightControl(val)
-}
-
-func EncodeSeatalkWirelessKeypadControl(val *SeatalkWirelessKeypadControl) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Pid, 8)
-	w.writeUInt8(val.Variant, 8)
-	w.writeUInt8(val.BeepControl, 8)
-	w.skipBits(24)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkWirelessKeypadControlMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkWirelessKeypadControl)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadControl, got %T", v)
-	}
-	return EncodeSeatalkWirelessKeypadControl(val)
-}
-
-func EncodeVictronBatteryRegister(val *VictronBatteryRegister) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.RegisterId, 16)
-	w.writeUInt32(val.Payload, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeVictronBatteryRegisterMsg(v Message) ([]byte, error) {
-	val, ok := v.(*VictronBatteryRegister)
-	if !ok {
-		return nil, fmt.Errorf("expected *VictronBatteryRegister, got %T", v)
-	}
-	return EncodeVictronBatteryRegister(val)
-}
-
-func EncodeFurunoHeave(val *FurunoHeave) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	var heaveRaw *float32
-	if val.Heave != nil {
-		heaveRaw = &val.Heave.Value
-	}
-	w.writeSignedResolution(heaveRaw, 32, 0.001)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoHeaveMsg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoHeave)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoHeave, got %T", v)
-	}
-	return EncodeFurunoHeave(val)
-}
-
-func EncodeMaretronProprietaryDcBreakerCurrent(val *MaretronProprietaryDcBreakerCurrent) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.BankInstance, 8)
-	w.writeUInt8(val.IndicatorNumber, 8)
-	w.writeUnsignedResolution(val.BreakerCurrent, 16, 0.1)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronProprietaryDcBreakerCurrentMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronProprietaryDcBreakerCurrent)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronProprietaryDcBreakerCurrent, got %T", v)
-	}
-	return EncodeMaretronProprietaryDcBreakerCurrent(val)
-}
-
-func EncodeAirmarBootStateAcknowledgment(val *AirmarBootStateAcknowledgment) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.BootState), 3)
-	w.skipBits(45)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarBootStateAcknowledgmentMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarBootStateAcknowledgment)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarBootStateAcknowledgment, got %T", v)
-	}
-	return EncodeAirmarBootStateAcknowledgment(val)
-}
-
-func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.TemperatureSource), 8)
-	var actualTemperatureRaw *float32
-	if val.ActualTemperature != nil {
-		actualTemperatureRaw = &val.ActualTemperature.Value
-	}
-	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
-	w.skipBits(24)
-	return w.Bytes(), w.Err()
-}
-func encodeLowranceTemperatureMsg(v Message) ([]byte, error) {
-	val, ok := v.(*LowranceTemperature)
-	if !ok {
-		return nil, fmt.Errorf("expected *LowranceTemperature, got %T", v)
-	}
-	return EncodeLowranceTemperature(val)
-}
-
-func EncodeAirmarBootStateRequest(val *AirmarBootStateRequest) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarBootStateRequestMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarBootStateRequest)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarBootStateRequest, got %T", v)
-	}
-	return EncodeAirmarBootStateRequest(val)
-}
-
-func EncodeAirmarAccessLevel(val *AirmarAccessLevel) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.FormatCode, 8)
-	w.writeLookupField(uint64(val.AccessLevel), 3)
-	w.skipBits(5)
-	w.writeUInt32(val.AccessSeedKey, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarAccessLevelMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarAccessLevel)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarAccessLevel, got %T", v)
-	}
-	return EncodeAirmarAccessLevel(val)
-}
-
-func EncodeSimnetConfigureTemperatureSensor(val *SimnetConfigureTemperatureSensor) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetConfigureTemperatureSensorMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetConfigureTemperatureSensor)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetConfigureTemperatureSensor, got %T", v)
-	}
-	return EncodeSimnetConfigureTemperatureSensor(val)
-}
-
-func EncodeSeatalkAlarm(val *SeatalkAlarm) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeBinaryData(val.Sid, 8)
-	w.writeLookupField(uint64(val.AlarmStatus), 8)
-	w.writeLookupField(uint64(val.AlarmId), 8)
-	w.writeLookupField(uint64(val.AlarmGroup), 8)
-	w.writeBinaryData(val.AlarmPriority, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkAlarmMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkAlarm)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkAlarm, got %T", v)
-	}
-	return EncodeSeatalkAlarm(val)
-}
-
-func EncodeSimnetTrimTabSensorCalibration(val *SimnetTrimTabSensorCalibration) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetTrimTabSensorCalibrationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetTrimTabSensorCalibration)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetTrimTabSensorCalibration, got %T", v)
-	}
-	return EncodeSimnetTrimTabSensorCalibration(val)
-}
-
-func EncodeSimnetPaddleWheelSpeedConfiguration(val *SimnetPaddleWheelSpeedConfiguration) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetPaddleWheelSpeedConfigurationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetPaddleWheelSpeedConfiguration)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetPaddleWheelSpeedConfiguration, got %T", v)
-	}
-	return EncodeSimnetPaddleWheelSpeedConfiguration(val)
-}
-
-func EncodeSimnetClearFluidLevelWarnings(val *SimnetClearFluidLevelWarnings) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetClearFluidLevelWarningsMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetClearFluidLevelWarnings)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetClearFluidLevelWarnings, got %T", v)
-	}
-	return EncodeSimnetClearFluidLevelWarnings(val)
-}
-
-func EncodeSimnetLgc2000Configuration(val *SimnetLgc2000Configuration) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetLgc2000ConfigurationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetLgc2000Configuration)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetLgc2000Configuration, got %T", v)
-	}
-	return EncodeSimnetLgc2000Configuration(val)
-}
-
-func EncodeDiverseYachtServicesLoadCell(val *DiverseYachtServicesLoadCell) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Instance, 8)
-	w.skipBits(8)
-	w.writeUInt32(val.LoadCell, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeDiverseYachtServicesLoadCellMsg(v Message) ([]byte, error) {
-	val, ok := v.(*DiverseYachtServicesLoadCell)
-	if !ok {
-		return nil, fmt.Errorf("expected *DiverseYachtServicesLoadCell, got %T", v)
-	}
-	return EncodeDiverseYachtServicesLoadCell(val)
-}
-
-func EncodeSimnetApUnknown1(val *SimnetApUnknown1) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt16(val.C, 16)
-	w.writeUInt8(val.D, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetApUnknown1Msg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetApUnknown1)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetApUnknown1, got %T", v)
-	}
-	return EncodeSimnetApUnknown1(val)
-}
-
-func EncodeSimnetDeviceStatus(val *SimnetDeviceStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.Model), 8)
-	w.writeLookupField(uint64(val.Report), 8)
-	w.writeLookupField(uint64(val.Status), 8)
-	w.skipBits(24)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetDeviceStatusMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetDeviceStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetDeviceStatus, got %T", v)
-	}
-	return EncodeSimnetDeviceStatus(val)
-}
-
-func EncodeSimnetDeviceStatusRequest(val *SimnetDeviceStatusRequest) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.Model), 8)
-	w.writeLookupField(uint64(val.Report), 8)
-	w.skipBits(32)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetDeviceStatusRequestMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetDeviceStatusRequest)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetDeviceStatusRequest, got %T", v)
-	}
-	return EncodeSimnetDeviceStatusRequest(val)
-}
-
-func EncodeSimnetPilotMode(val *SimnetPilotMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.Model), 8)
-	w.writeLookupField(uint64(val.Report), 8)
-	w.writeLookupField(uint64(val.Mode), 16)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetPilotModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetPilotMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetPilotMode, got %T", v)
-	}
-	return EncodeSimnetPilotMode(val)
-}
-
-func EncodeSimnetDeviceModeRequest(val *SimnetDeviceModeRequest) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.Model), 8)
-	w.writeLookupField(uint64(val.Report), 8)
-	w.skipBits(32)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetDeviceModeRequestMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetDeviceModeRequest)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetDeviceModeRequest, got %T", v)
-	}
-	return EncodeSimnetDeviceModeRequest(val)
-}
-
-func EncodeSimnetSailingProcessorStatus(val *SimnetSailingProcessorStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.Model), 8)
-	w.writeLookupField(uint64(val.Report), 8)
-	w.writeBinaryData(val.Data, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetSailingProcessorStatusMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetSailingProcessorStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetSailingProcessorStatus, got %T", v)
-	}
-	return EncodeSimnetSailingProcessorStatus(val)
-}
-
-func EncodeNavicoWirelessBatteryStatus(val *NavicoWirelessBatteryStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Status, 8)
-	w.writeUInt8(val.BatteryStatus, 8)
-	w.writeUInt8(val.BatteryChargeStatus, 8)
-	w.skipBits(24)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoWirelessBatteryStatusMsg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoWirelessBatteryStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoWirelessBatteryStatus, got %T", v)
-	}
-	return EncodeNavicoWirelessBatteryStatus(val)
-}
-
-func EncodeNavicoWirelessSignalStatus(val *NavicoWirelessSignalStatus) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Unknown, 8)
-	w.writeUInt8(val.SignalStrength, 8)
-	w.skipBits(32)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoWirelessSignalStatusMsg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoWirelessSignalStatus)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoWirelessSignalStatus, got %T", v)
-	}
-	return EncodeNavicoWirelessSignalStatus(val)
-}
-
-func EncodeSimnetApUnknown2(val *SimnetApUnknown2) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetApUnknown2Msg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetApUnknown2)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetApUnknown2, got %T", v)
-	}
-	return EncodeSimnetApUnknown2(val)
-}
-
-func EncodeSimnetAutopilotAngle(val *SimnetAutopilotAngle) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(16)
-	w.writeLookupField(uint64(val.Mode), 8)
-	w.skipBits(8)
-	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetAutopilotAngleMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetAutopilotAngle)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetAutopilotAngle, got %T", v)
-	}
-	return EncodeSimnetAutopilotAngle(val)
-}
-
-func EncodeSeatalkPilotWindDatum(val *SeatalkPilotWindDatum) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUnsignedResolution(val.WindDatum, 16, 0.0001)
-	w.writeUnsignedResolution(val.RollingAverageWindAngle, 16, 0.0001)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkPilotWindDatumMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkPilotWindDatum)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkPilotWindDatum, got %T", v)
-	}
-	return EncodeSeatalkPilotWindDatum(val)
-}
-
-func EncodeSimnetMagneticField(val *SimnetMagneticField) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeSignedResolution(val.A, 16, 0.0001)
-	w.writeUInt8(val.B, 8)
-	w.writeSignedResolution(val.C, 16, 0.0001)
-	w.writeSignedResolution(val.D, 16, 0.0001)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetMagneticFieldMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetMagneticField)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetMagneticField, got %T", v)
-	}
-	return EncodeSimnetMagneticField(val)
-}
-
-func EncodeSeatalkPilotHeading(val *SeatalkPilotHeading) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeBinaryData(val.Sid, 8)
-	w.writeUnsignedResolution(val.HeadingTrue, 16, 0.0001)
-	w.writeUnsignedResolution(val.HeadingMagnetic, 16, 0.0001)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkPilotHeadingMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkPilotHeading)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkPilotHeading, got %T", v)
-	}
-	return EncodeSeatalkPilotHeading(val)
-}
-
-func EncodeSeatalkPilotLockedHeading(val *SeatalkPilotLockedHeading) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeBinaryData(val.Sid, 8)
-	w.writeUnsignedResolution(val.TargetHeadingTrue, 16, 0.0001)
-	w.writeUnsignedResolution(val.TargetHeadingMagnetic, 16, 0.0001)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkPilotLockedHeadingMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkPilotLockedHeading)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkPilotLockedHeading, got %T", v)
-	}
-	return EncodeSeatalkPilotLockedHeading(val)
-}
-
-func EncodeSeatalkSilenceAlarm(val *SeatalkSilenceAlarm) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.AlarmId), 8)
-	w.writeLookupField(uint64(val.AlarmGroup), 8)
-	w.skipBits(32)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkSilenceAlarmMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkSilenceAlarm)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkSilenceAlarm, got %T", v)
-	}
-	return EncodeSeatalkSilenceAlarm(val)
-}
-
-func EncodeSeatalkKeypadMessage(val *SeatalkKeypadMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	w.writeUInt8(val.FirstKey, 8)
-	w.writeUInt8(val.SecondKey, 8)
-	w.writeUInt8(val.FirstKeyState, 2)
-	w.writeUInt8(val.SecondKeyState, 2)
-	w.skipBits(4)
-	w.writeUInt8(val.EncoderPosition, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkKeypadMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkKeypadMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkKeypadMessage, got %T", v)
-	}
-	return EncodeSeatalkKeypadMessage(val)
-}
-
-func EncodeSeatalkKeypadHeartbeat(val *SeatalkKeypadHeartbeat) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	w.writeUInt8(val.Variant, 8)
-	w.writeUInt8(val.Status, 8)
-	w.skipBits(24)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkKeypadHeartbeatMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkKeypadHeartbeat)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkKeypadHeartbeat, got %T", v)
-	}
-	return EncodeSeatalkKeypadHeartbeat(val)
-}
-
-func EncodeSeatalkPilotMode(val *SeatalkPilotMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.PilotMode), 16)
-	w.writeBinaryData(val.SubMode, 16)
-	w.writeBinaryData(val.PilotModeData, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalkPilotModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SeatalkPilotMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *SeatalkPilotMode, got %T", v)
-	}
-	return EncodeSeatalkPilotMode(val)
-}
-
-func EncodeAirmarDepthQualityFactor(val *AirmarDepthQualityFactor) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Sid, 8)
-	w.writeLookupField(uint64(val.DepthQualityFactor), 4)
-	w.skipBits(36)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarDepthQualityFactorMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarDepthQualityFactor)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarDepthQualityFactor, got %T", v)
-	}
-	return EncodeAirmarDepthQualityFactor(val)
-}
-
-func EncodeAirmarSpeedPulseCount(val *AirmarSpeedPulseCount) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Sid, 8)
-	w.writeUnsignedResolution(val.DurationOfInterval, 16, 0.001)
-	w.writeUInt16(val.NumberOfPulsesReceived, 16)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarSpeedPulseCountMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarSpeedPulseCount)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarSpeedPulseCount, got %T", v)
-	}
-	return EncodeAirmarSpeedPulseCount(val)
-}
-
-func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Sid, 8)
-	var internalDeviceTemperatureRaw *float32
-	if val.InternalDeviceTemperature != nil {
-		internalDeviceTemperatureRaw = &val.InternalDeviceTemperature.Value
-	}
-	w.writeUnsignedResolution(internalDeviceTemperatureRaw, 16, 0.01)
-	w.writeUnsignedResolution(val.SupplyVoltage, 16, 0.01)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarDeviceInformationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarDeviceInformation)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarDeviceInformation, got %T", v)
-	}
-	return EncodeAirmarDeviceInformation(val)
-}
-
-func EncodeSimnetApUnknown3(val *SimnetApUnknown3) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetApUnknown3Msg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetApUnknown3)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetApUnknown3, got %T", v)
-	}
-	return EncodeSimnetApUnknown3(val)
-}
-
-func EncodeSimnetAutopilotMode(val *SimnetAutopilotMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetAutopilotModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetAutopilotMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetAutopilotMode, got %T", v)
-	}
-	return EncodeSimnetAutopilotMode(val)
-}
-
-func EncodeSeatalk1PilotMode(val *Seatalk1PilotMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProprietaryId, 16)
-	w.writeUInt8(val.Command, 8)
-	w.writeBinaryData(val.Unknown1, 24)
-	w.writeLookupField(uint64(val.PilotMode), 8)
-	w.writeUInt8(val.SubMode, 8)
-	w.writeBinaryData(val.PilotModeData, 8)
-	w.writeBinaryData(val.Unknown2, 80)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalk1PilotModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Seatalk1PilotMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *Seatalk1PilotMode, got %T", v)
-	}
-	return EncodeSeatalk1PilotMode(val)
-}
-
-func EncodeSeatalk1Keystroke(val *Seatalk1Keystroke) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProprietaryId, 16)
-	w.writeUInt8(val.Command, 8)
-	w.writeUInt8(val.Device, 8)
-	w.writeLookupField(uint64(val.Key), 8)
-	w.writeUInt8(val.Keyinverted, 8)
-	w.writeBinaryData(val.UnknownData, 112)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalk1KeystrokeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Seatalk1Keystroke)
-	if !ok {
-		return nil, fmt.Errorf("expected *Seatalk1Keystroke, got %T", v)
-	}
-	return EncodeSeatalk1Keystroke(val)
-}
-
-func EncodeSeatalk1DeviceIdentification(val *Seatalk1DeviceIdentification) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProprietaryId, 16)
-	w.writeUInt8(val.Command, 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Device), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalk1DeviceIdentificationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Seatalk1DeviceIdentification)
-	if !ok {
-		return nil, fmt.Errorf("expected *Seatalk1DeviceIdentification, got %T", v)
-	}
-	return EncodeSeatalk1DeviceIdentification(val)
-}
-
-func EncodeSeatalk1DisplayBrightness(val *Seatalk1DisplayBrightness) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProprietaryId, 16)
-	w.writeLookupField(uint64(val.Group), 8)
-	w.writeBinaryData(val.Unknown1, 8)
-	w.writeUInt8(val.Command, 8)
-	w.writeUInt8(val.Brightness, 8)
-	w.writeBinaryData(val.Unknown2, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalk1DisplayBrightnessMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Seatalk1DisplayBrightness)
-	if !ok {
-		return nil, fmt.Errorf("expected *Seatalk1DisplayBrightness, got %T", v)
-	}
-	return EncodeSeatalk1DisplayBrightness(val)
-}
-
-func EncodeSeatalk1DisplayColor(val *Seatalk1DisplayColor) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProprietaryId, 16)
-	w.writeLookupField(uint64(val.Group), 8)
-	w.writeBinaryData(val.Unknown1, 8)
-	w.writeUInt8(val.Command, 8)
-	w.writeLookupField(uint64(val.Color), 8)
-	w.writeBinaryData(val.Unknown2, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSeatalk1DisplayColorMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Seatalk1DisplayColor)
-	if !ok {
-		return nil, fmt.Errorf("expected *Seatalk1DisplayColor, got %T", v)
-	}
-	return EncodeSeatalk1DisplayColor(val)
-}
-
-func EncodeAirmarAttitudeOffset(val *AirmarAttitudeOffset) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeSignedResolution(val.AzimuthOffset, 16, 0.0001)
-	w.writeSignedResolution(val.PitchOffset, 16, 0.0001)
-	w.writeSignedResolution(val.RollOffset, 16, 0.0001)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarAttitudeOffsetMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarAttitudeOffset)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarAttitudeOffset, got %T", v)
-	}
-	return EncodeAirmarAttitudeOffset(val)
-}
-
-func EncodeAirmarCalibrateCompass(val *AirmarCalibrateCompass) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.CalibrateFunction), 8)
-	w.writeLookupField(uint64(val.CalibrationStatus), 8)
-	w.writeUInt8(val.VerifyScore, 8)
-	w.writeSignedResolution(val.XAxisGainValue, 16, 0.01)
-	w.writeSignedResolution(val.YAxisGainValue, 16, 0.01)
-	w.writeSignedResolution(val.ZAxisGainValue, 16, 0.01)
-	w.writeSignedResolution(val.XAxisLinearOffset, 16, 0.01)
-	w.writeSignedResolution(val.YAxisLinearOffset, 16, 0.01)
-	w.writeSignedResolution(val.ZAxisLinearOffset, 16, 0.01)
-	w.writeSignedResolution(val.XAxisAngularOffset, 16, 0.1)
-	w.writeSignedResolution(val.PitchAndRollDamping, 16, 0.05)
-	w.writeSignedResolution(val.CompassRateGyroDamping, 16, 0.05)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarCalibrateCompassMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarCalibrateCompass)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarCalibrateCompass, got %T", v)
-	}
-	return EncodeAirmarCalibrateCompass(val)
-}
-
-func EncodeAirmarTrueWindOptions(val *AirmarTrueWindOptions) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.CogSubstitutionForHdg), 2)
-	w.skipBits(22)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarTrueWindOptionsMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarTrueWindOptions)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarTrueWindOptions, got %T", v)
-	}
-	return EncodeAirmarTrueWindOptions(val)
-}
-
-func EncodeAirmarSimulateMode(val *AirmarSimulateMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.SimulateMode), 2)
-	w.skipBits(22)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarSimulateModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarSimulateMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarSimulateMode, got %T", v)
-	}
-	return EncodeAirmarSimulateMode(val)
-}
-
-func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	var speedOfSoundModeRaw *float32
-	if val.SpeedOfSoundMode != nil {
-		speedOfSoundModeRaw = &val.SpeedOfSoundMode.Value
-	}
-	w.writeUnsignedResolution(speedOfSoundModeRaw, 16, 0.1)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarCalibrateDepthMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarCalibrateDepth)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarCalibrateDepth, got %T", v)
-	}
-	return EncodeAirmarCalibrateDepth(val)
-}
-
-func EncodeAirmarCalibrateSpeed(val *AirmarCalibrateSpeed) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.NumberOfPairsOfDataPoints, 8)
-	for _, rep := range val.Repeating1 {
-		w.writeUnsignedResolution(rep.InputFrequency, 16, 0.1)
-		var outputSpeedRaw *float32
-		if rep.OutputSpeed != nil {
-			outputSpeedRaw = &rep.OutputSpeed.Value
-		}
-		w.writeUnsignedResolution(outputSpeedRaw, 16, 0.01)
-	}
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarCalibrateSpeedMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarCalibrateSpeed)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarCalibrateSpeed, got %T", v)
-	}
-	return EncodeAirmarCalibrateSpeed(val)
-}
-
-func EncodeAirmarCalibrateTemperature(val *AirmarCalibrateTemperature) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.TemperatureInstance), 2)
-	w.skipBits(6)
-	var temperatureOffsetRaw *float32
-	if val.TemperatureOffset != nil {
-		temperatureOffsetRaw = &val.TemperatureOffset.Value
-	}
-	w.writeSignedResolution(temperatureOffsetRaw, 16, 0.001)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarCalibrateTemperatureMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarCalibrateTemperature)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarCalibrateTemperature, got %T", v)
-	}
-	return EncodeAirmarCalibrateTemperature(val)
-}
-
-func EncodeAirmarSpeedFilterNone(val *AirmarSpeedFilterNone) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
-	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarSpeedFilterNoneMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarSpeedFilterNone)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarSpeedFilterNone, got %T", v)
-	}
-	return EncodeAirmarSpeedFilterNone(val)
-}
-
-func EncodeAirmarSpeedFilterIir(val *AirmarSpeedFilterIir) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
-	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarSpeedFilterIirMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarSpeedFilterIir)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarSpeedFilterIir, got %T", v)
-	}
-	return EncodeAirmarSpeedFilterIir(val)
-}
-
-func EncodeAirmarTemperatureFilterNone(val *AirmarTemperatureFilterNone) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
-	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarTemperatureFilterNoneMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarTemperatureFilterNone)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarTemperatureFilterNone, got %T", v)
-	}
-	return EncodeAirmarTemperatureFilterNone(val)
-}
-
-func EncodeAirmarTemperatureFilterIir(val *AirmarTemperatureFilterIir) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
-	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarTemperatureFilterIirMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarTemperatureFilterIir)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarTemperatureFilterIir, got %T", v)
-	}
-	return EncodeAirmarTemperatureFilterIir(val)
-}
-
-func EncodeAirmarNmea2000Options(val *AirmarNmea2000Options) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.TransmissionInterval), 2)
-	w.skipBits(22)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarNmea2000OptionsMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarNmea2000Options)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarNmea2000Options, got %T", v)
-	}
-	return EncodeAirmarNmea2000Options(val)
-}
-
-func EncodeAirmarAddressableMultiFrame(val *AirmarAddressableMultiFrame) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.ProprietaryId, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeAirmarAddressableMultiFrameMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AirmarAddressableMultiFrame)
-	if !ok {
-		return nil, fmt.Errorf("expected *AirmarAddressableMultiFrame, got %T", v)
-	}
-	return EncodeAirmarAddressableMultiFrame(val)
-}
-
-func EncodeMaretronSlaveResponse(val *MaretronSlaveResponse) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProductCode, 16)
-	w.writeUInt16(val.SoftwareCode, 16)
-	w.writeUInt8(val.Command, 8)
-	w.writeUInt8(val.Status, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronSlaveResponseMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronSlaveResponse)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronSlaveResponse, got %T", v)
-	}
-	return EncodeMaretronSlaveResponse(val)
-}
-
-func EncodeGarminDayMode(val *GarminDayMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.UnknownId1, 8)
-	w.writeUInt8(val.UnknownId2, 8)
-	w.writeUInt8(val.UnknownId3, 8)
-	w.writeUInt8(val.UnknownId4, 8)
-	w.skipBits(16)
-	w.writeLookupField(uint64(val.Mode), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Backlight), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeGarminDayModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*GarminDayMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *GarminDayMode, got %T", v)
-	}
-	return EncodeGarminDayMode(val)
-}
-
-func EncodeGarminNightMode(val *GarminNightMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.UnknownId1, 8)
-	w.writeUInt8(val.UnknownId2, 8)
-	w.writeUInt8(val.UnknownId3, 8)
-	w.writeUInt8(val.UnknownId4, 8)
-	w.skipBits(16)
-	w.writeLookupField(uint64(val.Mode), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Backlight), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeGarminNightModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*GarminNightMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *GarminNightMode, got %T", v)
-	}
-	return EncodeGarminNightMode(val)
-}
-
-func EncodeGarminColorMode(val *GarminColorMode) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.UnknownId1, 8)
-	w.writeUInt8(val.UnknownId2, 8)
-	w.writeUInt8(val.UnknownId3, 8)
-	w.writeUInt8(val.UnknownId4, 8)
-	w.skipBits(16)
-	w.writeLookupField(uint64(val.Mode), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Color), 8)
-	return w.Bytes(), w.Err()
-}
-func encodeGarminColorModeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*GarminColorMode)
-	if !ok {
-		return nil, fmt.Errorf("expected *GarminColorMode, got %T", v)
-	}
-	return EncodeGarminColorMode(val)
-}
-
-func EncodeSimradTextMessage(val *SimradTextMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Prio, 8)
-	w.writeFixedString(val.Text, 256)
-	return w.Bytes(), w.Err()
-}
-func encodeSimradTextMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimradTextMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimradTextMessage, got %T", v)
-	}
-	return EncodeSimradTextMessage(val)
-}
-
-func EncodeNavicoProductInformation(val *NavicoProductInformation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProductCode, 16)
-	w.writeFixedString(val.Model, 256)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeFixedString(val.FirmwareVersion, 80)
-	w.writeFixedString(val.FirmwareDate, 256)
-	w.writeFixedString(val.FirmwareTime, 256)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoProductInformationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoProductInformation)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoProductInformation, got %T", v)
-	}
-	return EncodeNavicoProductInformation(val)
-}
-
-func EncodeLowranceProductInformation(val *LowranceProductInformation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.ProductCode, 16)
-	w.writeFixedString(val.Model, 256)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeFixedString(val.FirmwareVersion, 80)
-	w.writeFixedString(val.FirmwareDate, 256)
-	w.writeFixedString(val.FirmwareTime, 256)
-	return w.Bytes(), w.Err()
-}
-func encodeLowranceProductInformationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*LowranceProductInformation)
-	if !ok {
-		return nil, fmt.Errorf("expected *LowranceProductInformation, got %T", v)
-	}
-	return EncodeLowranceProductInformation(val)
-}
-
-func EncodeSimnetReprogramData(val *SimnetReprogramData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.Version, 16)
-	w.writeUInt16(val.Sequence, 16)
-	w.writeBinaryData(val.Data, 1736)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetReprogramDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetReprogramData)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetReprogramData, got %T", v)
-	}
-	return EncodeSimnetReprogramData(val)
-}
-
-func EncodeFurunoUnknown130820(val *FurunoUnknown130820) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoUnknown130820Msg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoUnknown130820)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoUnknown130820, got %T", v)
-	}
-	return EncodeFurunoUnknown130820(val)
-}
-
-func EncodeNavicoAsciiData(val *NavicoAsciiData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeFixedString(val.Message, 2048)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoAsciiDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoAsciiData)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoAsciiData, got %T", v)
-	}
-	return EncodeNavicoAsciiData(val)
-}
-
-func EncodeFurunoUnknown130821(val *FurunoUnknown130821) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeUInt8(val.F, 8)
-	w.writeUInt8(val.G, 8)
-	w.writeUInt8(val.H, 8)
-	w.writeUInt8(val.I, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoUnknown130821Msg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoUnknown130821)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoUnknown130821, got %T", v)
-	}
-	return EncodeFurunoUnknown130821(val)
-}
-
-func EncodeNavicoUnknown1(val *NavicoUnknown1) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeBinaryData(val.Data, 1848)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoUnknown1Msg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoUnknown1)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoUnknown1, got %T", v)
-	}
-	return EncodeNavicoUnknown1(val)
-}
-
-func EncodeMaretronProprietaryTemperatureHighRange(val *MaretronProprietaryTemperatureHighRange) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	var actualTemperatureRaw *float32
-	if val.ActualTemperature != nil {
-		actualTemperatureRaw = &val.ActualTemperature.Value
-	}
-	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.1)
-	var setTemperatureRaw *float32
-	if val.SetTemperature != nil {
-		setTemperatureRaw = &val.SetTemperature.Value
-	}
-	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronProprietaryTemperatureHighRangeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronProprietaryTemperatureHighRange)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronProprietaryTemperatureHighRange, got %T", v)
-	}
-	return EncodeMaretronProprietaryTemperatureHighRange(val)
-}
-
-func EncodeBGKeyValueData(val *BGKeyValueData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	for _, rep := range val.Repeating1 {
-		w.writeLookupField(uint64(rep.Key), 12)
-		w.writeUInt8(rep.Length, 4)
-		var valueLength uint16
-		if rep.Length != nil {
-			valueLength = uint16(*rep.Length) * 8
-		}
-		w.writeBinaryData(rep.Value, valueLength)
-	}
-	return w.Bytes(), w.Err()
-}
-func encodeBGKeyValueDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*BGKeyValueData)
-	if !ok {
-		return nil, fmt.Errorf("expected *BGKeyValueData, got %T", v)
-	}
-	return EncodeBGKeyValueData(val)
-}
-
-func EncodeMaretronAnnunciator(val *MaretronAnnunciator) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Field4, 8)
-	w.writeUInt8(val.Field5, 8)
-	w.writeUInt16(val.Field6, 16)
-	w.writeUInt8(val.Field7, 8)
-	w.writeUInt16(val.Field8, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronAnnunciatorMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronAnnunciator)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronAnnunciator, got %T", v)
-	}
-	return EncodeMaretronAnnunciator(val)
-}
-
-func EncodeNavicoUnknown2(val *NavicoUnknown2) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeBinaryData(val.Data, 80)
-	return w.Bytes(), w.Err()
-}
-func encodeNavicoUnknown2Msg(v Message) ([]byte, error) {
-	val, ok := v.(*NavicoUnknown2)
-	if !ok {
-		return nil, fmt.Errorf("expected *NavicoUnknown2, got %T", v)
-	}
-	return EncodeNavicoUnknown2(val)
-}
-
-func EncodeBGUserAndRemoteRename(val *BGUserAndRemoteRename) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.DataType), 12)
-	w.writeUInt8(val.Length, 4)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Decimals), 8)
-	w.writeFixedString(val.ShortName, 64)
-	w.writeFixedString(val.LongName, 128)
-	return w.Bytes(), w.Err()
-}
-func encodeBGUserAndRemoteRenameMsg(v Message) ([]byte, error) {
-	val, ok := v.(*BGUserAndRemoteRename)
-	if !ok {
-		return nil, fmt.Errorf("expected *BGUserAndRemoteRename, got %T", v)
-	}
-	return EncodeBGUserAndRemoteRename(val)
-}
-
-func EncodeSimnetFluidLevelSensorConfiguration(val *SimnetFluidLevelSensorConfiguration) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.C, 8)
-	w.writeUInt8(val.Device, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.F, 4)
-	w.writeLookupField(uint64(val.TankType), 4)
-	var capacityRaw *float32
-	if val.Capacity != nil {
-		capacityRaw = &val.Capacity.Value
-	}
-	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
-	w.writeUInt8(val.G, 8)
-	w.writeInt16(val.H, 16)
-	w.writeInt8(val.I, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetFluidLevelSensorConfigurationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetFluidLevelSensorConfiguration)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetFluidLevelSensorConfiguration, got %T", v)
-	}
-	return EncodeSimnetFluidLevelSensorConfiguration(val)
-}
-
-func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.IndicatorNumber, 8)
-	w.writeUInt16(val.StartDate, 16)
-	w.writeUnsignedResolution(val.StartTime, 32, 0.0001)
-	w.writeUInt8(val.OffCounter, 8)
-	w.writeUInt8(val.OnCounter, 8)
-	w.writeUInt8(val.ErrorCounter, 8)
-	w.writeLookupField(uint64(val.SwitchStatus), 2)
-	w.skipBits(6)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronSwitchStatusCounterMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronSwitchStatusCounter)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronSwitchStatusCounter, got %T", v)
-	}
-	return EncodeMaretronSwitchStatusCounter(val)
-}
-
-func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Instance, 8)
-	w.writeUInt8(val.IndicatorNumber, 8)
-	w.writeUInt16(val.StartDate, 16)
-	w.writeUnsignedResolution(val.StartTime, 32, 0.0001)
-	w.writeUInt32(val.AccumulatedOffPeriod, 32)
-	w.writeUInt32(val.AccumulatedOnPeriod, 32)
-	w.writeUInt32(val.AccumulatedErrorPeriod, 32)
-	w.writeLookupField(uint64(val.SwitchStatus), 2)
-	w.skipBits(6)
-	return w.Bytes(), w.Err()
-}
-func encodeMaretronSwitchStatusTimerMsg(v Message) ([]byte, error) {
-	val, ok := v.(*MaretronSwitchStatusTimer)
-	if !ok {
-		return nil, fmt.Errorf("expected *MaretronSwitchStatusTimer, got %T", v)
-	}
-	return EncodeMaretronSwitchStatusTimer(val)
-}
-
-func EncodeFurunoSixDegreesOfFreedomMovement(val *FurunoSixDegreesOfFreedomMovement) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeInt32(val.A, 32)
-	w.writeInt32(val.B, 32)
-	w.writeInt32(val.C, 32)
-	w.writeInt8(val.D, 8)
-	w.writeInt32(val.E, 32)
-	w.writeInt32(val.F, 32)
-	w.writeInt16(val.G, 16)
-	w.writeInt16(val.H, 16)
-	w.writeInt16(val.I, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoSixDegreesOfFreedomMovementMsg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoSixDegreesOfFreedomMovement)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoSixDegreesOfFreedomMovement, got %T", v)
-	}
-	return EncodeFurunoSixDegreesOfFreedomMovement(val)
-}
-
-func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg24PartB) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.MessageId, 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt8(val.D, 8)
-	w.writeUInt8(val.E, 8)
-	w.writeUInt32(val.UserId, 32)
-	w.writeLookupField(uint64(val.TypeOfShip), 8)
-	w.writeFixedString(val.VendorId, 56)
-	w.writeFixedString(val.Callsign, 56)
-	var lengthRaw *float32
-	if val.Length != nil {
-		lengthRaw = &val.Length.Value
-	}
-	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
-	var beamRaw *float32
-	if val.Beam != nil {
-		beamRaw = &val.Beam.Value
-	}
-	w.writeUnsignedResolution(beamRaw, 16, 0.1)
-	var positionReferenceFromStarboardRaw *float32
-	if val.PositionReferenceFromStarboard != nil {
-		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
-	var positionReferenceFromBowRaw *float32
-	if val.PositionReferenceFromBow != nil {
-		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
-	w.writeUInt32(val.MothershipUserId, 32)
-	w.skipBits(6)
-	w.skipBits(2)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetAisClassBStaticDataMsg24PartBMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetAisClassBStaticDataMsg24PartB)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetAisClassBStaticDataMsg24PartB, got %T", v)
-	}
-	return EncodeSimnetAisClassBStaticDataMsg24PartB(val)
-}
-
-func EncodeFurunoHeelAngleRollInformation(val *FurunoHeelAngleRollInformation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.A, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeSignedResolution(val.Yaw, 16, 0.0001)
-	w.writeSignedResolution(val.Pitch, 16, 0.0001)
-	w.writeSignedResolution(val.Roll, 16, 0.0001)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoHeelAngleRollInformationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoHeelAngleRollInformation)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoHeelAngleRollInformation, got %T", v)
-	}
-	return EncodeFurunoHeelAngleRollInformation(val)
-}
-
-func EncodeFurunoMultiSatsInViewExtended(val *FurunoMultiSatsInViewExtended) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoMultiSatsInViewExtendedMsg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoMultiSatsInViewExtended)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoMultiSatsInViewExtended, got %T", v)
-	}
-	return EncodeFurunoMultiSatsInViewExtended(val)
-}
-
-func EncodeSimnetKeyValue(val *SimnetKeyValue) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Address, 8)
-	w.writeLookupField(uint64(val.RepeatIndicator), 8)
-	w.writeLookupField(uint64(val.DisplayGroup), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Key), 16)
-	w.skipBits(8)
-	w.writeUInt8(val.Minlength, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetKeyValueMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetKeyValue)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetKeyValue, got %T", v)
-	}
-	return EncodeSimnetKeyValue(val)
-}
-
-func EncodeSimnetParameterSet(val *SimnetParameterSet) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Address, 8)
-	w.writeUInt8(val.B, 8)
-	w.writeLookupField(uint64(val.DisplayGroup), 8)
-	w.writeUInt16(val.D, 16)
-	w.writeLookupField(uint64(val.Key), 16)
-	w.skipBits(8)
-	w.writeUInt8(val.Length, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetParameterSetMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetParameterSet)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetParameterSet, got %T", v)
-	}
-	return EncodeSimnetParameterSet(val)
-}
-
-func EncodeFurunoMotionSensorStatusExtended(val *FurunoMotionSensorStatusExtended) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	return w.Bytes(), w.Err()
-}
-func encodeFurunoMotionSensorStatusExtendedMsg(v Message) ([]byte, error) {
-	val, ok := v.(*FurunoMotionSensorStatusExtended)
-	if !ok {
-		return nil, fmt.Errorf("expected *FurunoMotionSensorStatusExtended, got %T", v)
-	}
-	return EncodeFurunoMotionSensorStatusExtended(val)
-}
-
-func EncodeSimnetApCommand(val *SimnetApCommand) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Address, 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeLookupField(uint64(val.ApStatus), 8)
-	w.writeLookupField(uint64(val.ApCommand), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Direction), 8)
-	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetApCommandMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetApCommand)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetApCommand, got %T", v)
-	}
-	return EncodeSimnetApCommand(val)
-}
-
-func EncodeSimnetEventCommandApCommand(val *SimnetEventCommandApCommand) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt16(val.UnusedA, 16)
-	w.writeUInt8(val.ControllingDevice, 8)
-	w.writeLookupField(uint64(val.Event), 8)
-	w.writeUInt8(val.UnusedB, 8)
-	w.writeLookupField(uint64(val.Direction), 8)
-	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	w.writeUInt8(val.UnusedC, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetEventCommandApCommandMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetEventCommandApCommand)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetEventCommandApCommand, got %T", v)
-	}
-	return EncodeSimnetEventCommandApCommand(val)
-}
-
-func EncodeSimnetAlarm(val *SimnetAlarm) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt8(val.Address, 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.skipBits(8)
-	w.writeLookupField(uint64(val.Alarm), 16)
-	w.writeUInt16(val.MessageId, 16)
-	w.writeUInt8(val.F, 8)
-	w.writeUInt8(val.G, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetAlarmMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetAlarm)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetAlarm, got %T", v)
-	}
-	return EncodeSimnetAlarm(val)
-}
-
-func EncodeSimnetEventReplyApCommand(val *SimnetEventReplyApCommand) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.writeUInt16(val.B, 16)
-	w.writeUInt8(val.Address, 8)
-	w.writeLookupField(uint64(val.Event), 8)
-	w.writeUInt8(val.C, 8)
-	w.writeLookupField(uint64(val.Direction), 8)
-	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	w.writeUInt8(val.G, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetEventReplyApCommandMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetEventReplyApCommand)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetEventReplyApCommand, got %T", v)
-	}
-	return EncodeSimnetEventReplyApCommand(val)
-}
-
-func EncodeSimnetAlarmMessage(val *SimnetAlarmMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.writeUInt16(val.MessageId, 16)
-	w.writeUInt8(val.B, 8)
-	w.writeUInt8(val.C, 8)
-	w.writeFixedString(val.Text, 1784)
-	return w.Bytes(), w.Err()
-}
-func encodeSimnetAlarmMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SimnetAlarmMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *SimnetAlarmMessage, got %T", v)
-	}
-	return EncodeSimnetAlarmMessage(val)
-}
-
 func EncodeSimnetApUnknown4(val *SimnetApUnknown4) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -9435,6 +9795,7 @@ func EncodeSimnetApUnknown4(val *SimnetApUnknown4) ([]byte, error) {
 	w.writeUInt32(val.F, 32)
 	return w.Bytes(), w.Err()
 }
+
 func encodeSimnetApUnknown4Msg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown4)
 	if !ok {

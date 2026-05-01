@@ -26,7 +26,9 @@ type AisClassAPositionReport struct {
 	SpecialManeuverIndicator AisSpecialManeuverConst `json:"specialManeuverIndicator"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
+
 func (a *AisClassAPositionReport) PGNNumber() uint32  { return 129038 }
+
 func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassAPositionReport{}
 	val.Info = Info
@@ -197,6 +199,45 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 	}	
 	return val, nil
 }
+
+func EncodeAisClassAPositionReport(val *AisClassAPositionReport) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
+	w.writeLookupField(uint64(val.PositionAccuracy), 1)
+	w.writeLookupField(uint64(val.Raim), 1)
+	w.writeLookupField(uint64(val.TimeStamp), 6)
+	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
+	var sogRaw *float32
+	if val.Sog != nil {
+		sogRaw = &val.Sog.Value
+	}
+	w.writeUnsignedResolution(sogRaw, 16, 0.01)
+	w.writeBinaryData(val.CommunicationState, 19)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.writeUnsignedResolution(val.Heading, 16, 0.0001)
+	w.writeSignedResolution(val.RateOfTurn, 16, 3.125e-05)
+	w.writeLookupField(uint64(val.NavStatus), 4)
+	w.writeLookupField(uint64(val.SpecialManeuverIndicator), 2)
+	w.skipBits(2)
+	w.skipBits(3)
+	w.skipBits(5)
+	w.writeUInt8(val.SequenceId, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisClassAPositionReportMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisClassAPositionReport)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisClassAPositionReport, got %T", v)
+	}
+	return EncodeAisClassAPositionReport(val)
+}
+
 type AisClassBPositionReport struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -220,7 +261,9 @@ type AisClassBPositionReport struct {
 	AisMode AisModeConst `json:"aisMode"`
 	AisCommunicationState AisCommunicationStateConst `json:"aisCommunicationState"`
 }
+
 func (a *AisClassBPositionReport) PGNNumber() uint32  { return 129039 }
+
 func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBPositionReport{}
 	val.Info = Info
@@ -418,6 +461,48 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 		}	
 	return val, nil
 }
+
+func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
+	w.writeLookupField(uint64(val.PositionAccuracy), 1)
+	w.writeLookupField(uint64(val.Raim), 1)
+	w.writeLookupField(uint64(val.TimeStamp), 6)
+	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
+	var sogRaw *float32
+	if val.Sog != nil {
+		sogRaw = &val.Sog.Value
+	}
+	w.writeUnsignedResolution(sogRaw, 16, 0.01)
+	w.writeBinaryData(val.CommunicationState, 19)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.writeUnsignedResolution(val.Heading, 16, 0.0001)
+	w.skipBits(8)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.UnitType), 1)
+	w.writeLookupField(uint64(val.IntegratedDisplay), 1)
+	w.writeLookupField(uint64(val.Dsc), 1)
+	w.writeLookupField(uint64(val.Band), 1)
+	w.writeLookupField(uint64(val.CanHandleMsg22), 1)
+	w.writeLookupField(uint64(val.AisMode), 1)
+	w.writeLookupField(uint64(val.AisCommunicationState), 1)
+	w.skipBits(15)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisClassBPositionReportMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisClassBPositionReport)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisClassBPositionReport, got %T", v)
+	}
+	return EncodeAisClassBPositionReport(val)
+}
+
 type AisClassBExtendedPositionReport struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -442,7 +527,9 @@ type AisClassBExtendedPositionReport struct {
 	AisMode AisModeConst `json:"aisMode"`
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
+
 func (a *AisClassBExtendedPositionReport) PGNNumber() uint32  { return 129040 }
+
 func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBExtendedPositionReport{}
 	val.Info = Info
@@ -661,6 +748,68 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 		}	
 	return val, nil
 }
+
+func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
+	w.writeLookupField(uint64(val.PositionAccuracy), 1)
+	w.writeLookupField(uint64(val.Raim), 1)
+	w.writeLookupField(uint64(val.TimeStamp), 6)
+	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
+	var sogRaw *float32
+	if val.Sog != nil {
+		sogRaw = &val.Sog.Value
+	}
+	w.writeUnsignedResolution(sogRaw, 16, 0.01)
+	w.skipBits(8)
+	w.skipBits(4)
+	w.skipBits(4)
+	w.writeLookupField(uint64(val.TypeOfShip), 8)
+	w.writeUnsignedResolution(val.TrueHeading, 16, 0.0001)
+	w.skipBits(4)
+	w.writeLookupField(uint64(val.GnssType), 4)
+	var lengthRaw *float32
+	if val.Length != nil {
+		lengthRaw = &val.Length.Value
+	}
+	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
+	var beamRaw *float32
+	if val.Beam != nil {
+		beamRaw = &val.Beam.Value
+	}
+	w.writeUnsignedResolution(beamRaw, 16, 0.1)
+	var positionReferenceFromStarboardRaw *float32
+	if val.PositionReferenceFromStarboard != nil {
+		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
+	var positionReferenceFromBowRaw *float32
+	if val.PositionReferenceFromBow != nil {
+		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
+	w.writeFixedString(val.Name, 160)
+	w.writeLookupField(uint64(val.Dte), 1)
+	w.writeLookupField(uint64(val.AisMode), 1)
+	w.skipBits(4)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(5)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisClassBExtendedPositionReportMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisClassBExtendedPositionReport)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisClassBExtendedPositionReport, got %T", v)
+	}
+	return EncodeAisClassBExtendedPositionReport(val)
+}
+
 type AisAidsToNavigationAtonReport struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -684,7 +833,9 @@ type AisAidsToNavigationAtonReport struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	AtonName string `json:"atonName"`
 }
+
 func (a *AisAidsToNavigationAtonReport) PGNNumber() uint32  { return 129041 }
+
 func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAidsToNavigationAtonReport{}
 	val.Info = Info
@@ -882,6 +1033,60 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 	}	
 	return val, nil
 }
+
+func EncodeAisAidsToNavigationAtonReport(val *AisAidsToNavigationAtonReport) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
+	w.writeLookupField(uint64(val.PositionAccuracy), 1)
+	w.writeLookupField(uint64(val.Raim), 1)
+	w.writeLookupField(uint64(val.TimeStamp), 6)
+	var lengthDiameterRaw *float32
+	if val.LengthDiameter != nil {
+		lengthDiameterRaw = &val.LengthDiameter.Value
+	}
+	w.writeUnsignedResolution(lengthDiameterRaw, 16, 0.1)
+	var beamDiameterRaw *float32
+	if val.BeamDiameter != nil {
+		beamDiameterRaw = &val.BeamDiameter.Value
+	}
+	w.writeUnsignedResolution(beamDiameterRaw, 16, 0.1)
+	var positionReferenceFromStarboardEdgeRaw *float32
+	if val.PositionReferenceFromStarboardEdge != nil {
+		positionReferenceFromStarboardEdgeRaw = &val.PositionReferenceFromStarboardEdge.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromStarboardEdgeRaw, 16, 0.1)
+	var positionReferenceFromTrueNorthFacingEdgeRaw *float32
+	if val.PositionReferenceFromTrueNorthFacingEdge != nil {
+		positionReferenceFromTrueNorthFacingEdgeRaw = &val.PositionReferenceFromTrueNorthFacingEdge.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromTrueNorthFacingEdgeRaw, 16, 0.1)
+	w.writeLookupField(uint64(val.AtonType), 5)
+	w.writeLookupField(uint64(val.OffPositionIndicator), 1)
+	w.writeLookupField(uint64(val.VirtualAtonFlag), 1)
+	w.writeLookupField(uint64(val.AssignedModeFlag), 1)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.PositionFixingDeviceType), 4)
+	w.skipBits(3)
+	w.writeBinaryData(val.AtonStatus, 8)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	w.writeStringWithLengthAndControl(val.AtonName)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisAidsToNavigationAtonReportMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisAidsToNavigationAtonReport)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisAidsToNavigationAtonReport, got %T", v)
+	}
+	return EncodeAisAidsToNavigationAtonReport(val)
+}
+
 type AisUtcAndDateReport struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -897,7 +1102,9 @@ type AisUtcAndDateReport struct {
 	PositionDate *uint16 `json:"positionDate"`
 	GnssType PositionFixDeviceConst `json:"gnssType"`
 }
+
 func (a *AisUtcAndDateReport) PGNNumber() uint32  { return 129793 }
+
 func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisUtcAndDateReport{}
 	val.Info = Info
@@ -1023,6 +1230,36 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 		}	
 	return val, nil
 }
+
+func EncodeAisUtcAndDateReport(val *AisUtcAndDateReport) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
+	w.writeLookupField(uint64(val.PositionAccuracy), 1)
+	w.writeLookupField(uint64(val.Raim), 1)
+	w.skipBits(6)
+	w.writeUnsignedResolution(val.PositionTime, 32, 0.0001)
+	w.writeBinaryData(val.CommunicationState, 19)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.writeUInt16(val.PositionDate, 16)
+	w.skipBits(4)
+	w.writeLookupField(uint64(val.GnssType), 4)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisUtcAndDateReportMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisUtcAndDateReport)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisUtcAndDateReport, got %T", v)
+	}
+	return EncodeAisUtcAndDateReport(val)
+}
+
 type AisClassAStaticAndVoyageRelatedData struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1045,7 +1282,9 @@ type AisClassAStaticAndVoyageRelatedData struct {
 	Dte AvailableConst `json:"dte"`
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
+
 func (a *AisClassAStaticAndVoyageRelatedData) PGNNumber() uint32  { return 129794 }
+
 func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassAStaticAndVoyageRelatedData{}
 	val.Info = Info
@@ -1230,6 +1469,62 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 		}	
 	return val, nil
 }
+
+func EncodeAisClassAStaticAndVoyageRelatedData(val *AisClassAStaticAndVoyageRelatedData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeUInt32(val.ImoNumber, 32)
+	w.writeFixedString(val.Callsign, 56)
+	w.writeFixedString(val.Name, 160)
+	w.writeLookupField(uint64(val.TypeOfShip), 8)
+	var lengthRaw *float32
+	if val.Length != nil {
+		lengthRaw = &val.Length.Value
+	}
+	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
+	var beamRaw *float32
+	if val.Beam != nil {
+		beamRaw = &val.Beam.Value
+	}
+	w.writeUnsignedResolution(beamRaw, 16, 0.1)
+	var positionReferenceFromStarboardRaw *float32
+	if val.PositionReferenceFromStarboard != nil {
+		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
+	var positionReferenceFromBowRaw *float32
+	if val.PositionReferenceFromBow != nil {
+		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
+	}
+	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
+	w.writeUInt16(val.EtaDate, 16)
+	w.writeUnsignedResolution(val.EtaTime, 32, 0.0001)
+	var draftRaw *float32
+	if val.Draft != nil {
+		draftRaw = &val.Draft.Value
+	}
+	w.writeUnsignedResolution(draftRaw, 16, 0.01)
+	w.writeFixedString(val.Destination, 160)
+	w.writeLookupField(uint64(val.AisVersionIndicator), 2)
+	w.writeLookupField(uint64(val.GnssType), 4)
+	w.writeLookupField(uint64(val.Dte), 1)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisClassAStaticAndVoyageRelatedDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisClassAStaticAndVoyageRelatedData)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisClassAStaticAndVoyageRelatedData, got %T", v)
+	}
+	return EncodeAisClassAStaticAndVoyageRelatedData(val)
+}
+
 type AisAddressedBinaryMessage struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1242,7 +1537,9 @@ type AisAddressedBinaryMessage struct {
 	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
 	BinaryData []uint8 `json:"binaryData"`
 }
+
 func (a *AisAddressedBinaryMessage) PGNNumber() uint32  { return 129795 }
+
 func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAddressedBinaryMessage{}
 	val.Info = Info
@@ -1345,6 +1642,32 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 	}	
 	return val, nil
 }
+
+func EncodeAisAddressedBinaryMessage(val *AisAddressedBinaryMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.writeUInt8(val.SequenceNumber, 2)
+	w.writeUInt32(val.DestinationId, 32)
+	w.skipBits(6)
+	w.writeUInt8(val.RetransmitFlag, 1)
+	w.skipBits(1)
+	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisAddressedBinaryMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisAddressedBinaryMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisAddressedBinaryMessage, got %T", v)
+	}
+	return EncodeAisAddressedBinaryMessage(val)
+}
+
 type AisAcknowledge struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1355,7 +1678,9 @@ type AisAcknowledge struct {
 	SequenceNumberForId1 []uint8 `json:"sequenceNumberForId1"`
 	SequenceNumberForIdN []uint8 `json:"sequenceNumberForIdN"`
 }
+
 func (a *AisAcknowledge) PGNNumber() uint32  { return 129796 }
+
 func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAcknowledge{}
 	val.Info = Info
@@ -1440,6 +1765,32 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 		}	
 	return val, nil
 }
+
+func EncodeAisAcknowledge(val *AisAcknowledge) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(2)
+	w.writeUInt32(val.DestinationId1, 32)
+	w.writeBinaryData(val.SequenceNumberForId1, 2)
+	w.skipBits(6)
+	w.writeBinaryData(val.SequenceNumberForIdN, 2)
+	w.skipBits(6)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisAcknowledgeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisAcknowledge)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisAcknowledge, got %T", v)
+	}
+	return EncodeAisAcknowledge(val)
+}
+
 type AisBinaryBroadcastMessage struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1449,7 +1800,9 @@ type AisBinaryBroadcastMessage struct {
 	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
 	BinaryData []uint8 `json:"binaryData"`
 }
+
 func (a *AisBinaryBroadcastMessage) PGNNumber() uint32  { return 129797 }
+
 func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisBinaryBroadcastMessage{}
 	val.Info = Info
@@ -1521,6 +1874,28 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 	}	
 	return val, nil
 }
+
+func EncodeAisBinaryBroadcastMessage(val *AisBinaryBroadcastMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(2)
+	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisBinaryBroadcastMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisBinaryBroadcastMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisBinaryBroadcastMessage, got %T", v)
+	}
+	return EncodeAisBinaryBroadcastMessage(val)
+}
+
 type AisUtcDateInquiry struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1529,7 +1904,9 @@ type AisUtcDateInquiry struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	DestinationId *uint32 `json:"destinationId"`
 }
+
 func (a *AisUtcDateInquiry) PGNNumber() uint32  { return 129800 }
+
 func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisUtcDateInquiry{}
 	val.Info = Info
@@ -1584,6 +1961,27 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 	}	
 	return val, nil
 }
+
+func EncodeAisUtcDateInquiry(val *AisUtcDateInquiry) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	w.writeUInt32(val.DestinationId, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisUtcDateInquiryMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisUtcDateInquiry)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisUtcDateInquiry, got %T", v)
+	}
+	return EncodeAisUtcDateInquiry(val)
+}
+
 type AisAddressedSafetyRelatedMessage struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1595,7 +1993,9 @@ type AisAddressedSafetyRelatedMessage struct {
 	RetransmitFlag *uint8 `json:"retransmitFlag"`
 	SafetyRelatedText string `json:"safetyRelatedText"`
 }
+
 func (a *AisAddressedSafetyRelatedMessage) PGNNumber() uint32  { return 129801 }
+
 func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAddressedSafetyRelatedMessage{}
 	val.Info = Info
@@ -1681,6 +2081,31 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeAisAddressedSafetyRelatedMessage(val *AisAddressedSafetyRelatedMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.writeUInt8(val.SequenceNumber, 2)
+	w.skipBits(1)
+	w.writeUInt32(val.DestinationId, 32)
+	w.writeUInt8(val.RetransmitFlag, 1)
+	w.skipBits(7)
+	w.writeFixedString(val.SafetyRelatedText, 936)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisAddressedSafetyRelatedMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisAddressedSafetyRelatedMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisAddressedSafetyRelatedMessage, got %T", v)
+	}
+	return EncodeAisAddressedSafetyRelatedMessage(val)
+}
+
 type AisSafetyRelatedBroadcastMessage struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1689,7 +2114,9 @@ type AisSafetyRelatedBroadcastMessage struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SafetyRelatedText string `json:"safetyRelatedText"`
 }
+
 func (a *AisSafetyRelatedBroadcastMessage) PGNNumber() uint32  { return 129802 }
+
 func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisSafetyRelatedBroadcastMessage{}
 	val.Info = Info
@@ -1744,6 +2171,27 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 	}	
 	return val, nil
 }
+
+func EncodeAisSafetyRelatedBroadcastMessage(val *AisSafetyRelatedBroadcastMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	w.writeFixedString(val.SafetyRelatedText, 1296)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisSafetyRelatedBroadcastMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisSafetyRelatedBroadcastMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisSafetyRelatedBroadcastMessage, got %T", v)
+	}
+	return EncodeAisSafetyRelatedBroadcastMessage(val)
+}
+
 type AisInterrogation struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1760,7 +2208,9 @@ type AisInterrogation struct {
 	SlotOffset21 *uint16 `json:"slotOffset21"`
 	Sid *uint8 `json:"sid"`
 }
+
 func (a *AisInterrogation) PGNNumber() uint32  { return 129803 }
+
 func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisInterrogation{}
 	val.Info = Info
@@ -1907,6 +2357,40 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 	}	
 	return val, nil
 }
+
+func EncodeAisInterrogation(val *AisInterrogation) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.skipBits(1)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(2)
+	w.writeUInt32(val.DestinationId1, 32)
+	w.writeLookupField(uint64(val.MessageId11), 6)
+	w.writeUInt16(val.SlotOffset11, 12)
+	w.skipBits(2)
+	w.writeLookupField(uint64(val.MessageId12), 6)
+	w.writeUInt16(val.SlotOffset12, 12)
+	w.skipBits(2)
+	w.writeUInt32(val.DestinationId2, 32)
+	w.writeLookupField(uint64(val.MessageId21), 6)
+	w.writeUInt16(val.SlotOffset21, 12)
+	w.skipBits(2)
+	w.skipBits(4)
+	w.writeUInt8(val.Sid, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisInterrogationMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisInterrogation)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisInterrogation, got %T", v)
+	}
+	return EncodeAisInterrogation(val)
+}
+
 type AisDataLinkManagementMessage struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -1915,13 +2399,16 @@ type AisDataLinkManagementMessage struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	Repeating1 []AisDataLinkManagementMessageRepeating1 `json:"repeating1"`
 }
+
 type AisDataLinkManagementMessageRepeating1 struct {
 	Offset *uint16 `json:"offset"`
 	NumberOfSlots *uint8 `json:"numberOfSlots"`
 	Timeout *uint8 `json:"timeout"`
 	Increment *uint16 `json:"increment"`
 }
+
 func (a *AisDataLinkManagementMessage) PGNNumber() uint32  { return 129805 }
+
 func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisDataLinkManagementMessage{}
 	val.Info = Info
@@ -2004,6 +2491,32 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 	}	
 	return val, nil
 }
+
+func EncodeAisDataLinkManagementMessage(val *AisDataLinkManagementMessage) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	for _, rep := range val.Repeating1 {
+		w.writeUInt16(rep.Offset, 16)
+		w.writeUInt8(rep.NumberOfSlots, 8)
+		w.writeUInt8(rep.Timeout, 8)
+		w.writeUInt16(rep.Increment, 16)
+	}
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisDataLinkManagementMessageMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisDataLinkManagementMessage)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisDataLinkManagementMessage, got %T", v)
+	}
+	return EncodeAisDataLinkManagementMessage(val)
+}
+
 type AisChannelManagement struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -2023,7 +2536,9 @@ type AisChannelManagement struct {
 	ChannelBBandwidth *uint8 `json:"channelBBandwidth"`
 	TransitionalZoneSize *uint8 `json:"transitionalZoneSize"`
 }
+
 func (a *AisChannelManagement) PGNNumber() uint32  { return 129806 }
+
 func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisChannelManagement{}
 	val.Info = Info
@@ -2189,6 +2704,41 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 	}	
 	return val, nil
 }
+
+func EncodeAisChannelManagement(val *AisChannelManagement) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.SourceId, 32)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	w.writeUInt8(val.ChannelA, 7)
+	w.writeUInt8(val.ChannelB, 7)
+	w.skipBits(2)
+	w.writeUInt8(val.Power, 8)
+	w.writeUInt8(val.TxRxMode, 8)
+	w.writeSignedResolution64Override(val.NorthEastLongitudeCorner1, 32, 1e-07)
+	w.writeSignedResolution64Override(val.NorthEastLatitudeCorner1, 32, 1e-07)
+	w.writeSignedResolution64Override(val.SouthWestLongitudeCorner1, 32, 1e-07)
+	w.writeSignedResolution64Override(val.SouthWestLatitudeCorner2, 32, 1e-07)
+	w.skipBits(6)
+	w.writeUInt8(val.AddressedOrBroadcastMessageIndicator, 2)
+	w.writeUInt8(val.ChannelABandwidth, 7)
+	w.writeUInt8(val.ChannelBBandwidth, 7)
+	w.skipBits(2)
+	w.writeUInt8(val.TransitionalZoneSize, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisChannelManagementMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisChannelManagement)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisChannelManagement, got %T", v)
+	}
+	return EncodeAisChannelManagement(val)
+}
+
 type AisClassBStaticDataMsg24PartA struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -2198,7 +2748,9 @@ type AisClassBStaticDataMsg24PartA struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
+
 func (a *AisClassBStaticDataMsg24PartA) PGNNumber() uint32  { return 129809 }
+
 func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBStaticDataMsg24PartA{}
 	val.Info = Info
@@ -2262,6 +2814,28 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 	}	
 	return val, nil
 }
+
+func EncodeAisClassBStaticDataMsg24PartA(val *AisClassBStaticDataMsg24PartA) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.MessageId), 6)
+	w.writeLookupField(uint64(val.RepeatIndicator), 2)
+	w.writeUInt32(val.UserId, 32)
+	w.writeFixedString(val.Name, 160)
+	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
+	w.skipBits(3)
+	w.writeUInt8(val.SequenceId, 8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeAisClassBStaticDataMsg24PartAMsg(v Message) ([]byte, error) {
+	val, ok := v.(*AisClassBStaticDataMsg24PartA)
+	if !ok {
+		return nil, fmt.Errorf("expected *AisClassBStaticDataMsg24PartA, got %T", v)
+	}
+	return EncodeAisClassBStaticDataMsg24PartA(val)
+}
+
 type AisClassBStaticDataMsg24PartB struct {
 	Info MessageInfo `json:"info"`
 	MessageId AisMessageIdConst `json:"messageId"`
@@ -2278,7 +2852,9 @@ type AisClassBStaticDataMsg24PartB struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
+
 func (a *AisClassBStaticDataMsg24PartB) PGNNumber() uint32  { return 129810 }
+
 func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBStaticDataMsg24PartB{}
 	val.Info = Info
@@ -2414,515 +2990,6 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 	return val, nil
 }
 
-func EncodeAisClassAPositionReport(val *AisClassAPositionReport) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
-	w.writeLookupField(uint64(val.PositionAccuracy), 1)
-	w.writeLookupField(uint64(val.Raim), 1)
-	w.writeLookupField(uint64(val.TimeStamp), 6)
-	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
-	var sogRaw *float32
-	if val.Sog != nil {
-		sogRaw = &val.Sog.Value
-	}
-	w.writeUnsignedResolution(sogRaw, 16, 0.01)
-	w.writeBinaryData(val.CommunicationState, 19)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.writeUnsignedResolution(val.Heading, 16, 0.0001)
-	w.writeSignedResolution(val.RateOfTurn, 16, 3.125e-05)
-	w.writeLookupField(uint64(val.NavStatus), 4)
-	w.writeLookupField(uint64(val.SpecialManeuverIndicator), 2)
-	w.skipBits(2)
-	w.skipBits(3)
-	w.skipBits(5)
-	w.writeUInt8(val.SequenceId, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeAisClassAPositionReportMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisClassAPositionReport)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisClassAPositionReport, got %T", v)
-	}
-	return EncodeAisClassAPositionReport(val)
-}
-
-func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
-	w.writeLookupField(uint64(val.PositionAccuracy), 1)
-	w.writeLookupField(uint64(val.Raim), 1)
-	w.writeLookupField(uint64(val.TimeStamp), 6)
-	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
-	var sogRaw *float32
-	if val.Sog != nil {
-		sogRaw = &val.Sog.Value
-	}
-	w.writeUnsignedResolution(sogRaw, 16, 0.01)
-	w.writeBinaryData(val.CommunicationState, 19)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.writeUnsignedResolution(val.Heading, 16, 0.0001)
-	w.skipBits(8)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.UnitType), 1)
-	w.writeLookupField(uint64(val.IntegratedDisplay), 1)
-	w.writeLookupField(uint64(val.Dsc), 1)
-	w.writeLookupField(uint64(val.Band), 1)
-	w.writeLookupField(uint64(val.CanHandleMsg22), 1)
-	w.writeLookupField(uint64(val.AisMode), 1)
-	w.writeLookupField(uint64(val.AisCommunicationState), 1)
-	w.skipBits(15)
-	return w.Bytes(), w.Err()
-}
-func encodeAisClassBPositionReportMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisClassBPositionReport)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisClassBPositionReport, got %T", v)
-	}
-	return EncodeAisClassBPositionReport(val)
-}
-
-func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
-	w.writeLookupField(uint64(val.PositionAccuracy), 1)
-	w.writeLookupField(uint64(val.Raim), 1)
-	w.writeLookupField(uint64(val.TimeStamp), 6)
-	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
-	var sogRaw *float32
-	if val.Sog != nil {
-		sogRaw = &val.Sog.Value
-	}
-	w.writeUnsignedResolution(sogRaw, 16, 0.01)
-	w.skipBits(8)
-	w.skipBits(4)
-	w.skipBits(4)
-	w.writeLookupField(uint64(val.TypeOfShip), 8)
-	w.writeUnsignedResolution(val.TrueHeading, 16, 0.0001)
-	w.skipBits(4)
-	w.writeLookupField(uint64(val.GnssType), 4)
-	var lengthRaw *float32
-	if val.Length != nil {
-		lengthRaw = &val.Length.Value
-	}
-	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
-	var beamRaw *float32
-	if val.Beam != nil {
-		beamRaw = &val.Beam.Value
-	}
-	w.writeUnsignedResolution(beamRaw, 16, 0.1)
-	var positionReferenceFromStarboardRaw *float32
-	if val.PositionReferenceFromStarboard != nil {
-		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
-	var positionReferenceFromBowRaw *float32
-	if val.PositionReferenceFromBow != nil {
-		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
-	w.writeFixedString(val.Name, 160)
-	w.writeLookupField(uint64(val.Dte), 1)
-	w.writeLookupField(uint64(val.AisMode), 1)
-	w.skipBits(4)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(5)
-	return w.Bytes(), w.Err()
-}
-func encodeAisClassBExtendedPositionReportMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisClassBExtendedPositionReport)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisClassBExtendedPositionReport, got %T", v)
-	}
-	return EncodeAisClassBExtendedPositionReport(val)
-}
-
-func EncodeAisAidsToNavigationAtonReport(val *AisAidsToNavigationAtonReport) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
-	w.writeLookupField(uint64(val.PositionAccuracy), 1)
-	w.writeLookupField(uint64(val.Raim), 1)
-	w.writeLookupField(uint64(val.TimeStamp), 6)
-	var lengthDiameterRaw *float32
-	if val.LengthDiameter != nil {
-		lengthDiameterRaw = &val.LengthDiameter.Value
-	}
-	w.writeUnsignedResolution(lengthDiameterRaw, 16, 0.1)
-	var beamDiameterRaw *float32
-	if val.BeamDiameter != nil {
-		beamDiameterRaw = &val.BeamDiameter.Value
-	}
-	w.writeUnsignedResolution(beamDiameterRaw, 16, 0.1)
-	var positionReferenceFromStarboardEdgeRaw *float32
-	if val.PositionReferenceFromStarboardEdge != nil {
-		positionReferenceFromStarboardEdgeRaw = &val.PositionReferenceFromStarboardEdge.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromStarboardEdgeRaw, 16, 0.1)
-	var positionReferenceFromTrueNorthFacingEdgeRaw *float32
-	if val.PositionReferenceFromTrueNorthFacingEdge != nil {
-		positionReferenceFromTrueNorthFacingEdgeRaw = &val.PositionReferenceFromTrueNorthFacingEdge.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromTrueNorthFacingEdgeRaw, 16, 0.1)
-	w.writeLookupField(uint64(val.AtonType), 5)
-	w.writeLookupField(uint64(val.OffPositionIndicator), 1)
-	w.writeLookupField(uint64(val.VirtualAtonFlag), 1)
-	w.writeLookupField(uint64(val.AssignedModeFlag), 1)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.PositionFixingDeviceType), 4)
-	w.skipBits(3)
-	w.writeBinaryData(val.AtonStatus, 8)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	w.writeStringWithLengthAndControl(val.AtonName)
-	return w.Bytes(), w.Err()
-}
-func encodeAisAidsToNavigationAtonReportMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisAidsToNavigationAtonReport)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisAidsToNavigationAtonReport, got %T", v)
-	}
-	return EncodeAisAidsToNavigationAtonReport(val)
-}
-
-func EncodeAisUtcAndDateReport(val *AisUtcAndDateReport) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
-	w.writeLookupField(uint64(val.PositionAccuracy), 1)
-	w.writeLookupField(uint64(val.Raim), 1)
-	w.skipBits(6)
-	w.writeUnsignedResolution(val.PositionTime, 32, 0.0001)
-	w.writeBinaryData(val.CommunicationState, 19)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.writeUInt16(val.PositionDate, 16)
-	w.skipBits(4)
-	w.writeLookupField(uint64(val.GnssType), 4)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeAisUtcAndDateReportMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisUtcAndDateReport)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisUtcAndDateReport, got %T", v)
-	}
-	return EncodeAisUtcAndDateReport(val)
-}
-
-func EncodeAisClassAStaticAndVoyageRelatedData(val *AisClassAStaticAndVoyageRelatedData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeUInt32(val.ImoNumber, 32)
-	w.writeFixedString(val.Callsign, 56)
-	w.writeFixedString(val.Name, 160)
-	w.writeLookupField(uint64(val.TypeOfShip), 8)
-	var lengthRaw *float32
-	if val.Length != nil {
-		lengthRaw = &val.Length.Value
-	}
-	w.writeUnsignedResolution(lengthRaw, 16, 0.1)
-	var beamRaw *float32
-	if val.Beam != nil {
-		beamRaw = &val.Beam.Value
-	}
-	w.writeUnsignedResolution(beamRaw, 16, 0.1)
-	var positionReferenceFromStarboardRaw *float32
-	if val.PositionReferenceFromStarboard != nil {
-		positionReferenceFromStarboardRaw = &val.PositionReferenceFromStarboard.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromStarboardRaw, 16, 0.1)
-	var positionReferenceFromBowRaw *float32
-	if val.PositionReferenceFromBow != nil {
-		positionReferenceFromBowRaw = &val.PositionReferenceFromBow.Value
-	}
-	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
-	w.writeUInt16(val.EtaDate, 16)
-	w.writeUnsignedResolution(val.EtaTime, 32, 0.0001)
-	var draftRaw *float32
-	if val.Draft != nil {
-		draftRaw = &val.Draft.Value
-	}
-	w.writeUnsignedResolution(draftRaw, 16, 0.01)
-	w.writeFixedString(val.Destination, 160)
-	w.writeLookupField(uint64(val.AisVersionIndicator), 2)
-	w.writeLookupField(uint64(val.GnssType), 4)
-	w.writeLookupField(uint64(val.Dte), 1)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	return w.Bytes(), w.Err()
-}
-func encodeAisClassAStaticAndVoyageRelatedDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisClassAStaticAndVoyageRelatedData)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisClassAStaticAndVoyageRelatedData, got %T", v)
-	}
-	return EncodeAisClassAStaticAndVoyageRelatedData(val)
-}
-
-func EncodeAisAddressedBinaryMessage(val *AisAddressedBinaryMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.writeUInt8(val.SequenceNumber, 2)
-	w.writeUInt32(val.DestinationId, 32)
-	w.skipBits(6)
-	w.writeUInt8(val.RetransmitFlag, 1)
-	w.skipBits(1)
-	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeAisAddressedBinaryMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisAddressedBinaryMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisAddressedBinaryMessage, got %T", v)
-	}
-	return EncodeAisAddressedBinaryMessage(val)
-}
-
-func EncodeAisAcknowledge(val *AisAcknowledge) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
-	w.writeUInt32(val.DestinationId1, 32)
-	w.writeBinaryData(val.SequenceNumberForId1, 2)
-	w.skipBits(6)
-	w.writeBinaryData(val.SequenceNumberForIdN, 2)
-	w.skipBits(6)
-	return w.Bytes(), w.Err()
-}
-func encodeAisAcknowledgeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisAcknowledge)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisAcknowledge, got %T", v)
-	}
-	return EncodeAisAcknowledge(val)
-}
-
-func EncodeAisBinaryBroadcastMessage(val *AisBinaryBroadcastMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
-	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
-	return w.Bytes(), w.Err()
-}
-func encodeAisBinaryBroadcastMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisBinaryBroadcastMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisBinaryBroadcastMessage, got %T", v)
-	}
-	return EncodeAisBinaryBroadcastMessage(val)
-}
-
-func EncodeAisUtcDateInquiry(val *AisUtcDateInquiry) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	w.writeUInt32(val.DestinationId, 32)
-	return w.Bytes(), w.Err()
-}
-func encodeAisUtcDateInquiryMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisUtcDateInquiry)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisUtcDateInquiry, got %T", v)
-	}
-	return EncodeAisUtcDateInquiry(val)
-}
-
-func EncodeAisAddressedSafetyRelatedMessage(val *AisAddressedSafetyRelatedMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.writeUInt8(val.SequenceNumber, 2)
-	w.skipBits(1)
-	w.writeUInt32(val.DestinationId, 32)
-	w.writeUInt8(val.RetransmitFlag, 1)
-	w.skipBits(7)
-	w.writeFixedString(val.SafetyRelatedText, 936)
-	return w.Bytes(), w.Err()
-}
-func encodeAisAddressedSafetyRelatedMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisAddressedSafetyRelatedMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisAddressedSafetyRelatedMessage, got %T", v)
-	}
-	return EncodeAisAddressedSafetyRelatedMessage(val)
-}
-
-func EncodeAisSafetyRelatedBroadcastMessage(val *AisSafetyRelatedBroadcastMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	w.writeFixedString(val.SafetyRelatedText, 1296)
-	return w.Bytes(), w.Err()
-}
-func encodeAisSafetyRelatedBroadcastMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisSafetyRelatedBroadcastMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisSafetyRelatedBroadcastMessage, got %T", v)
-	}
-	return EncodeAisSafetyRelatedBroadcastMessage(val)
-}
-
-func EncodeAisInterrogation(val *AisInterrogation) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
-	w.writeUInt32(val.DestinationId1, 32)
-	w.writeLookupField(uint64(val.MessageId11), 6)
-	w.writeUInt16(val.SlotOffset11, 12)
-	w.skipBits(2)
-	w.writeLookupField(uint64(val.MessageId12), 6)
-	w.writeUInt16(val.SlotOffset12, 12)
-	w.skipBits(2)
-	w.writeUInt32(val.DestinationId2, 32)
-	w.writeLookupField(uint64(val.MessageId21), 6)
-	w.writeUInt16(val.SlotOffset21, 12)
-	w.skipBits(2)
-	w.skipBits(4)
-	w.writeUInt8(val.Sid, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeAisInterrogationMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisInterrogation)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisInterrogation, got %T", v)
-	}
-	return EncodeAisInterrogation(val)
-}
-
-func EncodeAisDataLinkManagementMessage(val *AisDataLinkManagementMessage) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	for _, rep := range val.Repeating1 {
-		w.writeUInt16(rep.Offset, 16)
-		w.writeUInt8(rep.NumberOfSlots, 8)
-		w.writeUInt8(rep.Timeout, 8)
-		w.writeUInt16(rep.Increment, 16)
-	}
-	return w.Bytes(), w.Err()
-}
-func encodeAisDataLinkManagementMessageMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisDataLinkManagementMessage)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisDataLinkManagementMessage, got %T", v)
-	}
-	return EncodeAisDataLinkManagementMessage(val)
-}
-
-func EncodeAisChannelManagement(val *AisChannelManagement) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.SourceId, 32)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	w.writeUInt8(val.ChannelA, 7)
-	w.writeUInt8(val.ChannelB, 7)
-	w.skipBits(2)
-	w.writeUInt8(val.Power, 8)
-	w.writeUInt8(val.TxRxMode, 8)
-	w.writeSignedResolution64Override(val.NorthEastLongitudeCorner1, 32, 1e-07)
-	w.writeSignedResolution64Override(val.NorthEastLatitudeCorner1, 32, 1e-07)
-	w.writeSignedResolution64Override(val.SouthWestLongitudeCorner1, 32, 1e-07)
-	w.writeSignedResolution64Override(val.SouthWestLatitudeCorner2, 32, 1e-07)
-	w.skipBits(6)
-	w.writeUInt8(val.AddressedOrBroadcastMessageIndicator, 2)
-	w.writeUInt8(val.ChannelABandwidth, 7)
-	w.writeUInt8(val.ChannelBBandwidth, 7)
-	w.skipBits(2)
-	w.writeUInt8(val.TransitionalZoneSize, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeAisChannelManagementMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisChannelManagement)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisChannelManagement, got %T", v)
-	}
-	return EncodeAisChannelManagement(val)
-}
-
-func EncodeAisClassBStaticDataMsg24PartA(val *AisClassBStaticDataMsg24PartA) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.MessageId), 6)
-	w.writeLookupField(uint64(val.RepeatIndicator), 2)
-	w.writeUInt32(val.UserId, 32)
-	w.writeFixedString(val.Name, 160)
-	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
-	w.writeUInt8(val.SequenceId, 8)
-	return w.Bytes(), w.Err()
-}
-func encodeAisClassBStaticDataMsg24PartAMsg(v Message) ([]byte, error) {
-	val, ok := v.(*AisClassBStaticDataMsg24PartA)
-	if !ok {
-		return nil, fmt.Errorf("expected *AisClassBStaticDataMsg24PartA, got %T", v)
-	}
-	return EncodeAisClassBStaticDataMsg24PartA(val)
-}
-
 func EncodeAisClassBStaticDataMsg24PartB(val *AisClassBStaticDataMsg24PartB) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -2960,6 +3027,7 @@ func EncodeAisClassBStaticDataMsg24PartB(val *AisClassBStaticDataMsg24PartB) ([]
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
+
 func encodeAisClassBStaticDataMsg24PartBMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassBStaticDataMsg24PartB)
 	if !ok {

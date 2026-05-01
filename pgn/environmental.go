@@ -11,7 +11,9 @@ type LeewayAngle struct {
 	Sid *uint8 `json:"sid"`
 	LeewayAngle *float32 `json:"leewayAngle"`
 }
+
 func (x *LeewayAngle) PGNNumber() uint32  { return 128000 }
+
 func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &LeewayAngle{}
 	val.Info = Info
@@ -39,6 +41,24 @@ func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (Message, error)
 		}	
 	return val, nil
 }
+
+func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeSignedResolution(val.LeewayAngle, 16, 0.0001)
+	w.skipBits(40)
+	return w.Bytes(), w.Err()
+}
+
+func encodeLeewayAngleMsg(v Message) ([]byte, error) {
+	val, ok := v.(*LeewayAngle)
+	if !ok {
+		return nil, fmt.Errorf("expected *LeewayAngle, got %T", v)
+	}
+	return EncodeLeewayAngle(val)
+}
+
 type WindData struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -46,7 +66,9 @@ type WindData struct {
 	WindAngle *float32 `json:"windAngle"`
 	Reference WindReferenceConst `json:"reference"`
 }
+
 func (x *WindData) PGNNumber() uint32  { return 130306 }
+
 func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &WindData{}
 	val.Info = Info
@@ -92,6 +114,30 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 		}	
 	return val, nil
 }
+
+func EncodeWindData(val *WindData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var windSpeedRaw *float32
+	if val.WindSpeed != nil {
+		windSpeedRaw = &val.WindSpeed.Value
+	}
+	w.writeUnsignedResolution(windSpeedRaw, 16, 0.01)
+	w.writeUnsignedResolution(val.WindAngle, 16, 0.0001)
+	w.writeLookupField(uint64(val.Reference), 3)
+	w.skipBits(21)
+	return w.Bytes(), w.Err()
+}
+
+func encodeWindDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*WindData)
+	if !ok {
+		return nil, fmt.Errorf("expected *WindData, got %T", v)
+	}
+	return EncodeWindData(val)
+}
+
 type EnvironmentalParametersObsolete struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -99,7 +145,9 @@ type EnvironmentalParametersObsolete struct {
 	OutsideAmbientAirTemperature *units.Temperature `json:"outsideAmbientAirTemperature"`
 	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
+
 func (x *EnvironmentalParametersObsolete) PGNNumber() uint32  { return 130310 }
+
 func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EnvironmentalParametersObsolete{}
 	val.Info = Info
@@ -145,6 +193,38 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 		}	
 	return val, nil
 }
+
+func EncodeEnvironmentalParametersObsolete(val *EnvironmentalParametersObsolete) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var waterTemperatureRaw *float32
+	if val.WaterTemperature != nil {
+		waterTemperatureRaw = &val.WaterTemperature.Value
+	}
+	w.writeUnsignedResolution(waterTemperatureRaw, 16, 0.01)
+	var outsideAmbientAirTemperatureRaw *float32
+	if val.OutsideAmbientAirTemperature != nil {
+		outsideAmbientAirTemperatureRaw = &val.OutsideAmbientAirTemperature.Value
+	}
+	w.writeUnsignedResolution(outsideAmbientAirTemperatureRaw, 16, 0.01)
+	var atmosphericPressureRaw *float32
+	if val.AtmosphericPressure != nil {
+		atmosphericPressureRaw = &val.AtmosphericPressure.Value
+	}
+	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeEnvironmentalParametersObsoleteMsg(v Message) ([]byte, error) {
+	val, ok := v.(*EnvironmentalParametersObsolete)
+	if !ok {
+		return nil, fmt.Errorf("expected *EnvironmentalParametersObsolete, got %T", v)
+	}
+	return EncodeEnvironmentalParametersObsolete(val)
+}
+
 type EnvironmentalParameters struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -154,7 +234,9 @@ type EnvironmentalParameters struct {
 	Humidity *float32 `json:"humidity"`
 	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
+
 func (x *EnvironmentalParameters) PGNNumber() uint32  { return 130311 }
+
 func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EnvironmentalParameters{}
 	val.Info = Info
@@ -214,6 +296,35 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 	}	
 	return val, nil
 }
+
+func EncodeEnvironmentalParameters(val *EnvironmentalParameters) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeLookupField(uint64(val.TemperatureSource), 6)
+	w.writeLookupField(uint64(val.HumiditySource), 2)
+	var temperatureRaw *float32
+	if val.Temperature != nil {
+		temperatureRaw = &val.Temperature.Value
+	}
+	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
+	w.writeSignedResolution(val.Humidity, 16, 0.004)
+	var atmosphericPressureRaw *float32
+	if val.AtmosphericPressure != nil {
+		atmosphericPressureRaw = &val.AtmosphericPressure.Value
+	}
+	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
+	return w.Bytes(), w.Err()
+}
+
+func encodeEnvironmentalParametersMsg(v Message) ([]byte, error) {
+	val, ok := v.(*EnvironmentalParameters)
+	if !ok {
+		return nil, fmt.Errorf("expected *EnvironmentalParameters, got %T", v)
+	}
+	return EncodeEnvironmentalParameters(val)
+}
+
 type Temperature struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -222,7 +333,9 @@ type Temperature struct {
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
+
 func (x *Temperature) PGNNumber() uint32  { return 130312 }
+
 func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Temperature{}
 	val.Info = Info
@@ -277,6 +390,35 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 		}	
 	return val, nil
 }
+
+func EncodeTemperature(val *Temperature) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	var actualTemperatureRaw *float32
+	if val.ActualTemperature != nil {
+		actualTemperatureRaw = &val.ActualTemperature.Value
+	}
+	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
+	var setTemperatureRaw *float32
+	if val.SetTemperature != nil {
+		setTemperatureRaw = &val.SetTemperature.Value
+	}
+	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.01)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTemperatureMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Temperature)
+	if !ok {
+		return nil, fmt.Errorf("expected *Temperature, got %T", v)
+	}
+	return EncodeTemperature(val)
+}
+
 type Humidity struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -285,7 +427,9 @@ type Humidity struct {
 	ActualHumidity *float32 `json:"actualHumidity"`
 	SetHumidity *float32 `json:"setHumidity"`
 }
+
 func (x *Humidity) PGNNumber() uint32  { return 130313 }
+
 func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Humidity{}
 	val.Info = Info
@@ -340,6 +484,27 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 		}	
 	return val, nil
 }
+
+func EncodeHumidity(val *Humidity) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	w.writeSignedResolution(val.ActualHumidity, 16, 0.004)
+	w.writeSignedResolution(val.SetHumidity, 16, 0.004)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeHumidityMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Humidity)
+	if !ok {
+		return nil, fmt.Errorf("expected *Humidity, got %T", v)
+	}
+	return EncodeHumidity(val)
+}
+
 type ActualPressure struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -347,7 +512,9 @@ type ActualPressure struct {
 	Source PressureSourceConst `json:"source"`
 	Pressure *units.Pressure `json:"pressure"`
 }
+
 func (x *ActualPressure) PGNNumber() uint32  { return 130314 }
+
 func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ActualPressure{}
 	val.Info = Info
@@ -393,6 +560,30 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, err
 		}	
 	return val, nil
 }
+
+func EncodeActualPressure(val *ActualPressure) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	var pressureRaw *float32
+	if val.Pressure != nil {
+		pressureRaw = &val.Pressure.Value
+	}
+	w.writeSignedResolution(pressureRaw, 32, 0.1)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeActualPressureMsg(v Message) ([]byte, error) {
+	val, ok := v.(*ActualPressure)
+	if !ok {
+		return nil, fmt.Errorf("expected *ActualPressure, got %T", v)
+	}
+	return EncodeActualPressure(val)
+}
+
 type SetPressure struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -400,7 +591,9 @@ type SetPressure struct {
 	Source PressureSourceConst `json:"source"`
 	Pressure *units.Pressure `json:"pressure"`
 }
+
 func (x *SetPressure) PGNNumber() uint32  { return 130315 }
+
 func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SetPressure{}
 	val.Info = Info
@@ -446,6 +639,30 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error)
 		}	
 	return val, nil
 }
+
+func EncodeSetPressure(val *SetPressure) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	var pressureRaw *float32
+	if val.Pressure != nil {
+		pressureRaw = &val.Pressure.Value
+	}
+	w.writeUnsignedResolution(pressureRaw, 32, 0.1)
+	w.skipBits(8)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSetPressureMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SetPressure)
+	if !ok {
+		return nil, fmt.Errorf("expected *SetPressure, got %T", v)
+	}
+	return EncodeSetPressure(val)
+}
+
 type TemperatureExtendedRange struct {
 	Info MessageInfo `json:"info"`
 	Sid *uint8 `json:"sid"`
@@ -454,7 +671,9 @@ type TemperatureExtendedRange struct {
 	Temperature *units.Temperature `json:"temperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
+
 func (x *TemperatureExtendedRange) PGNNumber() uint32  { return 130316 }
+
 func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TemperatureExtendedRange{}
 	val.Info = Info
@@ -505,6 +724,34 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 	}	
 	return val, nil
 }
+
+func EncodeTemperatureExtendedRange(val *TemperatureExtendedRange) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.Source), 8)
+	var temperatureRaw *float32
+	if val.Temperature != nil {
+		temperatureRaw = &val.Temperature.Value
+	}
+	w.writeUnsignedResolution(temperatureRaw, 24, 0.001)
+	var setTemperatureRaw *float32
+	if val.SetTemperature != nil {
+		setTemperatureRaw = &val.SetTemperature.Value
+	}
+	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTemperatureExtendedRangeMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TemperatureExtendedRange)
+	if !ok {
+		return nil, fmt.Errorf("expected *TemperatureExtendedRange, got %T", v)
+	}
+	return EncodeTemperatureExtendedRange(val)
+}
+
 type TideStationData struct {
 	Info MessageInfo `json:"info"`
 	Mode ResidualModeConst `json:"mode"`
@@ -518,7 +765,9 @@ type TideStationData struct {
 	StationId string `json:"stationId"`
 	StationName string `json:"stationName"`
 }
+
 func (x *TideStationData) PGNNumber() uint32  { return 130320 }
+
 func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TideStationData{}
 	val.Info = Info
@@ -618,6 +867,40 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 	}	
 	return val, nil
 }
+
+func EncodeTideStationData(val *TideStationData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Mode), 4)
+	w.writeLookupField(uint64(val.TideTendency), 2)
+	w.skipBits(2)
+	w.writeUInt16(val.MeasurementDate, 16)
+	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
+	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.StationLongitude, 32, 1e-07)
+	var tideLevelRaw *float32
+	if val.TideLevel != nil {
+		tideLevelRaw = &val.TideLevel.Value
+	}
+	w.writeSignedResolution(tideLevelRaw, 16, 0.001)
+	var tideLevelStandardDeviationRaw *float32
+	if val.TideLevelStandardDeviation != nil {
+		tideLevelStandardDeviationRaw = &val.TideLevelStandardDeviation.Value
+	}
+	w.writeUnsignedResolution(tideLevelStandardDeviationRaw, 16, 0.01)
+	w.writeStringWithLengthAndControl(val.StationId)
+	w.writeStringWithLengthAndControl(val.StationName)
+	return w.Bytes(), w.Err()
+}
+
+func encodeTideStationDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*TideStationData)
+	if !ok {
+		return nil, fmt.Errorf("expected *TideStationData, got %T", v)
+	}
+	return EncodeTideStationData(val)
+}
+
 type SalinityStationData struct {
 	Info MessageInfo `json:"info"`
 	Mode ResidualModeConst `json:"mode"`
@@ -630,7 +913,9 @@ type SalinityStationData struct {
 	StationId string `json:"stationId"`
 	StationName string `json:"stationName"`
 }
+
 func (x *SalinityStationData) PGNNumber() uint32  { return 130321 }
+
 func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SalinityStationData{}
 	val.Info = Info
@@ -721,6 +1006,35 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 	}	
 	return val, nil
 }
+
+func EncodeSalinityStationData(val *SalinityStationData) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.Mode), 4)
+	w.skipBits(4)
+	w.writeUInt16(val.MeasurementDate, 16)
+	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
+	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)
+	w.writeSignedResolution64Override(val.StationLongitude, 32, 1e-07)
+	w.writeFloat32(val.Salinity)
+	var waterTemperatureRaw *float32
+	if val.WaterTemperature != nil {
+		waterTemperatureRaw = &val.WaterTemperature.Value
+	}
+	w.writeUnsignedResolution(waterTemperatureRaw, 16, 0.01)
+	w.writeStringWithLengthAndControl(val.StationId)
+	w.writeStringWithLengthAndControl(val.StationName)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSalinityStationDataMsg(v Message) ([]byte, error) {
+	val, ok := v.(*SalinityStationData)
+	if !ok {
+		return nil, fmt.Errorf("expected *SalinityStationData, got %T", v)
+	}
+	return EncodeSalinityStationData(val)
+}
+
 type WatermakerInputSettingAndStatus struct {
 	Info MessageInfo `json:"info"`
 	WatermakerOperatingState WatermakerStateConst `json:"watermakerOperatingState"`
@@ -746,7 +1060,9 @@ type WatermakerInputSettingAndStatus struct {
 	BrineWaterFlow *units.Flow `json:"brineWaterFlow"`
 	RunTime *uint32 `json:"runTime"`
 }
+
 func (x *WatermakerInputSettingAndStatus) PGNNumber() uint32  { return 130567 }
+
 func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &WatermakerInputSettingAndStatus{}
 	val.Info = Info
@@ -955,276 +1271,6 @@ func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStre
 	return val, nil
 }
 
-func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeSignedResolution(val.LeewayAngle, 16, 0.0001)
-	w.skipBits(40)
-	return w.Bytes(), w.Err()
-}
-func encodeLeewayAngleMsg(v Message) ([]byte, error) {
-	val, ok := v.(*LeewayAngle)
-	if !ok {
-		return nil, fmt.Errorf("expected *LeewayAngle, got %T", v)
-	}
-	return EncodeLeewayAngle(val)
-}
-
-func EncodeWindData(val *WindData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	var windSpeedRaw *float32
-	if val.WindSpeed != nil {
-		windSpeedRaw = &val.WindSpeed.Value
-	}
-	w.writeUnsignedResolution(windSpeedRaw, 16, 0.01)
-	w.writeUnsignedResolution(val.WindAngle, 16, 0.0001)
-	w.writeLookupField(uint64(val.Reference), 3)
-	w.skipBits(21)
-	return w.Bytes(), w.Err()
-}
-func encodeWindDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*WindData)
-	if !ok {
-		return nil, fmt.Errorf("expected *WindData, got %T", v)
-	}
-	return EncodeWindData(val)
-}
-
-func EncodeEnvironmentalParametersObsolete(val *EnvironmentalParametersObsolete) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	var waterTemperatureRaw *float32
-	if val.WaterTemperature != nil {
-		waterTemperatureRaw = &val.WaterTemperature.Value
-	}
-	w.writeUnsignedResolution(waterTemperatureRaw, 16, 0.01)
-	var outsideAmbientAirTemperatureRaw *float32
-	if val.OutsideAmbientAirTemperature != nil {
-		outsideAmbientAirTemperatureRaw = &val.OutsideAmbientAirTemperature.Value
-	}
-	w.writeUnsignedResolution(outsideAmbientAirTemperatureRaw, 16, 0.01)
-	var atmosphericPressureRaw *float32
-	if val.AtmosphericPressure != nil {
-		atmosphericPressureRaw = &val.AtmosphericPressure.Value
-	}
-	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeEnvironmentalParametersObsoleteMsg(v Message) ([]byte, error) {
-	val, ok := v.(*EnvironmentalParametersObsolete)
-	if !ok {
-		return nil, fmt.Errorf("expected *EnvironmentalParametersObsolete, got %T", v)
-	}
-	return EncodeEnvironmentalParametersObsolete(val)
-}
-
-func EncodeEnvironmentalParameters(val *EnvironmentalParameters) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeLookupField(uint64(val.TemperatureSource), 6)
-	w.writeLookupField(uint64(val.HumiditySource), 2)
-	var temperatureRaw *float32
-	if val.Temperature != nil {
-		temperatureRaw = &val.Temperature.Value
-	}
-	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
-	w.writeSignedResolution(val.Humidity, 16, 0.004)
-	var atmosphericPressureRaw *float32
-	if val.AtmosphericPressure != nil {
-		atmosphericPressureRaw = &val.AtmosphericPressure.Value
-	}
-	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
-	return w.Bytes(), w.Err()
-}
-func encodeEnvironmentalParametersMsg(v Message) ([]byte, error) {
-	val, ok := v.(*EnvironmentalParameters)
-	if !ok {
-		return nil, fmt.Errorf("expected *EnvironmentalParameters, got %T", v)
-	}
-	return EncodeEnvironmentalParameters(val)
-}
-
-func EncodeTemperature(val *Temperature) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	var actualTemperatureRaw *float32
-	if val.ActualTemperature != nil {
-		actualTemperatureRaw = &val.ActualTemperature.Value
-	}
-	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
-	var setTemperatureRaw *float32
-	if val.SetTemperature != nil {
-		setTemperatureRaw = &val.SetTemperature.Value
-	}
-	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.01)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeTemperatureMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Temperature)
-	if !ok {
-		return nil, fmt.Errorf("expected *Temperature, got %T", v)
-	}
-	return EncodeTemperature(val)
-}
-
-func EncodeHumidity(val *Humidity) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	w.writeSignedResolution(val.ActualHumidity, 16, 0.004)
-	w.writeSignedResolution(val.SetHumidity, 16, 0.004)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeHumidityMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Humidity)
-	if !ok {
-		return nil, fmt.Errorf("expected *Humidity, got %T", v)
-	}
-	return EncodeHumidity(val)
-}
-
-func EncodeActualPressure(val *ActualPressure) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	var pressureRaw *float32
-	if val.Pressure != nil {
-		pressureRaw = &val.Pressure.Value
-	}
-	w.writeSignedResolution(pressureRaw, 32, 0.1)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeActualPressureMsg(v Message) ([]byte, error) {
-	val, ok := v.(*ActualPressure)
-	if !ok {
-		return nil, fmt.Errorf("expected *ActualPressure, got %T", v)
-	}
-	return EncodeActualPressure(val)
-}
-
-func EncodeSetPressure(val *SetPressure) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	var pressureRaw *float32
-	if val.Pressure != nil {
-		pressureRaw = &val.Pressure.Value
-	}
-	w.writeUnsignedResolution(pressureRaw, 32, 0.1)
-	w.skipBits(8)
-	return w.Bytes(), w.Err()
-}
-func encodeSetPressureMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SetPressure)
-	if !ok {
-		return nil, fmt.Errorf("expected *SetPressure, got %T", v)
-	}
-	return EncodeSetPressure(val)
-}
-
-func EncodeTemperatureExtendedRange(val *TemperatureExtendedRange) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Sid, 8)
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.Source), 8)
-	var temperatureRaw *float32
-	if val.Temperature != nil {
-		temperatureRaw = &val.Temperature.Value
-	}
-	w.writeUnsignedResolution(temperatureRaw, 24, 0.001)
-	var setTemperatureRaw *float32
-	if val.SetTemperature != nil {
-		setTemperatureRaw = &val.SetTemperature.Value
-	}
-	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
-	return w.Bytes(), w.Err()
-}
-func encodeTemperatureExtendedRangeMsg(v Message) ([]byte, error) {
-	val, ok := v.(*TemperatureExtendedRange)
-	if !ok {
-		return nil, fmt.Errorf("expected *TemperatureExtendedRange, got %T", v)
-	}
-	return EncodeTemperatureExtendedRange(val)
-}
-
-func EncodeTideStationData(val *TideStationData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Mode), 4)
-	w.writeLookupField(uint64(val.TideTendency), 2)
-	w.skipBits(2)
-	w.writeUInt16(val.MeasurementDate, 16)
-	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
-	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.StationLongitude, 32, 1e-07)
-	var tideLevelRaw *float32
-	if val.TideLevel != nil {
-		tideLevelRaw = &val.TideLevel.Value
-	}
-	w.writeSignedResolution(tideLevelRaw, 16, 0.001)
-	var tideLevelStandardDeviationRaw *float32
-	if val.TideLevelStandardDeviation != nil {
-		tideLevelStandardDeviationRaw = &val.TideLevelStandardDeviation.Value
-	}
-	w.writeUnsignedResolution(tideLevelStandardDeviationRaw, 16, 0.01)
-	w.writeStringWithLengthAndControl(val.StationId)
-	w.writeStringWithLengthAndControl(val.StationName)
-	return w.Bytes(), w.Err()
-}
-func encodeTideStationDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*TideStationData)
-	if !ok {
-		return nil, fmt.Errorf("expected *TideStationData, got %T", v)
-	}
-	return EncodeTideStationData(val)
-}
-
-func EncodeSalinityStationData(val *SalinityStationData) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeLookupField(uint64(val.Mode), 4)
-	w.skipBits(4)
-	w.writeUInt16(val.MeasurementDate, 16)
-	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
-	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)
-	w.writeSignedResolution64Override(val.StationLongitude, 32, 1e-07)
-	w.writeFloat32(val.Salinity)
-	var waterTemperatureRaw *float32
-	if val.WaterTemperature != nil {
-		waterTemperatureRaw = &val.WaterTemperature.Value
-	}
-	w.writeUnsignedResolution(waterTemperatureRaw, 16, 0.01)
-	w.writeStringWithLengthAndControl(val.StationId)
-	w.writeStringWithLengthAndControl(val.StationName)
-	return w.Bytes(), w.Err()
-}
-func encodeSalinityStationDataMsg(v Message) ([]byte, error) {
-	val, ok := v.(*SalinityStationData)
-	if !ok {
-		return nil, fmt.Errorf("expected *SalinityStationData, got %T", v)
-	}
-	return EncodeSalinityStationData(val)
-}
-
 func EncodeWatermakerInputSettingAndStatus(val *WatermakerInputSettingAndStatus) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
@@ -1281,6 +1327,7 @@ func EncodeWatermakerInputSettingAndStatus(val *WatermakerInputSettingAndStatus)
 	w.writeUInt32(val.RunTime, 32)
 	return w.Bytes(), w.Err()
 }
+
 func encodeWatermakerInputSettingAndStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*WatermakerInputSettingAndStatus)
 	if !ok {

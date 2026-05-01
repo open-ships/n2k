@@ -13,7 +13,9 @@ type RadioFrequencyModePower struct {
 	Mode *uint16 `json:"mode"`
 	ChannelBandwidth *uint16 `json:"channelBandwidth"`
 }
+
 func (x *RadioFrequencyModePower) PGNNumber() uint32  { return 129799 }
+
 func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &RadioFrequencyModePower{}
 	val.Info = Info
@@ -85,6 +87,7 @@ func EncodeRadioFrequencyModePower(val *RadioFrequencyModePower) ([]byte, error)
 	w.writeUInt16(val.ChannelBandwidth, 16)
 	return w.Bytes(), w.Err()
 }
+
 func encodeRadioFrequencyModePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*RadioFrequencyModePower)
 	if !ok {

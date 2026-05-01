@@ -15,7 +15,9 @@ type ChetcoDimmer struct {
 	Dimmer4 *uint8 `json:"dimmer4"`
 	Control *uint8 `json:"control"`
 }
+
 func (x *ChetcoDimmer) PGNNumber() uint32  { return 65286 }
+
 func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ChetcoDimmer{}
 	val.Info = Info
@@ -118,6 +120,7 @@ func EncodeChetcoDimmer(val *ChetcoDimmer) ([]byte, error) {
 	w.writeUInt8(val.Control, 8)
 	return w.Bytes(), w.Err()
 }
+
 func encodeChetcoDimmerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ChetcoDimmer)
 	if !ok {
