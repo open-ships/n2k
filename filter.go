@@ -176,11 +176,19 @@ func (f *filter) evalPre(info pgn.MessageInfo) bool {
 	if f.preProg == nil {
 		return true
 	}
+	var priority int64
+	if info.Priority != nil {
+		priority = int64(*info.Priority)
+	}
+	var destination int64 = 255
+	if info.TargetId != nil {
+		destination = int64(*info.TargetId)
+	}
 	activation := map[string]any{
 		"pgn":         int64(info.PGN),
 		"source":      int64(info.SourceId),
-		"priority":    int64(info.Priority),
-		"destination": int64(info.TargetId),
+		"priority":    priority,
+		"destination": destination,
 	}
 	out, _, err := f.preProg.Eval(activation)
 	if err != nil {
@@ -196,11 +204,19 @@ func (f *filter) evalPostWithInfo(info pgn.MessageInfo, fields map[string]any) b
 	if f.postProg == nil {
 		return true
 	}
+	var priority int64
+	if info.Priority != nil {
+		priority = int64(*info.Priority)
+	}
+	var destination int64 = 255
+	if info.TargetId != nil {
+		destination = int64(*info.TargetId)
+	}
 	activation := map[string]any{
 		"pgn":         int64(info.PGN),
 		"source":      int64(info.SourceId),
-		"priority":    int64(info.Priority),
-		"destination": int64(info.TargetId),
+		"priority":    priority,
+		"destination": destination,
 		"msg":         fields,
 	}
 	out, _, err := f.postProg.Eval(activation)
@@ -235,10 +251,6 @@ func structToFilterMap(v any) map[string]any {
 
 		// Skip unexported fields.
 		if !field.IsExported() {
-			continue
-		}
-		// Skip the embedded Info field.
-		if field.Name == "Info" && field.Type == reflect.TypeOf(pgn.MessageInfo{}) {
 			continue
 		}
 

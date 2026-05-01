@@ -15,8 +15,9 @@ type ChetcoDimmer struct {
 	Dimmer4 *uint8 `json:"dimmer4"`
 	Control *uint8 `json:"control"`
 }
-func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ChetcoDimmer
+func (x *ChetcoDimmer) PGNNumber() uint32  { return 65286 }
+func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ChetcoDimmer{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-ManufacturerCode: %w", err)
@@ -117,7 +118,7 @@ func EncodeChetcoDimmer(val *ChetcoDimmer) ([]byte, error) {
 	w.writeUInt8(val.Control, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeChetcoDimmerAny(v any) ([]byte, error) {
+func encodeChetcoDimmerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ChetcoDimmer)
 	if !ok {
 		return nil, fmt.Errorf("expected *ChetcoDimmer, got %T", v)

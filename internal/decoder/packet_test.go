@@ -24,11 +24,12 @@ func TestValid(t *testing.T) {
 //   - Byte 1: upper 3 bits of manufacturer code in bits 0-2, industry code in bits 5-7
 //     ((381 >> 8) | (4 << 5) = 0x81)
 func TestGetManCode(t *testing.T) {
+	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
 		PGN:      130824,
 		SourceId: 7,
-		Priority: 1,
-		TargetId: 0,
+		Priority: &pri,
+		TargetId: &tgt,
 	}
 	p := Packet{
 		Info: pInfo,
@@ -62,16 +63,17 @@ func TestGetSeqFrame(t *testing.T) {
 //   - Fast flag is set (130824 is classified as a fast-packet PGN)
 //   - GetManCode correctly extracts manufacturer 381 (B&G) after initialization
 func TestNewPacket(t *testing.T) {
+	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
 		PGN:      130824,
 		SourceId: 7,
-		Priority: 1,
-		TargetId: 0,
+		Priority: &pri,
+		TargetId: &tgt,
 	}
 	p := NewPacket(pInfo, []uint8{(381 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
 	assert.Equal(t, uint32(130824), p.Info.PGN)
 	assert.Equal(t, uint8(7), p.Info.SourceId)
-	assert.Equal(t, uint8(1), p.Info.Priority)
+	assert.Equal(t, uint8(1), *p.Info.Priority)
 	assert.Equal(t, 0, len(p.ParseErrors))
 	assert.Equal(t, 2, len(p.Candidates))
 	assert.True(t, p.Fast)
@@ -89,21 +91,23 @@ func TestNewPacket(t *testing.T) {
 //     so the Decoders slice remains empty. The "no decoders" error is deferred to the
 //     decode stage rather than being added here.
 func TestFilterSlow(t *testing.T) {
+	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
 		PGN:      130824,
 		SourceId: 7,
-		Priority: 1,
-		TargetId: 0,
+		Priority: &pri,
+		TargetId: &tgt,
 	}
 	p := NewPacket(pInfo, []uint8{(381 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
 	p.AddDecoders()
 	assert.Equal(t, 0, len(p.ParseErrors))
 	assert.Equal(t, 1, len(p.Decoders))
+	pri2, tgt2 := uint8(1), uint8(0)
 	pInfo = pgn.MessageInfo{
 		PGN:      130824,
 		SourceId: 10,
-		Priority: 1,
-		TargetId: 0,
+		Priority: &pri2,
+		TargetId: &tgt2,
 	}
 	// Use manufacturer code 380 (not matching any known PGN 130824 variant) to verify filtering.
 	p = NewPacket(pInfo, []uint8{(380 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
@@ -121,11 +125,12 @@ func TestFilterSlow(t *testing.T) {
 // PGN 130820 has many candidate decoders. After filtering by manufacturer 419 (Maretron),
 // 16 decoders remain (Maretron defines many message types under this PGN).
 func TestFilterFast(t *testing.T) {
+	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
 		PGN:      130820,
 		SourceId: 10,
-		Priority: 1,
-		TargetId: 0,
+		Priority: &pri,
+		TargetId: &tgt,
 	}
 	// Data encodes manufacturer code 419 (Maretron) and industry code 4.
 	p := NewPacket(pInfo, []uint8{160, 5, (419 & 0xFF), (419 >> 8) | (4 << 5), 32, 128, 1, 255})
@@ -141,13 +146,14 @@ func TestFilterFast(t *testing.T) {
 // PGN 0x1ef00 is a broadcast PGN. The test confirms that the PGN number and broadcast
 // target address (255) are preserved in the packet's MessageInfo.
 func TestBroadcast(t *testing.T) {
+	pri, tgt := uint8(1), uint8(255)
 	pInfo := pgn.MessageInfo{
 		PGN:      0x1ef00,
 		SourceId: 7,
-		Priority: 1,
-		TargetId: 255,
+		Priority: &pri,
+		TargetId: &tgt,
 	}
 	p := NewPacket(pInfo, []uint8{160, 9, (137 & 0xFF), (137 >> 8) | (4 << 5), 1, 2, 3, 4})
 	assert.Equal(t, uint32(0x1ef00), p.Info.PGN)
-	assert.Equal(t, uint8(255), p.Info.TargetId)
+	assert.Equal(t, uint8(255), *p.Info.TargetId)
 }

@@ -17,9 +17,9 @@ import (
 type Scanner struct {
 	ctx  context.Context
 	cfg  config
-	msg  any
+	msg  pgn.Message
 	err  error
-	ch   chan any
+	ch   chan pgn.Message
 	once sync.Once
 }
 
@@ -36,7 +36,7 @@ func NewScanner(ctx context.Context, opts ...Option) *Scanner {
 	return &Scanner{
 		ctx: ctx,
 		cfg: cfg,
-		ch:  make(chan any, 64),
+		ch:  make(chan pgn.Message, 64),
 	}
 }
 
@@ -61,7 +61,7 @@ func (s *Scanner) Next() bool {
 }
 
 // Message returns the most recently scanned message.
-func (s *Scanner) Message() any {
+func (s *Scanner) Message() pgn.Message {
 	return s.msg
 }
 
@@ -110,14 +110,9 @@ type scannerHandler struct {
 	filter  *filter
 }
 
-func (h *scannerHandler) HandleStruct(msg any) {
+func (h *scannerHandler) HandleStruct(msg pgn.Message) {
 	if msg == nil {
 		return
-	}
-
-	// Normalize value-type UnknownPGN to pointer for consistent downstream handling.
-	if u, ok := msg.(pgn.UnknownPGN); ok {
-		msg = &u
 	}
 
 	// Drop unknown PGNs unless IncludeUnknown is set.
@@ -134,17 +129,11 @@ func (h *scannerHandler) HandleStruct(msg any) {
 	// Post-filter: check decoded struct fields.
 	if h.filter != nil && h.filter.hasPost {
 		fields := structToFilterMap(msg)
-		var info pgn.MessageInfo
 		rv := reflect.ValueOf(msg)
 		if rv.Kind() == reflect.Pointer {
 			rv = rv.Elem()
 		}
-		if rv.Kind() == reflect.Struct {
-			infoField := rv.FieldByName("Info")
-			if infoField.IsValid() {
-				info, _ = infoField.Interface().(pgn.MessageInfo)
-			}
-		}
+		info := rv.FieldByName("Info").Interface().(pgn.MessageInfo)
 		if !h.filter.evalPostWithInfo(info, fields) {
 			return
 		}

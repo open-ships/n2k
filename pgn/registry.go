@@ -1,7 +1,7 @@
 package pgn
 
 // EncoderLookup maps PGN numbers to their encoder functions, built during init().
-var EncoderLookup map[uint32]func(any) ([]byte, error)
+var EncoderLookup map[uint32]func(Message) ([]byte, error)
 
 var unseenList = []PgnInfo{
 	{
@@ -608,7 +608,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoAcknowledgement,
-		Encoder: encodeIsoAcknowledgementAny,
+		Encoder: encodeIsoAcknowledgementMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Control",
@@ -659,7 +659,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoRequest,
-		Encoder: encodeIsoRequestAny,
+		Encoder: encodeIsoRequestMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "PGN",
@@ -680,7 +680,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolDataTransfer,
-		Encoder: encodeIsoTransportProtocolDataTransferAny,
+		Encoder: encodeIsoTransportProtocolDataTransferMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -711,7 +711,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolConnectionManagementRequestToSend,
-		Encoder: encodeIsoTransportProtocolConnectionManagementRequestToSendAny,
+		Encoder: encodeIsoTransportProtocolConnectionManagementRequestToSendMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Group Function Code",
@@ -772,7 +772,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolConnectionManagementClearToSend,
-		Encoder: encodeIsoTransportProtocolConnectionManagementClearToSendAny,
+		Encoder: encodeIsoTransportProtocolConnectionManagementClearToSendMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Group Function Code",
@@ -833,7 +833,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolConnectionManagementEndOfMessage,
-		Encoder: encodeIsoTransportProtocolConnectionManagementEndOfMessageAny,
+		Encoder: encodeIsoTransportProtocolConnectionManagementEndOfMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Group Function Code",
@@ -894,7 +894,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce,
-		Encoder: encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceAny,
+		Encoder: encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Group Function Code",
@@ -955,7 +955,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoTransportProtocolConnectionManagementAbort,
-		Encoder: encodeIsoTransportProtocolConnectionManagementAbortAny,
+		Encoder: encodeIsoTransportProtocolConnectionManagementAbortMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Group Function Code",
@@ -1006,7 +1006,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoAddressClaim,
-		Encoder: encodeIsoAddressClaimAny,
+		Encoder: encodeIsoAddressClaimMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Unique Number",
@@ -1117,7 +1117,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkWirelessKeypadLightControl,
-		Encoder: encodeSeatalkWirelessKeypadLightControlAny,
+		Encoder: encodeSeatalkWirelessKeypadLightControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -1208,7 +1208,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkWirelessKeypadControl,
-		Encoder: encodeSeatalkWirelessKeypadControlAny,
+		Encoder: encodeSeatalkWirelessKeypadControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -1289,7 +1289,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 358,
 		Decoder: DecodeVictronBatteryRegister,
-		Encoder: encodeVictronBatteryRegisterAny,
+		Encoder: encodeVictronBatteryRegisterMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -1350,7 +1350,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBus1PhaseCBasicAcQuantities,
-		Encoder: encodeBus1PhaseCBasicAcQuantitiesAny,
+		Encoder: encodeBus1PhaseCBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1401,7 +1401,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBus1PhaseBBasicAcQuantities,
-		Encoder: encodeBus1PhaseBBasicAcQuantitiesAny,
+		Encoder: encodeBus1PhaseBBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1452,7 +1452,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBus1PhaseABasicAcQuantities,
-		Encoder: encodeBus1PhaseABasicAcQuantitiesAny,
+		Encoder: encodeBus1PhaseABasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1503,7 +1503,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBus1AverageBasicAcQuantities,
-		Encoder: encodeBus1AverageBasicAcQuantitiesAny,
+		Encoder: encodeBus1AverageBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1554,7 +1554,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityTotalAcEnergy,
-		Encoder: encodeUtilityTotalAcEnergyAny,
+		Encoder: encodeUtilityTotalAcEnergyMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Total Energy Export",
@@ -1585,7 +1585,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseCAcReactivePower,
-		Encoder: encodeUtilityPhaseCAcReactivePowerAny,
+		Encoder: encodeUtilityPhaseCAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -1636,7 +1636,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseCAcPower,
-		Encoder: encodeUtilityPhaseCAcPowerAny,
+		Encoder: encodeUtilityPhaseCAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -1667,7 +1667,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseCBasicAcQuantities,
-		Encoder: encodeUtilityPhaseCBasicAcQuantitiesAny,
+		Encoder: encodeUtilityPhaseCBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1718,7 +1718,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseBAcReactivePower,
-		Encoder: encodeUtilityPhaseBAcReactivePowerAny,
+		Encoder: encodeUtilityPhaseBAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -1769,7 +1769,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseBAcPower,
-		Encoder: encodeUtilityPhaseBAcPowerAny,
+		Encoder: encodeUtilityPhaseBAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -1800,7 +1800,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseBBasicAcQuantities,
-		Encoder: encodeUtilityPhaseBBasicAcQuantitiesAny,
+		Encoder: encodeUtilityPhaseBBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1851,7 +1851,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseAAcReactivePower,
-		Encoder: encodeUtilityPhaseAAcReactivePowerAny,
+		Encoder: encodeUtilityPhaseAAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -1902,7 +1902,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseAAcPower,
-		Encoder: encodeUtilityPhaseAAcPowerAny,
+		Encoder: encodeUtilityPhaseAAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -1933,7 +1933,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityPhaseABasicAcQuantities,
-		Encoder: encodeUtilityPhaseABasicAcQuantitiesAny,
+		Encoder: encodeUtilityPhaseABasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -1984,7 +1984,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityTotalAcReactivePower,
-		Encoder: encodeUtilityTotalAcReactivePowerAny,
+		Encoder: encodeUtilityTotalAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -2035,7 +2035,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityTotalAcPower,
-		Encoder: encodeUtilityTotalAcPowerAny,
+		Encoder: encodeUtilityTotalAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -2066,7 +2066,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeUtilityAverageBasicAcQuantities,
-		Encoder: encodeUtilityAverageBasicAcQuantitiesAny,
+		Encoder: encodeUtilityAverageBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -2117,7 +2117,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorTotalAcEnergy,
-		Encoder: encodeGeneratorTotalAcEnergyAny,
+		Encoder: encodeGeneratorTotalAcEnergyMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Total Energy Export",
@@ -2148,7 +2148,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseCAcReactivePower,
-		Encoder: encodeGeneratorPhaseCAcReactivePowerAny,
+		Encoder: encodeGeneratorPhaseCAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -2199,7 +2199,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseCAcPower,
-		Encoder: encodeGeneratorPhaseCAcPowerAny,
+		Encoder: encodeGeneratorPhaseCAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -2230,7 +2230,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseCBasicAcQuantities,
-		Encoder: encodeGeneratorPhaseCBasicAcQuantitiesAny,
+		Encoder: encodeGeneratorPhaseCBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -2281,7 +2281,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseBAcReactivePower,
-		Encoder: encodeGeneratorPhaseBAcReactivePowerAny,
+		Encoder: encodeGeneratorPhaseBAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -2332,7 +2332,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseBAcPower,
-		Encoder: encodeGeneratorPhaseBAcPowerAny,
+		Encoder: encodeGeneratorPhaseBAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -2363,7 +2363,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseBBasicAcQuantities,
-		Encoder: encodeGeneratorPhaseBBasicAcQuantitiesAny,
+		Encoder: encodeGeneratorPhaseBBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -2414,7 +2414,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseAAcReactivePower,
-		Encoder: encodeGeneratorPhaseAAcReactivePowerAny,
+		Encoder: encodeGeneratorPhaseAAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -2465,7 +2465,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseAAcPower,
-		Encoder: encodeGeneratorPhaseAAcPowerAny,
+		Encoder: encodeGeneratorPhaseAAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -2496,7 +2496,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorPhaseABasicAcQuantities,
-		Encoder: encodeGeneratorPhaseABasicAcQuantitiesAny,
+		Encoder: encodeGeneratorPhaseABasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -2547,7 +2547,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorTotalAcReactivePower,
-		Encoder: encodeGeneratorTotalAcReactivePowerAny,
+		Encoder: encodeGeneratorTotalAcReactivePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Reactive Power",
@@ -2598,7 +2598,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorTotalAcPower,
-		Encoder: encodeGeneratorTotalAcPowerAny,
+		Encoder: encodeGeneratorTotalAcPowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Real Power",
@@ -2629,7 +2629,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGeneratorAverageBasicAcQuantities,
-		Encoder: encodeGeneratorAverageBasicAcQuantitiesAny,
+		Encoder: encodeGeneratorAverageBasicAcQuantitiesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Line-Line AC RMS Voltage",
@@ -2680,7 +2680,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeIsoCommandedAddress,
-		Encoder: encodeIsoCommandedAddressAny,
+		Encoder: encodeIsoCommandedAddressMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Unique Number",
@@ -2801,7 +2801,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1855,
 		Decoder: DecodeFurunoHeave,
-		Encoder: encodeFurunoHeaveAny,
+		Encoder: encodeFurunoHeaveMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -2862,7 +2862,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 137,
 		Decoder: DecodeMaretronProprietaryDcBreakerCurrent,
-		Encoder: encodeMaretronProprietaryDcBreakerCurrentAny,
+		Encoder: encodeMaretronProprietaryDcBreakerCurrentMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -2943,7 +2943,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarBootStateAcknowledgment,
-		Encoder: encodeAirmarBootStateAcknowledgmentAny,
+		Encoder: encodeAirmarBootStateAcknowledgmentMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3004,7 +3004,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 140,
 		Decoder: DecodeLowranceTemperature,
-		Encoder: encodeLowranceTemperatureAny,
+		Encoder: encodeLowranceTemperatureMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3075,7 +3075,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 409,
 		Decoder: DecodeChetcoDimmer,
-		Encoder: encodeChetcoDimmerAny,
+		Encoder: encodeChetcoDimmerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3176,7 +3176,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarBootStateRequest,
-		Encoder: encodeAirmarBootStateRequestAny,
+		Encoder: encodeAirmarBootStateRequestMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3227,7 +3227,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarAccessLevel,
-		Encoder: encodeAirmarAccessLevelAny,
+		Encoder: encodeAirmarAccessLevelMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3308,7 +3308,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetConfigureTemperatureSensor,
-		Encoder: encodeSimnetConfigureTemperatureSensorAny,
+		Encoder: encodeSimnetConfigureTemperatureSensorMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3359,7 +3359,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkAlarm,
-		Encoder: encodeSeatalkAlarmAny,
+		Encoder: encodeSeatalkAlarmMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3450,7 +3450,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetTrimTabSensorCalibration,
-		Encoder: encodeSimnetTrimTabSensorCalibrationAny,
+		Encoder: encodeSimnetTrimTabSensorCalibrationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3501,7 +3501,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetPaddleWheelSpeedConfiguration,
-		Encoder: encodeSimnetPaddleWheelSpeedConfigurationAny,
+		Encoder: encodeSimnetPaddleWheelSpeedConfigurationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3552,7 +3552,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetClearFluidLevelWarnings,
-		Encoder: encodeSimnetClearFluidLevelWarningsAny,
+		Encoder: encodeSimnetClearFluidLevelWarningsMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3603,7 +3603,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetLgc2000Configuration,
-		Encoder: encodeSimnetLgc2000ConfigurationAny,
+		Encoder: encodeSimnetLgc2000ConfigurationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3654,7 +3654,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 641,
 		Decoder: DecodeDiverseYachtServicesLoadCell,
-		Encoder: encodeDiverseYachtServicesLoadCellAny,
+		Encoder: encodeDiverseYachtServicesLoadCellMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3725,7 +3725,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetApUnknown1,
-		Encoder: encodeSimnetApUnknown1Any,
+		Encoder: encodeSimnetApUnknown1Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3816,7 +3816,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetDeviceStatus,
-		Encoder: encodeSimnetDeviceStatusAny,
+		Encoder: encodeSimnetDeviceStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3897,7 +3897,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetDeviceStatusRequest,
-		Encoder: encodeSimnetDeviceStatusRequestAny,
+		Encoder: encodeSimnetDeviceStatusRequestMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -3968,7 +3968,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetPilotMode,
-		Encoder: encodeSimnetPilotModeAny,
+		Encoder: encodeSimnetPilotModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4049,7 +4049,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetDeviceModeRequest,
-		Encoder: encodeSimnetDeviceModeRequestAny,
+		Encoder: encodeSimnetDeviceModeRequestMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4120,7 +4120,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetSailingProcessorStatus,
-		Encoder: encodeSimnetSailingProcessorStatusAny,
+		Encoder: encodeSimnetSailingProcessorStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4191,7 +4191,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 275,
 		Decoder: DecodeNavicoWirelessBatteryStatus,
-		Encoder: encodeNavicoWirelessBatteryStatusAny,
+		Encoder: encodeNavicoWirelessBatteryStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4272,7 +4272,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 275,
 		Decoder: DecodeNavicoWirelessSignalStatus,
-		Encoder: encodeNavicoWirelessSignalStatusAny,
+		Encoder: encodeNavicoWirelessSignalStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4343,7 +4343,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetApUnknown2,
-		Encoder: encodeSimnetApUnknown2Any,
+		Encoder: encodeSimnetApUnknown2Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4444,7 +4444,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetAutopilotAngle,
-		Encoder: encodeSimnetAutopilotAngleAny,
+		Encoder: encodeSimnetAutopilotAngleMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4525,7 +4525,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkPilotWindDatum,
-		Encoder: encodeSeatalkPilotWindDatumAny,
+		Encoder: encodeSeatalkPilotWindDatumMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4596,7 +4596,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSimnetMagneticField,
-		Encoder: encodeSimnetMagneticFieldAny,
+		Encoder: encodeSimnetMagneticFieldMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "A",
@@ -4657,7 +4657,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkPilotHeading,
-		Encoder: encodeSeatalkPilotHeadingAny,
+		Encoder: encodeSeatalkPilotHeadingMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4738,7 +4738,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkPilotLockedHeading,
-		Encoder: encodeSeatalkPilotLockedHeadingAny,
+		Encoder: encodeSeatalkPilotLockedHeadingMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4819,7 +4819,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkSilenceAlarm,
-		Encoder: encodeSeatalkSilenceAlarmAny,
+		Encoder: encodeSeatalkSilenceAlarmMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -4890,7 +4890,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkKeypadMessage,
-		Encoder: encodeSeatalkKeypadMessageAny,
+		Encoder: encodeSeatalkKeypadMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5011,7 +5011,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkKeypadHeartbeat,
-		Encoder: encodeSeatalkKeypadHeartbeatAny,
+		Encoder: encodeSeatalkKeypadHeartbeatMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5092,7 +5092,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1851,
 		Decoder: DecodeSeatalkPilotMode,
-		Encoder: encodeSeatalkPilotModeAny,
+		Encoder: encodeSeatalkPilotModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5173,7 +5173,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarDepthQualityFactor,
-		Encoder: encodeAirmarDepthQualityFactorAny,
+		Encoder: encodeAirmarDepthQualityFactorMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5244,7 +5244,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarSpeedPulseCount,
-		Encoder: encodeAirmarSpeedPulseCountAny,
+		Encoder: encodeAirmarSpeedPulseCountMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5325,7 +5325,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 135,
 		Decoder: DecodeAirmarDeviceInformation,
-		Encoder: encodeAirmarDeviceInformationAny,
+		Encoder: encodeAirmarDeviceInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5406,7 +5406,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetApUnknown3,
-		Encoder: encodeSimnetApUnknown3Any,
+		Encoder: encodeSimnetApUnknown3Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5507,7 +5507,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 1857,
 		Decoder: DecodeSimnetAutopilotMode,
-		Encoder: encodeSimnetAutopilotModeAny,
+		Encoder: encodeSimnetAutopilotModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -5558,7 +5558,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaRequestGroupFunction,
-		Encoder: encodeNmeaRequestGroupFunctionAny,
+		Encoder: encodeNmeaRequestGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -5639,7 +5639,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaCommandGroupFunction,
-		Encoder: encodeNmeaCommandGroupFunctionAny,
+		Encoder: encodeNmeaCommandGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -5720,7 +5720,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaAcknowledgeGroupFunction,
-		Encoder: encodeNmeaAcknowledgeGroupFunctionAny,
+		Encoder: encodeNmeaAcknowledgeGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -5791,7 +5791,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaReadFieldsGroupFunction,
-		Encoder: encodeNmeaReadFieldsGroupFunctionAny,
+		Encoder: encodeNmeaReadFieldsGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -5912,7 +5912,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaReadFieldsReplyGroupFunction,
-		Encoder: encodeNmeaReadFieldsReplyGroupFunctionAny,
+		Encoder: encodeNmeaReadFieldsReplyGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -6043,7 +6043,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaWriteFieldsGroupFunction,
-		Encoder: encodeNmeaWriteFieldsGroupFunctionAny,
+		Encoder: encodeNmeaWriteFieldsGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -6174,7 +6174,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNmeaWriteFieldsReplyGroupFunction,
-		Encoder: encodeNmeaWriteFieldsReplyGroupFunctionAny,
+		Encoder: encodeNmeaWriteFieldsReplyGroupFunctionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -6305,7 +6305,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodePgnListTransmitAndReceive,
-		Encoder: encodePgnListTransmitAndReceiveAny,
+		Encoder: encodePgnListTransmitAndReceiveMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Function Code",
@@ -6336,7 +6336,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1851,
 		Decoder: DecodeSeatalk1PilotMode,
-		Encoder: encodeSeatalk1PilotModeAny,
+		Encoder: encodeSeatalk1PilotModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6447,7 +6447,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionMediaControl,
-		Encoder: encodeFusionMediaControlAny,
+		Encoder: encodeFusionMediaControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6528,7 +6528,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSiriusControl,
-		Encoder: encodeFusionSiriusControlAny,
+		Encoder: encodeFusionSiriusControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6609,7 +6609,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionRequestStatus,
-		Encoder: encodeFusionRequestStatusAny,
+		Encoder: encodeFusionRequestStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6670,7 +6670,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSetSource,
-		Encoder: encodeFusionSetSourceAny,
+		Encoder: encodeFusionSetSourceMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6741,7 +6741,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSetMute,
-		Encoder: encodeFusionSetMuteAny,
+		Encoder: encodeFusionSetMuteMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6802,7 +6802,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSetZoneVolume,
-		Encoder: encodeFusionSetZoneVolumeAny,
+		Encoder: encodeFusionSetZoneVolumeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6883,7 +6883,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSetAllVolumes,
-		Encoder: encodeFusionSetAllVolumesAny,
+		Encoder: encodeFusionSetAllVolumesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -6984,7 +6984,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1851,
 		Decoder: DecodeSeatalk1Keystroke,
-		Encoder: encodeSeatalk1KeystrokeAny,
+		Encoder: encodeSeatalk1KeystrokeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7085,7 +7085,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1851,
 		Decoder: DecodeSeatalk1DeviceIdentification,
-		Encoder: encodeSeatalk1DeviceIdentificationAny,
+		Encoder: encodeSeatalk1DeviceIdentificationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7166,7 +7166,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1851,
 		Decoder: DecodeSeatalk1DisplayBrightness,
-		Encoder: encodeSeatalk1DisplayBrightnessAny,
+		Encoder: encodeSeatalk1DisplayBrightnessMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7267,7 +7267,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1851,
 		Decoder: DecodeSeatalk1DisplayColor,
-		Encoder: encodeSeatalk1DisplayColorAny,
+		Encoder: encodeSeatalk1DisplayColorMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7368,7 +7368,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarAttitudeOffset,
-		Encoder: encodeAirmarAttitudeOffsetAny,
+		Encoder: encodeAirmarAttitudeOffsetMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7449,7 +7449,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarCalibrateCompass,
-		Encoder: encodeAirmarCalibrateCompassAny,
+		Encoder: encodeAirmarCalibrateCompassMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7620,7 +7620,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarTrueWindOptions,
-		Encoder: encodeAirmarTrueWindOptionsAny,
+		Encoder: encodeAirmarTrueWindOptionsMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7691,7 +7691,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarSimulateMode,
-		Encoder: encodeAirmarSimulateModeAny,
+		Encoder: encodeAirmarSimulateModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7762,7 +7762,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarCalibrateDepth,
-		Encoder: encodeAirmarCalibrateDepthAny,
+		Encoder: encodeAirmarCalibrateDepthMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7833,7 +7833,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarCalibrateSpeed,
-		Encoder: encodeAirmarCalibrateSpeedAny,
+		Encoder: encodeAirmarCalibrateSpeedMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7914,7 +7914,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarCalibrateTemperature,
-		Encoder: encodeAirmarCalibrateTemperatureAny,
+		Encoder: encodeAirmarCalibrateTemperatureMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -7995,7 +7995,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarSpeedFilterNone,
-		Encoder: encodeAirmarSpeedFilterNoneAny,
+		Encoder: encodeAirmarSpeedFilterNoneMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8076,7 +8076,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarSpeedFilterIir,
-		Encoder: encodeAirmarSpeedFilterIirAny,
+		Encoder: encodeAirmarSpeedFilterIirMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8167,7 +8167,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarTemperatureFilterNone,
-		Encoder: encodeAirmarTemperatureFilterNoneAny,
+		Encoder: encodeAirmarTemperatureFilterNoneMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8248,7 +8248,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarTemperatureFilterIir,
-		Encoder: encodeAirmarTemperatureFilterIirAny,
+		Encoder: encodeAirmarTemperatureFilterIirMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8339,7 +8339,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarNmea2000Options,
-		Encoder: encodeAirmarNmea2000OptionsAny,
+		Encoder: encodeAirmarNmea2000OptionsMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8410,7 +8410,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 135,
 		Decoder: DecodeAirmarAddressableMultiFrame,
-		Encoder: encodeAirmarAddressableMultiFrameAny,
+		Encoder: encodeAirmarAddressableMultiFrameMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8461,7 +8461,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 137,
 		Decoder: DecodeMaretronSlaveResponse,
-		Encoder: encodeMaretronSlaveResponseAny,
+		Encoder: encodeMaretronSlaveResponseMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8542,7 +8542,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 229,
 		Decoder: DecodeGarminDayMode,
-		Encoder: encodeGarminDayModeAny,
+		Encoder: encodeGarminDayModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8663,7 +8663,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 229,
 		Decoder: DecodeGarminNightMode,
-		Encoder: encodeGarminNightModeAny,
+		Encoder: encodeGarminNightModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8784,7 +8784,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 229,
 		Decoder: DecodeGarminColorMode,
-		Encoder: encodeGarminColorModeAny,
+		Encoder: encodeGarminColorModeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -8905,7 +8905,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlert,
-		Encoder: encodeAlertAny,
+		Encoder: encodeAlertMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9126,7 +9126,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlertResponse,
-		Encoder: encodeAlertResponseAny,
+		Encoder: encodeAlertResponseMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9257,7 +9257,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlertText,
-		Encoder: encodeAlertTextAny,
+		Encoder: encodeAlertTextMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9388,7 +9388,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlertConfiguration,
-		Encoder: encodeAlertConfigurationAny,
+		Encoder: encodeAlertConfigurationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9549,7 +9549,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlertThreshold,
-		Encoder: encodeAlertThresholdAny,
+		Encoder: encodeAlertThresholdMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9700,7 +9700,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAlertValue,
-		Encoder: encodeAlertValueAny,
+		Encoder: encodeAlertValueMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Alert Type",
@@ -9841,7 +9841,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSystemTime,
-		Encoder: encodeSystemTimeAny,
+		Encoder: encodeSystemTimeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -9902,7 +9902,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeHeartbeat,
-		Encoder: encodeHeartbeatAny,
+		Encoder: encodeHeartbeatMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Data transmit offset",
@@ -9973,7 +9973,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeProductInformation,
-		Encoder: encodeProductInformationAny,
+		Encoder: encodeProductInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "NMEA 2000 Version",
@@ -10064,7 +10064,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeConfigurationInformation,
-		Encoder: encodeConfigurationInformationAny,
+		Encoder: encodeConfigurationInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Installation Description #1",
@@ -10105,7 +10105,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeManOverboardNotification,
-		Encoder: encodeManOverboardNotificationAny,
+		Encoder: encodeManOverboardNotificationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -10296,7 +10296,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeHeadingTrackControl,
-		Encoder: encodeHeadingTrackControlAny,
+		Encoder: encodeHeadingTrackControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Rudder Limit Exceeded",
@@ -10487,7 +10487,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeRudder,
-		Encoder: encodeRudderAny,
+		Encoder: encodeRudderMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -10558,7 +10558,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeVesselHeading,
-		Encoder: encodeVesselHeadingAny,
+		Encoder: encodeVesselHeadingMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -10629,7 +10629,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeRateOfTurn,
-		Encoder: encodeRateOfTurnAny,
+		Encoder: encodeRateOfTurnMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -10670,7 +10670,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeHeave,
-		Encoder: encodeHeaveAny,
+		Encoder: encodeHeaveMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -10711,7 +10711,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAttitude,
-		Encoder: encodeAttitudeAny,
+		Encoder: encodeAttitudeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -10772,7 +10772,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeMagneticVariation,
-		Encoder: encodeMagneticVariationAny,
+		Encoder: encodeMagneticVariationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -10843,7 +10843,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeEngineParametersRapidUpdate,
-		Encoder: encodeEngineParametersRapidUpdateAny,
+		Encoder: encodeEngineParametersRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -10904,7 +10904,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeEngineParametersDynamic,
-		Encoder: encodeEngineParametersDynamicAny,
+		Encoder: encodeEngineParametersDynamicMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11055,7 +11055,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeTransmissionParametersDynamic,
-		Encoder: encodeTransmissionParametersDynamicAny,
+		Encoder: encodeTransmissionParametersDynamicMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11136,7 +11136,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeTripParametersVessel,
-		Encoder: encodeTripParametersVesselAny,
+		Encoder: encodeTripParametersVesselMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Time to Empty",
@@ -11187,7 +11187,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeTripParametersEngine,
-		Encoder: encodeTripParametersEngineAny,
+		Encoder: encodeTripParametersEngineMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11248,7 +11248,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeEngineParametersStatic,
-		Encoder: encodeEngineParametersStaticAny,
+		Encoder: encodeEngineParametersStaticMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11299,7 +11299,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeLoadControllerConnectionStateControl,
-		Encoder: encodeLoadControllerConnectionStateControlAny,
+		Encoder: encodeLoadControllerConnectionStateControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Sequence ID",
@@ -11390,7 +11390,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBinarySwitchBankStatus,
-		Encoder: encodeBinarySwitchBankStatusAny,
+		Encoder: encodeBinarySwitchBankStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11691,7 +11691,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSwitchBankControl,
-		Encoder: encodeSwitchBankControlAny,
+		Encoder: encodeSwitchBankControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -11992,7 +11992,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAcInputStatus,
-		Encoder: encodeAcInputStatusAny,
+		Encoder: encodeAcInputStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12123,7 +12123,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAcOutputStatus,
-		Encoder: encodeAcOutputStatusAny,
+		Encoder: encodeAcOutputStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12254,7 +12254,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeFluidLevel,
-		Encoder: encodeFluidLevelAny,
+		Encoder: encodeFluidLevelMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12315,7 +12315,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeDcDetailedStatus,
-		Encoder: encodeDcDetailedStatusAny,
+		Encoder: encodeDcDetailedStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -12406,7 +12406,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeChargerStatus,
-		Encoder: encodeChargerStatusAny,
+		Encoder: encodeChargerStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12497,7 +12497,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeBatteryStatus,
-		Encoder: encodeBatteryStatusAny,
+		Encoder: encodeBatteryStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12558,7 +12558,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeInverterStatus,
-		Encoder: encodeInverterStatusAny,
+		Encoder: encodeInverterStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12629,7 +12629,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeInverterConfigurationStatus,
-		Encoder: encodeInverterConfigurationStatusAny,
+		Encoder: encodeInverterConfigurationStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12730,7 +12730,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAgsConfigurationStatus,
-		Encoder: encodeAgsConfigurationStatusAny,
+		Encoder: encodeAgsConfigurationStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12781,7 +12781,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeBatteryConfigurationStatus,
-		Encoder: encodeBatteryConfigurationStatusAny,
+		Encoder: encodeBatteryConfigurationStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12892,7 +12892,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAgsStatus,
-		Encoder: encodeAgsStatusAny,
+		Encoder: encodeAgsStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Instance",
@@ -12973,7 +12973,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAcPowerCurrentPhaseA,
-		Encoder: encodeAcPowerCurrentPhaseAAny,
+		Encoder: encodeAcPowerCurrentPhaseAMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13024,7 +13024,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAcPowerCurrentPhaseB,
-		Encoder: encodeAcPowerCurrentPhaseBAny,
+		Encoder: encodeAcPowerCurrentPhaseBMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13075,7 +13075,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAcPowerCurrentPhaseC,
-		Encoder: encodeAcPowerCurrentPhaseCAny,
+		Encoder: encodeAcPowerCurrentPhaseCMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13126,7 +13126,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeConverterStatus,
-		Encoder: encodeConverterStatusAny,
+		Encoder: encodeConverterStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13217,7 +13217,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeDcVoltageCurrent,
-		Encoder: encodeDcVoltageCurrentAny,
+		Encoder: encodeDcVoltageCurrentMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13278,7 +13278,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeLeewayAngle,
-		Encoder: encodeLeewayAngleAny,
+		Encoder: encodeLeewayAngleMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13319,7 +13319,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeThrusterControlStatus,
-		Encoder: encodeThrusterControlStatusAny,
+		Encoder: encodeThrusterControlStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13420,7 +13420,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeThrusterInformation,
-		Encoder: encodeThrusterInformationAny,
+		Encoder: encodeThrusterInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Identifier",
@@ -13491,7 +13491,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeThrusterMotorStatus,
-		Encoder: encodeThrusterMotorStatusAny,
+		Encoder: encodeThrusterMotorStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13562,7 +13562,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSpeed,
-		Encoder: encodeSpeedAny,
+		Encoder: encodeSpeedMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13633,7 +13633,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeWaterDepth,
-		Encoder: encodeWaterDepthAny,
+		Encoder: encodeWaterDepthMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13684,7 +13684,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeDistanceLog,
-		Encoder: encodeDistanceLogAny,
+		Encoder: encodeDistanceLogMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Date",
@@ -13735,7 +13735,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeTrackedTargetData,
-		Encoder: encodeTrackedTargetDataAny,
+		Encoder: encodeTrackedTargetDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -13896,7 +13896,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeWindlassControlStatus,
-		Encoder: encodeWindlassControlStatusAny,
+		Encoder: encodeWindlassControlStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -14047,7 +14047,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAnchorWindlassOperatingStatus,
-		Encoder: encodeAnchorWindlassOperatingStatusAny,
+		Encoder: encodeAnchorWindlassOperatingStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -14158,7 +14158,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAnchorWindlassMonitoringStatus,
-		Encoder: encodeAnchorWindlassMonitoringStatusAny,
+		Encoder: encodeAnchorWindlassMonitoringStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -14239,7 +14239,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodePositionRapidUpdate,
-		Encoder: encodePositionRapidUpdateAny,
+		Encoder: encodePositionRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Latitude",
@@ -14270,7 +14270,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeCogSogRapidUpdate,
-		Encoder: encodeCogSogRapidUpdateAny,
+		Encoder: encodeCogSogRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -14341,7 +14341,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodePositionDeltaRapidUpdate,
-		Encoder: encodePositionDeltaRapidUpdateAny,
+		Encoder: encodePositionDeltaRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -14402,7 +14402,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeAltitudeDeltaRapidUpdate,
-		Encoder: encodeAltitudeDeltaRapidUpdateAny,
+		Encoder: encodeAltitudeDeltaRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -14483,7 +14483,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeGnssPositionData,
-		Encoder: encodeGnssPositionDataAny,
+		Encoder: encodeGnssPositionDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -14674,7 +14674,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeTimeDate,
-		Encoder: encodeTimeDateAny,
+		Encoder: encodeTimeDateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Date",
@@ -14715,7 +14715,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassAPositionReport,
-		Encoder: encodeAisClassAPositionReportAny,
+		Encoder: encodeAisClassAPositionReportMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -14926,7 +14926,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassBPositionReport,
-		Encoder: encodeAisClassBPositionReportAny,
+		Encoder: encodeAisClassBPositionReportMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -15167,7 +15167,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassBExtendedPositionReport,
-		Encoder: encodeAisClassBExtendedPositionReportAny,
+		Encoder: encodeAisClassBExtendedPositionReportMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -15448,7 +15448,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisAidsToNavigationAtonReport,
-		Encoder: encodeAisAidsToNavigationAtonReportAny,
+		Encoder: encodeAisAidsToNavigationAtonReportMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -15689,7 +15689,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeDatum,
-		Encoder: encodeDatumAny,
+		Encoder: encodeDatumMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Local Datum",
@@ -15750,7 +15750,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeUserDatum,
-		Encoder: encodeUserDatumAny,
+		Encoder: encodeUserDatumMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Delta X",
@@ -15861,7 +15861,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeCrossTrackError,
-		Encoder: encodeCrossTrackErrorAny,
+		Encoder: encodeCrossTrackErrorMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -15932,7 +15932,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNavigationData,
-		Encoder: encodeNavigationDataAny,
+		Encoder: encodeNavigationDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -16093,7 +16093,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeNavigationRouteWpInformation,
-		Encoder: encodeNavigationRouteWpInformationAny,
+		Encoder: encodeNavigationRouteWpInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Start RPS#",
@@ -16234,7 +16234,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSetDriftRapidUpdate,
-		Encoder: encodeSetDriftRapidUpdateAny,
+		Encoder: encodeSetDriftRapidUpdateMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -16305,7 +16305,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeGnssDops,
-		Encoder: encodeGnssDopsAny,
+		Encoder: encodeGnssDopsMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -16386,7 +16386,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeGnssSatsInView,
-		Encoder: encodeGnssSatsInViewAny,
+		Encoder: encodeGnssSatsInViewMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "SID",
@@ -16507,7 +16507,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeGpsAlmanacData,
-		Encoder: encodeGpsAlmanacDataAny,
+		Encoder: encodeGpsAlmanacDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "PRN",
@@ -16658,7 +16658,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisUtcAndDateReport,
-		Encoder: encodeAisUtcAndDateReportAny,
+		Encoder: encodeAisUtcAndDateReportMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -16819,7 +16819,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassAStaticAndVoyageRelatedData,
-		Encoder: encodeAisClassAStaticAndVoyageRelatedDataAny,
+		Encoder: encodeAisClassAStaticAndVoyageRelatedDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17040,7 +17040,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisAddressedBinaryMessage,
-		Encoder: encodeAisAddressedBinaryMessageAny,
+		Encoder: encodeAisAddressedBinaryMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17171,7 +17171,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisAcknowledge,
-		Encoder: encodeAisAcknowledgeAny,
+		Encoder: encodeAisAcknowledgeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17292,7 +17292,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisBinaryBroadcastMessage,
-		Encoder: encodeAisBinaryBroadcastMessageAny,
+		Encoder: encodeAisBinaryBroadcastMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17383,7 +17383,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeRadioFrequencyModePower,
-		Encoder: encodeRadioFrequencyModePowerAny,
+		Encoder: encodeRadioFrequencyModePowerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Rx Frequency",
@@ -17454,7 +17454,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisUtcDateInquiry,
-		Encoder: encodeAisUtcDateInquiryAny,
+		Encoder: encodeAisUtcDateInquiryMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17525,7 +17525,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisAddressedSafetyRelatedMessage,
-		Encoder: encodeAisAddressedSafetyRelatedMessageAny,
+		Encoder: encodeAisAddressedSafetyRelatedMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17636,7 +17636,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisSafetyRelatedBroadcastMessage,
-		Encoder: encodeAisSafetyRelatedBroadcastMessageAny,
+		Encoder: encodeAisSafetyRelatedBroadcastMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17707,7 +17707,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisInterrogation,
-		Encoder: encodeAisInterrogationAny,
+		Encoder: encodeAisInterrogationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -17908,7 +17908,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisDataLinkManagementMessage,
-		Encoder: encodeAisDataLinkManagementMessageAny,
+		Encoder: encodeAisDataLinkManagementMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -18009,7 +18009,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisChannelManagement,
-		Encoder: encodeAisChannelManagementAny,
+		Encoder: encodeAisChannelManagementMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -18220,7 +18220,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassBStaticDataMsg24PartA,
-		Encoder: encodeAisClassBStaticDataMsg24PartAAny,
+		Encoder: encodeAisClassBStaticDataMsg24PartAMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -18301,7 +18301,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeAisClassBStaticDataMsg24PartB,
-		Encoder: encodeAisClassBStaticDataMsg24PartBAny,
+		Encoder: encodeAisClassBStaticDataMsg24PartBMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Message ID",
@@ -18472,7 +18472,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeWindData,
-		Encoder: encodeWindDataAny,
+		Encoder: encodeWindDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18533,7 +18533,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeEnvironmentalParametersObsolete,
-		Encoder: encodeEnvironmentalParametersObsoleteAny,
+		Encoder: encodeEnvironmentalParametersObsoleteMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18594,7 +18594,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeEnvironmentalParameters,
-		Encoder: encodeEnvironmentalParametersAny,
+		Encoder: encodeEnvironmentalParametersMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18665,7 +18665,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeTemperature,
-		Encoder: encodeTemperatureAny,
+		Encoder: encodeTemperatureMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18736,7 +18736,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeHumidity,
-		Encoder: encodeHumidityAny,
+		Encoder: encodeHumidityMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18807,7 +18807,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeActualPressure,
-		Encoder: encodeActualPressureAny,
+		Encoder: encodeActualPressureMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18868,7 +18868,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSetPressure,
-		Encoder: encodeSetPressureAny,
+		Encoder: encodeSetPressureMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18929,7 +18929,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeTemperatureExtendedRange,
-		Encoder: encodeTemperatureExtendedRangeAny,
+		Encoder: encodeTemperatureExtendedRangeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "SID",
@@ -18990,7 +18990,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeTideStationData,
-		Encoder: encodeTideStationDataAny,
+		Encoder: encodeTideStationDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Mode",
@@ -19111,7 +19111,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeSalinityStationData,
-		Encoder: encodeSalinityStationDataAny,
+		Encoder: encodeSalinityStationDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Mode",
@@ -19222,7 +19222,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeWatermakerInputSettingAndStatus,
-		Encoder: encodeWatermakerInputSettingAndStatusAny,
+		Encoder: encodeWatermakerInputSettingAndStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Watermaker Operating State",
@@ -19463,7 +19463,7 @@ var pgnList = []PgnInfo{
 		Fast: false,
 		ManId: 0,
 		Decoder: DecodeSmallCraftStatus,
-		Encoder: encodeSmallCraftStatusAny,
+		Encoder: encodeSmallCraftStatusMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Port trim tab",
@@ -19504,7 +19504,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 0,
 		Decoder: DecodeVesselSpeedComponents,
-		Encoder: encodeVesselSpeedComponentsAny,
+		Encoder: encodeVesselSpeedComponentsMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: {
 			Name: "Longitudinal Speed, Water-referenced",
@@ -19575,7 +19575,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubZoneInfo,
-		Encoder: encodeSonichubZoneInfoAny,
+		Encoder: encodeSonichubZoneInfoMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -19656,7 +19656,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubSource,
-		Encoder: encodeSonichubSourceAny,
+		Encoder: encodeSonichubSourceMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -19737,7 +19737,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubSourceList,
-		Encoder: encodeSonichubSourceListAny,
+		Encoder: encodeSonichubSourceListMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -19838,7 +19838,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubControl,
-		Encoder: encodeSonichubControlAny,
+		Encoder: encodeSonichubControlMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -19919,7 +19919,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubFmRadio,
-		Encoder: encodeSonichubFmRadioAny,
+		Encoder: encodeSonichubFmRadioMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20050,7 +20050,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubPlaylist,
-		Encoder: encodeSonichubPlaylistAny,
+		Encoder: encodeSonichubPlaylistMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20181,7 +20181,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubTrack,
-		Encoder: encodeSonichubTrackAny,
+		Encoder: encodeSonichubTrackMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20272,7 +20272,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubArtist,
-		Encoder: encodeSonichubArtistAny,
+		Encoder: encodeSonichubArtistMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20363,7 +20363,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubAlbum,
-		Encoder: encodeSonichubAlbumAny,
+		Encoder: encodeSonichubAlbumMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20454,7 +20454,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubMenuItem,
-		Encoder: encodeSonichubMenuItemAny,
+		Encoder: encodeSonichubMenuItemMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20575,7 +20575,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubZones,
-		Encoder: encodeSonichubZonesAny,
+		Encoder: encodeSonichubZonesMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20656,7 +20656,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubMaxVolume,
-		Encoder: encodeSonichubMaxVolumeAny,
+		Encoder: encodeSonichubMaxVolumeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20747,7 +20747,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubVolume,
-		Encoder: encodeSonichubVolumeAny,
+		Encoder: encodeSonichubVolumeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20838,7 +20838,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubInit1,
-		Encoder: encodeSonichubInit1Any,
+		Encoder: encodeSonichubInit1Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20909,7 +20909,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeSonichubPosition,
-		Encoder: encodeSonichubPositionAny,
+		Encoder: encodeSonichubPositionMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -20990,7 +20990,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimradTextMessage,
-		Encoder: encodeSimradTextMessageAny,
+		Encoder: encodeSimradTextMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21111,7 +21111,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeNavicoProductInformation,
-		Encoder: encodeNavicoProductInformationAny,
+		Encoder: encodeNavicoProductInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21232,7 +21232,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 140,
 		Decoder: DecodeLowranceProductInformation,
-		Encoder: encodeLowranceProductInformationAny,
+		Encoder: encodeLowranceProductInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21353,7 +21353,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetReprogramData,
-		Encoder: encodeSimnetReprogramDataAny,
+		Encoder: encodeSimnetReprogramDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21424,7 +21424,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoUnknown130820,
-		Encoder: encodeFurunoUnknown130820Any,
+		Encoder: encodeFurunoUnknown130820Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21515,7 +21515,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSourceName,
-		Encoder: encodeFusionSourceNameAny,
+		Encoder: encodeFusionSourceNameMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21626,7 +21626,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionTrackInfo,
-		Encoder: encodeFusionTrackInfoAny,
+		Encoder: encodeFusionTrackInfoMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21787,7 +21787,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionTrack,
-		Encoder: encodeFusionTrackAny,
+		Encoder: encodeFusionTrackMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21868,7 +21868,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionArtist,
-		Encoder: encodeFusionArtistAny,
+		Encoder: encodeFusionArtistMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -21949,7 +21949,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionAlbum,
-		Encoder: encodeFusionAlbumAny,
+		Encoder: encodeFusionAlbumMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22030,7 +22030,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionUnitName,
-		Encoder: encodeFusionUnitNameAny,
+		Encoder: encodeFusionUnitNameMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22101,7 +22101,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionZoneName,
-		Encoder: encodeFusionZoneNameAny,
+		Encoder: encodeFusionZoneNameMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22182,7 +22182,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionPlayProgress,
-		Encoder: encodeFusionPlayProgressAny,
+		Encoder: encodeFusionPlayProgressMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22263,7 +22263,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionAmFmStation,
-		Encoder: encodeFusionAmFmStationAny,
+		Encoder: encodeFusionAmFmStationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22374,7 +22374,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionVhf,
-		Encoder: encodeFusionVhfAny,
+		Encoder: encodeFusionVhfMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22465,7 +22465,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSquelch,
-		Encoder: encodeFusionSquelchAny,
+		Encoder: encodeFusionSquelchMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22546,7 +22546,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionScan,
-		Encoder: encodeFusionScanAny,
+		Encoder: encodeFusionScanMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22637,7 +22637,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionMenuItem,
-		Encoder: encodeFusionMenuItemAny,
+		Encoder: encodeFusionMenuItemMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22778,7 +22778,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionReplay,
-		Encoder: encodeFusionReplayAny,
+		Encoder: encodeFusionReplayMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22919,7 +22919,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionMute,
-		Encoder: encodeFusionMuteAny,
+		Encoder: encodeFusionMuteMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -22990,7 +22990,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 419,
 		Decoder: DecodeFusionSubVolume,
-		Encoder: encodeFusionSubVolumeAny,
+		Encoder: encodeFusionSubVolumeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23091,7 +23091,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeNavicoAsciiData,
-		Encoder: encodeNavicoAsciiDataAny,
+		Encoder: encodeNavicoAsciiDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23152,7 +23152,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoUnknown130821,
-		Encoder: encodeFurunoUnknown130821Any,
+		Encoder: encodeFurunoUnknown130821Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23293,7 +23293,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeNavicoUnknown1,
-		Encoder: encodeNavicoUnknown1Any,
+		Encoder: encodeNavicoUnknown1Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23344,7 +23344,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 137,
 		Decoder: DecodeMaretronProprietaryTemperatureHighRange,
-		Encoder: encodeMaretronProprietaryTemperatureHighRangeAny,
+		Encoder: encodeMaretronProprietaryTemperatureHighRangeMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23435,7 +23435,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 381,
 		Decoder: DecodeBGKeyValueData,
-		Encoder: encodeBGKeyValueDataAny,
+		Encoder: encodeBGKeyValueDataMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23506,7 +23506,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 137,
 		Decoder: DecodeMaretronAnnunciator,
-		Encoder: encodeMaretronAnnunciatorAny,
+		Encoder: encodeMaretronAnnunciatorMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23597,7 +23597,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 275,
 		Decoder: DecodeNavicoUnknown2,
-		Encoder: encodeNavicoUnknown2Any,
+		Encoder: encodeNavicoUnknown2Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23648,7 +23648,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 381,
 		Decoder: DecodeBGUserAndRemoteRename,
-		Encoder: encodeBGUserAndRemoteRenameAny,
+		Encoder: encodeBGUserAndRemoteRenameMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23749,7 +23749,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetFluidLevelSensorConfiguration,
-		Encoder: encodeSimnetFluidLevelSensorConfigurationAny,
+		Encoder: encodeSimnetFluidLevelSensorConfigurationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -23880,7 +23880,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 137,
 		Decoder: DecodeMaretronSwitchStatusCounter,
-		Encoder: encodeMaretronSwitchStatusCounterAny,
+		Encoder: encodeMaretronSwitchStatusCounterMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24011,7 +24011,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 137,
 		Decoder: DecodeMaretronSwitchStatusTimer,
-		Encoder: encodeMaretronSwitchStatusTimerAny,
+		Encoder: encodeMaretronSwitchStatusTimerMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24142,7 +24142,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoSixDegreesOfFreedomMovement,
-		Encoder: encodeFurunoSixDegreesOfFreedomMovementAny,
+		Encoder: encodeFurunoSixDegreesOfFreedomMovementMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24273,7 +24273,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetAisClassBStaticDataMsg24PartB,
-		Encoder: encodeSimnetAisClassBStaticDataMsg24PartBAny,
+		Encoder: encodeSimnetAisClassBStaticDataMsg24PartBMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24464,7 +24464,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoHeelAngleRollInformation,
-		Encoder: encodeFurunoHeelAngleRollInformationAny,
+		Encoder: encodeFurunoHeelAngleRollInformationMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24555,7 +24555,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoMultiSatsInViewExtended,
-		Encoder: encodeFurunoMultiSatsInViewExtendedAny,
+		Encoder: encodeFurunoMultiSatsInViewExtendedMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24596,7 +24596,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetKeyValue,
-		Encoder: encodeSimnetKeyValueAny,
+		Encoder: encodeSimnetKeyValueMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24717,7 +24717,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetParameterSet,
-		Encoder: encodeSimnetParameterSetAny,
+		Encoder: encodeSimnetParameterSetMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24838,7 +24838,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1855,
 		Decoder: DecodeFurunoMotionSensorStatusExtended,
-		Encoder: encodeFurunoMotionSensorStatusExtendedAny,
+		Encoder: encodeFurunoMotionSensorStatusExtendedMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -24879,7 +24879,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetApCommand,
-		Encoder: encodeSimnetApCommandAny,
+		Encoder: encodeSimnetApCommandMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25000,7 +25000,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetEventCommandApCommand,
-		Encoder: encodeSimnetEventCommandApCommandAny,
+		Encoder: encodeSimnetEventCommandApCommandMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25121,7 +25121,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetAlarm,
-		Encoder: encodeSimnetAlarmAny,
+		Encoder: encodeSimnetAlarmMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25242,7 +25242,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetEventReplyApCommand,
-		Encoder: encodeSimnetEventReplyApCommandAny,
+		Encoder: encodeSimnetEventReplyApCommandMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25363,7 +25363,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetAlarmMessage,
-		Encoder: encodeSimnetAlarmMessageAny,
+		Encoder: encodeSimnetAlarmMessageMsg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25444,7 +25444,7 @@ var pgnList = []PgnInfo{
 		Fast: true,
 		ManId: 1857,
 		Decoder: DecodeSimnetApUnknown4,
-		Encoder: encodeSimnetApUnknown4Any,
+		Encoder: encodeSimnetApUnknown4Msg,
 		Fields: map[int]*FieldDescriptor{
 		1: { 
 			Name: "Manufacturer Code",
@@ -25546,7 +25546,7 @@ var pgnList = []PgnInfo{
 func init() {
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
 	UnseenLookup = make(map[uint32][]*PgnInfo)
-	EncoderLookup = make(map[uint32]func(any) ([]byte, error))
+	EncoderLookup = make(map[uint32]func(Message) ([]byte, error))
 
 	// Index every PGN in the generated pgnList (PGNs with sample data / known-good decoders).
 	for i, pi := range pgnList {

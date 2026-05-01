@@ -60,16 +60,17 @@ SOFTWARE.
 // Returns a pgn.MessageInfo populated with the extracted PGN, source, priority, target,
 // and current timestamp.
 func NewPacketInfo(message *can.Frame) pgn.MessageInfo {
+	// Extract priority from bits 26-28 (3 bits). The mask 0x1C000000 selects bits 28-26,
+	// then right-shift by 26 to get the 0-7 priority value.
+	priority := uint8((message.ID & 0x1C000000) >> 26)
 	p := pgn.MessageInfo{
 		Timestamp: time.Now(),
 		// Extract source address from bits 0-7 of the CAN ID.
 		SourceId: uint8(message.ID & 0xFF),
 		// Extract PGN from bits 8-25 (18 bits). The mask 0x3FFFF00 selects bits 25-8,
 		// then right-shift by 8 to get the actual PGN value.
-		PGN: (message.ID & 0x3FFFF00) >> 8,
-		// Extract priority from bits 26-28 (3 bits). The mask 0x1C000000 selects bits 28-26,
-		// then right-shift by 26 to get the 0-7 priority value.
-		Priority: uint8((message.ID & 0x1C000000) >> 26),
+		PGN:      (message.ID & 0x3FFFF00) >> 8,
+		Priority: &priority,
 	}
 
 	// Determine if this is an addressed (point-to-point) or broadcast message by
@@ -81,7 +82,8 @@ func NewPacketInfo(message *can.Frame) pgn.MessageInfo {
 		// This is an addressed (point-to-point) message. The lower byte of the PGN field
 		// actually contains the destination address, not part of the PGN itself.
 		// Extract it as TargetId and mask it off the PGN.
-		p.TargetId = uint8(p.PGN & 0xFF)
+		targetId := uint8(p.PGN & 0xFF)
+		p.TargetId = &targetId
 		p.PGN &= 0xFFF00 // Zero out the destination byte to get the true PGN.
 	}
 	return p

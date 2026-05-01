@@ -11,8 +11,9 @@ type LeewayAngle struct {
 	Sid *uint8 `json:"sid"`
 	LeewayAngle *float32 `json:"leewayAngle"`
 }
-func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val LeewayAngle
+func (x *LeewayAngle) PGNNumber() uint32  { return 128000 }
+func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LeewayAngle{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LeewayAngle-Sid: %w", err)
@@ -45,8 +46,9 @@ type WindData struct {
 	WindAngle *float32 `json:"windAngle"`
 	Reference WindReferenceConst `json:"reference"`
 }
-func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WindData
+func (x *WindData) PGNNumber() uint32  { return 130306 }
+func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WindData{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for WindData-Sid: %w", err)
@@ -97,8 +99,9 @@ type EnvironmentalParametersObsolete struct {
 	OutsideAmbientAirTemperature *units.Temperature `json:"outsideAmbientAirTemperature"`
 	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
-func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EnvironmentalParametersObsolete
+func (x *EnvironmentalParametersObsolete) PGNNumber() uint32  { return 130310 }
+func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EnvironmentalParametersObsolete{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParametersObsolete-Sid: %w", err)
@@ -151,8 +154,9 @@ type EnvironmentalParameters struct {
 	Humidity *float32 `json:"humidity"`
 	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
 }
-func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EnvironmentalParameters
+func (x *EnvironmentalParameters) PGNNumber() uint32  { return 130311 }
+func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EnvironmentalParameters{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-Sid: %w", err)
@@ -218,8 +222,9 @@ type Temperature struct {
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
-func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Temperature
+func (x *Temperature) PGNNumber() uint32  { return 130312 }
+func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Temperature{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Temperature-Sid: %w", err)
@@ -280,8 +285,9 @@ type Humidity struct {
 	ActualHumidity *float32 `json:"actualHumidity"`
 	SetHumidity *float32 `json:"setHumidity"`
 }
-func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Humidity
+func (x *Humidity) PGNNumber() uint32  { return 130313 }
+func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Humidity{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Humidity-Sid: %w", err)
@@ -341,8 +347,9 @@ type ActualPressure struct {
 	Source PressureSourceConst `json:"source"`
 	Pressure *units.Pressure `json:"pressure"`
 }
-func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ActualPressure
+func (x *ActualPressure) PGNNumber() uint32  { return 130314 }
+func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ActualPressure{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ActualPressure-Sid: %w", err)
@@ -393,8 +400,9 @@ type SetPressure struct {
 	Source PressureSourceConst `json:"source"`
 	Pressure *units.Pressure `json:"pressure"`
 }
-func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SetPressure
+func (x *SetPressure) PGNNumber() uint32  { return 130315 }
+func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SetPressure{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SetPressure-Sid: %w", err)
@@ -446,8 +454,9 @@ type TemperatureExtendedRange struct {
 	Temperature *units.Temperature `json:"temperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
-func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TemperatureExtendedRange
+func (x *TemperatureExtendedRange) PGNNumber() uint32  { return 130316 }
+func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TemperatureExtendedRange{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TemperatureExtendedRange-Sid: %w", err)
@@ -509,8 +518,9 @@ type TideStationData struct {
 	StationId string `json:"stationId"`
 	StationName string `json:"stationName"`
 }
-func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TideStationData
+func (x *TideStationData) PGNNumber() uint32  { return 130320 }
+func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TideStationData{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-Mode: %w", err)
@@ -620,8 +630,9 @@ type SalinityStationData struct {
 	StationId string `json:"stationId"`
 	StationName string `json:"stationName"`
 }
-func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SalinityStationData
+func (x *SalinityStationData) PGNNumber() uint32  { return 130321 }
+func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SalinityStationData{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-Mode: %w", err)
@@ -735,8 +746,9 @@ type WatermakerInputSettingAndStatus struct {
 	BrineWaterFlow *units.Flow `json:"brineWaterFlow"`
 	RunTime *uint32 `json:"runTime"`
 }
-func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WatermakerInputSettingAndStatus
+func (x *WatermakerInputSettingAndStatus) PGNNumber() uint32  { return 130567 }
+func DecodeWatermakerInputSettingAndStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WatermakerInputSettingAndStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for WatermakerInputSettingAndStatus-WatermakerOperatingState: %w", err)
@@ -951,7 +963,7 @@ func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
 	w.skipBits(40)
 	return w.Bytes(), w.Err()
 }
-func encodeLeewayAngleAny(v any) ([]byte, error) {
+func encodeLeewayAngleMsg(v Message) ([]byte, error) {
 	val, ok := v.(*LeewayAngle)
 	if !ok {
 		return nil, fmt.Errorf("expected *LeewayAngle, got %T", v)
@@ -973,7 +985,7 @@ func EncodeWindData(val *WindData) ([]byte, error) {
 	w.skipBits(21)
 	return w.Bytes(), w.Err()
 }
-func encodeWindDataAny(v any) ([]byte, error) {
+func encodeWindDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*WindData)
 	if !ok {
 		return nil, fmt.Errorf("expected *WindData, got %T", v)
@@ -1003,7 +1015,7 @@ func EncodeEnvironmentalParametersObsolete(val *EnvironmentalParametersObsolete)
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeEnvironmentalParametersObsoleteAny(v any) ([]byte, error) {
+func encodeEnvironmentalParametersObsoleteMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EnvironmentalParametersObsolete)
 	if !ok {
 		return nil, fmt.Errorf("expected *EnvironmentalParametersObsolete, got %T", v)
@@ -1030,7 +1042,7 @@ func EncodeEnvironmentalParameters(val *EnvironmentalParameters) ([]byte, error)
 	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
 	return w.Bytes(), w.Err()
 }
-func encodeEnvironmentalParametersAny(v any) ([]byte, error) {
+func encodeEnvironmentalParametersMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EnvironmentalParameters)
 	if !ok {
 		return nil, fmt.Errorf("expected *EnvironmentalParameters, got %T", v)
@@ -1057,7 +1069,7 @@ func EncodeTemperature(val *Temperature) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeTemperatureAny(v any) ([]byte, error) {
+func encodeTemperatureMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Temperature)
 	if !ok {
 		return nil, fmt.Errorf("expected *Temperature, got %T", v)
@@ -1076,7 +1088,7 @@ func EncodeHumidity(val *Humidity) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeHumidityAny(v any) ([]byte, error) {
+func encodeHumidityMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Humidity)
 	if !ok {
 		return nil, fmt.Errorf("expected *Humidity, got %T", v)
@@ -1098,7 +1110,7 @@ func EncodeActualPressure(val *ActualPressure) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeActualPressureAny(v any) ([]byte, error) {
+func encodeActualPressureMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ActualPressure)
 	if !ok {
 		return nil, fmt.Errorf("expected *ActualPressure, got %T", v)
@@ -1120,7 +1132,7 @@ func EncodeSetPressure(val *SetPressure) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSetPressureAny(v any) ([]byte, error) {
+func encodeSetPressureMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SetPressure)
 	if !ok {
 		return nil, fmt.Errorf("expected *SetPressure, got %T", v)
@@ -1146,7 +1158,7 @@ func EncodeTemperatureExtendedRange(val *TemperatureExtendedRange) ([]byte, erro
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
 	return w.Bytes(), w.Err()
 }
-func encodeTemperatureExtendedRangeAny(v any) ([]byte, error) {
+func encodeTemperatureExtendedRangeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TemperatureExtendedRange)
 	if !ok {
 		return nil, fmt.Errorf("expected *TemperatureExtendedRange, got %T", v)
@@ -1178,7 +1190,7 @@ func EncodeTideStationData(val *TideStationData) ([]byte, error) {
 	w.writeStringWithLengthAndControl(val.StationName)
 	return w.Bytes(), w.Err()
 }
-func encodeTideStationDataAny(v any) ([]byte, error) {
+func encodeTideStationDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TideStationData)
 	if !ok {
 		return nil, fmt.Errorf("expected *TideStationData, got %T", v)
@@ -1205,7 +1217,7 @@ func EncodeSalinityStationData(val *SalinityStationData) ([]byte, error) {
 	w.writeStringWithLengthAndControl(val.StationName)
 	return w.Bytes(), w.Err()
 }
-func encodeSalinityStationDataAny(v any) ([]byte, error) {
+func encodeSalinityStationDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SalinityStationData)
 	if !ok {
 		return nil, fmt.Errorf("expected *SalinityStationData, got %T", v)
@@ -1269,7 +1281,7 @@ func EncodeWatermakerInputSettingAndStatus(val *WatermakerInputSettingAndStatus)
 	w.writeUInt32(val.RunTime, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeWatermakerInputSettingAndStatusAny(v any) ([]byte, error) {
+func encodeWatermakerInputSettingAndStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*WatermakerInputSettingAndStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *WatermakerInputSettingAndStatus, got %T", v)

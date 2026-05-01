@@ -12,8 +12,9 @@ type IsoAcknowledgement struct {
 	GroupFunction *uint8 `json:"groupFunction"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoAcknowledgement
+func (i *IsoAcknowledgement) PGNNumber() uint32  { return 59392 }
+func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoAcknowledgement{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAcknowledgement-Control: %w", err)
@@ -58,7 +59,7 @@ func EncodeIsoAcknowledgement(val *IsoAcknowledgement) ([]byte, error) {
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoAcknowledgementAny(v any) ([]byte, error) {
+func encodeIsoAcknowledgementMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoAcknowledgement)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoAcknowledgement, got %T", v)
@@ -69,8 +70,9 @@ type IsoRequest struct {
 	Info MessageInfo `json:"info"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoRequest
+func (i *IsoRequest) PGNNumber() uint32  { return 59904 }
+func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoRequest{}
 	val.Info = Info
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoRequest-Pgn: %w", err)
@@ -90,7 +92,7 @@ func EncodeIsoRequest(val *IsoRequest) ([]byte, error) {
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoRequestAny(v any) ([]byte, error) {
+func encodeIsoRequestMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoRequest)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoRequest, got %T", v)
@@ -102,8 +104,9 @@ type IsoTransportProtocolDataTransfer struct {
 	Sid *uint8 `json:"sid"`
 	Data []uint8 `json:"data"`
 }
-func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolDataTransfer
+func (i *IsoTransportProtocolDataTransfer) PGNNumber() uint32  { return 60160 }
+func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolDataTransfer{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolDataTransfer-Sid: %w", err)
@@ -133,7 +136,7 @@ func EncodeIsoTransportProtocolDataTransfer(val *IsoTransportProtocolDataTransfe
 	w.writeBinaryData(val.Data, 56)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolDataTransferAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolDataTransferMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolDataTransfer)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolDataTransfer, got %T", v)
@@ -148,8 +151,9 @@ type IsoTransportProtocolConnectionManagementRequestToSend struct {
 	PacketsReply *uint8 `json:"packetsReply"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolConnectionManagementRequestToSend
+func (i *IsoTransportProtocolConnectionManagementRequestToSend) PGNNumber() uint32  { return 60416 }
+func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolConnectionManagementRequestToSend{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementRequestToSend-GroupFunctionCode: %w", err)
@@ -212,7 +216,7 @@ func EncodeIsoTransportProtocolConnectionManagementRequestToSend(val *IsoTranspo
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolConnectionManagementRequestToSendAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolConnectionManagementRequestToSendMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementRequestToSend)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolConnectionManagementRequestToSend, got %T", v)
@@ -226,8 +230,9 @@ type IsoTransportProtocolConnectionManagementClearToSend struct {
 	NextSid *uint8 `json:"nextSid"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolConnectionManagementClearToSend
+func (i *IsoTransportProtocolConnectionManagementClearToSend) PGNNumber() uint32  { return 60416 }
+func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolConnectionManagementClearToSend{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementClearToSend-GroupFunctionCode: %w", err)
@@ -285,7 +290,7 @@ func EncodeIsoTransportProtocolConnectionManagementClearToSend(val *IsoTransport
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolConnectionManagementClearToSendAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolConnectionManagementClearToSendMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementClearToSend)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolConnectionManagementClearToSend, got %T", v)
@@ -299,8 +304,9 @@ type IsoTransportProtocolConnectionManagementEndOfMessage struct {
 	TotalNumberOfFramesReceived *uint8 `json:"totalNumberOfFramesReceived"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolConnectionManagementEndOfMessage
+func (i *IsoTransportProtocolConnectionManagementEndOfMessage) PGNNumber() uint32  { return 60416 }
+func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolConnectionManagementEndOfMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementEndOfMessage-GroupFunctionCode: %w", err)
@@ -358,7 +364,7 @@ func EncodeIsoTransportProtocolConnectionManagementEndOfMessage(val *IsoTranspor
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolConnectionManagementEndOfMessageAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolConnectionManagementEndOfMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementEndOfMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolConnectionManagementEndOfMessage, got %T", v)
@@ -372,8 +378,9 @@ type IsoTransportProtocolConnectionManagementBroadcastAnnounce struct {
 	Packets *uint8 `json:"packets"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolConnectionManagementBroadcastAnnounce
+func (i *IsoTransportProtocolConnectionManagementBroadcastAnnounce) PGNNumber() uint32  { return 60416 }
+func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolConnectionManagementBroadcastAnnounce{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementBroadcastAnnounce-GroupFunctionCode: %w", err)
@@ -431,7 +438,7 @@ func EncodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(val *IsoTra
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementBroadcastAnnounce)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolConnectionManagementBroadcastAnnounce, got %T", v)
@@ -444,8 +451,9 @@ type IsoTransportProtocolConnectionManagementAbort struct {
 	Reason []uint8 `json:"reason"`
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoTransportProtocolConnectionManagementAbort
+func (i *IsoTransportProtocolConnectionManagementAbort) PGNNumber() uint32  { return 60416 }
+func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoTransportProtocolConnectionManagementAbort{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementAbort-GroupFunctionCode: %w", err)
@@ -493,7 +501,7 @@ func EncodeIsoTransportProtocolConnectionManagementAbort(val *IsoTransportProtoc
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoTransportProtocolConnectionManagementAbortAny(v any) ([]byte, error) {
+func encodeIsoTransportProtocolConnectionManagementAbortMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementAbort)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoTransportProtocolConnectionManagementAbort, got %T", v)
@@ -512,8 +520,9 @@ type IsoAddressClaim struct {
 	IndustryGroup IndustryCodeConst `json:"industryGroup"`
 	ArbitraryAddressCapable *uint8 `json:"arbitraryAddressCapable"`
 }
-func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoAddressClaim
+func (i *IsoAddressClaim) PGNNumber() uint32  { return 60928 }
+func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoAddressClaim{}
 	val.Info = Info
 	if v, err := stream.readUInt32(21); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-UniqueNumber: %w", err)
@@ -618,7 +627,7 @@ func EncodeIsoAddressClaim(val *IsoAddressClaim) ([]byte, error) {
 	w.writeUInt8(val.ArbitraryAddressCapable, 1)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoAddressClaimAny(v any) ([]byte, error) {
+func encodeIsoAddressClaimMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoAddressClaim)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoAddressClaim, got %T", v)
@@ -637,8 +646,9 @@ type IsoCommandedAddress struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	NewSourceAddress *uint8 `json:"newSourceAddress"`
 }
-func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val IsoCommandedAddress
+func (i *IsoCommandedAddress) PGNNumber() uint32  { return 65240 }
+func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &IsoCommandedAddress{}
 	val.Info = Info
 	if v, err := stream.readBinaryData(21); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-UniqueNumber: %w", err)
@@ -748,7 +758,7 @@ func EncodeIsoCommandedAddress(val *IsoCommandedAddress) ([]byte, error) {
 	w.writeUInt8(val.NewSourceAddress, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeIsoCommandedAddressAny(v any) ([]byte, error) {
+func encodeIsoCommandedAddressMsg(v Message) ([]byte, error) {
 	val, ok := v.(*IsoCommandedAddress)
 	if !ok {
 		return nil, fmt.Errorf("expected *IsoCommandedAddress, got %T", v)
@@ -764,12 +774,13 @@ type NmeaRequestGroupFunction struct {
 	NumberOfParameters *uint8 `json:"numberOfParameters"`
 	Repeating1 []NmeaRequestGroupFunctionRepeating1 `json:"repeating1"`
 }
+func (n *NmeaRequestGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaRequestGroupFunctionRepeating1 struct {
 	Parameter *uint8 `json:"parameter"`
 	Value []uint8 `json:"value"`
 }
-func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaRequestGroupFunction
+func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaRequestGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var fieldIndex uint8
@@ -881,7 +892,7 @@ func EncodeNmeaRequestGroupFunction(val *NmeaRequestGroupFunction) ([]byte, erro
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaRequestGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaRequestGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaRequestGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaRequestGroupFunction, got %T", v)
@@ -896,12 +907,13 @@ type NmeaCommandGroupFunction struct {
 	NumberOfParameters *uint8 `json:"numberOfParameters"`
 	Repeating1 []NmeaCommandGroupFunctionRepeating1 `json:"repeating1"`
 }
+func (n *NmeaCommandGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaCommandGroupFunctionRepeating1 struct {
 	Parameter *uint8 `json:"parameter"`
 	Value []uint8 `json:"value"`
 }
-func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaCommandGroupFunction
+func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaCommandGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var fieldIndex uint8
@@ -1008,7 +1020,7 @@ func EncodeNmeaCommandGroupFunction(val *NmeaCommandGroupFunction) ([]byte, erro
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaCommandGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaCommandGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaCommandGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaCommandGroupFunction, got %T", v)
@@ -1024,11 +1036,12 @@ type NmeaAcknowledgeGroupFunction struct {
 	NumberOfParameters *uint8 `json:"numberOfParameters"`
 	Repeating1 []NmeaAcknowledgeGroupFunctionRepeating1 `json:"repeating1"`
 }
+func (n *NmeaAcknowledgeGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaAcknowledgeGroupFunctionRepeating1 struct {
 	Parameter ParameterFieldConst `json:"parameter"`
 }
-func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaAcknowledgeGroupFunction
+func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaAcknowledgeGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(8); err != nil {
@@ -1122,7 +1135,7 @@ func EncodeNmeaAcknowledgeGroupFunction(val *NmeaAcknowledgeGroupFunction) ([]by
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaAcknowledgeGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaAcknowledgeGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaAcknowledgeGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaAcknowledgeGroupFunction, got %T", v)
@@ -1141,6 +1154,7 @@ type NmeaReadFieldsGroupFunction struct {
 	Repeating1 []NmeaReadFieldsGroupFunctionRepeating1 `json:"repeating1"`
 	Repeating2 []NmeaReadFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
+func (n *NmeaReadFieldsGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaReadFieldsGroupFunctionRepeating1 struct {
 	SelectionParameter *uint8 `json:"selectionParameter"`
 	SelectionValue []uint8 `json:"selectionValue"`
@@ -1148,8 +1162,8 @@ type NmeaReadFieldsGroupFunctionRepeating1 struct {
 type NmeaReadFieldsGroupFunctionRepeating2 struct {
 	Parameter *uint8 `json:"parameter"`
 }
-func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaReadFieldsGroupFunction
+func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaReadFieldsGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var repeat2Count uint16
@@ -1321,7 +1335,7 @@ func EncodeNmeaReadFieldsGroupFunction(val *NmeaReadFieldsGroupFunction) ([]byte
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaReadFieldsGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaReadFieldsGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaReadFieldsGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaReadFieldsGroupFunction, got %T", v)
@@ -1340,6 +1354,7 @@ type NmeaReadFieldsReplyGroupFunction struct {
 	Repeating1 []NmeaReadFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
 	Repeating2 []NmeaReadFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
+func (n *NmeaReadFieldsReplyGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaReadFieldsReplyGroupFunctionRepeating1 struct {
 	SelectionParameter *uint8 `json:"selectionParameter"`
 	SelectionValue []uint8 `json:"selectionValue"`
@@ -1348,8 +1363,8 @@ type NmeaReadFieldsReplyGroupFunctionRepeating2 struct {
 	Parameter *uint8 `json:"parameter"`
 	Value []uint8 `json:"value"`
 }
-func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaReadFieldsReplyGroupFunction
+func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaReadFieldsReplyGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var repeat2Count uint16
@@ -1534,7 +1549,7 @@ func EncodeNmeaReadFieldsReplyGroupFunction(val *NmeaReadFieldsReplyGroupFunctio
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaReadFieldsReplyGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaReadFieldsReplyGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaReadFieldsReplyGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaReadFieldsReplyGroupFunction, got %T", v)
@@ -1553,6 +1568,7 @@ type NmeaWriteFieldsGroupFunction struct {
 	Repeating1 []NmeaWriteFieldsGroupFunctionRepeating1 `json:"repeating1"`
 	Repeating2 []NmeaWriteFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
+func (n *NmeaWriteFieldsGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaWriteFieldsGroupFunctionRepeating1 struct {
 	SelectionParameter *uint8 `json:"selectionParameter"`
 	SelectionValue []uint8 `json:"selectionValue"`
@@ -1561,8 +1577,8 @@ type NmeaWriteFieldsGroupFunctionRepeating2 struct {
 	Parameter *uint8 `json:"parameter"`
 	Value []uint8 `json:"value"`
 }
-func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaWriteFieldsGroupFunction
+func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaWriteFieldsGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var repeat2Count uint16
@@ -1747,7 +1763,7 @@ func EncodeNmeaWriteFieldsGroupFunction(val *NmeaWriteFieldsGroupFunction) ([]by
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaWriteFieldsGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaWriteFieldsGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaWriteFieldsGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaWriteFieldsGroupFunction, got %T", v)
@@ -1766,6 +1782,7 @@ type NmeaWriteFieldsReplyGroupFunction struct {
 	Repeating1 []NmeaWriteFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
 	Repeating2 []NmeaWriteFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
+func (n *NmeaWriteFieldsReplyGroupFunction) PGNNumber() uint32  { return 126208 }
 type NmeaWriteFieldsReplyGroupFunctionRepeating1 struct {
 	SelectionParameter *uint8 `json:"selectionParameter"`
 	SelectionValue []uint8 `json:"selectionValue"`
@@ -1774,8 +1791,8 @@ type NmeaWriteFieldsReplyGroupFunctionRepeating2 struct {
 	Parameter *uint8 `json:"parameter"`
 	Value []uint8 `json:"value"`
 }
-func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NmeaWriteFieldsReplyGroupFunction
+func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NmeaWriteFieldsReplyGroupFunction{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var repeat2Count uint16
@@ -1960,7 +1977,7 @@ func EncodeNmeaWriteFieldsReplyGroupFunction(val *NmeaWriteFieldsReplyGroupFunct
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeNmeaWriteFieldsReplyGroupFunctionAny(v any) ([]byte, error) {
+func encodeNmeaWriteFieldsReplyGroupFunctionMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NmeaWriteFieldsReplyGroupFunction)
 	if !ok {
 		return nil, fmt.Errorf("expected *NmeaWriteFieldsReplyGroupFunction, got %T", v)
@@ -1972,11 +1989,12 @@ type PgnListTransmitAndReceive struct {
 	FunctionCode PgnListFunctionConst `json:"functionCode"`
 	Repeating1 []PgnListTransmitAndReceiveRepeating1 `json:"repeating1"`
 }
+func (p *PgnListTransmitAndReceive) PGNNumber() uint32  { return 126464 }
 type PgnListTransmitAndReceiveRepeating1 struct {
 	Pgn *uint32 `json:"pgn"`
 }
-func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val PgnListTransmitAndReceive
+func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &PgnListTransmitAndReceive{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(8); err != nil {
@@ -2021,7 +2039,7 @@ func EncodePgnListTransmitAndReceive(val *PgnListTransmitAndReceive) ([]byte, er
 	}
 	return w.Bytes(), w.Err()
 }
-func encodePgnListTransmitAndReceiveAny(v any) ([]byte, error) {
+func encodePgnListTransmitAndReceiveMsg(v Message) ([]byte, error) {
 	val, ok := v.(*PgnListTransmitAndReceive)
 	if !ok {
 		return nil, fmt.Errorf("expected *PgnListTransmitAndReceive, got %T", v)
@@ -2051,8 +2069,9 @@ type Alert struct {
 	AlertPriority *uint8 `json:"alertPriority"`
 	AlertState AlertStateConst `json:"alertState"`
 }
-func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Alert
+func (a *Alert) PGNNumber() uint32  { return 126983 }
+func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Alert{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertType: %w", err)
@@ -2267,7 +2286,7 @@ func EncodeAlert(val *Alert) ([]byte, error) {
 	w.writeLookupField(uint64(val.AlertState), 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAlertAny(v any) ([]byte, error) {
+func encodeAlertMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Alert)
 	if !ok {
 		return nil, fmt.Errorf("expected *Alert, got %T", v)
@@ -2288,8 +2307,9 @@ type AlertResponse struct {
 	AcknowledgeSourceNetworkIdName *uint64 `json:"acknowledgeSourceNetworkIdName"`
 	ResponseCommand AlertResponseCommandConst `json:"responseCommand"`
 }
-func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AlertResponse
+func (a *AlertResponse) PGNNumber() uint32  { return 126984 }
+func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AlertResponse{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertType: %w", err)
@@ -2414,7 +2434,7 @@ func EncodeAlertResponse(val *AlertResponse) ([]byte, error) {
 	w.skipBits(6)
 	return w.Bytes(), w.Err()
 }
-func encodeAlertResponseAny(v any) ([]byte, error) {
+func encodeAlertResponseMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AlertResponse)
 	if !ok {
 		return nil, fmt.Errorf("expected *AlertResponse, got %T", v)
@@ -2436,8 +2456,9 @@ type AlertText struct {
 	AlertTextDescription string `json:"alertTextDescription"`
 	AlertLocationTextDescription string `json:"alertLocationTextDescription"`
 }
-func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AlertText
+func (a *AlertText) PGNNumber() uint32  { return 126985 }
+func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AlertText{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertType: %w", err)
@@ -2567,7 +2588,7 @@ func EncodeAlertText(val *AlertText) ([]byte, error) {
 	w.writeStringWithLengthAndControl(val.AlertLocationTextDescription)
 	return w.Bytes(), w.Err()
 }
-func encodeAlertTextAny(v any) ([]byte, error) {
+func encodeAlertTextMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AlertText)
 	if !ok {
 		return nil, fmt.Errorf("expected *AlertText, got %T", v)
@@ -2591,8 +2612,9 @@ type AlertConfiguration struct {
 	TemporarySilencePeriod *uint8 `json:"temporarySilencePeriod"`
 	EscalationPeriod *uint8 `json:"escalationPeriod"`
 }
-func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AlertConfiguration
+func (a *AlertConfiguration) PGNNumber() uint32  { return 126986 }
+func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AlertConfiguration{}
 	val.Info = Info
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertType: %w", err)
@@ -2747,7 +2769,7 @@ func EncodeAlertConfiguration(val *AlertConfiguration) ([]byte, error) {
 	w.writeUInt8(val.EscalationPeriod, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAlertConfigurationAny(v any) ([]byte, error) {
+func encodeAlertConfigurationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AlertConfiguration)
 	if !ok {
 		return nil, fmt.Errorf("expected *AlertConfiguration, got %T", v)
@@ -2768,14 +2790,15 @@ type AlertThreshold struct {
 	NumberOfParameters *uint8 `json:"numberOfParameters"`
 	Repeating1 []AlertThresholdRepeating1 `json:"repeating1"`
 }
+func (a *AlertThreshold) PGNNumber() uint32  { return 126987 }
 type AlertThresholdRepeating1 struct {
 	ParameterNumber *uint8 `json:"parameterNumber"`
 	TriggerMethod *uint8 `json:"triggerMethod"`
 	ThresholdDataFormat *uint8 `json:"thresholdDataFormat"`
 	ThresholdLevel *uint64 `json:"thresholdLevel"`
 }
-func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AlertThreshold
+func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AlertThreshold{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(4); err != nil {
@@ -2934,7 +2957,7 @@ func EncodeAlertThreshold(val *AlertThreshold) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeAlertThresholdAny(v any) ([]byte, error) {
+func encodeAlertThresholdMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AlertThreshold)
 	if !ok {
 		return nil, fmt.Errorf("expected *AlertThreshold, got %T", v)
@@ -2955,13 +2978,14 @@ type AlertValue struct {
 	NumberOfParameters *uint8 `json:"numberOfParameters"`
 	Repeating1 []AlertValueRepeating1 `json:"repeating1"`
 }
+func (a *AlertValue) PGNNumber() uint32  { return 126988 }
 type AlertValueRepeating1 struct {
 	ValueParameterNumber *uint8 `json:"valueParameterNumber"`
 	ValueDataFormat *uint8 `json:"valueDataFormat"`
 	ValueData *uint64 `json:"valueData"`
 }
-func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AlertValue
+func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AlertValue{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(4); err != nil {
@@ -3114,7 +3138,7 @@ func EncodeAlertValue(val *AlertValue) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeAlertValueAny(v any) ([]byte, error) {
+func encodeAlertValueMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AlertValue)
 	if !ok {
 		return nil, fmt.Errorf("expected *AlertValue, got %T", v)
@@ -3128,8 +3152,9 @@ type SystemTime struct {
 	Date *uint16 `json:"date"`
 	Time *float32 `json:"time"`
 }
-func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SystemTime
+func (s *SystemTime) PGNNumber() uint32  { return 126992 }
+func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SystemTime{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SystemTime-Sid: %w", err)
@@ -3184,7 +3209,7 @@ func EncodeSystemTime(val *SystemTime) ([]byte, error) {
 	w.writeUnsignedResolution(val.Time, 32, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeSystemTimeAny(v any) ([]byte, error) {
+func encodeSystemTimeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SystemTime)
 	if !ok {
 		return nil, fmt.Errorf("expected *SystemTime, got %T", v)
@@ -3199,8 +3224,9 @@ type Heartbeat struct {
 	Controller2State ControllerStateConst `json:"controller2State"`
 	EquipmentStatus EquipmentStatusConst `json:"equipmentStatus"`
 }
-func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Heartbeat
+func (h *Heartbeat) PGNNumber() uint32  { return 126993 }
+func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Heartbeat{}
 	val.Info = Info
 	if v, err := stream.readUnsignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for Heartbeat-DataTransmitOffset: %w", err)
@@ -3265,7 +3291,7 @@ func EncodeHeartbeat(val *Heartbeat) ([]byte, error) {
 	w.skipBits(34)
 	return w.Bytes(), w.Err()
 }
-func encodeHeartbeatAny(v any) ([]byte, error) {
+func encodeHeartbeatMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Heartbeat)
 	if !ok {
 		return nil, fmt.Errorf("expected *Heartbeat, got %T", v)
@@ -3283,8 +3309,9 @@ type ProductInformation struct {
 	CertificationLevel *uint8 `json:"certificationLevel"`
 	LoadEquivalency *uint8 `json:"loadEquivalency"`
 }
-func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ProductInformation
+func (p *ProductInformation) PGNNumber() uint32  { return 126996 }
+func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ProductInformation{}
 	val.Info = Info
 	if v, err := stream.readUnsignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-Nmea2000Version: %w", err)
@@ -3374,7 +3401,7 @@ func EncodeProductInformation(val *ProductInformation) ([]byte, error) {
 	w.writeUInt8(val.LoadEquivalency, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeProductInformationAny(v any) ([]byte, error) {
+func encodeProductInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ProductInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *ProductInformation, got %T", v)
@@ -3387,8 +3414,9 @@ type ConfigurationInformation struct {
 	InstallationDescription2 string `json:"installationDescription2"`
 	ManufacturerInformation string `json:"manufacturerInformation"`
 }
-func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ConfigurationInformation
+func (c *ConfigurationInformation) PGNNumber() uint32  { return 126998 }
+func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ConfigurationInformation{}
 	val.Info = Info
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for ConfigurationInformation-InstallationDescription1: %w", err)
@@ -3428,7 +3456,7 @@ func EncodeConfigurationInformation(val *ConfigurationInformation) ([]byte, erro
 	w.writeStringWithLengthAndControl(val.ManufacturerInformation)
 	return w.Bytes(), w.Err()
 }
-func encodeConfigurationInformationAny(v any) ([]byte, error) {
+func encodeConfigurationInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ConfigurationInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *ConfigurationInformation, got %T", v)
@@ -3452,8 +3480,9 @@ type ManOverboardNotification struct {
 	MmsiOfVesselOfOrigin *uint32 `json:"mmsiOfVesselOfOrigin"`
 	MobEmitterBatteryLowStatus LowBatteryConst `json:"mobEmitterBatteryLowStatus"`
 }
-func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ManOverboardNotification
+func (m *ManOverboardNotification) PGNNumber() uint32  { return 127233 }
+func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ManOverboardNotification{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-Sid: %w", err)
@@ -3627,7 +3656,7 @@ func EncodeManOverboardNotification(val *ManOverboardNotification) ([]byte, erro
 	w.skipBits(5)
 	return w.Bytes(), w.Err()
 }
-func encodeManOverboardNotificationAny(v any) ([]byte, error) {
+func encodeManOverboardNotificationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ManOverboardNotification)
 	if !ok {
 		return nil, fmt.Errorf("expected *ManOverboardNotification, got %T", v)
@@ -3654,8 +3683,9 @@ type HeadingTrackControl struct {
 	OffTrackLimit *units.Distance `json:"offTrackLimit"`
 	VesselHeading *float32 `json:"vesselHeading"`
 }
-func DecodeHeadingTrackControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val HeadingTrackControl
+func (h *HeadingTrackControl) PGNNumber() uint32  { return 127237 }
+func DecodeHeadingTrackControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &HeadingTrackControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for HeadingTrackControl-RudderLimitExceeded: %w", err)
@@ -3845,7 +3875,7 @@ func EncodeHeadingTrackControl(val *HeadingTrackControl) ([]byte, error) {
 	w.writeUnsignedResolution(val.VesselHeading, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeHeadingTrackControlAny(v any) ([]byte, error) {
+func encodeHeadingTrackControlMsg(v Message) ([]byte, error) {
 	val, ok := v.(*HeadingTrackControl)
 	if !ok {
 		return nil, fmt.Errorf("expected *HeadingTrackControl, got %T", v)

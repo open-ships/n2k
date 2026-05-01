@@ -13,8 +13,9 @@ type Rudder struct {
 	AngleOrder *float32 `json:"angleOrder"`
 	Position *float32 `json:"position"`
 }
-func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Rudder
+func (x *Rudder) PGNNumber() uint32  { return 127245 }
+func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Rudder{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Rudder-Instance: %w", err)
@@ -69,8 +70,9 @@ type EngineParametersRapidUpdate struct {
 	BoostPressure *units.Pressure `json:"boostPressure"`
 	TiltTrim *int8 `json:"tiltTrim"`
 }
-func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersRapidUpdate
+func (x *EngineParametersRapidUpdate) PGNNumber() uint32  { return 127488 }
+func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersRapidUpdate{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersRapidUpdate-Instance: %w", err)
@@ -130,8 +132,9 @@ type EngineParametersDynamic struct {
 	EngineLoad *int8 `json:"engineLoad"`
 	EngineTorque *int8 `json:"engineTorque"`
 }
-func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersDynamic
+func (x *EngineParametersDynamic) PGNNumber() uint32  { return 127489 }
+func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersDynamic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-Instance: %w", err)
@@ -264,8 +267,9 @@ type TransmissionParametersDynamic struct {
 	OilTemperature *units.Temperature `json:"oilTemperature"`
 	DiscreteStatus1 *uint8 `json:"discreteStatus1"`
 }
-func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TransmissionParametersDynamic
+func (x *TransmissionParametersDynamic) PGNNumber() uint32  { return 127493 }
+func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TransmissionParametersDynamic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-Instance: %w", err)
@@ -329,8 +333,9 @@ type TripParametersVessel struct {
 	EstimatedFuelRemaining *units.Volume `json:"estimatedFuelRemaining"`
 	TripRunTime *float32 `json:"tripRunTime"`
 }
-func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TripParametersVessel
+func (x *TripParametersVessel) PGNNumber() uint32  { return 127496 }
+func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TripParametersVessel{}
 	val.Info = Info
 	if v, err := stream.readUnsignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersVessel-TimeToEmpty: %w", err)
@@ -378,8 +383,9 @@ type TripParametersEngine struct {
 	FuelRateEconomy *units.Flow `json:"fuelRateEconomy"`
 	InstantaneousFuelEconomy *units.Flow `json:"instantaneousFuelEconomy"`
 }
-func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TripParametersEngine
+func (x *TripParametersEngine) PGNNumber() uint32  { return 127497 }
+func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TripParametersEngine{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-Instance: %w", err)
@@ -435,8 +441,9 @@ type EngineParametersStatic struct {
 	Vin string `json:"vin"`
 	SoftwareId string `json:"softwareId"`
 }
-func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val EngineParametersStatic
+func (x *EngineParametersStatic) PGNNumber() uint32  { return 127498 }
+func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &EngineParametersStatic{}
 	val.Info = Info
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersStatic-Instance: %w", err)
@@ -488,7 +495,7 @@ func EncodeRudder(val *Rudder) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeRudderAny(v any) ([]byte, error) {
+func encodeRudderMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Rudder)
 	if !ok {
 		return nil, fmt.Errorf("expected *Rudder, got %T", v)
@@ -510,7 +517,7 @@ func EncodeEngineParametersRapidUpdate(val *EngineParametersRapidUpdate) ([]byte
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeEngineParametersRapidUpdateAny(v any) ([]byte, error) {
+func encodeEngineParametersRapidUpdateMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EngineParametersRapidUpdate)
 	if !ok {
 		return nil, fmt.Errorf("expected *EngineParametersRapidUpdate, got %T", v)
@@ -561,7 +568,7 @@ func EncodeEngineParametersDynamic(val *EngineParametersDynamic) ([]byte, error)
 	w.writeInt8(val.EngineTorque, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeEngineParametersDynamicAny(v any) ([]byte, error) {
+func encodeEngineParametersDynamicMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EngineParametersDynamic)
 	if !ok {
 		return nil, fmt.Errorf("expected *EngineParametersDynamic, got %T", v)
@@ -589,7 +596,7 @@ func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeTransmissionParametersDynamicAny(v any) ([]byte, error) {
+func encodeTransmissionParametersDynamicMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TransmissionParametersDynamic)
 	if !ok {
 		return nil, fmt.Errorf("expected *TransmissionParametersDynamic, got %T", v)
@@ -615,7 +622,7 @@ func EncodeTripParametersVessel(val *TripParametersVessel) ([]byte, error) {
 	w.writeUnsignedResolution(val.TripRunTime, 32, 0.001)
 	return w.Bytes(), w.Err()
 }
-func encodeTripParametersVesselAny(v any) ([]byte, error) {
+func encodeTripParametersVesselMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TripParametersVessel)
 	if !ok {
 		return nil, fmt.Errorf("expected *TripParametersVessel, got %T", v)
@@ -650,7 +657,7 @@ func EncodeTripParametersEngine(val *TripParametersEngine) ([]byte, error) {
 	w.writeSignedResolution(instantaneousFuelEconomyRaw, 16, 0.1)
 	return w.Bytes(), w.Err()
 }
-func encodeTripParametersEngineAny(v any) ([]byte, error) {
+func encodeTripParametersEngineMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TripParametersEngine)
 	if !ok {
 		return nil, fmt.Errorf("expected *TripParametersEngine, got %T", v)
@@ -667,7 +674,7 @@ func EncodeEngineParametersStatic(val *EngineParametersStatic) ([]byte, error) {
 	w.writeFixedString(val.SoftwareId, 256)
 	return w.Bytes(), w.Err()
 }
-func encodeEngineParametersStaticAny(v any) ([]byte, error) {
+func encodeEngineParametersStaticMsg(v Message) ([]byte, error) {
 	val, ok := v.(*EngineParametersStatic)
 	if !ok {
 		return nil, fmt.Errorf("expected *EngineParametersStatic, got %T", v)

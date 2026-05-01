@@ -1,45 +1,121 @@
 ## Change Log for open-ships/n2k
 
+### 2026-05-01 — Message interface and type-safe API
+
+Introduces the `pgn.Message` interface and eliminates redundant PGN specification when constructing messages. Users no longer need to pass the PGN number in `MessageInfo` — each struct knows its own PGN via its `PGNNumber()` method.
+
+**New: `pgn.Message` interface**
+
+- Single-method interface: `PGNNumber() uint32`
+- All 278 PGN structs (including `UnknownPGN`) implement `Message`
+- `Client.Write`, `Client.Receive`, `Receive`, and `Scanner` all use `Message` instead of `any`
+- Encoder and decoder function signatures updated from `any` to `Message` throughout
+
+**Changed: `MessageInfo` fields**
+
+- `Priority` changed from `uint8` to `*uint8` — nil defaults to 6 (standard priority) on write
+- `TargetId` changed from `uint8` to `*uint8` — nil defaults to 255 (broadcast) on write
+- `SourceId` remains `uint8`; `Timestamp` remains `time.Time`
+
+**New: convenience helpers**
+
+- `pgn.Priority(v uint8) *uint8` — construct priority for `MessageInfo`
+- `pgn.Target(v uint8) *uint8` — construct target address for `MessageInfo`
+
+**Simplified write API**
+
+Before:
+```go
+heading := &pgn.VesselHeading{
+    Info:    pgn.MessageInfo{PGN: 127250, Priority: 2},
+    Heading: ptrFloat32(1.5708),
+}
+```
+
+After:
+```go
+heading := &pgn.VesselHeading{
+    Heading: ptrFloat32(1.5708),
+}
+```
+
+With explicit priority/target:
+```go
+heading := &pgn.VesselHeading{
+    Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
+    Heading: ptrFloat32(1.5708),
+}
+```
+
+**Cleanup**
+
+- Removed stale `pgngen` / code generator references from comments
+- Updated README with new API examples and `Message` interface docs
+
+---
+
+### 2026-04-25 — Write capabilities, encoders, and transport protocol
+
+Adds the `Client` API for bidirectional NMEA 2000 communication, PGN encoders, and multi-frame transport protocol support.
+
+**New: `Client` API (`client.go`)**
+
+- `NewClient(ctx, opts...)` — creates a client for reading and writing PGN messages
+- `Client.Write(msg)` — asynchronous, FIFO-ordered message transmission
+- `Client.Receive()` / `Client.Scanner()` — delegates to the top-level read APIs
+- `Client.WrittenFrames()` — inspect captured frames in replay/test mode
+- `Client.Close()` — graceful shutdown with write drain
+- `WriteResult` with `Wait()` / `Err()` for write completion tracking
+
+**New: PGN encoders**
+
+- `pgn/pgndatastream_writer.go` — `PGNDataStreamWriter` for encoding fields back to wire format
+- Encoder functions for all PGN structs that have decoders
+- `EncoderLookup` map in `pgn/registry.go` for PGN-to-encoder dispatch
+- `PgnInfo.Encoder` field on PGN metadata
+
+**New: frame encoding (`internal/framer/`)**
+
+- `BuildCANID` — construct 29-bit CAN identifiers from PGN, priority, source, destination
+- `FrameSingle` — single-frame (<=8 byte) CAN framing
+- `FrameFastPacket` — multi-frame fast-packet framing with sequence IDs
+
+**New: transport protocol (`internal/transport/`)**
+
+- BAM (Broadcast Announce Message) for multi-frame broadcasts >223 bytes
+- RTS/CTS (Request to Send / Clear to Send) for addressed multi-frame messages
+- `Manager` coordinates send/receive state machines with timeouts
+
+**New: address claiming (`internal/claiming/`)**
+
+- ISO 11783 address claim protocol implementation
+- `DeviceName` builder with industry code, manufacturer, device class, etc.
+
+**New: PGN struct files**
+
+- Reorganized PGN structs from single generated file (`pgninfo_generated.go`) into category files: `ais.go`, `communication.go`, `electrical.go`, `engine.go`, `entertainment.go`, `environmental.go`, `lighting.go`, `navigation.go`, `other.go`, `propulsion.go`, `sensors.go`, `system.go`
+- `pgn/registry.go` — consolidated `pgnList`, `PgnInfoLookup`, `EncoderLookup`, and `init()`
+- `pgn/enums.go` — NMEA 2000 enumeration constants
+
+**New: options**
+
+- `WithSourceAddress(addr)` — explicit source address for writes
+- `WithName(name)` — ISO 11783 device NAME for address claiming
+
+---
+
+### 2026-04-15 — CI hardening and cleanup
+
+- Added GitHub Actions security scanning workflow (`security.yaml`)
+- Added CI badges to README (Test, Lint, Secure)
+- Bumped Go version and tooling
+- Unexported CAN bus channel types (`USBCANChannel` → `usbCANChannel`, `SocketCANChannel` → `socketCANChannel`)
+- Removed SocketCAN auto-setup from CI (not available in GitHub Actions runners)
+- Fixed `reflect.Ptr` → `reflect.Pointer` deprecation in `scanner.go`
+- Cleaned up lint issues across the codebase
+
+---
+
 ### 2026-03-31
-Major housekeeping to simplify the repo and move fully under the open-ships org.
 
-- Removed mage build system; replaced Makefile with a justfile using plain go commands
-- Removed lintroller and its configuration
-- Removed renovate, package.json, package-lock.json, and .releaserc.yaml
-- Replaced semantic-release with date-based tagging (matching beacon's release process)
-- Simplified CI: single test workflow using `go test`, release triggers on successful test run
-- Removed `cmd/convertcandumps` and `cmd/replay` (and `pkg/endpoint/n2kfileendpoint`)
-- Inlined `tugboat/pkg/canbus` and `tugboat/pkg/units` into this repo, removing the tugboat dependency
-- Replaced `sirupsen/logrus` with `log/slog` throughout
-- Upgraded to Go 1.25
-- Changed module path from `github.com/boatkit-io/n2k` to `github.com/open-ships/n2k`
-- Removed `.tool-versions`
-
-## (Prior) Change Log for boatkit-io/n2k
-
-This document will be updated whenever changes are made to the main branch of this project.
-
-### 2022-12-01
-Initial restructuring of the package as we move it from private to public.
-
-### 2023-09-29
-- Preliminary support for variants of PGN 126208 that include a reference PGN and repeating pairs of the index to a field in the reference PGN and its value. To determine the length of the value requires looking up the reference PGN, potentially its Manufacturer (to deal with variants of proprietary PGNs), and the length of the specified field's value.  It would be possible to use reflection and return the value in an appropriate golang type, but for now the values are returned in a []uint8.
-- Preliminary support for Key\_Value fields. These also require accessing information to determine the type of the value, based on the key. For now these also return the value in a []uint8.
-- Note that for now the support for PGN 126208 only matches the Manufacturer in selecting the appropriate variant. In fact fields can vary based on at matches.
-- Note that for PGN 126208 with command code of 1 (NmeaCommandGroupFunction), if the commanded PGN is Proprietary there's no way to select the correct variant, since the ManufacturerCode is not specified. (This works because the intended recipient is implemented by a specific manufacturer). In this case if we find multiple variants we return an error.
-- Canboat PGN definitions without samples (that is, no logs including the PGN/variant have been submitted to Canboat) are tracked separately--when they're found in logs the samples should be submitted to the project.
-- Imports canboat.json from an interim version forked on Boatkit while we wait for the project to address issues related to values with lengths not known in the PGN definition.
-
-### 2023-10-05
-Release v0.0.1
-
-- Switched back to Canboat's canboat.json.
-
-### 2023-10-07
-Release v0.0.2
-Moved from Pipeline constructed from channels to a much simpler model connecting each stage
-through function variables.
-
-
-
-
+Initial setup

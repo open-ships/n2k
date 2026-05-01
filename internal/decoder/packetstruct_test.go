@@ -13,11 +13,11 @@ import (
 // Decoder produces without needing a real downstream consumer.
 type mockHandler struct {
 	// received accumulates all structs passed to HandleStruct in order.
-	received []any
+	received []pgn.Message
 }
 
 // HandleStruct appends the received struct to the captured list for test verification.
-func (m *mockHandler) HandleStruct(v any) {
+func (m *mockHandler) HandleStruct(v pgn.Message) {
 	m.received = append(m.received, v)
 }
 
@@ -46,21 +46,23 @@ func TestDecode_ValidDecoder(t *testing.T) {
 
 	info := pgn.MessageInfo{PGN: 127250, SourceId: 1}
 	// A mock decoder that always succeeds and returns a VesselHeading struct.
-	dec := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
-		return pgn.VesselHeading{Info: mi}, nil
+	dec := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
+		vh := &pgn.VesselHeading{}
+		vh.Info = mi
+		return vh, nil
 	}
 
 	pkt := Packet{
 		Info:     info,
 		Data:     []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
-		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error){dec},
+		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error){dec},
 	}
 
 	ps.Decode(pkt)
 
 	// Verify exactly one struct was forwarded and it's the correct type with correct PGN.
 	assert.Equal(t, 1, len(handler.received))
-	vh, ok := handler.received[0].(pgn.VesselHeading)
+	vh, ok := handler.received[0].(*pgn.VesselHeading)
 	assert.True(t, ok)
 	assert.Equal(t, uint32(127250), vh.Info.PGN)
 }
@@ -75,21 +77,21 @@ func TestDecode_DecoderFails_FallsToUnknown(t *testing.T) {
 
 	info := pgn.MessageInfo{PGN: 127250, SourceId: 1}
 	// A mock decoder that always fails.
-	failDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
+	failDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
 		return nil, fmt.Errorf("decode error")
 	}
 
 	pkt := Packet{
 		Info:     info,
 		Data:     []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
-		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error){failDecoder},
+		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error){failDecoder},
 	}
 
 	ps.Decode(pkt)
 
 	// Should still produce output, but as UnknownPGN instead of VesselHeading.
 	assert.Equal(t, 1, len(handler.received))
-	u, ok := handler.received[0].(pgn.UnknownPGN)
+	u, ok := handler.received[0].(*pgn.UnknownPGN)
 	assert.True(t, ok)
 	assert.Equal(t, uint32(127250), u.Info.PGN)
 }
@@ -112,7 +114,7 @@ func TestDecode_NoDecoders_SendsUnknown(t *testing.T) {
 	ps.Decode(pkt)
 
 	assert.Equal(t, 1, len(handler.received))
-	u, ok := handler.received[0].(pgn.UnknownPGN)
+	u, ok := handler.received[0].(*pgn.UnknownPGN)
 	assert.True(t, ok)
 	assert.Contains(t, u.Reason.Error(), "no matching decoder")
 }
@@ -127,17 +129,19 @@ func TestDecode_MultipleDecoders_FirstFails_SecondSucceeds(t *testing.T) {
 	ps.SetOutput(handler)
 
 	info := pgn.MessageInfo{PGN: 127250, SourceId: 1}
-	failDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
+	failDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
 		return nil, fmt.Errorf("first decoder failed")
 	}
-	successDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
-		return pgn.VesselHeading{Info: mi}, nil
+	successDecoder := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
+		vh := &pgn.VesselHeading{}
+		vh.Info = mi
+		return vh, nil
 	}
 
 	pkt := Packet{
 		Info: info,
 		Data: []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
-		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error){
+		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error){
 			failDecoder,    // This one fails...
 			successDecoder, // ...so this one should be tried and succeed.
 		},
@@ -147,7 +151,7 @@ func TestDecode_MultipleDecoders_FirstFails_SecondSucceeds(t *testing.T) {
 
 	// The second decoder should have produced a VesselHeading.
 	assert.Equal(t, 1, len(handler.received))
-	_, ok := handler.received[0].(pgn.VesselHeading)
+	_, ok := handler.received[0].(*pgn.VesselHeading)
 	assert.True(t, ok)
 }
 
@@ -158,14 +162,16 @@ func TestDecode_NoHandler(t *testing.T) {
 	ps := New()
 	// Intentionally no handler set -- should not panic.
 	info := pgn.MessageInfo{PGN: 127250, SourceId: 1}
-	dec := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
-		return pgn.VesselHeading{Info: mi}, nil
+	dec := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
+		vh := &pgn.VesselHeading{}
+		vh.Info = mi
+		return vh, nil
 	}
 
 	pkt := Packet{
 		Info:     info,
 		Data:     []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
-		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error){dec},
+		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error){dec},
 	}
 
 	assert.NotPanics(t, func() {
@@ -182,24 +188,24 @@ func TestDecode_AllDecodersFail(t *testing.T) {
 	ps.SetOutput(handler)
 
 	info := pgn.MessageInfo{PGN: 127250, SourceId: 1}
-	fail1 := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
+	fail1 := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
 		return nil, fmt.Errorf("fail1")
 	}
-	fail2 := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (any, error) {
+	fail2 := func(mi pgn.MessageInfo, s *pgn.PGNDataStream) (pgn.Message, error) {
 		return nil, fmt.Errorf("fail2")
 	}
 
 	pkt := Packet{
 		Info:     info,
 		Data:     []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08},
-		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (any, error){fail1, fail2},
+		Decoders: []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error){fail1, fail2},
 	}
 
 	ps.Decode(pkt)
 
 	// Should produce an UnknownPGN with a non-nil Reason containing the error details.
 	assert.Equal(t, 1, len(handler.received))
-	u, ok := handler.received[0].(pgn.UnknownPGN)
+	u, ok := handler.received[0].(*pgn.UnknownPGN)
 	assert.True(t, ok)
 	assert.NotNil(t, u.Reason)
 }

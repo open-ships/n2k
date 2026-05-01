@@ -15,8 +15,9 @@ type SeatalkWirelessKeypadLightControl struct {
 	WirelessSetting *uint8 `json:"wirelessSetting"`
 	WiredSetting *uint8 `json:"wiredSetting"`
 }
-func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkWirelessKeypadLightControl
+func (s *SeatalkWirelessKeypadLightControl) PGNNumber() uint32  { return 61184 }
+func DecodeSeatalkWirelessKeypadLightControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkWirelessKeypadLightControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkWirelessKeypadLightControl-ManufacturerCode: %w", err)
@@ -99,8 +100,9 @@ type SeatalkWirelessKeypadControl struct {
 	Variant *uint8 `json:"variant"`
 	BeepControl *uint8 `json:"beepControl"`
 }
-func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkWirelessKeypadControl
+func (s *SeatalkWirelessKeypadControl) PGNNumber() uint32  { return 61184 }
+func DecodeSeatalkWirelessKeypadControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkWirelessKeypadControl{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkWirelessKeypadControl-ManufacturerCode: %w", err)
@@ -170,8 +172,9 @@ type VictronBatteryRegister struct {
 	RegisterId *uint16 `json:"registerId"`
 	Payload *uint32 `json:"payload"`
 }
-func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val VictronBatteryRegister
+func (v *VictronBatteryRegister) PGNNumber() uint32  { return 61184 }
+func DecodeVictronBatteryRegister(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &VictronBatteryRegister{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for VictronBatteryRegister-ManufacturerCode: %w", err)
@@ -227,8 +230,9 @@ type FurunoHeave struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Heave *units.Distance `json:"heave"`
 }
-func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoHeave
+func (f *FurunoHeave) PGNNumber() uint32  { return 65280 }
+func DecodeFurunoHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoHeave{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoHeave-ManufacturerCode: %w", err)
@@ -281,8 +285,9 @@ type MaretronProprietaryDcBreakerCurrent struct {
 	IndicatorNumber *uint8 `json:"indicatorNumber"`
 	BreakerCurrent *float32 `json:"breakerCurrent"`
 }
-func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronProprietaryDcBreakerCurrent
+func (m *MaretronProprietaryDcBreakerCurrent) PGNNumber() uint32  { return 65284 }
+func DecodeMaretronProprietaryDcBreakerCurrent(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronProprietaryDcBreakerCurrent{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronProprietaryDcBreakerCurrent-ManufacturerCode: %w", err)
@@ -351,8 +356,9 @@ type AirmarBootStateAcknowledgment struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	BootState BootStateConst `json:"bootState"`
 }
-func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarBootStateAcknowledgment
+func (a *AirmarBootStateAcknowledgment) PGNNumber() uint32  { return 65285 }
+func DecodeAirmarBootStateAcknowledgment(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarBootStateAcknowledgment{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarBootStateAcknowledgment-ManufacturerCode: %w", err)
@@ -404,8 +410,9 @@ type LowranceTemperature struct {
 	TemperatureSource TemperatureSourceConst `json:"temperatureSource"`
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 }
-func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val LowranceTemperature
+func (l *LowranceTemperature) PGNNumber() uint32  { return 65285 }
+func DecodeLowranceTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LowranceTemperature{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for LowranceTemperature-ManufacturerCode: %w", err)
@@ -464,8 +471,9 @@ type AirmarBootStateRequest struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarBootStateRequest
+func (a *AirmarBootStateRequest) PGNNumber() uint32  { return 65286 }
+func DecodeAirmarBootStateRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarBootStateRequest{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarBootStateRequest-ManufacturerCode: %w", err)
@@ -509,8 +517,9 @@ type AirmarAccessLevel struct {
 	AccessLevel AccessLevelConst `json:"accessLevel"`
 	AccessSeedKey *uint32 `json:"accessSeedKey"`
 }
-func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarAccessLevel
+func (a *AirmarAccessLevel) PGNNumber() uint32  { return 65287 }
+func DecodeAirmarAccessLevel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarAccessLevel{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarAccessLevel-ManufacturerCode: %w", err)
@@ -578,8 +587,9 @@ type SimnetConfigureTemperatureSensor struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetConfigureTemperatureSensor
+func (s *SimnetConfigureTemperatureSensor) PGNNumber() uint32  { return 65287 }
+func DecodeSimnetConfigureTemperatureSensor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetConfigureTemperatureSensor{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetConfigureTemperatureSensor-ManufacturerCode: %w", err)
@@ -625,8 +635,9 @@ type SeatalkAlarm struct {
 	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
 	AlarmPriority []uint8 `json:"alarmPriority"`
 }
-func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkAlarm
+func (s *SeatalkAlarm) PGNNumber() uint32  { return 65288 }
+func DecodeSeatalkAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkAlarm{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkAlarm-ManufacturerCode: %w", err)
@@ -708,8 +719,9 @@ type SimnetTrimTabSensorCalibration struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetTrimTabSensorCalibration
+func (s *SimnetTrimTabSensorCalibration) PGNNumber() uint32  { return 65289 }
+func DecodeSimnetTrimTabSensorCalibration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetTrimTabSensorCalibration{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetTrimTabSensorCalibration-ManufacturerCode: %w", err)
@@ -750,8 +762,9 @@ type SimnetPaddleWheelSpeedConfiguration struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetPaddleWheelSpeedConfiguration
+func (s *SimnetPaddleWheelSpeedConfiguration) PGNNumber() uint32  { return 65290 }
+func DecodeSimnetPaddleWheelSpeedConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetPaddleWheelSpeedConfiguration{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetPaddleWheelSpeedConfiguration-ManufacturerCode: %w", err)
@@ -792,8 +805,9 @@ type SimnetClearFluidLevelWarnings struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetClearFluidLevelWarnings
+func (s *SimnetClearFluidLevelWarnings) PGNNumber() uint32  { return 65292 }
+func DecodeSimnetClearFluidLevelWarnings(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetClearFluidLevelWarnings{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetClearFluidLevelWarnings-ManufacturerCode: %w", err)
@@ -834,8 +848,9 @@ type SimnetLgc2000Configuration struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetLgc2000Configuration
+func (s *SimnetLgc2000Configuration) PGNNumber() uint32  { return 65293 }
+func DecodeSimnetLgc2000Configuration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetLgc2000Configuration{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetLgc2000Configuration-ManufacturerCode: %w", err)
@@ -878,8 +893,9 @@ type DiverseYachtServicesLoadCell struct {
 	Instance *uint8 `json:"instance"`
 	LoadCell *uint32 `json:"loadCell"`
 }
-func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DiverseYachtServicesLoadCell
+func (d *DiverseYachtServicesLoadCell) PGNNumber() uint32  { return 65293 }
+func DecodeDiverseYachtServicesLoadCell(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DiverseYachtServicesLoadCell{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for DiverseYachtServicesLoadCell-ManufacturerCode: %w", err)
@@ -942,8 +958,9 @@ type SimnetApUnknown1 struct {
 	C *uint16 `json:"c"`
 	D *uint8 `json:"d"`
 }
-func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetApUnknown1
+func (s *SimnetApUnknown1) PGNNumber() uint32  { return 65302 }
+func DecodeSimnetApUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetApUnknown1{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetApUnknown1-ManufacturerCode: %w", err)
@@ -1023,8 +1040,9 @@ type SimnetDeviceStatus struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Status SimnetApStatusConst `json:"status"`
 }
-func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetDeviceStatus
+func (s *SimnetDeviceStatus) PGNNumber() uint32  { return 65305 }
+func DecodeSimnetDeviceStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetDeviceStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetDeviceStatus-ManufacturerCode: %w", err)
@@ -1097,8 +1115,9 @@ type SimnetDeviceStatusRequest struct {
 	Model SimnetDeviceModelConst `json:"model"`
 	Report SimnetDeviceReportConst `json:"report"`
 }
-func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetDeviceStatusRequest
+func (s *SimnetDeviceStatusRequest) PGNNumber() uint32  { return 65305 }
+func DecodeSimnetDeviceStatusRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetDeviceStatusRequest{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetDeviceStatusRequest-ManufacturerCode: %w", err)
@@ -1163,8 +1182,9 @@ type SimnetPilotMode struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Mode SimnetApModeBitfieldConst `json:"mode"`
 }
-func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetPilotMode
+func (s *SimnetPilotMode) PGNNumber() uint32  { return 65305 }
+func DecodeSimnetPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetPilotMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetPilotMode-ManufacturerCode: %w", err)
@@ -1237,8 +1257,9 @@ type SimnetDeviceModeRequest struct {
 	Model SimnetDeviceModelConst `json:"model"`
 	Report SimnetDeviceReportConst `json:"report"`
 }
-func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetDeviceModeRequest
+func (s *SimnetDeviceModeRequest) PGNNumber() uint32  { return 65305 }
+func DecodeSimnetDeviceModeRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetDeviceModeRequest{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetDeviceModeRequest-ManufacturerCode: %w", err)
@@ -1303,8 +1324,9 @@ type SimnetSailingProcessorStatus struct {
 	Report SimnetDeviceReportConst `json:"report"`
 	Data []uint8 `json:"data"`
 }
-func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetSailingProcessorStatus
+func (s *SimnetSailingProcessorStatus) PGNNumber() uint32  { return 65305 }
+func DecodeSimnetSailingProcessorStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetSailingProcessorStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetSailingProcessorStatus-ManufacturerCode: %w", err)
@@ -1374,8 +1396,9 @@ type NavicoWirelessBatteryStatus struct {
 	BatteryStatus *uint8 `json:"batteryStatus"`
 	BatteryChargeStatus *uint8 `json:"batteryChargeStatus"`
 }
-func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoWirelessBatteryStatus
+func (n *NavicoWirelessBatteryStatus) PGNNumber() uint32  { return 65309 }
+func DecodeNavicoWirelessBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoWirelessBatteryStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoWirelessBatteryStatus-ManufacturerCode: %w", err)
@@ -1445,8 +1468,9 @@ type NavicoWirelessSignalStatus struct {
 	Unknown *uint8 `json:"unknown"`
 	SignalStrength *uint8 `json:"signalStrength"`
 }
-func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoWirelessSignalStatus
+func (n *NavicoWirelessSignalStatus) PGNNumber() uint32  { return 65312 }
+func DecodeNavicoWirelessSignalStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoWirelessSignalStatus{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoWirelessSignalStatus-ManufacturerCode: %w", err)
@@ -1510,8 +1534,9 @@ type SimnetApUnknown2 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
-func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetApUnknown2
+func (s *SimnetApUnknown2) PGNNumber() uint32  { return 65340 }
+func DecodeSimnetApUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetApUnknown2{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetApUnknown2-ManufacturerCode: %w", err)
@@ -1599,8 +1624,9 @@ type SimnetAutopilotAngle struct {
 	Mode SimnetApModeConst `json:"mode"`
 	Angle *float32 `json:"angle"`
 }
-func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetAutopilotAngle
+func (s *SimnetAutopilotAngle) PGNNumber() uint32  { return 65341 }
+func DecodeSimnetAutopilotAngle(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetAutopilotAngle{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetAutopilotAngle-ManufacturerCode: %w", err)
@@ -1665,8 +1691,9 @@ type SeatalkPilotWindDatum struct {
 	WindDatum *float32 `json:"windDatum"`
 	RollingAverageWindAngle *float32 `json:"rollingAverageWindAngle"`
 }
-func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkPilotWindDatum
+func (s *SeatalkPilotWindDatum) PGNNumber() uint32  { return 65345 }
+func DecodeSeatalkPilotWindDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkPilotWindDatum{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkPilotWindDatum-ManufacturerCode: %w", err)
@@ -1727,8 +1754,9 @@ type SimnetMagneticField struct {
 	C *float32 `json:"c"`
 	D *float32 `json:"d"`
 }
-func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetMagneticField
+func (s *SimnetMagneticField) PGNNumber() uint32  { return 65350 }
+func DecodeSimnetMagneticField(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetMagneticField{}
 	val.Info = Info
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetMagneticField-A: %w", err)
@@ -1780,8 +1808,9 @@ type SeatalkPilotHeading struct {
 	HeadingTrue *float32 `json:"headingTrue"`
 	HeadingMagnetic *float32 `json:"headingMagnetic"`
 }
-func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkPilotHeading
+func (s *SeatalkPilotHeading) PGNNumber() uint32  { return 65359 }
+func DecodeSeatalkPilotHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkPilotHeading{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkPilotHeading-ManufacturerCode: %w", err)
@@ -1852,8 +1881,9 @@ type SeatalkPilotLockedHeading struct {
 	TargetHeadingTrue *float32 `json:"targetHeadingTrue"`
 	TargetHeadingMagnetic *float32 `json:"targetHeadingMagnetic"`
 }
-func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkPilotLockedHeading
+func (s *SeatalkPilotLockedHeading) PGNNumber() uint32  { return 65360 }
+func DecodeSeatalkPilotLockedHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkPilotLockedHeading{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkPilotLockedHeading-ManufacturerCode: %w", err)
@@ -1923,8 +1953,9 @@ type SeatalkSilenceAlarm struct {
 	AlarmId SeatalkAlarmIdConst `json:"alarmId"`
 	AlarmGroup SeatalkAlarmGroupConst `json:"alarmGroup"`
 }
-func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkSilenceAlarm
+func (s *SeatalkSilenceAlarm) PGNNumber() uint32  { return 65361 }
+func DecodeSeatalkSilenceAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkSilenceAlarm{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkSilenceAlarm-ManufacturerCode: %w", err)
@@ -1989,8 +2020,9 @@ type SeatalkKeypadMessage struct {
 	SecondKeyState *uint8 `json:"secondKeyState"`
 	EncoderPosition *uint8 `json:"encoderPosition"`
 }
-func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkKeypadMessage
+func (s *SeatalkKeypadMessage) PGNNumber() uint32  { return 65371 }
+func DecodeSeatalkKeypadMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkKeypadMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkKeypadMessage-ManufacturerCode: %w", err)
@@ -2092,8 +2124,9 @@ type SeatalkKeypadHeartbeat struct {
 	Variant *uint8 `json:"variant"`
 	Status *uint8 `json:"status"`
 }
-func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkKeypadHeartbeat
+func (s *SeatalkKeypadHeartbeat) PGNNumber() uint32  { return 65374 }
+func DecodeSeatalkKeypadHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkKeypadHeartbeat{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkKeypadHeartbeat-ManufacturerCode: %w", err)
@@ -2164,8 +2197,9 @@ type SeatalkPilotMode struct {
 	SubMode []uint8 `json:"subMode"`
 	PilotModeData []uint8 `json:"pilotModeData"`
 }
-func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SeatalkPilotMode
+func (s *SeatalkPilotMode) PGNNumber() uint32  { return 65379 }
+func DecodeSeatalkPilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SeatalkPilotMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SeatalkPilotMode-ManufacturerCode: %w", err)
@@ -2235,8 +2269,9 @@ type AirmarDepthQualityFactor struct {
 	Sid *uint8 `json:"sid"`
 	DepthQualityFactor AirmarDepthQualityFactorConst `json:"depthQualityFactor"`
 }
-func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarDepthQualityFactor
+func (a *AirmarDepthQualityFactor) PGNNumber() uint32  { return 65408 }
+func DecodeAirmarDepthQualityFactor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarDepthQualityFactor{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarDepthQualityFactor-ManufacturerCode: %w", err)
@@ -2298,8 +2333,9 @@ type AirmarSpeedPulseCount struct {
 	DurationOfInterval *float32 `json:"durationOfInterval"`
 	NumberOfPulsesReceived *uint16 `json:"numberOfPulsesReceived"`
 }
-func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarSpeedPulseCount
+func (a *AirmarSpeedPulseCount) PGNNumber() uint32  { return 65409 }
+func DecodeAirmarSpeedPulseCount(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarSpeedPulseCount{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarSpeedPulseCount-ManufacturerCode: %w", err)
@@ -2370,8 +2406,9 @@ type AirmarDeviceInformation struct {
 	InternalDeviceTemperature *units.Temperature `json:"internalDeviceTemperature"`
 	SupplyVoltage *float32 `json:"supplyVoltage"`
 }
-func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarDeviceInformation
+func (a *AirmarDeviceInformation) PGNNumber() uint32  { return 65410 }
+func DecodeAirmarDeviceInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarDeviceInformation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarDeviceInformation-ManufacturerCode: %w", err)
@@ -2444,8 +2481,9 @@ type SimnetApUnknown3 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
-func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetApUnknown3
+func (s *SimnetApUnknown3) PGNNumber() uint32  { return 65420 }
+func DecodeSimnetApUnknown3(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetApUnknown3{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetApUnknown3-ManufacturerCode: %w", err)
@@ -2531,8 +2569,9 @@ type SimnetAutopilotMode struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetAutopilotMode
+func (s *SimnetAutopilotMode) PGNNumber() uint32  { return 65480 }
+func DecodeSimnetAutopilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetAutopilotMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetAutopilotMode-ManufacturerCode: %w", err)
@@ -2580,8 +2619,9 @@ type Seatalk1PilotMode struct {
 	PilotModeData []uint8 `json:"pilotModeData"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
-func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Seatalk1PilotMode
+func (s *Seatalk1PilotMode) PGNNumber() uint32  { return 126720 }
+func DecodeSeatalk1PilotMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Seatalk1PilotMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for Seatalk1PilotMode-ManufacturerCode: %w", err)
@@ -2693,8 +2733,9 @@ type Seatalk1Keystroke struct {
 	Keyinverted *uint8 `json:"keyinverted"`
 	UnknownData []uint8 `json:"unknownData"`
 }
-func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Seatalk1Keystroke
+func (s *Seatalk1Keystroke) PGNNumber() uint32  { return 126720 }
+func DecodeSeatalk1Keystroke(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Seatalk1Keystroke{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for Seatalk1Keystroke-ManufacturerCode: %w", err)
@@ -2794,8 +2835,9 @@ type Seatalk1DeviceIdentification struct {
 	Command *uint8 `json:"command"`
 	Device SeatalkDeviceIdConst `json:"device"`
 }
-func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Seatalk1DeviceIdentification
+func (s *Seatalk1DeviceIdentification) PGNNumber() uint32  { return 126720 }
+func DecodeSeatalk1DeviceIdentification(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Seatalk1DeviceIdentification{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for Seatalk1DeviceIdentification-ManufacturerCode: %w", err)
@@ -2875,8 +2917,9 @@ type Seatalk1DisplayBrightness struct {
 	Brightness *uint8 `json:"brightness"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
-func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Seatalk1DisplayBrightness
+func (s *Seatalk1DisplayBrightness) PGNNumber() uint32  { return 126720 }
+func DecodeSeatalk1DisplayBrightness(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Seatalk1DisplayBrightness{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for Seatalk1DisplayBrightness-ManufacturerCode: %w", err)
@@ -2979,8 +3022,9 @@ type Seatalk1DisplayColor struct {
 	Color SeatalkDisplayColorConst `json:"color"`
 	Unknown2 []uint8 `json:"unknown2"`
 }
-func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Seatalk1DisplayColor
+func (s *Seatalk1DisplayColor) PGNNumber() uint32  { return 126720 }
+func DecodeSeatalk1DisplayColor(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Seatalk1DisplayColor{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for Seatalk1DisplayColor-ManufacturerCode: %w", err)
@@ -3081,8 +3125,9 @@ type AirmarAttitudeOffset struct {
 	PitchOffset *float32 `json:"pitchOffset"`
 	RollOffset *float32 `json:"rollOffset"`
 }
-func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarAttitudeOffset
+func (a *AirmarAttitudeOffset) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarAttitudeOffset(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarAttitudeOffset{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarAttitudeOffset-ManufacturerCode: %w", err)
@@ -3171,8 +3216,9 @@ type AirmarCalibrateCompass struct {
 	PitchAndRollDamping *float32 `json:"pitchAndRollDamping"`
 	CompassRateGyroDamping *float32 `json:"compassRateGyroDamping"`
 }
-func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarCalibrateCompass
+func (a *AirmarCalibrateCompass) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarCalibrateCompass(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarCalibrateCompass{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarCalibrateCompass-ManufacturerCode: %w", err)
@@ -3331,8 +3377,9 @@ type AirmarTrueWindOptions struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	CogSubstitutionForHdg YesNoConst `json:"cogSubstitutionForHdg"`
 }
-func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarTrueWindOptions
+func (a *AirmarTrueWindOptions) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarTrueWindOptions(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarTrueWindOptions{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarTrueWindOptions-ManufacturerCode: %w", err)
@@ -3396,8 +3443,9 @@ type AirmarSimulateMode struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	SimulateMode OffOnConst `json:"simulateMode"`
 }
-func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarSimulateMode
+func (a *AirmarSimulateMode) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarSimulateMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarSimulateMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarSimulateMode-ManufacturerCode: %w", err)
@@ -3461,8 +3509,9 @@ type AirmarCalibrateDepth struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	SpeedOfSoundMode *units.Velocity `json:"speedOfSoundMode"`
 }
-func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarCalibrateDepth
+func (a *AirmarCalibrateDepth) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarCalibrateDepth(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarCalibrateDepth{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarCalibrateDepth-ManufacturerCode: %w", err)
@@ -3531,8 +3580,9 @@ type AirmarCalibrateSpeedRepeating1 struct {
 	InputFrequency *float32 `json:"inputFrequency"`
 	OutputSpeed *units.Velocity `json:"outputSpeed"`
 }
-func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarCalibrateSpeed
+func (a *AirmarCalibrateSpeed) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarCalibrateSpeed(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarCalibrateSpeed{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(11); err != nil {
@@ -3626,8 +3676,9 @@ type AirmarCalibrateTemperature struct {
 	TemperatureInstance AirmarTemperatureInstanceConst `json:"temperatureInstance"`
 	TemperatureOffset *units.Temperature `json:"temperatureOffset"`
 }
-func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarCalibrateTemperature
+func (a *AirmarCalibrateTemperature) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarCalibrateTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarCalibrateTemperature{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarCalibrateTemperature-ManufacturerCode: %w", err)
@@ -3701,8 +3752,9 @@ type AirmarSpeedFilterNone struct {
 	FilterType *uint8 `json:"filterType"`
 	SampleInterval *float32 `json:"sampleInterval"`
 }
-func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarSpeedFilterNone
+func (a *AirmarSpeedFilterNone) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarSpeedFilterNone(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarSpeedFilterNone{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarSpeedFilterNone-ManufacturerCode: %w", err)
@@ -3780,8 +3832,9 @@ type AirmarSpeedFilterIir struct {
 	SampleInterval *float32 `json:"sampleInterval"`
 	FilterDuration *float32 `json:"filterDuration"`
 }
-func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarSpeedFilterIir
+func (a *AirmarSpeedFilterIir) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarSpeedFilterIir(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarSpeedFilterIir{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarSpeedFilterIir-ManufacturerCode: %w", err)
@@ -3867,8 +3920,9 @@ type AirmarTemperatureFilterNone struct {
 	FilterType *uint8 `json:"filterType"`
 	SampleInterval *float32 `json:"sampleInterval"`
 }
-func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarTemperatureFilterNone
+func (a *AirmarTemperatureFilterNone) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarTemperatureFilterNone(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarTemperatureFilterNone{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarTemperatureFilterNone-ManufacturerCode: %w", err)
@@ -3946,8 +4000,9 @@ type AirmarTemperatureFilterIir struct {
 	SampleInterval *float32 `json:"sampleInterval"`
 	FilterDuration *float32 `json:"filterDuration"`
 }
-func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarTemperatureFilterIir
+func (a *AirmarTemperatureFilterIir) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarTemperatureFilterIir(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarTemperatureFilterIir{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarTemperatureFilterIir-ManufacturerCode: %w", err)
@@ -4032,8 +4087,9 @@ type AirmarNmea2000Options struct {
 	ProprietaryId AirmarCommandConst `json:"proprietaryId"`
 	TransmissionInterval AirmarTransmissionIntervalConst `json:"transmissionInterval"`
 }
-func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarNmea2000Options
+func (a *AirmarNmea2000Options) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarNmea2000Options(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarNmea2000Options{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarNmea2000Options-ManufacturerCode: %w", err)
@@ -4096,8 +4152,9 @@ type AirmarAddressableMultiFrame struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	ProprietaryId *uint8 `json:"proprietaryId"`
 }
-func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AirmarAddressableMultiFrame
+func (a *AirmarAddressableMultiFrame) PGNNumber() uint32  { return 126720 }
+func DecodeAirmarAddressableMultiFrame(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AirmarAddressableMultiFrame{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for AirmarAddressableMultiFrame-ManufacturerCode: %w", err)
@@ -4147,8 +4204,9 @@ type MaretronSlaveResponse struct {
 	Command *uint8 `json:"command"`
 	Status *uint8 `json:"status"`
 }
-func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronSlaveResponse
+func (m *MaretronSlaveResponse) PGNNumber() uint32  { return 126720 }
+func DecodeMaretronSlaveResponse(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronSlaveResponse{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronSlaveResponse-ManufacturerCode: %w", err)
@@ -4227,8 +4285,9 @@ type GarminDayMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
-func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GarminDayMode
+func (g *GarminDayMode) PGNNumber() uint32  { return 126720 }
+func DecodeGarminDayMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GarminDayMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for GarminDayMode-ManufacturerCode: %w", err)
@@ -4348,8 +4407,9 @@ type GarminNightMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Backlight GarminBacklightLevelConst `json:"backlight"`
 }
-func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GarminNightMode
+func (g *GarminNightMode) PGNNumber() uint32  { return 126720 }
+func DecodeGarminNightMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GarminNightMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for GarminNightMode-ManufacturerCode: %w", err)
@@ -4469,8 +4529,9 @@ type GarminColorMode struct {
 	Mode GarminColorModeConst `json:"mode"`
 	Color GarminColorConst `json:"color"`
 }
-func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GarminColorMode
+func (g *GarminColorMode) PGNNumber() uint32  { return 126720 }
+func DecodeGarminColorMode(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GarminColorMode{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for GarminColorMode-ManufacturerCode: %w", err)
@@ -4591,8 +4652,9 @@ type SimradTextMessage struct {
 	Prio *uint8 `json:"prio"`
 	Text string `json:"text"`
 }
-func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimradTextMessage
+func (s *SimradTextMessage) PGNNumber() uint32  { return 130816 }
+func DecodeSimradTextMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimradTextMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimradTextMessage-ManufacturerCode: %w", err)
@@ -4707,8 +4769,9 @@ type NavicoProductInformation struct {
 	FirmwareDate string `json:"firmwareDate"`
 	FirmwareTime string `json:"firmwareTime"`
 }
-func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoProductInformation
+func (n *NavicoProductInformation) PGNNumber() uint32  { return 130817 }
+func DecodeNavicoProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoProductInformation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoProductInformation-ManufacturerCode: %w", err)
@@ -4825,8 +4888,9 @@ type LowranceProductInformation struct {
 	FirmwareDate string `json:"firmwareDate"`
 	FirmwareTime string `json:"firmwareTime"`
 }
-func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val LowranceProductInformation
+func (l *LowranceProductInformation) PGNNumber() uint32  { return 130817 }
+func DecodeLowranceProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LowranceProductInformation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for LowranceProductInformation-ManufacturerCode: %w", err)
@@ -4938,8 +5002,9 @@ type SimnetReprogramData struct {
 	Sequence *uint16 `json:"sequence"`
 	Data []uint8 `json:"data"`
 }
-func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetReprogramData
+func (s *SimnetReprogramData) PGNNumber() uint32  { return 130818 }
+func DecodeSimnetReprogramData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetReprogramData{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetReprogramData-ManufacturerCode: %w", err)
@@ -5008,8 +5073,9 @@ type FurunoUnknown130820 struct {
 	D *uint8 `json:"d"`
 	E *uint8 `json:"e"`
 }
-func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoUnknown130820
+func (f *FurunoUnknown130820) PGNNumber() uint32  { return 130820 }
+func DecodeFurunoUnknown130820(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoUnknown130820{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoUnknown130820-ManufacturerCode: %w", err)
@@ -5093,8 +5159,9 @@ type NavicoAsciiData struct {
 	A *uint8 `json:"a"`
 	Message string `json:"message"`
 }
-func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoAsciiData
+func (n *NavicoAsciiData) PGNNumber() uint32  { return 130821 }
+func DecodeNavicoAsciiData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoAsciiData{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoAsciiData-ManufacturerCode: %w", err)
@@ -5159,8 +5226,9 @@ type FurunoUnknown130821 struct {
 	H *uint8 `json:"h"`
 	I *uint8 `json:"i"`
 }
-func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoUnknown130821
+func (f *FurunoUnknown130821) PGNNumber() uint32  { return 130821 }
+func DecodeFurunoUnknown130821(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoUnknown130821{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoUnknown130821-ManufacturerCode: %w", err)
@@ -5288,8 +5356,9 @@ type NavicoUnknown1 struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Data []uint8 `json:"data"`
 }
-func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoUnknown1
+func (n *NavicoUnknown1) PGNNumber() uint32  { return 130822 }
+func DecodeNavicoUnknown1(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoUnknown1{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoUnknown1-ManufacturerCode: %w", err)
@@ -5340,8 +5409,9 @@ type MaretronProprietaryTemperatureHighRange struct {
 	ActualTemperature *units.Temperature `json:"actualTemperature"`
 	SetTemperature *units.Temperature `json:"setTemperature"`
 }
-func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronProprietaryTemperatureHighRange
+func (m *MaretronProprietaryTemperatureHighRange) PGNNumber() uint32  { return 130823 }
+func DecodeMaretronProprietaryTemperatureHighRange(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronProprietaryTemperatureHighRange{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronProprietaryTemperatureHighRange-ManufacturerCode: %w", err)
@@ -5429,8 +5499,9 @@ type BGKeyValueDataRepeating1 struct {
 	Length *uint8 `json:"length"`
 	Value []uint8 `json:"value"`
 }
-func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BGKeyValueData
+func (b *BGKeyValueData) PGNNumber() uint32  { return 130824 }
+func DecodeBGKeyValueData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BGKeyValueData{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 		var valueLength uint16
@@ -5510,8 +5581,9 @@ type MaretronAnnunciator struct {
 	Field7 *uint8 `json:"field7"`
 	Field8 *uint16 `json:"field8"`
 }
-func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronAnnunciator
+func (m *MaretronAnnunciator) PGNNumber() uint32  { return 130824 }
+func DecodeMaretronAnnunciator(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronAnnunciator{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronAnnunciator-ManufacturerCode: %w", err)
@@ -5594,8 +5666,9 @@ type NavicoUnknown2 struct {
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 	Data []uint8 `json:"data"`
 }
-func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val NavicoUnknown2
+func (n *NavicoUnknown2) PGNNumber() uint32  { return 130825 }
+func DecodeNavicoUnknown2(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &NavicoUnknown2{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for NavicoUnknown2-ManufacturerCode: %w", err)
@@ -5646,8 +5719,9 @@ type BGUserAndRemoteRename struct {
 	ShortName string `json:"shortName"`
 	LongName string `json:"longName"`
 }
-func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BGUserAndRemoteRename
+func (b *BGUserAndRemoteRename) PGNNumber() uint32  { return 130833 }
+func DecodeBGUserAndRemoteRename(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BGUserAndRemoteRename{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for BGUserAndRemoteRename-ManufacturerCode: %w", err)
@@ -5742,8 +5816,9 @@ type SimnetFluidLevelSensorConfiguration struct {
 	H *int16 `json:"h"`
 	I *int8 `json:"i"`
 }
-func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetFluidLevelSensorConfiguration
+func (s *SimnetFluidLevelSensorConfiguration) PGNNumber() uint32  { return 130836 }
+func DecodeSimnetFluidLevelSensorConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetFluidLevelSensorConfiguration{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetFluidLevelSensorConfiguration-ManufacturerCode: %w", err)
@@ -5869,8 +5944,9 @@ type MaretronSwitchStatusCounter struct {
 	ErrorCounter *uint8 `json:"errorCounter"`
 	SwitchStatus OffOnConst `json:"switchStatus"`
 }
-func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronSwitchStatusCounter
+func (m *MaretronSwitchStatusCounter) PGNNumber() uint32  { return 130836 }
+func DecodeMaretronSwitchStatusCounter(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronSwitchStatusCounter{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronSwitchStatusCounter-ManufacturerCode: %w", err)
@@ -5991,8 +6067,9 @@ type MaretronSwitchStatusTimer struct {
 	AccumulatedErrorPeriod *uint32 `json:"accumulatedErrorPeriod"`
 	SwitchStatus OffOnConst `json:"switchStatus"`
 }
-func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val MaretronSwitchStatusTimer
+func (m *MaretronSwitchStatusTimer) PGNNumber() uint32  { return 130837 }
+func DecodeMaretronSwitchStatusTimer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &MaretronSwitchStatusTimer{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for MaretronSwitchStatusTimer-ManufacturerCode: %w", err)
@@ -6114,8 +6191,9 @@ type FurunoSixDegreesOfFreedomMovement struct {
 	H *int16 `json:"h"`
 	I *int16 `json:"i"`
 }
-func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoSixDegreesOfFreedomMovement
+func (f *FurunoSixDegreesOfFreedomMovement) PGNNumber() uint32  { return 130842 }
+func DecodeFurunoSixDegreesOfFreedomMovement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoSixDegreesOfFreedomMovement{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoSixDegreesOfFreedomMovement-ManufacturerCode: %w", err)
@@ -6246,8 +6324,9 @@ type SimnetAisClassBStaticDataMsg24PartB struct {
 	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
 	MothershipUserId *uint32 `json:"mothershipUserId"`
 }
-func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetAisClassBStaticDataMsg24PartB
+func (s *SimnetAisClassBStaticDataMsg24PartB) PGNNumber() uint32  { return 130842 }
+func DecodeSimnetAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetAisClassBStaticDataMsg24PartB{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetAisClassBStaticDataMsg24PartB-ManufacturerCode: %w", err)
@@ -6417,8 +6496,9 @@ type FurunoHeelAngleRollInformation struct {
 	Pitch *float32 `json:"pitch"`
 	Roll *float32 `json:"roll"`
 }
-func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoHeelAngleRollInformation
+func (f *FurunoHeelAngleRollInformation) PGNNumber() uint32  { return 130843 }
+func DecodeFurunoHeelAngleRollInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoHeelAngleRollInformation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoHeelAngleRollInformation-ManufacturerCode: %w", err)
@@ -6500,8 +6580,9 @@ type FurunoMultiSatsInViewExtended struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoMultiSatsInViewExtended
+func (f *FurunoMultiSatsInViewExtended) PGNNumber() uint32  { return 130845 }
+func DecodeFurunoMultiSatsInViewExtended(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoMultiSatsInViewExtended{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoMultiSatsInViewExtended-ManufacturerCode: %w", err)
@@ -6544,8 +6625,9 @@ type SimnetKeyValue struct {
 	Minlength *uint8 `json:"minlength"`
 	Value []uint8 `json:"value"`
 }
-func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetKeyValue
+func (s *SimnetKeyValue) PGNNumber() uint32  { return 130845 }
+func DecodeSimnetKeyValue(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetKeyValue{}
 	val.Info = Info
 		var valueLength uint16
 	
@@ -6657,8 +6739,9 @@ type SimnetParameterSet struct {
 	Length *uint8 `json:"length"`
 	Value []uint8 `json:"value"`
 }
-func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetParameterSet
+func (s *SimnetParameterSet) PGNNumber() uint32  { return 130846 }
+func DecodeSimnetParameterSet(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetParameterSet{}
 	val.Info = Info
 		var valueLength uint16
 	
@@ -6764,8 +6847,9 @@ type FurunoMotionSensorStatusExtended struct {
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode IndustryCodeConst `json:"industryCode"`
 }
-func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FurunoMotionSensorStatusExtended
+func (f *FurunoMotionSensorStatusExtended) PGNNumber() uint32  { return 130846 }
+func DecodeFurunoMotionSensorStatusExtended(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FurunoMotionSensorStatusExtended{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for FurunoMotionSensorStatusExtended-ManufacturerCode: %w", err)
@@ -6808,8 +6892,9 @@ type SimnetApCommand struct {
 	Direction SimnetDirectionConst `json:"direction"`
 	Angle *float32 `json:"angle"`
 }
-func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetApCommand
+func (s *SimnetApCommand) PGNNumber() uint32  { return 130850 }
+func DecodeSimnetApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetApCommand{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetApCommand-ManufacturerCode: %w", err)
@@ -6919,8 +7004,9 @@ type SimnetEventCommandApCommand struct {
 	Angle *float32 `json:"angle"`
 	UnusedC *uint8 `json:"unusedC"`
 }
-func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetEventCommandApCommand
+func (s *SimnetEventCommandApCommand) PGNNumber() uint32  { return 130850 }
+func DecodeSimnetEventCommandApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetEventCommandApCommand{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetEventCommandApCommand-ManufacturerCode: %w", err)
@@ -7038,8 +7124,9 @@ type SimnetAlarm struct {
 	F *uint8 `json:"f"`
 	G *uint8 `json:"g"`
 }
-func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetAlarm
+func (s *SimnetAlarm) PGNNumber() uint32  { return 130850 }
+func DecodeSimnetAlarm(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetAlarm{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetAlarm-ManufacturerCode: %w", err)
@@ -7149,8 +7236,9 @@ type SimnetEventReplyApCommand struct {
 	Angle *float32 `json:"angle"`
 	G *uint8 `json:"g"`
 }
-func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetEventReplyApCommand
+func (s *SimnetEventReplyApCommand) PGNNumber() uint32  { return 130851 }
+func DecodeSimnetEventReplyApCommand(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetEventReplyApCommand{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetEventReplyApCommand-ManufacturerCode: %w", err)
@@ -7266,8 +7354,9 @@ type SimnetAlarmMessage struct {
 	C *uint8 `json:"c"`
 	Text string `json:"text"`
 }
-func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetAlarmMessage
+func (s *SimnetAlarmMessage) PGNNumber() uint32  { return 130856 }
+func DecodeSimnetAlarmMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetAlarmMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetAlarmMessage-ManufacturerCode: %w", err)
@@ -7346,8 +7435,9 @@ type SimnetApUnknown4 struct {
 	E *int32 `json:"e"`
 	F *uint32 `json:"f"`
 }
-func DecodeSimnetApUnknown4(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SimnetApUnknown4
+func (s *SimnetApUnknown4) PGNNumber() uint32  { return 130860 }
+func DecodeSimnetApUnknown4(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SimnetApUnknown4{}
 	val.Info = Info
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for SimnetApUnknown4-ManufacturerCode: %w", err)
@@ -7447,7 +7537,7 @@ func EncodeSeatalkWirelessKeypadLightControl(val *SeatalkWirelessKeypadLightCont
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkWirelessKeypadLightControlAny(v any) ([]byte, error) {
+func encodeSeatalkWirelessKeypadLightControlMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkWirelessKeypadLightControl)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadLightControl, got %T", v)
@@ -7467,7 +7557,7 @@ func EncodeSeatalkWirelessKeypadControl(val *SeatalkWirelessKeypadControl) ([]by
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkWirelessKeypadControlAny(v any) ([]byte, error) {
+func encodeSeatalkWirelessKeypadControlMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkWirelessKeypadControl)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkWirelessKeypadControl, got %T", v)
@@ -7485,7 +7575,7 @@ func EncodeVictronBatteryRegister(val *VictronBatteryRegister) ([]byte, error) {
 	w.writeUInt32(val.Payload, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeVictronBatteryRegisterAny(v any) ([]byte, error) {
+func encodeVictronBatteryRegisterMsg(v Message) ([]byte, error) {
 	val, ok := v.(*VictronBatteryRegister)
 	if !ok {
 		return nil, fmt.Errorf("expected *VictronBatteryRegister, got %T", v)
@@ -7507,7 +7597,7 @@ func EncodeFurunoHeave(val *FurunoHeave) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoHeaveAny(v any) ([]byte, error) {
+func encodeFurunoHeaveMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoHeave)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoHeave, got %T", v)
@@ -7527,7 +7617,7 @@ func EncodeMaretronProprietaryDcBreakerCurrent(val *MaretronProprietaryDcBreaker
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronProprietaryDcBreakerCurrentAny(v any) ([]byte, error) {
+func encodeMaretronProprietaryDcBreakerCurrentMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronProprietaryDcBreakerCurrent)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronProprietaryDcBreakerCurrent, got %T", v)
@@ -7545,7 +7635,7 @@ func EncodeAirmarBootStateAcknowledgment(val *AirmarBootStateAcknowledgment) ([]
 	w.skipBits(45)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarBootStateAcknowledgmentAny(v any) ([]byte, error) {
+func encodeAirmarBootStateAcknowledgmentMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarBootStateAcknowledgment)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarBootStateAcknowledgment, got %T", v)
@@ -7568,7 +7658,7 @@ func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeLowranceTemperatureAny(v any) ([]byte, error) {
+func encodeLowranceTemperatureMsg(v Message) ([]byte, error) {
 	val, ok := v.(*LowranceTemperature)
 	if !ok {
 		return nil, fmt.Errorf("expected *LowranceTemperature, got %T", v)
@@ -7585,7 +7675,7 @@ func EncodeAirmarBootStateRequest(val *AirmarBootStateRequest) ([]byte, error) {
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarBootStateRequestAny(v any) ([]byte, error) {
+func encodeAirmarBootStateRequestMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarBootStateRequest)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarBootStateRequest, got %T", v)
@@ -7605,7 +7695,7 @@ func EncodeAirmarAccessLevel(val *AirmarAccessLevel) ([]byte, error) {
 	w.writeUInt32(val.AccessSeedKey, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarAccessLevelAny(v any) ([]byte, error) {
+func encodeAirmarAccessLevelMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarAccessLevel)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarAccessLevel, got %T", v)
@@ -7622,7 +7712,7 @@ func EncodeSimnetConfigureTemperatureSensor(val *SimnetConfigureTemperatureSenso
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetConfigureTemperatureSensorAny(v any) ([]byte, error) {
+func encodeSimnetConfigureTemperatureSensorMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetConfigureTemperatureSensor)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetConfigureTemperatureSensor, got %T", v)
@@ -7643,7 +7733,7 @@ func EncodeSeatalkAlarm(val *SeatalkAlarm) ([]byte, error) {
 	w.writeBinaryData(val.AlarmPriority, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkAlarmAny(v any) ([]byte, error) {
+func encodeSeatalkAlarmMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkAlarm)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkAlarm, got %T", v)
@@ -7660,7 +7750,7 @@ func EncodeSimnetTrimTabSensorCalibration(val *SimnetTrimTabSensorCalibration) (
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetTrimTabSensorCalibrationAny(v any) ([]byte, error) {
+func encodeSimnetTrimTabSensorCalibrationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetTrimTabSensorCalibration)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetTrimTabSensorCalibration, got %T", v)
@@ -7677,7 +7767,7 @@ func EncodeSimnetPaddleWheelSpeedConfiguration(val *SimnetPaddleWheelSpeedConfig
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetPaddleWheelSpeedConfigurationAny(v any) ([]byte, error) {
+func encodeSimnetPaddleWheelSpeedConfigurationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetPaddleWheelSpeedConfiguration)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetPaddleWheelSpeedConfiguration, got %T", v)
@@ -7694,7 +7784,7 @@ func EncodeSimnetClearFluidLevelWarnings(val *SimnetClearFluidLevelWarnings) ([]
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetClearFluidLevelWarningsAny(v any) ([]byte, error) {
+func encodeSimnetClearFluidLevelWarningsMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetClearFluidLevelWarnings)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetClearFluidLevelWarnings, got %T", v)
@@ -7711,7 +7801,7 @@ func EncodeSimnetLgc2000Configuration(val *SimnetLgc2000Configuration) ([]byte, 
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetLgc2000ConfigurationAny(v any) ([]byte, error) {
+func encodeSimnetLgc2000ConfigurationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetLgc2000Configuration)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetLgc2000Configuration, got %T", v)
@@ -7730,7 +7820,7 @@ func EncodeDiverseYachtServicesLoadCell(val *DiverseYachtServicesLoadCell) ([]by
 	w.writeUInt32(val.LoadCell, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeDiverseYachtServicesLoadCellAny(v any) ([]byte, error) {
+func encodeDiverseYachtServicesLoadCellMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DiverseYachtServicesLoadCell)
 	if !ok {
 		return nil, fmt.Errorf("expected *DiverseYachtServicesLoadCell, got %T", v)
@@ -7751,7 +7841,7 @@ func EncodeSimnetApUnknown1(val *SimnetApUnknown1) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetApUnknown1Any(v any) ([]byte, error) {
+func encodeSimnetApUnknown1Msg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown1)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetApUnknown1, got %T", v)
@@ -7771,7 +7861,7 @@ func EncodeSimnetDeviceStatus(val *SimnetDeviceStatus) ([]byte, error) {
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetDeviceStatusAny(v any) ([]byte, error) {
+func encodeSimnetDeviceStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetDeviceStatus, got %T", v)
@@ -7790,7 +7880,7 @@ func EncodeSimnetDeviceStatusRequest(val *SimnetDeviceStatusRequest) ([]byte, er
 	w.skipBits(32)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetDeviceStatusRequestAny(v any) ([]byte, error) {
+func encodeSimnetDeviceStatusRequestMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceStatusRequest)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetDeviceStatusRequest, got %T", v)
@@ -7810,7 +7900,7 @@ func EncodeSimnetPilotMode(val *SimnetPilotMode) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetPilotModeAny(v any) ([]byte, error) {
+func encodeSimnetPilotModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetPilotMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetPilotMode, got %T", v)
@@ -7829,7 +7919,7 @@ func EncodeSimnetDeviceModeRequest(val *SimnetDeviceModeRequest) ([]byte, error)
 	w.skipBits(32)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetDeviceModeRequestAny(v any) ([]byte, error) {
+func encodeSimnetDeviceModeRequestMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceModeRequest)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetDeviceModeRequest, got %T", v)
@@ -7848,7 +7938,7 @@ func EncodeSimnetSailingProcessorStatus(val *SimnetSailingProcessorStatus) ([]by
 	w.writeBinaryData(val.Data, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetSailingProcessorStatusAny(v any) ([]byte, error) {
+func encodeSimnetSailingProcessorStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetSailingProcessorStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetSailingProcessorStatus, got %T", v)
@@ -7868,7 +7958,7 @@ func EncodeNavicoWirelessBatteryStatus(val *NavicoWirelessBatteryStatus) ([]byte
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoWirelessBatteryStatusAny(v any) ([]byte, error) {
+func encodeNavicoWirelessBatteryStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoWirelessBatteryStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoWirelessBatteryStatus, got %T", v)
@@ -7887,7 +7977,7 @@ func EncodeNavicoWirelessSignalStatus(val *NavicoWirelessSignalStatus) ([]byte, 
 	w.skipBits(32)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoWirelessSignalStatusAny(v any) ([]byte, error) {
+func encodeNavicoWirelessSignalStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoWirelessSignalStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoWirelessSignalStatus, got %T", v)
@@ -7909,7 +7999,7 @@ func EncodeSimnetApUnknown2(val *SimnetApUnknown2) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetApUnknown2Any(v any) ([]byte, error) {
+func encodeSimnetApUnknown2Msg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown2)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetApUnknown2, got %T", v)
@@ -7929,7 +8019,7 @@ func EncodeSimnetAutopilotAngle(val *SimnetAutopilotAngle) ([]byte, error) {
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetAutopilotAngleAny(v any) ([]byte, error) {
+func encodeSimnetAutopilotAngleMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetAutopilotAngle)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetAutopilotAngle, got %T", v)
@@ -7948,7 +8038,7 @@ func EncodeSeatalkPilotWindDatum(val *SeatalkPilotWindDatum) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkPilotWindDatumAny(v any) ([]byte, error) {
+func encodeSeatalkPilotWindDatumMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotWindDatum)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkPilotWindDatum, got %T", v)
@@ -7966,7 +8056,7 @@ func EncodeSimnetMagneticField(val *SimnetMagneticField) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetMagneticFieldAny(v any) ([]byte, error) {
+func encodeSimnetMagneticFieldMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetMagneticField)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetMagneticField, got %T", v)
@@ -7986,7 +8076,7 @@ func EncodeSeatalkPilotHeading(val *SeatalkPilotHeading) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkPilotHeadingAny(v any) ([]byte, error) {
+func encodeSeatalkPilotHeadingMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotHeading)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkPilotHeading, got %T", v)
@@ -8006,7 +8096,7 @@ func EncodeSeatalkPilotLockedHeading(val *SeatalkPilotLockedHeading) ([]byte, er
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkPilotLockedHeadingAny(v any) ([]byte, error) {
+func encodeSeatalkPilotLockedHeadingMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotLockedHeading)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkPilotLockedHeading, got %T", v)
@@ -8025,7 +8115,7 @@ func EncodeSeatalkSilenceAlarm(val *SeatalkSilenceAlarm) ([]byte, error) {
 	w.skipBits(32)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkSilenceAlarmAny(v any) ([]byte, error) {
+func encodeSeatalkSilenceAlarmMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkSilenceAlarm)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkSilenceAlarm, got %T", v)
@@ -8049,7 +8139,7 @@ func EncodeSeatalkKeypadMessage(val *SeatalkKeypadMessage) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkKeypadMessageAny(v any) ([]byte, error) {
+func encodeSeatalkKeypadMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkKeypadMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkKeypadMessage, got %T", v)
@@ -8069,7 +8159,7 @@ func EncodeSeatalkKeypadHeartbeat(val *SeatalkKeypadHeartbeat) ([]byte, error) {
 	w.skipBits(24)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkKeypadHeartbeatAny(v any) ([]byte, error) {
+func encodeSeatalkKeypadHeartbeatMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkKeypadHeartbeat)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkKeypadHeartbeat, got %T", v)
@@ -8089,7 +8179,7 @@ func EncodeSeatalkPilotMode(val *SeatalkPilotMode) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalkPilotModeAny(v any) ([]byte, error) {
+func encodeSeatalkPilotModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *SeatalkPilotMode, got %T", v)
@@ -8108,7 +8198,7 @@ func EncodeAirmarDepthQualityFactor(val *AirmarDepthQualityFactor) ([]byte, erro
 	w.skipBits(36)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarDepthQualityFactorAny(v any) ([]byte, error) {
+func encodeAirmarDepthQualityFactorMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarDepthQualityFactor)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarDepthQualityFactor, got %T", v)
@@ -8128,7 +8218,7 @@ func EncodeAirmarSpeedPulseCount(val *AirmarSpeedPulseCount) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarSpeedPulseCountAny(v any) ([]byte, error) {
+func encodeAirmarSpeedPulseCountMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedPulseCount)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarSpeedPulseCount, got %T", v)
@@ -8152,7 +8242,7 @@ func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error)
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarDeviceInformationAny(v any) ([]byte, error) {
+func encodeAirmarDeviceInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarDeviceInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarDeviceInformation, got %T", v)
@@ -8174,7 +8264,7 @@ func EncodeSimnetApUnknown3(val *SimnetApUnknown3) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetApUnknown3Any(v any) ([]byte, error) {
+func encodeSimnetApUnknown3Msg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown3)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetApUnknown3, got %T", v)
@@ -8191,7 +8281,7 @@ func EncodeSimnetAutopilotMode(val *SimnetAutopilotMode) ([]byte, error) {
 	w.skipBits(48)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetAutopilotModeAny(v any) ([]byte, error) {
+func encodeSimnetAutopilotModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetAutopilotMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetAutopilotMode, got %T", v)
@@ -8214,7 +8304,7 @@ func EncodeSeatalk1PilotMode(val *Seatalk1PilotMode) ([]byte, error) {
 	w.writeBinaryData(val.Unknown2, 80)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalk1PilotModeAny(v any) ([]byte, error) {
+func encodeSeatalk1PilotModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Seatalk1PilotMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *Seatalk1PilotMode, got %T", v)
@@ -8236,7 +8326,7 @@ func EncodeSeatalk1Keystroke(val *Seatalk1Keystroke) ([]byte, error) {
 	w.writeBinaryData(val.UnknownData, 112)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalk1KeystrokeAny(v any) ([]byte, error) {
+func encodeSeatalk1KeystrokeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Seatalk1Keystroke)
 	if !ok {
 		return nil, fmt.Errorf("expected *Seatalk1Keystroke, got %T", v)
@@ -8256,7 +8346,7 @@ func EncodeSeatalk1DeviceIdentification(val *Seatalk1DeviceIdentification) ([]by
 	w.writeLookupField(uint64(val.Device), 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalk1DeviceIdentificationAny(v any) ([]byte, error) {
+func encodeSeatalk1DeviceIdentificationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Seatalk1DeviceIdentification)
 	if !ok {
 		return nil, fmt.Errorf("expected *Seatalk1DeviceIdentification, got %T", v)
@@ -8278,7 +8368,7 @@ func EncodeSeatalk1DisplayBrightness(val *Seatalk1DisplayBrightness) ([]byte, er
 	w.writeBinaryData(val.Unknown2, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalk1DisplayBrightnessAny(v any) ([]byte, error) {
+func encodeSeatalk1DisplayBrightnessMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Seatalk1DisplayBrightness)
 	if !ok {
 		return nil, fmt.Errorf("expected *Seatalk1DisplayBrightness, got %T", v)
@@ -8300,7 +8390,7 @@ func EncodeSeatalk1DisplayColor(val *Seatalk1DisplayColor) ([]byte, error) {
 	w.writeBinaryData(val.Unknown2, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSeatalk1DisplayColorAny(v any) ([]byte, error) {
+func encodeSeatalk1DisplayColorMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Seatalk1DisplayColor)
 	if !ok {
 		return nil, fmt.Errorf("expected *Seatalk1DisplayColor, got %T", v)
@@ -8320,7 +8410,7 @@ func EncodeAirmarAttitudeOffset(val *AirmarAttitudeOffset) ([]byte, error) {
 	w.writeSignedResolution(val.RollOffset, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarAttitudeOffsetAny(v any) ([]byte, error) {
+func encodeAirmarAttitudeOffsetMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarAttitudeOffset)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarAttitudeOffset, got %T", v)
@@ -8349,7 +8439,7 @@ func EncodeAirmarCalibrateCompass(val *AirmarCalibrateCompass) ([]byte, error) {
 	w.writeSignedResolution(val.CompassRateGyroDamping, 16, 0.05)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarCalibrateCompassAny(v any) ([]byte, error) {
+func encodeAirmarCalibrateCompassMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateCompass)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarCalibrateCompass, got %T", v)
@@ -8368,7 +8458,7 @@ func EncodeAirmarTrueWindOptions(val *AirmarTrueWindOptions) ([]byte, error) {
 	w.skipBits(22)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarTrueWindOptionsAny(v any) ([]byte, error) {
+func encodeAirmarTrueWindOptionsMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarTrueWindOptions)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarTrueWindOptions, got %T", v)
@@ -8387,7 +8477,7 @@ func EncodeAirmarSimulateMode(val *AirmarSimulateMode) ([]byte, error) {
 	w.skipBits(22)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarSimulateModeAny(v any) ([]byte, error) {
+func encodeAirmarSimulateModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarSimulateMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarSimulateMode, got %T", v)
@@ -8410,7 +8500,7 @@ func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarCalibrateDepthAny(v any) ([]byte, error) {
+func encodeAirmarCalibrateDepthMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateDepth)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarCalibrateDepth, got %T", v)
@@ -8436,7 +8526,7 @@ func EncodeAirmarCalibrateSpeed(val *AirmarCalibrateSpeed) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarCalibrateSpeedAny(v any) ([]byte, error) {
+func encodeAirmarCalibrateSpeedMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateSpeed)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarCalibrateSpeed, got %T", v)
@@ -8460,7 +8550,7 @@ func EncodeAirmarCalibrateTemperature(val *AirmarCalibrateTemperature) ([]byte, 
 	w.writeSignedResolution(temperatureOffsetRaw, 16, 0.001)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarCalibrateTemperatureAny(v any) ([]byte, error) {
+func encodeAirmarCalibrateTemperatureMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateTemperature)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarCalibrateTemperature, got %T", v)
@@ -8480,7 +8570,7 @@ func EncodeAirmarSpeedFilterNone(val *AirmarSpeedFilterNone) ([]byte, error) {
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarSpeedFilterNoneAny(v any) ([]byte, error) {
+func encodeAirmarSpeedFilterNoneMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedFilterNone)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarSpeedFilterNone, got %T", v)
@@ -8501,7 +8591,7 @@ func EncodeAirmarSpeedFilterIir(val *AirmarSpeedFilterIir) ([]byte, error) {
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarSpeedFilterIirAny(v any) ([]byte, error) {
+func encodeAirmarSpeedFilterIirMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedFilterIir)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarSpeedFilterIir, got %T", v)
@@ -8521,7 +8611,7 @@ func EncodeAirmarTemperatureFilterNone(val *AirmarTemperatureFilterNone) ([]byte
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarTemperatureFilterNoneAny(v any) ([]byte, error) {
+func encodeAirmarTemperatureFilterNoneMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarTemperatureFilterNone)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarTemperatureFilterNone, got %T", v)
@@ -8542,7 +8632,7 @@ func EncodeAirmarTemperatureFilterIir(val *AirmarTemperatureFilterIir) ([]byte, 
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarTemperatureFilterIirAny(v any) ([]byte, error) {
+func encodeAirmarTemperatureFilterIirMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarTemperatureFilterIir)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarTemperatureFilterIir, got %T", v)
@@ -8561,7 +8651,7 @@ func EncodeAirmarNmea2000Options(val *AirmarNmea2000Options) ([]byte, error) {
 	w.skipBits(22)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarNmea2000OptionsAny(v any) ([]byte, error) {
+func encodeAirmarNmea2000OptionsMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarNmea2000Options)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarNmea2000Options, got %T", v)
@@ -8578,7 +8668,7 @@ func EncodeAirmarAddressableMultiFrame(val *AirmarAddressableMultiFrame) ([]byte
 	w.writeUInt8(val.ProprietaryId, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAirmarAddressableMultiFrameAny(v any) ([]byte, error) {
+func encodeAirmarAddressableMultiFrameMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AirmarAddressableMultiFrame)
 	if !ok {
 		return nil, fmt.Errorf("expected *AirmarAddressableMultiFrame, got %T", v)
@@ -8598,7 +8688,7 @@ func EncodeMaretronSlaveResponse(val *MaretronSlaveResponse) ([]byte, error) {
 	w.writeUInt8(val.Status, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronSlaveResponseAny(v any) ([]byte, error) {
+func encodeMaretronSlaveResponseMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronSlaveResponse)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronSlaveResponse, got %T", v)
@@ -8622,7 +8712,7 @@ func EncodeGarminDayMode(val *GarminDayMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Backlight), 8)
 	return w.Bytes(), w.Err()
 }
-func encodeGarminDayModeAny(v any) ([]byte, error) {
+func encodeGarminDayModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GarminDayMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *GarminDayMode, got %T", v)
@@ -8646,7 +8736,7 @@ func EncodeGarminNightMode(val *GarminNightMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Backlight), 8)
 	return w.Bytes(), w.Err()
 }
-func encodeGarminNightModeAny(v any) ([]byte, error) {
+func encodeGarminNightModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GarminNightMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *GarminNightMode, got %T", v)
@@ -8670,7 +8760,7 @@ func EncodeGarminColorMode(val *GarminColorMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Color), 8)
 	return w.Bytes(), w.Err()
 }
-func encodeGarminColorModeAny(v any) ([]byte, error) {
+func encodeGarminColorModeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GarminColorMode)
 	if !ok {
 		return nil, fmt.Errorf("expected *GarminColorMode, got %T", v)
@@ -8694,7 +8784,7 @@ func EncodeSimradTextMessage(val *SimradTextMessage) ([]byte, error) {
 	w.writeFixedString(val.Text, 256)
 	return w.Bytes(), w.Err()
 }
-func encodeSimradTextMessageAny(v any) ([]byte, error) {
+func encodeSimradTextMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimradTextMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimradTextMessage, got %T", v)
@@ -8718,7 +8808,7 @@ func EncodeNavicoProductInformation(val *NavicoProductInformation) ([]byte, erro
 	w.writeFixedString(val.FirmwareTime, 256)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoProductInformationAny(v any) ([]byte, error) {
+func encodeNavicoProductInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoProductInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoProductInformation, got %T", v)
@@ -8742,7 +8832,7 @@ func EncodeLowranceProductInformation(val *LowranceProductInformation) ([]byte, 
 	w.writeFixedString(val.FirmwareTime, 256)
 	return w.Bytes(), w.Err()
 }
-func encodeLowranceProductInformationAny(v any) ([]byte, error) {
+func encodeLowranceProductInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*LowranceProductInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *LowranceProductInformation, got %T", v)
@@ -8761,7 +8851,7 @@ func EncodeSimnetReprogramData(val *SimnetReprogramData) ([]byte, error) {
 	w.writeBinaryData(val.Data, 1736)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetReprogramDataAny(v any) ([]byte, error) {
+func encodeSimnetReprogramDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetReprogramData)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetReprogramData, got %T", v)
@@ -8782,7 +8872,7 @@ func EncodeFurunoUnknown130820(val *FurunoUnknown130820) ([]byte, error) {
 	w.writeUInt8(val.E, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoUnknown130820Any(v any) ([]byte, error) {
+func encodeFurunoUnknown130820Msg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoUnknown130820)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoUnknown130820, got %T", v)
@@ -8800,7 +8890,7 @@ func EncodeNavicoAsciiData(val *NavicoAsciiData) ([]byte, error) {
 	w.writeFixedString(val.Message, 2048)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoAsciiDataAny(v any) ([]byte, error) {
+func encodeNavicoAsciiDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoAsciiData)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoAsciiData, got %T", v)
@@ -8826,7 +8916,7 @@ func EncodeFurunoUnknown130821(val *FurunoUnknown130821) ([]byte, error) {
 	w.writeUInt8(val.I, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoUnknown130821Any(v any) ([]byte, error) {
+func encodeFurunoUnknown130821Msg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoUnknown130821)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoUnknown130821, got %T", v)
@@ -8843,7 +8933,7 @@ func EncodeNavicoUnknown1(val *NavicoUnknown1) ([]byte, error) {
 	w.writeBinaryData(val.Data, 1848)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoUnknown1Any(v any) ([]byte, error) {
+func encodeNavicoUnknown1Msg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoUnknown1)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoUnknown1, got %T", v)
@@ -8872,7 +8962,7 @@ func EncodeMaretronProprietaryTemperatureHighRange(val *MaretronProprietaryTempe
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronProprietaryTemperatureHighRangeAny(v any) ([]byte, error) {
+func encodeMaretronProprietaryTemperatureHighRangeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronProprietaryTemperatureHighRange)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronProprietaryTemperatureHighRange, got %T", v)
@@ -8897,7 +8987,7 @@ func EncodeBGKeyValueData(val *BGKeyValueData) ([]byte, error) {
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeBGKeyValueDataAny(v any) ([]byte, error) {
+func encodeBGKeyValueDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*BGKeyValueData)
 	if !ok {
 		return nil, fmt.Errorf("expected *BGKeyValueData, got %T", v)
@@ -8918,7 +9008,7 @@ func EncodeMaretronAnnunciator(val *MaretronAnnunciator) ([]byte, error) {
 	w.writeUInt16(val.Field8, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronAnnunciatorAny(v any) ([]byte, error) {
+func encodeMaretronAnnunciatorMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronAnnunciator)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronAnnunciator, got %T", v)
@@ -8935,7 +9025,7 @@ func EncodeNavicoUnknown2(val *NavicoUnknown2) ([]byte, error) {
 	w.writeBinaryData(val.Data, 80)
 	return w.Bytes(), w.Err()
 }
-func encodeNavicoUnknown2Any(v any) ([]byte, error) {
+func encodeNavicoUnknown2Msg(v Message) ([]byte, error) {
 	val, ok := v.(*NavicoUnknown2)
 	if !ok {
 		return nil, fmt.Errorf("expected *NavicoUnknown2, got %T", v)
@@ -8957,7 +9047,7 @@ func EncodeBGUserAndRemoteRename(val *BGUserAndRemoteRename) ([]byte, error) {
 	w.writeFixedString(val.LongName, 128)
 	return w.Bytes(), w.Err()
 }
-func encodeBGUserAndRemoteRenameAny(v any) ([]byte, error) {
+func encodeBGUserAndRemoteRenameMsg(v Message) ([]byte, error) {
 	val, ok := v.(*BGUserAndRemoteRename)
 	if !ok {
 		return nil, fmt.Errorf("expected *BGUserAndRemoteRename, got %T", v)
@@ -8986,7 +9076,7 @@ func EncodeSimnetFluidLevelSensorConfiguration(val *SimnetFluidLevelSensorConfig
 	w.writeInt8(val.I, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetFluidLevelSensorConfigurationAny(v any) ([]byte, error) {
+func encodeSimnetFluidLevelSensorConfigurationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetFluidLevelSensorConfiguration)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetFluidLevelSensorConfiguration, got %T", v)
@@ -9011,7 +9101,7 @@ func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte
 	w.skipBits(6)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronSwitchStatusCounterAny(v any) ([]byte, error) {
+func encodeMaretronSwitchStatusCounterMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronSwitchStatusCounter)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronSwitchStatusCounter, got %T", v)
@@ -9036,7 +9126,7 @@ func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, er
 	w.skipBits(6)
 	return w.Bytes(), w.Err()
 }
-func encodeMaretronSwitchStatusTimerAny(v any) ([]byte, error) {
+func encodeMaretronSwitchStatusTimerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*MaretronSwitchStatusTimer)
 	if !ok {
 		return nil, fmt.Errorf("expected *MaretronSwitchStatusTimer, got %T", v)
@@ -9061,7 +9151,7 @@ func EncodeFurunoSixDegreesOfFreedomMovement(val *FurunoSixDegreesOfFreedomMovem
 	w.writeInt16(val.I, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoSixDegreesOfFreedomMovementAny(v any) ([]byte, error) {
+func encodeFurunoSixDegreesOfFreedomMovementMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoSixDegreesOfFreedomMovement)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoSixDegreesOfFreedomMovement, got %T", v)
@@ -9108,7 +9198,7 @@ func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg
 	w.skipBits(2)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetAisClassBStaticDataMsg24PartBAny(v any) ([]byte, error) {
+func encodeSimnetAisClassBStaticDataMsg24PartBMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetAisClassBStaticDataMsg24PartB)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetAisClassBStaticDataMsg24PartB, got %T", v)
@@ -9129,7 +9219,7 @@ func EncodeFurunoHeelAngleRollInformation(val *FurunoHeelAngleRollInformation) (
 	w.writeSignedResolution(val.Roll, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoHeelAngleRollInformationAny(v any) ([]byte, error) {
+func encodeFurunoHeelAngleRollInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoHeelAngleRollInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoHeelAngleRollInformation, got %T", v)
@@ -9145,7 +9235,7 @@ func EncodeFurunoMultiSatsInViewExtended(val *FurunoMultiSatsInViewExtended) ([]
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoMultiSatsInViewExtendedAny(v any) ([]byte, error) {
+func encodeFurunoMultiSatsInViewExtendedMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoMultiSatsInViewExtended)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoMultiSatsInViewExtended, got %T", v)
@@ -9168,7 +9258,7 @@ func EncodeSimnetKeyValue(val *SimnetKeyValue) ([]byte, error) {
 	w.writeUInt8(val.Minlength, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetKeyValueAny(v any) ([]byte, error) {
+func encodeSimnetKeyValueMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetKeyValue)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetKeyValue, got %T", v)
@@ -9191,7 +9281,7 @@ func EncodeSimnetParameterSet(val *SimnetParameterSet) ([]byte, error) {
 	w.writeUInt8(val.Length, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetParameterSetAny(v any) ([]byte, error) {
+func encodeSimnetParameterSetMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetParameterSet)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetParameterSet, got %T", v)
@@ -9207,7 +9297,7 @@ func EncodeFurunoMotionSensorStatusExtended(val *FurunoMotionSensorStatusExtende
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	return w.Bytes(), w.Err()
 }
-func encodeFurunoMotionSensorStatusExtendedAny(v any) ([]byte, error) {
+func encodeFurunoMotionSensorStatusExtendedMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FurunoMotionSensorStatusExtended)
 	if !ok {
 		return nil, fmt.Errorf("expected *FurunoMotionSensorStatusExtended, got %T", v)
@@ -9231,7 +9321,7 @@ func EncodeSimnetApCommand(val *SimnetApCommand) ([]byte, error) {
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetApCommandAny(v any) ([]byte, error) {
+func encodeSimnetApCommandMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApCommand)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetApCommand, got %T", v)
@@ -9255,7 +9345,7 @@ func EncodeSimnetEventCommandApCommand(val *SimnetEventCommandApCommand) ([]byte
 	w.writeUInt8(val.UnusedC, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetEventCommandApCommandAny(v any) ([]byte, error) {
+func encodeSimnetEventCommandApCommandMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetEventCommandApCommand)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetEventCommandApCommand, got %T", v)
@@ -9279,7 +9369,7 @@ func EncodeSimnetAlarm(val *SimnetAlarm) ([]byte, error) {
 	w.writeUInt8(val.G, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetAlarmAny(v any) ([]byte, error) {
+func encodeSimnetAlarmMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetAlarm)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetAlarm, got %T", v)
@@ -9303,7 +9393,7 @@ func EncodeSimnetEventReplyApCommand(val *SimnetEventReplyApCommand) ([]byte, er
 	w.writeUInt8(val.G, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetEventReplyApCommandAny(v any) ([]byte, error) {
+func encodeSimnetEventReplyApCommandMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetEventReplyApCommand)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetEventReplyApCommand, got %T", v)
@@ -9323,7 +9413,7 @@ func EncodeSimnetAlarmMessage(val *SimnetAlarmMessage) ([]byte, error) {
 	w.writeFixedString(val.Text, 1784)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetAlarmMessageAny(v any) ([]byte, error) {
+func encodeSimnetAlarmMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetAlarmMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetAlarmMessage, got %T", v)
@@ -9345,7 +9435,7 @@ func EncodeSimnetApUnknown4(val *SimnetApUnknown4) ([]byte, error) {
 	w.writeUInt32(val.F, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeSimnetApUnknown4Any(v any) ([]byte, error) {
+func encodeSimnetApUnknown4Msg(v Message) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown4)
 	if !ok {
 		return nil, fmt.Errorf("expected *SimnetApUnknown4, got %T", v)

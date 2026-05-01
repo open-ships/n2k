@@ -18,8 +18,9 @@ type ThrusterControlStatus struct {
 	CommandTimeout *float32 `json:"commandTimeout"`
 	AzimuthControl *float32 `json:"azimuthControl"`
 }
-func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterControlStatus
+func (x *ThrusterControlStatus) PGNNumber() uint32  { return 128006 }
+func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterControlStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-Sid: %w", err)
@@ -112,8 +113,9 @@ type ThrusterInformation struct {
 	MaximumTemperatureRating *units.Temperature `json:"maximumTemperatureRating"`
 	MaximumRotationalSpeed *float32 `json:"maximumRotationalSpeed"`
 }
-func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterInformation
+func (x *ThrusterInformation) PGNNumber() uint32  { return 128007 }
+func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterInformation{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-Identifier: %w", err)
@@ -175,8 +177,9 @@ type ThrusterMotorStatus struct {
 	Temperature *units.Temperature `json:"temperature"`
 	OperatingTime *float32 `json:"operatingTime"`
 }
-func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ThrusterMotorStatus
+func (x *ThrusterMotorStatus) PGNNumber() uint32  { return 128008 }
+func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ThrusterMotorStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-Sid: %w", err)
@@ -242,8 +245,9 @@ type Speed struct {
 	SpeedWaterReferencedType WaterReferenceConst `json:"speedWaterReferencedType"`
 	SpeedDirection *uint8 `json:"speedDirection"`
 }
-func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Speed
+func (x *Speed) PGNNumber() uint32  { return 128259 }
+func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Speed{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Speed-Sid: %w", err)
@@ -303,8 +307,9 @@ type WaterDepth struct {
 	Offset *units.Distance `json:"offset"`
 	Range *units.Distance `json:"range"`
 }
-func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WaterDepth
+func (x *WaterDepth) PGNNumber() uint32  { return 128267 }
+func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WaterDepth{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for WaterDepth-Sid: %w", err)
@@ -351,8 +356,9 @@ type DistanceLog struct {
 	Log *units.Distance `json:"log"`
 	TripLog *units.Distance `json:"tripLog"`
 }
-func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DistanceLog
+func (x *DistanceLog) PGNNumber() uint32  { return 128275 }
+func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DistanceLog{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for DistanceLog-Date: %w", err)
@@ -407,7 +413,7 @@ func EncodeThrusterControlStatus(val *ThrusterControlStatus) ([]byte, error) {
 	w.writeUnsignedResolution(val.AzimuthControl, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
-func encodeThrusterControlStatusAny(v any) ([]byte, error) {
+func encodeThrusterControlStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ThrusterControlStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *ThrusterControlStatus, got %T", v)
@@ -430,7 +436,7 @@ func EncodeThrusterInformation(val *ThrusterInformation) ([]byte, error) {
 	w.writeUnsignedResolution(val.MaximumRotationalSpeed, 16, 0.25)
 	return w.Bytes(), w.Err()
 }
-func encodeThrusterInformationAny(v any) ([]byte, error) {
+func encodeThrusterInformationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ThrusterInformation)
 	if !ok {
 		return nil, fmt.Errorf("expected *ThrusterInformation, got %T", v)
@@ -453,7 +459,7 @@ func EncodeThrusterMotorStatus(val *ThrusterMotorStatus) ([]byte, error) {
 	w.writeUnsignedResolution(val.OperatingTime, 16, 60)
 	return w.Bytes(), w.Err()
 }
-func encodeThrusterMotorStatusAny(v any) ([]byte, error) {
+func encodeThrusterMotorStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ThrusterMotorStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *ThrusterMotorStatus, got %T", v)
@@ -480,7 +486,7 @@ func EncodeSpeed(val *Speed) ([]byte, error) {
 	w.skipBits(12)
 	return w.Bytes(), w.Err()
 }
-func encodeSpeedAny(v any) ([]byte, error) {
+func encodeSpeedMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Speed)
 	if !ok {
 		return nil, fmt.Errorf("expected *Speed, got %T", v)
@@ -509,7 +515,7 @@ func EncodeWaterDepth(val *WaterDepth) ([]byte, error) {
 	w.writeUnsignedResolution(rangeRaw, 8, 10)
 	return w.Bytes(), w.Err()
 }
-func encodeWaterDepthAny(v any) ([]byte, error) {
+func encodeWaterDepthMsg(v Message) ([]byte, error) {
 	val, ok := v.(*WaterDepth)
 	if !ok {
 		return nil, fmt.Errorf("expected *WaterDepth, got %T", v)
@@ -536,7 +542,7 @@ func EncodeDistanceLog(val *DistanceLog) ([]byte, error) {
 	w.writeUInt32(tripLogRaw, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeDistanceLogAny(v any) ([]byte, error) {
+func encodeDistanceLogMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DistanceLog)
 	if !ok {
 		return nil, fmt.Errorf("expected *DistanceLog, got %T", v)

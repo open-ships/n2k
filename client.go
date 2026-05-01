@@ -58,7 +58,7 @@ type Client struct {
 }
 
 type writeJob struct {
-	msg    any
+	msg    pgn.Message
 	result *WriteResult
 }
 
@@ -157,7 +157,7 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 // be a pointer to a PGN struct (e.g. *pgn.VesselHeading). The returned
 // WriteResult can be used to wait for completion and check for errors.
 // Writes are serialized through a single goroutine to guarantee FIFO ordering.
-func (c *Client) Write(msg any) *WriteResult {
+func (c *Client) Write(msg pgn.Message) *WriteResult {
 	wr := newWriteResult()
 
 	c.mu.Lock()
@@ -180,72 +180,45 @@ func (c *Client) writeLoop() {
 }
 
 // doWrite performs the synchronous work of encoding and framing a PGN message.
-func (c *Client) doWrite(msg any) error {
-	// Extract MessageInfo from the struct's Info field using reflect.
-	rv := reflect.ValueOf(msg)
-	if rv.Kind() == reflect.Pointer {
-		rv = rv.Elem()
-	}
-	if rv.Kind() != reflect.Struct {
-		return fmt.Errorf("n2k: expected pointer to PGN struct, got %T", msg)
-	}
+func (c *Client) doWrite(msg pgn.Message) error {
+	pgnNum := msg.PGNNumber()
 
-	infoField := rv.FieldByName("Info")
-	if !infoField.IsValid() {
-		return fmt.Errorf("n2k: type %T has no Info field; not a PGN struct", msg)
-	}
-	info, ok := infoField.Interface().(pgn.MessageInfo)
-	if !ok {
-		return fmt.Errorf("n2k: Info field of %T is not pgn.MessageInfo", msg)
-	}
-
-	pgnNum := info.PGN
-	if pgnNum == 0 {
-		return fmt.Errorf("n2k: PGN number is 0 in %T; set Info.PGN before writing", msg)
-	}
-
-	// Look up the encoder.
 	encoder, ok := pgn.EncoderLookup[pgnNum]
 	if !ok {
 		return fmt.Errorf("n2k: no encoder registered for PGN %d", pgnNum)
 	}
 
-	// Encode the struct to bytes.
 	payload, err := encoder(msg)
 	if err != nil {
 		return fmt.Errorf("n2k: encode PGN %d: %w", pgnNum, err)
 	}
 
-	// Determine priority: use Info.Priority if non-zero, else default 6.
-	priority := info.Priority
-	if priority == 0 {
-		priority = 6
+	// Extract MessageInfo from the struct's exported Info field.
+	info := reflect.ValueOf(msg).Elem().FieldByName("Info").Interface().(pgn.MessageInfo)
+
+	var priority uint8 = 6
+	if info.Priority != nil {
+		priority = *info.Priority
 	}
 
-	// Determine destination: use Info.TargetId if non-zero, else 255 (broadcast).
-	destination := info.TargetId
-	if destination == 0 {
-		destination = 255
+	var destination uint8 = 255
+	if info.TargetId != nil {
+		destination = *info.TargetId
 	}
 
-	// Build the CAN ID.
 	canID := framer.BuildCANID(pgnNum, priority, c.sourceAddr, destination)
 
-	// Determine framing strategy.
 	if len(payload) <= 8 {
-		// Single frame.
 		frame := framer.FrameSingle(canID, payload)
 		return c.writeFrame(frame)
 	}
 
-	// Check if this is a fast-packet PGN.
 	isFast := false
 	if infos, ok := pgn.PgnInfoLookup[pgnNum]; ok && len(infos) > 0 {
 		isFast = infos[0].Fast
 	}
 
 	if isFast && len(payload) <= 223 {
-		// Fast-packet.
 		seqID := uint8(c.fastSeq.Add(1) % 8)
 		frames := framer.FrameFastPacket(canID, payload, seqID)
 		for _, f := range frames {
@@ -256,14 +229,13 @@ func (c *Client) doWrite(msg any) error {
 		return nil
 	}
 
-	// Large payload: use transport protocol BAM (broadcast).
 	return c.tp.SendBAM(pgnNum, c.sourceAddr, payload)
 }
 
 // Receive returns an iterator of decoded NMEA 2000 messages from the
 // configured sources. It delegates to the top-level n2k.Receive function
 // with the same options used to create this Client.
-func (c *Client) Receive() iter.Seq2[any, error] {
+func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
 	return Receive(c.ctx, c.opts...)
 }
 

@@ -23,8 +23,9 @@ type TrackedTargetData struct {
 	UtcOfFix *float32 `json:"utcOfFix"`
 	Name string `json:"name"`
 }
-func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val TrackedTargetData
+func (x *TrackedTargetData) PGNNumber() uint32  { return 128520 }
+func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &TrackedTargetData{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Sid: %w", err)
@@ -173,8 +174,9 @@ type WindlassControlStatus struct {
 	CommandTimeout *float32 `json:"commandTimeout"`
 	WindlassControlEvents WindlassControlConst `json:"windlassControlEvents"`
 }
-func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val WindlassControlStatus
+func (x *WindlassControlStatus) PGNNumber() uint32  { return 128776 }
+func DecodeWindlassControlStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WindlassControlStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for WindlassControlStatus-Sid: %w", err)
@@ -306,8 +308,9 @@ type AnchorWindlassOperatingStatus struct {
 	AnchorDockingStatus DockingStatusConst `json:"anchorDockingStatus"`
 	WindlassOperatingEvents WindlassOperationConst `json:"windlassOperatingEvents"`
 }
-func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AnchorWindlassOperatingStatus
+func (x *AnchorWindlassOperatingStatus) PGNNumber() uint32  { return 128777 }
+func DecodeAnchorWindlassOperatingStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AnchorWindlassOperatingStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AnchorWindlassOperatingStatus-Sid: %w", err)
@@ -405,8 +408,9 @@ type AnchorWindlassMonitoringStatus struct {
 	MotorCurrent *uint8 `json:"motorCurrent"`
 	TotalMotorTime *float32 `json:"totalMotorTime"`
 }
-func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AnchorWindlassMonitoringStatus
+func (x *AnchorWindlassMonitoringStatus) PGNNumber() uint32  { return 128778 }
+func DecodeAnchorWindlassMonitoringStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AnchorWindlassMonitoringStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AnchorWindlassMonitoringStatus-Sid: %w", err)
@@ -501,7 +505,7 @@ func EncodeTrackedTargetData(val *TrackedTargetData) ([]byte, error) {
 	w.writeFixedString(val.Name, 1784)
 	return w.Bytes(), w.Err()
 }
-func encodeTrackedTargetDataAny(v any) ([]byte, error) {
+func encodeTrackedTargetDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*TrackedTargetData)
 	if !ok {
 		return nil, fmt.Errorf("expected *TrackedTargetData, got %T", v)
@@ -528,7 +532,7 @@ func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
 	w.skipBits(12)
 	return w.Bytes(), w.Err()
 }
-func encodeWindlassControlStatusAny(v any) ([]byte, error) {
+func encodeWindlassControlStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*WindlassControlStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *WindlassControlStatus, got %T", v)
@@ -559,7 +563,7 @@ func EncodeAnchorWindlassOperatingStatus(val *AnchorWindlassOperatingStatus) ([]
 	w.writeLookupField(uint64(val.WindlassOperatingEvents), 6)
 	return w.Bytes(), w.Err()
 }
-func encodeAnchorWindlassOperatingStatusAny(v any) ([]byte, error) {
+func encodeAnchorWindlassOperatingStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AnchorWindlassOperatingStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AnchorWindlassOperatingStatus, got %T", v)
@@ -579,7 +583,7 @@ func EncodeAnchorWindlassMonitoringStatus(val *AnchorWindlassMonitoringStatus) (
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAnchorWindlassMonitoringStatusAny(v any) ([]byte, error) {
+func encodeAnchorWindlassMonitoringStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AnchorWindlassMonitoringStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AnchorWindlassMonitoringStatus, got %T", v)

@@ -12,12 +12,14 @@ import (
 // building an UnknownPGN, the manufacturer code should be extracted from the first two
 // data bytes. The test uses manufacturer code 381 (B&G / Bandg) and confirms it appears
 // in the resulting UnknownPGN's ManufacturerCode field.
+func ptrUint8(v uint8) *uint8 { return &v }
+
 func TestProprietary(t *testing.T) {
 	pInfo := pgn.MessageInfo{
 		PGN:      130824,
 		SourceId: 10,
-		Priority: 1,
-		TargetId: 0,
+		Priority: ptrUint8(1),
+		TargetId: ptrUint8(0),
 	}
 	p := Packet{
 		Info: pInfo,

@@ -25,5 +25,5 @@ func TestPgn127501(t *testing.T) {
 	stream := pgn.NewPgnDataStream(p.Data)
 	ret, err := decoder(p.Info, stream)
 	assert.Nil(t, err)
-	assert.IsType(t, pgn.BinarySwitchBankStatus{}, ret)
+	assert.IsType(t, &pgn.BinarySwitchBankStatus{}, ret)
 }

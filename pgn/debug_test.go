@@ -12,11 +12,13 @@ import (
 func TestDebugDumpPGN_SimpleStruct(t *testing.T) {
 	heading := float32(1.5)
 	sid := uint8(3)
-	v := VesselHeading{
-		Info:    MessageInfo{PGN: 127250, SourceId: 1, Priority: 2},
+	v := &VesselHeading{
 		Sid:     &sid,
 		Heading: &heading,
 	}
+	v.Info.PGN = 127250
+	v.Info.SourceId = 1
+	v.Info.Priority = ptrUint8(2)
 	result := DebugDumpPGN(v)
 	assert.Contains(t, result, "VesselHeading:")
 	assert.Contains(t, result, "PGN=")
@@ -30,10 +32,11 @@ func TestDebugDumpPGN_SimpleStruct(t *testing.T) {
 // "data not available") are rendered as "nil" in the debug output rather than causing
 // a nil dereference panic. All optional fields on VesselHeading are left nil.
 func TestDebugDumpPGN_NilPointers(t *testing.T) {
-	v := VesselHeading{
-		Info: MessageInfo{PGN: 127250, SourceId: 5},
-		Sid:  nil,
+	v := &VesselHeading{
+		Sid: nil,
 	}
+	v.Info.PGN = 127250
+	v.Info.SourceId = 5
 	result := DebugDumpPGN(v)
 	assert.Contains(t, result, "VesselHeading:")
 	assert.Contains(t, result, "Sid=nil")
@@ -48,11 +51,12 @@ func TestDebugDumpPGN_NilPointers(t *testing.T) {
 func TestDebugDumpPGN_NonNilPointers(t *testing.T) {
 	rate := float64(-0.5)
 	sid := uint8(1)
-	v := RateOfTurn{
-		Info: MessageInfo{PGN: 127251, SourceId: 2},
+	v := &RateOfTurn{
 		Sid:  &sid,
 		Rate: &rate,
 	}
+	v.Info.PGN = 127251
+	v.Info.SourceId = 2
 	result := DebugDumpPGN(v)
 	assert.Contains(t, result, "RateOfTurn:")
 	assert.Contains(t, result, "Sid=")
@@ -66,9 +70,10 @@ func TestDebugDumpPGN_NonNilPointers(t *testing.T) {
 // being nested inside an "Info={...}" wrapper. This makes the debug output more readable
 // since every PGN struct embeds MessageInfo.
 func TestDebugDumpPGN_MessageInfoEmbedded(t *testing.T) {
-	v := VesselHeading{
-		Info: MessageInfo{PGN: 127250, SourceId: 7, Priority: 3},
-	}
+	v := &VesselHeading{}
+	v.Info.PGN = 127250
+	v.Info.SourceId = 7
+	v.Info.Priority = ptrUint8(3)
 	result := DebugDumpPGN(v)
 	assert.Contains(t, result, "PGN=")
 	assert.Contains(t, result, "SourceId=")

@@ -97,21 +97,23 @@ func TestFilterDestination(t *testing.T) {
 	f, err := compileFilter("destination == 255")
 	require.NoError(t, err)
 	assert.True(t, f.preOnly)
-	assert.True(t, f.evalPre(pgn.MessageInfo{TargetId: 255}))
-	assert.False(t, f.evalPre(pgn.MessageInfo{TargetId: 0}))
+	assert.True(t, f.evalPre(pgn.MessageInfo{TargetId: ptrU8(255)}))
+	assert.False(t, f.evalPre(pgn.MessageInfo{TargetId: ptrU8(0)}))
 }
 
 func TestFilterPriority(t *testing.T) {
 	f, err := compileFilter("priority < 4")
 	require.NoError(t, err)
 	assert.True(t, f.preOnly)
-	assert.True(t, f.evalPre(pgn.MessageInfo{Priority: 2}))
-	assert.False(t, f.evalPre(pgn.MessageInfo{Priority: 5}))
+	assert.True(t, f.evalPre(pgn.MessageInfo{Priority: ptrU8(2)}))
+	assert.False(t, f.evalPre(pgn.MessageInfo{Priority: ptrU8(5)}))
 }
+
+func ptrU8(v uint8) *uint8 { return &v }
 
 func TestStructToFilterMap(t *testing.T) {
 	type testStruct struct {
-		Info      pgn.MessageInfo
+		info      pgn.MessageInfo // unexported, like real PGN structs
 		Heading   *float32
 		Deviation *float32
 		Sid       *uint8
@@ -121,7 +123,7 @@ func TestStructToFilterMap(t *testing.T) {
 	heading := float32(1.57)
 	sid := uint8(42)
 	s := testStruct{
-		Info:      pgn.MessageInfo{PGN: 127250},
+		info:      pgn.MessageInfo{PGN: 127250},
 		Heading:   &heading,
 		Deviation: nil, // nil pointer, should be skipped
 		Sid:       &sid,
@@ -130,9 +132,9 @@ func TestStructToFilterMap(t *testing.T) {
 
 	m := structToFilterMap(s)
 
-	// Info should be skipped.
-	_, hasInfo := m["Info"]
-	assert.False(t, hasInfo, "Info field should be skipped")
+	// info (unexported) should be skipped.
+	_, hasInfo := m["info"]
+	assert.False(t, hasInfo, "unexported info field should be skipped")
 
 	// Heading should be present with both cases.
 	assert.InDelta(t, 1.57, m["Heading"], 0.01)

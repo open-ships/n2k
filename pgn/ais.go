@@ -26,8 +26,9 @@ type AisClassAPositionReport struct {
 	SpecialManeuverIndicator AisSpecialManeuverConst `json:"specialManeuverIndicator"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
-func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassAPositionReport
+func (a *AisClassAPositionReport) PGNNumber() uint32  { return 129038 }
+func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassAPositionReport{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-MessageId: %w", err)
@@ -219,8 +220,9 @@ type AisClassBPositionReport struct {
 	AisMode AisModeConst `json:"aisMode"`
 	AisCommunicationState AisCommunicationStateConst `json:"aisCommunicationState"`
 }
-func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassBPositionReport
+func (a *AisClassBPositionReport) PGNNumber() uint32  { return 129039 }
+func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassBPositionReport{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-MessageId: %w", err)
@@ -440,8 +442,9 @@ type AisClassBExtendedPositionReport struct {
 	AisMode AisModeConst `json:"aisMode"`
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
-func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassBExtendedPositionReport
+func (a *AisClassBExtendedPositionReport) PGNNumber() uint32  { return 129040 }
+func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassBExtendedPositionReport{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-MessageId: %w", err)
@@ -681,8 +684,9 @@ type AisAidsToNavigationAtonReport struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	AtonName string `json:"atonName"`
 }
-func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisAidsToNavigationAtonReport
+func (a *AisAidsToNavigationAtonReport) PGNNumber() uint32  { return 129041 }
+func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisAidsToNavigationAtonReport{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-MessageId: %w", err)
@@ -893,8 +897,9 @@ type AisUtcAndDateReport struct {
 	PositionDate *uint16 `json:"positionDate"`
 	GnssType PositionFixDeviceConst `json:"gnssType"`
 }
-func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisUtcAndDateReport
+func (a *AisUtcAndDateReport) PGNNumber() uint32  { return 129793 }
+func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisUtcAndDateReport{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-MessageId: %w", err)
@@ -1040,8 +1045,9 @@ type AisClassAStaticAndVoyageRelatedData struct {
 	Dte AvailableConst `json:"dte"`
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 }
-func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassAStaticAndVoyageRelatedData
+func (a *AisClassAStaticAndVoyageRelatedData) PGNNumber() uint32  { return 129794 }
+func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassAStaticAndVoyageRelatedData{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-MessageId: %w", err)
@@ -1236,8 +1242,9 @@ type AisAddressedBinaryMessage struct {
 	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
 	BinaryData []uint8 `json:"binaryData"`
 }
-func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisAddressedBinaryMessage
+func (a *AisAddressedBinaryMessage) PGNNumber() uint32  { return 129795 }
+func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisAddressedBinaryMessage{}
 	val.Info = Info
 		var binaryLength uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
@@ -1348,8 +1355,9 @@ type AisAcknowledge struct {
 	SequenceNumberForId1 []uint8 `json:"sequenceNumberForId1"`
 	SequenceNumberForIdN []uint8 `json:"sequenceNumberForIdN"`
 }
-func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisAcknowledge
+func (a *AisAcknowledge) PGNNumber() uint32  { return 129796 }
+func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisAcknowledge{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-MessageId: %w", err)
@@ -1441,8 +1449,9 @@ type AisBinaryBroadcastMessage struct {
 	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
 	BinaryData []uint8 `json:"binaryData"`
 }
-func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisBinaryBroadcastMessage
+func (a *AisBinaryBroadcastMessage) PGNNumber() uint32  { return 129797 }
+func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisBinaryBroadcastMessage{}
 	val.Info = Info
 		var binaryLength uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
@@ -1520,8 +1529,9 @@ type AisUtcDateInquiry struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	DestinationId *uint32 `json:"destinationId"`
 }
-func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisUtcDateInquiry
+func (a *AisUtcDateInquiry) PGNNumber() uint32  { return 129800 }
+func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisUtcDateInquiry{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcDateInquiry-MessageId: %w", err)
@@ -1585,8 +1595,9 @@ type AisAddressedSafetyRelatedMessage struct {
 	RetransmitFlag *uint8 `json:"retransmitFlag"`
 	SafetyRelatedText string `json:"safetyRelatedText"`
 }
-func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisAddressedSafetyRelatedMessage
+func (a *AisAddressedSafetyRelatedMessage) PGNNumber() uint32  { return 129801 }
+func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisAddressedSafetyRelatedMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-MessageId: %w", err)
@@ -1678,8 +1689,9 @@ type AisSafetyRelatedBroadcastMessage struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SafetyRelatedText string `json:"safetyRelatedText"`
 }
-func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisSafetyRelatedBroadcastMessage
+func (a *AisSafetyRelatedBroadcastMessage) PGNNumber() uint32  { return 129802 }
+func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisSafetyRelatedBroadcastMessage{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisSafetyRelatedBroadcastMessage-MessageId: %w", err)
@@ -1748,8 +1760,9 @@ type AisInterrogation struct {
 	SlotOffset21 *uint16 `json:"slotOffset21"`
 	Sid *uint8 `json:"sid"`
 }
-func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisInterrogation
+func (a *AisInterrogation) PGNNumber() uint32  { return 129803 }
+func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisInterrogation{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-MessageId: %w", err)
@@ -1908,8 +1921,9 @@ type AisDataLinkManagementMessageRepeating1 struct {
 	Timeout *uint8 `json:"timeout"`
 	Increment *uint16 `json:"increment"`
 }
-func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisDataLinkManagementMessage
+func (a *AisDataLinkManagementMessage) PGNNumber() uint32  { return 129805 }
+func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisDataLinkManagementMessage{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
@@ -2009,8 +2023,9 @@ type AisChannelManagement struct {
 	ChannelBBandwidth *uint8 `json:"channelBBandwidth"`
 	TransitionalZoneSize *uint8 `json:"transitionalZoneSize"`
 }
-func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisChannelManagement
+func (a *AisChannelManagement) PGNNumber() uint32  { return 129806 }
+func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisChannelManagement{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-MessageId: %w", err)
@@ -2183,8 +2198,9 @@ type AisClassBStaticDataMsg24PartA struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
-func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassBStaticDataMsg24PartA
+func (a *AisClassBStaticDataMsg24PartA) PGNNumber() uint32  { return 129809 }
+func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassBStaticDataMsg24PartA{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-MessageId: %w", err)
@@ -2262,8 +2278,9 @@ type AisClassBStaticDataMsg24PartB struct {
 	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
 	SequenceId *uint8 `json:"sequenceId"`
 }
-func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AisClassBStaticDataMsg24PartB
+func (a *AisClassBStaticDataMsg24PartB) PGNNumber() uint32  { return 129810 }
+func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AisClassBStaticDataMsg24PartB{}
 	val.Info = Info
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-MessageId: %w", err)
@@ -2426,7 +2443,7 @@ func EncodeAisClassAPositionReport(val *AisClassAPositionReport) ([]byte, error)
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassAPositionReportAny(v any) ([]byte, error) {
+func encodeAisClassAPositionReportMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassAPositionReport)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassAPositionReport, got %T", v)
@@ -2466,7 +2483,7 @@ func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error)
 	w.skipBits(15)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassBPositionReportAny(v any) ([]byte, error) {
+func encodeAisClassBPositionReportMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassBPositionReport)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassBPositionReport, got %T", v)
@@ -2526,7 +2543,7 @@ func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport)
 	w.skipBits(5)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassBExtendedPositionReportAny(v any) ([]byte, error) {
+func encodeAisClassBExtendedPositionReportMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassBExtendedPositionReport)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassBExtendedPositionReport, got %T", v)
@@ -2578,7 +2595,7 @@ func EncodeAisAidsToNavigationAtonReport(val *AisAidsToNavigationAtonReport) ([]
 	w.writeStringWithLengthAndControl(val.AtonName)
 	return w.Bytes(), w.Err()
 }
-func encodeAisAidsToNavigationAtonReportAny(v any) ([]byte, error) {
+func encodeAisAidsToNavigationAtonReportMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisAidsToNavigationAtonReport)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisAidsToNavigationAtonReport, got %T", v)
@@ -2606,7 +2623,7 @@ func EncodeAisUtcAndDateReport(val *AisUtcAndDateReport) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisUtcAndDateReportAny(v any) ([]byte, error) {
+func encodeAisUtcAndDateReportMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisUtcAndDateReport)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisUtcAndDateReport, got %T", v)
@@ -2660,7 +2677,7 @@ func EncodeAisClassAStaticAndVoyageRelatedData(val *AisClassAStaticAndVoyageRela
 	w.skipBits(3)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassAStaticAndVoyageRelatedDataAny(v any) ([]byte, error) {
+func encodeAisClassAStaticAndVoyageRelatedDataMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassAStaticAndVoyageRelatedData)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassAStaticAndVoyageRelatedData, got %T", v)
@@ -2684,7 +2701,7 @@ func EncodeAisAddressedBinaryMessage(val *AisAddressedBinaryMessage) ([]byte, er
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeAisAddressedBinaryMessageAny(v any) ([]byte, error) {
+func encodeAisAddressedBinaryMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisAddressedBinaryMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisAddressedBinaryMessage, got %T", v)
@@ -2708,7 +2725,7 @@ func EncodeAisAcknowledge(val *AisAcknowledge) ([]byte, error) {
 	w.skipBits(6)
 	return w.Bytes(), w.Err()
 }
-func encodeAisAcknowledgeAny(v any) ([]byte, error) {
+func encodeAisAcknowledgeMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisAcknowledge)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisAcknowledge, got %T", v)
@@ -2728,7 +2745,7 @@ func EncodeAisBinaryBroadcastMessage(val *AisBinaryBroadcastMessage) ([]byte, er
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeAisBinaryBroadcastMessageAny(v any) ([]byte, error) {
+func encodeAisBinaryBroadcastMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisBinaryBroadcastMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisBinaryBroadcastMessage, got %T", v)
@@ -2747,7 +2764,7 @@ func EncodeAisUtcDateInquiry(val *AisUtcDateInquiry) ([]byte, error) {
 	w.writeUInt32(val.DestinationId, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeAisUtcDateInquiryAny(v any) ([]byte, error) {
+func encodeAisUtcDateInquiryMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisUtcDateInquiry)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisUtcDateInquiry, got %T", v)
@@ -2770,7 +2787,7 @@ func EncodeAisAddressedSafetyRelatedMessage(val *AisAddressedSafetyRelatedMessag
 	w.writeFixedString(val.SafetyRelatedText, 936)
 	return w.Bytes(), w.Err()
 }
-func encodeAisAddressedSafetyRelatedMessageAny(v any) ([]byte, error) {
+func encodeAisAddressedSafetyRelatedMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisAddressedSafetyRelatedMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisAddressedSafetyRelatedMessage, got %T", v)
@@ -2789,7 +2806,7 @@ func EncodeAisSafetyRelatedBroadcastMessage(val *AisSafetyRelatedBroadcastMessag
 	w.writeFixedString(val.SafetyRelatedText, 1296)
 	return w.Bytes(), w.Err()
 }
-func encodeAisSafetyRelatedBroadcastMessageAny(v any) ([]byte, error) {
+func encodeAisSafetyRelatedBroadcastMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisSafetyRelatedBroadcastMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisSafetyRelatedBroadcastMessage, got %T", v)
@@ -2821,7 +2838,7 @@ func EncodeAisInterrogation(val *AisInterrogation) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisInterrogationAny(v any) ([]byte, error) {
+func encodeAisInterrogationMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisInterrogation)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisInterrogation, got %T", v)
@@ -2845,7 +2862,7 @@ func EncodeAisDataLinkManagementMessage(val *AisDataLinkManagementMessage) ([]by
 	}
 	return w.Bytes(), w.Err()
 }
-func encodeAisDataLinkManagementMessageAny(v any) ([]byte, error) {
+func encodeAisDataLinkManagementMessageMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisDataLinkManagementMessage)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisDataLinkManagementMessage, got %T", v)
@@ -2878,7 +2895,7 @@ func EncodeAisChannelManagement(val *AisChannelManagement) ([]byte, error) {
 	w.writeUInt8(val.TransitionalZoneSize, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisChannelManagementAny(v any) ([]byte, error) {
+func encodeAisChannelManagementMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisChannelManagement)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisChannelManagement, got %T", v)
@@ -2898,7 +2915,7 @@ func EncodeAisClassBStaticDataMsg24PartA(val *AisClassBStaticDataMsg24PartA) ([]
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassBStaticDataMsg24PartAAny(v any) ([]byte, error) {
+func encodeAisClassBStaticDataMsg24PartAMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassBStaticDataMsg24PartA)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassBStaticDataMsg24PartA, got %T", v)
@@ -2943,7 +2960,7 @@ func EncodeAisClassBStaticDataMsg24PartB(val *AisClassBStaticDataMsg24PartB) ([]
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeAisClassBStaticDataMsg24PartBAny(v any) ([]byte, error) {
+func encodeAisClassBStaticDataMsg24PartBMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AisClassBStaticDataMsg24PartB)
 	if !ok {
 		return nil, fmt.Errorf("expected *AisClassBStaticDataMsg24PartB, got %T", v)

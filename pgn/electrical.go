@@ -12,8 +12,9 @@ type Bus1PhaseCBasicAcQuantities struct {
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseCBasicAcQuantities
+func (b *Bus1PhaseCBasicAcQuantities) PGNNumber() uint32  { return 65001 }
+func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -54,8 +55,9 @@ type Bus1PhaseBBasicAcQuantities struct {
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseBBasicAcQuantities
+func (b *Bus1PhaseBBasicAcQuantities) PGNNumber() uint32  { return 65002 }
+func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -96,8 +98,9 @@ type Bus1PhaseABasicAcQuantities struct {
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1PhaseABasicAcQuantities
+func (b *Bus1PhaseABasicAcQuantities) PGNNumber() uint32  { return 65003 }
+func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1PhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -138,8 +141,9 @@ type Bus1AverageBasicAcQuantities struct {
 	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
 	AcFrequency *float32 `json:"acFrequency"`
 }
-func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val Bus1AverageBasicAcQuantities
+func (b *Bus1AverageBasicAcQuantities) PGNNumber() uint32  { return 65004 }
+func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Bus1AverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1AverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -179,8 +183,9 @@ type UtilityTotalAcEnergy struct {
 	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
 	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
-func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcEnergy
+func (u *UtilityTotalAcEnergy) PGNNumber() uint32  { return 65005 }
+func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcEnergy{}
 	val.Info = Info
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcEnergy-TotalEnergyExport: %w", err)
@@ -208,8 +213,9 @@ type UtilityPhaseCAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCAcReactivePower
+func (u *UtilityPhaseCAcReactivePower) PGNNumber() uint32  { return 65006 }
+func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcReactivePower-ReactivePower: %w", err)
@@ -249,8 +255,9 @@ type UtilityPhaseCAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCAcPower
+func (u *UtilityPhaseCAcPower) PGNNumber() uint32  { return 65007 }
+func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcPower-RealPower: %w", err)
@@ -279,8 +286,9 @@ type UtilityPhaseCBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseCBasicAcQuantities
+func (u *UtilityPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65008 }
+func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -326,8 +334,9 @@ type UtilityPhaseBAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBAcReactivePower
+func (u *UtilityPhaseBAcReactivePower) PGNNumber() uint32  { return 65009 }
+func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcReactivePower-ReactivePower: %w", err)
@@ -367,8 +376,9 @@ type UtilityPhaseBAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBAcPower
+func (u *UtilityPhaseBAcPower) PGNNumber() uint32  { return 65010 }
+func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcPower-RealPower: %w", err)
@@ -397,8 +407,9 @@ type UtilityPhaseBBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseBBasicAcQuantities
+func (u *UtilityPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65011 }
+func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -444,8 +455,9 @@ type UtilityPhaseAAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseAAcReactivePower
+func (u *UtilityPhaseAAcReactivePower) PGNNumber() uint32  { return 65012 }
+func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseAAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcReactivePower-ReactivePower: %w", err)
@@ -485,8 +497,9 @@ type UtilityPhaseAAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseAAcPower
+func (u *UtilityPhaseAAcPower) PGNNumber() uint32  { return 65013 }
+func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseAAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcPower-RealPower: %w", err)
@@ -515,8 +528,9 @@ type UtilityPhaseABasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityPhaseABasicAcQuantities
+func (u *UtilityPhaseABasicAcQuantities) PGNNumber() uint32  { return 65014 }
+func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityPhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -562,8 +576,9 @@ type UtilityTotalAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcReactivePower
+func (u *UtilityTotalAcReactivePower) PGNNumber() uint32  { return 65015 }
+func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcReactivePower-ReactivePower: %w", err)
@@ -603,8 +618,9 @@ type UtilityTotalAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityTotalAcPower
+func (u *UtilityTotalAcPower) PGNNumber() uint32  { return 65016 }
+func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityTotalAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcPower-RealPower: %w", err)
@@ -633,8 +649,9 @@ type UtilityAverageBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val UtilityAverageBasicAcQuantities
+func (u *UtilityAverageBasicAcQuantities) PGNNumber() uint32  { return 65017 }
+func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &UtilityAverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityAverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -679,8 +696,9 @@ type GeneratorTotalAcEnergy struct {
 	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
 	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
 }
-func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcEnergy
+func (g *GeneratorTotalAcEnergy) PGNNumber() uint32  { return 65018 }
+func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcEnergy{}
 	val.Info = Info
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcEnergy-TotalEnergyExport: %w", err)
@@ -708,8 +726,9 @@ type GeneratorPhaseCAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCAcReactivePower
+func (g *GeneratorPhaseCAcReactivePower) PGNNumber() uint32  { return 65019 }
+func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcReactivePower-ReactivePower: %w", err)
@@ -749,8 +768,9 @@ type GeneratorPhaseCAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCAcPower
+func (g *GeneratorPhaseCAcPower) PGNNumber() uint32  { return 65020 }
+func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcPower-RealPower: %w", err)
@@ -779,8 +799,9 @@ type GeneratorPhaseCBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseCBasicAcQuantities
+func (g *GeneratorPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65021 }
+func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseCBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -826,8 +847,9 @@ type GeneratorPhaseBAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBAcReactivePower
+func (g *GeneratorPhaseBAcReactivePower) PGNNumber() uint32  { return 65022 }
+func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcReactivePower-ReactivePower: %w", err)
@@ -867,8 +889,9 @@ type GeneratorPhaseBAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBAcPower
+func (g *GeneratorPhaseBAcPower) PGNNumber() uint32  { return 65023 }
+func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcPower-RealPower: %w", err)
@@ -897,8 +920,9 @@ type GeneratorPhaseBBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseBBasicAcQuantities
+func (g *GeneratorPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65024 }
+func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseBBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -944,8 +968,9 @@ type GeneratorPhaseAAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseAAcReactivePower
+func (g *GeneratorPhaseAAcReactivePower) PGNNumber() uint32  { return 65025 }
+func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseAAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcReactivePower-ReactivePower: %w", err)
@@ -985,8 +1010,9 @@ type GeneratorPhaseAAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseAAcPower
+func (g *GeneratorPhaseAAcPower) PGNNumber() uint32  { return 65026 }
+func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseAAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcPower-RealPower: %w", err)
@@ -1015,8 +1041,9 @@ type GeneratorPhaseABasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorPhaseABasicAcQuantities
+func (g *GeneratorPhaseABasicAcQuantities) PGNNumber() uint32  { return 65027 }
+func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorPhaseABasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseABasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -1062,8 +1089,9 @@ type GeneratorTotalAcReactivePower struct {
 	PowerFactor *float32 `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
-func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcReactivePower
+func (g *GeneratorTotalAcReactivePower) PGNNumber() uint32  { return 65028 }
+func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcReactivePower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcReactivePower-ReactivePower: %w", err)
@@ -1103,8 +1131,9 @@ type GeneratorTotalAcPower struct {
 	RealPower *int32 `json:"realPower"`
 	ApparentPower *int32 `json:"apparentPower"`
 }
-func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorTotalAcPower
+func (g *GeneratorTotalAcPower) PGNNumber() uint32  { return 65029 }
+func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorTotalAcPower{}
 	val.Info = Info
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcPower-RealPower: %w", err)
@@ -1133,8 +1162,9 @@ type GeneratorAverageBasicAcQuantities struct {
 	AcFrequency *float32 `json:"acFrequency"`
 	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
 }
-func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val GeneratorAverageBasicAcQuantities
+func (g *GeneratorAverageBasicAcQuantities) PGNNumber() uint32  { return 65030 }
+func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &GeneratorAverageBasicAcQuantities{}
 	val.Info = Info
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorAverageBasicAcQuantities-LineLineAcRmsVoltage: %w", err)
@@ -1185,8 +1215,9 @@ type LoadControllerConnectionStateControl struct {
 	Timeon *uint8 `json:"timeon"`
 	Timeoff *uint8 `json:"timeoff"`
 }
-func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val LoadControllerConnectionStateControl
+func (l *LoadControllerConnectionStateControl) PGNNumber() uint32  { return 127500 }
+func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LoadControllerConnectionStateControl{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-SequenceId: %w", err)
@@ -1294,8 +1325,9 @@ type BinarySwitchBankStatus struct {
 	Indicator27 OffOnConst `json:"indicator27"`
 	Indicator28 OffOnConst `json:"indicator28"`
 }
-func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BinarySwitchBankStatus
+func (b *BinarySwitchBankStatus) PGNNumber() uint32  { return 127501 }
+func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BinarySwitchBankStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Instance: %w", err)
@@ -1592,8 +1624,9 @@ type SwitchBankControl struct {
 	Switch27 OffOnConst `json:"switch27"`
 	Switch28 OffOnConst `json:"switch28"`
 }
-func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val SwitchBankControl
+func (s *SwitchBankControl) PGNNumber() uint32  { return 127502 }
+func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &SwitchBankControl{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Instance: %w", err)
@@ -1875,8 +1908,9 @@ type AcInputStatusRepeating1 struct {
 	ReactivePower *uint32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 }
-func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcInputStatus
+func (a *AcInputStatus) PGNNumber() uint32  { return 127503 }
+func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcInputStatus{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -1984,8 +2018,9 @@ type AcOutputStatusRepeating1 struct {
 	ReactivePower *uint32 `json:"reactivePower"`
 	PowerFactor *float32 `json:"powerFactor"`
 }
-func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcOutputStatus
+func (a *AcOutputStatus) PGNNumber() uint32  { return 127504 }
+func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcOutputStatus{}
 	val.Info = Info
 		var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
@@ -2083,8 +2118,9 @@ type FluidLevel struct {
 	Level *float32 `json:"level"`
 	Capacity *units.Volume `json:"capacity"`
 }
-func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val FluidLevel
+func (f *FluidLevel) PGNNumber() uint32  { return 127505 }
+func DecodeFluidLevel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &FluidLevel{}
 	val.Info = Info
 	if v, err := stream.readUInt8(4); err != nil {
 		return nil, fmt.Errorf("parse failed for FluidLevel-Instance: %w", err)
@@ -2139,8 +2175,9 @@ type DcDetailedStatus struct {
 	RippleVoltage *float32 `json:"rippleVoltage"`
 	RemainingCapacity *uint16 `json:"remainingCapacity"`
 }
-func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DcDetailedStatus
+func (d *DcDetailedStatus) PGNNumber() uint32  { return 127506 }
+func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DcDetailedStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-Sid: %w", err)
@@ -2226,8 +2263,9 @@ type ChargerStatus struct {
 	EqualizationPending OffOnConst `json:"equalizationPending"`
 	EqualizationTimeRemaining *float32 `json:"equalizationTimeRemaining"`
 }
-func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ChargerStatus
+func (c *ChargerStatus) PGNNumber() uint32  { return 127507 }
+func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ChargerStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-Instance: %w", err)
@@ -2306,8 +2344,9 @@ type BatteryStatus struct {
 	Temperature *units.Temperature `json:"temperature"`
 	Sid *uint8 `json:"sid"`
 }
-func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BatteryStatus
+func (b *BatteryStatus) PGNNumber() uint32  { return 127508 }
+func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BatteryStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Instance: %w", err)
@@ -2364,8 +2403,9 @@ type InverterStatus struct {
 	OperatingState InverterStateConst `json:"operatingState"`
 	InverterEnable OffOnConst `json:"inverterEnable"`
 }
-func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val InverterStatus
+func (i *InverterStatus) PGNNumber() uint32  { return 127509 }
+func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &InverterStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-Instance: %w", err)
@@ -2429,8 +2469,9 @@ type InverterConfigurationStatus struct {
 	LoadSensePowerThreshold *uint8 `json:"loadSensePowerThreshold"`
 	LoadSenseInterval *uint8 `json:"loadSenseInterval"`
 }
-func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val InverterConfigurationStatus
+func (i *InverterConfigurationStatus) PGNNumber() uint32  { return 127511 }
+func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &InverterConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-Instance: %w", err)
@@ -2516,8 +2557,9 @@ type AgsConfigurationStatus struct {
 	GeneratorInstance *uint8 `json:"generatorInstance"`
 	AgsMode *uint8 `json:"agsMode"`
 }
-func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AgsConfigurationStatus
+func (a *AgsConfigurationStatus) PGNNumber() uint32  { return 127512 }
+func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AgsConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsConfigurationStatus-Instance: %w", err)
@@ -2564,8 +2606,9 @@ type BatteryConfigurationStatus struct {
 	PeukertExponent *float32 `json:"peukertExponent"`
 	ChargeEfficiencyFactor *int8 `json:"chargeEfficiencyFactor"`
 }
-func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val BatteryConfigurationStatus
+func (b *BatteryConfigurationStatus) PGNNumber() uint32  { return 127513 }
+func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &BatteryConfigurationStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-Instance: %w", err)
@@ -2663,8 +2706,9 @@ type AgsStatus struct {
 	GeneratorOnReason *uint8 `json:"generatorOnReason"`
 	GeneratorOffReason *uint8 `json:"generatorOffReason"`
 }
-func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AgsStatus
+func (a *AgsStatus) PGNNumber() uint32  { return 127514 }
+func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AgsStatus{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-Instance: %w", err)
@@ -2733,8 +2777,9 @@ type AcPowerCurrentPhaseA struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseA
+func (a *AcPowerCurrentPhaseA) PGNNumber() uint32  { return 127744 }
+func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseA{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseA-Sid: %w", err)
@@ -2781,8 +2826,9 @@ type AcPowerCurrentPhaseB struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseB
+func (a *AcPowerCurrentPhaseB) PGNNumber() uint32  { return 127745 }
+func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseB{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseB-Sid: %w", err)
@@ -2829,8 +2875,9 @@ type AcPowerCurrentPhaseC struct {
 	AcRmsCurrent *float32 `json:"acRmsCurrent"`
 	Power *int32 `json:"power"`
 }
-func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val AcPowerCurrentPhaseC
+func (a *AcPowerCurrentPhaseC) PGNNumber() uint32  { return 127746 }
+func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &AcPowerCurrentPhaseC{}
 	val.Info = Info
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseC-Sid: %w", err)
@@ -2880,8 +2927,9 @@ type ConverterStatus struct {
 	LowDcVoltageState GoodWarningErrorConst `json:"lowDcVoltageState"`
 	RippleState GoodWarningErrorConst `json:"rippleState"`
 }
-func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val ConverterStatus
+func (c *ConverterStatus) PGNNumber() uint32  { return 127750 }
+func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &ConverterStatus{}
 	val.Info = Info
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-Sid: %w", err)
@@ -2959,8 +3007,9 @@ type DcVoltageCurrent struct {
 	DcVoltage *float32 `json:"dcVoltage"`
 	DcCurrent *float32 `json:"dcCurrent"`
 }
-func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (any, error) {
-	var val DcVoltageCurrent
+func (d *DcVoltageCurrent) PGNNumber() uint32  { return 127751 }
+func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DcVoltageCurrent{}
 	val.Info = Info
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcVoltageCurrent-Sid: %w", err)
@@ -3014,7 +3063,7 @@ func EncodeBus1PhaseCBasicAcQuantities(val *Bus1PhaseCBasicAcQuantities) ([]byte
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeBus1PhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeBus1PhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseCBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *Bus1PhaseCBasicAcQuantities, got %T", v)
@@ -3031,7 +3080,7 @@ func EncodeBus1PhaseBBasicAcQuantities(val *Bus1PhaseBBasicAcQuantities) ([]byte
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeBus1PhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeBus1PhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseBBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *Bus1PhaseBBasicAcQuantities, got %T", v)
@@ -3048,7 +3097,7 @@ func EncodeBus1PhaseABasicAcQuantities(val *Bus1PhaseABasicAcQuantities) ([]byte
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeBus1PhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeBus1PhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseABasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *Bus1PhaseABasicAcQuantities, got %T", v)
@@ -3065,7 +3114,7 @@ func EncodeBus1AverageBasicAcQuantities(val *Bus1AverageBasicAcQuantities) ([]by
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeBus1AverageBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeBus1AverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*Bus1AverageBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *Bus1AverageBasicAcQuantities, got %T", v)
@@ -3080,7 +3129,7 @@ func EncodeUtilityTotalAcEnergy(val *UtilityTotalAcEnergy) ([]byte, error) {
 	w.writeUInt32(val.TotalEnergyImport, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityTotalAcEnergyAny(v any) ([]byte, error) {
+func encodeUtilityTotalAcEnergyMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcEnergy)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityTotalAcEnergy, got %T", v)
@@ -3097,7 +3146,7 @@ func EncodeUtilityPhaseCAcReactivePower(val *UtilityPhaseCAcReactivePower) ([]by
 	w.skipBits(30)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseCAcReactivePowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseCAcReactivePower, got %T", v)
@@ -3112,7 +3161,7 @@ func EncodeUtilityPhaseCAcPower(val *UtilityPhaseCAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseCAcPowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseCAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseCAcPower, got %T", v)
@@ -3129,7 +3178,7 @@ func EncodeUtilityPhaseCBasicAcQuantities(val *UtilityPhaseCBasicAcQuantities) (
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeUtilityPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseCBasicAcQuantities, got %T", v)
@@ -3146,7 +3195,7 @@ func EncodeUtilityPhaseBAcReactivePower(val *UtilityPhaseBAcReactivePower) ([]by
 	w.skipBits(30)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseBAcReactivePowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseBAcReactivePower, got %T", v)
@@ -3161,7 +3210,7 @@ func EncodeUtilityPhaseBAcPower(val *UtilityPhaseBAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseBAcPowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseBAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseBAcPower, got %T", v)
@@ -3178,7 +3227,7 @@ func EncodeUtilityPhaseBBasicAcQuantities(val *UtilityPhaseBBasicAcQuantities) (
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeUtilityPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseBBasicAcQuantities, got %T", v)
@@ -3195,7 +3244,7 @@ func EncodeUtilityPhaseAAcReactivePower(val *UtilityPhaseAAcReactivePower) ([]by
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseAAcReactivePowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseAAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseAAcReactivePower, got %T", v)
@@ -3210,7 +3259,7 @@ func EncodeUtilityPhaseAAcPower(val *UtilityPhaseAAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseAAcPowerAny(v any) ([]byte, error) {
+func encodeUtilityPhaseAAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseAAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseAAcPower, got %T", v)
@@ -3227,7 +3276,7 @@ func EncodeUtilityPhaseABasicAcQuantities(val *UtilityPhaseABasicAcQuantities) (
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeUtilityPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseABasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityPhaseABasicAcQuantities, got %T", v)
@@ -3244,7 +3293,7 @@ func EncodeUtilityTotalAcReactivePower(val *UtilityTotalAcReactivePower) ([]byte
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityTotalAcReactivePowerAny(v any) ([]byte, error) {
+func encodeUtilityTotalAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityTotalAcReactivePower, got %T", v)
@@ -3259,7 +3308,7 @@ func EncodeUtilityTotalAcPower(val *UtilityTotalAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityTotalAcPowerAny(v any) ([]byte, error) {
+func encodeUtilityTotalAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityTotalAcPower, got %T", v)
@@ -3276,7 +3325,7 @@ func EncodeUtilityAverageBasicAcQuantities(val *UtilityAverageBasicAcQuantities)
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeUtilityAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeUtilityAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*UtilityAverageBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *UtilityAverageBasicAcQuantities, got %T", v)
@@ -3291,7 +3340,7 @@ func EncodeGeneratorTotalAcEnergy(val *GeneratorTotalAcEnergy) ([]byte, error) {
 	w.writeUInt32(val.TotalEnergyImport, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorTotalAcEnergyAny(v any) ([]byte, error) {
+func encodeGeneratorTotalAcEnergyMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcEnergy)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorTotalAcEnergy, got %T", v)
@@ -3308,7 +3357,7 @@ func EncodeGeneratorPhaseCAcReactivePower(val *GeneratorPhaseCAcReactivePower) (
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseCAcReactivePowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseCAcReactivePower, got %T", v)
@@ -3323,7 +3372,7 @@ func EncodeGeneratorPhaseCAcPower(val *GeneratorPhaseCAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseCAcPowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseCAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseCAcPower, got %T", v)
@@ -3340,7 +3389,7 @@ func EncodeGeneratorPhaseCBasicAcQuantities(val *GeneratorPhaseCBasicAcQuantitie
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseCBasicAcQuantities, got %T", v)
@@ -3357,7 +3406,7 @@ func EncodeGeneratorPhaseBAcReactivePower(val *GeneratorPhaseBAcReactivePower) (
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseBAcReactivePowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseBAcReactivePower, got %T", v)
@@ -3372,7 +3421,7 @@ func EncodeGeneratorPhaseBAcPower(val *GeneratorPhaseBAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseBAcPowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseBAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseBAcPower, got %T", v)
@@ -3389,7 +3438,7 @@ func EncodeGeneratorPhaseBBasicAcQuantities(val *GeneratorPhaseBBasicAcQuantitie
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseBBasicAcQuantities, got %T", v)
@@ -3406,7 +3455,7 @@ func EncodeGeneratorPhaseAAcReactivePower(val *GeneratorPhaseAAcReactivePower) (
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseAAcReactivePowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseAAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseAAcReactivePower, got %T", v)
@@ -3421,7 +3470,7 @@ func EncodeGeneratorPhaseAAcPower(val *GeneratorPhaseAAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseAAcPowerAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseAAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseAAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseAAcPower, got %T", v)
@@ -3438,7 +3487,7 @@ func EncodeGeneratorPhaseABasicAcQuantities(val *GeneratorPhaseABasicAcQuantitie
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeGeneratorPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseABasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorPhaseABasicAcQuantities, got %T", v)
@@ -3455,7 +3504,7 @@ func EncodeGeneratorTotalAcReactivePower(val *GeneratorTotalAcReactivePower) ([]
 	w.skipBits(14)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorTotalAcReactivePowerAny(v any) ([]byte, error) {
+func encodeGeneratorTotalAcReactivePowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcReactivePower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorTotalAcReactivePower, got %T", v)
@@ -3470,7 +3519,7 @@ func EncodeGeneratorTotalAcPower(val *GeneratorTotalAcPower) ([]byte, error) {
 	w.writeInt32(val.ApparentPower, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorTotalAcPowerAny(v any) ([]byte, error) {
+func encodeGeneratorTotalAcPowerMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcPower)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorTotalAcPower, got %T", v)
@@ -3487,7 +3536,7 @@ func EncodeGeneratorAverageBasicAcQuantities(val *GeneratorAverageBasicAcQuantit
 	w.writeUInt16(val.AcRmsCurrent, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeGeneratorAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
+func encodeGeneratorAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 	val, ok := v.(*GeneratorAverageBasicAcQuantities)
 	if !ok {
 		return nil, fmt.Errorf("expected *GeneratorAverageBasicAcQuantities, got %T", v)
@@ -3508,7 +3557,7 @@ func EncodeLoadControllerConnectionStateControl(val *LoadControllerConnectionSta
 	w.writeUInt8(val.Timeoff, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeLoadControllerConnectionStateControlAny(v any) ([]byte, error) {
+func encodeLoadControllerConnectionStateControlMsg(v Message) ([]byte, error) {
 	val, ok := v.(*LoadControllerConnectionStateControl)
 	if !ok {
 		return nil, fmt.Errorf("expected *LoadControllerConnectionStateControl, got %T", v)
@@ -3550,7 +3599,7 @@ func EncodeBinarySwitchBankStatus(val *BinarySwitchBankStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.Indicator28), 2)
 	return w.Bytes(), w.Err()
 }
-func encodeBinarySwitchBankStatusAny(v any) ([]byte, error) {
+func encodeBinarySwitchBankStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*BinarySwitchBankStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *BinarySwitchBankStatus, got %T", v)
@@ -3592,7 +3641,7 @@ func EncodeSwitchBankControl(val *SwitchBankControl) ([]byte, error) {
 	w.writeLookupField(uint64(val.Switch28), 2)
 	return w.Bytes(), w.Err()
 }
-func encodeSwitchBankControlAny(v any) ([]byte, error) {
+func encodeSwitchBankControlMsg(v Message) ([]byte, error) {
 	val, ok := v.(*SwitchBankControl)
 	if !ok {
 		return nil, fmt.Errorf("expected *SwitchBankControl, got %T", v)
@@ -3620,7 +3669,7 @@ func EncodeAcInputStatus(val *AcInputStatus) ([]byte, error) {
 	w.skipBits(4)
 	return w.Bytes(), w.Err()
 }
-func encodeAcInputStatusAny(v any) ([]byte, error) {
+func encodeAcInputStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AcInputStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AcInputStatus, got %T", v)
@@ -3648,7 +3697,7 @@ func EncodeAcOutputStatus(val *AcOutputStatus) ([]byte, error) {
 	w.skipBits(3)
 	return w.Bytes(), w.Err()
 }
-func encodeAcOutputStatusAny(v any) ([]byte, error) {
+func encodeAcOutputStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AcOutputStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AcOutputStatus, got %T", v)
@@ -3670,7 +3719,7 @@ func EncodeFluidLevel(val *FluidLevel) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeFluidLevelAny(v any) ([]byte, error) {
+func encodeFluidLevelMsg(v Message) ([]byte, error) {
 	val, ok := v.(*FluidLevel)
 	if !ok {
 		return nil, fmt.Errorf("expected *FluidLevel, got %T", v)
@@ -3691,7 +3740,7 @@ func EncodeDcDetailedStatus(val *DcDetailedStatus) ([]byte, error) {
 	w.writeUInt16(val.RemainingCapacity, 16)
 	return w.Bytes(), w.Err()
 }
-func encodeDcDetailedStatusAny(v any) ([]byte, error) {
+func encodeDcDetailedStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DcDetailedStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *DcDetailedStatus, got %T", v)
@@ -3712,7 +3761,7 @@ func EncodeChargerStatus(val *ChargerStatus) ([]byte, error) {
 	w.writeUnsignedResolution(val.EqualizationTimeRemaining, 16, 60)
 	return w.Bytes(), w.Err()
 }
-func encodeChargerStatusAny(v any) ([]byte, error) {
+func encodeChargerStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ChargerStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *ChargerStatus, got %T", v)
@@ -3734,7 +3783,7 @@ func EncodeBatteryStatus(val *BatteryStatus) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeBatteryStatusAny(v any) ([]byte, error) {
+func encodeBatteryStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*BatteryStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *BatteryStatus, got %T", v)
@@ -3753,7 +3802,7 @@ func EncodeInverterStatus(val *InverterStatus) ([]byte, error) {
 	w.skipBits(2)
 	return w.Bytes(), w.Err()
 }
-func encodeInverterStatusAny(v any) ([]byte, error) {
+func encodeInverterStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*InverterStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *InverterStatus, got %T", v)
@@ -3775,7 +3824,7 @@ func EncodeInverterConfigurationStatus(val *InverterConfigurationStatus) ([]byte
 	w.writeUInt8(val.LoadSenseInterval, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeInverterConfigurationStatusAny(v any) ([]byte, error) {
+func encodeInverterConfigurationStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*InverterConfigurationStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *InverterConfigurationStatus, got %T", v)
@@ -3792,7 +3841,7 @@ func EncodeAgsConfigurationStatus(val *AgsConfigurationStatus) ([]byte, error) {
 	w.skipBits(40)
 	return w.Bytes(), w.Err()
 }
-func encodeAgsConfigurationStatusAny(v any) ([]byte, error) {
+func encodeAgsConfigurationStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AgsConfigurationStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AgsConfigurationStatus, got %T", v)
@@ -3815,7 +3864,7 @@ func EncodeBatteryConfigurationStatus(val *BatteryConfigurationStatus) ([]byte, 
 	w.writeInt8(val.ChargeEfficiencyFactor, 8)
 	return w.Bytes(), w.Err()
 }
-func encodeBatteryConfigurationStatusAny(v any) ([]byte, error) {
+func encodeBatteryConfigurationStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*BatteryConfigurationStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *BatteryConfigurationStatus, got %T", v)
@@ -3835,7 +3884,7 @@ func EncodeAgsStatus(val *AgsStatus) ([]byte, error) {
 	w.skipBits(16)
 	return w.Bytes(), w.Err()
 }
-func encodeAgsStatusAny(v any) ([]byte, error) {
+func encodeAgsStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AgsStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *AgsStatus, got %T", v)
@@ -3852,7 +3901,7 @@ func EncodeAcPowerCurrentPhaseA(val *AcPowerCurrentPhaseA) ([]byte, error) {
 	w.writeInt32(val.Power, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeAcPowerCurrentPhaseAAny(v any) ([]byte, error) {
+func encodeAcPowerCurrentPhaseAMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseA)
 	if !ok {
 		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseA, got %T", v)
@@ -3869,7 +3918,7 @@ func EncodeAcPowerCurrentPhaseB(val *AcPowerCurrentPhaseB) ([]byte, error) {
 	w.writeInt32(val.Power, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeAcPowerCurrentPhaseBAny(v any) ([]byte, error) {
+func encodeAcPowerCurrentPhaseBMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseB)
 	if !ok {
 		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseB, got %T", v)
@@ -3886,7 +3935,7 @@ func EncodeAcPowerCurrentPhaseC(val *AcPowerCurrentPhaseC) ([]byte, error) {
 	w.writeInt32(val.Power, 32)
 	return w.Bytes(), w.Err()
 }
-func encodeAcPowerCurrentPhaseCAny(v any) ([]byte, error) {
+func encodeAcPowerCurrentPhaseCMsg(v Message) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseC)
 	if !ok {
 		return nil, fmt.Errorf("expected *AcPowerCurrentPhaseC, got %T", v)
@@ -3907,7 +3956,7 @@ func EncodeConverterStatus(val *ConverterStatus) ([]byte, error) {
 	w.skipBits(32)
 	return w.Bytes(), w.Err()
 }
-func encodeConverterStatusAny(v any) ([]byte, error) {
+func encodeConverterStatusMsg(v Message) ([]byte, error) {
 	val, ok := v.(*ConverterStatus)
 	if !ok {
 		return nil, fmt.Errorf("expected *ConverterStatus, got %T", v)
@@ -3925,7 +3974,7 @@ func EncodeDcVoltageCurrent(val *DcVoltageCurrent) ([]byte, error) {
 	w.skipBits(8)
 	return w.Bytes(), w.Err()
 }
-func encodeDcVoltageCurrentAny(v any) ([]byte, error) {
+func encodeDcVoltageCurrentMsg(v Message) ([]byte, error) {
 	val, ok := v.(*DcVoltageCurrent)
 	if !ok {
 		return nil, fmt.Errorf("expected *DcVoltageCurrent, got %T", v)
