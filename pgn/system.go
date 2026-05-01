@@ -56,7 +56,7 @@ func EncodeIsoAcknowledgement(val *IsoAcknowledgement) ([]byte, error) {
 	w.writeUInt8(val.GroupFunction, 8)
 	w.skipBits(24)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoAcknowledgementAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoAcknowledgement)
@@ -88,7 +88,7 @@ func EncodeIsoRequest(val *IsoRequest) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoRequestAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoRequest)
@@ -131,7 +131,7 @@ func EncodeIsoTransportProtocolDataTransfer(val *IsoTransportProtocolDataTransfe
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeBinaryData(val.Data, 56)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolDataTransferAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolDataTransfer)
@@ -210,7 +210,7 @@ func EncodeIsoTransportProtocolConnectionManagementRequestToSend(val *IsoTranspo
 	w.writeUInt8(val.Packets, 8)
 	w.writeUInt8(val.PacketsReply, 8)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolConnectionManagementRequestToSendAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementRequestToSend)
@@ -283,7 +283,7 @@ func EncodeIsoTransportProtocolConnectionManagementClearToSend(val *IsoTransport
 	w.writeUInt8(val.NextSid, 8)
 	w.skipBits(16)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolConnectionManagementClearToSendAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementClearToSend)
@@ -356,7 +356,7 @@ func EncodeIsoTransportProtocolConnectionManagementEndOfMessage(val *IsoTranspor
 	w.writeUInt8(val.TotalNumberOfFramesReceived, 8)
 	w.skipBits(8)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolConnectionManagementEndOfMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementEndOfMessage)
@@ -429,7 +429,7 @@ func EncodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(val *IsoTra
 	w.writeUInt8(val.Packets, 8)
 	w.skipBits(8)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementBroadcastAnnounce)
@@ -491,7 +491,7 @@ func EncodeIsoTransportProtocolConnectionManagementAbort(val *IsoTransportProtoc
 	w.writeBinaryData(val.Reason, 8)
 	w.skipBits(24)
 	w.writeUInt32(val.Pgn, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoTransportProtocolConnectionManagementAbortAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoTransportProtocolConnectionManagementAbort)
@@ -616,7 +616,7 @@ func EncodeIsoAddressClaim(val *IsoAddressClaim) ([]byte, error) {
 	w.writeUInt8(val.SystemInstance, 4)
 	w.writeLookupField(uint64(val.IndustryGroup), 3)
 	w.writeUInt8(val.ArbitraryAddressCapable, 1)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoAddressClaimAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoAddressClaim)
@@ -746,7 +746,7 @@ func EncodeIsoCommandedAddress(val *IsoCommandedAddress) ([]byte, error) {
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(1)
 	w.writeUInt8(val.NewSourceAddress, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeIsoCommandedAddressAny(v any) ([]byte, error) {
 	val, ok := v.(*IsoCommandedAddress)
@@ -879,7 +879,7 @@ func EncodeNmeaRequestGroupFunction(val *NmeaRequestGroupFunction) ([]byte, erro
 			}())
 		}
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaRequestGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaRequestGroupFunction)
@@ -1006,7 +1006,7 @@ func EncodeNmeaCommandGroupFunction(val *NmeaCommandGroupFunction) ([]byte, erro
 			}())
 		}
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaCommandGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaCommandGroupFunction)
@@ -1120,7 +1120,7 @@ func EncodeNmeaAcknowledgeGroupFunction(val *NmeaAcknowledgeGroupFunction) ([]by
 	for _, rep := range val.Repeating1 {
 		w.writeLookupField(uint64(rep.Parameter), 4)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaAcknowledgeGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaAcknowledgeGroupFunction)
@@ -1319,7 +1319,7 @@ func EncodeNmeaReadFieldsGroupFunction(val *NmeaReadFieldsGroupFunction) ([]byte
 	for _, rep := range val.Repeating2 {
 		w.writeUInt8(rep.Parameter, 8)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaReadFieldsGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaReadFieldsGroupFunction)
@@ -1532,7 +1532,7 @@ func EncodeNmeaReadFieldsReplyGroupFunction(val *NmeaReadFieldsReplyGroupFunctio
 			}())
 		}
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaReadFieldsReplyGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaReadFieldsReplyGroupFunction)
@@ -1745,7 +1745,7 @@ func EncodeNmeaWriteFieldsGroupFunction(val *NmeaWriteFieldsGroupFunction) ([]by
 			}())
 		}
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaWriteFieldsGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaWriteFieldsGroupFunction)
@@ -1958,7 +1958,7 @@ func EncodeNmeaWriteFieldsReplyGroupFunction(val *NmeaWriteFieldsReplyGroupFunct
 			}())
 		}
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNmeaWriteFieldsReplyGroupFunctionAny(v any) ([]byte, error) {
 	val, ok := v.(*NmeaWriteFieldsReplyGroupFunction)
@@ -2019,7 +2019,7 @@ func EncodePgnListTransmitAndReceive(val *PgnListTransmitAndReceive) ([]byte, er
 	for _, rep := range val.Repeating1 {
 		w.writeUInt32(rep.Pgn, 24)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodePgnListTransmitAndReceiveAny(v any) ([]byte, error) {
 	val, ok := v.(*PgnListTransmitAndReceive)
@@ -2265,7 +2265,7 @@ func EncodeAlert(val *Alert) ([]byte, error) {
 	w.writeLookupField(uint64(val.ThresholdStatus), 4)
 	w.writeUInt8(val.AlertPriority, 8)
 	w.writeLookupField(uint64(val.AlertState), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertAny(v any) ([]byte, error) {
 	val, ok := v.(*Alert)
@@ -2412,7 +2412,7 @@ func EncodeAlertResponse(val *AlertResponse) ([]byte, error) {
 	w.writeUInt64(val.AcknowledgeSourceNetworkIdName, 64)
 	w.writeLookupField(uint64(val.ResponseCommand), 2)
 	w.skipBits(6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertResponseAny(v any) ([]byte, error) {
 	val, ok := v.(*AlertResponse)
@@ -2565,7 +2565,7 @@ func EncodeAlertText(val *AlertText) ([]byte, error) {
 	w.writeLookupField(uint64(val.LanguageId), 8)
 	w.writeStringWithLengthAndControl(val.AlertTextDescription)
 	w.writeStringWithLengthAndControl(val.AlertLocationTextDescription)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertTextAny(v any) ([]byte, error) {
 	val, ok := v.(*AlertText)
@@ -2745,7 +2745,7 @@ func EncodeAlertConfiguration(val *AlertConfiguration) ([]byte, error) {
 	w.writeUInt8(val.ReactivationPeriod, 8)
 	w.writeUInt8(val.TemporarySilencePeriod, 8)
 	w.writeUInt8(val.EscalationPeriod, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertConfigurationAny(v any) ([]byte, error) {
 	val, ok := v.(*AlertConfiguration)
@@ -2932,7 +2932,7 @@ func EncodeAlertThreshold(val *AlertThreshold) ([]byte, error) {
 		w.writeUInt8(rep.ThresholdDataFormat, 8)
 		w.writeUInt64(rep.ThresholdLevel, 64)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertThresholdAny(v any) ([]byte, error) {
 	val, ok := v.(*AlertThreshold)
@@ -3112,7 +3112,7 @@ func EncodeAlertValue(val *AlertValue) ([]byte, error) {
 		w.writeUInt8(rep.ValueDataFormat, 8)
 		w.writeUInt64(rep.ValueData, 64)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAlertValueAny(v any) ([]byte, error) {
 	val, ok := v.(*AlertValue)
@@ -3182,7 +3182,7 @@ func EncodeSystemTime(val *SystemTime) ([]byte, error) {
 	w.skipBits(4)
 	w.writeUInt16(val.Date, 16)
 	w.writeUnsignedResolution(val.Time, 32, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSystemTimeAny(v any) ([]byte, error) {
 	val, ok := v.(*SystemTime)
@@ -3263,7 +3263,7 @@ func EncodeHeartbeat(val *Heartbeat) ([]byte, error) {
 	w.writeLookupField(uint64(val.Controller2State), 2)
 	w.writeLookupField(uint64(val.EquipmentStatus), 2)
 	w.skipBits(34)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeHeartbeatAny(v any) ([]byte, error) {
 	val, ok := v.(*Heartbeat)
@@ -3372,7 +3372,7 @@ func EncodeProductInformation(val *ProductInformation) ([]byte, error) {
 	w.writeFixedString(val.ModelSerialCode, 256)
 	w.writeUInt8(val.CertificationLevel, 8)
 	w.writeUInt8(val.LoadEquivalency, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeProductInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*ProductInformation)
@@ -3426,7 +3426,7 @@ func EncodeConfigurationInformation(val *ConfigurationInformation) ([]byte, erro
 	w.writeStringWithLengthAndControl(val.InstallationDescription1)
 	w.writeStringWithLengthAndControl(val.InstallationDescription2)
 	w.writeStringWithLengthAndControl(val.ManufacturerInformation)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeConfigurationInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*ConfigurationInformation)
@@ -3625,7 +3625,7 @@ func EncodeManOverboardNotification(val *ManOverboardNotification) ([]byte, erro
 	w.writeUInt32(val.MmsiOfVesselOfOrigin, 32)
 	w.writeLookupField(uint64(val.MobEmitterBatteryLowStatus), 3)
 	w.skipBits(5)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeManOverboardNotificationAny(v any) ([]byte, error) {
 	val, ok := v.(*ManOverboardNotification)
@@ -3843,7 +3843,7 @@ func EncodeHeadingTrackControl(val *HeadingTrackControl) ([]byte, error) {
 	}
 	w.writeInt16(offTrackLimitRaw, 16)
 	w.writeUnsignedResolution(val.VesselHeading, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeHeadingTrackControlAny(v any) ([]byte, error) {
 	val, ok := v.(*HeadingTrackControl)

@@ -486,7 +486,7 @@ func EncodeRudder(val *Rudder) ([]byte, error) {
 	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
 	w.writeSignedResolution(val.Position, 16, 0.0001)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeRudderAny(v any) ([]byte, error) {
 	val, ok := v.(*Rudder)
@@ -508,7 +508,7 @@ func EncodeEngineParametersRapidUpdate(val *EngineParametersRapidUpdate) ([]byte
 	w.writeUnsignedResolution(boostPressureRaw, 16, 100)
 	w.writeInt8(val.TiltTrim, 8)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeEngineParametersRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*EngineParametersRapidUpdate)
@@ -559,7 +559,7 @@ func EncodeEngineParametersDynamic(val *EngineParametersDynamic) ([]byte, error)
 	w.writeLookupField(uint64(val.DiscreteStatus2), 16)
 	w.writeInt8(val.EngineLoad, 8)
 	w.writeInt8(val.EngineTorque, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeEngineParametersDynamicAny(v any) ([]byte, error) {
 	val, ok := v.(*EngineParametersDynamic)
@@ -587,7 +587,7 @@ func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]
 	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
 	w.writeUInt8(val.DiscreteStatus1, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTransmissionParametersDynamicAny(v any) ([]byte, error) {
 	val, ok := v.(*TransmissionParametersDynamic)
@@ -613,7 +613,7 @@ func EncodeTripParametersVessel(val *TripParametersVessel) ([]byte, error) {
 	}
 	w.writeUInt16(estimatedFuelRemainingRaw, 16)
 	w.writeUnsignedResolution(val.TripRunTime, 32, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTripParametersVesselAny(v any) ([]byte, error) {
 	val, ok := v.(*TripParametersVessel)
@@ -648,7 +648,7 @@ func EncodeTripParametersEngine(val *TripParametersEngine) ([]byte, error) {
 		instantaneousFuelEconomyRaw = &val.InstantaneousFuelEconomy.Value
 	}
 	w.writeSignedResolution(instantaneousFuelEconomyRaw, 16, 0.1)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTripParametersEngineAny(v any) ([]byte, error) {
 	val, ok := v.(*TripParametersEngine)
@@ -665,7 +665,7 @@ func EncodeEngineParametersStatic(val *EngineParametersStatic) ([]byte, error) {
 	w.writeUnsignedResolution(val.RatedEngineSpeed, 16, 0.25)
 	w.writeFixedString(val.Vin, 136)
 	w.writeFixedString(val.SoftwareId, 256)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeEngineParametersStaticAny(v any) ([]byte, error) {
 	val, ok := v.(*EngineParametersStatic)

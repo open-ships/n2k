@@ -3012,7 +3012,7 @@ func EncodeBus1PhaseCBasicAcQuantities(val *Bus1PhaseCBasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBus1PhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseCBasicAcQuantities)
@@ -3029,7 +3029,7 @@ func EncodeBus1PhaseBBasicAcQuantities(val *Bus1PhaseBBasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBus1PhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseBBasicAcQuantities)
@@ -3046,7 +3046,7 @@ func EncodeBus1PhaseABasicAcQuantities(val *Bus1PhaseABasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBus1PhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*Bus1PhaseABasicAcQuantities)
@@ -3063,7 +3063,7 @@ func EncodeBus1AverageBasicAcQuantities(val *Bus1AverageBasicAcQuantities) ([]by
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBus1AverageBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*Bus1AverageBasicAcQuantities)
@@ -3078,7 +3078,7 @@ func EncodeUtilityTotalAcEnergy(val *UtilityTotalAcEnergy) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt32(val.TotalEnergyExport, 32)
 	w.writeUInt32(val.TotalEnergyImport, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityTotalAcEnergyAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcEnergy)
@@ -3095,7 +3095,7 @@ func EncodeUtilityPhaseCAcReactivePower(val *UtilityPhaseCAcReactivePower) ([]by
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(30)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseCAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCAcReactivePower)
@@ -3110,7 +3110,7 @@ func EncodeUtilityPhaseCAcPower(val *UtilityPhaseCAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseCAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCAcPower)
@@ -3127,7 +3127,7 @@ func EncodeUtilityPhaseCBasicAcQuantities(val *UtilityPhaseCBasicAcQuantities) (
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseCBasicAcQuantities)
@@ -3144,7 +3144,7 @@ func EncodeUtilityPhaseBAcReactivePower(val *UtilityPhaseBAcReactivePower) ([]by
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(30)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseBAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBAcReactivePower)
@@ -3159,7 +3159,7 @@ func EncodeUtilityPhaseBAcPower(val *UtilityPhaseBAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseBAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBAcPower)
@@ -3176,7 +3176,7 @@ func EncodeUtilityPhaseBBasicAcQuantities(val *UtilityPhaseBBasicAcQuantities) (
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseBBasicAcQuantities)
@@ -3193,7 +3193,7 @@ func EncodeUtilityPhaseAAcReactivePower(val *UtilityPhaseAAcReactivePower) ([]by
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseAAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseAAcReactivePower)
@@ -3208,7 +3208,7 @@ func EncodeUtilityPhaseAAcPower(val *UtilityPhaseAAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseAAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseAAcPower)
@@ -3225,7 +3225,7 @@ func EncodeUtilityPhaseABasicAcQuantities(val *UtilityPhaseABasicAcQuantities) (
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityPhaseABasicAcQuantities)
@@ -3242,7 +3242,7 @@ func EncodeUtilityTotalAcReactivePower(val *UtilityTotalAcReactivePower) ([]byte
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityTotalAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcReactivePower)
@@ -3257,7 +3257,7 @@ func EncodeUtilityTotalAcPower(val *UtilityTotalAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityTotalAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityTotalAcPower)
@@ -3274,7 +3274,7 @@ func EncodeUtilityAverageBasicAcQuantities(val *UtilityAverageBasicAcQuantities)
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUtilityAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*UtilityAverageBasicAcQuantities)
@@ -3289,7 +3289,7 @@ func EncodeGeneratorTotalAcEnergy(val *GeneratorTotalAcEnergy) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt32(val.TotalEnergyExport, 32)
 	w.writeUInt32(val.TotalEnergyImport, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorTotalAcEnergyAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcEnergy)
@@ -3306,7 +3306,7 @@ func EncodeGeneratorPhaseCAcReactivePower(val *GeneratorPhaseCAcReactivePower) (
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseCAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCAcReactivePower)
@@ -3321,7 +3321,7 @@ func EncodeGeneratorPhaseCAcPower(val *GeneratorPhaseCAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseCAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCAcPower)
@@ -3338,7 +3338,7 @@ func EncodeGeneratorPhaseCBasicAcQuantities(val *GeneratorPhaseCBasicAcQuantitie
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseCBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseCBasicAcQuantities)
@@ -3355,7 +3355,7 @@ func EncodeGeneratorPhaseBAcReactivePower(val *GeneratorPhaseBAcReactivePower) (
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseBAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBAcReactivePower)
@@ -3370,7 +3370,7 @@ func EncodeGeneratorPhaseBAcPower(val *GeneratorPhaseBAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseBAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBAcPower)
@@ -3387,7 +3387,7 @@ func EncodeGeneratorPhaseBBasicAcQuantities(val *GeneratorPhaseBBasicAcQuantitie
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseBBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseBBasicAcQuantities)
@@ -3404,7 +3404,7 @@ func EncodeGeneratorPhaseAAcReactivePower(val *GeneratorPhaseAAcReactivePower) (
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseAAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseAAcReactivePower)
@@ -3419,7 +3419,7 @@ func EncodeGeneratorPhaseAAcPower(val *GeneratorPhaseAAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseAAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseAAcPower)
@@ -3436,7 +3436,7 @@ func EncodeGeneratorPhaseABasicAcQuantities(val *GeneratorPhaseABasicAcQuantitie
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorPhaseABasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorPhaseABasicAcQuantities)
@@ -3453,7 +3453,7 @@ func EncodeGeneratorTotalAcReactivePower(val *GeneratorTotalAcReactivePower) ([]
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
 	w.skipBits(14)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorTotalAcReactivePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcReactivePower)
@@ -3468,7 +3468,7 @@ func EncodeGeneratorTotalAcPower(val *GeneratorTotalAcPower) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt32(val.RealPower, 32)
 	w.writeInt32(val.ApparentPower, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorTotalAcPowerAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorTotalAcPower)
@@ -3485,7 +3485,7 @@ func EncodeGeneratorAverageBasicAcQuantities(val *GeneratorAverageBasicAcQuantit
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
 	w.writeUInt16(val.AcRmsCurrent, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGeneratorAverageBasicAcQuantitiesAny(v any) ([]byte, error) {
 	val, ok := v.(*GeneratorAverageBasicAcQuantities)
@@ -3506,7 +3506,7 @@ func EncodeLoadControllerConnectionStateControl(val *LoadControllerConnectionSta
 	w.writeUInt8(val.PwmDutyCycle, 8)
 	w.writeUInt8(val.Timeon, 8)
 	w.writeUInt8(val.Timeoff, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeLoadControllerConnectionStateControlAny(v any) ([]byte, error) {
 	val, ok := v.(*LoadControllerConnectionStateControl)
@@ -3548,7 +3548,7 @@ func EncodeBinarySwitchBankStatus(val *BinarySwitchBankStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.Indicator26), 2)
 	w.writeLookupField(uint64(val.Indicator27), 2)
 	w.writeLookupField(uint64(val.Indicator28), 2)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBinarySwitchBankStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*BinarySwitchBankStatus)
@@ -3590,7 +3590,7 @@ func EncodeSwitchBankControl(val *SwitchBankControl) ([]byte, error) {
 	w.writeLookupField(uint64(val.Switch26), 2)
 	w.writeLookupField(uint64(val.Switch27), 2)
 	w.writeLookupField(uint64(val.Switch28), 2)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSwitchBankControlAny(v any) ([]byte, error) {
 	val, ok := v.(*SwitchBankControl)
@@ -3618,7 +3618,7 @@ func EncodeAcInputStatus(val *AcInputStatus) ([]byte, error) {
 		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
 	}
 	w.skipBits(4)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAcInputStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AcInputStatus)
@@ -3646,7 +3646,7 @@ func EncodeAcOutputStatus(val *AcOutputStatus) ([]byte, error) {
 		w.writeUnsignedResolution(rep.PowerFactor, 8, 0.01)
 	}
 	w.skipBits(3)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAcOutputStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AcOutputStatus)
@@ -3668,7 +3668,7 @@ func EncodeFluidLevel(val *FluidLevel) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFluidLevelAny(v any) ([]byte, error) {
 	val, ok := v.(*FluidLevel)
@@ -3689,7 +3689,7 @@ func EncodeDcDetailedStatus(val *DcDetailedStatus) ([]byte, error) {
 	w.writeUnsignedResolution(val.TimeRemaining, 16, 60)
 	w.writeUnsignedResolution(val.RippleVoltage, 16, 0.01)
 	w.writeUInt16(val.RemainingCapacity, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeDcDetailedStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*DcDetailedStatus)
@@ -3710,7 +3710,7 @@ func EncodeChargerStatus(val *ChargerStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.EqualizationPending), 2)
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.EqualizationTimeRemaining, 16, 60)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeChargerStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*ChargerStatus)
@@ -3732,7 +3732,7 @@ func EncodeBatteryStatus(val *BatteryStatus) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
 	w.writeUInt8(val.Sid, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBatteryStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*BatteryStatus)
@@ -3751,7 +3751,7 @@ func EncodeInverterStatus(val *InverterStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.OperatingState), 4)
 	w.writeLookupField(uint64(val.InverterEnable), 2)
 	w.skipBits(2)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeInverterStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*InverterStatus)
@@ -3773,7 +3773,7 @@ func EncodeInverterConfigurationStatus(val *InverterConfigurationStatus) ([]byte
 	w.writeUInt8(val.LoadSenseEnableDisable, 8)
 	w.writeUInt8(val.LoadSensePowerThreshold, 8)
 	w.writeUInt8(val.LoadSenseInterval, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeInverterConfigurationStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*InverterConfigurationStatus)
@@ -3790,7 +3790,7 @@ func EncodeAgsConfigurationStatus(val *AgsConfigurationStatus) ([]byte, error) {
 	w.writeUInt8(val.GeneratorInstance, 8)
 	w.writeUInt8(val.AgsMode, 8)
 	w.skipBits(40)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAgsConfigurationStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AgsConfigurationStatus)
@@ -3813,7 +3813,7 @@ func EncodeBatteryConfigurationStatus(val *BatteryConfigurationStatus) ([]byte, 
 	w.writeInt8(val.TemperatureCoefficient, 8)
 	w.writeUnsignedResolution(val.PeukertExponent, 8, 0.002)
 	w.writeInt8(val.ChargeEfficiencyFactor, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBatteryConfigurationStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*BatteryConfigurationStatus)
@@ -3833,7 +3833,7 @@ func EncodeAgsStatus(val *AgsStatus) ([]byte, error) {
 	w.writeUInt8(val.GeneratorOnReason, 8)
 	w.writeUInt8(val.GeneratorOffReason, 8)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAgsStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AgsStatus)
@@ -3850,7 +3850,7 @@ func EncodeAcPowerCurrentPhaseA(val *AcPowerCurrentPhaseA) ([]byte, error) {
 	w.writeUInt8(val.ConnectionNumber, 8)
 	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
 	w.writeInt32(val.Power, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAcPowerCurrentPhaseAAny(v any) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseA)
@@ -3867,7 +3867,7 @@ func EncodeAcPowerCurrentPhaseB(val *AcPowerCurrentPhaseB) ([]byte, error) {
 	w.writeUInt8(val.ConnectionNumber, 8)
 	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
 	w.writeInt32(val.Power, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAcPowerCurrentPhaseBAny(v any) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseB)
@@ -3884,7 +3884,7 @@ func EncodeAcPowerCurrentPhaseC(val *AcPowerCurrentPhaseC) ([]byte, error) {
 	w.writeUInt8(val.ConnectionNumber, 8)
 	w.writeUnsignedResolution(val.AcRmsCurrent, 16, 0.1)
 	w.writeInt32(val.Power, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAcPowerCurrentPhaseCAny(v any) ([]byte, error) {
 	val, ok := v.(*AcPowerCurrentPhaseC)
@@ -3905,7 +3905,7 @@ func EncodeConverterStatus(val *ConverterStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.LowDcVoltageState), 2)
 	w.writeLookupField(uint64(val.RippleState), 2)
 	w.skipBits(32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeConverterStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*ConverterStatus)
@@ -3923,7 +3923,7 @@ func EncodeDcVoltageCurrent(val *DcVoltageCurrent) ([]byte, error) {
 	w.writeUnsignedResolution(val.DcVoltage, 16, 0.1)
 	w.writeSignedResolution(val.DcCurrent, 24, 0.01)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeDcVoltageCurrentAny(v any) ([]byte, error) {
 	val, ok := v.(*DcVoltageCurrent)

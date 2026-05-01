@@ -78,7 +78,7 @@ func EncodeVesselHeading(val *VesselHeading) ([]byte, error) {
 	w.writeSignedResolution(val.Variation, 16, 0.0001)
 	w.writeLookupField(uint64(val.Reference), 2)
 	w.skipBits(6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeVesselHeadingAny(v any) ([]byte, error) {
 	val, ok := v.(*VesselHeading)
@@ -126,7 +126,7 @@ func EncodeRateOfTurn(val *RateOfTurn) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	w.writeSignedResolution64Override(val.Rate, 32, 3.125e-08)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeRateOfTurnAny(v any) ([]byte, error) {
 	val, ok := v.(*RateOfTurn)
@@ -178,7 +178,7 @@ func EncodeHeave(val *Heave) ([]byte, error) {
 	}
 	w.writeSignedResolution(heaveRaw, 16, 0.01)
 	w.skipBits(40)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeHeaveAny(v any) ([]byte, error) {
 	val, ok := v.(*Heave)
@@ -248,7 +248,7 @@ func EncodeAttitude(val *Attitude) ([]byte, error) {
 	w.writeSignedResolution(val.Pitch, 16, 0.0001)
 	w.writeSignedResolution(val.Roll, 16, 0.0001)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAttitudeAny(v any) ([]byte, error) {
 	val, ok := v.(*Attitude)
@@ -323,7 +323,7 @@ func EncodeMagneticVariation(val *MagneticVariation) ([]byte, error) {
 	w.writeUInt16(val.AgeOfService, 16)
 	w.writeSignedResolution(val.Variation, 16, 0.0001)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMagneticVariationAny(v any) ([]byte, error) {
 	val, ok := v.(*MagneticVariation)
@@ -366,7 +366,7 @@ func EncodePositionRapidUpdate(val *PositionRapidUpdate) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
 	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodePositionRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*PositionRapidUpdate)
@@ -445,7 +445,7 @@ func EncodeCogSogRapidUpdate(val *CogSogRapidUpdate) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(sogRaw, 16, 0.01)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeCogSogRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*CogSogRapidUpdate)
@@ -515,7 +515,7 @@ func EncodePositionDeltaRapidUpdate(val *PositionDeltaRapidUpdate) ([]byte, erro
 	w.writeInt16(val.LatitudeDelta, 16)
 	w.writeInt16(val.LongitudeDelta, 16)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodePositionDeltaRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*PositionDeltaRapidUpdate)
@@ -607,7 +607,7 @@ func EncodeAltitudeDeltaRapidUpdate(val *AltitudeDeltaRapidUpdate) ([]byte, erro
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
 	w.writeInt16(val.AltitudeDelta, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAltitudeDeltaRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*AltitudeDeltaRapidUpdate)
@@ -844,7 +844,7 @@ func EncodeGnssPositionData(val *GnssPositionData) ([]byte, error) {
 		w.writeUInt16(rep.ReferenceStationId, 12)
 		w.writeUnsignedResolution(rep.AgeOfDgnssCorrections, 16, 0.01)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGnssPositionDataAny(v any) ([]byte, error) {
 	val, ok := v.(*GnssPositionData)
@@ -898,7 +898,7 @@ func EncodeTimeDate(val *TimeDate) ([]byte, error) {
 	w.writeUInt16(val.Date, 16)
 	w.writeUnsignedResolution(val.Time, 32, 0.0001)
 	w.writeSignedResolution(val.LocalOffset, 16, 60)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTimeDateAny(v any) ([]byte, error) {
 	val, ok := v.(*TimeDate)
@@ -978,7 +978,7 @@ func EncodeDatum(val *Datum) ([]byte, error) {
 	}
 	w.writeSignedResolution(deltaAltitudeRaw, 32, 0.01)
 	w.writeFixedString(val.ReferenceDatum, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeDatumAny(v any) ([]byte, error) {
 	val, ok := v.(*Datum)
@@ -1125,7 +1125,7 @@ func EncodeUserDatum(val *UserDatum) ([]byte, error) {
 	w.writeSignedResolution(ellipsoidSemiMajorAxisRaw, 32, 0.01)
 	w.writeFloat32(val.EllipsoidFlatteningInverse)
 	w.writeFixedString(val.DatumName, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeUserDatumAny(v any) ([]byte, error) {
 	val, ok := v.(*UserDatum)
@@ -1204,7 +1204,7 @@ func EncodeCrossTrackError(val *CrossTrackError) ([]byte, error) {
 	}
 	w.writeSignedResolution(xteRaw, 32, 0.01)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeCrossTrackErrorAny(v any) ([]byte, error) {
 	val, ok := v.(*CrossTrackError)
@@ -1398,7 +1398,7 @@ func EncodeNavigationData(val *NavigationData) ([]byte, error) {
 		waypointClosingVelocityRaw = &val.WaypointClosingVelocity.Value
 	}
 	w.writeSignedResolution(waypointClosingVelocityRaw, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavigationDataAny(v any) ([]byte, error) {
 	val, ok := v.(*NavigationData)
@@ -1562,7 +1562,7 @@ func EncodeNavigationRouteWpInformation(val *NavigationRouteWpInformation) ([]by
 		w.writeSignedResolution64Override(rep.WpLatitude, 32, 1e-07)
 		w.writeSignedResolution64Override(rep.WpLongitude, 32, 1e-07)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavigationRouteWpInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*NavigationRouteWpInformation)
@@ -1641,7 +1641,7 @@ func EncodeSetDriftRapidUpdate(val *SetDriftRapidUpdate) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(driftRaw, 16, 0.01)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSetDriftRapidUpdateAny(v any) ([]byte, error) {
 	val, ok := v.(*SetDriftRapidUpdate)
@@ -1733,7 +1733,7 @@ func EncodeGnssDops(val *GnssDops) ([]byte, error) {
 	w.writeSignedResolution(val.Hdop, 16, 0.01)
 	w.writeSignedResolution(val.Vdop, 16, 0.01)
 	w.writeSignedResolution(val.Tdop, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGnssDopsAny(v any) ([]byte, error) {
 	val, ok := v.(*GnssDops)
@@ -1864,7 +1864,7 @@ func EncodeGnssSatsInView(val *GnssSatsInView) ([]byte, error) {
 		w.writeLookupField(uint64(rep.Status), 4)
 		w.skipBits(4)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGnssSatsInViewAny(v any) ([]byte, error) {
 	val, ok := v.(*GnssSatsInView)
@@ -2033,7 +2033,7 @@ func EncodeGpsAlmanacData(val *GpsAlmanacData) ([]byte, error) {
 	w.writeSignedResolution(val.ClockParameter1, 11, 9.53674e-07)
 	w.writeSignedResolution64Override(val.ClockParameter2, 11, 3.63798e-12)
 	w.skipBits(2)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGpsAlmanacDataAny(v any) ([]byte, error) {
 	val, ok := v.(*GpsAlmanacData)
@@ -2081,7 +2081,7 @@ func EncodeSmallCraftStatus(val *SmallCraftStatus) ([]byte, error) {
 	w.writeInt8(val.PortTrimTab, 8)
 	w.writeInt8(val.StarboardTrimTab, 8)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSmallCraftStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*SmallCraftStatus)
@@ -2192,7 +2192,7 @@ func EncodeVesselSpeedComponents(val *VesselSpeedComponents) ([]byte, error) {
 		sternSpeedGroundReferencedRaw = &val.SternSpeedGroundReferenced.Value
 	}
 	w.writeSignedResolution(sternSpeedGroundReferencedRaw, 16, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeVesselSpeedComponentsAny(v any) ([]byte, error) {
 	val, ok := v.(*VesselSpeedComponents)

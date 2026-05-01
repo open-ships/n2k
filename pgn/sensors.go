@@ -499,7 +499,7 @@ func EncodeTrackedTargetData(val *TrackedTargetData) ([]byte, error) {
 	w.writeSignedResolution(val.Tcpa, 32, 0.001)
 	w.writeUnsignedResolution(val.UtcOfFix, 32, 0.0001)
 	w.writeFixedString(val.Name, 1784)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTrackedTargetDataAny(v any) ([]byte, error) {
 	val, ok := v.(*TrackedTargetData)
@@ -526,7 +526,7 @@ func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
 	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
 	w.writeLookupField(uint64(val.WindlassControlEvents), 4)
 	w.skipBits(12)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeWindlassControlStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*WindlassControlStatus)
@@ -557,7 +557,7 @@ func EncodeAnchorWindlassOperatingStatus(val *AnchorWindlassOperatingStatus) ([]
 	w.writeUnsignedResolution(windlassLineSpeedRaw, 16, 0.01)
 	w.writeLookupField(uint64(val.AnchorDockingStatus), 2)
 	w.writeLookupField(uint64(val.WindlassOperatingEvents), 6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAnchorWindlassOperatingStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AnchorWindlassOperatingStatus)
@@ -577,7 +577,7 @@ func EncodeAnchorWindlassMonitoringStatus(val *AnchorWindlassMonitoringStatus) (
 	w.writeUInt8(val.MotorCurrent, 8)
 	w.writeUnsignedResolution(val.TotalMotorTime, 16, 60)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAnchorWindlassMonitoringStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*AnchorWindlassMonitoringStatus)

@@ -144,7 +144,7 @@ func GetProprietaryInfo(data []uint8) (ManufacturerCodeConst, IndustryCodeConst,
 		man = ManufacturerCodeConst(v)
 	}
 	// Skip the 2 reserved bits (bits 11-12).
-	_ = stream.skipBits(2)
+	stream.skipBits(2)
 	// Read the 3-bit industry code from bits 13-15.
 	if v, err := stream.readLookupField(3); err == nil {
 		ind = IndustryCodeConst(v)

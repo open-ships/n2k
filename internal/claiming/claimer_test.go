@@ -39,14 +39,6 @@ func (s *frameSink) count() int {
 	return len(s.frames)
 }
 
-func (s *frameSink) all() []can.Frame {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	dst := make([]can.Frame, len(s.frames))
-	copy(dst, s.frames)
-	return dst
-}
-
 // extractClaimAddress returns the source address from an Address Claim CAN frame.
 func extractClaimAddress(f can.Frame) uint8 {
 	return uint8(f.ID & 0xFF)

@@ -2424,7 +2424,7 @@ func EncodeAisClassAPositionReport(val *AisClassAPositionReport) ([]byte, error)
 	w.skipBits(3)
 	w.skipBits(5)
 	w.writeUInt8(val.SequenceId, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassAPositionReportAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassAPositionReport)
@@ -2464,7 +2464,7 @@ func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error)
 	w.writeLookupField(uint64(val.AisMode), 1)
 	w.writeLookupField(uint64(val.AisCommunicationState), 1)
 	w.skipBits(15)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassBPositionReportAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassBPositionReport)
@@ -2524,7 +2524,7 @@ func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport)
 	w.skipBits(4)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(5)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassBExtendedPositionReportAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassBExtendedPositionReport)
@@ -2576,7 +2576,7 @@ func EncodeAisAidsToNavigationAtonReport(val *AisAidsToNavigationAtonReport) ([]
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
 	w.writeStringWithLengthAndControl(val.AtonName)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisAidsToNavigationAtonReportAny(v any) ([]byte, error) {
 	val, ok := v.(*AisAidsToNavigationAtonReport)
@@ -2604,7 +2604,7 @@ func EncodeAisUtcAndDateReport(val *AisUtcAndDateReport) ([]byte, error) {
 	w.skipBits(4)
 	w.writeLookupField(uint64(val.GnssType), 4)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisUtcAndDateReportAny(v any) ([]byte, error) {
 	val, ok := v.(*AisUtcAndDateReport)
@@ -2658,7 +2658,7 @@ func EncodeAisClassAStaticAndVoyageRelatedData(val *AisClassAStaticAndVoyageRela
 	w.skipBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassAStaticAndVoyageRelatedDataAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassAStaticAndVoyageRelatedData)
@@ -2682,7 +2682,7 @@ func EncodeAisAddressedBinaryMessage(val *AisAddressedBinaryMessage) ([]byte, er
 	w.writeUInt8(val.RetransmitFlag, 1)
 	w.skipBits(1)
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisAddressedBinaryMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*AisAddressedBinaryMessage)
@@ -2706,7 +2706,7 @@ func EncodeAisAcknowledge(val *AisAcknowledge) ([]byte, error) {
 	w.skipBits(6)
 	w.writeBinaryData(val.SequenceNumberForIdN, 2)
 	w.skipBits(6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisAcknowledgeAny(v any) ([]byte, error) {
 	val, ok := v.(*AisAcknowledge)
@@ -2726,7 +2726,7 @@ func EncodeAisBinaryBroadcastMessage(val *AisBinaryBroadcastMessage) ([]byte, er
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(2)
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisBinaryBroadcastMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*AisBinaryBroadcastMessage)
@@ -2745,7 +2745,7 @@ func EncodeAisUtcDateInquiry(val *AisUtcDateInquiry) ([]byte, error) {
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
 	w.writeUInt32(val.DestinationId, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisUtcDateInquiryAny(v any) ([]byte, error) {
 	val, ok := v.(*AisUtcDateInquiry)
@@ -2768,7 +2768,7 @@ func EncodeAisAddressedSafetyRelatedMessage(val *AisAddressedSafetyRelatedMessag
 	w.writeUInt8(val.RetransmitFlag, 1)
 	w.skipBits(7)
 	w.writeFixedString(val.SafetyRelatedText, 936)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisAddressedSafetyRelatedMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*AisAddressedSafetyRelatedMessage)
@@ -2787,7 +2787,7 @@ func EncodeAisSafetyRelatedBroadcastMessage(val *AisSafetyRelatedBroadcastMessag
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
 	w.writeFixedString(val.SafetyRelatedText, 1296)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisSafetyRelatedBroadcastMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*AisSafetyRelatedBroadcastMessage)
@@ -2819,7 +2819,7 @@ func EncodeAisInterrogation(val *AisInterrogation) ([]byte, error) {
 	w.skipBits(2)
 	w.skipBits(4)
 	w.writeUInt8(val.Sid, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisInterrogationAny(v any) ([]byte, error) {
 	val, ok := v.(*AisInterrogation)
@@ -2843,7 +2843,7 @@ func EncodeAisDataLinkManagementMessage(val *AisDataLinkManagementMessage) ([]by
 		w.writeUInt8(rep.Timeout, 8)
 		w.writeUInt16(rep.Increment, 16)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisDataLinkManagementMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*AisDataLinkManagementMessage)
@@ -2876,7 +2876,7 @@ func EncodeAisChannelManagement(val *AisChannelManagement) ([]byte, error) {
 	w.writeUInt8(val.ChannelBBandwidth, 7)
 	w.skipBits(2)
 	w.writeUInt8(val.TransitionalZoneSize, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisChannelManagementAny(v any) ([]byte, error) {
 	val, ok := v.(*AisChannelManagement)
@@ -2896,7 +2896,7 @@ func EncodeAisClassBStaticDataMsg24PartA(val *AisClassBStaticDataMsg24PartA) ([]
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
 	w.writeUInt8(val.SequenceId, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassBStaticDataMsg24PartAAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassBStaticDataMsg24PartA)
@@ -2941,7 +2941,7 @@ func EncodeAisClassBStaticDataMsg24PartB(val *AisClassBStaticDataMsg24PartB) ([]
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.skipBits(3)
 	w.writeUInt8(val.SequenceId, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAisClassBStaticDataMsg24PartBAny(v any) ([]byte, error) {
 	val, ok := v.(*AisClassBStaticDataMsg24PartB)

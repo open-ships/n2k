@@ -949,7 +949,7 @@ func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	w.writeSignedResolution(val.LeewayAngle, 16, 0.0001)
 	w.skipBits(40)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeLeewayAngleAny(v any) ([]byte, error) {
 	val, ok := v.(*LeewayAngle)
@@ -971,7 +971,7 @@ func EncodeWindData(val *WindData) ([]byte, error) {
 	w.writeUnsignedResolution(val.WindAngle, 16, 0.0001)
 	w.writeLookupField(uint64(val.Reference), 3)
 	w.skipBits(21)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeWindDataAny(v any) ([]byte, error) {
 	val, ok := v.(*WindData)
@@ -1001,7 +1001,7 @@ func EncodeEnvironmentalParametersObsolete(val *EnvironmentalParametersObsolete)
 	}
 	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeEnvironmentalParametersObsoleteAny(v any) ([]byte, error) {
 	val, ok := v.(*EnvironmentalParametersObsolete)
@@ -1028,7 +1028,7 @@ func EncodeEnvironmentalParameters(val *EnvironmentalParameters) ([]byte, error)
 		atmosphericPressureRaw = &val.AtmosphericPressure.Value
 	}
 	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeEnvironmentalParametersAny(v any) ([]byte, error) {
 	val, ok := v.(*EnvironmentalParameters)
@@ -1055,7 +1055,7 @@ func EncodeTemperature(val *Temperature) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.01)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTemperatureAny(v any) ([]byte, error) {
 	val, ok := v.(*Temperature)
@@ -1074,7 +1074,7 @@ func EncodeHumidity(val *Humidity) ([]byte, error) {
 	w.writeSignedResolution(val.ActualHumidity, 16, 0.004)
 	w.writeSignedResolution(val.SetHumidity, 16, 0.004)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeHumidityAny(v any) ([]byte, error) {
 	val, ok := v.(*Humidity)
@@ -1096,7 +1096,7 @@ func EncodeActualPressure(val *ActualPressure) ([]byte, error) {
 	}
 	w.writeSignedResolution(pressureRaw, 32, 0.1)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeActualPressureAny(v any) ([]byte, error) {
 	val, ok := v.(*ActualPressure)
@@ -1118,7 +1118,7 @@ func EncodeSetPressure(val *SetPressure) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(pressureRaw, 32, 0.1)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSetPressureAny(v any) ([]byte, error) {
 	val, ok := v.(*SetPressure)
@@ -1144,7 +1144,7 @@ func EncodeTemperatureExtendedRange(val *TemperatureExtendedRange) ([]byte, erro
 		setTemperatureRaw = &val.SetTemperature.Value
 	}
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTemperatureExtendedRangeAny(v any) ([]byte, error) {
 	val, ok := v.(*TemperatureExtendedRange)
@@ -1176,7 +1176,7 @@ func EncodeTideStationData(val *TideStationData) ([]byte, error) {
 	w.writeUnsignedResolution(tideLevelStandardDeviationRaw, 16, 0.01)
 	w.writeStringWithLengthAndControl(val.StationId)
 	w.writeStringWithLengthAndControl(val.StationName)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeTideStationDataAny(v any) ([]byte, error) {
 	val, ok := v.(*TideStationData)
@@ -1203,7 +1203,7 @@ func EncodeSalinityStationData(val *SalinityStationData) ([]byte, error) {
 	w.writeUnsignedResolution(waterTemperatureRaw, 16, 0.01)
 	w.writeStringWithLengthAndControl(val.StationId)
 	w.writeStringWithLengthAndControl(val.StationName)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSalinityStationDataAny(v any) ([]byte, error) {
 	val, ok := v.(*SalinityStationData)
@@ -1267,7 +1267,7 @@ func EncodeWatermakerInputSettingAndStatus(val *WatermakerInputSettingAndStatus)
 	}
 	w.writeSignedResolution(brineWaterFlowRaw, 16, 0.1)
 	w.writeUInt32(val.RunTime, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeWatermakerInputSettingAndStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*WatermakerInputSettingAndStatus)

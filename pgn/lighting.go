@@ -115,7 +115,7 @@ func EncodeChetcoDimmer(val *ChetcoDimmer) ([]byte, error) {
 	w.writeUInt8(val.Dimmer3, 8)
 	w.writeUInt8(val.Dimmer4, 8)
 	w.writeUInt8(val.Control, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeChetcoDimmerAny(v any) ([]byte, error) {
 	val, ok := v.(*ChetcoDimmer)

@@ -111,8 +111,8 @@ func TestRoundTrip_PutGetNumberRaw(t *testing.T) {
 // the expected quantization error.
 func TestRoundTrip_UnsignedResolution(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeUnsignedResolution(ptrFloat32(1.5708), 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeUnsignedResolution(ptrFloat32(1.5708), 16, 0.0001)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readUnsignedResolution(16, 0.0001)
@@ -125,8 +125,8 @@ func TestRoundTrip_UnsignedResolution(t *testing.T) {
 // then reads it back, verifying correct two's-complement handling.
 func TestRoundTrip_SignedResolution(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeSignedResolution(ptrFloat32(-0.5), 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeSignedResolution(ptrFloat32(-0.5), 16, 0.0001)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readSignedResolution(16, 0.0001)
@@ -139,8 +139,8 @@ func TestRoundTrip_SignedResolution(t *testing.T) {
 // for high-precision fields like latitude/longitude.
 func TestRoundTrip_SignedResolution64Override(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeSignedResolution64Override(ptrFloat64(-123.456789), 32, 0.0000001)
-	assert.NoError(t, err)
+	w.writeSignedResolution64Override(ptrFloat64(-123.456789), 32, 0.0000001)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readSignedResolution64Override(32, 0.0000001)
@@ -155,16 +155,15 @@ func TestRoundTrip_NullFields(t *testing.T) {
 	w := NewPGNDataStreamWriter()
 
 	// Write nil uint8 (8 bits → 0xFF null sentinel)
-	err := w.writeUInt8(nil, 8)
-	assert.NoError(t, err)
+	w.writeUInt8(nil, 8)
 
 	// Write nil unsigned resolution (16 bits → 0xFFFF null sentinel)
-	err = w.writeUnsignedResolution(nil, 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeUnsignedResolution(nil, 16, 0.0001)
 
 	// Write nil signed resolution (16 bits → 0x7FFF null sentinel)
-	err = w.writeSignedResolution(nil, 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeSignedResolution(nil, 16, 0.0001)
+
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 
@@ -184,12 +183,12 @@ func TestRoundTrip_NullFields(t *testing.T) {
 // TestRoundTrip_LookupField writes a 2-bit lookup value then reads it back.
 func TestRoundTrip_LookupField(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeLookupField(2, 2)
-	assert.NoError(t, err)
+	w.writeLookupField(2, 2)
 
 	// Pad the remaining 6 bits so the reader has a full byte.
-	err = w.skipBits(6)
-	assert.NoError(t, err)
+	w.skipBits(6)
+
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readLookupField(2)
@@ -201,8 +200,8 @@ func TestRoundTrip_LookupField(t *testing.T) {
 // verifying that the 0xFF padding is correctly stripped by the reader.
 func TestRoundTrip_FixedString(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeFixedString("HELLO", 64) // 8 bytes = 64 bits, "HELLO" + 3 bytes of 0xFF padding
-	assert.NoError(t, err)
+	w.writeFixedString("HELLO", 64) // 8 bytes = 64 bits, "HELLO" + 3 bytes of 0xFF padding
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readFixedString(64)
@@ -213,8 +212,8 @@ func TestRoundTrip_FixedString(t *testing.T) {
 // TestRoundTrip_Float32 writes an IEEE 754 float32 then reads it back.
 func TestRoundTrip_Float32(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeFloat32(ptrFloat32(3.14))
-	assert.NoError(t, err)
+	w.writeFloat32(ptrFloat32(3.14))
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readFloat32()
@@ -226,8 +225,8 @@ func TestRoundTrip_Float32(t *testing.T) {
 // TestRoundTrip_Float32_Null writes a nil float32 then reads it back as nil.
 func TestRoundTrip_Float32_Null(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeFloat32(nil)
-	assert.NoError(t, err)
+	w.writeFloat32(nil)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readFloat32()
@@ -241,20 +240,18 @@ func TestRoundTrip_SignedIntegers(t *testing.T) {
 	w := NewPGNDataStreamWriter()
 
 	// Positive int8
-	err := w.writeInt8(ptrInt8(42), 8)
-	assert.NoError(t, err)
+	w.writeInt8(ptrInt8(42), 8)
 
 	// Negative int8
-	err = w.writeInt8(ptrInt8(-44), 8)
-	assert.NoError(t, err)
+	w.writeInt8(ptrInt8(-44), 8)
 
 	// Positive int16
-	err = w.writeInt16(ptrInt16(1000), 16)
-	assert.NoError(t, err)
+	w.writeInt16(ptrInt16(1000), 16)
 
 	// Negative int16
-	err = w.writeInt16(ptrInt16(-4396), 16)
-	assert.NoError(t, err)
+	w.writeInt16(ptrInt16(-4396), 16)
+
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 
@@ -283,10 +280,9 @@ func TestRoundTrip_SignedIntegers(t *testing.T) {
 // returns nil for the signed null sentinel.
 func TestRoundTrip_SignedIntegers_Null(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeInt8(nil, 8)
-	assert.NoError(t, err)
-	err = w.writeInt16(nil, 16)
-	assert.NoError(t, err)
+	w.writeInt8(nil, 8)
+	w.writeInt16(nil, 16)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 
@@ -303,8 +299,8 @@ func TestRoundTrip_SignedIntegers_Null(t *testing.T) {
 func TestRoundTrip_BinaryData(t *testing.T) {
 	payload := []uint8{0xDE, 0xAD, 0xBE, 0xEF}
 	w := NewPGNDataStreamWriter()
-	err := w.writeBinaryData(payload, 32)
-	assert.NoError(t, err)
+	w.writeBinaryData(payload, 32)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readBinaryData(32)
@@ -315,8 +311,8 @@ func TestRoundTrip_BinaryData(t *testing.T) {
 // TestRoundTrip_StringWithLength writes a STRING_LZ string then reads it back.
 func TestRoundTrip_StringWithLength(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeStringWithLength("Hello")
-	assert.NoError(t, err)
+	w.writeStringWithLength("Hello")
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readStringWithLength()
@@ -327,8 +323,8 @@ func TestRoundTrip_StringWithLength(t *testing.T) {
 // TestRoundTrip_StringWithLengthAndControl writes a STRING_LAU string then reads it back.
 func TestRoundTrip_StringWithLengthAndControl(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeStringWithLengthAndControl("Hello")
-	assert.NoError(t, err)
+	w.writeStringWithLengthAndControl("Hello")
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readStringWithLengthAndControl()
@@ -345,8 +341,8 @@ func TestRoundTrip_StringWithLengthAndControl(t *testing.T) {
 // TestRoundTrip_UInt32 verifies uint32 write and read round-trip.
 func TestRoundTrip_UInt32(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeUInt32(ptrUint32(0xDEADBEEF), 32)
-	assert.NoError(t, err)
+	w.writeUInt32(ptrUint32(0xDEADBEEF), 32)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readUInt32(32)
@@ -358,8 +354,8 @@ func TestRoundTrip_UInt32(t *testing.T) {
 // TestRoundTrip_UInt16 verifies uint16 write and read round-trip.
 func TestRoundTrip_UInt16(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeUInt16(ptrUint16(0x1234), 16)
-	assert.NoError(t, err)
+	w.writeUInt16(ptrUint16(0x1234), 16)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readUInt16(16)
@@ -371,8 +367,8 @@ func TestRoundTrip_UInt16(t *testing.T) {
 // TestRoundTrip_UInt64 verifies uint64 write and read round-trip.
 func TestRoundTrip_UInt64(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeUInt64(ptrUint64(0x123456789ABCDEF0), 64)
-	assert.NoError(t, err)
+	w.writeUInt64(ptrUint64(0x123456789ABCDEF0), 64)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readUInt64(64)
@@ -384,8 +380,8 @@ func TestRoundTrip_UInt64(t *testing.T) {
 // TestRoundTrip_Int32 verifies int32 write and read round-trip.
 func TestRoundTrip_Int32(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeInt32(ptrInt32(-123456), 32)
-	assert.NoError(t, err)
+	w.writeInt32(ptrInt32(-123456), 32)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readInt32(32)
@@ -397,8 +393,8 @@ func TestRoundTrip_Int32(t *testing.T) {
 // TestRoundTrip_Int64 verifies int64 write and read round-trip.
 func TestRoundTrip_Int64(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeInt64(ptrInt64(-9876543210), 64)
-	assert.NoError(t, err)
+	w.writeInt64(ptrInt64(-9876543210), 64)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readInt64(64)
@@ -468,16 +464,15 @@ func TestRoundTrip_MultipleSequentialFields(t *testing.T) {
 	w := NewPGNDataStreamWriter()
 
 	// SID: uint8 field (8 bits)
-	err := w.writeUInt8(ptrUint8(1), 8)
-	assert.NoError(t, err)
+	w.writeUInt8(ptrUint8(1), 8)
 
 	// Heading: unsigned resolution (16 bits, resolution 0.0001 rad)
-	err = w.writeUnsignedResolution(ptrFloat32(0.4660), 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeUnsignedResolution(ptrFloat32(0.4660), 16, 0.0001)
 
 	// Reserved: skip 8 bits
-	err = w.skipBits(8)
-	assert.NoError(t, err)
+	w.skipBits(8)
+
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 
@@ -502,8 +497,8 @@ func TestRoundTrip_MultipleSequentialFields(t *testing.T) {
 func TestRoundTrip_FixedString_ExactLength(t *testing.T) {
 	w := NewPGNDataStreamWriter()
 	// 5 chars in 40 bits (5 bytes) — no padding needed.
-	err := w.writeFixedString("ABCDE", 40)
-	assert.NoError(t, err)
+	w.writeFixedString("ABCDE", 40)
+	assert.NoError(t, w.Err())
 	assert.Equal(t, []uint8{'A', 'B', 'C', 'D', 'E'}, w.Bytes())
 
 	r := NewPgnDataStream(w.Bytes())
@@ -515,8 +510,8 @@ func TestRoundTrip_FixedString_ExactLength(t *testing.T) {
 // TestRoundTrip_FixedString_Empty verifies an empty string fills with padding.
 func TestRoundTrip_FixedString_Empty(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeFixedString("", 24) // 3 bytes of padding
-	assert.NoError(t, err)
+	w.writeFixedString("", 24) // 3 bytes of padding
+	assert.NoError(t, w.Err())
 	assert.Equal(t, []uint8{0xFF, 0xFF, 0xFF}, w.Bytes())
 
 	r := NewPgnDataStream(w.Bytes())
@@ -528,12 +523,12 @@ func TestRoundTrip_FixedString_Empty(t *testing.T) {
 // TestWriteBinaryData_SubByte verifies writing fewer than 8 bits of binary data.
 func TestWriteBinaryData_SubByte(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	err := w.writeBinaryData([]uint8{0x0F}, 4) // Only low 4 bits matter
-	assert.NoError(t, err)
+	w.writeBinaryData([]uint8{0x0F}, 4) // Only low 4 bits matter
 
 	// Fill remaining bits so we can read back
-	err = w.skipBits(4)
-	assert.NoError(t, err)
+	w.skipBits(4)
+
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readBinaryData(4)
@@ -546,8 +541,8 @@ func TestWriteBinaryData_SubByte(t *testing.T) {
 func TestRoundTrip_UnsignedResolution_LargeValue(t *testing.T) {
 	// Max representable non-null: (0xFFFE) * 0.0001 = 6.5534
 	w := NewPGNDataStreamWriter()
-	err := w.writeUnsignedResolution(ptrFloat32(6.5534), 16, 0.0001)
-	assert.NoError(t, err)
+	w.writeUnsignedResolution(ptrFloat32(6.5534), 16, 0.0001)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readUnsignedResolution(16, 0.0001)
@@ -569,12 +564,10 @@ func TestPutNumberRaw_64Bit(t *testing.T) {
 func TestRoundTrip_SubByte_LookupFields(t *testing.T) {
 	w := NewPGNDataStreamWriter()
 	// Write three lookup fields: 3-bit, 3-bit, 2-bit (total 8 bits = 1 byte)
-	err := w.writeLookupField(5, 3)
-	assert.NoError(t, err)
-	err = w.writeLookupField(3, 3)
-	assert.NoError(t, err)
-	err = w.writeLookupField(2, 2)
-	assert.NoError(t, err)
+	w.writeLookupField(5, 3)
+	w.writeLookupField(3, 3)
+	w.writeLookupField(2, 2)
+	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v1, err := r.readLookupField(3)
@@ -605,8 +598,8 @@ func TestRoundTrip_Float32_SpecialValues(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := NewPGNDataStreamWriter()
-			err := w.writeFloat32(ptrFloat32(tt.value))
-			assert.NoError(t, err)
+			w.writeFloat32(ptrFloat32(tt.value))
+			assert.NoError(t, w.Err())
 
 			// Verify exact byte representation matches IEEE 754 LE encoding.
 			bits := math.Float32bits(tt.value)

@@ -1,8 +1,9 @@
 package n2k
 
 import (
+	"crypto/rand"
+	"encoding/binary"
 	"fmt"
-	"math/rand/v2"
 )
 
 // DeviceName represents the ISO 11783 / NMEA 2000 64-bit NAME that uniquely
@@ -129,5 +130,7 @@ func DefaultDeviceName() DeviceName {
 // randomIdentityNumber returns a random 21-bit value suitable for use as an
 // ISO 11783 NAME identity number.
 func randomIdentityNumber() uint32 {
-	return rand.Uint32() & 0x1FFFFF
+	var buf [4]byte
+	_, _ = rand.Read(buf[:])
+	return binary.LittleEndian.Uint32(buf[:]) & 0x1FFFFF
 }

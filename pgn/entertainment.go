@@ -3447,7 +3447,7 @@ func EncodeFusionMediaControl(val *FusionMediaControl) ([]byte, error) {
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.SourceId, 8)
 	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionMediaControlAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionMediaControl)
@@ -3467,7 +3467,7 @@ func EncodeFusionSiriusControl(val *FusionSiriusControl) ([]byte, error) {
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.SourceId, 8)
 	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSiriusControlAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSiriusControl)
@@ -3485,7 +3485,7 @@ func EncodeFusionRequestStatus(val *FusionRequestStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionRequestStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionRequestStatus)
@@ -3504,7 +3504,7 @@ func EncodeFusionSetSource(val *FusionSetSource) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.SourceId, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSetSourceAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSetSource)
@@ -3522,7 +3522,7 @@ func EncodeFusionSetMute(val *FusionSetMute) ([]byte, error) {
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Command), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSetMuteAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSetMute)
@@ -3542,7 +3542,7 @@ func EncodeFusionSetZoneVolume(val *FusionSetZoneVolume) ([]byte, error) {
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.Zone, 8)
 	w.writeUInt8(val.Volume, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSetZoneVolumeAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSetZoneVolume)
@@ -3564,7 +3564,7 @@ func EncodeFusionSetAllVolumes(val *FusionSetAllVolumes) ([]byte, error) {
 	w.writeUInt8(val.Zone2, 8)
 	w.writeUInt8(val.Zone3, 8)
 	w.writeUInt8(val.Zone4, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSetAllVolumesAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSetAllVolumes)
@@ -3584,7 +3584,7 @@ func EncodeSonichubZoneInfo(val *SonichubZoneInfo) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt8(val.Zone, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubZoneInfoAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubZoneInfo)
@@ -3604,7 +3604,7 @@ func EncodeSonichubSource(val *SonichubSource) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeLookupField(uint64(val.Source), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubSourceAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubSource)
@@ -3626,7 +3626,7 @@ func EncodeSonichubSourceList(val *SonichubSourceList) ([]byte, error) {
 	w.writeUInt8(val.SourceId, 8)
 	w.writeUInt8(val.A, 8)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubSourceListAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubSourceList)
@@ -3646,7 +3646,7 @@ func EncodeSonichubControl(val *SonichubControl) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeLookupField(uint64(val.Item), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubControlAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubControl)
@@ -3671,7 +3671,7 @@ func EncodeSonichubFmRadio(val *SonichubFmRadio) ([]byte, error) {
 	w.writeUInt8(val.SignalLevel, 4)
 	w.skipBits(2)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubFmRadioAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubFmRadio)
@@ -3696,7 +3696,7 @@ func EncodeSonichubPlaylist(val *SonichubPlaylist) ([]byte, error) {
 	w.writeUInt32(val.Tracks, 32)
 	w.writeUnsignedResolution(val.Length, 32, 0.001)
 	w.writeUnsignedResolution(val.PositionInTrack, 32, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubPlaylistAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubPlaylist)
@@ -3717,7 +3717,7 @@ func EncodeSonichubTrack(val *SonichubTrack) ([]byte, error) {
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt32(val.Item, 32)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubTrackAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubTrack)
@@ -3738,7 +3738,7 @@ func EncodeSonichubArtist(val *SonichubArtist) ([]byte, error) {
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt32(val.Item, 32)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubArtistAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubArtist)
@@ -3759,7 +3759,7 @@ func EncodeSonichubAlbum(val *SonichubAlbum) ([]byte, error) {
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt32(val.Item, 32)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubAlbumAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubAlbum)
@@ -3783,7 +3783,7 @@ func EncodeSonichubMenuItem(val *SonichubMenuItem) ([]byte, error) {
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubMenuItemAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubMenuItem)
@@ -3803,7 +3803,7 @@ func EncodeSonichubZones(val *SonichubZones) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt8(val.Zones, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubZonesAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubZones)
@@ -3824,7 +3824,7 @@ func EncodeSonichubMaxVolume(val *SonichubMaxVolume) ([]byte, error) {
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt8(val.Zone, 8)
 	w.writeUInt8(val.Level, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubMaxVolumeAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubMaxVolume)
@@ -3845,7 +3845,7 @@ func EncodeSonichubVolume(val *SonichubVolume) ([]byte, error) {
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt8(val.Zone, 8)
 	w.writeUInt8(val.Level, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubVolumeAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubVolume)
@@ -3864,7 +3864,7 @@ func EncodeSonichubInit1(val *SonichubInit1) ([]byte, error) {
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubInit1Any(v any) ([]byte, error) {
 	val, ok := v.(*SonichubInit1)
@@ -3884,7 +3884,7 @@ func EncodeSonichubPosition(val *SonichubPosition) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUnsignedResolution(val.Position, 32, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSonichubPositionAny(v any) ([]byte, error) {
 	val, ok := v.(*SonichubPosition)
@@ -3907,7 +3907,7 @@ func EncodeFusionSourceName(val *FusionSourceName) ([]byte, error) {
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
 	w.writeStringWithLength(val.Source)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSourceNameAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSourceName)
@@ -3935,7 +3935,7 @@ func EncodeFusionTrackInfo(val *FusionTrackInfo) ([]byte, error) {
 	w.writeUnsignedResolution(val.Length, 24, 0.001)
 	w.writeUnsignedResolution(val.PositionInTrack, 24, 0.001)
 	w.writeUInt16(val.H, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionTrackInfoAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionTrackInfo)
@@ -3955,7 +3955,7 @@ func EncodeFusionTrack(val *FusionTrack) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt64(val.B, 40)
 	w.writeStringWithLength(val.Track)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionTrackAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionTrack)
@@ -3975,7 +3975,7 @@ func EncodeFusionArtist(val *FusionArtist) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt64(val.B, 40)
 	w.writeStringWithLength(val.Artist)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionArtistAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionArtist)
@@ -3995,7 +3995,7 @@ func EncodeFusionAlbum(val *FusionAlbum) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt64(val.B, 40)
 	w.writeStringWithLength(val.Album)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionAlbumAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionAlbum)
@@ -4014,7 +4014,7 @@ func EncodeFusionUnitName(val *FusionUnitName) ([]byte, error) {
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
 	w.writeStringWithLength(val.Name)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionUnitNameAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionUnitName)
@@ -4034,7 +4034,7 @@ func EncodeFusionZoneName(val *FusionZoneName) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.Number, 8)
 	w.writeStringWithLength(val.Name)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionZoneNameAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionZoneName)
@@ -4054,7 +4054,7 @@ func EncodeFusionPlayProgress(val *FusionPlayProgress) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeUnsignedResolution(val.Progress, 24, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionPlayProgressAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionPlayProgress)
@@ -4077,7 +4077,7 @@ func EncodeFusionAmFmStation(val *FusionAmFmStation) ([]byte, error) {
 	w.writeUInt32(val.Frequency, 32)
 	w.writeUInt8(val.C, 8)
 	w.writeStringWithLength(val.Track)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionAmFmStationAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionAmFmStation)
@@ -4098,7 +4098,7 @@ func EncodeFusionVhf(val *FusionVhf) ([]byte, error) {
 	w.writeUInt8(val.B, 8)
 	w.writeUInt8(val.Channel, 8)
 	w.writeUInt32(val.D, 24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionVhfAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionVhf)
@@ -4118,7 +4118,7 @@ func EncodeFusionSquelch(val *FusionSquelch) ([]byte, error) {
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeUInt8(val.Squelch, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSquelchAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSquelch)
@@ -4139,7 +4139,7 @@ func EncodeFusionScan(val *FusionScan) ([]byte, error) {
 	w.writeUInt8(val.B, 8)
 	w.writeLookupField(uint64(val.Scan), 2)
 	w.writeUInt8(val.C, 6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionScanAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionScan)
@@ -4165,7 +4165,7 @@ func EncodeFusionMenuItem(val *FusionMenuItem) ([]byte, error) {
 	w.writeUInt8(val.H, 8)
 	w.writeUInt8(val.I, 8)
 	w.writeStringWithLength(val.Text)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionMenuItemAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionMenuItem)
@@ -4191,7 +4191,7 @@ func EncodeFusionReplay(val *FusionReplay) ([]byte, error) {
 	w.writeUInt8(val.H, 8)
 	w.writeUInt8(val.I, 8)
 	w.writeUInt8(val.J, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionReplayAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionReplay)
@@ -4210,7 +4210,7 @@ func EncodeFusionMute(val *FusionMute) ([]byte, error) {
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
 	w.writeLookupField(uint64(val.Mute), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionMuteAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionMute)
@@ -4232,7 +4232,7 @@ func EncodeFusionSubVolume(val *FusionSubVolume) ([]byte, error) {
 	w.writeUInt8(val.Zone2, 8)
 	w.writeUInt8(val.Zone3, 8)
 	w.writeUInt8(val.Zone4, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFusionSubVolumeAny(v any) ([]byte, error) {
 	val, ok := v.(*FusionSubVolume)

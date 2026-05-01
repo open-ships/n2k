@@ -405,7 +405,7 @@ func EncodeThrusterControlStatus(val *ThrusterControlStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.ControlEvents), 8)
 	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
 	w.writeUnsignedResolution(val.AzimuthControl, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeThrusterControlStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*ThrusterControlStatus)
@@ -428,7 +428,7 @@ func EncodeThrusterInformation(val *ThrusterInformation) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(maximumTemperatureRatingRaw, 16, 0.01)
 	w.writeUnsignedResolution(val.MaximumRotationalSpeed, 16, 0.25)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeThrusterInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*ThrusterInformation)
@@ -451,7 +451,7 @@ func EncodeThrusterMotorStatus(val *ThrusterMotorStatus) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(temperatureRaw, 16, 0.01)
 	w.writeUnsignedResolution(val.OperatingTime, 16, 60)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeThrusterMotorStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*ThrusterMotorStatus)
@@ -478,7 +478,7 @@ func EncodeSpeed(val *Speed) ([]byte, error) {
 	w.writeLookupField(uint64(val.SpeedWaterReferencedType), 8)
 	w.writeUInt8(val.SpeedDirection, 4)
 	w.skipBits(12)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSpeedAny(v any) ([]byte, error) {
 	val, ok := v.(*Speed)
@@ -507,7 +507,7 @@ func EncodeWaterDepth(val *WaterDepth) ([]byte, error) {
 		rangeRaw = &val.Range.Value
 	}
 	w.writeUnsignedResolution(rangeRaw, 8, 10)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeWaterDepthAny(v any) ([]byte, error) {
 	val, ok := v.(*WaterDepth)
@@ -534,7 +534,7 @@ func EncodeDistanceLog(val *DistanceLog) ([]byte, error) {
 		tripLogRaw = &v
 	}
 	w.writeUInt32(tripLogRaw, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeDistanceLogAny(v any) ([]byte, error) {
 	val, ok := v.(*DistanceLog)

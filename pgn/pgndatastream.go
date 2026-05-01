@@ -58,25 +58,16 @@ func (s *PGNDataStream) isEOF() bool {
 
 // skipBits advances the read cursor by bitLength bits without reading data.
 // This is used to skip over reserved or unused fields in a PGN definition.
-// Returns an error if the skip would move the cursor past the end of the data.
-func (s *PGNDataStream) skipBits(bitLength uint16) error {
-	// Add the whole-byte portion of the skip to byteOffset.
-	s.byteOffset += bitLength >> 3 // equivalent to bitLength / 8
-	bitLength &= 7                 // keep only the remaining sub-byte bits
+// Any out-of-bounds condition will be caught by the next read operation.
+func (s *PGNDataStream) skipBits(bitLength uint16) {
+	s.byteOffset += bitLength >> 3
+	bitLength &= 7
 
-	// Add the remaining sub-byte bits, handling overflow past a byte boundary.
 	s.bitOffset += uint8(bitLength)
 	if s.bitOffset >= 8 {
 		s.byteOffset++
 		s.bitOffset -= 8
 	}
-
-	// Bounds check: ensure we haven't moved past the end of the data slice.
-	if int(s.byteOffset) >= len(s.data) {
-		return fmt.Errorf("reading byte(%d) off end of pgn (len:%d)", s.byteOffset, len(s.data))
-	}
-
-	return nil
 }
 
 // getBitOffset returns the absolute read cursor position in bits from the start of the stream.

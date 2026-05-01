@@ -7445,7 +7445,7 @@ func EncodeSeatalkWirelessKeypadLightControl(val *SeatalkWirelessKeypadLightCont
 	w.writeUInt8(val.WirelessSetting, 8)
 	w.writeUInt8(val.WiredSetting, 8)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkWirelessKeypadLightControlAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkWirelessKeypadLightControl)
@@ -7465,7 +7465,7 @@ func EncodeSeatalkWirelessKeypadControl(val *SeatalkWirelessKeypadControl) ([]by
 	w.writeUInt8(val.Variant, 8)
 	w.writeUInt8(val.BeepControl, 8)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkWirelessKeypadControlAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkWirelessKeypadControl)
@@ -7483,7 +7483,7 @@ func EncodeVictronBatteryRegister(val *VictronBatteryRegister) ([]byte, error) {
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.RegisterId, 16)
 	w.writeUInt32(val.Payload, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeVictronBatteryRegisterAny(v any) ([]byte, error) {
 	val, ok := v.(*VictronBatteryRegister)
@@ -7505,7 +7505,7 @@ func EncodeFurunoHeave(val *FurunoHeave) ([]byte, error) {
 	}
 	w.writeSignedResolution(heaveRaw, 32, 0.001)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoHeaveAny(v any) ([]byte, error) {
 	val, ok := v.(*FurunoHeave)
@@ -7525,7 +7525,7 @@ func EncodeMaretronProprietaryDcBreakerCurrent(val *MaretronProprietaryDcBreaker
 	w.writeUInt8(val.IndicatorNumber, 8)
 	w.writeUnsignedResolution(val.BreakerCurrent, 16, 0.1)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronProprietaryDcBreakerCurrentAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronProprietaryDcBreakerCurrent)
@@ -7543,7 +7543,7 @@ func EncodeAirmarBootStateAcknowledgment(val *AirmarBootStateAcknowledgment) ([]
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.BootState), 3)
 	w.skipBits(45)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarBootStateAcknowledgmentAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarBootStateAcknowledgment)
@@ -7566,7 +7566,7 @@ func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeLowranceTemperatureAny(v any) ([]byte, error) {
 	val, ok := v.(*LowranceTemperature)
@@ -7583,7 +7583,7 @@ func EncodeAirmarBootStateRequest(val *AirmarBootStateRequest) ([]byte, error) {
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarBootStateRequestAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarBootStateRequest)
@@ -7603,7 +7603,7 @@ func EncodeAirmarAccessLevel(val *AirmarAccessLevel) ([]byte, error) {
 	w.writeLookupField(uint64(val.AccessLevel), 3)
 	w.skipBits(5)
 	w.writeUInt32(val.AccessSeedKey, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarAccessLevelAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarAccessLevel)
@@ -7620,7 +7620,7 @@ func EncodeSimnetConfigureTemperatureSensor(val *SimnetConfigureTemperatureSenso
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetConfigureTemperatureSensorAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetConfigureTemperatureSensor)
@@ -7641,7 +7641,7 @@ func EncodeSeatalkAlarm(val *SeatalkAlarm) ([]byte, error) {
 	w.writeLookupField(uint64(val.AlarmId), 8)
 	w.writeLookupField(uint64(val.AlarmGroup), 8)
 	w.writeBinaryData(val.AlarmPriority, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkAlarmAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkAlarm)
@@ -7658,7 +7658,7 @@ func EncodeSimnetTrimTabSensorCalibration(val *SimnetTrimTabSensorCalibration) (
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetTrimTabSensorCalibrationAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetTrimTabSensorCalibration)
@@ -7675,7 +7675,7 @@ func EncodeSimnetPaddleWheelSpeedConfiguration(val *SimnetPaddleWheelSpeedConfig
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetPaddleWheelSpeedConfigurationAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetPaddleWheelSpeedConfiguration)
@@ -7692,7 +7692,7 @@ func EncodeSimnetClearFluidLevelWarnings(val *SimnetClearFluidLevelWarnings) ([]
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetClearFluidLevelWarningsAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetClearFluidLevelWarnings)
@@ -7709,7 +7709,7 @@ func EncodeSimnetLgc2000Configuration(val *SimnetLgc2000Configuration) ([]byte, 
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetLgc2000ConfigurationAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetLgc2000Configuration)
@@ -7728,7 +7728,7 @@ func EncodeDiverseYachtServicesLoadCell(val *DiverseYachtServicesLoadCell) ([]by
 	w.writeUInt8(val.Instance, 8)
 	w.skipBits(8)
 	w.writeUInt32(val.LoadCell, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeDiverseYachtServicesLoadCellAny(v any) ([]byte, error) {
 	val, ok := v.(*DiverseYachtServicesLoadCell)
@@ -7749,7 +7749,7 @@ func EncodeSimnetApUnknown1(val *SimnetApUnknown1) ([]byte, error) {
 	w.writeUInt16(val.C, 16)
 	w.writeUInt8(val.D, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetApUnknown1Any(v any) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown1)
@@ -7769,7 +7769,7 @@ func EncodeSimnetDeviceStatus(val *SimnetDeviceStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.Report), 8)
 	w.writeLookupField(uint64(val.Status), 8)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetDeviceStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceStatus)
@@ -7788,7 +7788,7 @@ func EncodeSimnetDeviceStatusRequest(val *SimnetDeviceStatusRequest) ([]byte, er
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
 	w.skipBits(32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetDeviceStatusRequestAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceStatusRequest)
@@ -7808,7 +7808,7 @@ func EncodeSimnetPilotMode(val *SimnetPilotMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Report), 8)
 	w.writeLookupField(uint64(val.Mode), 16)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetPilotModeAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetPilotMode)
@@ -7827,7 +7827,7 @@ func EncodeSimnetDeviceModeRequest(val *SimnetDeviceModeRequest) ([]byte, error)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
 	w.skipBits(32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetDeviceModeRequestAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetDeviceModeRequest)
@@ -7846,7 +7846,7 @@ func EncodeSimnetSailingProcessorStatus(val *SimnetSailingProcessorStatus) ([]by
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
 	w.writeBinaryData(val.Data, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetSailingProcessorStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetSailingProcessorStatus)
@@ -7866,7 +7866,7 @@ func EncodeNavicoWirelessBatteryStatus(val *NavicoWirelessBatteryStatus) ([]byte
 	w.writeUInt8(val.BatteryStatus, 8)
 	w.writeUInt8(val.BatteryChargeStatus, 8)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoWirelessBatteryStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*NavicoWirelessBatteryStatus)
@@ -7885,7 +7885,7 @@ func EncodeNavicoWirelessSignalStatus(val *NavicoWirelessSignalStatus) ([]byte, 
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.SignalStrength, 8)
 	w.skipBits(32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoWirelessSignalStatusAny(v any) ([]byte, error) {
 	val, ok := v.(*NavicoWirelessSignalStatus)
@@ -7907,7 +7907,7 @@ func EncodeSimnetApUnknown2(val *SimnetApUnknown2) ([]byte, error) {
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetApUnknown2Any(v any) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown2)
@@ -7927,7 +7927,7 @@ func EncodeSimnetAutopilotAngle(val *SimnetAutopilotAngle) ([]byte, error) {
 	w.writeLookupField(uint64(val.Mode), 8)
 	w.skipBits(8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetAutopilotAngleAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetAutopilotAngle)
@@ -7946,7 +7946,7 @@ func EncodeSeatalkPilotWindDatum(val *SeatalkPilotWindDatum) ([]byte, error) {
 	w.writeUnsignedResolution(val.WindDatum, 16, 0.0001)
 	w.writeUnsignedResolution(val.RollingAverageWindAngle, 16, 0.0001)
 	w.skipBits(16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkPilotWindDatumAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotWindDatum)
@@ -7964,7 +7964,7 @@ func EncodeSimnetMagneticField(val *SimnetMagneticField) ([]byte, error) {
 	w.writeSignedResolution(val.C, 16, 0.0001)
 	w.writeSignedResolution(val.D, 16, 0.0001)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetMagneticFieldAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetMagneticField)
@@ -7984,7 +7984,7 @@ func EncodeSeatalkPilotHeading(val *SeatalkPilotHeading) ([]byte, error) {
 	w.writeUnsignedResolution(val.HeadingTrue, 16, 0.0001)
 	w.writeUnsignedResolution(val.HeadingMagnetic, 16, 0.0001)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkPilotHeadingAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotHeading)
@@ -8004,7 +8004,7 @@ func EncodeSeatalkPilotLockedHeading(val *SeatalkPilotLockedHeading) ([]byte, er
 	w.writeUnsignedResolution(val.TargetHeadingTrue, 16, 0.0001)
 	w.writeUnsignedResolution(val.TargetHeadingMagnetic, 16, 0.0001)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkPilotLockedHeadingAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotLockedHeading)
@@ -8023,7 +8023,7 @@ func EncodeSeatalkSilenceAlarm(val *SeatalkSilenceAlarm) ([]byte, error) {
 	w.writeLookupField(uint64(val.AlarmId), 8)
 	w.writeLookupField(uint64(val.AlarmGroup), 8)
 	w.skipBits(32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkSilenceAlarmAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkSilenceAlarm)
@@ -8047,7 +8047,7 @@ func EncodeSeatalkKeypadMessage(val *SeatalkKeypadMessage) ([]byte, error) {
 	w.skipBits(4)
 	w.writeUInt8(val.EncoderPosition, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkKeypadMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkKeypadMessage)
@@ -8067,7 +8067,7 @@ func EncodeSeatalkKeypadHeartbeat(val *SeatalkKeypadHeartbeat) ([]byte, error) {
 	w.writeUInt8(val.Variant, 8)
 	w.writeUInt8(val.Status, 8)
 	w.skipBits(24)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkKeypadHeartbeatAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkKeypadHeartbeat)
@@ -8087,7 +8087,7 @@ func EncodeSeatalkPilotMode(val *SeatalkPilotMode) ([]byte, error) {
 	w.writeBinaryData(val.SubMode, 16)
 	w.writeBinaryData(val.PilotModeData, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalkPilotModeAny(v any) ([]byte, error) {
 	val, ok := v.(*SeatalkPilotMode)
@@ -8106,7 +8106,7 @@ func EncodeAirmarDepthQualityFactor(val *AirmarDepthQualityFactor) ([]byte, erro
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.DepthQualityFactor), 4)
 	w.skipBits(36)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarDepthQualityFactorAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarDepthQualityFactor)
@@ -8126,7 +8126,7 @@ func EncodeAirmarSpeedPulseCount(val *AirmarSpeedPulseCount) ([]byte, error) {
 	w.writeUnsignedResolution(val.DurationOfInterval, 16, 0.001)
 	w.writeUInt16(val.NumberOfPulsesReceived, 16)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarSpeedPulseCountAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedPulseCount)
@@ -8150,7 +8150,7 @@ func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error)
 	w.writeUnsignedResolution(internalDeviceTemperatureRaw, 16, 0.01)
 	w.writeUnsignedResolution(val.SupplyVoltage, 16, 0.01)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarDeviceInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarDeviceInformation)
@@ -8172,7 +8172,7 @@ func EncodeSimnetApUnknown3(val *SimnetApUnknown3) ([]byte, error) {
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetApUnknown3Any(v any) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown3)
@@ -8189,7 +8189,7 @@ func EncodeSimnetAutopilotMode(val *SimnetAutopilotMode) ([]byte, error) {
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.skipBits(48)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetAutopilotModeAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetAutopilotMode)
@@ -8212,7 +8212,7 @@ func EncodeSeatalk1PilotMode(val *Seatalk1PilotMode) ([]byte, error) {
 	w.writeUInt8(val.SubMode, 8)
 	w.writeBinaryData(val.PilotModeData, 8)
 	w.writeBinaryData(val.Unknown2, 80)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalk1PilotModeAny(v any) ([]byte, error) {
 	val, ok := v.(*Seatalk1PilotMode)
@@ -8234,7 +8234,7 @@ func EncodeSeatalk1Keystroke(val *Seatalk1Keystroke) ([]byte, error) {
 	w.writeLookupField(uint64(val.Key), 8)
 	w.writeUInt8(val.Keyinverted, 8)
 	w.writeBinaryData(val.UnknownData, 112)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalk1KeystrokeAny(v any) ([]byte, error) {
 	val, ok := v.(*Seatalk1Keystroke)
@@ -8254,7 +8254,7 @@ func EncodeSeatalk1DeviceIdentification(val *Seatalk1DeviceIdentification) ([]by
 	w.writeUInt8(val.Command, 8)
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.Device), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalk1DeviceIdentificationAny(v any) ([]byte, error) {
 	val, ok := v.(*Seatalk1DeviceIdentification)
@@ -8276,7 +8276,7 @@ func EncodeSeatalk1DisplayBrightness(val *Seatalk1DisplayBrightness) ([]byte, er
 	w.writeUInt8(val.Command, 8)
 	w.writeUInt8(val.Brightness, 8)
 	w.writeBinaryData(val.Unknown2, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalk1DisplayBrightnessAny(v any) ([]byte, error) {
 	val, ok := v.(*Seatalk1DisplayBrightness)
@@ -8298,7 +8298,7 @@ func EncodeSeatalk1DisplayColor(val *Seatalk1DisplayColor) ([]byte, error) {
 	w.writeUInt8(val.Command, 8)
 	w.writeLookupField(uint64(val.Color), 8)
 	w.writeBinaryData(val.Unknown2, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSeatalk1DisplayColorAny(v any) ([]byte, error) {
 	val, ok := v.(*Seatalk1DisplayColor)
@@ -8318,7 +8318,7 @@ func EncodeAirmarAttitudeOffset(val *AirmarAttitudeOffset) ([]byte, error) {
 	w.writeSignedResolution(val.AzimuthOffset, 16, 0.0001)
 	w.writeSignedResolution(val.PitchOffset, 16, 0.0001)
 	w.writeSignedResolution(val.RollOffset, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarAttitudeOffsetAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarAttitudeOffset)
@@ -8347,7 +8347,7 @@ func EncodeAirmarCalibrateCompass(val *AirmarCalibrateCompass) ([]byte, error) {
 	w.writeSignedResolution(val.XAxisAngularOffset, 16, 0.1)
 	w.writeSignedResolution(val.PitchAndRollDamping, 16, 0.05)
 	w.writeSignedResolution(val.CompassRateGyroDamping, 16, 0.05)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarCalibrateCompassAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateCompass)
@@ -8366,7 +8366,7 @@ func EncodeAirmarTrueWindOptions(val *AirmarTrueWindOptions) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.CogSubstitutionForHdg), 2)
 	w.skipBits(22)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarTrueWindOptionsAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarTrueWindOptions)
@@ -8385,7 +8385,7 @@ func EncodeAirmarSimulateMode(val *AirmarSimulateMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.SimulateMode), 2)
 	w.skipBits(22)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarSimulateModeAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarSimulateMode)
@@ -8408,7 +8408,7 @@ func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
 	}
 	w.writeUnsignedResolution(speedOfSoundModeRaw, 16, 0.1)
 	w.skipBits(8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarCalibrateDepthAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateDepth)
@@ -8434,7 +8434,7 @@ func EncodeAirmarCalibrateSpeed(val *AirmarCalibrateSpeed) ([]byte, error) {
 		}
 		w.writeUnsignedResolution(outputSpeedRaw, 16, 0.01)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarCalibrateSpeedAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateSpeed)
@@ -8458,7 +8458,7 @@ func EncodeAirmarCalibrateTemperature(val *AirmarCalibrateTemperature) ([]byte, 
 		temperatureOffsetRaw = &val.TemperatureOffset.Value
 	}
 	w.writeSignedResolution(temperatureOffsetRaw, 16, 0.001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarCalibrateTemperatureAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarCalibrateTemperature)
@@ -8478,7 +8478,7 @@ func EncodeAirmarSpeedFilterNone(val *AirmarSpeedFilterNone) ([]byte, error) {
 	w.writeUInt8(val.FilterType, 4)
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarSpeedFilterNoneAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedFilterNone)
@@ -8499,7 +8499,7 @@ func EncodeAirmarSpeedFilterIir(val *AirmarSpeedFilterIir) ([]byte, error) {
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarSpeedFilterIirAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarSpeedFilterIir)
@@ -8519,7 +8519,7 @@ func EncodeAirmarTemperatureFilterNone(val *AirmarTemperatureFilterNone) ([]byte
 	w.writeUInt8(val.FilterType, 4)
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarTemperatureFilterNoneAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarTemperatureFilterNone)
@@ -8540,7 +8540,7 @@ func EncodeAirmarTemperatureFilterIir(val *AirmarTemperatureFilterIir) ([]byte, 
 	w.skipBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarTemperatureFilterIirAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarTemperatureFilterIir)
@@ -8559,7 +8559,7 @@ func EncodeAirmarNmea2000Options(val *AirmarNmea2000Options) ([]byte, error) {
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.TransmissionInterval), 2)
 	w.skipBits(22)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarNmea2000OptionsAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarNmea2000Options)
@@ -8576,7 +8576,7 @@ func EncodeAirmarAddressableMultiFrame(val *AirmarAddressableMultiFrame) ([]byte
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeAirmarAddressableMultiFrameAny(v any) ([]byte, error) {
 	val, ok := v.(*AirmarAddressableMultiFrame)
@@ -8596,7 +8596,7 @@ func EncodeMaretronSlaveResponse(val *MaretronSlaveResponse) ([]byte, error) {
 	w.writeUInt16(val.SoftwareCode, 16)
 	w.writeUInt8(val.Command, 8)
 	w.writeUInt8(val.Status, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronSlaveResponseAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronSlaveResponse)
@@ -8620,7 +8620,7 @@ func EncodeGarminDayMode(val *GarminDayMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Mode), 8)
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.Backlight), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGarminDayModeAny(v any) ([]byte, error) {
 	val, ok := v.(*GarminDayMode)
@@ -8644,7 +8644,7 @@ func EncodeGarminNightMode(val *GarminNightMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Mode), 8)
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.Backlight), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGarminNightModeAny(v any) ([]byte, error) {
 	val, ok := v.(*GarminNightMode)
@@ -8668,7 +8668,7 @@ func EncodeGarminColorMode(val *GarminColorMode) ([]byte, error) {
 	w.writeLookupField(uint64(val.Mode), 8)
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.Color), 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeGarminColorModeAny(v any) ([]byte, error) {
 	val, ok := v.(*GarminColorMode)
@@ -8692,7 +8692,7 @@ func EncodeSimradTextMessage(val *SimradTextMessage) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	w.writeUInt8(val.Prio, 8)
 	w.writeFixedString(val.Text, 256)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimradTextMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*SimradTextMessage)
@@ -8716,7 +8716,7 @@ func EncodeNavicoProductInformation(val *NavicoProductInformation) ([]byte, erro
 	w.writeFixedString(val.FirmwareVersion, 80)
 	w.writeFixedString(val.FirmwareDate, 256)
 	w.writeFixedString(val.FirmwareTime, 256)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoProductInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*NavicoProductInformation)
@@ -8740,7 +8740,7 @@ func EncodeLowranceProductInformation(val *LowranceProductInformation) ([]byte, 
 	w.writeFixedString(val.FirmwareVersion, 80)
 	w.writeFixedString(val.FirmwareDate, 256)
 	w.writeFixedString(val.FirmwareTime, 256)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeLowranceProductInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*LowranceProductInformation)
@@ -8759,7 +8759,7 @@ func EncodeSimnetReprogramData(val *SimnetReprogramData) ([]byte, error) {
 	w.writeUInt16(val.Version, 16)
 	w.writeUInt16(val.Sequence, 16)
 	w.writeBinaryData(val.Data, 1736)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetReprogramDataAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetReprogramData)
@@ -8780,7 +8780,7 @@ func EncodeFurunoUnknown130820(val *FurunoUnknown130820) ([]byte, error) {
 	w.writeUInt8(val.C, 8)
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoUnknown130820Any(v any) ([]byte, error) {
 	val, ok := v.(*FurunoUnknown130820)
@@ -8798,7 +8798,7 @@ func EncodeNavicoAsciiData(val *NavicoAsciiData) ([]byte, error) {
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeFixedString(val.Message, 2048)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoAsciiDataAny(v any) ([]byte, error) {
 	val, ok := v.(*NavicoAsciiData)
@@ -8824,7 +8824,7 @@ func EncodeFurunoUnknown130821(val *FurunoUnknown130821) ([]byte, error) {
 	w.writeUInt8(val.G, 8)
 	w.writeUInt8(val.H, 8)
 	w.writeUInt8(val.I, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoUnknown130821Any(v any) ([]byte, error) {
 	val, ok := v.(*FurunoUnknown130821)
@@ -8841,7 +8841,7 @@ func EncodeNavicoUnknown1(val *NavicoUnknown1) ([]byte, error) {
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Data, 1848)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoUnknown1Any(v any) ([]byte, error) {
 	val, ok := v.(*NavicoUnknown1)
@@ -8870,7 +8870,7 @@ func EncodeMaretronProprietaryTemperatureHighRange(val *MaretronProprietaryTempe
 		setTemperatureRaw = &val.SetTemperature.Value
 	}
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.1)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronProprietaryTemperatureHighRangeAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronProprietaryTemperatureHighRange)
@@ -8895,7 +8895,7 @@ func EncodeBGKeyValueData(val *BGKeyValueData) ([]byte, error) {
 		}
 		w.writeBinaryData(rep.Value, valueLength)
 	}
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBGKeyValueDataAny(v any) ([]byte, error) {
 	val, ok := v.(*BGKeyValueData)
@@ -8916,7 +8916,7 @@ func EncodeMaretronAnnunciator(val *MaretronAnnunciator) ([]byte, error) {
 	w.writeUInt16(val.Field6, 16)
 	w.writeUInt8(val.Field7, 8)
 	w.writeUInt16(val.Field8, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronAnnunciatorAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronAnnunciator)
@@ -8933,7 +8933,7 @@ func EncodeNavicoUnknown2(val *NavicoUnknown2) ([]byte, error) {
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Data, 80)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeNavicoUnknown2Any(v any) ([]byte, error) {
 	val, ok := v.(*NavicoUnknown2)
@@ -8955,7 +8955,7 @@ func EncodeBGUserAndRemoteRename(val *BGUserAndRemoteRename) ([]byte, error) {
 	w.writeLookupField(uint64(val.Decimals), 8)
 	w.writeFixedString(val.ShortName, 64)
 	w.writeFixedString(val.LongName, 128)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeBGUserAndRemoteRenameAny(v any) ([]byte, error) {
 	val, ok := v.(*BGUserAndRemoteRename)
@@ -8984,7 +8984,7 @@ func EncodeSimnetFluidLevelSensorConfiguration(val *SimnetFluidLevelSensorConfig
 	w.writeUInt8(val.G, 8)
 	w.writeInt16(val.H, 16)
 	w.writeInt8(val.I, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetFluidLevelSensorConfigurationAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetFluidLevelSensorConfiguration)
@@ -9009,7 +9009,7 @@ func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte
 	w.writeUInt8(val.ErrorCounter, 8)
 	w.writeLookupField(uint64(val.SwitchStatus), 2)
 	w.skipBits(6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronSwitchStatusCounterAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronSwitchStatusCounter)
@@ -9034,7 +9034,7 @@ func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, er
 	w.writeUInt32(val.AccumulatedErrorPeriod, 32)
 	w.writeLookupField(uint64(val.SwitchStatus), 2)
 	w.skipBits(6)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeMaretronSwitchStatusTimerAny(v any) ([]byte, error) {
 	val, ok := v.(*MaretronSwitchStatusTimer)
@@ -9059,7 +9059,7 @@ func EncodeFurunoSixDegreesOfFreedomMovement(val *FurunoSixDegreesOfFreedomMovem
 	w.writeInt16(val.G, 16)
 	w.writeInt16(val.H, 16)
 	w.writeInt16(val.I, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoSixDegreesOfFreedomMovementAny(v any) ([]byte, error) {
 	val, ok := v.(*FurunoSixDegreesOfFreedomMovement)
@@ -9106,7 +9106,7 @@ func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg
 	w.writeUInt32(val.MothershipUserId, 32)
 	w.skipBits(6)
 	w.skipBits(2)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetAisClassBStaticDataMsg24PartBAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetAisClassBStaticDataMsg24PartB)
@@ -9127,7 +9127,7 @@ func EncodeFurunoHeelAngleRollInformation(val *FurunoHeelAngleRollInformation) (
 	w.writeSignedResolution(val.Yaw, 16, 0.0001)
 	w.writeSignedResolution(val.Pitch, 16, 0.0001)
 	w.writeSignedResolution(val.Roll, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoHeelAngleRollInformationAny(v any) ([]byte, error) {
 	val, ok := v.(*FurunoHeelAngleRollInformation)
@@ -9143,7 +9143,7 @@ func EncodeFurunoMultiSatsInViewExtended(val *FurunoMultiSatsInViewExtended) ([]
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoMultiSatsInViewExtendedAny(v any) ([]byte, error) {
 	val, ok := v.(*FurunoMultiSatsInViewExtended)
@@ -9166,7 +9166,7 @@ func EncodeSimnetKeyValue(val *SimnetKeyValue) ([]byte, error) {
 	w.writeLookupField(uint64(val.Key), 16)
 	w.skipBits(8)
 	w.writeUInt8(val.Minlength, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetKeyValueAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetKeyValue)
@@ -9189,7 +9189,7 @@ func EncodeSimnetParameterSet(val *SimnetParameterSet) ([]byte, error) {
 	w.writeLookupField(uint64(val.Key), 16)
 	w.skipBits(8)
 	w.writeUInt8(val.Length, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetParameterSetAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetParameterSet)
@@ -9205,7 +9205,7 @@ func EncodeFurunoMotionSensorStatusExtended(val *FurunoMotionSensorStatusExtende
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
 	w.skipBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeFurunoMotionSensorStatusExtendedAny(v any) ([]byte, error) {
 	val, ok := v.(*FurunoMotionSensorStatusExtended)
@@ -9229,7 +9229,7 @@ func EncodeSimnetApCommand(val *SimnetApCommand) ([]byte, error) {
 	w.skipBits(8)
 	w.writeLookupField(uint64(val.Direction), 8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetApCommandAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetApCommand)
@@ -9253,7 +9253,7 @@ func EncodeSimnetEventCommandApCommand(val *SimnetEventCommandApCommand) ([]byte
 	w.writeLookupField(uint64(val.Direction), 8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	w.writeUInt8(val.UnusedC, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetEventCommandApCommandAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetEventCommandApCommand)
@@ -9277,7 +9277,7 @@ func EncodeSimnetAlarm(val *SimnetAlarm) ([]byte, error) {
 	w.writeUInt16(val.MessageId, 16)
 	w.writeUInt8(val.F, 8)
 	w.writeUInt8(val.G, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetAlarmAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetAlarm)
@@ -9301,7 +9301,7 @@ func EncodeSimnetEventReplyApCommand(val *SimnetEventReplyApCommand) ([]byte, er
 	w.writeLookupField(uint64(val.Direction), 8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	w.writeUInt8(val.G, 8)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetEventReplyApCommandAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetEventReplyApCommand)
@@ -9321,7 +9321,7 @@ func EncodeSimnetAlarmMessage(val *SimnetAlarmMessage) ([]byte, error) {
 	w.writeUInt8(val.B, 8)
 	w.writeUInt8(val.C, 8)
 	w.writeFixedString(val.Text, 1784)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetAlarmMessageAny(v any) ([]byte, error) {
 	val, ok := v.(*SimnetAlarmMessage)
@@ -9343,7 +9343,7 @@ func EncodeSimnetApUnknown4(val *SimnetApUnknown4) ([]byte, error) {
 	w.writeUInt32(val.D, 32)
 	w.writeInt32(val.E, 32)
 	w.writeUInt32(val.F, 32)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeSimnetApUnknown4Any(v any) ([]byte, error) {
 	val, ok := v.(*SimnetApUnknown4)

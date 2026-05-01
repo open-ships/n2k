@@ -82,7 +82,7 @@ func EncodeRadioFrequencyModePower(val *RadioFrequencyModePower) ([]byte, error)
 	w.writeUInt8(val.TxPower, 8)
 	w.writeUInt16(val.Mode, 16)
 	w.writeUInt16(val.ChannelBandwidth, 16)
-	return w.Bytes(), nil
+	return w.Bytes(), w.Err()
 }
 func encodeRadioFrequencyModePowerAny(v any) ([]byte, error) {
 	val, ok := v.(*RadioFrequencyModePower)

@@ -58,7 +58,7 @@ func TestFrameFastPacket_SmallPayload(t *testing.T) {
 	// Frame 0
 	f0 := frames[0]
 	assert.Equal(t, canID, f0.ID)
-	assert.Equal(t, uint8((3<<5)|0), f0.Data[0], "frame 0 header: seqId=3, frameNum=0")
+	assert.Equal(t, uint8(3<<5), f0.Data[0], "frame 0 header: seqId=3, frameNum=0")
 	assert.Equal(t, uint8(10), f0.Data[1], "frame 0 length byte")
 	assert.Equal(t, payload[:6], f0.Data[2:8], "frame 0 should carry first 6 payload bytes")
 

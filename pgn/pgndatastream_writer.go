@@ -21,6 +21,10 @@ type PGNDataStreamWriter struct {
 	// bitOffset is the sub-byte portion (0-7) of the current write cursor position.
 	// Together with byteOffset, the absolute bit position is: byteOffset*8 + bitOffset.
 	bitOffset uint8
+
+	// err holds the first error encountered. Once set, all subsequent writes
+	// are no-ops. Callers check Err() after all writes are complete.
+	err error
 }
 
 // NewPGNDataStreamWriter creates a PGNDataStreamWriter with an empty payload buffer.
@@ -39,6 +43,17 @@ func (w *PGNDataStreamWriter) Bytes() []uint8 {
 	return w.data
 }
 
+// Err returns the first error encountered during writes, or nil if all writes succeeded.
+func (w *PGNDataStreamWriter) Err() error {
+	return w.err
+}
+
+func (w *PGNDataStreamWriter) setErr(err error) {
+	if w.err == nil {
+		w.err = err
+	}
+}
+
 // putNumberRaw is the lowest-level write primitive. It writes up to 64 bits into the
 // stream at the current cursor position in little-endian bit order. This is the exact
 // inverse of PGNDataStream.getNumberRaw.
@@ -50,10 +65,15 @@ func (w *PGNDataStreamWriter) Bytes() []uint8 {
 //  4. Extract the low bits from value, mask them, shift into position, OR into current byte.
 //  5. Shift value right by the number of bits written, advance cursor.
 func (w *PGNDataStreamWriter) putNumberRaw(value uint64, bitLength uint16) error {
+	if w.err != nil {
+		return w.err
+	}
 	if bitLength < 64 {
 		maxVal := uint64(1<<bitLength) - 1
 		if value > maxVal {
-			return fmt.Errorf("value %d exceeds %d-bit unsigned range (max %d)", value, bitLength, maxVal)
+			err := fmt.Errorf("value %d exceeds %d-bit unsigned range (max %d)", value, bitLength, maxVal)
+			w.setErr(err)
+			return err
 		}
 	}
 
@@ -135,181 +155,137 @@ func (w *PGNDataStreamWriter) putNullSigned(bitLength uint16) error {
 	return w.putNumberRaw(maxVal, bitLength)
 }
 
-// skipBits advances the write cursor by bitLength bits, filling with zeros.
-// This is used for reserved or unused fields in a PGN definition.
-func (w *PGNDataStreamWriter) skipBits(bitLength uint16) error {
-	return w.putNumberRaw(0, bitLength)
+func (w *PGNDataStreamWriter) skipBits(bitLength uint16) {
+	w.setErr(w.putNumberRaw(0, bitLength))
 }
 
-// writeLookupField writes an unsigned integer value at the given bit width.
-// No null detection is performed -- every bit pattern is valid for enum/lookup fields.
-func (w *PGNDataStreamWriter) writeLookupField(value uint64, bitLength uint16) error {
+func (w *PGNDataStreamWriter) writeLookupField(value uint64, bitLength uint16) {
 	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeLookupField", bitLength)
+		w.setErr(fmt.Errorf("requested %d bitLength in writeLookupField", bitLength))
+		return
 	}
-	return w.putNumberRaw(value, bitLength)
+	w.setErr(w.putNumberRaw(value, bitLength))
 }
 
-// writeUnsignedResolution writes a scaled unsigned value. The float value is divided by the
-// resolution factor, rounded to the nearest integer, and written as an unsigned field.
-// A nil pointer writes the unsigned null sentinel (all bits set).
-func (w *PGNDataStreamWriter) writeUnsignedResolution(value *float32, bitLength uint16, resolution float32) error {
+func (w *PGNDataStreamWriter) writeUnsignedResolution(value *float32, bitLength uint16, resolution float32) {
 	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeUnsignedResolution", bitLength)
+		w.setErr(fmt.Errorf("requested %d bitLength in writeUnsignedResolution", bitLength))
+		return
 	}
 	if value == nil {
-		return w.putNullUnsigned(bitLength)
+		w.setErr(w.putNullUnsigned(bitLength))
+		return
 	}
 	raw := uint64(math.Round(float64(*value) / float64(resolution)))
-	return w.putNumberRaw(raw, bitLength)
+	w.setErr(w.putNumberRaw(raw, bitLength))
 }
 
-// writeSignedResolution writes a scaled signed value. The float value is divided by the
-// resolution factor, rounded to the nearest integer, and written as a two's-complement field.
-// A nil pointer writes the signed null sentinel (positive maximum).
-func (w *PGNDataStreamWriter) writeSignedResolution(value *float32, bitLength uint16, resolution float32) error {
+func (w *PGNDataStreamWriter) writeSignedResolution(value *float32, bitLength uint16, resolution float32) {
 	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeSignedResolution", bitLength)
+		w.setErr(fmt.Errorf("requested %d bitLength in writeSignedResolution", bitLength))
+		return
 	}
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
 	raw := int64(math.Round(float64(*value) / float64(resolution)))
-	return w.putSignedNumber(raw, bitLength)
+	w.setErr(w.putSignedNumber(raw, bitLength))
 }
 
-// writeSignedResolution64Override is the float64 variant of writeSignedResolution.
-// It exists for fields where float32 precision is insufficient, such as latitude
-// and longitude which use very small resolution values applied to large integers.
-func (w *PGNDataStreamWriter) writeSignedResolution64Override(value *float64, bitLength uint16, resolution float64) error {
+func (w *PGNDataStreamWriter) writeSignedResolution64Override(value *float64, bitLength uint16, resolution float64) {
 	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeSignedResolution64Override", bitLength)
+		w.setErr(fmt.Errorf("requested %d bitLength in writeSignedResolution64Override", bitLength))
+		return
 	}
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
 	raw := int64(math.Round(*value / resolution))
-	return w.putSignedNumber(raw, bitLength)
+	w.setErr(w.putSignedNumber(raw, bitLength))
 }
 
-// writeUInt8 writes an 8-bit unsigned integer. A nil pointer writes the unsigned null sentinel.
-func (w *PGNDataStreamWriter) writeUInt8(value *uint8, bitLength uint16) error {
-	if bitLength > 8 {
-		return fmt.Errorf("requested %d bitLength in writeUInt8", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeUInt8(value *uint8, bitLength uint16) {
 	if value == nil {
-		return w.putNullUnsigned(bitLength)
+		w.setErr(w.putNullUnsigned(bitLength))
+		return
 	}
-	return w.putNumberRaw(uint64(*value), bitLength)
+	w.setErr(w.putNumberRaw(uint64(*value), bitLength))
 }
 
-// writeUInt16 writes a 16-bit unsigned integer. A nil pointer writes the unsigned null sentinel.
-func (w *PGNDataStreamWriter) writeUInt16(value *uint16, bitLength uint16) error {
-	if bitLength > 16 {
-		return fmt.Errorf("requested %d bitLength in writeUInt16", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeUInt16(value *uint16, bitLength uint16) {
 	if value == nil {
-		return w.putNullUnsigned(bitLength)
+		w.setErr(w.putNullUnsigned(bitLength))
+		return
 	}
-	return w.putNumberRaw(uint64(*value), bitLength)
+	w.setErr(w.putNumberRaw(uint64(*value), bitLength))
 }
 
-// writeUInt32 writes a 32-bit unsigned integer. A nil pointer writes the unsigned null sentinel.
-func (w *PGNDataStreamWriter) writeUInt32(value *uint32, bitLength uint16) error {
-	if bitLength > 32 {
-		return fmt.Errorf("requested %d bitLength in writeUInt32", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeUInt32(value *uint32, bitLength uint16) {
 	if value == nil {
-		return w.putNullUnsigned(bitLength)
+		w.setErr(w.putNullUnsigned(bitLength))
+		return
 	}
-	return w.putNumberRaw(uint64(*value), bitLength)
+	w.setErr(w.putNumberRaw(uint64(*value), bitLength))
 }
 
-// writeUInt64 writes a 64-bit unsigned integer. A nil pointer writes the unsigned null sentinel.
-func (w *PGNDataStreamWriter) writeUInt64(value *uint64, bitLength uint16) error {
-	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeUInt64", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeUInt64(value *uint64, bitLength uint16) {
 	if value == nil {
-		return w.putNullUnsigned(bitLength)
+		w.setErr(w.putNullUnsigned(bitLength))
+		return
 	}
-	return w.putNumberRaw(*value, bitLength)
+	w.setErr(w.putNumberRaw(*value, bitLength))
 }
 
-// writeInt8 writes an 8-bit signed two's-complement integer.
-// A nil pointer writes the signed null sentinel.
-func (w *PGNDataStreamWriter) writeInt8(value *int8, bitLength uint16) error {
-	if bitLength > 8 {
-		return fmt.Errorf("requested %d bitLength in writeInt8", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeInt8(value *int8, bitLength uint16) {
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
-	return w.putSignedNumber(int64(*value), bitLength)
+	w.setErr(w.putSignedNumber(int64(*value), bitLength))
 }
 
-// writeInt16 writes a 16-bit signed two's-complement integer.
-// A nil pointer writes the signed null sentinel.
-func (w *PGNDataStreamWriter) writeInt16(value *int16, bitLength uint16) error {
-	if bitLength > 16 {
-		return fmt.Errorf("requested %d bitLength in writeInt16", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeInt16(value *int16, bitLength uint16) {
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
-	return w.putSignedNumber(int64(*value), bitLength)
+	w.setErr(w.putSignedNumber(int64(*value), bitLength))
 }
 
-// writeInt32 writes a 32-bit signed two's-complement integer.
-// A nil pointer writes the signed null sentinel.
-func (w *PGNDataStreamWriter) writeInt32(value *int32, bitLength uint16) error {
-	if bitLength > 32 {
-		return fmt.Errorf("requested %d bitLength in writeInt32", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeInt32(value *int32, bitLength uint16) {
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
-	return w.putSignedNumber(int64(*value), bitLength)
+	w.setErr(w.putSignedNumber(int64(*value), bitLength))
 }
 
-// writeInt64 writes a 64-bit signed two's-complement integer.
-// A nil pointer writes the signed null sentinel.
-func (w *PGNDataStreamWriter) writeInt64(value *int64, bitLength uint16) error {
-	if bitLength > 64 {
-		return fmt.Errorf("requested %d bitLength in writeInt64", bitLength)
-	}
+func (w *PGNDataStreamWriter) writeInt64(value *int64, bitLength uint16) {
 	if value == nil {
-		return w.putNullSigned(bitLength)
+		w.setErr(w.putNullSigned(bitLength))
+		return
 	}
-	return w.putSignedNumber(*value, bitLength)
+	w.setErr(w.putSignedNumber(*value, bitLength))
 }
 
-// writeFloat32 writes an IEEE 754 single-precision float as 32 bits in little-endian order.
-// A nil pointer writes the unsigned null sentinel (0xFFFFFFFF), which is the same sentinel
-// that readFloat32 checks for null detection.
-func (w *PGNDataStreamWriter) writeFloat32(value *float32) error {
+func (w *PGNDataStreamWriter) writeFloat32(value *float32) {
 	if value == nil {
-		return w.putNullUnsigned(32)
+		w.setErr(w.putNullUnsigned(32))
+		return
 	}
 	bits := math.Float32bits(*value)
-	return w.putNumberRaw(uint64(bits), 32)
+	w.setErr(w.putNumberRaw(uint64(bits), 32))
 }
 
-// writeBinaryData writes raw binary bytes into the stream at the current bit position.
-// The data is written in chunks of up to 64 bits to mirror the reader's readBinaryData
-// which reads in 64-bit chunks. The bitLength parameter specifies the total number of
-// bits to write; if it is not a multiple of 8, only the low bits of the final byte are used.
-func (w *PGNDataStreamWriter) writeBinaryData(data []uint8, bitLength uint16) error {
+func (w *PGNDataStreamWriter) writeBinaryData(data []uint8, bitLength uint16) {
 	idx := 0
 	for i := uint16(0); i < bitLength; i += 64 {
-		// Determine how many bits to write in this chunk (up to 64).
 		num := uint16(64)
 		if bitLength-i < 64 {
 			num = bitLength - i
 		}
-
-		// Assemble the chunk value from individual bytes, placing each byte
-		// at the correct position (little-endian order within the chunk).
 		var value uint64
 		for h := uint16(0); h < num; h += 8 {
 			if idx < len(data) {
@@ -317,7 +293,6 @@ func (w *PGNDataStreamWriter) writeBinaryData(data []uint8, bitLength uint16) er
 				if bitsInThisByte > 8 {
 					bitsInThisByte = 8
 				}
-				// Mask the byte to only include the bits we need (for sub-byte final chunk).
 				b := data[idx]
 				if bitsInThisByte < 8 {
 					b &= uint8((1 << bitsInThisByte) - 1)
@@ -326,92 +301,50 @@ func (w *PGNDataStreamWriter) writeBinaryData(data []uint8, bitLength uint16) er
 				idx++
 			}
 		}
-
-		err := w.putNumberRaw(value, num)
-		if err != nil {
-			return err
-		}
+		w.setErr(w.putNumberRaw(value, num))
 	}
-	return nil
 }
 
-// writeFixedString writes a fixed-width string field of exactly bitLength bits.
-// The string is written as raw bytes, and any remaining space is padded with 0xFF
-// (the NMEA 2000 "data not available" fill byte). This matches the convention used
-// by readFixedString, which strips 0xFF, 0x00, and '@' padding on read.
-func (w *PGNDataStreamWriter) writeFixedString(s string, bitLength uint16) error {
+func (w *PGNDataStreamWriter) writeFixedString(s string, bitLength uint16) {
 	numBytes := bitLength / 8
 	buf := make([]uint8, numBytes)
-
-	// Copy string bytes into the buffer.
 	sBytes := []uint8(s)
 	copy(buf, sBytes)
-
-	// Pad remaining bytes with 0xFF.
 	for i := len(sBytes); i < int(numBytes); i++ {
 		buf[i] = 0xFF
 	}
-
-	return w.writeBinaryData(buf, bitLength)
+	w.writeBinaryData(buf, bitLength)
 }
 
-// writeStringWithLength writes a STRING_LZ encoded string.
-// Wire format:
-//   - Byte 0: length of the string data in bytes (does NOT include this length byte itself)
-//   - Bytes 1..N: the string character data
-func (w *PGNDataStreamWriter) writeStringWithLength(s string) error {
+func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 	sBytes := []uint8(s)
 	length := uint8(len(sBytes))
-
-	// Write the length byte.
-	err := w.putNumberRaw(uint64(length), 8)
-	if err != nil {
-		return err
-	}
-
-	// Write the string data.
-	return w.writeBinaryData(sBytes, uint16(length)*8)
+	w.setErr(w.putNumberRaw(uint64(length), 8))
+	w.writeBinaryData(sBytes, uint16(length)*8)
 }
 
-// writeVariableData writes raw binary bytes back for a variable-data field. It mirrors
-// readVariableData by looking up the field descriptor and using the appropriate encoding:
-// STRING_LAU fields are written with writeStringWithLengthAndControl, all others are
-// written as binary data at the field's bit length (rounded up to byte boundary).
-func (w *PGNDataStreamWriter) writeVariableData(data []uint8, pgn uint32, manID ManufacturerCodeConst, fieldIndex uint8) error {
+func (w *PGNDataStreamWriter) writeVariableData(data []uint8, pgn uint32, manID ManufacturerCodeConst, fieldIndex uint8) {
 	field, err := GetFieldDescriptor(pgn, manID, fieldIndex)
 	if err != nil {
-		return err
+		w.setErr(err)
+		return
 	}
 	if field.BitLengthVariable && field.CanboatType == "STRING_LAU" {
-		return w.writeStringWithLengthAndControl(string(data))
+		w.writeStringWithLengthAndControl(string(data))
+		return
 	}
 	bitLen := (field.BitLength + 7) &^ 0x7
-	return w.writeBinaryData(data, bitLen)
+	w.writeBinaryData(data, bitLen)
 }
 
-// writeStringWithLengthAndControl writes a STRING_LAU encoded string.
-// Wire format:
-//   - Byte 0: total length in bytes (includes this byte, the control byte, the string chars,
-//     and a terminating zero)
-//   - Byte 1: control/encoding byte (1 = ASCII)
-//   - Bytes 2..N: the string character data plus a trailing NUL
-func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) error {
+func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) {
 	sBytes := []uint8(s)
-	// Total length = 1 (length byte) + 1 (control byte) + len(string) + 1 (trailing NUL)
 	totalLength := uint8(len(sBytes) + 3)
-	controlByte := uint8(1) // 1 = ASCII
-
-	// Write the 2-byte header as binary data to match the reader's readBinaryData(16) call.
+	controlByte := uint8(1)
 	header := []uint8{totalLength, controlByte}
-	err := w.writeBinaryData(header, 16)
-	if err != nil {
-		return err
-	}
-
-	// Write the string data followed by a trailing NUL.
+	w.writeBinaryData(header, 16)
 	payload := make([]uint8, len(sBytes)+1)
 	copy(payload, sBytes)
-	payload[len(sBytes)] = 0 // trailing NUL
-
-	return w.writeBinaryData(payload, uint16(len(payload))*8)
+	payload[len(sBytes)] = 0
+	w.writeBinaryData(payload, uint16(len(payload))*8)
 }

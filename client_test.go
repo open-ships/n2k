@@ -51,7 +51,7 @@ func TestClient_NewClient_Validation(t *testing.T) {
 func TestClient_Write_EncodesAndFrames(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	heading := float32(1.5)
 	msg := &pgn.VesselHeading{
@@ -77,7 +77,7 @@ func TestClient_Write_EncodesAndFrames(t *testing.T) {
 func TestClient_Write_UsesPriorityFromInfo(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil), WithSourceAddress(10))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	heading := float32(0.5)
 	msg := &pgn.VesselHeading{
@@ -101,7 +101,7 @@ func TestClient_Write_UsesPriorityFromInfo(t *testing.T) {
 func TestClient_Write_DefaultPriority(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	heading := float32(0.5)
 	msg := &pgn.VesselHeading{
@@ -125,7 +125,7 @@ func TestClient_Write_DefaultPriority(t *testing.T) {
 func TestClient_Write_UnknownType(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	// A plain struct with no Info field.
 	type NotAPGN struct {
@@ -140,7 +140,7 @@ func TestClient_Write_UnknownType(t *testing.T) {
 func TestClient_Write_NonPointer(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	wr := c.Write("not a struct")
 	err = wr.Wait()
@@ -151,7 +151,7 @@ func TestClient_Write_NonPointer(t *testing.T) {
 func TestClient_Write_ZeroPGN(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	msg := &pgn.VesselHeading{
 		Info: pgn.MessageInfo{
@@ -168,7 +168,7 @@ func TestClient_Write_ZeroPGN(t *testing.T) {
 func TestClient_Write_NoEncoder(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	// Use a PGN struct with a PGN number that has no encoder registered.
 	// We use an unknown PGN and fake the Info.
@@ -217,7 +217,7 @@ func TestClient_Receive(t *testing.T) {
 
 	c, err := NewClient(context.Background(), Replay([]can.Frame{frame}))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	var received []any
 	for msg, err := range c.Receive() {
@@ -247,7 +247,7 @@ func TestClient_Scanner(t *testing.T) {
 
 	c, err := NewClient(context.Background(), Replay([]can.Frame{frame}))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	s := c.Scanner()
 	require.True(t, s.Next())
@@ -272,7 +272,7 @@ func TestClient_Close_Idempotent(t *testing.T) {
 func TestClient_WrittenFrames_Empty(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	frames := c.WrittenFrames()
 	assert.Empty(t, frames)
@@ -281,7 +281,7 @@ func TestClient_WrittenFrames_Empty(t *testing.T) {
 func TestClient_MultipleWrites(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil), WithSourceAddress(5))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	heading := float32(0.1)
 	for i := 0; i < 3; i++ {
@@ -300,7 +300,7 @@ func TestClient_MultipleWrites(t *testing.T) {
 func TestClient_Write_FastPacket(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil), WithSourceAddress(10))
 	require.NoError(t, err)
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	// ProductInformation (PGN 126996) is a fast-packet PGN. Its string fields
 	// produce a payload larger than 8 bytes, exercising the fast-packet framing path.
@@ -364,7 +364,7 @@ func TestClient_RoundTrip_SingleFrame(t *testing.T) {
 	// 2. Write via client.
 	writer, err := NewClient(ctx, Replay(nil))
 	require.NoError(t, err)
-	defer writer.Close()
+	defer func() { _ = writer.Close() }()
 
 	wr := writer.Write(original)
 	require.NoError(t, wr.Wait())
@@ -414,7 +414,7 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 	// 2. Write via client — should produce multiple frames (fast-packet).
 	writer, err := NewClient(ctx, Replay(nil))
 	require.NoError(t, err)
-	defer writer.Close()
+	defer func() { _ = writer.Close() }()
 
 	wr := writer.Write(original)
 	require.NoError(t, wr.Wait())
@@ -443,7 +443,9 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 
 	// String fields are fixed-width on the wire, so decoded strings may have trailing padding.
 	trimmed := func(s string) string {
-		return strings.TrimRight(s, "\x00\xff@ ")
+		return strings.TrimRightFunc(s, func(r rune) bool {
+			return r == 0x00 || r == 0xFF || r == '@' || r == ' ' || r == 0xFFFD
+		})
 	}
 
 	assert.Equal(t, "TestModel", trimmed(pi.ModelId), "ModelId should match after trimming padding")
@@ -464,7 +466,7 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 	// 1. Create client with source address 5.
 	writer, err := NewClient(ctx, Replay(nil), WithSourceAddress(5))
 	require.NoError(t, err)
-	defer writer.Close()
+	defer func() { _ = writer.Close() }()
 
 	// 2. Write 10 VesselHeading messages sequentially.
 	const count = 10
