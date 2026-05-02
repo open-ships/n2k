@@ -16,6 +16,12 @@ type MessageInfo struct {
 	TargetId  *uint8    `json:"targetId"`
 }
 
+// Priority returns a pointer to v, for use in MessageInfo literal construction:
+//
+//	pgn.MessageInfo{Priority: pgn.Priority(2)}
 func Priority(v uint8) *uint8 { return &v }
 
+// Target returns a pointer to v, for use in MessageInfo literal construction:
+//
+//	pgn.MessageInfo{TargetId: pgn.Target(42)}
 func Target(v uint8) *uint8 { return &v }

@@ -237,16 +237,20 @@ func (c *Client) initBus(cfg config) error {
 	c.tp = transport.NewManager(transport.ManagerConfig{
 		WriteFrame: c.writeFrame,
 		OnComplete: func(tpPGN uint32, source uint8, destination uint8, data []byte) {
-			// Build a synthetic CAN frame for the reassembled TP message
-			// and feed it through the decode pipeline.
-			canID := framer.BuildCANID(tpPGN, 6, source, destination)
-			f := can.Frame{
-				ID:     canID,
-				Length: uint8(min(len(data), 8)),
+			priority := uint8(6)
+			info := pgn.MessageInfo{
+				Timestamp: time.Now(),
+				PGN:       tpPGN,
+				SourceId:  source,
+				Priority:  &priority,
 			}
-			copy(f.Data[:], data)
-			// The adapter + decoder pipeline handles the rest.
-			c.readAdapter.HandleMessage(&f)
+			if destination != 0xFF {
+				info.TargetId = &destination
+			}
+			packet := decoder.NewPacket(info, data)
+			packet.Complete = true
+			packet.AddDecoders()
+			c.readDecoder.Decode(*packet)
 		},
 		Logger: c.log,
 	})
