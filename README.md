@@ -34,8 +34,9 @@ defer client.Close()
 
 // Write a message — the struct knows its own PGN number.
 // Priority defaults to 6, destination defaults to broadcast (255).
+h := float32(1.5708)
 heading := &pgn.VesselHeading{
-    Heading: ptrFloat32(1.5708),
+    Heading: &h,
 }
 result := client.Write(heading)
 if err := result.Wait(); err != nil {
@@ -45,7 +46,7 @@ if err := result.Wait(); err != nil {
 // Explicitly set priority and destination
 heading2 := &pgn.VesselHeading{
     Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
-    Heading: ptrFloat32(1.5708),
+    Heading: &h,
 }
 client.Write(heading2)
 
@@ -56,6 +57,53 @@ for msg, err := range client.Receive() {
     }
     fmt.Printf("Msg: %v\n", msg)
 }
+```
+
+### Address Claiming
+
+Every device that transmits on NMEA 2000 must claim a unique bus address (1–253) using the ISO 11783 address claim protocol (PGN 60928). `NewClient` handles this automatically — it broadcasts an address claim, waits for contention, and only returns once a valid address is secured.
+
+**How contention works:** Each device has a 64-bit NAME. When two devices claim the same address, the lower NAME wins and keeps the address; the loser must yield. The client supports two modes:
+
+```go
+// Auto mode (default) — starts at address 253 and negotiates downward on
+// contention. If all addresses are exhausted, NewClient returns an error.
+client, err := n2k.NewClient(ctx, n2k.CAN("can0"))
+
+// Explicit mode — uses a fixed address. If another device with a lower NAME
+// contests it, NewClient returns an error instead of retrying.
+client, err := n2k.NewClient(ctx,
+    n2k.CAN("can0"),
+    n2k.WithSourceAddress(42),
+)
+```
+
+**Device NAME:** The NAME determines who wins contention. Lower NAME = higher priority. Customize it to control your device's identity and arbitration priority on the bus:
+
+```go
+client, err := n2k.NewClient(ctx,
+    n2k.CAN("can0"),
+    n2k.WithName(n2k.DeviceName{
+        IndustryGroup:    4,     // 3 bits: 4 = Marine
+        ManufacturerCode: 2000,  // 11 bits: unassigned/experimental range
+        DeviceClass:      25,    // 7 bits: 25 = Internetwork Device
+        DeviceFunction:   130,   // 8 bits: 130 = PC Gateway
+        DeviceInstance:   0,     // 8 bits
+        SystemInstance:   0,     // 4 bits
+        IdentityNumber:   12345, // 21 bits: unique per physical device
+    }),
+)
+```
+
+When `WithName` is not set, `DefaultDeviceName()` is used — it randomizes the identity number so multiple clients from the same binary can coexist on one bus.
+
+**Claim timeout:** `NewClient` blocks for up to 1500ms (the default) to allow the network to respond to the initial claim. On heavily contested buses, increase it:
+
+```go
+client, err := n2k.NewClient(ctx,
+    n2k.CAN("can0"),
+    n2k.WithClaimTimeout(3 * time.Second),
+)
 ```
 
 ### Read-only
@@ -185,7 +233,16 @@ type MessageInfo struct {
 }
 ```
 
-When writing, `Priority` and `TargetId` default to 6 and 255 respectively when nil. When reading, they are populated from the wire.
+When writing, `Priority` and `TargetId` default to 6 and 255 respectively when nil. When reading, they are populated from the wire. Use the helpers `pgn.Priority(v)` and `pgn.Target(v)` for concise literal construction:
+
+```go
+info := pgn.MessageInfo{
+    PGN:      126996,
+    SourceId:  3,
+    Priority: pgn.Priority(2),
+    TargetId: pgn.Target(42),
+}
+```
 
 ## Unit Types
 
@@ -217,7 +274,6 @@ go run ./cmd/sniffer.go -i can0 | jq .
 - Cross-field validation is not yet implemented (stubs exist for future work).
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
-- Transport Protocol receive through the `Client` read API delivers only the first 8 bytes of reassembled payloads (TP send works fully).
 
 ## License
 

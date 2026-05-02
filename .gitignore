@@ -16,5 +16,8 @@ bin
 .vscode**
 sniffer
 
+# Scratch
+scratch/*
+
 # Internal docs
 docs/*
