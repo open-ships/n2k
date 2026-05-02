@@ -213,7 +213,7 @@ go run ./cmd/sniffer.go -i can0 | jq .
 - Cross-field validation is not yet implemented (stubs exist for future work).
 - One physical bus per client.
 - Real bus (CAN/USB) write support is in progress; use `Replay` for testing writes.
-- Transport Protocol BAM writes are supported; RTS/CTS writes for addressed messages are coming soon.
+- Transport Protocol (BAM and RTS/CTS) writes work in replay mode; real bus transmit is pending.
 
 ## License
 
@@ -227,4 +227,4 @@ The PGN definitions and decoders at the core of this library are generated from 
 
 ### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
 
-This project was originally inspired by [boatkit-io/n2k](https://github.com/boatkit-io/n2k/).
+This project is inspired by [boatkit-io/n2k](https://github.com/boatkit-io/n2k/).
