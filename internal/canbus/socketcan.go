@@ -106,9 +106,27 @@ func (c *socketCANChannel) Close() error {
 
 // WriteFrame sends a single CAN frame out on the SocketCAN bus.
 // The brutella/can library handles encoding the frame into the Linux SocketCAN wire format
-// and writing it to the raw CAN socket.
+// and writing it to the raw CAN socket. Returns an error if the bus is not yet open.
 func (c *socketCANChannel) WriteFrame(frame can.Frame) error {
+	if c.bus == nil {
+		return errors.New("socketCAN: bus not open (interface not available or Run not called)")
+	}
 	return c.bus.Publish(frame)
+}
+
+// NewSocketCAN creates a SocketCAN Interface for the given Linux CAN interface name.
+// The handler callback receives each incoming CAN frame. The interface is not opened
+// until Run() is called.
+func NewSocketCAN(log *slog.Logger, iface string, handler func(can.Frame)) Interface {
+	var frameHandler can.HandlerFunc = func(frame can.Frame) {
+		if handler != nil {
+			handler(frame)
+		}
+	}
+	return newSocketCANChannel(log, socketCANChannelOptions{
+		InterfaceName:  iface,
+		MessageHandler: frameHandler,
+	})
 }
 
 // RunSocketCAN creates a SocketCAN channel for the given interface and runs it,

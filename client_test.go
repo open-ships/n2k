@@ -3,7 +3,9 @@ package n2k
 import (
 	"context"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
@@ -145,7 +147,7 @@ func TestClient_Write_AfterClose(t *testing.T) {
 	assert.Contains(t, err.Error(), "closed")
 }
 
-func TestClient_Receive(t *testing.T) {
+func TestClient_Replay_Receive(t *testing.T) {
 	// Build a pre-encoded VesselHeading frame for replay.
 	heading := float32(1.5)
 	msg := &pgn.VesselHeading{
@@ -282,6 +284,19 @@ func TestClient_Write_FastPacket(t *testing.T) {
 	for i, f := range frames {
 		assert.Equal(t, f0.ID, f.ID, "frame %d should have same CAN ID as frame 0", i)
 	}
+}
+
+func TestClient_CANSource_NoLongerStubbed(t *testing.T) {
+	// CAN("can0") should attempt to construct a bus client, not error with
+	// "not yet implemented". On a machine without can0, it will fail with a
+	// hardware error — but NOT "not yet implemented".
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := NewClient(ctx, CAN("can_nonexistent_99"))
+	require.Error(t, err)
+	assert.NotContains(t, err.Error(), "not yet implemented",
+		"should no longer return the old stub error")
 }
 
 // --- Pointer helpers for building test PGN structs ---
@@ -447,4 +462,228 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 		assert.InDelta(t, float64(i)*0.1, float64(*vh.Heading), 0.001,
 			"message %d Heading should match write order", i)
 	}
+}
+
+// --- Mock bus for bus path tests ---
+
+type mockBus struct {
+	inbound chan can.Frame
+	written []can.Frame
+	mu      sync.Mutex
+	handler func(can.Frame)
+}
+
+func newMockBus() *mockBus {
+	return &mockBus{inbound: make(chan can.Frame, 64)}
+}
+
+func (m *mockBus) Run(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case f, ok := <-m.inbound:
+			if !ok {
+				return nil
+			}
+			if m.handler != nil {
+				m.handler(f)
+			}
+		}
+	}
+}
+
+func (m *mockBus) Close() error { return nil }
+
+func (m *mockBus) WriteFrame(frame can.Frame) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.written = append(m.written, frame)
+	return nil
+}
+
+func (m *mockBus) SetHandler(h func(can.Frame)) {
+	m.handler = h
+}
+
+func (m *mockBus) getWritten() []can.Frame {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	out := make([]can.Frame, len(m.written))
+	copy(out, m.written)
+	return out
+}
+
+func TestClient_AddressClaim(t *testing.T) {
+	mb := newMockBus()
+
+	c, err := NewClient(context.Background(),
+		WithBus(mb),
+		WithClaimTimeout(250*time.Millisecond),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	// The first written frame should be an address claim (PGN 60928).
+	written := mb.getWritten()
+	require.NotEmpty(t, written, "client should have written at least one frame (address claim)")
+
+	// Parse the CAN ID to extract the PGN properly (accounting for addressed PGNs).
+	firstFrame := written[0]
+	rawPGN := (firstFrame.ID & 0x3FFFF00) >> 8
+	pduFormat := uint8((rawPGN >> 8) & 0xFF)
+	if pduFormat < 240 {
+		rawPGN &= 0xFFF00 // mask off destination byte for addressed PGNs
+	}
+	assert.Equal(t, uint32(60928), rawPGN, "first frame should be address claim PGN 60928")
+}
+
+func TestClient_Write(t *testing.T) {
+	mb := newMockBus()
+
+	c, err := NewClient(context.Background(),
+		WithBus(mb),
+		WithClaimTimeout(250*time.Millisecond),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	heading := float32(1.5)
+	msg := &pgn.VesselHeading{
+		Heading: &heading,
+	}
+	msg.Info.Priority = ptrUint8(2)
+
+	wr := c.Write(msg)
+	require.NoError(t, wr.Wait())
+
+	// Find the VesselHeading frame in the written frames (skip address claim frames).
+	written := mb.getWritten()
+	var found bool
+	for _, f := range written {
+		framePGN := (f.ID & 0x3FFFF00) >> 8
+		if framePGN == 127250 {
+			found = true
+			break
+		}
+	}
+	assert.True(t, found, "should find a VesselHeading (PGN 127250) frame in written frames")
+}
+
+func TestClient_Receive(t *testing.T) {
+	mb := newMockBus()
+
+	c, err := NewClient(context.Background(),
+		WithBus(mb),
+		WithClaimTimeout(250*time.Millisecond),
+	)
+	require.NoError(t, err)
+
+	// Build and inject a VesselHeading frame into the mock bus.
+	heading := float32(1.5)
+	msg := &pgn.VesselHeading{
+		Heading: &heading,
+	}
+	encoder := pgn.EncoderLookup[127250]
+	require.NotNil(t, encoder)
+	payload, err := encoder(msg)
+	require.NoError(t, err)
+
+	canID := framer.BuildCANID(127250, 2, 42, 255)
+	frame := framer.FrameSingle(canID, payload)
+
+	// Inject the frame into the mock bus inbound channel.
+	mb.inbound <- frame
+
+	// Read messages via msgCh until we get a VesselHeading (skip address claim
+	// echoes that may arrive first from the claimer's own WriteFrame calls).
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	var received *pgn.VesselHeading
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for m, err := range c.Receive() {
+			if err != nil {
+				return
+			}
+			if vh, ok := m.(*pgn.VesselHeading); ok {
+				received = vh
+				return
+			}
+		}
+	}()
+
+	select {
+	case <-done:
+	case <-ctx.Done():
+		t.Fatal("timed out waiting for VesselHeading message")
+	}
+
+	require.NotNil(t, received, "should have received a decoded VesselHeading")
+	require.NotNil(t, received.Heading)
+	assert.InDelta(t, 1.5, float64(*received.Heading), 0.001)
+
+	_ = c.Close()
+}
+
+func TestClient_FilterPGN(t *testing.T) {
+	mb := newMockBus()
+
+	// Filter: only accept PGN 127250 (VesselHeading).
+	c, err := NewClient(context.Background(),
+		WithBus(mb),
+		WithClaimTimeout(250*time.Millisecond),
+		Filter("pgn == 127250"),
+	)
+	require.NoError(t, err)
+
+	// Build a VesselHeading frame (should pass filter).
+	heading := float32(1.5)
+	encoder := pgn.EncoderLookup[127250]
+	require.NotNil(t, encoder)
+	payload, err := encoder(&pgn.VesselHeading{Heading: &heading})
+	require.NoError(t, err)
+	headingFrame := framer.FrameSingle(framer.BuildCANID(127250, 2, 42, 255), payload)
+
+	// Build a SystemTime frame PGN 126992 (should be filtered out).
+	sysEncoder := pgn.EncoderLookup[126992]
+	require.NotNil(t, sysEncoder)
+	sysPayload, err := sysEncoder(&pgn.SystemTime{})
+	require.NoError(t, err)
+	sysFrame := framer.FrameSingle(framer.BuildCANID(126992, 3, 42, 255), sysPayload)
+
+	// Send the SystemTime first, then VesselHeading.
+	mb.inbound <- sysFrame
+	mb.inbound <- headingFrame
+
+	// We should only receive VesselHeading.
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	var received pgn.Message
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for m, err := range c.Receive() {
+			if err != nil {
+				return
+			}
+			received = m
+			return
+		}
+	}()
+
+	select {
+	case <-done:
+	case <-ctx.Done():
+		t.Fatal("timed out waiting for message")
+	}
+
+	require.NotNil(t, received)
+	_, ok := received.(*pgn.VesselHeading)
+	assert.True(t, ok, "expected VesselHeading, got %T", received)
+
+	_ = c.Close()
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"sync"
 
 	"github.com/brutella/can"
 	"go.bug.st/serial"
@@ -61,6 +62,9 @@ type usbCANChannel struct {
 	// It is nil until Run() is called.
 	port serial.Port
 
+	// mu guards all access to port, since Run() reads and WriteFrame() writes concurrently.
+	mu sync.Mutex
+
 	// log is the structured logger for debug/info messages about frame parsing and errors.
 	log *slog.Logger
 }
@@ -113,7 +117,9 @@ func (c *usbCANChannel) Run(ctx context.Context) error {
 		// Read up to 32 bytes at a time from the serial port.
 		// The actual number of bytes returned depends on what the OS has buffered.
 		working := make([]byte, 32)
+		c.mu.Lock()
 		readBytes, err := port.Read(working)
+		c.mu.Unlock()
 		if err != nil {
 			return err
 		}
@@ -329,7 +335,9 @@ func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 	buf = append(buf, frame.Data[0:frame.Length]...)
 	buf = append(buf, 0x55)
 
+	c.mu.Lock()
 	o, err := c.port.Write(buf)
+	c.mu.Unlock()
 	if o != len(buf) {
 		return fmt.Errorf("WriteFrame sent %d of %d bytes", o, len(buf))
 	}
@@ -338,6 +346,22 @@ func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 	}
 
 	return nil
+}
+
+// NewUSBCAN creates a USB-CAN Interface for the given serial port.
+// The handler callback receives each incoming CAN frame. The interface is not opened
+// until Run() is called.
+func NewUSBCAN(log *slog.Logger, port string, handler func(can.Frame)) Interface {
+	var frameHandler can.HandlerFunc = func(frame can.Frame) {
+		if handler != nil {
+			handler(frame)
+		}
+	}
+	return newUSBCANChannel(log, usbCANChannelOptions{
+		SerialPortName: port,
+		SerialBaudRate: 2000000,
+		FrameHandler:   frameHandler,
+	})
 }
 
 // RunUSBCAN creates a USB-CAN channel for the given serial port and runs it,
