@@ -216,8 +216,8 @@ go run ./cmd/sniffer.go -i can0 | jq .
 
 - Cross-field validation is not yet implemented (stubs exist for future work).
 - One physical bus per client.
-- Real bus (CAN/USB) write support is in progress; use `Replay` for testing writes.
-- Transport Protocol (BAM and RTS/CTS) writes work in replay mode; real bus transmit is pending.
+- Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
+- Transport Protocol receive through the `Client` read API delivers only the first 8 bytes of reassembled payloads (TP send works fully).
 
 ## License
 

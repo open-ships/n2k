@@ -3,8 +3,10 @@ package n2k
 import (
 	"errors"
 	"log/slog"
+	"time"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/canbus"
 )
 
 type config struct {
@@ -12,12 +14,14 @@ type config struct {
 	filterExpr     string
 	includeUnknown bool
 	logger         *slog.Logger
-	sourceAddress  *uint8      // nil = auto mode
-	deviceName     *DeviceName // nil = use default
+	sourceAddress  *uint8         // nil = auto mode
+	deviceName     *DeviceName    // nil = use default
+	claimTimeout   *time.Duration // nil = use default (1500ms)
+	bus            canbus.Interface // pre-constructed bus (internal/testing use)
 }
 
 func (c *config) validate() error {
-	if len(c.sources) == 0 {
+	if len(c.sources) == 0 && c.bus == nil {
 		return errors.New("n2k: at least one source (CAN, USB, or Replay) is required")
 	}
 	return nil
@@ -86,6 +90,15 @@ func WithSourceAddress(addr uint8) Option {
 	})
 }
 
+// WithClaimTimeout sets how long NewClient blocks waiting for address claiming
+// to complete on a real CAN bus. Default is 1500ms. This allows time for the
+// initial 250ms claim window plus several rounds of contention renegotiation.
+func WithClaimTimeout(d time.Duration) Option {
+	return optionFunc(func(c *config) {
+		c.claimTimeout = &d
+	})
+}
+
 // WithName sets the ISO 11783 device NAME used for address claiming.
 // The NAME is a 64-bit identifier that uniquely identifies this device on the
 // NMEA 2000 network. In address contention, the device with the lower NAME wins.
@@ -93,5 +106,14 @@ func WithSourceAddress(addr uint8) Option {
 func WithName(name DeviceName) Option {
 	return optionFunc(func(c *config) {
 		c.deviceName = &name
+	})
+}
+
+// WithBus provides a pre-constructed canbus.Interface for the client to use.
+// This is primarily for testing with mock buses. When set, the client uses this
+// bus directly instead of constructing one from CAN/USB sources.
+func WithBus(bus canbus.Interface) Option {
+	return optionFunc(func(c *config) {
+		c.bus = bus
 	})
 }

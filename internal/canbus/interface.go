@@ -6,6 +6,13 @@ import (
 	"github.com/brutella/can"
 )
 
+// HandlerSettable is optionally implemented by Interface implementations that
+// support setting the frame handler after construction (e.g., for testing with
+// mock buses where the handler isn't known at construction time).
+type HandlerSettable interface {
+	SetHandler(func(can.Frame))
+}
+
 // Interface is a basic interface for a CANbus implementation.
 // Any CAN bus transport (USB-CAN dongle, SocketCAN, etc.) must implement these three methods
 // to be usable as a CAN channel in the system.
