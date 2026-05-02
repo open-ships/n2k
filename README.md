@@ -12,86 +12,10 @@
 go get github.com/open-ships/n2k
 ```
 
-## Usage
 
-### Iterator API
+## Using `n2k`
 
-```go
-
-ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-defer stop()
-
-for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
-    if err != nil {
-        panic(err)
-    }
-    fmt.Printf("Msg: %v\n", msg)
-}
-```
-
-### Scanner API
-
-```go
-s := n2k.NewScanner(ctx, n2k.CAN("can0"))
-for s.Next() {
-    fmt.Printf("Msg: %v\n", msg)
-}
-if err := s.Err(); err != nil {
-    ...
-}
-```
-
-### Multiple Sources
-
-Read from multiple CAN interfaces simultaneously:
-
-```go
-for msg, err := range n2k.Receive(ctx,
-    n2k.CAN("can0"),
-    n2k.CAN("can1"),
-    n2k.USB("/dev/ttyUSB0"),
-) {
-    // messages from all sources, interleaved by arrival
-}
-```
-
-### Common Expression Language Filtering
-
-Filter messages using [CEL](https://github.com/google/cel-go) expressions.
-
-`n2k` automatically optimizes filters for max performance -- metadata-only expressions skip decoding entirely.
-
-```go
-// Only vessel heading messages
-for msg, err := range n2k.Receive(ctx,
-    n2k.CAN("can0"),
-    n2k.Filter(`pgn == 127250`),
-) { ... }
-
-// Filter on decoded fields
-for msg, err := range n2k.Receive(ctx,
-    n2k.CAN("can0"),
-    n2k.Filter(`pgn == 127250 && msg.Heading > 3.14`),
-) { ... }
-
-// Filter by source address
-for msg, err := range n2k.Receive(ctx,
-    n2k.CAN("can0"),
-    n2k.Filter(`source == 3`),
-) { ... }
-```
-
-**Filter variables:**
-
-| Variable | Type | Description |
-|----------|------|-------------|
-| `pgn` | `int` | Parameter Group Number |
-| `source` | `int` | Source address (0-252) |
-| `priority` | `int` | Message priority (0-7) |
-| `destination` | `int` | Destination address (255 = broadcast) |
-| `msg.<field>` | varies | Decoded struct field (case-insensitive) |
-
-### Client API
+### Reading and Writing
 
 `Client` provides read and write access to NMEA 2000. Use it when you need to transmit messages in addition to receiving them.
 
@@ -133,6 +57,86 @@ for msg, err := range client.Receive() {
     fmt.Printf("Msg: %v\n", msg)
 }
 ```
+
+### Read-only
+
+#### Iterator API:
+
+```go
+
+ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+defer stop()
+
+for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("Msg: %v\n", msg)
+}
+```
+
+#### Scanner API:
+
+```go
+s := n2k.NewScanner(ctx, n2k.CAN("can0"))
+for s.Next() {
+    fmt.Printf("Msg: %v\n", msg)
+}
+if err := s.Err(); err != nil {
+    ...
+}
+```
+
+### Multiple Networks
+
+Read from multiple CAN interfaces simultaneously:
+
+```go
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.CAN("can1"),
+    n2k.USB("/dev/ttyUSB0"),
+) {
+    // messages from all sources, interleaved by arrival
+}
+```
+
+### Filter Messages using Common Expression Language
+
+Filter messages using [CEL](https://github.com/google/cel-go) expressions.
+
+`n2k` automatically optimizes filters for max performance -- metadata-only expressions skip decoding entirely.
+
+```go
+// Only vessel heading messages
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`pgn == 127250`),
+) { ... }
+
+// Filter on decoded fields
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`pgn == 127250 && msg.Heading > 3.14`),
+) { ... }
+
+// Filter by source address
+for msg, err := range n2k.Receive(ctx,
+    n2k.CAN("can0"),
+    n2k.Filter(`source == 3`),
+) { ... }
+```
+
+**Filter variables:**
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `pgn` | `int` | Parameter Group Number |
+| `source` | `int` | Source address (0-252) |
+| `priority` | `int` | Message priority (0-7) |
+| `destination` | `int` | Destination address (255 = broadcast) |
+| `msg.<field>` | varies | Decoded struct field (case-insensitive) |
+
 
 ### Options
 
