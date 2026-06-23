@@ -30,6 +30,27 @@ func TestRoundTrip_EncodeDecodeVesselHeading(t *testing.T) {
 	assert.Equal(t, DirectionReferenceConst(1), result.Reference)
 }
 
+func TestRoundTrip_EncodeDecodeRudder(t *testing.T) {
+	original := &Rudder{
+		Instance:       ptrUint8(0),
+		DirectionOrder: DirectionRudderConst(1),
+		AngleOrder:     ptrFloat32(0.1745),
+		Position:       ptrFloat32(-0.0873),
+	}
+
+	data, err := EncodeRudder(original)
+	assert.NoError(t, err)
+
+	decoded, err := DecodeRudder(MessageInfo{}, NewPgnDataStream(data))
+	assert.NoError(t, err)
+
+	result := decoded.(*Rudder)
+	assert.Equal(t, uint8(0), *result.Instance)
+	assert.Equal(t, DirectionRudderConst(1), result.DirectionOrder)
+	assert.InDelta(t, float32(0.1745), *result.AngleOrder, 0.0001)
+	assert.InDelta(t, float32(-0.0873), *result.Position, 0.0001)
+}
+
 func TestRoundTrip_EncodeDecodeCogSogRapidUpdate(t *testing.T) {
 	sog := units.NewVelocity(units.MetersPerSecond, 5.25)
 	original := &CogSogRapidUpdate{
@@ -91,9 +112,9 @@ func TestRoundTrip_EncodeDecodeGnssPositionData(t *testing.T) {
 		ReferenceStations: &refStations,
 		Repeating1: []GnssPositionDataRepeating1{
 			{
-				ReferenceStationType:   GnsConst(3),
-				ReferenceStationId:     ptrUint16(42),
-				AgeOfDgnssCorrections:  ptrFloat32(1.5),
+				ReferenceStationType:  GnsConst(3),
+				ReferenceStationId:    ptrUint16(42),
+				AgeOfDgnssCorrections: ptrFloat32(1.5),
 			},
 		},
 	}

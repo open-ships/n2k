@@ -39,7 +39,7 @@ func TestNoSourcesError(t *testing.T) {
 
 func TestFilterOption(t *testing.T) {
 	var cfg config
-	Filter(`pgn == 127250`).apply(&cfg)
+	Filter("pgn == 127250").apply(&cfg)
 	assert.Equal(t, `pgn == 127250`, cfg.filterExpr)
 }
 

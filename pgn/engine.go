@@ -6,95 +6,15 @@ import (
 	"github.com/open-ships/n2k/units"
 )
 
-type Rudder struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	DirectionOrder DirectionRudderConst `json:"directionOrder"`
-	AngleOrder *float32 `json:"angleOrder"`
-	Position *float32 `json:"position"`
-}
-
-func (x *Rudder) PGNNumber() uint32  { return 127245 }
-
-func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (Message, error) {
-	val := &Rudder{}
-	val.Info = Info
-	if v, err := stream.readUInt8(8); err != nil {
-		return nil, fmt.Errorf("parse failed for Rudder-Instance: %w", err)
-	} else {
-		val.Instance = v
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	if v, err := stream.readLookupField(3); err != nil {
-		return nil, fmt.Errorf("parse failed for Rudder-DirectionOrder: %w", err)
-	} else {
-		val.DirectionOrder = DirectionRudderConst(v)
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(5)
-	if stream.isEOF() {
-		return val, nil
-		}
-	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
-		return nil, fmt.Errorf("parse failed for Rudder-AngleOrder: %w", err)
-	} else {
-		val.AngleOrder = v
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
-		return nil, fmt.Errorf("parse failed for Rudder-Position: %w", err)
-	} else {
-		val.Position = v
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(16)
-	if stream.isEOF() {
-		return val, nil
-		}	
-	return val, nil
-}
-
-func EncodeRudder(val *Rudder) ([]byte, error) {
-	w := NewPGNDataStreamWriter()
-	// TODO: cross-field validation not yet implemented
-	w.writeUInt8(val.Instance, 8)
-	w.writeLookupField(uint64(val.DirectionOrder), 3)
-	w.skipBits(5)
-	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
-	w.writeSignedResolution(val.Position, 16, 0.0001)
-	w.skipBits(16)
-	return w.Bytes(), w.Err()
-}
-
-func encodeRudderMsg(v Message) ([]byte, error) {
-	val, ok := v.(*Rudder)
-	if !ok {
-		return nil, fmt.Errorf("expected *Rudder, got %T", v)
-	}
-	return EncodeRudder(val)
-}
-
 type EngineParametersRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Instance EngineInstanceConst `json:"instance"`
-	Speed *float32 `json:"speed"`
-	BoostPressure *units.Pressure `json:"boostPressure"`
-	TiltTrim *int8 `json:"tiltTrim"`
+	Info          MessageInfo         `json:"info"`
+	Instance      EngineInstanceConst `json:"instance"`
+	Speed         *float32            `json:"speed"`
+	BoostPressure *units.Pressure     `json:"boostPressure"`
+	TiltTrim      *int8               `json:"tiltTrim"`
 }
 
-func (x *EngineParametersRapidUpdate) PGNNumber() uint32  { return 127488 }
+func (x *EngineParametersRapidUpdate) PGNNumber() uint32 { return 127488 }
 
 func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EngineParametersRapidUpdate{}
@@ -106,7 +26,7 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.25); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersRapidUpdate-Speed: %w", err)
@@ -115,7 +35,7 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersRapidUpdate-BoostPressure: %w", err)
@@ -124,7 +44,7 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersRapidUpdate-TiltTrim: %w", err)
@@ -133,12 +53,12 @@ func DecodeEngineParametersRapidUpdate(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -166,23 +86,23 @@ func encodeEngineParametersRapidUpdateMsg(v Message) ([]byte, error) {
 }
 
 type EngineParametersDynamic struct {
-	Info MessageInfo `json:"info"`
-	Instance EngineInstanceConst `json:"instance"`
-	OilPressure *units.Pressure `json:"oilPressure"`
-	OilTemperature *units.Temperature `json:"oilTemperature"`
-	Temperature *units.Temperature `json:"temperature"`
-	AlternatorPotential *float32 `json:"alternatorPotential"`
-	FuelRate *units.Flow `json:"fuelRate"`
-	TotalEngineHours *uint32 `json:"totalEngineHours"`
-	CoolantPressure *units.Pressure `json:"coolantPressure"`
-	FuelPressure *units.Pressure `json:"fuelPressure"`
-	DiscreteStatus1 EngineStatus1Const `json:"discreteStatus1"`
-	DiscreteStatus2 EngineStatus2Const `json:"discreteStatus2"`
-	EngineLoad *int8 `json:"engineLoad"`
-	EngineTorque *int8 `json:"engineTorque"`
+	Info                MessageInfo         `json:"info"`
+	Instance            EngineInstanceConst `json:"instance"`
+	OilPressure         *units.Pressure     `json:"oilPressure"`
+	OilTemperature      *units.Temperature  `json:"oilTemperature"`
+	Temperature         *units.Temperature  `json:"temperature"`
+	AlternatorPotential *float32            `json:"alternatorPotential"`
+	FuelRate            *units.Flow         `json:"fuelRate"`
+	TotalEngineHours    *uint32             `json:"totalEngineHours"`
+	CoolantPressure     *units.Pressure     `json:"coolantPressure"`
+	FuelPressure        *units.Pressure     `json:"fuelPressure"`
+	DiscreteStatus1     EngineStatus1Const  `json:"discreteStatus1"`
+	DiscreteStatus2     EngineStatus2Const  `json:"discreteStatus2"`
+	EngineLoad          *int8               `json:"engineLoad"`
+	EngineTorque        *int8               `json:"engineTorque"`
 }
 
-func (x *EngineParametersDynamic) PGNNumber() uint32  { return 127489 }
+func (x *EngineParametersDynamic) PGNNumber() uint32 { return 127489 }
 
 func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EngineParametersDynamic{}
@@ -194,7 +114,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-OilPressure: %w", err)
@@ -203,7 +123,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-OilTemperature: %w", err)
@@ -212,7 +132,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-Temperature: %w", err)
@@ -221,7 +141,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-AlternatorPotential: %w", err)
@@ -230,7 +150,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-FuelRate: %w", err)
@@ -239,7 +159,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-TotalEngineHours: %w", err)
@@ -248,7 +168,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-CoolantPressure: %w", err)
@@ -257,7 +177,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 1000); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-FuelPressure: %w", err)
@@ -266,12 +186,12 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(16); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-DiscreteStatus1: %w", err)
 	} else {
@@ -279,7 +199,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(16); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-DiscreteStatus2: %w", err)
@@ -288,7 +208,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-EngineLoad: %w", err)
@@ -297,7 +217,7 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersDynamic-EngineTorque: %w", err)
@@ -306,8 +226,8 @@ func DecodeEngineParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -364,15 +284,15 @@ func encodeEngineParametersDynamicMsg(v Message) ([]byte, error) {
 }
 
 type TransmissionParametersDynamic struct {
-	Info MessageInfo `json:"info"`
-	Instance EngineInstanceConst `json:"instance"`
-	TransmissionGear GearStatusConst `json:"transmissionGear"`
-	OilPressure *units.Pressure `json:"oilPressure"`
-	OilTemperature *units.Temperature `json:"oilTemperature"`
-	DiscreteStatus1 *uint8 `json:"discreteStatus1"`
+	Info             MessageInfo         `json:"info"`
+	Instance         EngineInstanceConst `json:"instance"`
+	TransmissionGear GearStatusConst     `json:"transmissionGear"`
+	OilPressure      *units.Pressure     `json:"oilPressure"`
+	OilTemperature   *units.Temperature  `json:"oilTemperature"`
+	DiscreteStatus1  *uint8              `json:"discreteStatus1"`
 }
 
-func (x *TransmissionParametersDynamic) PGNNumber() uint32  { return 127493 }
+func (x *TransmissionParametersDynamic) PGNNumber() uint32 { return 127493 }
 
 func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TransmissionParametersDynamic{}
@@ -384,7 +304,7 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-TransmissionGear: %w", err)
@@ -393,12 +313,12 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-OilPressure: %w", err)
 	} else {
@@ -406,7 +326,7 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-OilTemperature: %w", err)
@@ -415,7 +335,7 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TransmissionParametersDynamic-DiscreteStatus1: %w", err)
@@ -424,12 +344,12 @@ func DecodeTransmissionParametersDynamic(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -463,14 +383,14 @@ func encodeTransmissionParametersDynamicMsg(v Message) ([]byte, error) {
 }
 
 type TripParametersVessel struct {
-	Info MessageInfo `json:"info"`
-	TimeToEmpty *float32 `json:"timeToEmpty"`
-	DistanceToEmpty *units.Distance `json:"distanceToEmpty"`
-	EstimatedFuelRemaining *units.Volume `json:"estimatedFuelRemaining"`
-	TripRunTime *float32 `json:"tripRunTime"`
+	Info                   MessageInfo     `json:"info"`
+	TimeToEmpty            *float32        `json:"timeToEmpty"`
+	DistanceToEmpty        *units.Distance `json:"distanceToEmpty"`
+	EstimatedFuelRemaining *units.Volume   `json:"estimatedFuelRemaining"`
+	TripRunTime            *float32        `json:"tripRunTime"`
 }
 
-func (x *TripParametersVessel) PGNNumber() uint32  { return 127496 }
+func (x *TripParametersVessel) PGNNumber() uint32 { return 127496 }
 
 func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TripParametersVessel{}
@@ -482,7 +402,7 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersVessel-DistanceToEmpty: %w", err)
@@ -491,7 +411,7 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersVessel-EstimatedFuelRemaining: %w", err)
@@ -500,7 +420,7 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersVessel-TripRunTime: %w", err)
@@ -509,8 +429,8 @@ func DecodeTripParametersVessel(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -542,15 +462,15 @@ func encodeTripParametersVesselMsg(v Message) ([]byte, error) {
 }
 
 type TripParametersEngine struct {
-	Info MessageInfo `json:"info"`
-	Instance EngineInstanceConst `json:"instance"`
-	TripFuelUsed *units.Volume `json:"tripFuelUsed"`
-	FuelRateAverage *units.Flow `json:"fuelRateAverage"`
-	FuelRateEconomy *units.Flow `json:"fuelRateEconomy"`
-	InstantaneousFuelEconomy *units.Flow `json:"instantaneousFuelEconomy"`
+	Info                     MessageInfo         `json:"info"`
+	Instance                 EngineInstanceConst `json:"instance"`
+	TripFuelUsed             *units.Volume       `json:"tripFuelUsed"`
+	FuelRateAverage          *units.Flow         `json:"fuelRateAverage"`
+	FuelRateEconomy          *units.Flow         `json:"fuelRateEconomy"`
+	InstantaneousFuelEconomy *units.Flow         `json:"instantaneousFuelEconomy"`
 }
 
-func (x *TripParametersEngine) PGNNumber() uint32  { return 127497 }
+func (x *TripParametersEngine) PGNNumber() uint32 { return 127497 }
 
 func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TripParametersEngine{}
@@ -562,7 +482,7 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-TripFuelUsed: %w", err)
@@ -571,7 +491,7 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-FuelRateAverage: %w", err)
@@ -580,7 +500,7 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-FuelRateEconomy: %w", err)
@@ -589,7 +509,7 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for TripParametersEngine-InstantaneousFuelEconomy: %w", err)
@@ -598,8 +518,8 @@ func DecodeTripParametersEngine(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -640,14 +560,14 @@ func encodeTripParametersEngineMsg(v Message) ([]byte, error) {
 }
 
 type EngineParametersStatic struct {
-	Info MessageInfo `json:"info"`
-	Instance EngineInstanceConst `json:"instance"`
-	RatedEngineSpeed *float32 `json:"ratedEngineSpeed"`
-	Vin string `json:"vin"`
-	SoftwareId string `json:"softwareId"`
+	Info             MessageInfo         `json:"info"`
+	Instance         EngineInstanceConst `json:"instance"`
+	RatedEngineSpeed *float32            `json:"ratedEngineSpeed"`
+	Vin              string              `json:"vin"`
+	SoftwareId       string              `json:"softwareId"`
 }
 
-func (x *EngineParametersStatic) PGNNumber() uint32  { return 127498 }
+func (x *EngineParametersStatic) PGNNumber() uint32 { return 127498 }
 
 func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EngineParametersStatic{}
@@ -659,7 +579,7 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.25); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersStatic-RatedEngineSpeed: %w", err)
@@ -668,7 +588,7 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(136); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersStatic-Vin: %w", err)
@@ -677,7 +597,7 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(256); err != nil {
 		return nil, fmt.Errorf("parse failed for EngineParametersStatic-SoftwareId: %w", err)
@@ -686,8 +606,8 @@ func DecodeEngineParametersStatic(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 

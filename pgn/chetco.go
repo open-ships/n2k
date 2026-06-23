@@ -1,22 +1,20 @@
 package pgn
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type ChetcoDimmer struct {
-	Info MessageInfo `json:"info"`
+	Info             MessageInfo           `json:"info"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	Instance *uint8 `json:"instance"`
-	Dimmer1 *uint8 `json:"dimmer1"`
-	Dimmer2 *uint8 `json:"dimmer2"`
-	Dimmer3 *uint8 `json:"dimmer3"`
-	Dimmer4 *uint8 `json:"dimmer4"`
-	Control *uint8 `json:"control"`
+	IndustryCode     IndustryCodeConst     `json:"industryCode"`
+	Instance         *uint8                `json:"instance"`
+	Dimmer1          *uint8                `json:"dimmer1"`
+	Dimmer2          *uint8                `json:"dimmer2"`
+	Dimmer3          *uint8                `json:"dimmer3"`
+	Dimmer4          *uint8                `json:"dimmer4"`
+	Control          *uint8                `json:"control"`
 }
 
-func (x *ChetcoDimmer) PGNNumber() uint32  { return 65286 }
+func (x *ChetcoDimmer) PGNNumber() uint32 { return 65286 }
 
 func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ChetcoDimmer{}
@@ -31,12 +29,12 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-IndustryCode: %w", err)
 	} else {
@@ -47,7 +45,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Instance: %w", err)
@@ -56,7 +54,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Dimmer1: %w", err)
@@ -65,7 +63,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Dimmer2: %w", err)
@@ -74,7 +72,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Dimmer3: %w", err)
@@ -83,7 +81,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Dimmer4: %w", err)
@@ -92,7 +90,7 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChetcoDimmer-Control: %w", err)
@@ -101,8 +99,8 @@ func DecodeChetcoDimmer(Info MessageInfo, stream *PGNDataStream) (Message, error
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 

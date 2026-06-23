@@ -6,15 +6,317 @@ import (
 	"github.com/open-ships/n2k/units"
 )
 
+type HeadingTrackControl struct {
+	Info                     MessageInfo             `json:"info"`
+	RudderLimitExceeded      YesNoConst              `json:"rudderLimitExceeded"`
+	OffHeadingLimitExceeded  YesNoConst              `json:"offHeadingLimitExceeded"`
+	OffTrackLimitExceeded    YesNoConst              `json:"offTrackLimitExceeded"`
+	Override                 YesNoConst              `json:"override"`
+	SteeringMode             SteeringModeConst       `json:"steeringMode"`
+	TurnMode                 TurnModeConst           `json:"turnMode"`
+	HeadingReference         DirectionReferenceConst `json:"headingReference"`
+	CommandedRudderDirection DirectionRudderConst    `json:"commandedRudderDirection"`
+	CommandedRudderAngle     *float32                `json:"commandedRudderAngle"`
+	HeadingToSteerCourse     *float32                `json:"headingToSteerCourse"`
+	Track                    *float32                `json:"track"`
+	RudderLimit              *float32                `json:"rudderLimit"`
+	OffHeadingLimit          *float32                `json:"offHeadingLimit"`
+	RadiusOfTurnOrder        *float32                `json:"radiusOfTurnOrder"`
+	RateOfTurnOrder          *float32                `json:"rateOfTurnOrder"`
+	OffTrackLimit            *units.Distance         `json:"offTrackLimit"`
+	VesselHeading            *float32                `json:"vesselHeading"`
+}
+
+func (h *HeadingTrackControl) PGNNumber() uint32 { return 127237 }
+func DecodeHeadingTrackControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &HeadingTrackControl{}
+	val.Info = Info
+	if v, err := stream.readLookupField(2); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-RudderLimitExceeded: %w", err)
+	} else {
+		val.RudderLimitExceeded = YesNoConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(2); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-OffHeadingLimitExceeded: %w", err)
+	} else {
+		val.OffHeadingLimitExceeded = YesNoConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(2); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-OffTrackLimitExceeded: %w", err)
+	} else {
+		val.OffTrackLimitExceeded = YesNoConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(2); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-Override: %w", err)
+	} else {
+		val.Override = YesNoConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(3); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-SteeringMode: %w", err)
+	} else {
+		val.SteeringMode = SteeringModeConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(3); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-TurnMode: %w", err)
+	} else {
+		val.TurnMode = TurnModeConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(2); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-HeadingReference: %w", err)
+	} else {
+		val.HeadingReference = DirectionReferenceConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return val, nil
+	}
+	if v, err := stream.readLookupField(3); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-CommandedRudderDirection: %w", err)
+	} else {
+		val.CommandedRudderDirection = DirectionRudderConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-CommandedRudderAngle: %w", err)
+	} else {
+		val.CommandedRudderAngle = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-HeadingToSteerCourse: %w", err)
+	} else {
+		val.HeadingToSteerCourse = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-Track: %w", err)
+	} else {
+		val.Track = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-RudderLimit: %w", err)
+	} else {
+		val.RudderLimit = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-OffHeadingLimit: %w", err)
+	} else {
+		val.OffHeadingLimit = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-RadiusOfTurnOrder: %w", err)
+	} else {
+		val.RadiusOfTurnOrder = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 3.125e-05); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-RateOfTurnOrder: %w", err)
+	} else {
+		val.RateOfTurnOrder = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readInt16(16); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-OffTrackLimit: %w", err)
+	} else {
+		val.OffTrackLimit = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for HeadingTrackControl-VesselHeading: %w", err)
+	} else {
+		val.VesselHeading = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	return val, nil
+}
+
+func EncodeHeadingTrackControl(val *HeadingTrackControl) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeLookupField(uint64(val.RudderLimitExceeded), 2)
+	w.writeLookupField(uint64(val.OffHeadingLimitExceeded), 2)
+	w.writeLookupField(uint64(val.OffTrackLimitExceeded), 2)
+	w.writeLookupField(uint64(val.Override), 2)
+	w.writeLookupField(uint64(val.SteeringMode), 3)
+	w.writeLookupField(uint64(val.TurnMode), 3)
+	w.writeLookupField(uint64(val.HeadingReference), 2)
+	w.skipBits(5)
+	w.writeLookupField(uint64(val.CommandedRudderDirection), 3)
+	w.writeSignedResolution(val.CommandedRudderAngle, 16, 0.0001)
+	w.writeUnsignedResolution(val.HeadingToSteerCourse, 16, 0.0001)
+	w.writeUnsignedResolution(val.Track, 16, 0.0001)
+	w.writeUnsignedResolution(val.RudderLimit, 16, 0.0001)
+	w.writeUnsignedResolution(val.OffHeadingLimit, 16, 0.0001)
+	w.writeSignedResolution(val.RadiusOfTurnOrder, 16, 0.0001)
+	w.writeSignedResolution(val.RateOfTurnOrder, 16, 3.125e-05)
+	var offTrackLimitRaw *int16
+	if val.OffTrackLimit != nil {
+		v := int16(val.OffTrackLimit.Value)
+		offTrackLimitRaw = &v
+	}
+	w.writeInt16(offTrackLimitRaw, 16)
+	w.writeUnsignedResolution(val.VesselHeading, 16, 0.0001)
+	return w.Bytes(), w.Err()
+}
+func encodeHeadingTrackControlMsg(v Message) ([]byte, error) {
+	val, ok := v.(*HeadingTrackControl)
+	if !ok {
+		return nil, fmt.Errorf("expected *HeadingTrackControl, got %T", v)
+	}
+	return EncodeHeadingTrackControl(val)
+}
+
+type Rudder struct {
+	Info           MessageInfo          `json:"info"`
+	Instance       *uint8               `json:"instance"`
+	DirectionOrder DirectionRudderConst `json:"directionOrder"`
+	AngleOrder     *float32             `json:"angleOrder"`
+	Position       *float32             `json:"position"`
+}
+
+func (x *Rudder) PGNNumber() uint32 { return 127245 }
+
+func DecodeRudder(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Rudder{}
+	val.Info = Info
+	if v, err := stream.readUInt8(8); err != nil {
+		return nil, fmt.Errorf("parse failed for Rudder-Instance: %w", err)
+	} else {
+		val.Instance = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(3); err != nil {
+		return nil, fmt.Errorf("parse failed for Rudder-DirectionOrder: %w", err)
+	} else {
+		val.DirectionOrder = DirectionRudderConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return val, nil
+	}
+	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for Rudder-AngleOrder: %w", err)
+	} else {
+		val.AngleOrder = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for Rudder-Position: %w", err)
+	} else {
+		val.Position = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return val, nil
+	}
+	return val, nil
+}
+
+func EncodeRudder(val *Rudder) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Instance, 8)
+	w.writeLookupField(uint64(val.DirectionOrder), 3)
+	w.skipBits(5)
+	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
+	w.writeSignedResolution(val.Position, 16, 0.0001)
+	w.skipBits(16)
+	return w.Bytes(), w.Err()
+}
+
+func encodeRudderMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Rudder)
+	if !ok {
+		return nil, fmt.Errorf("expected *Rudder, got %T", v)
+	}
+	return EncodeRudder(val)
+}
+
 type VesselHeading struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Heading *float32 `json:"heading"`
-	Deviation *float32 `json:"deviation"`
-	Variation *float32 `json:"variation"`
+	Info      MessageInfo             `json:"info"`
+	Sid       *uint8                  `json:"sid"`
+	Heading   *float32                `json:"heading"`
+	Deviation *float32                `json:"deviation"`
+	Variation *float32                `json:"variation"`
 	Reference DirectionReferenceConst `json:"reference"`
 }
-func (v *VesselHeading) PGNNumber() uint32  { return 127250 }
+
+func (v *VesselHeading) PGNNumber() uint32 { return 127250 }
 func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &VesselHeading{}
 	val.Info = Info
@@ -25,7 +327,7 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselHeading-Heading: %w", err)
@@ -34,7 +336,7 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselHeading-Deviation: %w", err)
@@ -43,7 +345,7 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselHeading-Variation: %w", err)
@@ -52,7 +354,7 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselHeading-Reference: %w", err)
@@ -61,12 +363,12 @@ func DecodeVesselHeading(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -88,12 +390,14 @@ func encodeVesselHeadingMsg(v Message) ([]byte, error) {
 	}
 	return EncodeVesselHeading(val)
 }
+
 type RateOfTurn struct {
 	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Rate *float64 `json:"rate"`
+	Sid  *uint8      `json:"sid"`
+	Rate *float64    `json:"rate"`
 }
-func (r *RateOfTurn) PGNNumber() uint32  { return 127251 }
+
+func (r *RateOfTurn) PGNNumber() uint32 { return 127251 }
 func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &RateOfTurn{}
 	val.Info = Info
@@ -104,7 +408,7 @@ func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 3.125e-08); err != nil {
 		return nil, fmt.Errorf("parse failed for RateOfTurn-Rate: %w", err)
@@ -113,12 +417,12 @@ func DecodeRateOfTurn(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(24)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -137,12 +441,14 @@ func encodeRateOfTurnMsg(v Message) ([]byte, error) {
 	}
 	return EncodeRateOfTurn(val)
 }
+
 type Heave struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
+	Info  MessageInfo     `json:"info"`
+	Sid   *uint8          `json:"sid"`
 	Heave *units.Distance `json:"heave"`
 }
-func (h *Heave) PGNNumber() uint32  { return 127252 }
+
+func (h *Heave) PGNNumber() uint32 { return 127252 }
 func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Heave{}
 	val.Info = Info
@@ -153,7 +459,7 @@ func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for Heave-Heave: %w", err)
@@ -162,12 +468,12 @@ func DecodeHeave(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(40)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -190,14 +496,16 @@ func encodeHeaveMsg(v Message) ([]byte, error) {
 	}
 	return EncodeHeave(val)
 }
+
 type Attitude struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Yaw *float32 `json:"yaw"`
-	Pitch *float32 `json:"pitch"`
-	Roll *float32 `json:"roll"`
+	Info  MessageInfo `json:"info"`
+	Sid   *uint8      `json:"sid"`
+	Yaw   *float32    `json:"yaw"`
+	Pitch *float32    `json:"pitch"`
+	Roll  *float32    `json:"roll"`
 }
-func (a *Attitude) PGNNumber() uint32  { return 127257 }
+
+func (a *Attitude) PGNNumber() uint32 { return 127257 }
 func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Attitude{}
 	val.Info = Info
@@ -208,7 +516,7 @@ func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for Attitude-Yaw: %w", err)
@@ -217,7 +525,7 @@ func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for Attitude-Pitch: %w", err)
@@ -226,7 +534,7 @@ func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for Attitude-Roll: %w", err)
@@ -235,12 +543,12 @@ func DecodeAttitude(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -261,14 +569,16 @@ func encodeAttitudeMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAttitude(val)
 }
+
 type MagneticVariation struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Source MagneticVariationConst `json:"source"`
-	AgeOfService *uint16 `json:"ageOfService"`
-	Variation *float32 `json:"variation"`
+	Info         MessageInfo            `json:"info"`
+	Sid          *uint8                 `json:"sid"`
+	Source       MagneticVariationConst `json:"source"`
+	AgeOfService *uint16                `json:"ageOfService"`
+	Variation    *float32               `json:"variation"`
 }
-func (m *MagneticVariation) PGNNumber() uint32  { return 127258 }
+
+func (m *MagneticVariation) PGNNumber() uint32 { return 127258 }
 func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &MagneticVariation{}
 	val.Info = Info
@@ -279,7 +589,7 @@ func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for MagneticVariation-Source: %w", err)
@@ -288,12 +598,12 @@ func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for MagneticVariation-AgeOfService: %w", err)
 	} else {
@@ -301,7 +611,7 @@ func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for MagneticVariation-Variation: %w", err)
@@ -310,12 +620,12 @@ func DecodeMagneticVariation(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -337,12 +647,323 @@ func encodeMagneticVariationMsg(v Message) ([]byte, error) {
 	}
 	return EncodeMagneticVariation(val)
 }
-type PositionRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Latitude *float64 `json:"latitude"`
-	Longitude *float64 `json:"longitude"`
+
+type LeewayAngle struct {
+	Info        MessageInfo `json:"info"`
+	Sid         *uint8      `json:"sid"`
+	LeewayAngle *float32    `json:"leewayAngle"`
 }
-func (p *PositionRapidUpdate) PGNNumber() uint32  { return 129025 }
+
+func (x *LeewayAngle) PGNNumber() uint32 { return 128000 }
+
+func DecodeLeewayAngle(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &LeewayAngle{}
+	val.Info = Info
+	if v, err := stream.readUInt8(8); err != nil {
+		return nil, fmt.Errorf("parse failed for LeewayAngle-Sid: %w", err)
+	} else {
+		val.Sid = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for LeewayAngle-LeewayAngle: %w", err)
+	} else {
+		val.LeewayAngle = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	stream.skipBits(40)
+	if stream.isEOF() {
+		return val, nil
+	}
+	return val, nil
+}
+
+func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	w.writeSignedResolution(val.LeewayAngle, 16, 0.0001)
+	w.skipBits(40)
+	return w.Bytes(), w.Err()
+}
+
+func encodeLeewayAngleMsg(v Message) ([]byte, error) {
+	val, ok := v.(*LeewayAngle)
+	if !ok {
+		return nil, fmt.Errorf("expected *LeewayAngle, got %T", v)
+	}
+	return EncodeLeewayAngle(val)
+}
+
+type Speed struct {
+	Info                     MessageInfo         `json:"info"`
+	Sid                      *uint8              `json:"sid"`
+	SpeedWaterReferenced     *units.Velocity     `json:"speedWaterReferenced"`
+	SpeedGroundReferenced    *units.Velocity     `json:"speedGroundReferenced"`
+	SpeedWaterReferencedType WaterReferenceConst `json:"speedWaterReferencedType"`
+	SpeedDirection           *uint8              `json:"speedDirection"`
+}
+
+func (x *Speed) PGNNumber() uint32 { return 128259 }
+
+func DecodeSpeed(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &Speed{}
+	val.Info = Info
+	if v, err := stream.readUInt8(8); err != nil {
+		return nil, fmt.Errorf("parse failed for Speed-Sid: %w", err)
+	} else {
+		val.Sid = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
+		return nil, fmt.Errorf("parse failed for Speed-SpeedWaterReferenced: %w", err)
+	} else {
+		val.SpeedWaterReferenced = nullableUnit(units.MetersPerSecond, v, units.NewVelocity)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
+		return nil, fmt.Errorf("parse failed for Speed-SpeedGroundReferenced: %w", err)
+	} else {
+		val.SpeedGroundReferenced = nullableUnit(units.MetersPerSecond, v, units.NewVelocity)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readLookupField(8); err != nil {
+		return nil, fmt.Errorf("parse failed for Speed-SpeedWaterReferencedType: %w", err)
+	} else {
+		val.SpeedWaterReferencedType = WaterReferenceConst(v)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUInt8(4); err != nil {
+		return nil, fmt.Errorf("parse failed for Speed-SpeedDirection: %w", err)
+	} else {
+		val.SpeedDirection = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	stream.skipBits(12)
+	if stream.isEOF() {
+		return val, nil
+	}
+	return val, nil
+}
+
+func EncodeSpeed(val *Speed) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var speedWaterReferencedRaw *float32
+	if val.SpeedWaterReferenced != nil {
+		speedWaterReferencedRaw = &val.SpeedWaterReferenced.Value
+	}
+	w.writeUnsignedResolution(speedWaterReferencedRaw, 16, 0.01)
+	var speedGroundReferencedRaw *float32
+	if val.SpeedGroundReferenced != nil {
+		speedGroundReferencedRaw = &val.SpeedGroundReferenced.Value
+	}
+	w.writeUnsignedResolution(speedGroundReferencedRaw, 16, 0.01)
+	w.writeLookupField(uint64(val.SpeedWaterReferencedType), 8)
+	w.writeUInt8(val.SpeedDirection, 4)
+	w.skipBits(12)
+	return w.Bytes(), w.Err()
+}
+
+func encodeSpeedMsg(v Message) ([]byte, error) {
+	val, ok := v.(*Speed)
+	if !ok {
+		return nil, fmt.Errorf("expected *Speed, got %T", v)
+	}
+	return EncodeSpeed(val)
+}
+
+type WaterDepth struct {
+	Info   MessageInfo     `json:"info"`
+	Sid    *uint8          `json:"sid"`
+	Depth  *units.Distance `json:"depth"`
+	Offset *units.Distance `json:"offset"`
+	Range  *units.Distance `json:"range"`
+}
+
+func (x *WaterDepth) PGNNumber() uint32 { return 128267 }
+
+func DecodeWaterDepth(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &WaterDepth{}
+	val.Info = Info
+	if v, err := stream.readUInt8(8); err != nil {
+		return nil, fmt.Errorf("parse failed for WaterDepth-Sid: %w", err)
+	} else {
+		val.Sid = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(32, 0.01); err != nil {
+		return nil, fmt.Errorf("parse failed for WaterDepth-Depth: %w", err)
+	} else {
+		val.Depth = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
+		return nil, fmt.Errorf("parse failed for WaterDepth-Offset: %w", err)
+	} else {
+		val.Offset = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(8, 10); err != nil {
+		return nil, fmt.Errorf("parse failed for WaterDepth-Range: %w", err)
+	} else {
+		val.Range = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	return val, nil
+}
+
+func EncodeWaterDepth(val *WaterDepth) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt8(val.Sid, 8)
+	var depthRaw *float32
+	if val.Depth != nil {
+		depthRaw = &val.Depth.Value
+	}
+	w.writeUnsignedResolution(depthRaw, 32, 0.01)
+	var offsetRaw *float32
+	if val.Offset != nil {
+		offsetRaw = &val.Offset.Value
+	}
+	w.writeSignedResolution(offsetRaw, 16, 0.001)
+	var rangeRaw *float32
+	if val.Range != nil {
+		rangeRaw = &val.Range.Value
+	}
+	w.writeUnsignedResolution(rangeRaw, 8, 10)
+	return w.Bytes(), w.Err()
+}
+
+func encodeWaterDepthMsg(v Message) ([]byte, error) {
+	val, ok := v.(*WaterDepth)
+	if !ok {
+		return nil, fmt.Errorf("expected *WaterDepth, got %T", v)
+	}
+	return EncodeWaterDepth(val)
+}
+
+type DistanceLog struct {
+	Info    MessageInfo     `json:"info"`
+	Date    *uint16         `json:"date"`
+	Time    *float32        `json:"time"`
+	Log     *units.Distance `json:"log"`
+	TripLog *units.Distance `json:"tripLog"`
+}
+
+func (x *DistanceLog) PGNNumber() uint32 { return 128275 }
+
+func DecodeDistanceLog(Info MessageInfo, stream *PGNDataStream) (Message, error) {
+	val := &DistanceLog{}
+	val.Info = Info
+	if v, err := stream.readUInt16(16); err != nil {
+		return nil, fmt.Errorf("parse failed for DistanceLog-Date: %w", err)
+	} else {
+		val.Date = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
+		return nil, fmt.Errorf("parse failed for DistanceLog-Time: %w", err)
+	} else {
+		val.Time = v
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUInt32(32); err != nil {
+		return nil, fmt.Errorf("parse failed for DistanceLog-Log: %w", err)
+	} else {
+		val.Log = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	if v, err := stream.readUInt32(32); err != nil {
+		return nil, fmt.Errorf("parse failed for DistanceLog-TripLog: %w", err)
+	} else {
+		val.TripLog = nullableUnit(units.Meter, v, units.NewDistance)
+
+		if stream.isEOF() {
+			return val, nil
+		}
+	}
+	return val, nil
+}
+
+func EncodeDistanceLog(val *DistanceLog) ([]byte, error) {
+	w := NewPGNDataStreamWriter()
+	// TODO: cross-field validation not yet implemented
+	w.writeUInt16(val.Date, 16)
+	w.writeUnsignedResolution(val.Time, 32, 0.0001)
+	var logRaw *uint32
+	if val.Log != nil {
+		v := uint32(val.Log.Value)
+		logRaw = &v
+	}
+	w.writeUInt32(logRaw, 32)
+	var tripLogRaw *uint32
+	if val.TripLog != nil {
+		v := uint32(val.TripLog.Value)
+		tripLogRaw = &v
+	}
+	w.writeUInt32(tripLogRaw, 32)
+	return w.Bytes(), w.Err()
+}
+
+func encodeDistanceLogMsg(v Message) ([]byte, error) {
+	val, ok := v.(*DistanceLog)
+	if !ok {
+		return nil, fmt.Errorf("expected *DistanceLog, got %T", v)
+	}
+	return EncodeDistanceLog(val)
+}
+
+type PositionRapidUpdate struct {
+	Info      MessageInfo `json:"info"`
+	Latitude  *float64    `json:"latitude"`
+	Longitude *float64    `json:"longitude"`
+}
+
+func (p *PositionRapidUpdate) PGNNumber() uint32 { return 129025 }
 func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &PositionRapidUpdate{}
 	val.Info = Info
@@ -353,7 +974,7 @@ func DecodePositionRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionRapidUpdate-Longitude: %w", err)
@@ -381,14 +1002,16 @@ func encodePositionRapidUpdateMsg(v Message) ([]byte, error) {
 	}
 	return EncodePositionRapidUpdate(val)
 }
+
 type CogSogRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
+	Info         MessageInfo             `json:"info"`
+	Sid          *uint8                  `json:"sid"`
 	CogReference DirectionReferenceConst `json:"cogReference"`
-	Cog *float32 `json:"cog"`
-	Sog *units.Velocity `json:"sog"`
+	Cog          *float32                `json:"cog"`
+	Sog          *units.Velocity         `json:"sog"`
 }
-func (c *CogSogRapidUpdate) PGNNumber() uint32  { return 129026 }
+
+func (c *CogSogRapidUpdate) PGNNumber() uint32 { return 129026 }
 func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &CogSogRapidUpdate{}
 	val.Info = Info
@@ -399,7 +1022,7 @@ func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for CogSogRapidUpdate-CogReference: %w", err)
@@ -408,12 +1031,12 @@ func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for CogSogRapidUpdate-Cog: %w", err)
 	} else {
@@ -421,7 +1044,7 @@ func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for CogSogRapidUpdate-Sog: %w", err)
@@ -430,12 +1053,12 @@ func DecodeCogSogRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -461,14 +1084,16 @@ func encodeCogSogRapidUpdateMsg(v Message) ([]byte, error) {
 	}
 	return EncodeCogSogRapidUpdate(val)
 }
+
 type PositionDeltaRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	TimeDelta *uint16 `json:"timeDelta"`
-	LatitudeDelta *int16 `json:"latitudeDelta"`
-	LongitudeDelta *int16 `json:"longitudeDelta"`
+	Info           MessageInfo `json:"info"`
+	Sid            *uint8      `json:"sid"`
+	TimeDelta      *uint16     `json:"timeDelta"`
+	LatitudeDelta  *int16      `json:"latitudeDelta"`
+	LongitudeDelta *int16      `json:"longitudeDelta"`
 }
-func (p *PositionDeltaRapidUpdate) PGNNumber() uint32  { return 129027 }
+
+func (p *PositionDeltaRapidUpdate) PGNNumber() uint32 { return 129027 }
 func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &PositionDeltaRapidUpdate{}
 	val.Info = Info
@@ -479,7 +1104,7 @@ func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionDeltaRapidUpdate-TimeDelta: %w", err)
@@ -488,7 +1113,7 @@ func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionDeltaRapidUpdate-LatitudeDelta: %w", err)
@@ -497,7 +1122,7 @@ func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for PositionDeltaRapidUpdate-LongitudeDelta: %w", err)
@@ -506,12 +1131,12 @@ func DecodePositionDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -532,16 +1157,18 @@ func encodePositionDeltaRapidUpdateMsg(v Message) ([]byte, error) {
 	}
 	return EncodePositionDeltaRapidUpdate(val)
 }
+
 type AltitudeDeltaRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	TimeDelta *int16 `json:"timeDelta"`
-	GnssQuality *uint8 `json:"gnssQuality"`
-	Direction *uint8 `json:"direction"`
-	Cog *float32 `json:"cog"`
-	AltitudeDelta *int16 `json:"altitudeDelta"`
+	Info          MessageInfo `json:"info"`
+	Sid           *uint8      `json:"sid"`
+	TimeDelta     *int16      `json:"timeDelta"`
+	GnssQuality   *uint8      `json:"gnssQuality"`
+	Direction     *uint8      `json:"direction"`
+	Cog           *float32    `json:"cog"`
+	AltitudeDelta *int16      `json:"altitudeDelta"`
 }
-func (a *AltitudeDeltaRapidUpdate) PGNNumber() uint32  { return 129028 }
+
+func (a *AltitudeDeltaRapidUpdate) PGNNumber() uint32 { return 129028 }
 func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AltitudeDeltaRapidUpdate{}
 	val.Info = Info
@@ -552,7 +1179,7 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-TimeDelta: %w", err)
@@ -561,7 +1188,7 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-GnssQuality: %w", err)
@@ -570,7 +1197,7 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-Direction: %w", err)
@@ -579,12 +1206,12 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-Cog: %w", err)
 	} else {
@@ -592,7 +1219,7 @@ func DecodeAltitudeDeltaRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AltitudeDeltaRapidUpdate-AltitudeDelta: %w", err)
@@ -625,34 +1252,36 @@ func encodeAltitudeDeltaRapidUpdateMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAltitudeDeltaRapidUpdate(val)
 }
+
 type GnssPositionData struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Date *uint16 `json:"date"`
-	Time *float32 `json:"time"`
-	Latitude *float64 `json:"latitude"`
-	Longitude *float64 `json:"longitude"`
-	Altitude *units.Distance `json:"altitude"`
-	GnssType GnsConst `json:"gnssType"`
-	Method GnsMethodConst `json:"method"`
-	Integrity GnsIntegrityConst `json:"integrity"`
-	NumberOfSvs *uint8 `json:"numberOfSvs"`
-	Hdop *float32 `json:"hdop"`
-	Pdop *float32 `json:"pdop"`
-	GeoidalSeparation *units.Distance `json:"geoidalSeparation"`
-	ReferenceStations *uint8 `json:"referenceStations"`
-	Repeating1 []GnssPositionDataRepeating1 `json:"repeating1"`
+	Info              MessageInfo                  `json:"info"`
+	Sid               *uint8                       `json:"sid"`
+	Date              *uint16                      `json:"date"`
+	Time              *float32                     `json:"time"`
+	Latitude          *float64                     `json:"latitude"`
+	Longitude         *float64                     `json:"longitude"`
+	Altitude          *units.Distance              `json:"altitude"`
+	GnssType          GnsConst                     `json:"gnssType"`
+	Method            GnsMethodConst               `json:"method"`
+	Integrity         GnsIntegrityConst            `json:"integrity"`
+	NumberOfSvs       *uint8                       `json:"numberOfSvs"`
+	Hdop              *float32                     `json:"hdop"`
+	Pdop              *float32                     `json:"pdop"`
+	GeoidalSeparation *units.Distance              `json:"geoidalSeparation"`
+	ReferenceStations *uint8                       `json:"referenceStations"`
+	Repeating1        []GnssPositionDataRepeating1 `json:"repeating1"`
 }
 type GnssPositionDataRepeating1 struct {
-	ReferenceStationType GnsConst `json:"referenceStationType"`
-	ReferenceStationId *uint16 `json:"referenceStationId"`
+	ReferenceStationType  GnsConst `json:"referenceStationType"`
+	ReferenceStationId    *uint16  `json:"referenceStationId"`
 	AgeOfDgnssCorrections *float32 `json:"ageOfDgnssCorrections"`
 }
-func (g *GnssPositionData) PGNNumber() uint32  { return 129029 }
+
+func (g *GnssPositionData) PGNNumber() uint32 { return 129029 }
 func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GnssPositionData{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Sid: %w", err)
 	} else {
@@ -660,7 +1289,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Date: %w", err)
@@ -669,7 +1298,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Time: %w", err)
@@ -678,7 +1307,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(64, 1e-16); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Latitude: %w", err)
@@ -687,7 +1316,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(64, 1e-16); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Longitude: %w", err)
@@ -696,7 +1325,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(64, 1e-06); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Altitude: %w", err)
@@ -705,7 +1334,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-GnssType: %w", err)
@@ -714,7 +1343,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Method: %w", err)
@@ -723,7 +1352,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Integrity: %w", err)
@@ -732,12 +1361,12 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-NumberOfSvs: %w", err)
 	} else {
@@ -745,7 +1374,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Hdop: %w", err)
@@ -754,7 +1383,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-Pdop: %w", err)
@@ -763,7 +1392,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-GeoidalSeparation: %w", err)
@@ -772,7 +1401,7 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssPositionData-ReferenceStations: %w", err)
@@ -784,13 +1413,13 @@ func DecodeGnssPositionData(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]GnssPositionDataRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep GnssPositionDataRepeating1
 		if v, err := stream.readLookupField(4); err != nil {
@@ -863,13 +1492,15 @@ func encodeGnssPositionDataMsg(v Message) ([]byte, error) {
 	}
 	return EncodeGnssPositionData(val)
 }
+
 type TimeDate struct {
-	Info MessageInfo `json:"info"`
-	Date *uint16 `json:"date"`
-	Time *float32 `json:"time"`
-	LocalOffset *float32 `json:"localOffset"`
+	Info        MessageInfo `json:"info"`
+	Date        *uint16     `json:"date"`
+	Time        *float32    `json:"time"`
+	LocalOffset *float32    `json:"localOffset"`
 }
-func (t *TimeDate) PGNNumber() uint32  { return 129033 }
+
+func (t *TimeDate) PGNNumber() uint32 { return 129033 }
 func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TimeDate{}
 	val.Info = Info
@@ -880,7 +1511,7 @@ func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for TimeDate-Time: %w", err)
@@ -889,7 +1520,7 @@ func DecodeTimeDate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 60); err != nil {
 		return nil, fmt.Errorf("parse failed for TimeDate-LocalOffset: %w", err)
@@ -918,15 +1549,17 @@ func encodeTimeDateMsg(v Message) ([]byte, error) {
 	}
 	return EncodeTimeDate(val)
 }
+
 type Datum struct {
-	Info MessageInfo `json:"info"`
-	LocalDatum string `json:"localDatum"`
-	DeltaLatitude *float64 `json:"deltaLatitude"`
-	DeltaLongitude *float64 `json:"deltaLongitude"`
-	DeltaAltitude *units.Distance `json:"deltaAltitude"`
-	ReferenceDatum string `json:"referenceDatum"`
+	Info           MessageInfo     `json:"info"`
+	LocalDatum     string          `json:"localDatum"`
+	DeltaLatitude  *float64        `json:"deltaLatitude"`
+	DeltaLongitude *float64        `json:"deltaLongitude"`
+	DeltaAltitude  *units.Distance `json:"deltaAltitude"`
+	ReferenceDatum string          `json:"referenceDatum"`
 }
-func (d *Datum) PGNNumber() uint32  { return 129044 }
+
+func (d *Datum) PGNNumber() uint32 { return 129044 }
 func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Datum{}
 	val.Info = Info
@@ -937,7 +1570,7 @@ func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for Datum-DeltaLatitude: %w", err)
@@ -946,7 +1579,7 @@ func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for Datum-DeltaLongitude: %w", err)
@@ -955,7 +1588,7 @@ func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for Datum-DeltaAltitude: %w", err)
@@ -964,7 +1597,7 @@ func DecodeDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(32); err != nil {
 		return nil, fmt.Errorf("parse failed for Datum-ReferenceDatum: %w", err)
@@ -999,20 +1632,22 @@ func encodeDatumMsg(v Message) ([]byte, error) {
 	}
 	return EncodeDatum(val)
 }
+
 type UserDatum struct {
-	Info MessageInfo `json:"info"`
-	DeltaX *units.Distance `json:"deltaX"`
-	DeltaY *units.Distance `json:"deltaY"`
-	DeltaZ *units.Distance `json:"deltaZ"`
-	RotationInX *float32 `json:"rotationInX"`
-	RotationInY *float32 `json:"rotationInY"`
-	RotationInZ *float32 `json:"rotationInZ"`
-	Scale *float32 `json:"scale"`
-	EllipsoidSemiMajorAxis *units.Distance `json:"ellipsoidSemiMajorAxis"`
-	EllipsoidFlatteningInverse *float32 `json:"ellipsoidFlatteningInverse"`
-	DatumName string `json:"datumName"`
+	Info                       MessageInfo     `json:"info"`
+	DeltaX                     *units.Distance `json:"deltaX"`
+	DeltaY                     *units.Distance `json:"deltaY"`
+	DeltaZ                     *units.Distance `json:"deltaZ"`
+	RotationInX                *float32        `json:"rotationInX"`
+	RotationInY                *float32        `json:"rotationInY"`
+	RotationInZ                *float32        `json:"rotationInZ"`
+	Scale                      *float32        `json:"scale"`
+	EllipsoidSemiMajorAxis     *units.Distance `json:"ellipsoidSemiMajorAxis"`
+	EllipsoidFlatteningInverse *float32        `json:"ellipsoidFlatteningInverse"`
+	DatumName                  string          `json:"datumName"`
 }
-func (u *UserDatum) PGNNumber() uint32  { return 129045 }
+
+func (u *UserDatum) PGNNumber() uint32 { return 129045 }
 func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UserDatum{}
 	val.Info = Info
@@ -1023,7 +1658,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-DeltaY: %w", err)
@@ -1032,7 +1667,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-DeltaZ: %w", err)
@@ -1041,7 +1676,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-RotationInX: %w", err)
@@ -1050,7 +1685,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-RotationInY: %w", err)
@@ -1059,7 +1694,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-RotationInZ: %w", err)
@@ -1068,7 +1703,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-Scale: %w", err)
@@ -1077,7 +1712,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-EllipsoidSemiMajorAxis: %w", err)
@@ -1086,7 +1721,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-EllipsoidFlatteningInverse: %w", err)
@@ -1095,7 +1730,7 @@ func DecodeUserDatum(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UserDatum-DatumName: %w", err)
@@ -1147,14 +1782,16 @@ func encodeUserDatumMsg(v Message) ([]byte, error) {
 	}
 	return EncodeUserDatum(val)
 }
+
 type CrossTrackError struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	XteMode ResidualModeConst `json:"xteMode"`
-	NavigationTerminated YesNoConst `json:"navigationTerminated"`
-	Xte *units.Distance `json:"xte"`
+	Info                 MessageInfo       `json:"info"`
+	Sid                  *uint8            `json:"sid"`
+	XteMode              ResidualModeConst `json:"xteMode"`
+	NavigationTerminated YesNoConst        `json:"navigationTerminated"`
+	Xte                  *units.Distance   `json:"xte"`
 }
-func (c *CrossTrackError) PGNNumber() uint32  { return 129283 }
+
+func (c *CrossTrackError) PGNNumber() uint32 { return 129283 }
 func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &CrossTrackError{}
 	val.Info = Info
@@ -1165,7 +1802,7 @@ func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for CrossTrackError-XteMode: %w", err)
@@ -1174,12 +1811,12 @@ func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for CrossTrackError-NavigationTerminated: %w", err)
 	} else {
@@ -1187,7 +1824,7 @@ func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for CrossTrackError-Xte: %w", err)
@@ -1196,12 +1833,12 @@ func DecodeCrossTrackError(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -1227,25 +1864,27 @@ func encodeCrossTrackErrorMsg(v Message) ([]byte, error) {
 	}
 	return EncodeCrossTrackError(val)
 }
+
 type NavigationData struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	DistanceToWaypoint *units.Distance `json:"distanceToWaypoint"`
-	CourseBearingReference DirectionReferenceConst `json:"courseBearingReference"`
-	PerpendicularCrossed YesNoConst `json:"perpendicularCrossed"`
-	ArrivalCircleEntered YesNoConst `json:"arrivalCircleEntered"`
-	CalculationType BearingModeConst `json:"calculationType"`
-	EtaTime *float32 `json:"etaTime"`
-	EtaDate *uint16 `json:"etaDate"`
-	BearingOriginToDestinationWaypoint *float32 `json:"bearingOriginToDestinationWaypoint"`
-	BearingPositionToDestinationWaypoint *float32 `json:"bearingPositionToDestinationWaypoint"`
-	OriginWaypointNumber *uint32 `json:"originWaypointNumber"`
-	DestinationWaypointNumber *uint32 `json:"destinationWaypointNumber"`
-	DestinationLatitude *float64 `json:"destinationLatitude"`
-	DestinationLongitude *float64 `json:"destinationLongitude"`
-	WaypointClosingVelocity *units.Velocity `json:"waypointClosingVelocity"`
+	Info                                 MessageInfo             `json:"info"`
+	Sid                                  *uint8                  `json:"sid"`
+	DistanceToWaypoint                   *units.Distance         `json:"distanceToWaypoint"`
+	CourseBearingReference               DirectionReferenceConst `json:"courseBearingReference"`
+	PerpendicularCrossed                 YesNoConst              `json:"perpendicularCrossed"`
+	ArrivalCircleEntered                 YesNoConst              `json:"arrivalCircleEntered"`
+	CalculationType                      BearingModeConst        `json:"calculationType"`
+	EtaTime                              *float32                `json:"etaTime"`
+	EtaDate                              *uint16                 `json:"etaDate"`
+	BearingOriginToDestinationWaypoint   *float32                `json:"bearingOriginToDestinationWaypoint"`
+	BearingPositionToDestinationWaypoint *float32                `json:"bearingPositionToDestinationWaypoint"`
+	OriginWaypointNumber                 *uint32                 `json:"originWaypointNumber"`
+	DestinationWaypointNumber            *uint32                 `json:"destinationWaypointNumber"`
+	DestinationLatitude                  *float64                `json:"destinationLatitude"`
+	DestinationLongitude                 *float64                `json:"destinationLongitude"`
+	WaypointClosingVelocity              *units.Velocity         `json:"waypointClosingVelocity"`
 }
-func (n *NavigationData) PGNNumber() uint32  { return 129284 }
+
+func (n *NavigationData) PGNNumber() uint32 { return 129284 }
 func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavigationData{}
 	val.Info = Info
@@ -1256,7 +1895,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-DistanceToWaypoint: %w", err)
@@ -1265,7 +1904,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-CourseBearingReference: %w", err)
@@ -1274,7 +1913,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-PerpendicularCrossed: %w", err)
@@ -1283,7 +1922,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-ArrivalCircleEntered: %w", err)
@@ -1292,7 +1931,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-CalculationType: %w", err)
@@ -1301,7 +1940,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-EtaTime: %w", err)
@@ -1310,7 +1949,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-EtaDate: %w", err)
@@ -1319,7 +1958,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-BearingOriginToDestinationWaypoint: %w", err)
@@ -1328,7 +1967,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-BearingPositionToDestinationWaypoint: %w", err)
@@ -1337,7 +1976,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-OriginWaypointNumber: %w", err)
@@ -1346,7 +1985,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-DestinationWaypointNumber: %w", err)
@@ -1355,7 +1994,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-DestinationLatitude: %w", err)
@@ -1364,7 +2003,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-DestinationLongitude: %w", err)
@@ -1373,7 +2012,7 @@ func DecodeNavigationData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationData-WaypointClosingVelocity: %w", err)
@@ -1422,28 +2061,30 @@ func encodeNavigationDataMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNavigationData(val)
 }
+
 type NavigationRouteWpInformation struct {
-	Info MessageInfo `json:"info"`
-	StartRps *uint16 `json:"startRps"`
-	Nitems *uint16 `json:"nitems"`
-	DatabaseId *uint16 `json:"databaseId"`
-	RouteId *uint16 `json:"routeId"`
-	NavigationDirectionInRoute DirectionConst `json:"navigationDirectionInRoute"`
-	SupplementaryRouteWpDataAvailable OffOnConst `json:"supplementaryRouteWpDataAvailable"`
-	RouteName string `json:"routeName"`
-	Repeating1 []NavigationRouteWpInformationRepeating1 `json:"repeating1"`
+	Info                              MessageInfo                              `json:"info"`
+	StartRps                          *uint16                                  `json:"startRps"`
+	Nitems                            *uint16                                  `json:"nitems"`
+	DatabaseId                        *uint16                                  `json:"databaseId"`
+	RouteId                           *uint16                                  `json:"routeId"`
+	NavigationDirectionInRoute        DirectionConst                           `json:"navigationDirectionInRoute"`
+	SupplementaryRouteWpDataAvailable OffOnConst                               `json:"supplementaryRouteWpDataAvailable"`
+	RouteName                         string                                   `json:"routeName"`
+	Repeating1                        []NavigationRouteWpInformationRepeating1 `json:"repeating1"`
 }
 type NavigationRouteWpInformationRepeating1 struct {
-	WpId *uint16 `json:"wpId"`
-	WpName string `json:"wpName"`
-	WpLatitude *float64 `json:"wpLatitude"`
+	WpId        *uint16  `json:"wpId"`
+	WpName      string   `json:"wpName"`
+	WpLatitude  *float64 `json:"wpLatitude"`
 	WpLongitude *float64 `json:"wpLongitude"`
 }
-func (n *NavigationRouteWpInformation) PGNNumber() uint32  { return 129285 }
+
+func (n *NavigationRouteWpInformation) PGNNumber() uint32 { return 129285 }
 func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NavigationRouteWpInformation{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-StartRps: %w", err)
 	} else {
@@ -1451,7 +2092,7 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-Nitems: %w", err)
@@ -1463,7 +2104,7 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-DatabaseId: %w", err)
@@ -1472,7 +2113,7 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-RouteId: %w", err)
@@ -1481,7 +2122,7 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-NavigationDirectionInRoute: %w", err)
@@ -1490,7 +2131,7 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-SupplementaryRouteWpDataAvailable: %w", err)
@@ -1499,12 +2140,12 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for NavigationRouteWpInformation-RouteName: %w", err)
 	} else {
@@ -1512,17 +2153,17 @@ func DecodeNavigationRouteWpInformation(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
-		if repeat1Count == 0 {
-			return val, nil
-		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NavigationRouteWpInformationRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NavigationRouteWpInformationRepeating1
 		if v, err := stream.readUInt16(16); err != nil {
@@ -1587,14 +2228,16 @@ func encodeNavigationRouteWpInformationMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNavigationRouteWpInformation(val)
 }
+
 type SetDriftRapidUpdate struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
+	Info         MessageInfo             `json:"info"`
+	Sid          *uint8                  `json:"sid"`
 	SetReference DirectionReferenceConst `json:"setReference"`
-	Set *float32 `json:"set"`
-	Drift *units.Velocity `json:"drift"`
+	Set          *float32                `json:"set"`
+	Drift        *units.Velocity         `json:"drift"`
 }
-func (s *SetDriftRapidUpdate) PGNNumber() uint32  { return 129291 }
+
+func (s *SetDriftRapidUpdate) PGNNumber() uint32 { return 129291 }
 func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SetDriftRapidUpdate{}
 	val.Info = Info
@@ -1605,7 +2248,7 @@ func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SetDriftRapidUpdate-SetReference: %w", err)
@@ -1614,12 +2257,12 @@ func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for SetDriftRapidUpdate-Set: %w", err)
 	} else {
@@ -1627,7 +2270,7 @@ func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for SetDriftRapidUpdate-Drift: %w", err)
@@ -1636,12 +2279,12 @@ func DecodeSetDriftRapidUpdate(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -1667,16 +2310,18 @@ func encodeSetDriftRapidUpdateMsg(v Message) ([]byte, error) {
 	}
 	return EncodeSetDriftRapidUpdate(val)
 }
+
 type GnssDops struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
+	Info        MessageInfo   `json:"info"`
+	Sid         *uint8        `json:"sid"`
 	DesiredMode GnssModeConst `json:"desiredMode"`
-	ActualMode GnssModeConst `json:"actualMode"`
-	Hdop *float32 `json:"hdop"`
-	Vdop *float32 `json:"vdop"`
-	Tdop *float32 `json:"tdop"`
+	ActualMode  GnssModeConst `json:"actualMode"`
+	Hdop        *float32      `json:"hdop"`
+	Vdop        *float32      `json:"vdop"`
+	Tdop        *float32      `json:"tdop"`
 }
-func (g *GnssDops) PGNNumber() uint32  { return 129539 }
+
+func (g *GnssDops) PGNNumber() uint32 { return 129539 }
 func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GnssDops{}
 	val.Info = Info
@@ -1687,7 +2332,7 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-DesiredMode: %w", err)
@@ -1696,7 +2341,7 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-ActualMode: %w", err)
@@ -1705,12 +2350,12 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-Hdop: %w", err)
 	} else {
@@ -1718,7 +2363,7 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-Vdop: %w", err)
@@ -1727,7 +2372,7 @@ func DecodeGnssDops(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssDops-Tdop: %w", err)
@@ -1760,26 +2405,28 @@ func encodeGnssDopsMsg(v Message) ([]byte, error) {
 	}
 	return EncodeGnssDops(val)
 }
+
 type GnssSatsInView struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	RangeResidualMode RangeResidualModeConst `json:"rangeResidualMode"`
-	SatsInView *uint8 `json:"satsInView"`
-	Repeating1 []GnssSatsInViewRepeating1 `json:"repeating1"`
+	Info              MessageInfo                `json:"info"`
+	Sid               *uint8                     `json:"sid"`
+	RangeResidualMode RangeResidualModeConst     `json:"rangeResidualMode"`
+	SatsInView        *uint8                     `json:"satsInView"`
+	Repeating1        []GnssSatsInViewRepeating1 `json:"repeating1"`
 }
 type GnssSatsInViewRepeating1 struct {
-	Prn *uint8 `json:"prn"`
-	Elevation *float32 `json:"elevation"`
-	Azimuth *float32 `json:"azimuth"`
-	Snr *float32 `json:"snr"`
-	RangeResiduals *int32 `json:"rangeResiduals"`
-	Status SatelliteStatusConst `json:"status"`
+	Prn            *uint8               `json:"prn"`
+	Elevation      *float32             `json:"elevation"`
+	Azimuth        *float32             `json:"azimuth"`
+	Snr            *float32             `json:"snr"`
+	RangeResiduals *int32               `json:"rangeResiduals"`
+	Status         SatelliteStatusConst `json:"status"`
 }
-func (g *GnssSatsInView) PGNNumber() uint32  { return 129540 }
+
+func (g *GnssSatsInView) PGNNumber() uint32 { return 129540 }
 func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GnssSatsInView{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssSatsInView-Sid: %w", err)
 	} else {
@@ -1787,7 +2434,7 @@ func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssSatsInView-RangeResidualMode: %w", err)
@@ -1796,12 +2443,12 @@ func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GnssSatsInView-SatsInView: %w", err)
 	} else {
@@ -1812,13 +2459,13 @@ func DecodeGnssSatsInView(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]GnssSatsInViewRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep GnssSatsInViewRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -1892,23 +2539,25 @@ func encodeGnssSatsInViewMsg(v Message) ([]byte, error) {
 	}
 	return EncodeGnssSatsInView(val)
 }
+
 type GpsAlmanacData struct {
-	Info MessageInfo `json:"info"`
-	Prn *uint8 `json:"prn"`
-	GpsWeekNumber *uint16 `json:"gpsWeekNumber"`
-	SvHealthBits []uint8 `json:"svHealthBits"`
-	Eccentricity *float32 `json:"eccentricity"`
-	AlmanacReferenceTime *float32 `json:"almanacReferenceTime"`
-	InclinationAngle *float32 `json:"inclinationAngle"`
-	RateOfRightAscension *float64 `json:"rateOfRightAscension"`
-	RootOfSemiMajorAxis *float32 `json:"rootOfSemiMajorAxis"`
-	ArgumentOfPerigee *float32 `json:"argumentOfPerigee"`
-	LongitudeOfAscensionNode *float32 `json:"longitudeOfAscensionNode"`
-	MeanAnomaly *float32 `json:"meanAnomaly"`
-	ClockParameter1 *float32 `json:"clockParameter1"`
-	ClockParameter2 *float64 `json:"clockParameter2"`
+	Info                     MessageInfo `json:"info"`
+	Prn                      *uint8      `json:"prn"`
+	GpsWeekNumber            *uint16     `json:"gpsWeekNumber"`
+	SvHealthBits             []uint8     `json:"svHealthBits"`
+	Eccentricity             *float32    `json:"eccentricity"`
+	AlmanacReferenceTime     *float32    `json:"almanacReferenceTime"`
+	InclinationAngle         *float32    `json:"inclinationAngle"`
+	RateOfRightAscension     *float64    `json:"rateOfRightAscension"`
+	RootOfSemiMajorAxis      *float32    `json:"rootOfSemiMajorAxis"`
+	ArgumentOfPerigee        *float32    `json:"argumentOfPerigee"`
+	LongitudeOfAscensionNode *float32    `json:"longitudeOfAscensionNode"`
+	MeanAnomaly              *float32    `json:"meanAnomaly"`
+	ClockParameter1          *float32    `json:"clockParameter1"`
+	ClockParameter2          *float64    `json:"clockParameter2"`
 }
-func (g *GpsAlmanacData) PGNNumber() uint32  { return 129541 }
+
+func (g *GpsAlmanacData) PGNNumber() uint32 { return 129541 }
 func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GpsAlmanacData{}
 	val.Info = Info
@@ -1919,7 +2568,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-GpsWeekNumber: %w", err)
@@ -1928,7 +2577,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-SvHealthBits: %w", err)
@@ -1937,7 +2586,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 4.76837e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-Eccentricity: %w", err)
@@ -1946,7 +2595,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(8, 4096); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-AlmanacReferenceTime: %w", err)
@@ -1955,7 +2604,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 1.90735e-06); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-InclinationAngle: %w", err)
@@ -1964,7 +2613,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(16, 3.63798e-12); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-RateOfRightAscension: %w", err)
@@ -1973,7 +2622,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(24, 0.000488281); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-RootOfSemiMajorAxis: %w", err)
@@ -1982,7 +2631,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(24, 1.19209e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-ArgumentOfPerigee: %w", err)
@@ -1991,7 +2640,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(24, 1.19209e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-LongitudeOfAscensionNode: %w", err)
@@ -2000,7 +2649,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(24, 1.19209e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-MeanAnomaly: %w", err)
@@ -2009,7 +2658,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(11, 9.53674e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-ClockParameter1: %w", err)
@@ -2018,7 +2667,7 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(11, 3.63798e-12); err != nil {
 		return nil, fmt.Errorf("parse failed for GpsAlmanacData-ClockParameter2: %w", err)
@@ -2027,12 +2676,12 @@ func DecodeGpsAlmanacData(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -2062,12 +2711,14 @@ func encodeGpsAlmanacDataMsg(v Message) ([]byte, error) {
 	}
 	return EncodeGpsAlmanacData(val)
 }
+
 type SmallCraftStatus struct {
-	Info MessageInfo `json:"info"`
-	PortTrimTab *int8 `json:"portTrimTab"`
-	StarboardTrimTab *int8 `json:"starboardTrimTab"`
+	Info             MessageInfo `json:"info"`
+	PortTrimTab      *int8       `json:"portTrimTab"`
+	StarboardTrimTab *int8       `json:"starboardTrimTab"`
 }
-func (s *SmallCraftStatus) PGNNumber() uint32  { return 130576 }
+
+func (s *SmallCraftStatus) PGNNumber() uint32 { return 130576 }
 func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SmallCraftStatus{}
 	val.Info = Info
@@ -2078,7 +2729,7 @@ func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SmallCraftStatus-StarboardTrimTab: %w", err)
@@ -2087,12 +2738,12 @@ func DecodeSmallCraftStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(48)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	return val, nil
 }
 
@@ -2111,16 +2762,18 @@ func encodeSmallCraftStatusMsg(v Message) ([]byte, error) {
 	}
 	return EncodeSmallCraftStatus(val)
 }
+
 type VesselSpeedComponents struct {
-	Info MessageInfo `json:"info"`
-	LongitudinalSpeedWaterReferenced *units.Velocity `json:"longitudinalSpeedWaterReferenced"`
-	TransverseSpeedWaterReferenced *units.Velocity `json:"transverseSpeedWaterReferenced"`
+	Info                              MessageInfo     `json:"info"`
+	LongitudinalSpeedWaterReferenced  *units.Velocity `json:"longitudinalSpeedWaterReferenced"`
+	TransverseSpeedWaterReferenced    *units.Velocity `json:"transverseSpeedWaterReferenced"`
 	LongitudinalSpeedGroundReferenced *units.Velocity `json:"longitudinalSpeedGroundReferenced"`
-	TransverseSpeedGroundReferenced *units.Velocity `json:"transverseSpeedGroundReferenced"`
-	SternSpeedWaterReferenced *units.Velocity `json:"sternSpeedWaterReferenced"`
-	SternSpeedGroundReferenced *units.Velocity `json:"sternSpeedGroundReferenced"`
+	TransverseSpeedGroundReferenced   *units.Velocity `json:"transverseSpeedGroundReferenced"`
+	SternSpeedWaterReferenced         *units.Velocity `json:"sternSpeedWaterReferenced"`
+	SternSpeedGroundReferenced        *units.Velocity `json:"sternSpeedGroundReferenced"`
 }
-func (v *VesselSpeedComponents) PGNNumber() uint32  { return 130578 }
+
+func (v *VesselSpeedComponents) PGNNumber() uint32 { return 130578 }
 func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &VesselSpeedComponents{}
 	val.Info = Info
@@ -2131,7 +2784,7 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-TransverseSpeedWaterReferenced: %w", err)
@@ -2140,7 +2793,7 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-LongitudinalSpeedGroundReferenced: %w", err)
@@ -2149,7 +2802,7 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-TransverseSpeedGroundReferenced: %w", err)
@@ -2158,7 +2811,7 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-SternSpeedWaterReferenced: %w", err)
@@ -2167,7 +2820,7 @@ func DecodeVesselSpeedComponents(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for VesselSpeedComponents-SternSpeedGroundReferenced: %w", err)
