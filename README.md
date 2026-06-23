@@ -159,19 +159,19 @@ Filter messages using [CEL](https://github.com/google/cel-go) expressions.
 // Only vessel heading messages
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
-    n2k.Filter(`pgn == 127250`),
+    n2k.Filter("pgn == 127250"),
 ) { ... }
 
 // Filter on decoded fields
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
-    n2k.Filter(`pgn == 127250 && msg.Heading > 3.14`),
+    n2k.Filter("pgn == 127250 && msg.Heading > 3.14"),
 ) { ... }
 
 // Filter by source address
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
-    n2k.Filter(`source == 3`),
+    n2k.Filter("source == 3"),
 ) { ... }
 ```
 

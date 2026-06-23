@@ -30,7 +30,7 @@ func TestReceiveNoSources(t *testing.T) {
 func TestReceiveWithFilter(t *testing.T) {
 	ctx := context.Background()
 	count := 0
-	for msg, err := range Receive(ctx, Replay([]can.Frame{testFrame127501}), Filter(`pgn == 0`), IncludeUnknown()) {
+	for msg, err := range Receive(ctx, Replay([]can.Frame{testFrame127501}), Filter("pgn == 0"), IncludeUnknown()) {
 		assert.NoError(t, err)
 		_ = msg
 		count++

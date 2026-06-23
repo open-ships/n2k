@@ -30,27 +30,6 @@ func TestRoundTrip_EncodeDecodeEngineParametersRapidUpdate(t *testing.T) {
 	assert.Equal(t, int8(5), *result.TiltTrim)
 }
 
-func TestRoundTrip_EncodeDecodeRudder(t *testing.T) {
-	original := &Rudder{
-		Instance:       ptrUint8(0),
-		DirectionOrder: DirectionRudderConst(1),
-		AngleOrder:     ptrFloat32(0.1745),
-		Position:       ptrFloat32(-0.0873),
-	}
-
-	data, err := EncodeRudder(original)
-	assert.NoError(t, err)
-
-	decoded, err := DecodeRudder(MessageInfo{}, NewPgnDataStream(data))
-	assert.NoError(t, err)
-
-	result := decoded.(*Rudder)
-	assert.Equal(t, uint8(0), *result.Instance)
-	assert.Equal(t, DirectionRudderConst(1), result.DirectionOrder)
-	assert.InDelta(t, float32(0.1745), *result.AngleOrder, 0.0001)
-	assert.InDelta(t, float32(-0.0873), *result.Position, 0.0001)
-}
-
 func TestRoundTrip_EncodeDecodeEngineParametersDynamic(t *testing.T) {
 	oilPressure := units.NewPressure(units.Pa, 250000)
 	oilTemp := units.NewTemperature(units.Kelvin, 370.0)

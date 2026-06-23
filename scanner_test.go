@@ -94,7 +94,7 @@ func TestScannerWithFilter(t *testing.T) {
 	ctx := context.Background()
 	s := NewScanner(ctx,
 		Replay([]can.Frame{testFrame127501}),
-		Filter(`pgn == 127501`),
+		Filter("pgn == 127501"),
 		IncludeUnknown(),
 	)
 
@@ -110,7 +110,7 @@ func TestScannerWithFilterNoMatch(t *testing.T) {
 	ctx := context.Background()
 	s := NewScanner(ctx,
 		Replay([]can.Frame{testFrame127501}),
-		Filter(`pgn == 0`),
+		Filter("pgn == 0"),
 		IncludeUnknown(),
 	)
 
@@ -126,7 +126,7 @@ func TestScannerWithInvalidFilter(t *testing.T) {
 	ctx := context.Background()
 	s := NewScanner(ctx,
 		Replay([]can.Frame{testFrame127501}),
-		Filter(`invalid !!!`),
+		Filter("invalid !!!"),
 	)
 
 	assert.False(t, s.Next())
