@@ -3,8 +3,8 @@ package adapter
 import (
 	"time"
 
-	"github.com/open-ships/n2k/pgn"
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // This data structure is copied from

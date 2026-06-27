@@ -6,7 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-"os"
+	"os"
 	"os/signal"
 
 	"github.com/open-ships/n2k"

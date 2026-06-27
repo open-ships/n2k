@@ -253,8 +253,8 @@ func TestBAMTransmit_SmallPayload(t *testing.T) {
 	// Verify CM_BAM.
 	assert.Equal(t, ControlBAM, frames[0].Data[0])
 	assert.Equal(t, uint8(9), frames[0].Data[1]) // total size low byte
-	assert.Equal(t, uint8(0), frames[0].Data[2])  // total size high byte
-	assert.Equal(t, uint8(2), frames[0].Data[3])  // frame count
+	assert.Equal(t, uint8(0), frames[0].Data[2]) // total size high byte
+	assert.Equal(t, uint8(2), frames[0].Data[3]) // frame count
 
 	// Verify DT frame 1: seq=1, data=payload[0:7].
 	assert.Equal(t, uint8(1), frames[1].Data[0])

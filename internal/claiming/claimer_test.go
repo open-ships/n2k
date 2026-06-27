@@ -93,9 +93,9 @@ func TestClaimer_AutoMode_Contention(t *testing.T) {
 
 	var newAddr uint8
 	c := claiming.New(claiming.Config{
-		Mode:    claiming.ModeAuto,
-		Address: 253,
-		Name:    ourName,
+		Mode:       claiming.ModeAuto,
+		Address:    253,
+		Name:       ourName,
 		WriteFrame: sink.write,
 		OnAddressChange: func(addr uint8) {
 			newAddr = addr
@@ -125,9 +125,9 @@ func TestClaimer_AutoMode_MultipleRetries(t *testing.T) {
 
 	var addressHistory []uint8
 	c := claiming.New(claiming.Config{
-		Mode:    claiming.ModeAuto,
-		Address: 253,
-		Name:    ourName,
+		Mode:       claiming.ModeAuto,
+		Address:    253,
+		Name:       ourName,
 		WriteFrame: sink.write,
 		OnAddressChange: func(addr uint8) {
 			addressHistory = append(addressHistory, addr)
@@ -161,9 +161,9 @@ func TestClaimer_AutoMode_Exhaustion(t *testing.T) {
 
 	var lastAddr uint8
 	c := claiming.New(claiming.Config{
-		Mode:    claiming.ModeAuto,
-		Address: 3, // Start low to make exhaustion quick.
-		Name:    ourName,
+		Mode:       claiming.ModeAuto,
+		Address:    3, // Start low to make exhaustion quick.
+		Name:       ourName,
 		WriteFrame: sink.write,
 		OnAddressChange: func(addr uint8) {
 			lastAddr = addr
@@ -223,9 +223,9 @@ func TestClaimer_ExplicitMode_Contention(t *testing.T) {
 
 	var fatalErr error
 	c := claiming.New(claiming.Config{
-		Mode:    claiming.ModeExplicit,
-		Address: 42,
-		Name:    ourName,
+		Mode:       claiming.ModeExplicit,
+		Address:    42,
+		Name:       ourName,
 		WriteFrame: sink.write,
 		OnFatalError: func(err error) {
 			fatalErr = err

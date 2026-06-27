@@ -14,9 +14,9 @@ type config struct {
 	filterExpr     string
 	includeUnknown bool
 	logger         *slog.Logger
-	sourceAddress  *uint8         // nil = auto mode
-	deviceName     *DeviceName    // nil = use default
-	claimTimeout   *time.Duration // nil = use default (1500ms)
+	sourceAddress  *uint8           // nil = auto mode
+	deviceName     *DeviceName      // nil = use default
+	claimTimeout   *time.Duration   // nil = use default (1500ms)
 	bus            canbus.Interface // pre-constructed bus (internal/testing use)
 }
 
