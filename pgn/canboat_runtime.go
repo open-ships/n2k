@@ -610,7 +610,7 @@ func jsonFieldName(field *FieldDescriptor) string {
 		return "field"
 	}
 	parts := strings.FieldsFunc(name, func(r rune) bool {
-		return !(r >= 'a' && r <= 'z') && !(r >= 'A' && r <= 'Z') && !(r >= '0' && r <= '9')
+		return (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && (r < '0' || r > '9')
 	})
 	for i := range parts {
 		parts[i] = strings.ToLower(parts[i])
@@ -640,10 +640,3 @@ func canboatBool(v bool) *bool          { return &v }
 func canboatInt64(v int64) *int64       { return &v }
 
 func canboatMatch(v int) *int { return &v }
-
-func canboatOptionalFloat(v float64, ok bool) *float64 {
-	if !ok || math.IsNaN(v) {
-		return nil
-	}
-	return &v
-}

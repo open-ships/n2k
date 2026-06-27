@@ -107,7 +107,7 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	if err := os.WriteFile("pgn/canboat_generated.go", out, 0o644); err != nil {
+	if err := os.WriteFile("pgn/canboat_generated.go", out, 0o600); err != nil {
 		fatal(err)
 	}
 }
@@ -118,7 +118,7 @@ func fetch(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("GET %s: %s", url, resp.Status)
 	}

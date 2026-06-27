@@ -1,4 +1,5 @@
 golangci_lint_version := "v2.12.0"
+secure_go_toolchain := "go1.25.11"
 
 # list available recipes
 default:
@@ -63,8 +64,8 @@ lint:
 
 # run security review (vulnerability scan + static analysis)
 secure:
-    govulncheck ./...
-    gosec -exclude-generated -exclude=G115 ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} govulncheck ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} gosec -exclude-generated -exclude=G115 ./...
 
 # tidy go modules
 tidy:
