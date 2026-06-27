@@ -68,7 +68,7 @@ func EncodeVictronBatteryRegister(val *VictronBatteryRegister) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.RegisterId, 16)
 	w.writeUInt32(val.Payload, 32)

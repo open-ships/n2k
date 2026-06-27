@@ -29,6 +29,14 @@ setup:
 test:
     go test ./...
 
+# compare runtime PGN support against current canboat.json
+canboat-parity:
+    CANBOAT_PARITY=1 go test ./pgn -run TestCanboatParity -count=1 -v
+
+# regenerate CANboat-derived runtime metadata from upstream master
+generate-canboat:
+    go run ./cmd/canboatgen
+
 # run tests with verbose output
 test-v:
     go test -v ./...

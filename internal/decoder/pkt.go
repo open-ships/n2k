@@ -118,9 +118,12 @@ func NewPacket(info pgn.MessageInfo, data []byte) *Packet {
 			// PGN not found in the canboat-derived registry -- treat as unknown.
 			p.ParseErrors = append(p.ParseErrors, fmt.Errorf("no data for pgn"))
 		} else {
-			// Use the first candidate's Fast flag to determine if this is a multi-frame PGN.
-			// This is only misleading for PGN 130824, where some variants are fast and some slow.
-			p.Fast = p.Candidates[0].Fast // only misleading for PGN 130824
+			for _, candidate := range p.Candidates {
+				if candidate.Fast {
+					p.Fast = true
+					break
+				}
+			}
 		}
 	}
 	return &p
@@ -174,16 +177,21 @@ func (p *Packet) UnknownPGN() *pgn.UnknownPGN {
 // skips any candidate whose ManId doesn't match the packet's manufacturer. This ensures
 // that only the correct manufacturer's decoder is attempted.
 //
-// For non-proprietary PGNs, all candidates pass through (the Proprietary flag is false,
-// so the manufacturer check is skipped).
+// All remaining candidates are then filtered by CANboat Match predicates, which are
+// needed to distinguish variants that share a PGN and manufacturer.
 func (p *Packet) AddDecoders() {
 	// Extract manufacturer code from the data payload (only meaningful for proprietary PGNs).
 	p.GetManCode() // sets p.Manufacturer
+	candidates := make([]*pgn.PgnInfo, 0, len(p.Candidates))
 	for _, d := range p.Candidates {
 		// For proprietary PGNs, skip candidates from a different manufacturer.
-		if p.Proprietary && p.Manufacturer != d.ManId {
+		if p.Proprietary && d.ManId != 0 && p.Manufacturer != d.ManId {
 			continue
 		}
+		candidates = append(candidates, d)
+	}
+	candidates = pgn.FilterMatchingPgnInfos(candidates, p.Data)
+	for _, d := range candidates {
 		p.Decoders = append(p.Decoders, d.Decoder)
 	}
 }

@@ -125,9 +125,9 @@ func EncodeSimradTextMessage(val *SimradTextMessage) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)

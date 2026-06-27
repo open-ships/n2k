@@ -7,12 +7,13 @@ import (
 )
 
 type IsoAcknowledgement struct {
-	Info MessageInfo `json:"info"`
-	Control IsoControlConst `json:"control"`
-	GroupFunction *uint8 `json:"groupFunction"`
-	Pgn *uint32 `json:"pgn"`
+	Info          MessageInfo     `json:"info"`
+	Control       IsoControlConst `json:"control"`
+	GroupFunction *uint8          `json:"groupFunction"`
+	Pgn           *uint32         `json:"pgn"`
 }
-func (i *IsoAcknowledgement) PGNNumber() uint32  { return 59392 }
+
+func (i *IsoAcknowledgement) PGNNumber() uint32 { return 59392 }
 func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoAcknowledgement{}
 	val.Info = Info
@@ -23,7 +24,7 @@ func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAcknowledgement-GroupFunction: %w", err)
@@ -32,12 +33,12 @@ func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(24)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAcknowledgement-Pgn: %w", err)
 	} else {
@@ -45,8 +46,8 @@ func DecodeIsoAcknowledgement(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -55,7 +56,7 @@ func EncodeIsoAcknowledgement(val *IsoAcknowledgement) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.Control), 8)
 	w.writeUInt8(val.GroupFunction, 8)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
@@ -66,11 +67,13 @@ func encodeIsoAcknowledgementMsg(v Message) ([]byte, error) {
 	}
 	return EncodeIsoAcknowledgement(val)
 }
+
 type IsoRequest struct {
 	Info MessageInfo `json:"info"`
-	Pgn *uint32 `json:"pgn"`
+	Pgn  *uint32     `json:"pgn"`
 }
-func (i *IsoRequest) PGNNumber() uint32  { return 59904 }
+
+func (i *IsoRequest) PGNNumber() uint32 { return 59904 }
 func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoRequest{}
 	val.Info = Info
@@ -81,8 +84,8 @@ func DecodeIsoRequest(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -99,12 +102,14 @@ func encodeIsoRequestMsg(v Message) ([]byte, error) {
 	}
 	return EncodeIsoRequest(val)
 }
+
 type IsoTransportProtocolDataTransfer struct {
 	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Data []uint8 `json:"data"`
+	Sid  *uint8      `json:"sid"`
+	Data []uint8     `json:"data"`
 }
-func (i *IsoTransportProtocolDataTransfer) PGNNumber() uint32  { return 60160 }
+
+func (i *IsoTransportProtocolDataTransfer) PGNNumber() uint32 { return 60160 }
 func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolDataTransfer{}
 	val.Info = Info
@@ -115,7 +120,7 @@ func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(56); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolDataTransfer-Data: %w", err)
@@ -124,8 +129,8 @@ func DecodeIsoTransportProtocolDataTransfer(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -143,15 +148,17 @@ func encodeIsoTransportProtocolDataTransferMsg(v Message) ([]byte, error) {
 	}
 	return EncodeIsoTransportProtocolDataTransfer(val)
 }
+
 type IsoTransportProtocolConnectionManagementRequestToSend struct {
-	Info MessageInfo `json:"info"`
+	Info              MessageInfo     `json:"info"`
 	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
-	MessageSize *uint16 `json:"messageSize"`
-	Packets *uint8 `json:"packets"`
-	PacketsReply *uint8 `json:"packetsReply"`
-	Pgn *uint32 `json:"pgn"`
+	MessageSize       *uint16         `json:"messageSize"`
+	Packets           *uint8          `json:"packets"`
+	PacketsReply      *uint8          `json:"packetsReply"`
+	Pgn               *uint32         `json:"pgn"`
 }
-func (i *IsoTransportProtocolConnectionManagementRequestToSend) PGNNumber() uint32  { return 60416 }
+
+func (i *IsoTransportProtocolConnectionManagementRequestToSend) PGNNumber() uint32 { return 60416 }
 func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolConnectionManagementRequestToSend{}
 	val.Info = Info
@@ -165,7 +172,7 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementRequestToSend-MessageSize: %w", err)
@@ -174,7 +181,7 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementRequestToSend-Packets: %w", err)
@@ -183,7 +190,7 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementRequestToSend-PacketsReply: %w", err)
@@ -192,7 +199,7 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementRequestToSend-Pgn: %w", err)
@@ -201,8 +208,8 @@ func DecodeIsoTransportProtocolConnectionManagementRequestToSend(Info MessageInf
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -223,14 +230,16 @@ func encodeIsoTransportProtocolConnectionManagementRequestToSendMsg(v Message) (
 	}
 	return EncodeIsoTransportProtocolConnectionManagementRequestToSend(val)
 }
+
 type IsoTransportProtocolConnectionManagementClearToSend struct {
-	Info MessageInfo `json:"info"`
+	Info              MessageInfo     `json:"info"`
 	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
-	MaxPackets *uint8 `json:"maxPackets"`
-	NextSid *uint8 `json:"nextSid"`
-	Pgn *uint32 `json:"pgn"`
+	MaxPackets        *uint8          `json:"maxPackets"`
+	NextSid           *uint8          `json:"nextSid"`
+	Pgn               *uint32         `json:"pgn"`
 }
-func (i *IsoTransportProtocolConnectionManagementClearToSend) PGNNumber() uint32  { return 60416 }
+
+func (i *IsoTransportProtocolConnectionManagementClearToSend) PGNNumber() uint32 { return 60416 }
 func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolConnectionManagementClearToSend{}
 	val.Info = Info
@@ -244,7 +253,7 @@ func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementClearToSend-MaxPackets: %w", err)
@@ -253,7 +262,7 @@ func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementClearToSend-NextSid: %w", err)
@@ -262,12 +271,12 @@ func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementClearToSend-Pgn: %w", err)
 	} else {
@@ -275,8 +284,8 @@ func DecodeIsoTransportProtocolConnectionManagementClearToSend(Info MessageInfo,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -286,7 +295,7 @@ func EncodeIsoTransportProtocolConnectionManagementClearToSend(val *IsoTransport
 	w.writeLookupField(uint64(val.GroupFunctionCode), 8)
 	w.writeUInt8(val.MaxPackets, 8)
 	w.writeUInt8(val.NextSid, 8)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
@@ -297,14 +306,16 @@ func encodeIsoTransportProtocolConnectionManagementClearToSendMsg(v Message) ([]
 	}
 	return EncodeIsoTransportProtocolConnectionManagementClearToSend(val)
 }
+
 type IsoTransportProtocolConnectionManagementEndOfMessage struct {
-	Info MessageInfo `json:"info"`
-	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
-	TotalMessageSize *uint16 `json:"totalMessageSize"`
-	TotalNumberOfFramesReceived *uint8 `json:"totalNumberOfFramesReceived"`
-	Pgn *uint32 `json:"pgn"`
+	Info                        MessageInfo     `json:"info"`
+	GroupFunctionCode           IsoCommandConst `json:"groupFunctionCode"`
+	TotalMessageSize            *uint16         `json:"totalMessageSize"`
+	TotalNumberOfFramesReceived *uint8          `json:"totalNumberOfFramesReceived"`
+	Pgn                         *uint32         `json:"pgn"`
 }
-func (i *IsoTransportProtocolConnectionManagementEndOfMessage) PGNNumber() uint32  { return 60416 }
+
+func (i *IsoTransportProtocolConnectionManagementEndOfMessage) PGNNumber() uint32 { return 60416 }
 func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolConnectionManagementEndOfMessage{}
 	val.Info = Info
@@ -318,7 +329,7 @@ func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementEndOfMessage-TotalMessageSize: %w", err)
@@ -327,7 +338,7 @@ func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementEndOfMessage-TotalNumberOfFramesReceived: %w", err)
@@ -336,12 +347,12 @@ func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementEndOfMessage-Pgn: %w", err)
 	} else {
@@ -349,8 +360,8 @@ func DecodeIsoTransportProtocolConnectionManagementEndOfMessage(Info MessageInfo
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -360,7 +371,7 @@ func EncodeIsoTransportProtocolConnectionManagementEndOfMessage(val *IsoTranspor
 	w.writeLookupField(uint64(val.GroupFunctionCode), 8)
 	w.writeUInt16(val.TotalMessageSize, 16)
 	w.writeUInt8(val.TotalNumberOfFramesReceived, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
@@ -371,14 +382,16 @@ func encodeIsoTransportProtocolConnectionManagementEndOfMessageMsg(v Message) ([
 	}
 	return EncodeIsoTransportProtocolConnectionManagementEndOfMessage(val)
 }
+
 type IsoTransportProtocolConnectionManagementBroadcastAnnounce struct {
-	Info MessageInfo `json:"info"`
+	Info              MessageInfo     `json:"info"`
 	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
-	MessageSize *uint16 `json:"messageSize"`
-	Packets *uint8 `json:"packets"`
-	Pgn *uint32 `json:"pgn"`
+	MessageSize       *uint16         `json:"messageSize"`
+	Packets           *uint8          `json:"packets"`
+	Pgn               *uint32         `json:"pgn"`
 }
-func (i *IsoTransportProtocolConnectionManagementBroadcastAnnounce) PGNNumber() uint32  { return 60416 }
+
+func (i *IsoTransportProtocolConnectionManagementBroadcastAnnounce) PGNNumber() uint32 { return 60416 }
 func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolConnectionManagementBroadcastAnnounce{}
 	val.Info = Info
@@ -392,7 +405,7 @@ func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementBroadcastAnnounce-MessageSize: %w", err)
@@ -401,7 +414,7 @@ func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementBroadcastAnnounce-Packets: %w", err)
@@ -410,12 +423,12 @@ func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementBroadcastAnnounce-Pgn: %w", err)
 	} else {
@@ -423,8 +436,8 @@ func DecodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(Info Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -434,7 +447,7 @@ func EncodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(val *IsoTra
 	w.writeLookupField(uint64(val.GroupFunctionCode), 8)
 	w.writeUInt16(val.MessageSize, 16)
 	w.writeUInt8(val.Packets, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
@@ -445,13 +458,15 @@ func encodeIsoTransportProtocolConnectionManagementBroadcastAnnounceMsg(v Messag
 	}
 	return EncodeIsoTransportProtocolConnectionManagementBroadcastAnnounce(val)
 }
+
 type IsoTransportProtocolConnectionManagementAbort struct {
-	Info MessageInfo `json:"info"`
+	Info              MessageInfo     `json:"info"`
 	GroupFunctionCode IsoCommandConst `json:"groupFunctionCode"`
-	Reason []uint8 `json:"reason"`
-	Pgn *uint32 `json:"pgn"`
+	Reason            []uint8         `json:"reason"`
+	Pgn               *uint32         `json:"pgn"`
 }
-func (i *IsoTransportProtocolConnectionManagementAbort) PGNNumber() uint32  { return 60416 }
+
+func (i *IsoTransportProtocolConnectionManagementAbort) PGNNumber() uint32 { return 60416 }
 func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoTransportProtocolConnectionManagementAbort{}
 	val.Info = Info
@@ -465,7 +480,7 @@ func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, strea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementAbort-Reason: %w", err)
@@ -474,12 +489,12 @@ func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, strea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(24)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoTransportProtocolConnectionManagementAbort-Pgn: %w", err)
 	} else {
@@ -487,8 +502,8 @@ func DecodeIsoTransportProtocolConnectionManagementAbort(Info MessageInfo, strea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -497,7 +512,7 @@ func EncodeIsoTransportProtocolConnectionManagementAbort(val *IsoTransportProtoc
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.GroupFunctionCode), 8)
 	w.writeBinaryData(val.Reason, 8)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	w.writeUInt32(val.Pgn, 24)
 	return w.Bytes(), w.Err()
 }
@@ -508,19 +523,21 @@ func encodeIsoTransportProtocolConnectionManagementAbortMsg(v Message) ([]byte, 
 	}
 	return EncodeIsoTransportProtocolConnectionManagementAbort(val)
 }
+
 type IsoAddressClaim struct {
-	Info MessageInfo `json:"info"`
-	UniqueNumber *uint32 `json:"uniqueNumber"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	DeviceInstanceLower *uint8 `json:"deviceInstanceLower"`
-	DeviceInstanceUpper *uint8 `json:"deviceInstanceUpper"`
-	DeviceFunction DeviceFunctionConst `json:"deviceFunction"`
-	DeviceClass DeviceClassConst `json:"deviceClass"`
-	SystemInstance *uint8 `json:"systemInstance"`
-	IndustryGroup IndustryCodeConst `json:"industryGroup"`
-	ArbitraryAddressCapable *uint8 `json:"arbitraryAddressCapable"`
+	Info                    MessageInfo           `json:"info"`
+	UniqueNumber            *uint32               `json:"uniqueNumber"`
+	ManufacturerCode        ManufacturerCodeConst `json:"manufacturerCode"`
+	DeviceInstanceLower     *uint8                `json:"deviceInstanceLower"`
+	DeviceInstanceUpper     *uint8                `json:"deviceInstanceUpper"`
+	DeviceFunction          DeviceFunctionConst   `json:"deviceFunction"`
+	DeviceClass             DeviceClassConst      `json:"deviceClass"`
+	SystemInstance          *uint8                `json:"systemInstance"`
+	IndustryGroup           IndustryCodeConst     `json:"industryGroup"`
+	ArbitraryAddressCapable *uint8                `json:"arbitraryAddressCapable"`
 }
-func (i *IsoAddressClaim) PGNNumber() uint32  { return 60928 }
+
+func (i *IsoAddressClaim) PGNNumber() uint32 { return 60928 }
 func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoAddressClaim{}
 	val.Info = Info
@@ -531,7 +548,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-ManufacturerCode: %w", err)
@@ -540,7 +557,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(3); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-DeviceInstanceLower: %w", err)
@@ -549,7 +566,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(5); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-DeviceInstanceUpper: %w", err)
@@ -558,7 +575,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-DeviceFunction: %w", err)
@@ -567,12 +584,12 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(7); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-DeviceClass: %w", err)
 	} else {
@@ -580,7 +597,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(4); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-SystemInstance: %w", err)
@@ -589,7 +606,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-IndustryGroup: %w", err)
@@ -598,7 +615,7 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(1); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoAddressClaim-ArbitraryAddressCapable: %w", err)
@@ -607,8 +624,8 @@ func DecodeIsoAddressClaim(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -620,7 +637,7 @@ func EncodeIsoAddressClaim(val *IsoAddressClaim) ([]byte, error) {
 	w.writeUInt8(val.DeviceInstanceLower, 3)
 	w.writeUInt8(val.DeviceInstanceUpper, 5)
 	w.writeLookupField(uint64(val.DeviceFunction), 8)
-	w.skipBits(1)
+	w.writeSpareBits(1)
 	w.writeLookupField(uint64(val.DeviceClass), 7)
 	w.writeUInt8(val.SystemInstance, 4)
 	w.writeLookupField(uint64(val.IndustryGroup), 3)
@@ -634,19 +651,21 @@ func encodeIsoAddressClaimMsg(v Message) ([]byte, error) {
 	}
 	return EncodeIsoAddressClaim(val)
 }
+
 type IsoCommandedAddress struct {
-	Info MessageInfo `json:"info"`
-	UniqueNumber []uint8 `json:"uniqueNumber"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	DeviceInstanceLower *uint8 `json:"deviceInstanceLower"`
-	DeviceInstanceUpper *uint8 `json:"deviceInstanceUpper"`
-	DeviceFunction DeviceFunctionConst `json:"deviceFunction"`
-	DeviceClass DeviceClassConst `json:"deviceClass"`
-	SystemInstance *uint8 `json:"systemInstance"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	NewSourceAddress *uint8 `json:"newSourceAddress"`
+	Info                MessageInfo           `json:"info"`
+	UniqueNumber        []uint8               `json:"uniqueNumber"`
+	ManufacturerCode    ManufacturerCodeConst `json:"manufacturerCode"`
+	DeviceInstanceLower *uint8                `json:"deviceInstanceLower"`
+	DeviceInstanceUpper *uint8                `json:"deviceInstanceUpper"`
+	DeviceFunction      DeviceFunctionConst   `json:"deviceFunction"`
+	DeviceClass         DeviceClassConst      `json:"deviceClass"`
+	SystemInstance      *uint8                `json:"systemInstance"`
+	IndustryCode        IndustryCodeConst     `json:"industryCode"`
+	NewSourceAddress    *uint8                `json:"newSourceAddress"`
 }
-func (i *IsoCommandedAddress) PGNNumber() uint32  { return 65240 }
+
+func (i *IsoCommandedAddress) PGNNumber() uint32 { return 65240 }
 func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &IsoCommandedAddress{}
 	val.Info = Info
@@ -657,7 +676,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(11); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-ManufacturerCode: %w", err)
@@ -666,7 +685,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(3); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-DeviceInstanceLower: %w", err)
@@ -675,7 +694,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(5); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-DeviceInstanceUpper: %w", err)
@@ -684,7 +703,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-DeviceFunction: %w", err)
@@ -693,12 +712,12 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(7); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-DeviceClass: %w", err)
 	} else {
@@ -706,7 +725,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(4); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-SystemInstance: %w", err)
@@ -715,7 +734,7 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-IndustryCode: %w", err)
@@ -724,12 +743,12 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for IsoCommandedAddress-NewSourceAddress: %w", err)
 	} else {
@@ -737,8 +756,8 @@ func DecodeIsoCommandedAddress(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -750,11 +769,11 @@ func EncodeIsoCommandedAddress(val *IsoCommandedAddress) ([]byte, error) {
 	w.writeUInt8(val.DeviceInstanceLower, 3)
 	w.writeUInt8(val.DeviceInstanceUpper, 5)
 	w.writeLookupField(uint64(val.DeviceFunction), 8)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.DeviceClass), 7)
 	w.writeUInt8(val.SystemInstance, 4)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeUInt8(val.NewSourceAddress, 8)
 	return w.Bytes(), w.Err()
 }
@@ -765,26 +784,30 @@ func encodeIsoCommandedAddressMsg(v Message) ([]byte, error) {
 	}
 	return EncodeIsoCommandedAddress(val)
 }
+
 type NmeaRequestGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	TransmissionInterval *float32 `json:"transmissionInterval"`
-	TransmissionIntervalOffset *float32 `json:"transmissionIntervalOffset"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaRequestGroupFunctionRepeating1 `json:"repeating1"`
+	Info                       MessageInfo                          `json:"info"`
+	FunctionCode               GroupFunctionConst                   `json:"functionCode"`
+	Pgn                        *uint32                              `json:"pgn"`
+	TransmissionInterval       *float32                             `json:"transmissionInterval"`
+	TransmissionIntervalOffset *float32                             `json:"transmissionIntervalOffset"`
+	NumberOfParameters         *uint8                               `json:"numberOfParameters"`
+	Repeating1                 []NmeaRequestGroupFunctionRepeating1 `json:"repeating1"`
 }
-func (n *NmeaRequestGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaRequestGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaRequestGroupFunctionRepeating1 struct {
-	Parameter *uint8 `json:"parameter"`
-	Value []uint8 `json:"value"`
+	Parameter *uint8  `json:"parameter"`
+	Value     []uint8 `json:"value"`
 }
+
 func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaRequestGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaRequestGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -795,7 +818,7 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaRequestGroupFunction-Pgn: %w", err)
@@ -804,7 +827,7 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaRequestGroupFunction-TransmissionInterval: %w", err)
@@ -813,7 +836,7 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaRequestGroupFunction-TransmissionIntervalOffset: %w", err)
@@ -822,7 +845,7 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaRequestGroupFunction-NumberOfParameters: %w", err)
@@ -834,13 +857,13 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaRequestGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaRequestGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -860,14 +883,14 @@ func DecodeNmeaRequestGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -899,25 +922,29 @@ func encodeNmeaRequestGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaRequestGroupFunction(val)
 }
+
 type NmeaCommandGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	Priority PriorityConst `json:"priority"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaCommandGroupFunctionRepeating1 `json:"repeating1"`
+	Info               MessageInfo                          `json:"info"`
+	FunctionCode       GroupFunctionConst                   `json:"functionCode"`
+	Pgn                *uint32                              `json:"pgn"`
+	Priority           PriorityConst                        `json:"priority"`
+	NumberOfParameters *uint8                               `json:"numberOfParameters"`
+	Repeating1         []NmeaCommandGroupFunctionRepeating1 `json:"repeating1"`
 }
-func (n *NmeaCommandGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaCommandGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaCommandGroupFunctionRepeating1 struct {
-	Parameter *uint8 `json:"parameter"`
-	Value []uint8 `json:"value"`
+	Parameter *uint8  `json:"parameter"`
+	Value     []uint8 `json:"value"`
 }
+
 func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaCommandGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaCommandGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -928,7 +955,7 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaCommandGroupFunction-Pgn: %w", err)
@@ -937,7 +964,7 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaCommandGroupFunction-Priority: %w", err)
@@ -946,12 +973,12 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaCommandGroupFunction-NumberOfParameters: %w", err)
 	} else {
@@ -962,13 +989,13 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaCommandGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaCommandGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -988,14 +1015,14 @@ func DecodeNmeaCommandGroupFunction(Info MessageInfo, stream *PGNDataStream) (Me
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1005,7 +1032,7 @@ func EncodeNmeaCommandGroupFunction(val *NmeaCommandGroupFunction) ([]byte, erro
 	w.writeLookupField(uint64(val.FunctionCode), 8)
 	w.writeUInt32(val.Pgn, 24)
 	w.writeLookupField(uint64(val.Priority), 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt8(val.NumberOfParameters, 8)
 	for _, rep := range val.Repeating1 {
 		w.writeUInt8(rep.Parameter, 8)
@@ -1027,23 +1054,27 @@ func encodeNmeaCommandGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaCommandGroupFunction(val)
 }
+
 type NmeaAcknowledgeGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	PgnErrorCode PgnErrorCodeConst `json:"pgnErrorCode"`
-	TransmissionIntervalPriorityErrorCode TransmissionIntervalConst `json:"transmissionIntervalPriorityErrorCode"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaAcknowledgeGroupFunctionRepeating1 `json:"repeating1"`
+	Info                                  MessageInfo                              `json:"info"`
+	FunctionCode                          GroupFunctionConst                       `json:"functionCode"`
+	Pgn                                   *uint32                                  `json:"pgn"`
+	PgnErrorCode                          PgnErrorCodeConst                        `json:"pgnErrorCode"`
+	TransmissionIntervalPriorityErrorCode TransmissionIntervalConst                `json:"transmissionIntervalPriorityErrorCode"`
+	NumberOfParameters                    *uint8                                   `json:"numberOfParameters"`
+	Repeating1                            []NmeaAcknowledgeGroupFunctionRepeating1 `json:"repeating1"`
 }
-func (n *NmeaAcknowledgeGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaAcknowledgeGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaAcknowledgeGroupFunctionRepeating1 struct {
 	Parameter ParameterFieldConst `json:"parameter"`
 }
+
 func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaAcknowledgeGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaAcknowledgeGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -1054,7 +1085,7 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaAcknowledgeGroupFunction-Pgn: %w", err)
@@ -1063,7 +1094,7 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaAcknowledgeGroupFunction-PgnErrorCode: %w", err)
@@ -1072,7 +1103,7 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaAcknowledgeGroupFunction-TransmissionIntervalPriorityErrorCode: %w", err)
@@ -1081,7 +1112,7 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaAcknowledgeGroupFunction-NumberOfParameters: %w", err)
@@ -1093,13 +1124,13 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaAcknowledgeGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaAcknowledgeGroupFunctionRepeating1
 		if v, err := stream.readLookupField(4); err != nil {
@@ -1111,14 +1142,14 @@ func DecodeNmeaAcknowledgeGroupFunction(Info MessageInfo, stream *PGNDataStream)
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1142,33 +1173,37 @@ func encodeNmeaAcknowledgeGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaAcknowledgeGroupFunction(val)
 }
+
 type NmeaReadFieldsGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	UniqueId *uint8 `json:"uniqueId"`
-	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaReadFieldsGroupFunctionRepeating1 `json:"repeating1"`
-	Repeating2 []NmeaReadFieldsGroupFunctionRepeating2 `json:"repeating2"`
+	Info                   MessageInfo                             `json:"info"`
+	FunctionCode           GroupFunctionConst                      `json:"functionCode"`
+	Pgn                    *uint32                                 `json:"pgn"`
+	ManufacturerCode       ManufacturerCodeConst                   `json:"manufacturerCode"`
+	IndustryCode           IndustryCodeConst                       `json:"industryCode"`
+	UniqueId               *uint8                                  `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8                                  `json:"numberOfSelectionPairs"`
+	NumberOfParameters     *uint8                                  `json:"numberOfParameters"`
+	Repeating1             []NmeaReadFieldsGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2             []NmeaReadFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
-func (n *NmeaReadFieldsGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaReadFieldsGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaReadFieldsGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8 `json:"selectionParameter"`
-	SelectionValue []uint8 `json:"selectionValue"`
+	SelectionParameter *uint8  `json:"selectionParameter"`
+	SelectionValue     []uint8 `json:"selectionValue"`
 }
 type NmeaReadFieldsGroupFunctionRepeating2 struct {
 	Parameter *uint8 `json:"parameter"`
 }
+
 func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaReadFieldsGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var repeat2Count uint16
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var repeat2Count uint16
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -1179,7 +1214,7 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-Pgn: %w", err)
@@ -1188,31 +1223,31 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-	if IsProprietaryPGN( *val.Pgn) {
-	if v, err := stream.readLookupField(11); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-ManufacturerCode: %w", err)
-	} else {
-		val.ManufacturerCode = ManufacturerCodeConst(v)
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(2)
-	if stream.isEOF() {
-		return val, nil
 		}
-	if v, err := stream.readLookupField(3); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-IndustryCode: %w", err)
-	} else {
-		val.IndustryCode = IndustryCodeConst(v)
+	}
+	if IsProprietaryPGN(*val.Pgn) {
+		if v, err := stream.readLookupField(11); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-ManufacturerCode: %w", err)
+		} else {
+			val.ManufacturerCode = ManufacturerCodeConst(v)
 
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
+		stream.skipBits(2)
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
+		}
+		if v, err := stream.readLookupField(3); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-IndustryCode: %w", err)
+		} else {
+			val.IndustryCode = IndustryCodeConst(v)
+
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-UniqueId: %w", err)
@@ -1221,7 +1256,7 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-NumberOfSelectionPairs: %w", err)
@@ -1233,7 +1268,7 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsGroupFunction-NumberOfParameters: %w", err)
@@ -1245,13 +1280,13 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaReadFieldsGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaReadFieldsGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -1271,17 +1306,17 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
+			}
+		}
 	}
-		if repeat2Count == 0 {
-			return val, nil
-		}	
+	if repeat2Count == 0 {
+		return val, nil
+	}
 	val.Repeating2 = make([]NmeaReadFieldsGroupFunctionRepeating2, 0)
 	i = 0
 	for {
@@ -1295,14 +1330,14 @@ func DecodeNmeaReadFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) 
 		if int(repeat2Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			}  
+			}
 		} else {
 			i++
 			if i == int(repeat2Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1313,7 +1348,7 @@ func EncodeNmeaReadFieldsGroupFunction(val *NmeaReadFieldsGroupFunction) ([]byte
 	w.writeUInt32(val.Pgn, 24)
 	if val.Pgn != nil && IsProprietaryPGN(*val.Pgn) {
 		w.writeLookupField(uint64(val.ManufacturerCode), 11)
-		w.skipBits(2)
+		w.writeReservedBits(2)
 		w.writeLookupField(uint64(val.IndustryCode), 3)
 	}
 	w.writeUInt8(val.UniqueId, 8)
@@ -1342,34 +1377,38 @@ func encodeNmeaReadFieldsGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaReadFieldsGroupFunction(val)
 }
+
 type NmeaReadFieldsReplyGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	UniqueId *uint8 `json:"uniqueId"`
-	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaReadFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
-	Repeating2 []NmeaReadFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
+	Info                   MessageInfo                                  `json:"info"`
+	FunctionCode           GroupFunctionConst                           `json:"functionCode"`
+	Pgn                    *uint32                                      `json:"pgn"`
+	ManufacturerCode       ManufacturerCodeConst                        `json:"manufacturerCode"`
+	IndustryCode           IndustryCodeConst                            `json:"industryCode"`
+	UniqueId               *uint8                                       `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8                                       `json:"numberOfSelectionPairs"`
+	NumberOfParameters     *uint8                                       `json:"numberOfParameters"`
+	Repeating1             []NmeaReadFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2             []NmeaReadFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
-func (n *NmeaReadFieldsReplyGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaReadFieldsReplyGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaReadFieldsReplyGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8 `json:"selectionParameter"`
-	SelectionValue []uint8 `json:"selectionValue"`
+	SelectionParameter *uint8  `json:"selectionParameter"`
+	SelectionValue     []uint8 `json:"selectionValue"`
 }
 type NmeaReadFieldsReplyGroupFunctionRepeating2 struct {
-	Parameter *uint8 `json:"parameter"`
-	Value []uint8 `json:"value"`
+	Parameter *uint8  `json:"parameter"`
+	Value     []uint8 `json:"value"`
 }
+
 func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaReadFieldsReplyGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var repeat2Count uint16
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var repeat2Count uint16
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -1380,7 +1419,7 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-Pgn: %w", err)
@@ -1389,31 +1428,31 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-	if IsProprietaryPGN( *val.Pgn) {
-	if v, err := stream.readLookupField(11); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-ManufacturerCode: %w", err)
-	} else {
-		val.ManufacturerCode = ManufacturerCodeConst(v)
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(2)
-	if stream.isEOF() {
-		return val, nil
 		}
-	if v, err := stream.readLookupField(3); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-IndustryCode: %w", err)
-	} else {
-		val.IndustryCode = IndustryCodeConst(v)
+	}
+	if IsProprietaryPGN(*val.Pgn) {
+		if v, err := stream.readLookupField(11); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-ManufacturerCode: %w", err)
+		} else {
+			val.ManufacturerCode = ManufacturerCodeConst(v)
 
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
+		stream.skipBits(2)
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
+		}
+		if v, err := stream.readLookupField(3); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-IndustryCode: %w", err)
+		} else {
+			val.IndustryCode = IndustryCodeConst(v)
+
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-UniqueId: %w", err)
@@ -1422,7 +1461,7 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-NumberOfSelectionPairs: %w", err)
@@ -1434,7 +1473,7 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaReadFieldsReplyGroupFunction-NumberOfParameters: %w", err)
@@ -1446,13 +1485,13 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaReadFieldsReplyGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaReadFieldsReplyGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -1472,17 +1511,17 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
+			}
+		}
 	}
-		if repeat2Count == 0 {
-			return val, nil
-		}	
+	if repeat2Count == 0 {
+		return val, nil
+	}
 	val.Repeating2 = make([]NmeaReadFieldsReplyGroupFunctionRepeating2, 0)
 	i = 0
 	for {
@@ -1501,14 +1540,14 @@ func DecodeNmeaReadFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStr
 		if int(repeat2Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			}  
+			}
 		} else {
 			i++
 			if i == int(repeat2Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1519,7 +1558,7 @@ func EncodeNmeaReadFieldsReplyGroupFunction(val *NmeaReadFieldsReplyGroupFunctio
 	w.writeUInt32(val.Pgn, 24)
 	if val.Pgn != nil && IsProprietaryPGN(*val.Pgn) {
 		w.writeLookupField(uint64(val.ManufacturerCode), 11)
-		w.skipBits(2)
+		w.writeReservedBits(2)
 		w.writeLookupField(uint64(val.IndustryCode), 3)
 	}
 	w.writeUInt8(val.UniqueId, 8)
@@ -1556,34 +1595,38 @@ func encodeNmeaReadFieldsReplyGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaReadFieldsReplyGroupFunction(val)
 }
+
 type NmeaWriteFieldsGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	UniqueId *uint8 `json:"uniqueId"`
-	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaWriteFieldsGroupFunctionRepeating1 `json:"repeating1"`
-	Repeating2 []NmeaWriteFieldsGroupFunctionRepeating2 `json:"repeating2"`
+	Info                   MessageInfo                              `json:"info"`
+	FunctionCode           GroupFunctionConst                       `json:"functionCode"`
+	Pgn                    *uint32                                  `json:"pgn"`
+	ManufacturerCode       ManufacturerCodeConst                    `json:"manufacturerCode"`
+	IndustryCode           IndustryCodeConst                        `json:"industryCode"`
+	UniqueId               *uint8                                   `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8                                   `json:"numberOfSelectionPairs"`
+	NumberOfParameters     *uint8                                   `json:"numberOfParameters"`
+	Repeating1             []NmeaWriteFieldsGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2             []NmeaWriteFieldsGroupFunctionRepeating2 `json:"repeating2"`
 }
-func (n *NmeaWriteFieldsGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaWriteFieldsGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaWriteFieldsGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8 `json:"selectionParameter"`
-	SelectionValue []uint8 `json:"selectionValue"`
+	SelectionParameter *uint8  `json:"selectionParameter"`
+	SelectionValue     []uint8 `json:"selectionValue"`
 }
 type NmeaWriteFieldsGroupFunctionRepeating2 struct {
-	Parameter *uint8 `json:"parameter"`
-	Value []uint8 `json:"value"`
+	Parameter *uint8  `json:"parameter"`
+	Value     []uint8 `json:"value"`
 }
+
 func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaWriteFieldsGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var repeat2Count uint16
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var repeat2Count uint16
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -1594,7 +1637,7 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-Pgn: %w", err)
@@ -1603,31 +1646,31 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-	if IsProprietaryPGN( *val.Pgn) {
-	if v, err := stream.readLookupField(11); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-ManufacturerCode: %w", err)
-	} else {
-		val.ManufacturerCode = ManufacturerCodeConst(v)
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(2)
-	if stream.isEOF() {
-		return val, nil
 		}
-	if v, err := stream.readLookupField(3); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-IndustryCode: %w", err)
-	} else {
-		val.IndustryCode = IndustryCodeConst(v)
+	}
+	if IsProprietaryPGN(*val.Pgn) {
+		if v, err := stream.readLookupField(11); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-ManufacturerCode: %w", err)
+		} else {
+			val.ManufacturerCode = ManufacturerCodeConst(v)
 
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
+		stream.skipBits(2)
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
+		}
+		if v, err := stream.readLookupField(3); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-IndustryCode: %w", err)
+		} else {
+			val.IndustryCode = IndustryCodeConst(v)
+
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-UniqueId: %w", err)
@@ -1636,7 +1679,7 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-NumberOfSelectionPairs: %w", err)
@@ -1648,7 +1691,7 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsGroupFunction-NumberOfParameters: %w", err)
@@ -1660,13 +1703,13 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaWriteFieldsGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaWriteFieldsGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -1686,17 +1729,17 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
+			}
+		}
 	}
-		if repeat2Count == 0 {
-			return val, nil
-		}	
+	if repeat2Count == 0 {
+		return val, nil
+	}
 	val.Repeating2 = make([]NmeaWriteFieldsGroupFunctionRepeating2, 0)
 	i = 0
 	for {
@@ -1715,14 +1758,14 @@ func DecodeNmeaWriteFieldsGroupFunction(Info MessageInfo, stream *PGNDataStream)
 		if int(repeat2Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			}  
+			}
 		} else {
 			i++
 			if i == int(repeat2Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1733,7 +1776,7 @@ func EncodeNmeaWriteFieldsGroupFunction(val *NmeaWriteFieldsGroupFunction) ([]by
 	w.writeUInt32(val.Pgn, 24)
 	if val.Pgn != nil && IsProprietaryPGN(*val.Pgn) {
 		w.writeLookupField(uint64(val.ManufacturerCode), 11)
-		w.skipBits(2)
+		w.writeReservedBits(2)
 		w.writeLookupField(uint64(val.IndustryCode), 3)
 	}
 	w.writeUInt8(val.UniqueId, 8)
@@ -1770,34 +1813,38 @@ func encodeNmeaWriteFieldsGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaWriteFieldsGroupFunction(val)
 }
+
 type NmeaWriteFieldsReplyGroupFunction struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode GroupFunctionConst `json:"functionCode"`
-	Pgn *uint32 `json:"pgn"`
-	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
-	IndustryCode IndustryCodeConst `json:"industryCode"`
-	UniqueId *uint8 `json:"uniqueId"`
-	NumberOfSelectionPairs *uint8 `json:"numberOfSelectionPairs"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []NmeaWriteFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
-	Repeating2 []NmeaWriteFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
+	Info                   MessageInfo                                   `json:"info"`
+	FunctionCode           GroupFunctionConst                            `json:"functionCode"`
+	Pgn                    *uint32                                       `json:"pgn"`
+	ManufacturerCode       ManufacturerCodeConst                         `json:"manufacturerCode"`
+	IndustryCode           IndustryCodeConst                             `json:"industryCode"`
+	UniqueId               *uint8                                        `json:"uniqueId"`
+	NumberOfSelectionPairs *uint8                                        `json:"numberOfSelectionPairs"`
+	NumberOfParameters     *uint8                                        `json:"numberOfParameters"`
+	Repeating1             []NmeaWriteFieldsReplyGroupFunctionRepeating1 `json:"repeating1"`
+	Repeating2             []NmeaWriteFieldsReplyGroupFunctionRepeating2 `json:"repeating2"`
 }
-func (n *NmeaWriteFieldsReplyGroupFunction) PGNNumber() uint32  { return 126208 }
+
+func (n *NmeaWriteFieldsReplyGroupFunction) PGNNumber() uint32 { return 126208 }
+
 type NmeaWriteFieldsReplyGroupFunctionRepeating1 struct {
-	SelectionParameter *uint8 `json:"selectionParameter"`
-	SelectionValue []uint8 `json:"selectionValue"`
+	SelectionParameter *uint8  `json:"selectionParameter"`
+	SelectionValue     []uint8 `json:"selectionValue"`
 }
 type NmeaWriteFieldsReplyGroupFunctionRepeating2 struct {
-	Parameter *uint8 `json:"parameter"`
-	Value []uint8 `json:"value"`
+	Parameter *uint8  `json:"parameter"`
+	Value     []uint8 `json:"value"`
 }
+
 func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &NmeaWriteFieldsReplyGroupFunction{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
-		var repeat2Count uint16
-		var fieldIndex uint8
-		var manufacturer ManufacturerCodeConst
+	var repeat1Count uint16 = 0
+	var repeat2Count uint16
+	var fieldIndex uint8
+	var manufacturer ManufacturerCodeConst
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-FunctionCode: %w", err)
 	} else {
@@ -1808,7 +1855,7 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(24); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-Pgn: %w", err)
@@ -1817,31 +1864,31 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-	if IsProprietaryPGN( *val.Pgn) {
-	if v, err := stream.readLookupField(11); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-ManufacturerCode: %w", err)
-	} else {
-		val.ManufacturerCode = ManufacturerCodeConst(v)
-
-		if stream.isEOF() {
-			return val, nil
-		} 
-	}
-	stream.skipBits(2)
-	if stream.isEOF() {
-		return val, nil
 		}
-	if v, err := stream.readLookupField(3); err != nil {
-		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-IndustryCode: %w", err)
-	} else {
-		val.IndustryCode = IndustryCodeConst(v)
+	}
+	if IsProprietaryPGN(*val.Pgn) {
+		if v, err := stream.readLookupField(11); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-ManufacturerCode: %w", err)
+		} else {
+			val.ManufacturerCode = ManufacturerCodeConst(v)
 
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
+		stream.skipBits(2)
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
+		}
+		if v, err := stream.readLookupField(3); err != nil {
+			return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-IndustryCode: %w", err)
+		} else {
+			val.IndustryCode = IndustryCodeConst(v)
+
+			if stream.isEOF() {
+				return val, nil
+			}
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-UniqueId: %w", err)
@@ -1850,7 +1897,7 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-NumberOfSelectionPairs: %w", err)
@@ -1862,7 +1909,7 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for NmeaWriteFieldsReplyGroupFunction-NumberOfParameters: %w", err)
@@ -1874,13 +1921,13 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]NmeaWriteFieldsReplyGroupFunctionRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep NmeaWriteFieldsReplyGroupFunctionRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -1900,17 +1947,17 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
+			}
+		}
 	}
-		if repeat2Count == 0 {
-			return val, nil
-		}	
+	if repeat2Count == 0 {
+		return val, nil
+	}
 	val.Repeating2 = make([]NmeaWriteFieldsReplyGroupFunctionRepeating2, 0)
 	i = 0
 	for {
@@ -1929,14 +1976,14 @@ func DecodeNmeaWriteFieldsReplyGroupFunction(Info MessageInfo, stream *PGNDataSt
 		if int(repeat2Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			}  
+			}
 		} else {
 			i++
 			if i == int(repeat2Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -1947,7 +1994,7 @@ func EncodeNmeaWriteFieldsReplyGroupFunction(val *NmeaWriteFieldsReplyGroupFunct
 	w.writeUInt32(val.Pgn, 24)
 	if val.Pgn != nil && IsProprietaryPGN(*val.Pgn) {
 		w.writeLookupField(uint64(val.ManufacturerCode), 11)
-		w.skipBits(2)
+		w.writeReservedBits(2)
 		w.writeLookupField(uint64(val.IndustryCode), 3)
 	}
 	w.writeUInt8(val.UniqueId, 8)
@@ -1984,19 +2031,23 @@ func encodeNmeaWriteFieldsReplyGroupFunctionMsg(v Message) ([]byte, error) {
 	}
 	return EncodeNmeaWriteFieldsReplyGroupFunction(val)
 }
+
 type PgnListTransmitAndReceive struct {
-	Info MessageInfo `json:"info"`
-	FunctionCode PgnListFunctionConst `json:"functionCode"`
-	Repeating1 []PgnListTransmitAndReceiveRepeating1 `json:"repeating1"`
+	Info         MessageInfo                           `json:"info"`
+	FunctionCode PgnListFunctionConst                  `json:"functionCode"`
+	Repeating1   []PgnListTransmitAndReceiveRepeating1 `json:"repeating1"`
 }
-func (p *PgnListTransmitAndReceive) PGNNumber() uint32  { return 126464 }
+
+func (p *PgnListTransmitAndReceive) PGNNumber() uint32 { return 126464 }
+
 type PgnListTransmitAndReceiveRepeating1 struct {
 	Pgn *uint32 `json:"pgn"`
 }
+
 func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &PgnListTransmitAndReceive{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for PgnListTransmitAndReceive-FunctionCode: %w", err)
 	} else {
@@ -2004,10 +2055,10 @@ func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	val.Repeating1 = make([]PgnListTransmitAndReceiveRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep PgnListTransmitAndReceiveRepeating1
 		if v, err := stream.readUInt32(24); err != nil {
@@ -2019,14 +2070,14 @@ func DecodePgnListTransmitAndReceive(Info MessageInfo, stream *PGNDataStream) (M
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -2046,30 +2097,32 @@ func encodePgnListTransmitAndReceiveMsg(v Message) ([]byte, error) {
 	}
 	return EncodePgnListTransmitAndReceive(val)
 }
+
 type Alert struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	TemporarySilenceStatus YesNoConst `json:"temporarySilenceStatus"`
-	AcknowledgeStatus YesNoConst `json:"acknowledgeStatus"`
-	EscalationStatus YesNoConst `json:"escalationStatus"`
-	TemporarySilenceSupport YesNoConst `json:"temporarySilenceSupport"`
-	AcknowledgeSupport YesNoConst `json:"acknowledgeSupport"`
-	EscalationSupport YesNoConst `json:"escalationSupport"`
-	AcknowledgeSourceNetworkIdName *uint64 `json:"acknowledgeSourceNetworkIdName"`
-	TriggerCondition AlertTriggerConditionConst `json:"triggerCondition"`
-	ThresholdStatus AlertThresholdStatusConst `json:"thresholdStatus"`
-	AlertPriority *uint8 `json:"alertPriority"`
-	AlertState AlertStateConst `json:"alertState"`
+	Info                           MessageInfo                `json:"info"`
+	AlertType                      AlertTypeConst             `json:"alertType"`
+	AlertCategory                  AlertCategoryConst         `json:"alertCategory"`
+	AlertSystem                    *uint8                     `json:"alertSystem"`
+	AlertSubSystem                 *uint8                     `json:"alertSubSystem"`
+	AlertId                        *uint16                    `json:"alertId"`
+	DataSourceNetworkIdName        *uint64                    `json:"dataSourceNetworkIdName"`
+	DataSourceInstance             *uint8                     `json:"dataSourceInstance"`
+	DataSourceIndexSource          *uint8                     `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber          *uint8                     `json:"alertOccurrenceNumber"`
+	TemporarySilenceStatus         YesNoConst                 `json:"temporarySilenceStatus"`
+	AcknowledgeStatus              YesNoConst                 `json:"acknowledgeStatus"`
+	EscalationStatus               YesNoConst                 `json:"escalationStatus"`
+	TemporarySilenceSupport        YesNoConst                 `json:"temporarySilenceSupport"`
+	AcknowledgeSupport             YesNoConst                 `json:"acknowledgeSupport"`
+	EscalationSupport              YesNoConst                 `json:"escalationSupport"`
+	AcknowledgeSourceNetworkIdName *uint64                    `json:"acknowledgeSourceNetworkIdName"`
+	TriggerCondition               AlertTriggerConditionConst `json:"triggerCondition"`
+	ThresholdStatus                AlertThresholdStatusConst  `json:"thresholdStatus"`
+	AlertPriority                  *uint8                     `json:"alertPriority"`
+	AlertState                     AlertStateConst            `json:"alertState"`
 }
-func (a *Alert) PGNNumber() uint32  { return 126983 }
+
+func (a *Alert) PGNNumber() uint32 { return 126983 }
 func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Alert{}
 	val.Info = Info
@@ -2080,7 +2133,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertCategory: %w", err)
@@ -2089,7 +2142,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertSystem: %w", err)
@@ -2098,7 +2151,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertSubSystem: %w", err)
@@ -2107,7 +2160,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertId: %w", err)
@@ -2116,7 +2169,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-DataSourceNetworkIdName: %w", err)
@@ -2125,7 +2178,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-DataSourceInstance: %w", err)
@@ -2134,7 +2187,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-DataSourceIndexSource: %w", err)
@@ -2143,7 +2196,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertOccurrenceNumber: %w", err)
@@ -2152,7 +2205,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-TemporarySilenceStatus: %w", err)
@@ -2161,7 +2214,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AcknowledgeStatus: %w", err)
@@ -2170,7 +2223,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-EscalationStatus: %w", err)
@@ -2179,7 +2232,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-TemporarySilenceSupport: %w", err)
@@ -2188,7 +2241,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AcknowledgeSupport: %w", err)
@@ -2197,7 +2250,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-EscalationSupport: %w", err)
@@ -2206,12 +2259,12 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AcknowledgeSourceNetworkIdName: %w", err)
 	} else {
@@ -2219,7 +2272,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-TriggerCondition: %w", err)
@@ -2228,7 +2281,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-ThresholdStatus: %w", err)
@@ -2237,7 +2290,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertPriority: %w", err)
@@ -2246,7 +2299,7 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Alert-AlertState: %w", err)
@@ -2255,8 +2308,8 @@ func DecodeAlert(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2278,7 +2331,7 @@ func EncodeAlert(val *Alert) ([]byte, error) {
 	w.writeLookupField(uint64(val.TemporarySilenceSupport), 1)
 	w.writeLookupField(uint64(val.AcknowledgeSupport), 1)
 	w.writeLookupField(uint64(val.EscalationSupport), 1)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt64(val.AcknowledgeSourceNetworkIdName, 64)
 	w.writeLookupField(uint64(val.TriggerCondition), 4)
 	w.writeLookupField(uint64(val.ThresholdStatus), 4)
@@ -2293,21 +2346,23 @@ func encodeAlertMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlert(val)
 }
+
 type AlertResponse struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	AcknowledgeSourceNetworkIdName *uint64 `json:"acknowledgeSourceNetworkIdName"`
-	ResponseCommand AlertResponseCommandConst `json:"responseCommand"`
+	Info                           MessageInfo               `json:"info"`
+	AlertType                      AlertTypeConst            `json:"alertType"`
+	AlertCategory                  AlertCategoryConst        `json:"alertCategory"`
+	AlertSystem                    *uint8                    `json:"alertSystem"`
+	AlertSubSystem                 *uint8                    `json:"alertSubSystem"`
+	AlertId                        *uint16                   `json:"alertId"`
+	DataSourceNetworkIdName        *uint64                   `json:"dataSourceNetworkIdName"`
+	DataSourceInstance             *uint8                    `json:"dataSourceInstance"`
+	DataSourceIndexSource          *uint8                    `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber          *uint8                    `json:"alertOccurrenceNumber"`
+	AcknowledgeSourceNetworkIdName *uint64                   `json:"acknowledgeSourceNetworkIdName"`
+	ResponseCommand                AlertResponseCommandConst `json:"responseCommand"`
 }
-func (a *AlertResponse) PGNNumber() uint32  { return 126984 }
+
+func (a *AlertResponse) PGNNumber() uint32 { return 126984 }
 func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AlertResponse{}
 	val.Info = Info
@@ -2318,7 +2373,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertCategory: %w", err)
@@ -2327,7 +2382,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertSystem: %w", err)
@@ -2336,7 +2391,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertSubSystem: %w", err)
@@ -2345,7 +2400,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertId: %w", err)
@@ -2354,7 +2409,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-DataSourceNetworkIdName: %w", err)
@@ -2363,7 +2418,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-DataSourceInstance: %w", err)
@@ -2372,7 +2427,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-DataSourceIndexSource: %w", err)
@@ -2381,7 +2436,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AlertOccurrenceNumber: %w", err)
@@ -2390,7 +2445,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-AcknowledgeSourceNetworkIdName: %w", err)
@@ -2399,7 +2454,7 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertResponse-ResponseCommand: %w", err)
@@ -2408,12 +2463,12 @@ func DecodeAlertResponse(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -2431,7 +2486,7 @@ func EncodeAlertResponse(val *AlertResponse) ([]byte, error) {
 	w.writeUInt8(val.AlertOccurrenceNumber, 8)
 	w.writeUInt64(val.AcknowledgeSourceNetworkIdName, 64)
 	w.writeLookupField(uint64(val.ResponseCommand), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	return w.Bytes(), w.Err()
 }
 func encodeAlertResponseMsg(v Message) ([]byte, error) {
@@ -2441,22 +2496,24 @@ func encodeAlertResponseMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlertResponse(val)
 }
+
 type AlertText struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	LanguageId AlertLanguageIdConst `json:"languageId"`
-	AlertTextDescription string `json:"alertTextDescription"`
-	AlertLocationTextDescription string `json:"alertLocationTextDescription"`
+	Info                         MessageInfo          `json:"info"`
+	AlertType                    AlertTypeConst       `json:"alertType"`
+	AlertCategory                AlertCategoryConst   `json:"alertCategory"`
+	AlertSystem                  *uint8               `json:"alertSystem"`
+	AlertSubSystem               *uint8               `json:"alertSubSystem"`
+	AlertId                      *uint16              `json:"alertId"`
+	DataSourceNetworkIdName      *uint64              `json:"dataSourceNetworkIdName"`
+	DataSourceInstance           *uint8               `json:"dataSourceInstance"`
+	DataSourceIndexSource        *uint8               `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber        *uint8               `json:"alertOccurrenceNumber"`
+	LanguageId                   AlertLanguageIdConst `json:"languageId"`
+	AlertTextDescription         string               `json:"alertTextDescription"`
+	AlertLocationTextDescription string               `json:"alertLocationTextDescription"`
 }
-func (a *AlertText) PGNNumber() uint32  { return 126985 }
+
+func (a *AlertText) PGNNumber() uint32 { return 126985 }
 func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AlertText{}
 	val.Info = Info
@@ -2467,7 +2524,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertCategory: %w", err)
@@ -2476,7 +2533,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertSystem: %w", err)
@@ -2485,7 +2542,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertSubSystem: %w", err)
@@ -2494,7 +2551,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertId: %w", err)
@@ -2503,7 +2560,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-DataSourceNetworkIdName: %w", err)
@@ -2512,7 +2569,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-DataSourceInstance: %w", err)
@@ -2521,7 +2578,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-DataSourceIndexSource: %w", err)
@@ -2530,7 +2587,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertOccurrenceNumber: %w", err)
@@ -2539,7 +2596,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-LanguageId: %w", err)
@@ -2548,7 +2605,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertTextDescription: %w", err)
@@ -2557,7 +2614,7 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertText-AlertLocationTextDescription: %w", err)
@@ -2566,8 +2623,8 @@ func DecodeAlertText(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2595,24 +2652,26 @@ func encodeAlertTextMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlertText(val)
 }
+
 type AlertConfiguration struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	AlertControl *uint8 `json:"alertControl"`
-	UserDefinedAlertAssignment *uint8 `json:"userDefinedAlertAssignment"`
-	ReactivationPeriod *uint8 `json:"reactivationPeriod"`
-	TemporarySilencePeriod *uint8 `json:"temporarySilencePeriod"`
-	EscalationPeriod *uint8 `json:"escalationPeriod"`
+	Info                       MessageInfo        `json:"info"`
+	AlertType                  AlertTypeConst     `json:"alertType"`
+	AlertCategory              AlertCategoryConst `json:"alertCategory"`
+	AlertSystem                *uint8             `json:"alertSystem"`
+	AlertSubSystem             *uint8             `json:"alertSubSystem"`
+	AlertId                    *uint16            `json:"alertId"`
+	DataSourceNetworkIdName    *uint64            `json:"dataSourceNetworkIdName"`
+	DataSourceInstance         *uint8             `json:"dataSourceInstance"`
+	DataSourceIndexSource      *uint8             `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber      *uint8             `json:"alertOccurrenceNumber"`
+	AlertControl               *uint8             `json:"alertControl"`
+	UserDefinedAlertAssignment *uint8             `json:"userDefinedAlertAssignment"`
+	ReactivationPeriod         *uint8             `json:"reactivationPeriod"`
+	TemporarySilencePeriod     *uint8             `json:"temporarySilencePeriod"`
+	EscalationPeriod           *uint8             `json:"escalationPeriod"`
 }
-func (a *AlertConfiguration) PGNNumber() uint32  { return 126986 }
+
+func (a *AlertConfiguration) PGNNumber() uint32 { return 126986 }
 func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AlertConfiguration{}
 	val.Info = Info
@@ -2623,7 +2682,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertCategory: %w", err)
@@ -2632,7 +2691,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertSystem: %w", err)
@@ -2641,7 +2700,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertSubSystem: %w", err)
@@ -2650,7 +2709,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertId: %w", err)
@@ -2659,7 +2718,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-DataSourceNetworkIdName: %w", err)
@@ -2668,7 +2727,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-DataSourceInstance: %w", err)
@@ -2677,7 +2736,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-DataSourceIndexSource: %w", err)
@@ -2686,7 +2745,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertOccurrenceNumber: %w", err)
@@ -2695,7 +2754,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-AlertControl: %w", err)
@@ -2704,7 +2763,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-UserDefinedAlertAssignment: %w", err)
@@ -2713,12 +2772,12 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-ReactivationPeriod: %w", err)
 	} else {
@@ -2726,7 +2785,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-TemporarySilencePeriod: %w", err)
@@ -2735,7 +2794,7 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertConfiguration-EscalationPeriod: %w", err)
@@ -2744,8 +2803,8 @@ func DecodeAlertConfiguration(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2763,7 +2822,7 @@ func EncodeAlertConfiguration(val *AlertConfiguration) ([]byte, error) {
 	w.writeUInt8(val.AlertOccurrenceNumber, 8)
 	w.writeUInt8(val.AlertControl, 2)
 	w.writeUInt8(val.UserDefinedAlertAssignment, 2)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt8(val.ReactivationPeriod, 8)
 	w.writeUInt8(val.TemporarySilencePeriod, 8)
 	w.writeUInt8(val.EscalationPeriod, 8)
@@ -2776,31 +2835,35 @@ func encodeAlertConfigurationMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlertConfiguration(val)
 }
+
 type AlertThreshold struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []AlertThresholdRepeating1 `json:"repeating1"`
+	Info                    MessageInfo                `json:"info"`
+	AlertType               AlertTypeConst             `json:"alertType"`
+	AlertCategory           AlertCategoryConst         `json:"alertCategory"`
+	AlertSystem             *uint8                     `json:"alertSystem"`
+	AlertSubSystem          *uint8                     `json:"alertSubSystem"`
+	AlertId                 *uint16                    `json:"alertId"`
+	DataSourceNetworkIdName *uint64                    `json:"dataSourceNetworkIdName"`
+	DataSourceInstance      *uint8                     `json:"dataSourceInstance"`
+	DataSourceIndexSource   *uint8                     `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber   *uint8                     `json:"alertOccurrenceNumber"`
+	NumberOfParameters      *uint8                     `json:"numberOfParameters"`
+	Repeating1              []AlertThresholdRepeating1 `json:"repeating1"`
 }
-func (a *AlertThreshold) PGNNumber() uint32  { return 126987 }
+
+func (a *AlertThreshold) PGNNumber() uint32 { return 126987 }
+
 type AlertThresholdRepeating1 struct {
-	ParameterNumber *uint8 `json:"parameterNumber"`
-	TriggerMethod *uint8 `json:"triggerMethod"`
-	ThresholdDataFormat *uint8 `json:"thresholdDataFormat"`
-	ThresholdLevel *uint64 `json:"thresholdLevel"`
+	ParameterNumber     *uint8  `json:"parameterNumber"`
+	TriggerMethod       *uint8  `json:"triggerMethod"`
+	ThresholdDataFormat *uint8  `json:"thresholdDataFormat"`
+	ThresholdLevel      *uint64 `json:"thresholdLevel"`
 }
+
 func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AlertThreshold{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertType: %w", err)
 	} else {
@@ -2808,7 +2871,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertCategory: %w", err)
@@ -2817,7 +2880,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertSystem: %w", err)
@@ -2826,7 +2889,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertSubSystem: %w", err)
@@ -2835,7 +2898,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertId: %w", err)
@@ -2844,7 +2907,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-DataSourceNetworkIdName: %w", err)
@@ -2853,7 +2916,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-DataSourceInstance: %w", err)
@@ -2862,7 +2925,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-DataSourceIndexSource: %w", err)
@@ -2871,7 +2934,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-AlertOccurrenceNumber: %w", err)
@@ -2880,7 +2943,7 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertThreshold-NumberOfParameters: %w", err)
@@ -2892,13 +2955,13 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]AlertThresholdRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep AlertThresholdRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -2925,14 +2988,14 @@ func DecodeAlertThreshold(Info MessageInfo, stream *PGNDataStream) (Message, err
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -2964,30 +3027,34 @@ func encodeAlertThresholdMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlertThreshold(val)
 }
+
 type AlertValue struct {
-	Info MessageInfo `json:"info"`
-	AlertType AlertTypeConst `json:"alertType"`
-	AlertCategory AlertCategoryConst `json:"alertCategory"`
-	AlertSystem *uint8 `json:"alertSystem"`
-	AlertSubSystem *uint8 `json:"alertSubSystem"`
-	AlertId *uint16 `json:"alertId"`
-	DataSourceNetworkIdName *uint64 `json:"dataSourceNetworkIdName"`
-	DataSourceInstance *uint8 `json:"dataSourceInstance"`
-	DataSourceIndexSource *uint8 `json:"dataSourceIndexSource"`
-	AlertOccurrenceNumber *uint8 `json:"alertOccurrenceNumber"`
-	NumberOfParameters *uint8 `json:"numberOfParameters"`
-	Repeating1 []AlertValueRepeating1 `json:"repeating1"`
+	Info                    MessageInfo            `json:"info"`
+	AlertType               AlertTypeConst         `json:"alertType"`
+	AlertCategory           AlertCategoryConst     `json:"alertCategory"`
+	AlertSystem             *uint8                 `json:"alertSystem"`
+	AlertSubSystem          *uint8                 `json:"alertSubSystem"`
+	AlertId                 *uint16                `json:"alertId"`
+	DataSourceNetworkIdName *uint64                `json:"dataSourceNetworkIdName"`
+	DataSourceInstance      *uint8                 `json:"dataSourceInstance"`
+	DataSourceIndexSource   *uint8                 `json:"dataSourceIndexSource"`
+	AlertOccurrenceNumber   *uint8                 `json:"alertOccurrenceNumber"`
+	NumberOfParameters      *uint8                 `json:"numberOfParameters"`
+	Repeating1              []AlertValueRepeating1 `json:"repeating1"`
 }
-func (a *AlertValue) PGNNumber() uint32  { return 126988 }
+
+func (a *AlertValue) PGNNumber() uint32 { return 126988 }
+
 type AlertValueRepeating1 struct {
-	ValueParameterNumber *uint8 `json:"valueParameterNumber"`
-	ValueDataFormat *uint8 `json:"valueDataFormat"`
-	ValueData *uint64 `json:"valueData"`
+	ValueParameterNumber *uint8  `json:"valueParameterNumber"`
+	ValueDataFormat      *uint8  `json:"valueDataFormat"`
+	ValueData            *uint64 `json:"valueData"`
 }
+
 func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AlertValue{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertType: %w", err)
 	} else {
@@ -2995,7 +3062,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertCategory: %w", err)
@@ -3004,7 +3071,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertSystem: %w", err)
@@ -3013,7 +3080,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertSubSystem: %w", err)
@@ -3022,7 +3089,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertId: %w", err)
@@ -3031,7 +3098,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt64(64); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-DataSourceNetworkIdName: %w", err)
@@ -3040,7 +3107,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-DataSourceInstance: %w", err)
@@ -3049,7 +3116,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-DataSourceIndexSource: %w", err)
@@ -3058,7 +3125,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-AlertOccurrenceNumber: %w", err)
@@ -3067,7 +3134,7 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AlertValue-NumberOfParameters: %w", err)
@@ -3079,13 +3146,13 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]AlertValueRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep AlertValueRepeating1
 		if v, err := stream.readUInt8(8); err != nil {
@@ -3107,14 +3174,14 @@ func DecodeAlertValue(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -3145,14 +3212,16 @@ func encodeAlertValueMsg(v Message) ([]byte, error) {
 	}
 	return EncodeAlertValue(val)
 }
+
 type SystemTime struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
+	Info   MessageInfo     `json:"info"`
+	Sid    *uint8          `json:"sid"`
 	Source SystemTimeConst `json:"source"`
-	Date *uint16 `json:"date"`
-	Time *float32 `json:"time"`
+	Date   *uint16         `json:"date"`
+	Time   *float32        `json:"time"`
 }
-func (s *SystemTime) PGNNumber() uint32  { return 126992 }
+
+func (s *SystemTime) PGNNumber() uint32 { return 126992 }
 func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SystemTime{}
 	val.Info = Info
@@ -3163,7 +3232,7 @@ func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for SystemTime-Source: %w", err)
@@ -3172,12 +3241,12 @@ func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for SystemTime-Date: %w", err)
 	} else {
@@ -3185,7 +3254,7 @@ func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for SystemTime-Time: %w", err)
@@ -3194,8 +3263,8 @@ func DecodeSystemTime(Info MessageInfo, stream *PGNDataStream) (Message, error) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3204,7 +3273,7 @@ func EncodeSystemTime(val *SystemTime) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.Source), 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt16(val.Date, 16)
 	w.writeUnsignedResolution(val.Time, 32, 0.0001)
 	return w.Bytes(), w.Err()
@@ -3216,15 +3285,17 @@ func encodeSystemTimeMsg(v Message) ([]byte, error) {
 	}
 	return EncodeSystemTime(val)
 }
+
 type Heartbeat struct {
-	Info MessageInfo `json:"info"`
-	DataTransmitOffset *float32 `json:"dataTransmitOffset"`
-	SequenceCounter *uint8 `json:"sequenceCounter"`
-	Controller1State ControllerStateConst `json:"controller1State"`
-	Controller2State ControllerStateConst `json:"controller2State"`
-	EquipmentStatus EquipmentStatusConst `json:"equipmentStatus"`
+	Info               MessageInfo          `json:"info"`
+	DataTransmitOffset *float32             `json:"dataTransmitOffset"`
+	SequenceCounter    *uint8               `json:"sequenceCounter"`
+	Controller1State   ControllerStateConst `json:"controller1State"`
+	Controller2State   ControllerStateConst `json:"controller2State"`
+	EquipmentStatus    EquipmentStatusConst `json:"equipmentStatus"`
 }
-func (h *Heartbeat) PGNNumber() uint32  { return 126993 }
+
+func (h *Heartbeat) PGNNumber() uint32 { return 126993 }
 func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Heartbeat{}
 	val.Info = Info
@@ -3235,7 +3306,7 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Heartbeat-SequenceCounter: %w", err)
@@ -3244,7 +3315,7 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for Heartbeat-Controller1State: %w", err)
@@ -3253,7 +3324,7 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for Heartbeat-Controller2State: %w", err)
@@ -3262,7 +3333,7 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for Heartbeat-EquipmentStatus: %w", err)
@@ -3271,12 +3342,12 @@ func DecodeHeartbeat(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(34)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -3288,7 +3359,7 @@ func EncodeHeartbeat(val *Heartbeat) ([]byte, error) {
 	w.writeLookupField(uint64(val.Controller1State), 2)
 	w.writeLookupField(uint64(val.Controller2State), 2)
 	w.writeLookupField(uint64(val.EquipmentStatus), 2)
-	w.skipBits(34)
+	w.writeReservedBits(34)
 	return w.Bytes(), w.Err()
 }
 func encodeHeartbeatMsg(v Message) ([]byte, error) {
@@ -3298,18 +3369,20 @@ func encodeHeartbeatMsg(v Message) ([]byte, error) {
 	}
 	return EncodeHeartbeat(val)
 }
+
 type ProductInformation struct {
-	Info MessageInfo `json:"info"`
-	Nmea2000Version *float32 `json:"nmea2000Version"`
-	ProductCode *uint16 `json:"productCode"`
-	ModelId string `json:"modelId"`
-	SoftwareVersionCode string `json:"softwareVersionCode"`
-	ModelVersion string `json:"modelVersion"`
-	ModelSerialCode string `json:"modelSerialCode"`
-	CertificationLevel *uint8 `json:"certificationLevel"`
-	LoadEquivalency *uint8 `json:"loadEquivalency"`
+	Info                MessageInfo `json:"info"`
+	Nmea2000Version     *float32    `json:"nmea2000Version"`
+	ProductCode         *uint16     `json:"productCode"`
+	ModelId             string      `json:"modelId"`
+	SoftwareVersionCode string      `json:"softwareVersionCode"`
+	ModelVersion        string      `json:"modelVersion"`
+	ModelSerialCode     string      `json:"modelSerialCode"`
+	CertificationLevel  *uint8      `json:"certificationLevel"`
+	LoadEquivalency     *uint8      `json:"loadEquivalency"`
 }
-func (p *ProductInformation) PGNNumber() uint32  { return 126996 }
+
+func (p *ProductInformation) PGNNumber() uint32 { return 126996 }
 func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ProductInformation{}
 	val.Info = Info
@@ -3320,7 +3393,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-ProductCode: %w", err)
@@ -3329,7 +3402,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(256); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-ModelId: %w", err)
@@ -3338,7 +3411,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(256); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-SoftwareVersionCode: %w", err)
@@ -3347,7 +3420,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(256); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-ModelVersion: %w", err)
@@ -3356,7 +3429,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(256); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-ModelSerialCode: %w", err)
@@ -3365,7 +3438,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-CertificationLevel: %w", err)
@@ -3374,7 +3447,7 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ProductInformation-LoadEquivalency: %w", err)
@@ -3383,8 +3456,8 @@ func DecodeProductInformation(Info MessageInfo, stream *PGNDataStream) (Message,
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3408,13 +3481,15 @@ func encodeProductInformationMsg(v Message) ([]byte, error) {
 	}
 	return EncodeProductInformation(val)
 }
+
 type ConfigurationInformation struct {
-	Info MessageInfo `json:"info"`
-	InstallationDescription1 string `json:"installationDescription1"`
-	InstallationDescription2 string `json:"installationDescription2"`
-	ManufacturerInformation string `json:"manufacturerInformation"`
+	Info                     MessageInfo `json:"info"`
+	InstallationDescription1 string      `json:"installationDescription1"`
+	InstallationDescription2 string      `json:"installationDescription2"`
+	ManufacturerInformation  string      `json:"manufacturerInformation"`
 }
-func (c *ConfigurationInformation) PGNNumber() uint32  { return 126998 }
+
+func (c *ConfigurationInformation) PGNNumber() uint32 { return 126998 }
 func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ConfigurationInformation{}
 	val.Info = Info
@@ -3425,7 +3500,7 @@ func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for ConfigurationInformation-InstallationDescription2: %w", err)
@@ -3434,7 +3509,7 @@ func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for ConfigurationInformation-ManufacturerInformation: %w", err)
@@ -3443,8 +3518,8 @@ func DecodeConfigurationInformation(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3463,24 +3538,26 @@ func encodeConfigurationInformationMsg(v Message) ([]byte, error) {
 	}
 	return EncodeConfigurationInformation(val)
 }
+
 type ManOverboardNotification struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	MobEmitterId *uint32 `json:"mobEmitterId"`
-	ManOverboardStatus MobStatusConst `json:"manOverboardStatus"`
-	ActivationTime *float32 `json:"activationTime"`
-	PositionSource MobPositionSourceConst `json:"positionSource"`
-	PositionDate *uint16 `json:"positionDate"`
-	PositionTime *float32 `json:"positionTime"`
-	Latitude *float64 `json:"latitude"`
-	Longitude *float64 `json:"longitude"`
-	CogReference DirectionReferenceConst `json:"cogReference"`
-	Cog *float32 `json:"cog"`
-	Sog *units.Velocity `json:"sog"`
-	MmsiOfVesselOfOrigin *uint32 `json:"mmsiOfVesselOfOrigin"`
-	MobEmitterBatteryLowStatus LowBatteryConst `json:"mobEmitterBatteryLowStatus"`
+	Info                       MessageInfo             `json:"info"`
+	Sid                        *uint8                  `json:"sid"`
+	MobEmitterId               *uint32                 `json:"mobEmitterId"`
+	ManOverboardStatus         MobStatusConst          `json:"manOverboardStatus"`
+	ActivationTime             *float32                `json:"activationTime"`
+	PositionSource             MobPositionSourceConst  `json:"positionSource"`
+	PositionDate               *uint16                 `json:"positionDate"`
+	PositionTime               *float32                `json:"positionTime"`
+	Latitude                   *float64                `json:"latitude"`
+	Longitude                  *float64                `json:"longitude"`
+	CogReference               DirectionReferenceConst `json:"cogReference"`
+	Cog                        *float32                `json:"cog"`
+	Sog                        *units.Velocity         `json:"sog"`
+	MmsiOfVesselOfOrigin       *uint32                 `json:"mmsiOfVesselOfOrigin"`
+	MobEmitterBatteryLowStatus LowBatteryConst         `json:"mobEmitterBatteryLowStatus"`
 }
-func (m *ManOverboardNotification) PGNNumber() uint32  { return 127233 }
+
+func (m *ManOverboardNotification) PGNNumber() uint32 { return 127233 }
 func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ManOverboardNotification{}
 	val.Info = Info
@@ -3491,7 +3568,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-MobEmitterId: %w", err)
@@ -3500,7 +3577,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-ManOverboardStatus: %w", err)
@@ -3509,12 +3586,12 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(5)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-ActivationTime: %w", err)
 	} else {
@@ -3522,7 +3599,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-PositionSource: %w", err)
@@ -3531,12 +3608,12 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(5)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-PositionDate: %w", err)
 	} else {
@@ -3544,7 +3621,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-PositionTime: %w", err)
@@ -3553,7 +3630,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-Latitude: %w", err)
@@ -3562,7 +3639,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-Longitude: %w", err)
@@ -3571,7 +3648,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-CogReference: %w", err)
@@ -3580,12 +3657,12 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-Cog: %w", err)
 	} else {
@@ -3593,7 +3670,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-Sog: %w", err)
@@ -3602,7 +3679,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-MmsiOfVesselOfOrigin: %w", err)
@@ -3611,7 +3688,7 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for ManOverboardNotification-MobEmitterBatteryLowStatus: %w", err)
@@ -3620,12 +3697,12 @@ func DecodeManOverboardNotification(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(5)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -3635,16 +3712,16 @@ func EncodeManOverboardNotification(val *ManOverboardNotification) ([]byte, erro
 	w.writeUInt8(val.Sid, 8)
 	w.writeUInt32(val.MobEmitterId, 32)
 	w.writeLookupField(uint64(val.ManOverboardStatus), 3)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	w.writeUnsignedResolution(val.ActivationTime, 32, 0.0001)
 	w.writeLookupField(uint64(val.PositionSource), 3)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	w.writeUInt16(val.PositionDate, 16)
 	w.writeUnsignedResolution(val.PositionTime, 32, 0.0001)
 	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
 	w.writeSignedResolution64Override(val.Longitude, 32, 1e-07)
 	w.writeLookupField(uint64(val.CogReference), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
 	var sogRaw *float32
 	if val.Sog != nil {
@@ -3653,7 +3730,7 @@ func EncodeManOverboardNotification(val *ManOverboardNotification) ([]byte, erro
 	w.writeUnsignedResolution(sogRaw, 16, 0.01)
 	w.writeUInt32(val.MmsiOfVesselOfOrigin, 32)
 	w.writeLookupField(uint64(val.MobEmitterBatteryLowStatus), 3)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	return w.Bytes(), w.Err()
 }
 func encodeManOverboardNotificationMsg(v Message) ([]byte, error) {

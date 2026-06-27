@@ -55,9 +55,9 @@ func EncodeSimnetConfigureTemperatureSensor(val *SimnetConfigureTemperatureSenso
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -119,9 +119,9 @@ func EncodeSimnetTrimTabSensorCalibration(val *SimnetTrimTabSensorCalibration) (
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -183,9 +183,9 @@ func EncodeSimnetPaddleWheelSpeedConfiguration(val *SimnetPaddleWheelSpeedConfig
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -247,9 +247,9 @@ func EncodeSimnetClearFluidLevelWarnings(val *SimnetClearFluidLevelWarnings) ([]
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -311,9 +311,9 @@ func EncodeSimnetLgc2000Configuration(val *SimnetLgc2000Configuration) ([]byte, 
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -415,13 +415,13 @@ func EncodeSimnetApUnknown1(val *SimnetApUnknown1) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeUInt16(val.C, 16)
 	w.writeUInt8(val.D, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -506,11 +506,11 @@ func EncodeSimnetDeviceModeRequest(val *SimnetDeviceModeRequest) ([]byte, error)
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
-	w.skipBits(32)
+	w.writeSpareBits(32)
 	return w.Bytes(), w.Err()
 }
 
@@ -605,12 +605,12 @@ func EncodeSimnetDeviceStatus(val *SimnetDeviceStatus) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
 	w.writeLookupField(uint64(val.Status), 8)
-	w.skipBits(24)
+	w.writeSpareBits(24)
 	return w.Bytes(), w.Err()
 }
 
@@ -695,11 +695,11 @@ func EncodeSimnetDeviceStatusRequest(val *SimnetDeviceStatusRequest) ([]byte, er
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
-	w.skipBits(32)
+	w.writeSpareBits(32)
 	return w.Bytes(), w.Err()
 }
 
@@ -794,12 +794,12 @@ func EncodeSimnetPilotMode(val *SimnetPilotMode) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
 	w.writeLookupField(uint64(val.Mode), 16)
-	w.skipBits(16)
+	w.writeSpareBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -890,7 +890,7 @@ func EncodeSimnetSailingProcessorStatus(val *SimnetSailingProcessorStatus) ([]by
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.Model), 8)
 	w.writeLookupField(uint64(val.Report), 8)
@@ -1006,14 +1006,14 @@ func EncodeSimnetApUnknown2(val *SimnetApUnknown2) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeUInt8(val.C, 8)
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1099,11 +1099,11 @@ func EncodeSimnetAutopilotAngle(val *SimnetAutopilotAngle) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	w.writeLookupField(uint64(val.Mode), 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	return w.Bytes(), w.Err()
 }
@@ -1179,7 +1179,7 @@ func EncodeSimnetMagneticField(val *SimnetMagneticField) ([]byte, error) {
 	w.writeUInt8(val.B, 8)
 	w.writeSignedResolution(val.C, 16, 0.0001)
 	w.writeSignedResolution(val.D, 16, 0.0001)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1291,14 +1291,14 @@ func EncodeSimnetApUnknown3(val *SimnetApUnknown3) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeUInt8(val.C, 8)
 	w.writeUInt8(val.D, 8)
 	w.writeUInt8(val.E, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1360,9 +1360,9 @@ func EncodeSimnetAutopilotMode(val *SimnetAutopilotMode) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -1450,7 +1450,7 @@ func EncodeSimnetReprogramData(val *SimnetReprogramData) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.Version, 16)
 	w.writeUInt16(val.Sequence, 16)
@@ -1602,7 +1602,7 @@ func EncodeSimnetFluidLevelSensorConfiguration(val *SimnetFluidLevelSensorConfig
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.C, 8)
 	w.writeUInt8(val.Device, 8)
@@ -1815,7 +1815,7 @@ func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.MessageId, 6)
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
@@ -1846,8 +1846,8 @@ func EncodeSimnetAisClassBStaticDataMsg24PartB(val *SimnetAisClassBStaticDataMsg
 	}
 	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
 	w.writeUInt32(val.MothershipUserId, 32)
-	w.skipBits(6)
-	w.skipBits(2)
+	w.writeSpareBits(6)
+	w.writeReservedBits(2)
 	return w.Bytes(), w.Err()
 }
 
@@ -1978,14 +1978,14 @@ func EncodeSimnetKeyValue(val *SimnetKeyValue) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Address, 8)
 	w.writeLookupField(uint64(val.RepeatIndicator), 8)
 	w.writeLookupField(uint64(val.DisplayGroup), 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.Key), 16)
-	w.skipBits(8)
+	w.writeSpareBits(8)
 	w.writeUInt8(val.Minlength, 8)
 	return w.Bytes(), w.Err()
 }
@@ -2120,14 +2120,14 @@ func EncodeSimnetParameterSet(val *SimnetParameterSet) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Address, 8)
 	w.writeUInt8(val.B, 8)
 	w.writeLookupField(uint64(val.DisplayGroup), 8)
 	w.writeUInt16(val.D, 16)
 	w.writeLookupField(uint64(val.Key), 16)
-	w.skipBits(8)
+	w.writeSpareBits(8)
 	w.writeUInt8(val.Length, 8)
 	return w.Bytes(), w.Err()
 }
@@ -2257,12 +2257,12 @@ func EncodeSimnetAlarm(val *SimnetAlarm) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Address, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.Alarm), 16)
 	w.writeUInt16(val.MessageId, 16)
 	w.writeUInt8(val.F, 8)
@@ -2395,14 +2395,14 @@ func EncodeSimnetApCommand(val *SimnetApCommand) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Address, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.ApStatus), 8)
 	w.writeLookupField(uint64(val.ApCommand), 8)
-	w.skipBits(8)
+	w.writeSpareBits(8)
 	w.writeLookupField(uint64(val.Direction), 8)
 	w.writeUnsignedResolution(val.Angle, 16, 0.0001)
 	return w.Bytes(), w.Err()
@@ -2545,7 +2545,7 @@ func EncodeSimnetEventCommandApCommand(val *SimnetEventCommandApCommand) ([]byte
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt16(val.UnusedA, 16)
@@ -2695,7 +2695,7 @@ func EncodeSimnetEventReplyApCommand(val *SimnetEventReplyApCommand) ([]byte, er
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt16(val.B, 16)
@@ -2802,7 +2802,7 @@ func EncodeSimnetAlarmMessage(val *SimnetAlarmMessage) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.MessageId, 16)
 	w.writeUInt8(val.B, 8)
@@ -2925,7 +2925,7 @@ func EncodeSimnetApUnknown4(val *SimnetApUnknown4) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeInt32(val.B, 32)

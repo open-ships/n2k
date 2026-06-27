@@ -42,20 +42,20 @@ func TestNumerics(t *testing.T) {
 		length uint16
 	}{
 		// --- Byte-aligned reads ---
-		{0x12, []uint8{0x12}, 0, 8},                           // Single byte
-		{0x1234, []uint8{0x34, 0x12}, 0, 16},                  // 16-bit little-endian
-		{0x1234, []uint8{0, 0x34, 0x12, 0}, 8, 16},            // 16-bit after skipping one byte
-		{0xffffeed4, []uint8{0xd4, 0xee, 0xff, 0xff}, 0, 32},  // Full 32-bit value
+		{0x12, []uint8{0x12}, 0, 8},                          // Single byte
+		{0x1234, []uint8{0x34, 0x12}, 0, 16},                 // 16-bit little-endian
+		{0x1234, []uint8{0, 0x34, 0x12, 0}, 8, 16},           // 16-bit after skipping one byte
+		{0xffffeed4, []uint8{0xd4, 0xee, 0xff, 0xff}, 0, 32}, // Full 32-bit value
 
 		// --- Sub-byte reads on byte boundary ---
-		{0x1E, []uint8{0xFE}, 0, 5},  // Low 5 bits of 0xFE = 11110 = 0x1E
-		{2, []uint8{0xFE}, 0, 2},     // Low 2 bits of 0xFE = 10 = 2
+		{0x1E, []uint8{0xFE}, 0, 5}, // Low 5 bits of 0xFE = 11110 = 0x1E
+		{2, []uint8{0xFE}, 0, 2},    // Low 2 bits of 0xFE = 10 = 2
 
 		// --- Non-byte-aligned reads (testing bit extraction across byte boundaries) ---
-		{2, []uint8{0x14}, 1, 3},                             // 3 bits starting at bit 1 of 0x14
-		{0x3E, []uint8{0xFB}, 2, 6},                          // 6 bits starting at bit 2 of 0xFB
-		{0x21, []uint8{0, 0x1F, 0xF2, 0}, 12, 8},             // 8 bits straddling bytes 1-2
-		{0xC080, []uint8{1, 2, 0x3}, 2, 16},                  // 16 bits starting at bit 2
+		{2, []uint8{0x14}, 1, 3},                 // 3 bits starting at bit 1 of 0x14
+		{0x3E, []uint8{0xFB}, 2, 6},              // 6 bits starting at bit 2 of 0xFB
+		{0x21, []uint8{0, 0x1F, 0xF2, 0}, 12, 8}, // 8 bits straddling bytes 1-2
+		{0xC080, []uint8{1, 2, 0x3}, 2, 16},      // 16 bits starting at bit 2
 	}
 
 	for _, tst := range uintTests {
@@ -131,9 +131,9 @@ func TestNumerics(t *testing.T) {
 		offset uint16
 		length uint16
 	}{
-		{[]uint8{1, 2, 3}, []uint8{1, 2, 3}, 0, 24},                // Byte-aligned, 3 bytes
-		{[]uint8{0x1E}, []uint8{0xFE}, 0, 5},                        // Sub-byte: low 5 bits of 0xFE
-		{[]uint8{0x21}, []uint8{0, 0x1F, 0xF2, 0}, 12, 8},           // Non-aligned: 8 bits starting at bit 12
+		{[]uint8{1, 2, 3}, []uint8{1, 2, 3}, 0, 24},       // Byte-aligned, 3 bytes
+		{[]uint8{0x1E}, []uint8{0xFE}, 0, 5},              // Sub-byte: low 5 bits of 0xFE
+		{[]uint8{0x21}, []uint8{0, 0x1F, 0xF2, 0}, 12, 8}, // Non-aligned: 8 bits starting at bit 12
 	}
 
 	for _, tst := range bdTests {

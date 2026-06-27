@@ -451,12 +451,7 @@ func (c *Client) doWrite(msg pgn.Message) error {
 
 	pgnNum := msg.PGNNumber()
 
-	encoder, ok := pgn.EncoderLookup[pgnNum]
-	if !ok {
-		return fmt.Errorf("n2k: no encoder registered for PGN %d", pgnNum)
-	}
-
-	payload, err := encoder(msg)
+	payload, err := pgn.EncodeMessage(msg)
 	if err != nil {
 		return fmt.Errorf("n2k: encode PGN %d: %w", pgnNum, err)
 	}

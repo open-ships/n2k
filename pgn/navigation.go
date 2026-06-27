@@ -201,7 +201,7 @@ func EncodeHeadingTrackControl(val *HeadingTrackControl) ([]byte, error) {
 	w.writeLookupField(uint64(val.SteeringMode), 3)
 	w.writeLookupField(uint64(val.TurnMode), 3)
 	w.writeLookupField(uint64(val.HeadingReference), 2)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	w.writeLookupField(uint64(val.CommandedRudderDirection), 3)
 	w.writeSignedResolution(val.CommandedRudderAngle, 16, 0.0001)
 	w.writeUnsignedResolution(val.HeadingToSteerCourse, 16, 0.0001)
@@ -292,10 +292,10 @@ func EncodeRudder(val *Rudder) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Instance, 8)
 	w.writeLookupField(uint64(val.DirectionOrder), 3)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	w.writeSignedResolution(val.AngleOrder, 16, 0.0001)
 	w.writeSignedResolution(val.Position, 16, 0.0001)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -380,7 +380,7 @@ func EncodeVesselHeading(val *VesselHeading) ([]byte, error) {
 	w.writeSignedResolution(val.Deviation, 16, 0.0001)
 	w.writeSignedResolution(val.Variation, 16, 0.0001)
 	w.writeLookupField(uint64(val.Reference), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	return w.Bytes(), w.Err()
 }
 func encodeVesselHeadingMsg(v Message) ([]byte, error) {
@@ -431,7 +431,7 @@ func EncodeRateOfTurn(val *RateOfTurn) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeSignedResolution64Override(val.Rate, 32, 3.125e-08)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	return w.Bytes(), w.Err()
 }
 func encodeRateOfTurnMsg(v Message) ([]byte, error) {
@@ -486,7 +486,7 @@ func EncodeHeave(val *Heave) ([]byte, error) {
 		heaveRaw = &val.Heave.Value
 	}
 	w.writeSignedResolution(heaveRaw, 16, 0.01)
-	w.skipBits(40)
+	w.writeReservedBits(40)
 	return w.Bytes(), w.Err()
 }
 func encodeHeaveMsg(v Message) ([]byte, error) {
@@ -559,7 +559,7 @@ func EncodeAttitude(val *Attitude) ([]byte, error) {
 	w.writeSignedResolution(val.Yaw, 16, 0.0001)
 	w.writeSignedResolution(val.Pitch, 16, 0.0001)
 	w.writeSignedResolution(val.Roll, 16, 0.0001)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 func encodeAttitudeMsg(v Message) ([]byte, error) {
@@ -634,10 +634,10 @@ func EncodeMagneticVariation(val *MagneticVariation) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.Source), 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt16(val.AgeOfService, 16)
 	w.writeSignedResolution(val.Variation, 16, 0.0001)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 func encodeMagneticVariationMsg(v Message) ([]byte, error) {
@@ -689,7 +689,7 @@ func EncodeLeewayAngle(val *LeewayAngle) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeSignedResolution(val.LeewayAngle, 16, 0.0001)
-	w.skipBits(40)
+	w.writeReservedBits(40)
 	return w.Bytes(), w.Err()
 }
 
@@ -783,7 +783,7 @@ func EncodeSpeed(val *Speed) ([]byte, error) {
 	w.writeUnsignedResolution(speedGroundReferencedRaw, 16, 0.01)
 	w.writeLookupField(uint64(val.SpeedWaterReferencedType), 8)
 	w.writeUInt8(val.SpeedDirection, 4)
-	w.skipBits(12)
+	w.writeReservedBits(12)
 	return w.Bytes(), w.Err()
 }
 
@@ -1067,14 +1067,14 @@ func EncodeCogSogRapidUpdate(val *CogSogRapidUpdate) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.CogReference), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
 	var sogRaw *float32
 	if val.Sog != nil {
 		sogRaw = &val.Sog.Value
 	}
 	w.writeUnsignedResolution(sogRaw, 16, 0.01)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 func encodeCogSogRapidUpdateMsg(v Message) ([]byte, error) {
@@ -1147,7 +1147,7 @@ func EncodePositionDeltaRapidUpdate(val *PositionDeltaRapidUpdate) ([]byte, erro
 	w.writeUInt16(val.TimeDelta, 16)
 	w.writeInt16(val.LatitudeDelta, 16)
 	w.writeInt16(val.LongitudeDelta, 16)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 func encodePositionDeltaRapidUpdateMsg(v Message) ([]byte, error) {
@@ -1240,7 +1240,7 @@ func EncodeAltitudeDeltaRapidUpdate(val *AltitudeDeltaRapidUpdate) ([]byte, erro
 	w.writeInt16(val.TimeDelta, 16)
 	w.writeUInt8(val.GnssQuality, 2)
 	w.writeUInt8(val.Direction, 2)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.Cog, 16, 0.0001)
 	w.writeInt16(val.AltitudeDelta, 16)
 	return w.Bytes(), w.Err()
@@ -1468,7 +1468,7 @@ func EncodeGnssPositionData(val *GnssPositionData) ([]byte, error) {
 	w.writeLookupField(uint64(val.GnssType), 4)
 	w.writeLookupField(uint64(val.Method), 4)
 	w.writeLookupField(uint64(val.Integrity), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUInt8(val.NumberOfSvs, 8)
 	w.writeSignedResolution(val.Hdop, 16, 0.01)
 	w.writeSignedResolution(val.Pdop, 16, 0.01)
@@ -1847,14 +1847,14 @@ func EncodeCrossTrackError(val *CrossTrackError) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.XteMode), 4)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.NavigationTerminated), 2)
 	var xteRaw *float32
 	if val.Xte != nil {
 		xteRaw = &val.Xte.Value
 	}
 	w.writeSignedResolution(xteRaw, 32, 0.01)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 func encodeCrossTrackErrorMsg(v Message) ([]byte, error) {
@@ -2210,9 +2210,9 @@ func EncodeNavigationRouteWpInformation(val *NavigationRouteWpInformation) ([]by
 	w.writeUInt16(val.RouteId, 16)
 	w.writeLookupField(uint64(val.NavigationDirectionInRoute), 3)
 	w.writeLookupField(uint64(val.SupplementaryRouteWpDataAvailable), 2)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeStringWithLengthAndControl(val.RouteName)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	for _, rep := range val.Repeating1 {
 		w.writeUInt16(rep.WpId, 16)
 		w.writeStringWithLengthAndControl(rep.WpName)
@@ -2293,14 +2293,14 @@ func EncodeSetDriftRapidUpdate(val *SetDriftRapidUpdate) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.SetReference), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUnsignedResolution(val.Set, 16, 0.0001)
 	var driftRaw *float32
 	if val.Drift != nil {
 		driftRaw = &val.Drift.Value
 	}
 	w.writeUnsignedResolution(driftRaw, 16, 0.01)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 func encodeSetDriftRapidUpdateMsg(v Message) ([]byte, error) {
@@ -2392,7 +2392,7 @@ func EncodeGnssDops(val *GnssDops) ([]byte, error) {
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.DesiredMode), 3)
 	w.writeLookupField(uint64(val.ActualMode), 3)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeSignedResolution(val.Hdop, 16, 0.01)
 	w.writeSignedResolution(val.Vdop, 16, 0.01)
 	w.writeSignedResolution(val.Tdop, 16, 0.01)
@@ -2519,7 +2519,7 @@ func EncodeGnssSatsInView(val *GnssSatsInView) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.RangeResidualMode), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUInt8(val.SatsInView, 8)
 	for _, rep := range val.Repeating1 {
 		w.writeUInt8(rep.Prn, 8)
@@ -2528,7 +2528,7 @@ func EncodeGnssSatsInView(val *GnssSatsInView) ([]byte, error) {
 		w.writeUnsignedResolution(rep.Snr, 16, 0.01)
 		w.writeInt32(rep.RangeResiduals, 32)
 		w.writeLookupField(uint64(rep.Status), 4)
-		w.skipBits(4)
+		w.writeReservedBits(4)
 	}
 	return w.Bytes(), w.Err()
 }
@@ -2701,7 +2701,7 @@ func EncodeGpsAlmanacData(val *GpsAlmanacData) ([]byte, error) {
 	w.writeSignedResolution(val.MeanAnomaly, 24, 1.19209e-07)
 	w.writeSignedResolution(val.ClockParameter1, 11, 9.53674e-07)
 	w.writeSignedResolution64Override(val.ClockParameter2, 11, 3.63798e-12)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	return w.Bytes(), w.Err()
 }
 func encodeGpsAlmanacDataMsg(v Message) ([]byte, error) {
@@ -2752,7 +2752,7 @@ func EncodeSmallCraftStatus(val *SmallCraftStatus) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeInt8(val.PortTrimTab, 8)
 	w.writeInt8(val.StarboardTrimTab, 8)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 func encodeSmallCraftStatusMsg(v Message) ([]byte, error) {

@@ -15,6 +15,8 @@ import (
 // where different manufacturers define different payloads for the same PGN, and also with
 // "KeyValue" style PGNs that have multiple structural variants.
 type PgnInfo struct {
+	// CanboatId is the upstream canboat.json Id for this PGN variant.
+	CanboatId string `json:"canboatId"`
 	// Id is a unique string identifier for this PGN variant, needed to distinguish
 	// PGNs that share the same numeric PGN but have different field layouts (KeyValue PGNs).
 	Id string `json:"id"`
@@ -27,10 +29,39 @@ type PgnInfo struct {
 	PGN uint32 `json:"pgn"`
 	// Description is a human-readable name for this PGN (e.g., "Vessel Heading").
 	Description string `json:"description"`
+	// Explanation is CANboat's longer PGN description, when present.
+	Explanation string `json:"explanation,omitempty"`
+	// URL is CANboat's reference URL for this PGN, when present.
+	URL string `json:"url,omitempty"`
 	// Fast indicates whether this PGN uses the NMEA 2000 fast-packet protocol.
 	// Fast-packet PGNs can carry more than 8 bytes by spanning multiple CAN frames;
 	// single-frame PGNs are limited to 8 bytes.
 	Fast bool `json:"fast"`
+	// Type is the CANboat transport type string (Single, Fast, ISO, or Mixed).
+	Type string `json:"type"`
+	// Complete mirrors CANboat's confidence flag for fully described PGNs.
+	Complete bool `json:"complete"`
+	// Fallback marks range fallback definitions from CANboat.
+	Fallback bool `json:"fallback"`
+	// Missing lists CANboat metadata categories still missing for this PGN.
+	Missing []string `json:"missing,omitempty"`
+	// Length is the nominal payload length in bytes when CANboat provides one.
+	Length *int `json:"length,omitempty"`
+	// MinLength is the minimum payload length in bytes when CANboat provides one.
+	MinLength *int `json:"minLength,omitempty"`
+	// Priority is the default CAN priority when CANboat provides one.
+	Priority *uint8 `json:"priority,omitempty"`
+	// TransmissionInterval is the default transmission interval in milliseconds.
+	TransmissionInterval *int `json:"transmissionInterval,omitempty"`
+	// TransmissionIrregular marks PGNs whose transmission is event/request driven.
+	TransmissionIrregular *bool `json:"transmissionIrregular,omitempty"`
+	// RepeatingFieldSet metadata mirrors CANboat's repeating field-set annotations.
+	RepeatingFieldSet1StartField *int `json:"repeatingFieldSet1StartField,omitempty"`
+	RepeatingFieldSet1CountField *int `json:"repeatingFieldSet1CountField,omitempty"`
+	RepeatingFieldSet1Size       *int `json:"repeatingFieldSet1Size,omitempty"`
+	RepeatingFieldSet2StartField *int `json:"repeatingFieldSet2StartField,omitempty"`
+	RepeatingFieldSet2CountField *int `json:"repeatingFieldSet2CountField,omitempty"`
+	RepeatingFieldSet2Size       *int `json:"repeatingFieldSet2Size,omitempty"`
 	// ManId is the manufacturer code for proprietary PGNs. It is zero for standard
 	// (non-proprietary) PGNs. Used to select the correct variant when multiple
 	// manufacturers define different payloads for the same proprietary PGN number.
@@ -52,11 +83,17 @@ type PgnInfo struct {
 // It is used at runtime by readVariableData and GetFieldDescriptor to handle fields
 // whose type or length cannot be fully resolved at code-generation time.
 type FieldDescriptor struct {
+	// CanboatId is the upstream canboat.json field Id.
+	CanboatId string `json:"canboatId"`
 	// Name is the Canboat field name (e.g., "Heading", "SID", "Manufacturer Code").
 	Name string `json:"name"`
+	// Description is CANboat's per-field description, when present.
+	Description string `json:"description,omitempty"`
 	// BitLength is the width of this field in bits. For variable-length fields,
 	// this may be a nominal/default length.
 	BitLength uint16 `json:"bitLength"`
+	// BitLengthField is the field order that defines a variable-length field's width.
+	BitLengthField *int `json:"bitLengthField,omitempty"`
 	// BitOffset is the absolute bit position of this field from the start of the PGN payload.
 	BitOffset uint16 `json:"bitOffset"`
 	// BitLengthVariable is true when the field's actual length is determined at runtime
@@ -65,6 +102,33 @@ type FieldDescriptor struct {
 	// CanboatType is the Canboat type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
 	// "STRING_LZ", "STRING_FIX"). It drives type-specific decoding logic.
 	CanboatType string `json:"canboatType"`
+	// BitStart is the bit position within the containing byte when CANboat provides it.
+	BitStart uint16 `json:"bitStart"`
+	// PhysicalQuantity is the CANboat physical quantity identifier.
+	PhysicalQuantity string `json:"physicalQuantity,omitempty"`
+	// LookupEnumeration is the CANboat lookup enumeration name, when present.
+	LookupEnumeration string `json:"lookupEnumeration,omitempty"`
+	// LookupBitEnumeration is the CANboat bit lookup enumeration name, when present.
+	LookupBitEnumeration string `json:"lookupBitEnumeration,omitempty"`
+	// LookupIndirectEnumeration is the CANboat indirect lookup enumeration name, when present.
+	LookupIndirectEnumeration string `json:"lookupIndirectEnumeration,omitempty"`
+	// LookupFieldTypeEnumeration is the CANboat field-type lookup name, when present.
+	LookupFieldTypeEnumeration string `json:"lookupFieldTypeEnumeration,omitempty"`
+	// LookupIndirectEnumerationFieldOrder identifies the field that selects an indirect lookup.
+	LookupIndirectEnumerationFieldOrder *int `json:"lookupIndirectEnumerationFieldOrder,omitempty"`
+	// Condition is CANboat's field-level inclusion predicate, when present.
+	Condition string `json:"condition,omitempty"`
+	// Offset is an additive physical-value offset from CANboat.
+	Offset *float64 `json:"offset,omitempty"`
+	// RangeMin and RangeMax are the physical-value bounds from CANboat.
+	RangeMin *float64 `json:"rangeMin,omitempty"`
+	RangeMax *float64 `json:"rangeMax,omitempty"`
+	// CANboat sentinel values for nullable and special numeric states.
+	OutOfRangeValue *int64 `json:"outOfRangeValue,omitempty"`
+	ReservedValue   *int64 `json:"reservedValue,omitempty"`
+	UnknownValue    *int64 `json:"unknownValue,omitempty"`
+	// PartOfPrimaryKey marks fields CANboat uses to identify repeated rows.
+	PartOfPrimaryKey *bool `json:"partOfPrimaryKey,omitempty"`
 	// GolangType is the Go type name used in the generated struct field (e.g., "*uint8", "float32").
 	GolangType string `json:"golangType"`
 	// Resolution is the scaling factor applied to integer fields to produce physical units
@@ -92,7 +156,6 @@ var PgnInfoLookup map[uint32][]*PgnInfo
 // never been observed in real log data. These PGNs have decoders generated but are
 // considered less reliable because they lack test vectors.
 var UnseenLookup map[uint32][]*PgnInfo
-
 
 // IsProprietaryPGN returns true if the given PGN number falls within one of the four
 // NMEA 2000 proprietary PGN ranges. Proprietary PGNs are manufacturer-specific messages
