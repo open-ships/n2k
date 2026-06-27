@@ -20,11 +20,15 @@ jobs:
           check-latest: true
 
       - name: Run govulncheck
+        env:
+          GOTOOLCHAIN: go1.25.11
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@latest
           govulncheck ./...
 
       - name: Run gosec
+        env:
+          GOTOOLCHAIN: go1.25.11
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
           gosec -exclude-generated -exclude=G115 ./...
