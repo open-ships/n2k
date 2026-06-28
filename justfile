@@ -45,6 +45,19 @@ test-cover:
 fmt:
     gofmt -w .
 
+# regenerate pgn/manifest.json from pgn/registry.go
+pgn-manifest:
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+
+# sync catalog-only PGNs from upstream canboat.json and regenerate pgn/manifest.json
+pgn-sync:
+    go run ./tools/pgnsync
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+
+# check whether catalog-only PGNs match upstream canboat.json without writing files
+pgn-sync-check:
+    go run ./tools/pgnsync --check
+
 # run go vet
 vet:
     go vet ./...

@@ -157,8 +157,10 @@ func TestSearchUnseenList_CompletelyUnknown(t *testing.T) {
 func TestPgnInfoLookup_Populated(t *testing.T) {
 	assert.NotNil(t, PgnInfoLookup[127250], "Vessel Heading should be in lookup")
 	assert.NotNil(t, PgnInfoLookup[127501], "Binary Switch Bank Status should be in lookup")
+	assert.NotNil(t, PgnInfoLookup[127490], "catalog-only PGNs should be in lookup")
 	assert.Greater(t, len(PgnInfoLookup[127250]), 0)
 	assert.Greater(t, len(PgnInfoLookup[127501]), 0)
+	assert.Greater(t, len(PgnInfoLookup[127490]), 0)
 }
 
 // TestPgnInfoLookup_PGNDetails verifies that a specific PgnInfo entry has the expected
@@ -178,4 +180,16 @@ func TestPgnInfoLookup_PGNDetails(t *testing.T) {
 // (not an empty slice or a panic).
 func TestPgnInfoLookup_UnknownPGN(t *testing.T) {
 	assert.Nil(t, PgnInfoLookup[999999])
+}
+
+// TestPgnInfoLookup_CatalogOnlyPGN verifies that canboat catalog entries without
+// typed decoders are still exposed as PGN metadata.
+func TestPgnInfoLookup_CatalogOnlyPGN(t *testing.T) {
+	infos := PgnInfoLookup[127490]
+	assert.NotEmpty(t, infos)
+	assert.Equal(t, uint32(127490), infos[0].PGN)
+	assert.Equal(t, "Electric Drive Status, Dynamic", infos[0].Description)
+	assert.Nil(t, infos[0].Decoder)
+	assert.NotEmpty(t, infos[0].Fields)
+	assert.True(t, SearchUnseenList(127490))
 }

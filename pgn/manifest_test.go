@@ -14,14 +14,21 @@ import (
 
 type pgnManifest struct {
 	SchemaVersion int                   `json:"schemaVersion"`
+	Package       string                `json:"package"`
+	Source        string                `json:"source"`
+	Description   string                `json:"description"`
+	Notes         []string              `json:"notes"`
 	Counts        pgnManifestCounts     `json:"counts"`
 	Categories    []pgnManifestCategory `json:"categories"`
 }
 
 type pgnManifestCounts struct {
-	Categories          int `json:"categories"`
-	SupportedVariants   int `json:"supportedVariants"`
-	UniqueSupportedPgns int `json:"uniqueSupportedPgns"`
+	Categories              int `json:"categories"`
+	SupportedVariants       int `json:"supportedVariants"`
+	UniqueSupportedPgns     int `json:"uniqueSupportedPgns"`
+	DecodeSupportedVariants int `json:"decodeSupportedVariants"`
+	EncodeSupportedVariants int `json:"encodeSupportedVariants"`
+	CatalogOnlyVariants     int `json:"catalogOnlyVariants"`
 }
 
 type pgnManifestCategory struct {
@@ -31,15 +38,17 @@ type pgnManifestCategory struct {
 }
 
 type pgnManifestEntry struct {
-	ID             string                  `json:"id"`
-	PGN            uint32                  `json:"pgn"`
-	Description    string                  `json:"description"`
-	FastPacket     bool                    `json:"fastPacket"`
-	ManufacturerID int                     `json:"manufacturerId"`
-	Proprietary    bool                    `json:"proprietary"`
-	SourceFile     string                  `json:"sourceFile"`
-	PayloadShape   pgnManifestPayloadShape `json:"payloadShape"`
-	Example        map[string]any          `json:"example"`
+	ID              string                  `json:"id"`
+	PGN             uint32                  `json:"pgn"`
+	Description     string                  `json:"description"`
+	FastPacket      bool                    `json:"fastPacket"`
+	ManufacturerID  int                     `json:"manufacturerId"`
+	Proprietary     bool                    `json:"proprietary"`
+	SourceFile      string                  `json:"sourceFile"`
+	DecodeSupported bool                    `json:"decodeSupported"`
+	EncodeSupported bool                    `json:"encodeSupported"`
+	PayloadShape    pgnManifestPayloadShape `json:"payloadShape"`
+	Example         map[string]any          `json:"example,omitempty"`
 }
 
 type pgnManifestPayloadShape struct {
@@ -68,6 +77,19 @@ type pgnManifestStructField struct {
 }
 
 func TestPGNManifestMatchesRegistry(t *testing.T) {
+	expectedManifest := buildExpectedManifest(t)
+	if os.Getenv("UPDATE_PGN_MANIFEST") == "1" {
+		raw, err := json.MarshalIndent(expectedManifest, "", "  ")
+		if err != nil {
+			t.Fatalf("marshal manifest: %v", err)
+		}
+		raw = append(raw, '\n')
+		if err := os.WriteFile("manifest.json", raw, 0o644); err != nil {
+			t.Fatalf("write manifest: %v", err)
+		}
+		return
+	}
+
 	raw, err := os.ReadFile("manifest.json")
 	if err != nil {
 		t.Fatalf("read manifest: %v", err)
@@ -96,34 +118,14 @@ func TestPGNManifestMatchesRegistry(t *testing.T) {
 		}
 	}
 
-	uniquePGNs := make(map[uint32]struct{})
-	expected := make(map[string]pgnManifestEntry, len(pgnList))
-	for _, info := range pgnList {
-		uniquePGNs[info.PGN] = struct{}{}
-		_, sourceFile := functionSource(info.Decoder)
-		expected[info.Id] = pgnManifestEntry{
-			ID:             info.Id,
-			PGN:            info.PGN,
-			Description:    info.Description,
-			FastPacket:     info.Fast,
-			ManufacturerID: int(info.ManId),
-			Proprietary:    IsProprietaryPGN(info.PGN),
-			SourceFile:     sourceFile,
-			PayloadShape:   manifestPayloadShape(info.Fields),
-			Example:        manifestExample(t, info.Id, info.PGN),
-		}
-	}
-
 	if manifest.Counts.Categories != len(manifest.Categories) {
 		t.Errorf("manifest category count = %d, want %d", manifest.Counts.Categories, len(manifest.Categories))
 	}
-	if manifest.Counts.SupportedVariants != len(pgnList) {
-		t.Errorf("manifest supportedVariants = %d, want %d", manifest.Counts.SupportedVariants, len(pgnList))
-	}
-	if manifest.Counts.UniqueSupportedPgns != len(uniquePGNs) {
-		t.Errorf("manifest uniqueSupportedPgns = %d, want %d", manifest.Counts.UniqueSupportedPgns, len(uniquePGNs))
+	if !reflect.DeepEqual(manifest.Counts, expectedManifest.Counts) {
+		t.Errorf("manifest counts mismatch\n got: %#v\nwant: %#v", manifest.Counts, expectedManifest.Counts)
 	}
 
+	expected := manifestEntryMap(expectedManifest)
 	for id, want := range expected {
 		got, exists := actual[id]
 		if !exists {
@@ -148,6 +150,113 @@ func TestPGNManifestMatchesRegistry(t *testing.T) {
 	}
 }
 
+func buildExpectedManifest(t *testing.T) pgnManifest {
+	t.Helper()
+
+	infos := allManifestInfos()
+	uniquePGNs := make(map[uint32]struct{})
+	categories := make(map[string]*pgnManifestCategory)
+	var categoryOrder []string
+	decodeSupported := 0
+	encodeSupported := 0
+	catalogOnly := 0
+
+	for _, info := range infos {
+		uniquePGNs[info.PGN] = struct{}{}
+		entry := manifestEntry(t, info)
+		categoryID := functionCategory(entry.SourceFile)
+		category, ok := categories[categoryID]
+		if !ok {
+			categories[categoryID] = &pgnManifestCategory{
+				ID:   categoryID,
+				Name: manifestCategoryName(categoryID),
+			}
+			category = categories[categoryID]
+			categoryOrder = append(categoryOrder, categoryID)
+		}
+		category.PGNs = append(category.PGNs, entry)
+		if entry.DecodeSupported {
+			decodeSupported++
+		} else {
+			catalogOnly++
+		}
+		if entry.EncodeSupported {
+			encodeSupported++
+		}
+	}
+
+	manifestCategories := make([]pgnManifestCategory, 0, len(categoryOrder))
+	for _, categoryID := range categoryOrder {
+		manifestCategories = append(manifestCategories, *categories[categoryID])
+	}
+
+	return pgnManifest{
+		SchemaVersion: 1,
+		Package:       "github.com/open-ships/n2k/pgn",
+		Source:        "pgn/registry.go:pgnList",
+		Description:   "Known NMEA 2000 PGN variants in the package registry.",
+		Notes: []string{
+			"Each entry is wired into PgnInfoLookup.",
+			"decodeSupported marks entries with typed Go decoders; catalog-only canboat entries have decodeSupported false.",
+			"encodeSupported marks entries with typed Go encoders.",
+			"Categories for typed entries are grouped by the pgn package source file that owns each decoder.",
+			"Catalog-only entries are grouped under canboat and retain field metadata from canboat.json.",
+			"Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
+			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
+			"Examples are deterministic sample JSON objects based on generated struct json tags; they are only present for typed decoder entries.",
+		},
+		Counts: pgnManifestCounts{
+			Categories:              len(manifestCategories),
+			SupportedVariants:       len(infos),
+			UniqueSupportedPgns:     len(uniquePGNs),
+			DecodeSupportedVariants: decodeSupported,
+			EncodeSupportedVariants: encodeSupported,
+			CatalogOnlyVariants:     catalogOnly,
+		},
+		Categories: manifestCategories,
+	}
+}
+
+func allManifestInfos() []PgnInfo {
+	infos := make([]PgnInfo, 0, len(pgnList))
+	infos = append(infos, pgnList...)
+	return infos
+}
+
+func manifestEntry(t *testing.T, info PgnInfo) pgnManifestEntry {
+	t.Helper()
+	sourceFile := "canboat.json"
+	if info.Decoder != nil {
+		_, sourceFile = functionSource(info.Decoder)
+	}
+	entry := pgnManifestEntry{
+		ID:              info.Id,
+		PGN:             info.PGN,
+		Description:     info.Description,
+		FastPacket:      info.Fast,
+		ManufacturerID:  int(info.ManId),
+		Proprietary:     IsProprietaryPGN(info.PGN),
+		SourceFile:      sourceFile,
+		DecodeSupported: info.Decoder != nil,
+		EncodeSupported: info.Encoder != nil,
+		PayloadShape:    manifestPayloadShape(info.Fields),
+	}
+	if info.Decoder != nil {
+		entry.Example = manifestExample(t, info.Id, info.PGN)
+	}
+	return entry
+}
+
+func manifestEntryMap(manifest pgnManifest) map[string]pgnManifestEntry {
+	entries := make(map[string]pgnManifestEntry)
+	for _, category := range manifest.Categories {
+		for _, entry := range category.PGNs {
+			entries[entry.ID] = entry
+		}
+	}
+	return entries
+}
+
 func functionSource(fn any) (category string, sourceFile string) {
 	if fn == nil {
 		return "", ""
@@ -161,6 +270,34 @@ func functionSource(fn any) (category string, sourceFile string) {
 
 func functionCategory(sourceFile string) string {
 	return strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
+}
+
+func manifestCategoryName(categoryID string) string {
+	switch categoryID {
+	case "ais":
+		return "AIS"
+	case "bg":
+		return "B&G"
+	case "canboat":
+		return "Canboat Catalog"
+	case "diverse_yacht_services":
+		return "Diverse Yacht Services"
+	case "seatalk":
+		return "SeaTalk"
+	case "simnet":
+		return "SimNet"
+	case "sonichub":
+		return "SonicHub"
+	default:
+		parts := strings.Split(categoryID, "_")
+		for i, part := range parts {
+			if part == "" {
+				continue
+			}
+			parts[i] = strings.ToUpper(part[:1]) + part[1:]
+		}
+		return strings.Join(parts, " ")
+	}
 }
 
 func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadShape {

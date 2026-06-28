@@ -59,9 +59,10 @@ func TestGetSeqFrame(t *testing.T) {
 // proprietary PGN (130824). It checks:
 //   - MessageInfo fields are preserved (PGN, SourceId, Priority)
 //   - No parse errors for a valid, known PGN
-//   - Candidates are populated (PGN 130824 has 2 known variants)
+//   - Candidates are populated from both typed decoders and catalog-only metadata
 //   - Fast flag is set (130824 is classified as a fast-packet PGN)
 //   - GetManCode correctly extracts manufacturer 381 (B&G) after initialization
+//   - AddDecoders keeps only the matching typed decoder
 func TestNewPacket(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -75,10 +76,12 @@ func TestNewPacket(t *testing.T) {
 	assert.Equal(t, uint8(7), p.Info.SourceId)
 	assert.Equal(t, uint8(1), *p.Info.Priority)
 	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 2, len(p.Candidates))
+	assert.GreaterOrEqual(t, len(p.Candidates), 2)
 	assert.True(t, p.Fast)
 	p.GetManCode()
 	assert.Equal(t, pgn.ManufacturerCodeConst(381), p.Manufacturer)
+	p.AddDecoders()
+	assert.Equal(t, 1, len(p.Decoders))
 }
 
 // TestFilterSlow verifies that AddDecoders correctly filters proprietary PGN candidates

@@ -119,6 +119,31 @@ func TestDecode_NoDecoders_SendsUnknown(t *testing.T) {
 	assert.Contains(t, u.Reason.Error(), "no matching decoder")
 }
 
+// TestDecode_CatalogOnlyPGN_SendsUnknown verifies that PGNs known only from the
+// canboat catalog are treated as known metadata but do not install nil decoders.
+func TestDecode_CatalogOnlyPGN_SendsUnknown(t *testing.T) {
+	ps := New()
+	handler := &mockHandler{}
+	ps.SetOutput(handler)
+
+	info := pgn.MessageInfo{PGN: 127490, SourceId: 1}
+	pkt := NewPacket(info, []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08})
+
+	assert.NotEmpty(t, pkt.Candidates)
+	assert.Empty(t, pkt.ParseErrors)
+	pkt.AddDecoders()
+	assert.Empty(t, pkt.Decoders)
+
+	ps.Decode(*pkt)
+
+	assert.Equal(t, 1, len(handler.received))
+	u, ok := handler.received[0].(*pgn.UnknownPGN)
+	assert.True(t, ok)
+	assert.Equal(t, uint32(127490), u.Info.PGN)
+	assert.True(t, u.WasUnseen)
+	assert.Contains(t, u.Reason.Error(), "no matching decoder")
+}
+
 // TestDecode_MultipleDecoders_FirstFails_SecondSucceeds verifies the decoder
 // fallthrough behavior: when the first decoder fails, Decoder tries the next one.
 // This simulates the real scenario where multiple proprietary variants exist for the

@@ -184,6 +184,9 @@ func (p *Packet) AddDecoders() {
 		if p.Proprietary && p.Manufacturer != d.ManId {
 			continue
 		}
+		if d.Decoder == nil {
+			continue
+		}
 		p.Decoders = append(p.Decoders, d.Decoder)
 	}
 }
