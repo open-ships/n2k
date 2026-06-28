@@ -50,25 +50,22 @@ type typedEntry struct {
 }
 
 func main() {
-	registryPath := flag.String("registry", "pgn/registry.go", "path to pgn registry.go")
-	inputPath := flag.String("input", "", "local canboat.json file; defaults to --url")
-	url := flag.String("url", defaultCanboatJSONURL, "canboat.json URL")
 	check := flag.Bool("check", false, "fail if registry.go is not already synced")
 	flag.Parse()
 
-	if err := run(*registryPath, *inputPath, *url, *check); err != nil {
+	if err := run(*check); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
 
-func run(registryPath string, inputPath string, url string, check bool) error {
-	registry, err := os.ReadFile(registryPath)
+func run(check bool) error {
+	registry, err := os.ReadFile("pgn/registry.go")
 	if err != nil {
 		return fmt.Errorf("read registry: %w", err)
 	}
 
-	catalog, err := loadCanboatCatalog(inputPath, url)
+	catalog, err := loadCanboatCatalog()
 	if err != nil {
 		return err
 	}
@@ -94,32 +91,39 @@ func run(registryPath string, inputPath string, url string, check bool) error {
 			return fmt.Errorf("format current registry: %w", err)
 		}
 		if !bytes.Equal(current, formatted) {
-			return fmt.Errorf("%s is not synced with canboat.json", registryPath)
+			return fmt.Errorf("pgn/registry.go is not synced with canboat.json")
 		}
 		return nil
 	}
 
 	if !bytes.Equal(registry, formatted) {
-		if err := os.WriteFile(registryPath, formatted, 0o644); err != nil {
-			return fmt.Errorf("write registry: %w", err)
+		if err := writeRegistry(formatted); err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
-func loadCanboatCatalog(inputPath string, url string) (canboatCatalog, error) {
-	var raw []byte
-	var err error
-	if inputPath != "" {
-		raw, err = os.ReadFile(inputPath)
-		if err != nil {
-			return canboatCatalog{}, fmt.Errorf("read canboat json: %w", err)
+func writeRegistry(contents []byte) (err error) {
+	file, err := os.OpenFile("pgn/registry.go", os.O_WRONLY|os.O_TRUNC, 0)
+	if err != nil {
+		return fmt.Errorf("open registry for writing: %w", err)
+	}
+	defer func() {
+		if closeErr := file.Close(); err == nil && closeErr != nil {
+			err = fmt.Errorf("close registry: %w", closeErr)
 		}
-	} else {
-		raw, err = readURL(url)
-		if err != nil {
-			return canboatCatalog{}, err
-		}
+	}()
+	if _, err := file.Write(contents); err != nil {
+		return fmt.Errorf("write registry: %w", err)
+	}
+	return nil
+}
+
+func loadCanboatCatalog() (canboatCatalog, error) {
+	raw, err := readCanboatCatalog()
+	if err != nil {
+		return canboatCatalog{}, err
 	}
 
 	decoder := json.NewDecoder(bytes.NewReader(raw))
@@ -131,12 +135,16 @@ func loadCanboatCatalog(inputPath string, url string) (canboatCatalog, error) {
 	return catalog, nil
 }
 
-func readURL(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func readCanboatCatalog() (_ []byte, err error) {
+	resp, err := http.Get(defaultCanboatJSONURL)
 	if err != nil {
 		return nil, fmt.Errorf("fetch canboat json: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); err == nil && closeErr != nil {
+			err = fmt.Errorf("close canboat json response: %w", closeErr)
+		}
+	}()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("fetch canboat json: %s", resp.Status)
 	}
