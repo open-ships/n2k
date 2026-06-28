@@ -5,16 +5,16 @@ import (
 )
 
 type RadioFrequencyModePower struct {
-	Info MessageInfo `json:"info"`
-	RxFrequency *float32 `json:"rxFrequency"`
-	TxFrequency *float32 `json:"txFrequency"`
-	RadioChannel string `json:"radioChannel"`
-	TxPower *uint8 `json:"txPower"`
-	Mode *uint16 `json:"mode"`
-	ChannelBandwidth *uint16 `json:"channelBandwidth"`
+	Info             MessageInfo `json:"info"`
+	RxFrequency      *float32    `json:"rxFrequency"`
+	TxFrequency      *float32    `json:"txFrequency"`
+	RadioChannel     string      `json:"radioChannel"`
+	TxPower          *uint8      `json:"txPower"`
+	Mode             *uint16     `json:"mode"`
+	ChannelBandwidth *uint16     `json:"channelBandwidth"`
 }
 
-func (x *RadioFrequencyModePower) PGNNumber() uint32  { return 129799 }
+func (x *RadioFrequencyModePower) PGNNumber() uint32 { return 129799 }
 
 func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &RadioFrequencyModePower{}
@@ -26,7 +26,7 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 10); err != nil {
 		return nil, fmt.Errorf("parse failed for RadioFrequencyModePower-TxFrequency: %w", err)
@@ -35,7 +35,7 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(48); err != nil {
 		return nil, fmt.Errorf("parse failed for RadioFrequencyModePower-RadioChannel: %w", err)
@@ -44,7 +44,7 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for RadioFrequencyModePower-TxPower: %w", err)
@@ -53,7 +53,7 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for RadioFrequencyModePower-Mode: %w", err)
@@ -62,7 +62,7 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for RadioFrequencyModePower-ChannelBandwidth: %w", err)
@@ -71,8 +71,8 @@ func DecodeRadioFrequencyModePower(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 

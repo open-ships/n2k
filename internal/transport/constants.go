@@ -21,11 +21,11 @@ const (
 
 // CM control byte values identifying the type of connection management frame.
 const (
-	ControlRTS          uint8 = 16  // Request To Send
-	ControlCTS          uint8 = 17  // Clear To Send
-	ControlEndOfMsgAck  uint8 = 19  // End of Message Acknowledgement
-	ControlBAM          uint8 = 32  // Broadcast Announce Message
-	ControlAbort        uint8 = 255 // Connection Abort
+	ControlRTS         uint8 = 16  // Request To Send
+	ControlCTS         uint8 = 17  // Clear To Send
+	ControlEndOfMsgAck uint8 = 19  // End of Message Acknowledgement
+	ControlBAM         uint8 = 32  // Broadcast Announce Message
+	ControlAbort       uint8 = 255 // Connection Abort
 )
 
 // Standard priority for transport protocol frames.

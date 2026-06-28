@@ -91,7 +91,7 @@ func EncodeFusionMediaControl(val *FusionMediaControl) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -177,7 +177,7 @@ func EncodeFusionRequestStatus(val *FusionRequestStatus) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -301,7 +301,7 @@ func EncodeFusionSetAllVolumes(val *FusionSetAllVolumes) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -389,7 +389,7 @@ func EncodeFusionSetMute(val *FusionSetMute) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.Command), 8)
@@ -483,7 +483,7 @@ func EncodeFusionSetSource(val *FusionSetSource) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -588,7 +588,7 @@ func EncodeFusionSetZoneVolume(val *FusionSetZoneVolume) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -694,7 +694,7 @@ func EncodeFusionSiriusControl(val *FusionSiriusControl) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	w.writeUInt8(val.Unknown, 8)
@@ -800,7 +800,7 @@ func EncodeFusionAlbum(val *FusionAlbum) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -936,7 +936,7 @@ func EncodeFusionAmFmStation(val *FusionAmFmStation) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1045,7 +1045,7 @@ func EncodeFusionArtist(val *FusionArtist) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1211,7 +1211,7 @@ func EncodeFusionMenuItem(val *FusionMenuItem) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1313,7 +1313,7 @@ func EncodeFusionMute(val *FusionMute) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1418,7 +1418,7 @@ func EncodeFusionPlayProgress(val *FusionPlayProgress) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1584,7 +1584,7 @@ func EncodeFusionReplay(val *FusionReplay) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1706,7 +1706,7 @@ func EncodeFusionScan(val *FusionScan) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1843,7 +1843,7 @@ func EncodeFusionSourceName(val *FusionSourceName) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -1952,7 +1952,7 @@ func EncodeFusionSquelch(val *FusionSquelch) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -2078,7 +2078,7 @@ func EncodeFusionSubVolume(val *FusionSubVolume) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -2186,7 +2186,7 @@ func EncodeFusionTrack(val *FusionTrack) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -2372,7 +2372,7 @@ func EncodeFusionTrackInfo(val *FusionTrackInfo) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt16(val.A, 16)
@@ -2476,7 +2476,7 @@ func EncodeFusionUnitName(val *FusionUnitName) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -2591,7 +2591,7 @@ func EncodeFusionVhf(val *FusionVhf) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)
@@ -2698,7 +2698,7 @@ func EncodeFusionZoneName(val *FusionZoneName) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.MessageId), 8)
 	w.writeUInt8(val.A, 8)

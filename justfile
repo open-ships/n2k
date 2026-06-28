@@ -1,4 +1,5 @@
 golangci_lint_version := "v2.12.0"
+secure_go_toolchain := "go1.25.11"
 
 # list available recipes
 default:
@@ -29,6 +30,14 @@ setup:
 test:
     go test ./...
 
+# compare runtime PGN support against current canboat.json
+canboat-parity:
+    CANBOAT_PARITY=1 go test ./pgn -run TestCanboatParity -count=1 -v
+
+# regenerate CANboat-derived runtime metadata from upstream master
+generate-canboat:
+    go run ./cmd/canboatgen
+
 # run tests with verbose output
 test-v:
     go test -v ./...
@@ -55,8 +64,8 @@ lint:
 
 # run security review (vulnerability scan + static analysis)
 secure:
-    govulncheck ./...
-    gosec -exclude-generated -exclude=G115 ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} govulncheck ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} gosec -exclude-generated -exclude=G115 ./...
 
 # tidy go modules
 tidy:

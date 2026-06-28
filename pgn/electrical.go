@@ -7,13 +7,13 @@ import (
 )
 
 type Bus1PhaseCBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
 }
 
-func (b *Bus1PhaseCBasicAcQuantities) PGNNumber() uint32  { return 65001 }
+func (b *Bus1PhaseCBasicAcQuantities) PGNNumber() uint32 { return 65001 }
 
 func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Bus1PhaseCBasicAcQuantities{}
@@ -25,7 +25,7 @@ func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseCBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -34,7 +34,7 @@ func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseCBasicAcQuantities-AcFrequency: %w", err)
@@ -43,12 +43,12 @@ func DecodeBus1PhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -58,7 +58,7 @@ func EncodeBus1PhaseCBasicAcQuantities(val *Bus1PhaseCBasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -71,13 +71,13 @@ func encodeBus1PhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type Bus1PhaseBBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
 }
 
-func (b *Bus1PhaseBBasicAcQuantities) PGNNumber() uint32  { return 65002 }
+func (b *Bus1PhaseBBasicAcQuantities) PGNNumber() uint32 { return 65002 }
 
 func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Bus1PhaseBBasicAcQuantities{}
@@ -89,7 +89,7 @@ func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseBBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -98,7 +98,7 @@ func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseBBasicAcQuantities-AcFrequency: %w", err)
@@ -107,12 +107,12 @@ func DecodeBus1PhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -122,7 +122,7 @@ func EncodeBus1PhaseBBasicAcQuantities(val *Bus1PhaseBBasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -135,13 +135,13 @@ func encodeBus1PhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type Bus1PhaseABasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
 }
 
-func (b *Bus1PhaseABasicAcQuantities) PGNNumber() uint32  { return 65003 }
+func (b *Bus1PhaseABasicAcQuantities) PGNNumber() uint32 { return 65003 }
 
 func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Bus1PhaseABasicAcQuantities{}
@@ -153,7 +153,7 @@ func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseABasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -162,7 +162,7 @@ func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1PhaseABasicAcQuantities-AcFrequency: %w", err)
@@ -171,12 +171,12 @@ func DecodeBus1PhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -186,7 +186,7 @@ func EncodeBus1PhaseABasicAcQuantities(val *Bus1PhaseABasicAcQuantities) ([]byte
 	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -199,13 +199,13 @@ func encodeBus1PhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type Bus1AverageBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
 }
 
-func (b *Bus1AverageBasicAcQuantities) PGNNumber() uint32  { return 65004 }
+func (b *Bus1AverageBasicAcQuantities) PGNNumber() uint32 { return 65004 }
 
 func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Bus1AverageBasicAcQuantities{}
@@ -217,7 +217,7 @@ func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1AverageBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -226,7 +226,7 @@ func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for Bus1AverageBasicAcQuantities-AcFrequency: %w", err)
@@ -235,12 +235,12 @@ func DecodeBus1AverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -250,7 +250,7 @@ func EncodeBus1AverageBasicAcQuantities(val *Bus1AverageBasicAcQuantities) ([]by
 	w.writeUInt16(val.LineLineAcRmsVoltage, 16)
 	w.writeUInt16(val.LineNeutralAcRmsVoltage, 16)
 	w.writeUnsignedResolution(val.AcFrequency, 16, 0.0078125)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -263,12 +263,12 @@ func encodeBus1AverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type UtilityTotalAcEnergy struct {
-	Info MessageInfo `json:"info"`
-	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
-	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
+	Info              MessageInfo `json:"info"`
+	TotalEnergyExport *uint32     `json:"totalEnergyExport"`
+	TotalEnergyImport *uint32     `json:"totalEnergyImport"`
 }
 
-func (u *UtilityTotalAcEnergy) PGNNumber() uint32  { return 65005 }
+func (u *UtilityTotalAcEnergy) PGNNumber() uint32 { return 65005 }
 
 func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityTotalAcEnergy{}
@@ -280,7 +280,7 @@ func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcEnergy-TotalEnergyImport: %w", err)
@@ -289,8 +289,8 @@ func DecodeUtilityTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -311,13 +311,13 @@ func encodeUtilityTotalAcEnergyMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseCAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *uint16 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *uint16          `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (u *UtilityPhaseCAcReactivePower) PGNNumber() uint32  { return 65006 }
+func (u *UtilityPhaseCAcReactivePower) PGNNumber() uint32 { return 65006 }
 
 func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseCAcReactivePower{}
@@ -329,7 +329,7 @@ func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcReactivePower-PowerFactor: %w", err)
@@ -338,7 +338,7 @@ func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcReactivePower-PowerFactorLagging: %w", err)
@@ -347,12 +347,12 @@ func DecodeUtilityPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(30)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -362,7 +362,7 @@ func EncodeUtilityPhaseCAcReactivePower(val *UtilityPhaseCAcReactivePower) ([]by
 	w.writeUInt16(val.ReactivePower, 16)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(30)
+	w.writeReservedBits(30)
 	return w.Bytes(), w.Err()
 }
 
@@ -375,12 +375,12 @@ func encodeUtilityPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseCAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (u *UtilityPhaseCAcPower) PGNNumber() uint32  { return 65007 }
+func (u *UtilityPhaseCAcPower) PGNNumber() uint32 { return 65007 }
 
 func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseCAcPower{}
@@ -392,7 +392,7 @@ func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCAcPower-ApparentPower: %w", err)
@@ -401,8 +401,8 @@ func DecodeUtilityPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -423,14 +423,14 @@ func encodeUtilityPhaseCAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseCBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (u *UtilityPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65008 }
+func (u *UtilityPhaseCBasicAcQuantities) PGNNumber() uint32 { return 65008 }
 
 func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseCBasicAcQuantities{}
@@ -442,7 +442,7 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -451,7 +451,7 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCBasicAcQuantities-AcFrequency: %w", err)
@@ -460,7 +460,7 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseCBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -469,8 +469,8 @@ func DecodeUtilityPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -493,13 +493,13 @@ func encodeUtilityPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseBAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *uint16 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *uint16          `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (u *UtilityPhaseBAcReactivePower) PGNNumber() uint32  { return 65009 }
+func (u *UtilityPhaseBAcReactivePower) PGNNumber() uint32 { return 65009 }
 
 func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseBAcReactivePower{}
@@ -511,7 +511,7 @@ func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcReactivePower-PowerFactor: %w", err)
@@ -520,7 +520,7 @@ func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcReactivePower-PowerFactorLagging: %w", err)
@@ -529,12 +529,12 @@ func DecodeUtilityPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(30)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -544,7 +544,7 @@ func EncodeUtilityPhaseBAcReactivePower(val *UtilityPhaseBAcReactivePower) ([]by
 	w.writeUInt16(val.ReactivePower, 16)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(30)
+	w.writeReservedBits(30)
 	return w.Bytes(), w.Err()
 }
 
@@ -557,12 +557,12 @@ func encodeUtilityPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseBAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (u *UtilityPhaseBAcPower) PGNNumber() uint32  { return 65010 }
+func (u *UtilityPhaseBAcPower) PGNNumber() uint32 { return 65010 }
 
 func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseBAcPower{}
@@ -574,7 +574,7 @@ func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBAcPower-ApparentPower: %w", err)
@@ -583,8 +583,8 @@ func DecodeUtilityPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -605,14 +605,14 @@ func encodeUtilityPhaseBAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseBBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (u *UtilityPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65011 }
+func (u *UtilityPhaseBBasicAcQuantities) PGNNumber() uint32 { return 65011 }
 
 func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseBBasicAcQuantities{}
@@ -624,7 +624,7 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -633,7 +633,7 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBBasicAcQuantities-AcFrequency: %w", err)
@@ -642,7 +642,7 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseBBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -651,8 +651,8 @@ func DecodeUtilityPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -675,13 +675,13 @@ func encodeUtilityPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseAAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (u *UtilityPhaseAAcReactivePower) PGNNumber() uint32  { return 65012 }
+func (u *UtilityPhaseAAcReactivePower) PGNNumber() uint32 { return 65012 }
 
 func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseAAcReactivePower{}
@@ -693,7 +693,7 @@ func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcReactivePower-PowerFactor: %w", err)
@@ -702,7 +702,7 @@ func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcReactivePower-PowerFactorLagging: %w", err)
@@ -711,12 +711,12 @@ func DecodeUtilityPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -726,7 +726,7 @@ func EncodeUtilityPhaseAAcReactivePower(val *UtilityPhaseAAcReactivePower) ([]by
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -739,12 +739,12 @@ func encodeUtilityPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseAAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (u *UtilityPhaseAAcPower) PGNNumber() uint32  { return 65013 }
+func (u *UtilityPhaseAAcPower) PGNNumber() uint32 { return 65013 }
 
 func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseAAcPower{}
@@ -756,7 +756,7 @@ func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseAAcPower-ApparentPower: %w", err)
@@ -765,8 +765,8 @@ func DecodeUtilityPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -787,14 +787,14 @@ func encodeUtilityPhaseAAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityPhaseABasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (u *UtilityPhaseABasicAcQuantities) PGNNumber() uint32  { return 65014 }
+func (u *UtilityPhaseABasicAcQuantities) PGNNumber() uint32 { return 65014 }
 
 func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityPhaseABasicAcQuantities{}
@@ -806,7 +806,7 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseABasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -815,7 +815,7 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseABasicAcQuantities-AcFrequency: %w", err)
@@ -824,7 +824,7 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityPhaseABasicAcQuantities-AcRmsCurrent: %w", err)
@@ -833,8 +833,8 @@ func DecodeUtilityPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -857,13 +857,13 @@ func encodeUtilityPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type UtilityTotalAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (u *UtilityTotalAcReactivePower) PGNNumber() uint32  { return 65015 }
+func (u *UtilityTotalAcReactivePower) PGNNumber() uint32 { return 65015 }
 
 func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityTotalAcReactivePower{}
@@ -875,7 +875,7 @@ func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcReactivePower-PowerFactor: %w", err)
@@ -884,7 +884,7 @@ func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcReactivePower-PowerFactorLagging: %w", err)
@@ -893,12 +893,12 @@ func DecodeUtilityTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -908,7 +908,7 @@ func EncodeUtilityTotalAcReactivePower(val *UtilityTotalAcReactivePower) ([]byte
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -921,12 +921,12 @@ func encodeUtilityTotalAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityTotalAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (u *UtilityTotalAcPower) PGNNumber() uint32  { return 65016 }
+func (u *UtilityTotalAcPower) PGNNumber() uint32 { return 65016 }
 
 func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityTotalAcPower{}
@@ -938,7 +938,7 @@ func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityTotalAcPower-ApparentPower: %w", err)
@@ -947,8 +947,8 @@ func DecodeUtilityTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -969,14 +969,14 @@ func encodeUtilityTotalAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type UtilityAverageBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (u *UtilityAverageBasicAcQuantities) PGNNumber() uint32  { return 65017 }
+func (u *UtilityAverageBasicAcQuantities) PGNNumber() uint32 { return 65017 }
 
 func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &UtilityAverageBasicAcQuantities{}
@@ -988,7 +988,7 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityAverageBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -997,7 +997,7 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityAverageBasicAcQuantities-AcFrequency: %w", err)
@@ -1006,7 +1006,7 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for UtilityAverageBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -1015,8 +1015,8 @@ func DecodeUtilityAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1039,12 +1039,12 @@ func encodeUtilityAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorTotalAcEnergy struct {
-	Info MessageInfo `json:"info"`
-	TotalEnergyExport *uint32 `json:"totalEnergyExport"`
-	TotalEnergyImport *uint32 `json:"totalEnergyImport"`
+	Info              MessageInfo `json:"info"`
+	TotalEnergyExport *uint32     `json:"totalEnergyExport"`
+	TotalEnergyImport *uint32     `json:"totalEnergyImport"`
 }
 
-func (g *GeneratorTotalAcEnergy) PGNNumber() uint32  { return 65018 }
+func (g *GeneratorTotalAcEnergy) PGNNumber() uint32 { return 65018 }
 
 func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorTotalAcEnergy{}
@@ -1056,7 +1056,7 @@ func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcEnergy-TotalEnergyImport: %w", err)
@@ -1065,8 +1065,8 @@ func DecodeGeneratorTotalAcEnergy(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1087,13 +1087,13 @@ func encodeGeneratorTotalAcEnergyMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseCAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (g *GeneratorPhaseCAcReactivePower) PGNNumber() uint32  { return 65019 }
+func (g *GeneratorPhaseCAcReactivePower) PGNNumber() uint32 { return 65019 }
 
 func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseCAcReactivePower{}
@@ -1105,7 +1105,7 @@ func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcReactivePower-PowerFactor: %w", err)
@@ -1114,7 +1114,7 @@ func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcReactivePower-PowerFactorLagging: %w", err)
@@ -1123,12 +1123,12 @@ func DecodeGeneratorPhaseCAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1138,7 +1138,7 @@ func EncodeGeneratorPhaseCAcReactivePower(val *GeneratorPhaseCAcReactivePower) (
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -1151,12 +1151,12 @@ func encodeGeneratorPhaseCAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseCAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (g *GeneratorPhaseCAcPower) PGNNumber() uint32  { return 65020 }
+func (g *GeneratorPhaseCAcPower) PGNNumber() uint32 { return 65020 }
 
 func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseCAcPower{}
@@ -1168,7 +1168,7 @@ func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCAcPower-ApparentPower: %w", err)
@@ -1177,8 +1177,8 @@ func DecodeGeneratorPhaseCAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1199,14 +1199,14 @@ func encodeGeneratorPhaseCAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseCBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (g *GeneratorPhaseCBasicAcQuantities) PGNNumber() uint32  { return 65021 }
+func (g *GeneratorPhaseCBasicAcQuantities) PGNNumber() uint32 { return 65021 }
 
 func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseCBasicAcQuantities{}
@@ -1218,7 +1218,7 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -1227,7 +1227,7 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCBasicAcQuantities-AcFrequency: %w", err)
@@ -1236,7 +1236,7 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseCBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -1245,8 +1245,8 @@ func DecodeGeneratorPhaseCBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1269,13 +1269,13 @@ func encodeGeneratorPhaseCBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseBAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (g *GeneratorPhaseBAcReactivePower) PGNNumber() uint32  { return 65022 }
+func (g *GeneratorPhaseBAcReactivePower) PGNNumber() uint32 { return 65022 }
 
 func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseBAcReactivePower{}
@@ -1287,7 +1287,7 @@ func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcReactivePower-PowerFactor: %w", err)
@@ -1296,7 +1296,7 @@ func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcReactivePower-PowerFactorLagging: %w", err)
@@ -1305,12 +1305,12 @@ func DecodeGeneratorPhaseBAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1320,7 +1320,7 @@ func EncodeGeneratorPhaseBAcReactivePower(val *GeneratorPhaseBAcReactivePower) (
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -1333,12 +1333,12 @@ func encodeGeneratorPhaseBAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseBAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (g *GeneratorPhaseBAcPower) PGNNumber() uint32  { return 65023 }
+func (g *GeneratorPhaseBAcPower) PGNNumber() uint32 { return 65023 }
 
 func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseBAcPower{}
@@ -1350,7 +1350,7 @@ func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBAcPower-ApparentPower: %w", err)
@@ -1359,8 +1359,8 @@ func DecodeGeneratorPhaseBAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1381,14 +1381,14 @@ func encodeGeneratorPhaseBAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseBBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (g *GeneratorPhaseBBasicAcQuantities) PGNNumber() uint32  { return 65024 }
+func (g *GeneratorPhaseBBasicAcQuantities) PGNNumber() uint32 { return 65024 }
 
 func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseBBasicAcQuantities{}
@@ -1400,7 +1400,7 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -1409,7 +1409,7 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBBasicAcQuantities-AcFrequency: %w", err)
@@ -1418,7 +1418,7 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseBBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -1427,8 +1427,8 @@ func DecodeGeneratorPhaseBBasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1451,13 +1451,13 @@ func encodeGeneratorPhaseBBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseAAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (g *GeneratorPhaseAAcReactivePower) PGNNumber() uint32  { return 65025 }
+func (g *GeneratorPhaseAAcReactivePower) PGNNumber() uint32 { return 65025 }
 
 func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseAAcReactivePower{}
@@ -1469,7 +1469,7 @@ func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcReactivePower-PowerFactor: %w", err)
@@ -1478,7 +1478,7 @@ func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcReactivePower-PowerFactorLagging: %w", err)
@@ -1487,12 +1487,12 @@ func DecodeGeneratorPhaseAAcReactivePower(Info MessageInfo, stream *PGNDataStrea
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1502,7 +1502,7 @@ func EncodeGeneratorPhaseAAcReactivePower(val *GeneratorPhaseAAcReactivePower) (
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -1515,12 +1515,12 @@ func encodeGeneratorPhaseAAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseAAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (g *GeneratorPhaseAAcPower) PGNNumber() uint32  { return 65026 }
+func (g *GeneratorPhaseAAcPower) PGNNumber() uint32 { return 65026 }
 
 func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseAAcPower{}
@@ -1532,7 +1532,7 @@ func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseAAcPower-ApparentPower: %w", err)
@@ -1541,8 +1541,8 @@ func DecodeGeneratorPhaseAAcPower(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1563,14 +1563,14 @@ func encodeGeneratorPhaseAAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorPhaseABasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (g *GeneratorPhaseABasicAcQuantities) PGNNumber() uint32  { return 65027 }
+func (g *GeneratorPhaseABasicAcQuantities) PGNNumber() uint32 { return 65027 }
 
 func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorPhaseABasicAcQuantities{}
@@ -1582,7 +1582,7 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseABasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -1591,7 +1591,7 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseABasicAcQuantities-AcFrequency: %w", err)
@@ -1600,7 +1600,7 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorPhaseABasicAcQuantities-AcRmsCurrent: %w", err)
@@ -1609,8 +1609,8 @@ func DecodeGeneratorPhaseABasicAcQuantities(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1633,13 +1633,13 @@ func encodeGeneratorPhaseABasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorTotalAcReactivePower struct {
-	Info MessageInfo `json:"info"`
-	ReactivePower *int32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Info               MessageInfo      `json:"info"`
+	ReactivePower      *int32           `json:"reactivePower"`
+	PowerFactor        *float32         `json:"powerFactor"`
 	PowerFactorLagging PowerFactorConst `json:"powerFactorLagging"`
 }
 
-func (g *GeneratorTotalAcReactivePower) PGNNumber() uint32  { return 65028 }
+func (g *GeneratorTotalAcReactivePower) PGNNumber() uint32 { return 65028 }
 
 func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorTotalAcReactivePower{}
@@ -1651,7 +1651,7 @@ func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 6.10352e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcReactivePower-PowerFactor: %w", err)
@@ -1660,7 +1660,7 @@ func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcReactivePower-PowerFactorLagging: %w", err)
@@ -1669,12 +1669,12 @@ func DecodeGeneratorTotalAcReactivePower(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(14)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1684,7 +1684,7 @@ func EncodeGeneratorTotalAcReactivePower(val *GeneratorTotalAcReactivePower) ([]
 	w.writeInt32(val.ReactivePower, 32)
 	w.writeUnsignedResolution(val.PowerFactor, 16, 6.10352e-05)
 	w.writeLookupField(uint64(val.PowerFactorLagging), 2)
-	w.skipBits(14)
+	w.writeReservedBits(14)
 	return w.Bytes(), w.Err()
 }
 
@@ -1697,12 +1697,12 @@ func encodeGeneratorTotalAcReactivePowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorTotalAcPower struct {
-	Info MessageInfo `json:"info"`
-	RealPower *int32 `json:"realPower"`
-	ApparentPower *int32 `json:"apparentPower"`
+	Info          MessageInfo `json:"info"`
+	RealPower     *int32      `json:"realPower"`
+	ApparentPower *int32      `json:"apparentPower"`
 }
 
-func (g *GeneratorTotalAcPower) PGNNumber() uint32  { return 65029 }
+func (g *GeneratorTotalAcPower) PGNNumber() uint32 { return 65029 }
 
 func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorTotalAcPower{}
@@ -1714,7 +1714,7 @@ func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorTotalAcPower-ApparentPower: %w", err)
@@ -1723,8 +1723,8 @@ func DecodeGeneratorTotalAcPower(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1745,14 +1745,14 @@ func encodeGeneratorTotalAcPowerMsg(v Message) ([]byte, error) {
 }
 
 type GeneratorAverageBasicAcQuantities struct {
-	Info MessageInfo `json:"info"`
-	LineLineAcRmsVoltage *uint16 `json:"lineLineAcRmsVoltage"`
-	LineNeutralAcRmsVoltage *uint16 `json:"lineNeutralAcRmsVoltage"`
-	AcFrequency *float32 `json:"acFrequency"`
-	AcRmsCurrent *uint16 `json:"acRmsCurrent"`
+	Info                    MessageInfo `json:"info"`
+	LineLineAcRmsVoltage    *uint16     `json:"lineLineAcRmsVoltage"`
+	LineNeutralAcRmsVoltage *uint16     `json:"lineNeutralAcRmsVoltage"`
+	AcFrequency             *float32    `json:"acFrequency"`
+	AcRmsCurrent            *uint16     `json:"acRmsCurrent"`
 }
 
-func (g *GeneratorAverageBasicAcQuantities) PGNNumber() uint32  { return 65030 }
+func (g *GeneratorAverageBasicAcQuantities) PGNNumber() uint32 { return 65030 }
 
 func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &GeneratorAverageBasicAcQuantities{}
@@ -1764,7 +1764,7 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorAverageBasicAcQuantities-LineNeutralAcRmsVoltage: %w", err)
@@ -1773,7 +1773,7 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0078125); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorAverageBasicAcQuantities-AcFrequency: %w", err)
@@ -1782,7 +1782,7 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for GeneratorAverageBasicAcQuantities-AcRmsCurrent: %w", err)
@@ -1791,8 +1791,8 @@ func DecodeGeneratorAverageBasicAcQuantities(Info MessageInfo, stream *PGNDataSt
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1815,18 +1815,18 @@ func encodeGeneratorAverageBasicAcQuantitiesMsg(v Message) ([]byte, error) {
 }
 
 type LoadControllerConnectionStateControl struct {
-	Info MessageInfo `json:"info"`
-	SequenceId *uint8 `json:"sequenceId"`
-	ConnectionId *uint8 `json:"connectionId"`
-	State *uint8 `json:"state"`
-	Status *uint8 `json:"status"`
-	OperationalStatusControl *uint8 `json:"operationalStatusControl"`
-	PwmDutyCycle *uint8 `json:"pwmDutyCycle"`
-	Timeon *uint8 `json:"timeon"`
-	Timeoff *uint8 `json:"timeoff"`
+	Info                     MessageInfo `json:"info"`
+	SequenceId               *uint8      `json:"sequenceId"`
+	ConnectionId             *uint8      `json:"connectionId"`
+	State                    *uint8      `json:"state"`
+	Status                   *uint8      `json:"status"`
+	OperationalStatusControl *uint8      `json:"operationalStatusControl"`
+	PwmDutyCycle             *uint8      `json:"pwmDutyCycle"`
+	Timeon                   *uint8      `json:"timeon"`
+	Timeoff                  *uint8      `json:"timeoff"`
 }
 
-func (l *LoadControllerConnectionStateControl) PGNNumber() uint32  { return 127500 }
+func (l *LoadControllerConnectionStateControl) PGNNumber() uint32 { return 127500 }
 
 func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &LoadControllerConnectionStateControl{}
@@ -1838,7 +1838,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-ConnectionId: %w", err)
@@ -1847,7 +1847,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-State: %w", err)
@@ -1856,7 +1856,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-Status: %w", err)
@@ -1865,7 +1865,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-OperationalStatusControl: %w", err)
@@ -1874,7 +1874,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-PwmDutyCycle: %w", err)
@@ -1883,7 +1883,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-Timeon: %w", err)
@@ -1892,7 +1892,7 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for LoadControllerConnectionStateControl-Timeoff: %w", err)
@@ -1901,8 +1901,8 @@ func DecodeLoadControllerConnectionStateControl(Info MessageInfo, stream *PGNDat
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1929,39 +1929,39 @@ func encodeLoadControllerConnectionStateControlMsg(v Message) ([]byte, error) {
 }
 
 type BinarySwitchBankStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	Indicator1 OffOnConst `json:"indicator1"`
-	Indicator2 OffOnConst `json:"indicator2"`
-	Indicator3 OffOnConst `json:"indicator3"`
-	Indicator4 OffOnConst `json:"indicator4"`
-	Indicator5 OffOnConst `json:"indicator5"`
-	Indicator6 OffOnConst `json:"indicator6"`
-	Indicator7 OffOnConst `json:"indicator7"`
-	Indicator8 OffOnConst `json:"indicator8"`
-	Indicator9 OffOnConst `json:"indicator9"`
-	Indicator10 OffOnConst `json:"indicator10"`
-	Indicator11 OffOnConst `json:"indicator11"`
-	Indicator12 OffOnConst `json:"indicator12"`
-	Indicator13 OffOnConst `json:"indicator13"`
-	Indicator14 OffOnConst `json:"indicator14"`
-	Indicator15 OffOnConst `json:"indicator15"`
-	Indicator16 OffOnConst `json:"indicator16"`
-	Indicator17 OffOnConst `json:"indicator17"`
-	Indicator18 OffOnConst `json:"indicator18"`
-	Indicator19 OffOnConst `json:"indicator19"`
-	Indicator20 OffOnConst `json:"indicator20"`
-	Indicator21 OffOnConst `json:"indicator21"`
-	Indicator22 OffOnConst `json:"indicator22"`
-	Indicator23 OffOnConst `json:"indicator23"`
-	Indicator24 OffOnConst `json:"indicator24"`
-	Indicator25 OffOnConst `json:"indicator25"`
-	Indicator26 OffOnConst `json:"indicator26"`
-	Indicator27 OffOnConst `json:"indicator27"`
-	Indicator28 OffOnConst `json:"indicator28"`
+	Info        MessageInfo `json:"info"`
+	Instance    *uint8      `json:"instance"`
+	Indicator1  OffOnConst  `json:"indicator1"`
+	Indicator2  OffOnConst  `json:"indicator2"`
+	Indicator3  OffOnConst  `json:"indicator3"`
+	Indicator4  OffOnConst  `json:"indicator4"`
+	Indicator5  OffOnConst  `json:"indicator5"`
+	Indicator6  OffOnConst  `json:"indicator6"`
+	Indicator7  OffOnConst  `json:"indicator7"`
+	Indicator8  OffOnConst  `json:"indicator8"`
+	Indicator9  OffOnConst  `json:"indicator9"`
+	Indicator10 OffOnConst  `json:"indicator10"`
+	Indicator11 OffOnConst  `json:"indicator11"`
+	Indicator12 OffOnConst  `json:"indicator12"`
+	Indicator13 OffOnConst  `json:"indicator13"`
+	Indicator14 OffOnConst  `json:"indicator14"`
+	Indicator15 OffOnConst  `json:"indicator15"`
+	Indicator16 OffOnConst  `json:"indicator16"`
+	Indicator17 OffOnConst  `json:"indicator17"`
+	Indicator18 OffOnConst  `json:"indicator18"`
+	Indicator19 OffOnConst  `json:"indicator19"`
+	Indicator20 OffOnConst  `json:"indicator20"`
+	Indicator21 OffOnConst  `json:"indicator21"`
+	Indicator22 OffOnConst  `json:"indicator22"`
+	Indicator23 OffOnConst  `json:"indicator23"`
+	Indicator24 OffOnConst  `json:"indicator24"`
+	Indicator25 OffOnConst  `json:"indicator25"`
+	Indicator26 OffOnConst  `json:"indicator26"`
+	Indicator27 OffOnConst  `json:"indicator27"`
+	Indicator28 OffOnConst  `json:"indicator28"`
 }
 
-func (b *BinarySwitchBankStatus) PGNNumber() uint32  { return 127501 }
+func (b *BinarySwitchBankStatus) PGNNumber() uint32 { return 127501 }
 
 func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &BinarySwitchBankStatus{}
@@ -1973,7 +1973,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator1: %w", err)
@@ -1982,7 +1982,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator2: %w", err)
@@ -1991,7 +1991,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator3: %w", err)
@@ -2000,7 +2000,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator4: %w", err)
@@ -2009,7 +2009,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator5: %w", err)
@@ -2018,7 +2018,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator6: %w", err)
@@ -2027,7 +2027,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator7: %w", err)
@@ -2036,7 +2036,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator8: %w", err)
@@ -2045,7 +2045,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator9: %w", err)
@@ -2054,7 +2054,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator10: %w", err)
@@ -2063,7 +2063,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator11: %w", err)
@@ -2072,7 +2072,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator12: %w", err)
@@ -2081,7 +2081,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator13: %w", err)
@@ -2090,7 +2090,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator14: %w", err)
@@ -2099,7 +2099,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator15: %w", err)
@@ -2108,7 +2108,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator16: %w", err)
@@ -2117,7 +2117,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator17: %w", err)
@@ -2126,7 +2126,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator18: %w", err)
@@ -2135,7 +2135,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator19: %w", err)
@@ -2144,7 +2144,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator20: %w", err)
@@ -2153,7 +2153,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator21: %w", err)
@@ -2162,7 +2162,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator22: %w", err)
@@ -2171,7 +2171,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator23: %w", err)
@@ -2180,7 +2180,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator24: %w", err)
@@ -2189,7 +2189,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator25: %w", err)
@@ -2198,7 +2198,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator26: %w", err)
@@ -2207,7 +2207,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator27: %w", err)
@@ -2216,7 +2216,7 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BinarySwitchBankStatus-Indicator28: %w", err)
@@ -2225,8 +2225,8 @@ func DecodeBinarySwitchBankStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2274,39 +2274,39 @@ func encodeBinarySwitchBankStatusMsg(v Message) ([]byte, error) {
 }
 
 type SwitchBankControl struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	Switch1 OffOnConst `json:"switch1"`
-	Switch2 OffOnConst `json:"switch2"`
-	Switch3 OffOnConst `json:"switch3"`
-	Switch4 OffOnConst `json:"switch4"`
-	Switch5 OffOnConst `json:"switch5"`
-	Switch6 OffOnConst `json:"switch6"`
-	Switch7 OffOnConst `json:"switch7"`
-	Switch8 OffOnConst `json:"switch8"`
-	Switch9 OffOnConst `json:"switch9"`
-	Switch10 OffOnConst `json:"switch10"`
-	Switch11 OffOnConst `json:"switch11"`
-	Switch12 OffOnConst `json:"switch12"`
-	Switch13 OffOnConst `json:"switch13"`
-	Switch14 OffOnConst `json:"switch14"`
-	Switch15 OffOnConst `json:"switch15"`
-	Switch16 OffOnConst `json:"switch16"`
-	Switch17 OffOnConst `json:"switch17"`
-	Switch18 OffOnConst `json:"switch18"`
-	Switch19 OffOnConst `json:"switch19"`
-	Switch20 OffOnConst `json:"switch20"`
-	Switch21 OffOnConst `json:"switch21"`
-	Switch22 OffOnConst `json:"switch22"`
-	Switch23 OffOnConst `json:"switch23"`
-	Switch24 OffOnConst `json:"switch24"`
-	Switch25 OffOnConst `json:"switch25"`
-	Switch26 OffOnConst `json:"switch26"`
-	Switch27 OffOnConst `json:"switch27"`
-	Switch28 OffOnConst `json:"switch28"`
+	Info     MessageInfo `json:"info"`
+	Instance *uint8      `json:"instance"`
+	Switch1  OffOnConst  `json:"switch1"`
+	Switch2  OffOnConst  `json:"switch2"`
+	Switch3  OffOnConst  `json:"switch3"`
+	Switch4  OffOnConst  `json:"switch4"`
+	Switch5  OffOnConst  `json:"switch5"`
+	Switch6  OffOnConst  `json:"switch6"`
+	Switch7  OffOnConst  `json:"switch7"`
+	Switch8  OffOnConst  `json:"switch8"`
+	Switch9  OffOnConst  `json:"switch9"`
+	Switch10 OffOnConst  `json:"switch10"`
+	Switch11 OffOnConst  `json:"switch11"`
+	Switch12 OffOnConst  `json:"switch12"`
+	Switch13 OffOnConst  `json:"switch13"`
+	Switch14 OffOnConst  `json:"switch14"`
+	Switch15 OffOnConst  `json:"switch15"`
+	Switch16 OffOnConst  `json:"switch16"`
+	Switch17 OffOnConst  `json:"switch17"`
+	Switch18 OffOnConst  `json:"switch18"`
+	Switch19 OffOnConst  `json:"switch19"`
+	Switch20 OffOnConst  `json:"switch20"`
+	Switch21 OffOnConst  `json:"switch21"`
+	Switch22 OffOnConst  `json:"switch22"`
+	Switch23 OffOnConst  `json:"switch23"`
+	Switch24 OffOnConst  `json:"switch24"`
+	Switch25 OffOnConst  `json:"switch25"`
+	Switch26 OffOnConst  `json:"switch26"`
+	Switch27 OffOnConst  `json:"switch27"`
+	Switch28 OffOnConst  `json:"switch28"`
 }
 
-func (s *SwitchBankControl) PGNNumber() uint32  { return 127502 }
+func (s *SwitchBankControl) PGNNumber() uint32 { return 127502 }
 
 func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SwitchBankControl{}
@@ -2318,7 +2318,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch1: %w", err)
@@ -2327,7 +2327,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch2: %w", err)
@@ -2336,7 +2336,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch3: %w", err)
@@ -2345,7 +2345,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch4: %w", err)
@@ -2354,7 +2354,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch5: %w", err)
@@ -2363,7 +2363,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch6: %w", err)
@@ -2372,7 +2372,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch7: %w", err)
@@ -2381,7 +2381,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch8: %w", err)
@@ -2390,7 +2390,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch9: %w", err)
@@ -2399,7 +2399,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch10: %w", err)
@@ -2408,7 +2408,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch11: %w", err)
@@ -2417,7 +2417,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch12: %w", err)
@@ -2426,7 +2426,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch13: %w", err)
@@ -2435,7 +2435,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch14: %w", err)
@@ -2444,7 +2444,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch15: %w", err)
@@ -2453,7 +2453,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch16: %w", err)
@@ -2462,7 +2462,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch17: %w", err)
@@ -2471,7 +2471,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch18: %w", err)
@@ -2480,7 +2480,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch19: %w", err)
@@ -2489,7 +2489,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch20: %w", err)
@@ -2498,7 +2498,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch21: %w", err)
@@ -2507,7 +2507,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch22: %w", err)
@@ -2516,7 +2516,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch23: %w", err)
@@ -2525,7 +2525,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch24: %w", err)
@@ -2534,7 +2534,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch25: %w", err)
@@ -2543,7 +2543,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch26: %w", err)
@@ -2552,7 +2552,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch27: %w", err)
@@ -2561,7 +2561,7 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for SwitchBankControl-Switch28: %w", err)
@@ -2570,8 +2570,8 @@ func DecodeSwitchBankControl(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2619,30 +2619,30 @@ func encodeSwitchBankControlMsg(v Message) ([]byte, error) {
 }
 
 type AcInputStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	NumberOfLines *uint8 `json:"numberOfLines"`
-	Repeating1 []AcInputStatusRepeating1 `json:"repeating1"`
+	Info          MessageInfo               `json:"info"`
+	Instance      *uint8                    `json:"instance"`
+	NumberOfLines *uint8                    `json:"numberOfLines"`
+	Repeating1    []AcInputStatusRepeating1 `json:"repeating1"`
 }
 
 type AcInputStatusRepeating1 struct {
-	Line *uint8 `json:"line"`
+	Line          *uint8             `json:"line"`
 	Acceptability AcceptabilityConst `json:"acceptability"`
-	Voltage *float32 `json:"voltage"`
-	Current *float32 `json:"current"`
-	Frequency *float32 `json:"frequency"`
-	BreakerSize *float32 `json:"breakerSize"`
-	RealPower *uint32 `json:"realPower"`
-	ReactivePower *uint32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Voltage       *float32           `json:"voltage"`
+	Current       *float32           `json:"current"`
+	Frequency     *float32           `json:"frequency"`
+	BreakerSize   *float32           `json:"breakerSize"`
+	RealPower     *uint32            `json:"realPower"`
+	ReactivePower *uint32            `json:"reactivePower"`
+	PowerFactor   *float32           `json:"powerFactor"`
 }
 
-func (a *AcInputStatus) PGNNumber() uint32  { return 127503 }
+func (a *AcInputStatus) PGNNumber() uint32 { return 127503 }
 
 func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AcInputStatus{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcInputStatus-Instance: %w", err)
 	} else {
@@ -2650,7 +2650,7 @@ func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcInputStatus-NumberOfLines: %w", err)
@@ -2662,13 +2662,13 @@ func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]AcInputStatusRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep AcInputStatusRepeating1
 		if v, err := stream.readUInt8(2); err != nil {
@@ -2721,14 +2721,14 @@ func DecodeAcInputStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -2740,7 +2740,7 @@ func EncodeAcInputStatus(val *AcInputStatus) ([]byte, error) {
 	for _, rep := range val.Repeating1 {
 		w.writeUInt8(rep.Line, 2)
 		w.writeLookupField(uint64(rep.Acceptability), 2)
-		w.skipBits(4)
+		w.writeReservedBits(4)
 		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
 		w.writeUnsignedResolution(rep.Current, 16, 0.1)
 		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
@@ -2762,30 +2762,30 @@ func encodeAcInputStatusMsg(v Message) ([]byte, error) {
 }
 
 type AcOutputStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	NumberOfLines *uint8 `json:"numberOfLines"`
-	Repeating1 []AcOutputStatusRepeating1 `json:"repeating1"`
+	Info          MessageInfo                `json:"info"`
+	Instance      *uint8                     `json:"instance"`
+	NumberOfLines *uint8                     `json:"numberOfLines"`
+	Repeating1    []AcOutputStatusRepeating1 `json:"repeating1"`
 }
 
 type AcOutputStatusRepeating1 struct {
-	Line LineConst `json:"line"`
-	Waveform WaveformConst `json:"waveform"`
-	Voltage *float32 `json:"voltage"`
-	Current *float32 `json:"current"`
-	Frequency *float32 `json:"frequency"`
-	BreakerSize *float32 `json:"breakerSize"`
-	RealPower *uint32 `json:"realPower"`
-	ReactivePower *uint32 `json:"reactivePower"`
-	PowerFactor *float32 `json:"powerFactor"`
+	Line          LineConst     `json:"line"`
+	Waveform      WaveformConst `json:"waveform"`
+	Voltage       *float32      `json:"voltage"`
+	Current       *float32      `json:"current"`
+	Frequency     *float32      `json:"frequency"`
+	BreakerSize   *float32      `json:"breakerSize"`
+	RealPower     *uint32       `json:"realPower"`
+	ReactivePower *uint32       `json:"reactivePower"`
+	PowerFactor   *float32      `json:"powerFactor"`
 }
 
-func (a *AcOutputStatus) PGNNumber() uint32  { return 127504 }
+func (a *AcOutputStatus) PGNNumber() uint32 { return 127504 }
 
 func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AcOutputStatus{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcOutputStatus-Instance: %w", err)
 	} else {
@@ -2793,7 +2793,7 @@ func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcOutputStatus-NumberOfLines: %w", err)
@@ -2805,13 +2805,13 @@ func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}
-		if repeat1Count == 0 {
-			return val, nil
 		}
+	}
+	if repeat1Count == 0 {
+		return val, nil
+	}
 	val.Repeating1 = make([]AcOutputStatusRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep AcOutputStatusRepeating1
 		if v, err := stream.readLookupField(2); err != nil {
@@ -2864,14 +2864,14 @@ func DecodeAcOutputStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -2883,7 +2883,7 @@ func EncodeAcOutputStatus(val *AcOutputStatus) ([]byte, error) {
 	for _, rep := range val.Repeating1 {
 		w.writeLookupField(uint64(rep.Line), 2)
 		w.writeLookupField(uint64(rep.Waveform), 3)
-		w.skipBits(3)
+		w.writeReservedBits(3)
 		w.writeUnsignedResolution(rep.Voltage, 16, 0.01)
 		w.writeUnsignedResolution(rep.Current, 16, 0.1)
 		w.writeUnsignedResolution(rep.Frequency, 16, 0.01)
@@ -2905,18 +2905,18 @@ func encodeAcOutputStatusMsg(v Message) ([]byte, error) {
 }
 
 type DcDetailedStatus struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	DcType DcSourceConst `json:"dcType"`
-	StateOfCharge *uint8 `json:"stateOfCharge"`
-	StateOfHealth *uint8 `json:"stateOfHealth"`
-	TimeRemaining *float32 `json:"timeRemaining"`
-	RippleVoltage *float32 `json:"rippleVoltage"`
-	RemainingCapacity *uint16 `json:"remainingCapacity"`
+	Info              MessageInfo   `json:"info"`
+	Sid               *uint8        `json:"sid"`
+	Instance          *uint8        `json:"instance"`
+	DcType            DcSourceConst `json:"dcType"`
+	StateOfCharge     *uint8        `json:"stateOfCharge"`
+	StateOfHealth     *uint8        `json:"stateOfHealth"`
+	TimeRemaining     *float32      `json:"timeRemaining"`
+	RippleVoltage     *float32      `json:"rippleVoltage"`
+	RemainingCapacity *uint16       `json:"remainingCapacity"`
 }
 
-func (d *DcDetailedStatus) PGNNumber() uint32  { return 127506 }
+func (d *DcDetailedStatus) PGNNumber() uint32 { return 127506 }
 
 func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &DcDetailedStatus{}
@@ -2928,7 +2928,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-Instance: %w", err)
@@ -2937,7 +2937,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-DcType: %w", err)
@@ -2946,7 +2946,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-StateOfCharge: %w", err)
@@ -2955,7 +2955,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-StateOfHealth: %w", err)
@@ -2964,7 +2964,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 60); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-TimeRemaining: %w", err)
@@ -2973,7 +2973,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-RippleVoltage: %w", err)
@@ -2982,7 +2982,7 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for DcDetailedStatus-RemainingCapacity: %w", err)
@@ -2991,8 +2991,8 @@ func DecodeDcDetailedStatus(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3019,17 +3019,17 @@ func encodeDcDetailedStatusMsg(v Message) ([]byte, error) {
 }
 
 type ChargerStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	BatteryInstance *uint8 `json:"batteryInstance"`
-	OperatingState ChargerStateConst `json:"operatingState"`
-	ChargeMode ChargerModeConst `json:"chargeMode"`
-	Enabled OffOnConst `json:"enabled"`
-	EqualizationPending OffOnConst `json:"equalizationPending"`
-	EqualizationTimeRemaining *float32 `json:"equalizationTimeRemaining"`
+	Info                      MessageInfo       `json:"info"`
+	Instance                  *uint8            `json:"instance"`
+	BatteryInstance           *uint8            `json:"batteryInstance"`
+	OperatingState            ChargerStateConst `json:"operatingState"`
+	ChargeMode                ChargerModeConst  `json:"chargeMode"`
+	Enabled                   OffOnConst        `json:"enabled"`
+	EqualizationPending       OffOnConst        `json:"equalizationPending"`
+	EqualizationTimeRemaining *float32          `json:"equalizationTimeRemaining"`
 }
 
-func (c *ChargerStatus) PGNNumber() uint32  { return 127507 }
+func (c *ChargerStatus) PGNNumber() uint32 { return 127507 }
 
 func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ChargerStatus{}
@@ -3041,7 +3041,7 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-BatteryInstance: %w", err)
@@ -3050,7 +3050,7 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-OperatingState: %w", err)
@@ -3059,7 +3059,7 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-ChargeMode: %w", err)
@@ -3068,7 +3068,7 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-Enabled: %w", err)
@@ -3077,7 +3077,7 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-EqualizationPending: %w", err)
@@ -3086,12 +3086,12 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 60); err != nil {
 		return nil, fmt.Errorf("parse failed for ChargerStatus-EqualizationTimeRemaining: %w", err)
 	} else {
@@ -3099,8 +3099,8 @@ func DecodeChargerStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3113,7 +3113,7 @@ func EncodeChargerStatus(val *ChargerStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.ChargeMode), 4)
 	w.writeLookupField(uint64(val.Enabled), 2)
 	w.writeLookupField(uint64(val.EqualizationPending), 2)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.EqualizationTimeRemaining, 16, 60)
 	return w.Bytes(), w.Err()
 }
@@ -3127,15 +3127,15 @@ func encodeChargerStatusMsg(v Message) ([]byte, error) {
 }
 
 type BatteryStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	Voltage *float32 `json:"voltage"`
-	Current *float32 `json:"current"`
+	Info        MessageInfo        `json:"info"`
+	Instance    *uint8             `json:"instance"`
+	Voltage     *float32           `json:"voltage"`
+	Current     *float32           `json:"current"`
 	Temperature *units.Temperature `json:"temperature"`
-	Sid *uint8 `json:"sid"`
+	Sid         *uint8             `json:"sid"`
 }
 
-func (b *BatteryStatus) PGNNumber() uint32  { return 127508 }
+func (b *BatteryStatus) PGNNumber() uint32 { return 127508 }
 
 func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &BatteryStatus{}
@@ -3147,7 +3147,7 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Voltage: %w", err)
@@ -3156,7 +3156,7 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Current: %w", err)
@@ -3165,7 +3165,7 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Temperature: %w", err)
@@ -3174,7 +3174,7 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryStatus-Sid: %w", err)
@@ -3183,8 +3183,8 @@ func DecodeBatteryStatus(Info MessageInfo, stream *PGNDataStream) (Message, erro
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3212,15 +3212,15 @@ func encodeBatteryStatusMsg(v Message) ([]byte, error) {
 }
 
 type InverterStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	AcInstance *uint8 `json:"acInstance"`
-	DcInstance *uint8 `json:"dcInstance"`
+	Info           MessageInfo        `json:"info"`
+	Instance       *uint8             `json:"instance"`
+	AcInstance     *uint8             `json:"acInstance"`
+	DcInstance     *uint8             `json:"dcInstance"`
 	OperatingState InverterStateConst `json:"operatingState"`
-	InverterEnable OffOnConst `json:"inverterEnable"`
+	InverterEnable OffOnConst         `json:"inverterEnable"`
 }
 
-func (i *InverterStatus) PGNNumber() uint32  { return 127509 }
+func (i *InverterStatus) PGNNumber() uint32 { return 127509 }
 
 func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &InverterStatus{}
@@ -3232,7 +3232,7 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-AcInstance: %w", err)
@@ -3241,7 +3241,7 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-DcInstance: %w", err)
@@ -3250,7 +3250,7 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-OperatingState: %w", err)
@@ -3259,7 +3259,7 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterStatus-InverterEnable: %w", err)
@@ -3268,12 +3268,12 @@ func DecodeInverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -3285,7 +3285,7 @@ func EncodeInverterStatus(val *InverterStatus) ([]byte, error) {
 	w.writeUInt8(val.DcInstance, 8)
 	w.writeLookupField(uint64(val.OperatingState), 4)
 	w.writeLookupField(uint64(val.InverterEnable), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	return w.Bytes(), w.Err()
 }
 
@@ -3298,18 +3298,18 @@ func encodeInverterStatusMsg(v Message) ([]byte, error) {
 }
 
 type InverterConfigurationStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	AcInstance *uint8 `json:"acInstance"`
-	DcInstance *uint8 `json:"dcInstance"`
-	InverterEnableDisable *uint8 `json:"inverterEnableDisable"`
-	InverterMode *uint8 `json:"inverterMode"`
-	LoadSenseEnableDisable *uint8 `json:"loadSenseEnableDisable"`
-	LoadSensePowerThreshold *uint8 `json:"loadSensePowerThreshold"`
-	LoadSenseInterval *uint8 `json:"loadSenseInterval"`
+	Info                    MessageInfo `json:"info"`
+	Instance                *uint8      `json:"instance"`
+	AcInstance              *uint8      `json:"acInstance"`
+	DcInstance              *uint8      `json:"dcInstance"`
+	InverterEnableDisable   *uint8      `json:"inverterEnableDisable"`
+	InverterMode            *uint8      `json:"inverterMode"`
+	LoadSenseEnableDisable  *uint8      `json:"loadSenseEnableDisable"`
+	LoadSensePowerThreshold *uint8      `json:"loadSensePowerThreshold"`
+	LoadSenseInterval       *uint8      `json:"loadSenseInterval"`
 }
 
-func (i *InverterConfigurationStatus) PGNNumber() uint32  { return 127511 }
+func (i *InverterConfigurationStatus) PGNNumber() uint32 { return 127511 }
 
 func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &InverterConfigurationStatus{}
@@ -3321,7 +3321,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-AcInstance: %w", err)
@@ -3330,7 +3330,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-DcInstance: %w", err)
@@ -3339,7 +3339,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-InverterEnableDisable: %w", err)
@@ -3348,12 +3348,12 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-InverterMode: %w", err)
 	} else {
@@ -3361,7 +3361,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-LoadSenseEnableDisable: %w", err)
@@ -3370,7 +3370,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-LoadSensePowerThreshold: %w", err)
@@ -3379,7 +3379,7 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for InverterConfigurationStatus-LoadSenseInterval: %w", err)
@@ -3388,8 +3388,8 @@ func DecodeInverterConfigurationStatus(Info MessageInfo, stream *PGNDataStream) 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3400,7 +3400,7 @@ func EncodeInverterConfigurationStatus(val *InverterConfigurationStatus) ([]byte
 	w.writeUInt8(val.AcInstance, 8)
 	w.writeUInt8(val.DcInstance, 8)
 	w.writeUInt8(val.InverterEnableDisable, 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUInt8(val.InverterMode, 8)
 	w.writeUInt8(val.LoadSenseEnableDisable, 8)
 	w.writeUInt8(val.LoadSensePowerThreshold, 8)
@@ -3417,13 +3417,13 @@ func encodeInverterConfigurationStatusMsg(v Message) ([]byte, error) {
 }
 
 type AgsConfigurationStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	GeneratorInstance *uint8 `json:"generatorInstance"`
-	AgsMode *uint8 `json:"agsMode"`
+	Info              MessageInfo `json:"info"`
+	Instance          *uint8      `json:"instance"`
+	GeneratorInstance *uint8      `json:"generatorInstance"`
+	AgsMode           *uint8      `json:"agsMode"`
 }
 
-func (a *AgsConfigurationStatus) PGNNumber() uint32  { return 127512 }
+func (a *AgsConfigurationStatus) PGNNumber() uint32 { return 127512 }
 
 func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AgsConfigurationStatus{}
@@ -3435,7 +3435,7 @@ func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsConfigurationStatus-GeneratorInstance: %w", err)
@@ -3444,7 +3444,7 @@ func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsConfigurationStatus-AgsMode: %w", err)
@@ -3453,12 +3453,12 @@ func DecodeAgsConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Mess
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(40)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -3468,7 +3468,7 @@ func EncodeAgsConfigurationStatus(val *AgsConfigurationStatus) ([]byte, error) {
 	w.writeUInt8(val.Instance, 8)
 	w.writeUInt8(val.GeneratorInstance, 8)
 	w.writeUInt8(val.AgsMode, 8)
-	w.skipBits(40)
+	w.writeReservedBits(40)
 	return w.Bytes(), w.Err()
 }
 
@@ -3481,19 +3481,19 @@ func encodeAgsConfigurationStatusMsg(v Message) ([]byte, error) {
 }
 
 type BatteryConfigurationStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	BatteryType BatteryTypeConst `json:"batteryType"`
-	SupportsEqualization YesNoConst `json:"supportsEqualization"`
-	NominalVoltage BatteryVoltageConst `json:"nominalVoltage"`
-	Chemistry BatteryChemistryConst `json:"chemistry"`
-	Capacity *uint16 `json:"capacity"`
-	TemperatureCoefficient *int8 `json:"temperatureCoefficient"`
-	PeukertExponent *float32 `json:"peukertExponent"`
-	ChargeEfficiencyFactor *int8 `json:"chargeEfficiencyFactor"`
+	Info                   MessageInfo           `json:"info"`
+	Instance               *uint8                `json:"instance"`
+	BatteryType            BatteryTypeConst      `json:"batteryType"`
+	SupportsEqualization   YesNoConst            `json:"supportsEqualization"`
+	NominalVoltage         BatteryVoltageConst   `json:"nominalVoltage"`
+	Chemistry              BatteryChemistryConst `json:"chemistry"`
+	Capacity               *uint16               `json:"capacity"`
+	TemperatureCoefficient *int8                 `json:"temperatureCoefficient"`
+	PeukertExponent        *float32              `json:"peukertExponent"`
+	ChargeEfficiencyFactor *int8                 `json:"chargeEfficiencyFactor"`
 }
 
-func (b *BatteryConfigurationStatus) PGNNumber() uint32  { return 127513 }
+func (b *BatteryConfigurationStatus) PGNNumber() uint32 { return 127513 }
 
 func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &BatteryConfigurationStatus{}
@@ -3505,7 +3505,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-BatteryType: %w", err)
@@ -3514,7 +3514,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-SupportsEqualization: %w", err)
@@ -3523,12 +3523,12 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-NominalVoltage: %w", err)
 	} else {
@@ -3536,7 +3536,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-Chemistry: %w", err)
@@ -3545,7 +3545,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-Capacity: %w", err)
@@ -3554,7 +3554,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-TemperatureCoefficient: %w", err)
@@ -3563,7 +3563,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(8, 0.002); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-PeukertExponent: %w", err)
@@ -3572,7 +3572,7 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for BatteryConfigurationStatus-ChargeEfficiencyFactor: %w", err)
@@ -3581,8 +3581,8 @@ func DecodeBatteryConfigurationStatus(Info MessageInfo, stream *PGNDataStream) (
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3592,7 +3592,7 @@ func EncodeBatteryConfigurationStatus(val *BatteryConfigurationStatus) ([]byte, 
 	w.writeUInt8(val.Instance, 8)
 	w.writeLookupField(uint64(val.BatteryType), 4)
 	w.writeLookupField(uint64(val.SupportsEqualization), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.NominalVoltage), 4)
 	w.writeLookupField(uint64(val.Chemistry), 4)
 	w.writeUInt16(val.Capacity, 16)
@@ -3611,16 +3611,16 @@ func encodeBatteryConfigurationStatusMsg(v Message) ([]byte, error) {
 }
 
 type AgsStatus struct {
-	Info MessageInfo `json:"info"`
-	Instance *uint8 `json:"instance"`
-	GeneratorInstance *uint8 `json:"generatorInstance"`
-	AgsOperatingState *uint8 `json:"agsOperatingState"`
-	GeneratorState *uint8 `json:"generatorState"`
-	GeneratorOnReason *uint8 `json:"generatorOnReason"`
-	GeneratorOffReason *uint8 `json:"generatorOffReason"`
+	Info               MessageInfo `json:"info"`
+	Instance           *uint8      `json:"instance"`
+	GeneratorInstance  *uint8      `json:"generatorInstance"`
+	AgsOperatingState  *uint8      `json:"agsOperatingState"`
+	GeneratorState     *uint8      `json:"generatorState"`
+	GeneratorOnReason  *uint8      `json:"generatorOnReason"`
+	GeneratorOffReason *uint8      `json:"generatorOffReason"`
 }
 
-func (a *AgsStatus) PGNNumber() uint32  { return 127514 }
+func (a *AgsStatus) PGNNumber() uint32 { return 127514 }
 
 func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AgsStatus{}
@@ -3632,7 +3632,7 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-GeneratorInstance: %w", err)
@@ -3641,7 +3641,7 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-AgsOperatingState: %w", err)
@@ -3650,7 +3650,7 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-GeneratorState: %w", err)
@@ -3659,7 +3659,7 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-GeneratorOnReason: %w", err)
@@ -3668,7 +3668,7 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AgsStatus-GeneratorOffReason: %w", err)
@@ -3677,12 +3677,12 @@ func DecodeAgsStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(16)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -3695,7 +3695,7 @@ func EncodeAgsStatus(val *AgsStatus) ([]byte, error) {
 	w.writeUInt8(val.GeneratorState, 8)
 	w.writeUInt8(val.GeneratorOnReason, 8)
 	w.writeUInt8(val.GeneratorOffReason, 8)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -3708,14 +3708,14 @@ func encodeAgsStatusMsg(v Message) ([]byte, error) {
 }
 
 type AcPowerCurrentPhaseA struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	ConnectionNumber *uint8 `json:"connectionNumber"`
-	AcRmsCurrent *float32 `json:"acRmsCurrent"`
-	Power *int32 `json:"power"`
+	Info             MessageInfo `json:"info"`
+	Sid              *uint8      `json:"sid"`
+	ConnectionNumber *uint8      `json:"connectionNumber"`
+	AcRmsCurrent     *float32    `json:"acRmsCurrent"`
+	Power            *int32      `json:"power"`
 }
 
-func (a *AcPowerCurrentPhaseA) PGNNumber() uint32  { return 127744 }
+func (a *AcPowerCurrentPhaseA) PGNNumber() uint32 { return 127744 }
 
 func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AcPowerCurrentPhaseA{}
@@ -3727,7 +3727,7 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseA-ConnectionNumber: %w", err)
@@ -3736,7 +3736,7 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseA-AcRmsCurrent: %w", err)
@@ -3745,7 +3745,7 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseA-Power: %w", err)
@@ -3754,8 +3754,8 @@ func DecodeAcPowerCurrentPhaseA(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3778,14 +3778,14 @@ func encodeAcPowerCurrentPhaseAMsg(v Message) ([]byte, error) {
 }
 
 type AcPowerCurrentPhaseB struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	ConnectionNumber *uint8 `json:"connectionNumber"`
-	AcRmsCurrent *float32 `json:"acRmsCurrent"`
-	Power *int32 `json:"power"`
+	Info             MessageInfo `json:"info"`
+	Sid              *uint8      `json:"sid"`
+	ConnectionNumber *uint8      `json:"connectionNumber"`
+	AcRmsCurrent     *float32    `json:"acRmsCurrent"`
+	Power            *int32      `json:"power"`
 }
 
-func (a *AcPowerCurrentPhaseB) PGNNumber() uint32  { return 127745 }
+func (a *AcPowerCurrentPhaseB) PGNNumber() uint32 { return 127745 }
 
 func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AcPowerCurrentPhaseB{}
@@ -3797,7 +3797,7 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseB-ConnectionNumber: %w", err)
@@ -3806,7 +3806,7 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseB-AcRmsCurrent: %w", err)
@@ -3815,7 +3815,7 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseB-Power: %w", err)
@@ -3824,8 +3824,8 @@ func DecodeAcPowerCurrentPhaseB(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3848,14 +3848,14 @@ func encodeAcPowerCurrentPhaseBMsg(v Message) ([]byte, error) {
 }
 
 type AcPowerCurrentPhaseC struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	ConnectionNumber *uint8 `json:"connectionNumber"`
-	AcRmsCurrent *float32 `json:"acRmsCurrent"`
-	Power *int32 `json:"power"`
+	Info             MessageInfo `json:"info"`
+	Sid              *uint8      `json:"sid"`
+	ConnectionNumber *uint8      `json:"connectionNumber"`
+	AcRmsCurrent     *float32    `json:"acRmsCurrent"`
+	Power            *int32      `json:"power"`
 }
 
-func (a *AcPowerCurrentPhaseC) PGNNumber() uint32  { return 127746 }
+func (a *AcPowerCurrentPhaseC) PGNNumber() uint32 { return 127746 }
 
 func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AcPowerCurrentPhaseC{}
@@ -3867,7 +3867,7 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseC-ConnectionNumber: %w", err)
@@ -3876,7 +3876,7 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseC-AcRmsCurrent: %w", err)
@@ -3885,7 +3885,7 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AcPowerCurrentPhaseC-Power: %w", err)
@@ -3894,8 +3894,8 @@ func DecodeAcPowerCurrentPhaseC(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3918,17 +3918,17 @@ func encodeAcPowerCurrentPhaseCMsg(v Message) ([]byte, error) {
 }
 
 type ConverterStatus struct {
-	Info MessageInfo `json:"info"`
-	Sid []uint8 `json:"sid"`
-	ConnectionNumber *uint8 `json:"connectionNumber"`
-	OperatingState ConverterStateConst `json:"operatingState"`
-	TemperatureState GoodWarningErrorConst `json:"temperatureState"`
-	OverloadState GoodWarningErrorConst `json:"overloadState"`
+	Info              MessageInfo           `json:"info"`
+	Sid               []uint8               `json:"sid"`
+	ConnectionNumber  *uint8                `json:"connectionNumber"`
+	OperatingState    ConverterStateConst   `json:"operatingState"`
+	TemperatureState  GoodWarningErrorConst `json:"temperatureState"`
+	OverloadState     GoodWarningErrorConst `json:"overloadState"`
 	LowDcVoltageState GoodWarningErrorConst `json:"lowDcVoltageState"`
-	RippleState GoodWarningErrorConst `json:"rippleState"`
+	RippleState       GoodWarningErrorConst `json:"rippleState"`
 }
 
-func (c *ConverterStatus) PGNNumber() uint32  { return 127750 }
+func (c *ConverterStatus) PGNNumber() uint32 { return 127750 }
 
 func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ConverterStatus{}
@@ -3940,7 +3940,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-ConnectionNumber: %w", err)
@@ -3949,7 +3949,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-OperatingState: %w", err)
@@ -3958,7 +3958,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-TemperatureState: %w", err)
@@ -3967,7 +3967,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-OverloadState: %w", err)
@@ -3976,7 +3976,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-LowDcVoltageState: %w", err)
@@ -3985,7 +3985,7 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ConverterStatus-RippleState: %w", err)
@@ -3994,12 +3994,12 @@ func DecodeConverterStatus(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(32)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -4013,7 +4013,7 @@ func EncodeConverterStatus(val *ConverterStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.OverloadState), 2)
 	w.writeLookupField(uint64(val.LowDcVoltageState), 2)
 	w.writeLookupField(uint64(val.RippleState), 2)
-	w.skipBits(32)
+	w.writeReservedBits(32)
 	return w.Bytes(), w.Err()
 }
 
@@ -4026,14 +4026,14 @@ func encodeConverterStatusMsg(v Message) ([]byte, error) {
 }
 
 type DcVoltageCurrent struct {
-	Info MessageInfo `json:"info"`
-	Sid []uint8 `json:"sid"`
-	ConnectionNumber *uint8 `json:"connectionNumber"`
-	DcVoltage *float32 `json:"dcVoltage"`
-	DcCurrent *float32 `json:"dcCurrent"`
+	Info             MessageInfo `json:"info"`
+	Sid              []uint8     `json:"sid"`
+	ConnectionNumber *uint8      `json:"connectionNumber"`
+	DcVoltage        *float32    `json:"dcVoltage"`
+	DcCurrent        *float32    `json:"dcCurrent"`
 }
 
-func (d *DcVoltageCurrent) PGNNumber() uint32  { return 127751 }
+func (d *DcVoltageCurrent) PGNNumber() uint32 { return 127751 }
 
 func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &DcVoltageCurrent{}
@@ -4045,7 +4045,7 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for DcVoltageCurrent-ConnectionNumber: %w", err)
@@ -4054,7 +4054,7 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for DcVoltageCurrent-DcVoltage: %w", err)
@@ -4063,7 +4063,7 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(24, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for DcVoltageCurrent-DcCurrent: %w", err)
@@ -4072,12 +4072,12 @@ func DecodeDcVoltageCurrent(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -4088,7 +4088,7 @@ func EncodeDcVoltageCurrent(val *DcVoltageCurrent) ([]byte, error) {
 	w.writeUInt8(val.ConnectionNumber, 8)
 	w.writeUnsignedResolution(val.DcVoltage, 16, 0.1)
 	w.writeSignedResolution(val.DcCurrent, 24, 0.01)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 

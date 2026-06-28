@@ -60,14 +60,14 @@ func (d DeviceName) Validate() error {
 func (d DeviceName) Pack(arbitraryAddressCapable bool) uint64 {
 	var name uint64
 	name |= uint64(d.IdentityNumber) & 0x1FFFFF              // bits 0-20
-	name |= uint64(d.ManufacturerCode) << 21 & (0x7FF << 21)  // bits 21-31
-	name |= uint64(d.DeviceInstance&0x07) << 32                // bits 32-34 (lower 3)
-	name |= uint64(d.DeviceInstance>>3) << 35                  // bits 35-39 (upper 5)
-	name |= uint64(d.DeviceFunction) << 40                     // bits 40-47
+	name |= uint64(d.ManufacturerCode) << 21 & (0x7FF << 21) // bits 21-31
+	name |= uint64(d.DeviceInstance&0x07) << 32              // bits 32-34 (lower 3)
+	name |= uint64(d.DeviceInstance>>3) << 35                // bits 35-39 (upper 5)
+	name |= uint64(d.DeviceFunction) << 40                   // bits 40-47
 	// bit 48 reserved (0)
-	name |= uint64(d.DeviceClass&0x7F) << 49                   // bits 49-55
-	name |= uint64(d.SystemInstance&0x0F) << 56                 // bits 56-59
-	name |= uint64(d.IndustryGroup&0x07) << 60                  // bits 60-62
+	name |= uint64(d.DeviceClass&0x7F) << 49    // bits 49-55
+	name |= uint64(d.SystemInstance&0x0F) << 56 // bits 56-59
+	name |= uint64(d.IndustryGroup&0x07) << 60  // bits 60-62
 	if arbitraryAddressCapable {
 		name |= 1 << 63 // bit 63
 	}
@@ -81,13 +81,13 @@ func UnpackDeviceName(name uint64) DeviceName {
 	lower := uint8((name >> 32) & 0x07) // bits 32-34
 	upper := uint8((name >> 35) & 0x1F) // bits 35-39
 	return DeviceName{
-		IdentityNumber:   uint32(name & 0x1FFFFF),         // bits 0-20
-		ManufacturerCode: uint16((name >> 21) & 0x7FF),     // bits 21-31
-		DeviceInstance:   (upper << 3) | lower,             // recombine 8 bits
-		DeviceFunction:   uint8((name >> 40) & 0xFF),       // bits 40-47
-		DeviceClass:      uint8((name >> 49) & 0x7F),       // bits 49-55
-		SystemInstance:   uint8((name >> 56) & 0x0F),       // bits 56-59
-		IndustryGroup:    uint8((name >> 60) & 0x07),       // bits 60-62
+		IdentityNumber:   uint32(name & 0x1FFFFF),      // bits 0-20
+		ManufacturerCode: uint16((name >> 21) & 0x7FF), // bits 21-31
+		DeviceInstance:   (upper << 3) | lower,         // recombine 8 bits
+		DeviceFunction:   uint8((name >> 40) & 0xFF),   // bits 40-47
+		DeviceClass:      uint8((name >> 49) & 0x7F),   // bits 49-55
+		SystemInstance:   uint8((name >> 56) & 0x0F),   // bits 56-59
+		IndustryGroup:    uint8((name >> 60) & 0x07),   // bits 60-62
 	}
 }
 

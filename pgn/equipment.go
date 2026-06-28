@@ -72,7 +72,7 @@ func EncodeFluidLevel(val *FluidLevel) ([]byte, error) {
 		capacityRaw = &val.Capacity.Value
 	}
 	w.writeUnsignedResolution(capacityRaw, 32, 0.1)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -232,7 +232,7 @@ func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
 	w.writeLookupField(uint64(val.AnchorDockingControl), 2)
 	w.writeLookupField(uint64(val.SpeedControlType), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeBinaryData(val.SpeedControl, 8)
 	w.writeLookupField(uint64(val.PowerEnable), 2)
 	w.writeLookupField(uint64(val.MechanicalLock), 2)
@@ -240,7 +240,7 @@ func EncodeWindlassControlStatus(val *WindlassControlStatus) ([]byte, error) {
 	w.writeLookupField(uint64(val.AnchorLight), 2)
 	w.writeUnsignedResolution(val.CommandTimeout, 8, 0.005)
 	w.writeLookupField(uint64(val.WindlassControlEvents), 4)
-	w.skipBits(12)
+	w.writeReservedBits(12)
 	return w.Bytes(), w.Err()
 }
 
@@ -366,7 +366,7 @@ func EncodeAnchorWindlassOperatingStatus(val *AnchorWindlassOperatingStatus) ([]
 	w.writeLookupField(uint64(val.WindlassDirectionControl), 2)
 	w.writeLookupField(uint64(val.WindlassMotionStatus), 2)
 	w.writeLookupField(uint64(val.RodeTypeStatus), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	var rodeCounterValueRaw *float32
 	if val.RodeCounterValue != nil {
 		rodeCounterValueRaw = &val.RodeCounterValue.Value
@@ -475,7 +475,7 @@ func EncodeAnchorWindlassMonitoringStatus(val *AnchorWindlassMonitoringStatus) (
 	w.writeUnsignedResolution(val.ControllerVoltage, 8, 0.2)
 	w.writeUInt8(val.MotorCurrent, 8)
 	w.writeUnsignedResolution(val.TotalMotorTime, 16, 60)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -739,7 +739,7 @@ func EncodeWatermakerInputSettingAndStatus(val *WatermakerInputSettingAndStatus)
 	w.writeLookupField(uint64(val.OilChangeIndicatorStatus), 2)
 	w.writeLookupField(uint64(val.FilterStatus), 2)
 	w.writeLookupField(uint64(val.SystemStatus), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt16(val.Salinity, 16)
 	var productWaterTemperatureRaw *float32
 	if val.ProductWaterTemperature != nil {

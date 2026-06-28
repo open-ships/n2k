@@ -56,11 +56,11 @@ type session struct {
 	timer *time.Timer
 
 	// Transmit-side fields for RTS/CTS
-	txPayload []byte          // full payload to transmit
-	txOffset  int             // current offset into txPayload
-	txSeqNum  uint8           // next DT sequence number to send (1-based)
-	txDone    chan struct{}    // closed when transmit completes
-	txErr     error           // set if transmit fails
+	txPayload []byte        // full payload to transmit
+	txOffset  int           // current offset into txPayload
+	txSeqNum  uint8         // next DT sequence number to send (1-based)
+	txDone    chan struct{} // closed when transmit completes
+	txErr     error         // set if transmit fails
 }
 
 // Manager orchestrates ISO 11783 transport protocol sessions, handling both

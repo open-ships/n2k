@@ -119,13 +119,13 @@ func TestDeviceName_Default(t *testing.T) {
 func TestDeviceName_PackKnownValue(t *testing.T) {
 	// Hand-calculated 64-bit NAME for a known DeviceName.
 	dn := DeviceName{
-		IdentityNumber:   1,       // bits 0-20:  0x000001
-		ManufacturerCode: 1,       // bits 21-31: 1 << 21
-		DeviceInstance:   0,       // bits 32-39: 0
-		DeviceFunction:   0,       // bits 40-47: 0
-		DeviceClass:      0,       // bits 49-55: 0
-		SystemInstance:   0,       // bits 56-59: 0
-		IndustryGroup:    0,       // bits 60-62: 0
+		IdentityNumber:   1, // bits 0-20:  0x000001
+		ManufacturerCode: 1, // bits 21-31: 1 << 21
+		DeviceInstance:   0, // bits 32-39: 0
+		DeviceFunction:   0, // bits 40-47: 0
+		DeviceClass:      0, // bits 49-55: 0
+		SystemInstance:   0, // bits 56-59: 0
+		IndustryGroup:    0, // bits 60-62: 0
 	}
 
 	// Expected: bit 0 set (identity=1) + bit 21 set (mfr=1)

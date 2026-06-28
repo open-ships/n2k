@@ -155,8 +155,23 @@ func (w *PGNDataStreamWriter) putNullSigned(bitLength uint16) error {
 	return w.putNumberRaw(maxVal, bitLength)
 }
 
-func (w *PGNDataStreamWriter) skipBits(bitLength uint16) {
+func (w *PGNDataStreamWriter) writeSpareBits(bitLength uint16) {
 	w.setErr(w.putNumberRaw(0, bitLength))
+}
+
+func (w *PGNDataStreamWriter) writeReservedBits(bitLength uint16) {
+	if bitLength == 0 {
+		return
+	}
+	maxVal := uint64(0xFFFFFFFFFFFFFFFF)
+	if bitLength < 64 {
+		maxVal = (1 << bitLength) - 1
+	}
+	w.setErr(w.putNumberRaw(maxVal, bitLength))
+}
+
+func (w *PGNDataStreamWriter) skipBits(bitLength uint16) {
+	w.writeSpareBits(bitLength)
 }
 
 func (w *PGNDataStreamWriter) writeLookupField(value uint64, bitLength uint16) {

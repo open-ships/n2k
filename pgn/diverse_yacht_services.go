@@ -72,10 +72,10 @@ func EncodeDiverseYachtServicesLoadCell(val *DiverseYachtServicesLoadCell) ([]by
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Instance, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeUInt32(val.LoadCell, 32)
 	return w.Bytes(), w.Err()
 }

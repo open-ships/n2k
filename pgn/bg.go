@@ -93,7 +93,7 @@ func EncodeBGKeyValueData(val *BGKeyValueData) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	for _, rep := range val.Repeating1 {
 		w.writeLookupField(uint64(rep.Key), 12)
@@ -215,11 +215,11 @@ func EncodeBGUserAndRemoteRename(val *BGUserAndRemoteRename) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.DataType), 12)
 	w.writeUInt8(val.Length, 4)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.Decimals), 8)
 	w.writeFixedString(val.ShortName, 64)
 	w.writeFixedString(val.LongName, 128)

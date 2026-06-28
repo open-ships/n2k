@@ -1,7 +1,7 @@
 package pgn
 
 type UnknownPGN struct {
-	Info MessageInfo `json:"info"`
+	Info             MessageInfo           `json:"info"`
 	Data             []uint8               `json:"data"`
 	ManufacturerCode ManufacturerCodeConst `json:"manufacturerCode"`
 	IndustryCode     IndustryCodeConst     `json:"industryCode"`
