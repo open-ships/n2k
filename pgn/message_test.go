@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEncodeMessage_SelectsConcreteVariantForDuplicatePGN(t *testing.T) {
+func TestEncodeMessage_SelectsVariantForDuplicatePGN(t *testing.T) {
 	msg := &GarminColorMode{
 		ManufacturerCode: 229,
 		IndustryCode:     4,

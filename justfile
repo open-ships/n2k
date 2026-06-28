@@ -54,16 +54,16 @@ test-cover:
 fmt:
     gofmt -w .
 
-# regenerate pgn/manifest.json from pgn/registry.go
+# regenerate pgn/manifest.json from the initialized runtime PGN registry
 pgn-manifest:
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
 
-# sync generated CANboat metadata and regenerate pgn/manifest.json
+# sync generated CANboat metadata and regenerate the runtime PGN manifest
 pgn-sync:
     go run ./cmd/canboatgen
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
 
-# check whether generated CANboat metadata and pgn/manifest.json are current
+# check whether generated CANboat metadata and runtime PGN manifest are current
 pgn-sync-check:
     go run ./cmd/canboatgen --check
     go test ./pgn -run TestPGNManifestMatchesRegistry -count=1

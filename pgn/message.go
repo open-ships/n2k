@@ -9,8 +9,8 @@ type Message interface {
 	PGNNumber() uint32
 }
 
-// EncodeMessage serializes msg using the encoder registered for its concrete PGN
-// variant. Multiple CANboat variants can share a numeric PGN, so callers must not
+// EncodeMessage serializes msg using the encoder registered for its PGN variant.
+// Multiple CANboat variants can share a numeric PGN, so callers must not
 // select encoders by PGN number alone.
 func EncodeMessage(msg Message) ([]byte, error) {
 	if msg == nil {

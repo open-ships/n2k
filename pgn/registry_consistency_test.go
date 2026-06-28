@@ -98,7 +98,7 @@ func collectRegistrySourceFacts(t *testing.T) registrySourceFacts {
 
 	fset := token.NewFileSet()
 	for _, file := range files {
-		if strings.HasSuffix(file, "_test.go") || file == "registry.go" {
+		if strings.HasSuffix(file, "_test.go") || file == "registry.go" || file == "catalog_generated.go" || strings.HasSuffix(file, "_catalog_generated.go") {
 			continue
 		}
 

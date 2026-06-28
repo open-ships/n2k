@@ -51,7 +51,7 @@ type socketCANChannel struct {
 //   - log: structured logger for diagnostic output
 //   - options: required configuration including interface name and message handler
 //
-// Returns a *socketCANChannel (concrete type, not Interface) because SocketCAN-specific
+// Returns a *socketCANChannel (catalog type, not Interface) because SocketCAN-specific
 // callers may need access to SocketCAN-specific functionality.
 func newSocketCANChannel(log *slog.Logger, options socketCANChannelOptions) *socketCANChannel {
 	c := socketCANChannel{
