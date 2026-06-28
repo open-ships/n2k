@@ -134,7 +134,7 @@ func TestGetFieldDescriptor_MissingFieldIndex(t *testing.T) {
 }
 
 // TestSearchUnseenList_KnownUnseen verifies that PGN 127490 (which is in the canboat
-// database but has no sample data) is found in the unseen list.
+// database but is marked incomplete/missing metadata) is found in the unseen list.
 func TestSearchUnseenList_KnownUnseen(t *testing.T) {
 	assert.True(t, SearchUnseenList(127490))
 }
@@ -157,8 +157,10 @@ func TestSearchUnseenList_CompletelyUnknown(t *testing.T) {
 func TestPgnInfoLookup_Populated(t *testing.T) {
 	assert.NotNil(t, PgnInfoLookup[127250], "Vessel Heading should be in lookup")
 	assert.NotNil(t, PgnInfoLookup[127501], "Binary Switch Bank Status should be in lookup")
+	assert.NotNil(t, PgnInfoLookup[127490], "generated CANboat PGNs should be in lookup")
 	assert.Greater(t, len(PgnInfoLookup[127250]), 0)
 	assert.Greater(t, len(PgnInfoLookup[127501]), 0)
+	assert.Greater(t, len(PgnInfoLookup[127490]), 0)
 }
 
 // TestPgnInfoLookup_PGNDetails verifies that a specific PgnInfo entry has the expected
@@ -178,4 +180,17 @@ func TestPgnInfoLookup_PGNDetails(t *testing.T) {
 // (not an empty slice or a panic).
 func TestPgnInfoLookup_UnknownPGN(t *testing.T) {
 	assert.Nil(t, PgnInfoLookup[999999])
+}
+
+// TestPgnInfoLookup_GeneratedCanboatPGN verifies that CANboat-generated entries
+// without handwritten decoders are exposed with generic runtime support.
+func TestPgnInfoLookup_GeneratedCanboatPGN(t *testing.T) {
+	infos := PgnInfoLookup[127490]
+	assert.NotEmpty(t, infos)
+	assert.Equal(t, uint32(127490), infos[0].PGN)
+	assert.Equal(t, "Electric Drive Status, Dynamic", infos[0].Description)
+	assert.NotNil(t, infos[0].Decoder)
+	assert.NotNil(t, infos[0].Encoder)
+	assert.NotEmpty(t, infos[0].Fields)
+	assert.True(t, SearchUnseenList(127490))
 }

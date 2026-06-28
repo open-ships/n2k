@@ -54,6 +54,20 @@ test-cover:
 fmt:
     gofmt -w .
 
+# regenerate pgn/manifest.json from pgn/registry.go
+pgn-manifest:
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+
+# sync generated CANboat metadata and regenerate pgn/manifest.json
+pgn-sync:
+    go run ./cmd/canboatgen
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+
+# check whether generated CANboat metadata and pgn/manifest.json are current
+pgn-sync-check:
+    go run ./cmd/canboatgen --check
+    go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+
 # run go vet
 vet:
     go vet ./...

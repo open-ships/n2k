@@ -192,6 +192,9 @@ func (p *Packet) AddDecoders() {
 	}
 	candidates = pgn.FilterMatchingPgnInfos(candidates, p.Data)
 	for _, d := range candidates {
+		if d.Decoder == nil {
+			continue
+		}
 		p.Decoders = append(p.Decoders, d.Decoder)
 	}
 }

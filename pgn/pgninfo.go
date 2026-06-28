@@ -7,9 +7,9 @@ import (
 	"fmt"
 )
 
-// PgnInfo describes a known NMEA 2000 message type. Instances are collected in the pgnList
-// slice (in pgninfo_generated.go) and indexed into PgnInfoLookup at init time for fast
-// access by PGN number.
+// PgnInfo describes a known NMEA 2000 message type. Entries are collected in pgnList
+// and indexed into PgnInfoLookup at init time for fast access by PGN number. Entries
+// without typed decoders keep their canboat catalog metadata but have a nil Decoder.
 //
 // Multiple PgnInfo entries can share the same PGN number. This happens with proprietary PGNs
 // where different manufacturers define different payloads for the same PGN, and also with
@@ -148,13 +148,14 @@ type FieldDescriptor struct {
 }
 
 // PgnInfoLookup maps PGN numbers to their PgnInfo descriptors. It is the primary
-// lookup table used by callers to find the decoder for a received message. Multiple
-// entries per PGN are possible (proprietary PGNs with different manufacturers).
+// lookup table used by callers to find metadata and, when available, decoders for a
+// received message. Multiple entries per PGN are possible (proprietary PGNs with
+// different manufacturers).
 var PgnInfoLookup map[uint32][]*PgnInfo
 
-// UnseenLookup maps PGN numbers that are defined in the canboat database but have
-// never been observed in real log data. These PGNs have decoders generated but are
-// considered less reliable because they lack test vectors.
+// UnseenLookup maps PGN numbers that are defined in the canboat database but do not
+// have typed decoders in this package yet. These entries are still present in
+// PgnInfoLookup as catalog metadata, but their Decoder fields are nil.
 var UnseenLookup map[uint32][]*PgnInfo
 
 // IsProprietaryPGN returns true if the given PGN number falls within one of the four
@@ -264,10 +265,9 @@ func GetFieldDescriptor(pgn uint32, manID ManufacturerCodeConst, fieldIndex uint
 	return nil, fmt.Errorf("PGN not found")
 }
 
-// SearchUnseenList returns true if the given PGN number appears in the unseen list,
-// meaning it is defined in the canboat database but has never been observed in real
-// CAN bus log files. Unseen PGNs have decoders but may be less reliable
-// because their field layouts have not been validated against actual device output.
+// SearchUnseenList returns true if the given PGN number appears in the catalog-only
+// list, meaning it is defined in the canboat database but has no typed decoder in this
+// package yet.
 func SearchUnseenList(pgn uint32) bool {
 	return UnseenLookup[pgn] != nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"go/format"
 	"io"
@@ -15,6 +16,7 @@ import (
 )
 
 const canboatURL = "https://raw.githubusercontent.com/canboat/canboat/refs/heads/master/docs/canboat.json"
+const generatedPath = "pgn/canboat_generated.go"
 
 type canboatFile struct {
 	SchemaVersion string       `json:"SchemaVersion"`
@@ -95,6 +97,9 @@ func (t *text) UnmarshalJSON(data []byte) error {
 }
 
 func main() {
+	check := flag.Bool("check", false, "fail if generated CANboat metadata is not current")
+	flag.Parse()
+
 	raw, err := fetch(canboatURL)
 	if err != nil {
 		fatal(err)
@@ -107,7 +112,17 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	if err := os.WriteFile("pgn/canboat_generated.go", out, 0o600); err != nil {
+	if *check {
+		current, err := os.ReadFile(generatedPath)
+		if err != nil {
+			fatal(err)
+		}
+		if !bytes.Equal(current, out) {
+			fatal(fmt.Errorf("%s is not synced with %s", generatedPath, canboatURL))
+		}
+		return
+	}
+	if err := os.WriteFile(generatedPath, out, 0o600); err != nil {
 		fatal(err)
 	}
 }
