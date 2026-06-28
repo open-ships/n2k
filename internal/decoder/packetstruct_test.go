@@ -119,9 +119,9 @@ func TestDecode_NoDecoders_SendsUnknown(t *testing.T) {
 	assert.Contains(t, u.Reason.Error(), "no matching decoder")
 }
 
-// TestDecode_GeneratedCanboatPGN_UsesGenericDecoder verifies that PGNs without
-// handwritten decoders still decode through generated CANboat metadata.
-func TestDecode_GeneratedCanboatPGN_UsesGenericDecoder(t *testing.T) {
+// TestDecode_GeneratedPGN_UsesConcreteDecoder verifies that PGNs without
+// curated decoders still decode through generated concrete catalog structs.
+func TestDecode_GeneratedPGN_UsesConcreteDecoder(t *testing.T) {
 	ps := New()
 	handler := &mockHandler{}
 	ps.SetOutput(handler)
@@ -137,10 +137,10 @@ func TestDecode_GeneratedCanboatPGN_UsesGenericDecoder(t *testing.T) {
 	ps.Decode(*pkt)
 
 	assert.Equal(t, 1, len(handler.received))
-	msg, ok := handler.received[0].(*pgn.GenericMessage)
+	msg, ok := handler.received[0].(*pgn.PgnElectricDriveStatusDynamic)
 	assert.True(t, ok)
 	assert.Equal(t, uint32(127490), msg.Info.PGN)
-	assert.Equal(t, "electricDriveStatusDynamic", msg.CanboatId)
+	assert.NotNil(t, msg.InverterMotorIdentifier)
 }
 
 // TestDecode_MultipleDecoders_FirstFails_SecondSucceeds verifies the decoder

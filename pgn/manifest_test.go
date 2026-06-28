@@ -26,6 +26,10 @@ type pgnManifestCounts struct {
 	Categories          int `json:"categories"`
 	SupportedVariants   int `json:"supportedVariants"`
 	UniqueSupportedPgns int `json:"uniqueSupportedPgns"`
+	TypedVariants       int `json:"typedVariants"`
+	UniqueTypedPgns     int `json:"uniqueTypedPgns"`
+	GenericVariants     int `json:"genericVariants"`
+	UniqueGenericPgns   int `json:"uniqueGenericPgns"`
 }
 
 type pgnManifestCategory struct {
@@ -36,8 +40,13 @@ type pgnManifestCategory struct {
 
 type pgnManifestEntry struct {
 	ID             string                  `json:"id"`
+	SourceID       string                  `json:"sourceId,omitempty"`
 	PGN            uint32                  `json:"pgn"`
 	Description    string                  `json:"description"`
+	Implementation string                  `json:"implementation"`
+	Complete       bool                    `json:"complete"`
+	Fallback       bool                    `json:"fallback,omitempty"`
+	Missing        []string                `json:"missing,omitempty"`
 	FastPacket     bool                    `json:"fastPacket"`
 	ManufacturerID int                     `json:"manufacturerId"`
 	Proprietary    bool                    `json:"proprietary"`
@@ -57,7 +66,7 @@ type pgnManifestField struct {
 	BitLength      uint16  `json:"bitLength"`
 	BitOffset      uint16  `json:"bitOffset"`
 	VariableLength bool    `json:"variableLength"`
-	CanboatType    string  `json:"canboatType"`
+	FieldType      string  `json:"fieldType"`
 	GoType         string  `json:"goType"`
 	Resolution     float32 `json:"resolution"`
 	Signed         bool    `json:"signed"`
@@ -94,8 +103,8 @@ func TestPGNManifestMatchesRegistry(t *testing.T) {
 	if err := json.Unmarshal(raw, &manifest); err != nil {
 		t.Fatalf("parse manifest: %v", err)
 	}
-	if manifest.SchemaVersion != 1 {
-		t.Fatalf("schemaVersion = %d, want 1", manifest.SchemaVersion)
+	if manifest.SchemaVersion != 2 {
+		t.Fatalf("schemaVersion = %d, want 2", manifest.SchemaVersion)
 	}
 
 	actual := make(map[string]pgnManifestEntry)
@@ -149,12 +158,27 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	t.Helper()
 
 	uniquePGNs := make(map[uint32]struct{})
+	uniqueTypedPGNs := make(map[uint32]struct{})
+	uniqueGenericPGNs := make(map[uint32]struct{})
 	categories := make(map[string]*pgnManifestCategory)
 	var categoryOrder []string
+	var typedVariants int
+	var genericVariants int
+	registryInfos := manifestRegistryInfos()
 
-	for _, info := range pgnList {
+	for _, info := range registryInfos {
 		uniquePGNs[info.PGN] = struct{}{}
 		entry := manifestEntry(t, info)
+		switch entry.Implementation {
+		case "typed":
+			typedVariants++
+			uniqueTypedPGNs[entry.PGN] = struct{}{}
+		case "generic":
+			genericVariants++
+			uniqueGenericPGNs[entry.PGN] = struct{}{}
+		default:
+			t.Fatalf("%s has unknown implementation %q", entry.ID, entry.Implementation)
+		}
 		categoryID := functionCategory(entry.SourceFile)
 		category, ok := categories[categoryID]
 		if !ok {
@@ -174,41 +198,78 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	}
 
 	return pgnManifest{
-		SchemaVersion: 1,
+		SchemaVersion: 2,
 		Package:       "github.com/open-ships/n2k/pgn",
-		Source:        "pgn/registry.go:pgnList",
-		Description:   "Supported NMEA 2000 PGN variants decoded and encoded by this package.",
+		Source:        "pgn.PgnInfoLookup after generated metadata overlay",
+		Description:   "Runtime NMEA 2000 PGN variants decoded and encoded by this package.",
 		Notes: []string{
-			"Each entry is a supported PGN variant wired into PgnInfoLookup.",
-			"Categories are grouped by the pgn package source file that owns each typed decoder.",
+			"Each entry is a runtime PGN variant wired into PgnInfoLookup after package initialization.",
+			"Curated typed entries use domain-specific concrete message structs and generated typed decoders/encoders.",
+			"Generated catalog entries use concrete Pgn* message structs when no curated struct matches the PGN shape.",
+			"GenericMessage is a fallback path only; genericVariants is expected to remain zero.",
+			"Categories are grouped by the pgn package source file that owns each decoder implementation.",
 			"Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
 			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
-			"Examples are deterministic sample JSON objects based on generated struct json tags; they illustrate shape and are not captured bus values.",
-			"The registry.go unseenList is intentionally excluded because those entries are not wired into PgnInfoLookup.",
+			"Examples are deterministic sample JSON objects; they illustrate shape and are not captured bus values.",
+			"Incomplete upstream definitions are included when the runtime has a concrete generated struct for them.",
 		},
 		Counts: pgnManifestCounts{
 			Categories:          len(manifestCategories),
-			SupportedVariants:   len(pgnList),
+			SupportedVariants:   len(registryInfos),
 			UniqueSupportedPgns: len(uniquePGNs),
+			TypedVariants:       typedVariants,
+			UniqueTypedPgns:     len(uniqueTypedPGNs),
+			GenericVariants:     genericVariants,
+			UniqueGenericPgns:   len(uniqueGenericPGNs),
 		},
 		Categories: manifestCategories,
 	}
 }
 
-func manifestEntry(t *testing.T, info PgnInfo) pgnManifestEntry {
+func manifestRegistryInfos() []*PgnInfo {
+	var infos []*PgnInfo
+	for _, pgnInfos := range PgnInfoLookup {
+		infos = append(infos, pgnInfos...)
+	}
+	sort.SliceStable(infos, func(i, j int) bool {
+		if infos[i].PGN != infos[j].PGN {
+			return infos[i].PGN < infos[j].PGN
+		}
+		if infos[i].Description != infos[j].Description {
+			return infos[i].Description < infos[j].Description
+		}
+		return infos[i].Id < infos[j].Id
+	})
+	return infos
+}
+
+func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 	t.Helper()
 	_, sourceFile := functionSource(info.Decoder)
+	implementation := manifestImplementation(sourceFile)
 	return pgnManifestEntry{
 		ID:             info.Id,
+		SourceID:       info.CanboatId,
 		PGN:            info.PGN,
 		Description:    info.Description,
+		Implementation: implementation,
+		Complete:       info.Complete,
+		Fallback:       info.Fallback,
+		Missing:        append([]string(nil), info.Missing...),
 		FastPacket:     info.Fast,
 		ManufacturerID: int(info.ManId),
 		Proprietary:    IsProprietaryPGN(info.PGN),
 		SourceFile:     sourceFile,
 		PayloadShape:   manifestPayloadShape(info.Fields),
-		Example:        manifestExample(t, info.Id, info.PGN),
+		Example:        manifestExample(t, info, implementation),
 	}
+}
+
+func manifestImplementation(sourceFile string) string {
+	if sourceFile == "canboat_runtime.go" {
+		return "generic"
+	}
+	return "typed"
 }
 
 func manifestEntryMap(manifest pgnManifest) map[string]pgnManifestEntry {
@@ -233,17 +294,22 @@ func functionSource(fn any) (category string, sourceFile string) {
 }
 
 func functionCategory(sourceFile string) string {
-	return strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
+	category := strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
+	return strings.TrimSuffix(category, "_concrete_generated")
 }
 
 func manifestCategoryName(categoryID string) string {
 	switch categoryID {
 	case "ais":
 		return "AIS"
+	case "bep_marine":
+		return "BEP Marine"
 	case "bg":
 		return "B&G"
 	case "diverse_yacht_services":
 		return "Diverse Yacht Services"
+	case "sea_recovery":
+		return "Sea Recovery"
 	case "seatalk":
 		return "SeaTalk"
 	case "simnet":
@@ -278,7 +344,7 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 			BitLength:      field.BitLength,
 			BitOffset:      field.BitOffset,
 			VariableLength: field.BitLengthVariable,
-			CanboatType:    field.CanboatType,
+			FieldType:      field.CanboatType,
 			GoType:         field.GolangType,
 			Resolution:     field.Resolution,
 			Signed:         field.Signed,
@@ -298,15 +364,53 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 	}
 }
 
-func manifestExample(t *testing.T, structName string, pgn uint32) map[string]any {
+func manifestExample(t *testing.T, info *PgnInfo, implementation string) map[string]any {
+	t.Helper()
+	if implementation == "generic" {
+		return manifestGenericExample(t, info)
+	}
+	return manifestTypedExample(t, info.Id, info.PGN)
+}
+
+func manifestTypedExample(t *testing.T, structName string, pgn uint32) map[string]any {
 	t.Helper()
 	fields := manifestStructFields(t, structName)
-
 	example := make(map[string]any, len(fields))
 	for _, field := range fields {
 		example[field.JSONName] = manifestExampleValue(t, field.Type, field.JSONName, pgn)
 	}
 	return example
+}
+
+func manifestGenericExample(t *testing.T, info *PgnInfo) map[string]any {
+	t.Helper()
+	fields := make(map[string]any, len(info.Fields))
+	for _, field := range orderedFields(info) {
+		switch field.CanboatType {
+		case "RESERVED", "SPARE":
+			continue
+		case "STRING_FIX", "STRING_LZ", "STRING_LAU":
+			fields[jsonFieldName(field)] = "example"
+		case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
+			fields[jsonFieldName(field)] = []any{float64(1), float64(2), float64(3)}
+		case "FLOAT":
+			fields[jsonFieldName(field)] = 1.23
+		default:
+			if field.Signed {
+				fields[jsonFieldName(field)] = float64(-1)
+			} else if field.Match != nil {
+				fields[jsonFieldName(field)] = float64(*field.Match)
+			} else {
+				fields[jsonFieldName(field)] = float64(1)
+			}
+		}
+	}
+	return map[string]any{
+		"info":        manifestExampleValue(t, "MessageInfo", "info", info.PGN),
+		"sourceId":    info.CanboatId,
+		"description": info.Description,
+		"fields":      fields,
+	}
 }
 
 func manifestExampleValue(t *testing.T, goType string, jsonName string, pgn uint32) any {
@@ -348,7 +452,7 @@ func manifestExampleValue(t *testing.T, goType string, jsonName string, pgn uint
 		if elementType == "uint8" || elementType == "byte" {
 			return []any{float64(1), float64(2), float64(3)}
 		}
-		return []any{manifestExample(t, elementType, pgn)}
+		return []any{manifestTypedExample(t, elementType, pgn)}
 	}
 
 	if isManifestIntegerType(goType) {
@@ -359,7 +463,7 @@ func manifestExampleValue(t *testing.T, goType string, jsonName string, pgn uint
 	}
 
 	if _, ok := manifestStructFieldCache(t)[goType]; ok {
-		return manifestExample(t, goType, pgn)
+		return manifestTypedExample(t, goType, pgn)
 	}
 
 	// Enum aliases marshal as their numeric underlying value.
