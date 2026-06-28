@@ -119,29 +119,28 @@ func TestDecode_NoDecoders_SendsUnknown(t *testing.T) {
 	assert.Contains(t, u.Reason.Error(), "no matching decoder")
 }
 
-// TestDecode_CatalogOnlyPGN_SendsUnknown verifies that PGNs known only from the
-// canboat catalog are treated as known metadata but do not install nil decoders.
-func TestDecode_CatalogOnlyPGN_SendsUnknown(t *testing.T) {
+// TestDecode_GeneratedCanboatPGN_UsesGenericDecoder verifies that PGNs without
+// handwritten decoders still decode through generated CANboat metadata.
+func TestDecode_GeneratedCanboatPGN_UsesGenericDecoder(t *testing.T) {
 	ps := New()
 	handler := &mockHandler{}
 	ps.SetOutput(handler)
 
 	info := pgn.MessageInfo{PGN: 127490, SourceId: 1}
-	pkt := NewPacket(info, []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08})
+	pkt := NewPacket(info, []uint8{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C})
 
 	assert.NotEmpty(t, pkt.Candidates)
 	assert.Empty(t, pkt.ParseErrors)
 	pkt.AddDecoders()
-	assert.Empty(t, pkt.Decoders)
+	assert.NotEmpty(t, pkt.Decoders)
 
 	ps.Decode(*pkt)
 
 	assert.Equal(t, 1, len(handler.received))
-	u, ok := handler.received[0].(*pgn.UnknownPGN)
+	msg, ok := handler.received[0].(*pgn.GenericMessage)
 	assert.True(t, ok)
-	assert.Equal(t, uint32(127490), u.Info.PGN)
-	assert.True(t, u.WasUnseen)
-	assert.Contains(t, u.Reason.Error(), "no matching decoder")
+	assert.Equal(t, uint32(127490), msg.Info.PGN)
+	assert.Equal(t, "electricDriveStatusDynamic", msg.CanboatId)
 }
 
 // TestDecode_MultipleDecoders_FirstFails_SecondSucceeds verifies the decoder

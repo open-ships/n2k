@@ -65,14 +65,14 @@ func EncodeFurunoHeave(val *FurunoHeave) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	var heaveRaw *float32
 	if val.Heave != nil {
 		heaveRaw = &val.Heave.Value
 	}
 	w.writeSignedResolution(heaveRaw, 32, 0.001)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -180,7 +180,7 @@ func EncodeFurunoUnknown130820(val *FurunoUnknown130820) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
@@ -344,7 +344,7 @@ func EncodeFurunoUnknown130821(val *FurunoUnknown130821) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Sid, 8)
 	w.writeUInt8(val.A, 8)
@@ -503,7 +503,7 @@ func EncodeFurunoSixDegreesOfFreedomMovement(val *FurunoSixDegreesOfFreedomMovem
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeInt32(val.A, 32)
 	w.writeInt32(val.B, 32)
@@ -621,7 +621,7 @@ func EncodeFurunoHeelAngleRollInformation(val *FurunoHeelAngleRollInformation) (
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeUInt8(val.B, 8)
@@ -685,7 +685,7 @@ func EncodeFurunoMultiSatsInViewExtended(val *FurunoMultiSatsInViewExtended) ([]
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	return w.Bytes(), w.Err()
 }
@@ -744,7 +744,7 @@ func EncodeFurunoMotionSensorStatusExtended(val *FurunoMotionSensorStatusExtende
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	return w.Bytes(), w.Err()
 }

@@ -18,19 +18,19 @@ type registrySourceFacts struct {
 	pgnMethods map[string]uint32
 }
 
-func TestTypedPgnListMatchesCodeImplementation(t *testing.T) {
+func TestPgnListMatchesCodeImplementation(t *testing.T) {
 	facts := collectRegistrySourceFacts(t)
 
-	registeredIDs := make(map[string]struct{}, len(typedPgnList))
-	registeredDecoders := make(map[string]struct{}, len(typedPgnList))
-	registeredEncoders := make(map[string]struct{}, len(typedPgnList))
+	registeredIDs := make(map[string]struct{}, len(pgnList))
+	registeredDecoders := make(map[string]struct{}, len(pgnList))
+	registeredEncoders := make(map[string]struct{}, len(pgnList))
 
-	for _, info := range typedPgnList {
+	for _, info := range pgnList {
 		if info.Id == "" {
-			t.Fatalf("typedPgnList contains entry with empty Id for PGN %d", info.PGN)
+			t.Fatalf("pgnList contains entry with empty Id for PGN %d", info.PGN)
 		}
 		if _, exists := registeredIDs[info.Id]; exists {
-			t.Fatalf("typedPgnList contains duplicate Id %q", info.Id)
+			t.Fatalf("pgnList contains duplicate Id %q", info.Id)
 		}
 		registeredIDs[info.Id] = struct{}{}
 
@@ -67,28 +67,17 @@ func TestTypedPgnListMatchesCodeImplementation(t *testing.T) {
 
 	for decoder := range facts.decoders {
 		if _, exists := registeredDecoders[decoder]; !exists {
-			t.Errorf("decoder %s exists in code but is missing from typedPgnList", decoder)
+			t.Errorf("decoder %s exists in code but is missing from pgnList", decoder)
 		}
 	}
 	for encoder := range facts.encoders {
 		if _, exists := registeredEncoders[encoder]; !exists {
-			t.Errorf("encoder %s exists in code but is missing from typedPgnList", encoder)
+			t.Errorf("encoder %s exists in code but is missing from pgnList", encoder)
 		}
 	}
 	for structName := range facts.pgnMethods {
 		if _, exists := registeredIDs[structName]; !exists {
-			t.Errorf("%s has PGNNumber() but is missing from typedPgnList", structName)
-		}
-	}
-}
-
-func TestCatalogOnlyListHasNoTypedImplementation(t *testing.T) {
-	for _, info := range catalogOnlyList {
-		if info.Decoder != nil {
-			t.Errorf("catalog-only entry %s has Decoder set", info.Id)
-		}
-		if info.Encoder != nil {
-			t.Errorf("catalog-only entry %s has Encoder set", info.Id)
+			t.Errorf("%s has PGNNumber() but is missing from pgnList", structName)
 		}
 	}
 }
@@ -131,7 +120,7 @@ func collectRegistrySourceFacts(t *testing.T) registrySourceFacts {
 				facts.encoders[name] = file
 			case name == "PGNNumber" && fn.Recv != nil:
 				structName, ok := receiverStructName(fn)
-				if !ok || structName == "UnknownPGN" {
+				if !ok || structName == "UnknownPGN" || structName == "GenericMessage" {
 					continue
 				}
 				pgn, ok := returnedUint32Literal(fn)

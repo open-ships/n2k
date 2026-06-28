@@ -59,10 +59,10 @@ func TestGetSeqFrame(t *testing.T) {
 // proprietary PGN (130824). It checks:
 //   - MessageInfo fields are preserved (PGN, SourceId, Priority)
 //   - No parse errors for a valid, known PGN
-//   - Candidates are populated from both typed decoders and catalog-only metadata
+//   - Candidates are populated from generated CANboat metadata
 //   - Fast flag is set (130824 is classified as a fast-packet PGN)
 //   - GetManCode correctly extracts manufacturer 381 (B&G) after initialization
-//   - AddDecoders keeps only the matching typed decoder
+//   - AddDecoders keeps only the matching decoder
 func TestNewPacket(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -125,8 +125,8 @@ func TestFilterSlow(t *testing.T) {
 //   - Setting Complete = true as the MultiBuilder would
 //   - Extracting the manufacturer code (419 = Maretron) and filtering decoders
 //
-// PGN 130820 has many candidate decoders. After filtering by manufacturer 419 (Maretron),
-// 16 decoders remain (Maretron defines many message types under this PGN).
+// PGN 130820 has many candidate decoders. After filtering by manufacturer 419 (Maretron)
+// and applying CANboat match predicates, one decoder remains for this payload.
 func TestFilterFast(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -142,7 +142,7 @@ func TestFilterFast(t *testing.T) {
 	p.GetManCode()
 	p.AddDecoders()
 	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 16, len(p.Decoders)) // was 23, but 1 is furuno, and 6 have no sample data
+	assert.Equal(t, 1, len(p.Decoders))
 }
 
 // TestBroadcast verifies that NewPacket handles broadcast PGNs (TargetId = 255) correctly.

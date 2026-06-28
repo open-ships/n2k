@@ -50,8 +50,8 @@ func NewTemperature(u TemperatureUnit, value float32) Temperature {
 //
 // Unlike other unit types that use table-based conversion (simple ratio multiplication), temperature
 // conversion requires a two-step process using Kelvin as the intermediate/base unit:
-//   1. Convert the current value to Kelvin (the SI base unit for temperature)
-//   2. Convert from Kelvin to the target unit
+//  1. Convert the current value to Kelvin (the SI base unit for temperature)
+//  2. Convert from Kelvin to the target unit
 //
 // Conversion formulas:
 //   - Celsius to Kelvin:    K = C + 273.15

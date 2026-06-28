@@ -85,12 +85,12 @@ func EncodeMaretronProprietaryDcBreakerCurrent(val *MaretronProprietaryDcBreaker
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.BankInstance, 8)
 	w.writeUInt8(val.IndicatorNumber, 8)
 	w.writeUnsignedResolution(val.BreakerCurrent, 16, 0.1)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -188,7 +188,7 @@ func EncodeMaretronSlaveResponse(val *MaretronSlaveResponse) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProductCode, 16)
 	w.writeUInt16(val.SoftwareCode, 16)
@@ -301,7 +301,7 @@ func EncodeMaretronProprietaryTemperatureHighRange(val *MaretronProprietaryTempe
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Sid, 8)
 	w.writeUInt8(val.Instance, 8)
@@ -423,7 +423,7 @@ func EncodeMaretronAnnunciator(val *MaretronAnnunciator) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Field4, 8)
 	w.writeUInt8(val.Field5, 8)
@@ -571,7 +571,7 @@ func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Instance, 8)
 	w.writeUInt8(val.IndicatorNumber, 8)
@@ -581,7 +581,7 @@ func EncodeMaretronSwitchStatusCounter(val *MaretronSwitchStatusCounter) ([]byte
 	w.writeUInt8(val.OnCounter, 8)
 	w.writeUInt8(val.ErrorCounter, 8)
 	w.writeLookupField(uint64(val.SwitchStatus), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	return w.Bytes(), w.Err()
 }
 
@@ -723,7 +723,7 @@ func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, er
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Instance, 8)
 	w.writeUInt8(val.IndicatorNumber, 8)
@@ -733,7 +733,7 @@ func EncodeMaretronSwitchStatusTimer(val *MaretronSwitchStatusTimer) ([]byte, er
 	w.writeUInt32(val.AccumulatedOnPeriod, 32)
 	w.writeUInt32(val.AccumulatedErrorPeriod, 32)
 	w.writeLookupField(uint64(val.SwitchStatus), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	return w.Bytes(), w.Err()
 }
 

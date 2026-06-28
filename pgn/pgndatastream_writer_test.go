@@ -196,6 +196,14 @@ func TestRoundTrip_LookupField(t *testing.T) {
 	assert.Equal(t, uint64(2), v)
 }
 
+func TestWriteReservedAndSpareBits(t *testing.T) {
+	w := NewPGNDataStreamWriter()
+	w.writeReservedBits(4)
+	w.writeSpareBits(4)
+	assert.NoError(t, w.Err())
+	assert.Equal(t, []uint8{0x0f}, w.Bytes())
+}
+
 // TestRoundTrip_FixedString writes a fixed-width string then reads it back,
 // verifying that the 0xFF padding is correctly stripped by the reader.
 func TestRoundTrip_FixedString(t *testing.T) {

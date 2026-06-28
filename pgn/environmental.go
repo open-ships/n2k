@@ -7,14 +7,14 @@ import (
 )
 
 type WindData struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	WindSpeed *units.Velocity `json:"windSpeed"`
-	WindAngle *float32 `json:"windAngle"`
+	Info      MessageInfo        `json:"info"`
+	Sid       *uint8             `json:"sid"`
+	WindSpeed *units.Velocity    `json:"windSpeed"`
+	WindAngle *float32           `json:"windAngle"`
 	Reference WindReferenceConst `json:"reference"`
 }
 
-func (x *WindData) PGNNumber() uint32  { return 130306 }
+func (x *WindData) PGNNumber() uint32 { return 130306 }
 
 func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &WindData{}
@@ -26,7 +26,7 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for WindData-WindSpeed: %w", err)
@@ -35,7 +35,7 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for WindData-WindAngle: %w", err)
@@ -44,7 +44,7 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(3); err != nil {
 		return nil, fmt.Errorf("parse failed for WindData-Reference: %w", err)
@@ -53,12 +53,12 @@ func DecodeWindData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(21)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -73,7 +73,7 @@ func EncodeWindData(val *WindData) ([]byte, error) {
 	w.writeUnsignedResolution(windSpeedRaw, 16, 0.01)
 	w.writeUnsignedResolution(val.WindAngle, 16, 0.0001)
 	w.writeLookupField(uint64(val.Reference), 3)
-	w.skipBits(21)
+	w.writeReservedBits(21)
 	return w.Bytes(), w.Err()
 }
 
@@ -86,14 +86,14 @@ func encodeWindDataMsg(v Message) ([]byte, error) {
 }
 
 type EnvironmentalParametersObsolete struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	WaterTemperature *units.Temperature `json:"waterTemperature"`
+	Info                         MessageInfo        `json:"info"`
+	Sid                          *uint8             `json:"sid"`
+	WaterTemperature             *units.Temperature `json:"waterTemperature"`
 	OutsideAmbientAirTemperature *units.Temperature `json:"outsideAmbientAirTemperature"`
-	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
+	AtmosphericPressure          *units.Pressure    `json:"atmosphericPressure"`
 }
 
-func (x *EnvironmentalParametersObsolete) PGNNumber() uint32  { return 130310 }
+func (x *EnvironmentalParametersObsolete) PGNNumber() uint32 { return 130310 }
 
 func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EnvironmentalParametersObsolete{}
@@ -105,7 +105,7 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParametersObsolete-WaterTemperature: %w", err)
@@ -114,7 +114,7 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParametersObsolete-OutsideAmbientAirTemperature: %w", err)
@@ -123,7 +123,7 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParametersObsolete-AtmosphericPressure: %w", err)
@@ -132,12 +132,12 @@ func DecodeEnvironmentalParametersObsolete(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -160,7 +160,7 @@ func EncodeEnvironmentalParametersObsolete(val *EnvironmentalParametersObsolete)
 		atmosphericPressureRaw = &val.AtmosphericPressure.Value
 	}
 	w.writeUnsignedResolution(atmosphericPressureRaw, 16, 100)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -173,16 +173,16 @@ func encodeEnvironmentalParametersObsoleteMsg(v Message) ([]byte, error) {
 }
 
 type EnvironmentalParameters struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	TemperatureSource TemperatureSourceConst `json:"temperatureSource"`
-	HumiditySource HumiditySourceConst `json:"humiditySource"`
-	Temperature *units.Temperature `json:"temperature"`
-	Humidity *float32 `json:"humidity"`
-	AtmosphericPressure *units.Pressure `json:"atmosphericPressure"`
+	Info                MessageInfo            `json:"info"`
+	Sid                 *uint8                 `json:"sid"`
+	TemperatureSource   TemperatureSourceConst `json:"temperatureSource"`
+	HumiditySource      HumiditySourceConst    `json:"humiditySource"`
+	Temperature         *units.Temperature     `json:"temperature"`
+	Humidity            *float32               `json:"humidity"`
+	AtmosphericPressure *units.Pressure        `json:"atmosphericPressure"`
 }
 
-func (x *EnvironmentalParameters) PGNNumber() uint32  { return 130311 }
+func (x *EnvironmentalParameters) PGNNumber() uint32 { return 130311 }
 
 func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &EnvironmentalParameters{}
@@ -194,7 +194,7 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-TemperatureSource: %w", err)
@@ -203,7 +203,7 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-HumiditySource: %w", err)
@@ -212,7 +212,7 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-Temperature: %w", err)
@@ -221,7 +221,7 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.004); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-Humidity: %w", err)
@@ -230,7 +230,7 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 100); err != nil {
 		return nil, fmt.Errorf("parse failed for EnvironmentalParameters-AtmosphericPressure: %w", err)
@@ -239,8 +239,8 @@ func DecodeEnvironmentalParameters(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -273,15 +273,15 @@ func encodeEnvironmentalParametersMsg(v Message) ([]byte, error) {
 }
 
 type Temperature struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	Source TemperatureSourceConst `json:"source"`
-	ActualTemperature *units.Temperature `json:"actualTemperature"`
-	SetTemperature *units.Temperature `json:"setTemperature"`
+	Info              MessageInfo            `json:"info"`
+	Sid               *uint8                 `json:"sid"`
+	Instance          *uint8                 `json:"instance"`
+	Source            TemperatureSourceConst `json:"source"`
+	ActualTemperature *units.Temperature     `json:"actualTemperature"`
+	SetTemperature    *units.Temperature     `json:"setTemperature"`
 }
 
-func (x *Temperature) PGNNumber() uint32  { return 130312 }
+func (x *Temperature) PGNNumber() uint32 { return 130312 }
 
 func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Temperature{}
@@ -293,7 +293,7 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Temperature-Instance: %w", err)
@@ -302,7 +302,7 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Temperature-Source: %w", err)
@@ -311,7 +311,7 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for Temperature-ActualTemperature: %w", err)
@@ -320,7 +320,7 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for Temperature-SetTemperature: %w", err)
@@ -329,12 +329,12 @@ func DecodeTemperature(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -354,7 +354,7 @@ func EncodeTemperature(val *Temperature) ([]byte, error) {
 		setTemperatureRaw = &val.SetTemperature.Value
 	}
 	w.writeUnsignedResolution(setTemperatureRaw, 16, 0.01)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -367,15 +367,15 @@ func encodeTemperatureMsg(v Message) ([]byte, error) {
 }
 
 type Humidity struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	Source HumiditySourceConst `json:"source"`
-	ActualHumidity *float32 `json:"actualHumidity"`
-	SetHumidity *float32 `json:"setHumidity"`
+	Info           MessageInfo         `json:"info"`
+	Sid            *uint8              `json:"sid"`
+	Instance       *uint8              `json:"instance"`
+	Source         HumiditySourceConst `json:"source"`
+	ActualHumidity *float32            `json:"actualHumidity"`
+	SetHumidity    *float32            `json:"setHumidity"`
 }
 
-func (x *Humidity) PGNNumber() uint32  { return 130313 }
+func (x *Humidity) PGNNumber() uint32 { return 130313 }
 
 func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &Humidity{}
@@ -387,7 +387,7 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Humidity-Instance: %w", err)
@@ -396,7 +396,7 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for Humidity-Source: %w", err)
@@ -405,7 +405,7 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.004); err != nil {
 		return nil, fmt.Errorf("parse failed for Humidity-ActualHumidity: %w", err)
@@ -414,7 +414,7 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.004); err != nil {
 		return nil, fmt.Errorf("parse failed for Humidity-SetHumidity: %w", err)
@@ -423,12 +423,12 @@ func DecodeHumidity(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -440,7 +440,7 @@ func EncodeHumidity(val *Humidity) ([]byte, error) {
 	w.writeLookupField(uint64(val.Source), 8)
 	w.writeSignedResolution(val.ActualHumidity, 16, 0.004)
 	w.writeSignedResolution(val.SetHumidity, 16, 0.004)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -453,14 +453,14 @@ func encodeHumidityMsg(v Message) ([]byte, error) {
 }
 
 type ActualPressure struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	Source PressureSourceConst `json:"source"`
-	Pressure *units.Pressure `json:"pressure"`
+	Info     MessageInfo         `json:"info"`
+	Sid      *uint8              `json:"sid"`
+	Instance *uint8              `json:"instance"`
+	Source   PressureSourceConst `json:"source"`
+	Pressure *units.Pressure     `json:"pressure"`
 }
 
-func (x *ActualPressure) PGNNumber() uint32  { return 130314 }
+func (x *ActualPressure) PGNNumber() uint32 { return 130314 }
 
 func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ActualPressure{}
@@ -472,7 +472,7 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ActualPressure-Instance: %w", err)
@@ -481,7 +481,7 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ActualPressure-Source: %w", err)
@@ -490,7 +490,7 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for ActualPressure-Pressure: %w", err)
@@ -499,12 +499,12 @@ func DecodeActualPressure(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -519,7 +519,7 @@ func EncodeActualPressure(val *ActualPressure) ([]byte, error) {
 		pressureRaw = &val.Pressure.Value
 	}
 	w.writeSignedResolution(pressureRaw, 32, 0.1)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -532,14 +532,14 @@ func encodeActualPressureMsg(v Message) ([]byte, error) {
 }
 
 type SetPressure struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	Source PressureSourceConst `json:"source"`
-	Pressure *units.Pressure `json:"pressure"`
+	Info     MessageInfo         `json:"info"`
+	Sid      *uint8              `json:"sid"`
+	Instance *uint8              `json:"instance"`
+	Source   PressureSourceConst `json:"source"`
+	Pressure *units.Pressure     `json:"pressure"`
 }
 
-func (x *SetPressure) PGNNumber() uint32  { return 130315 }
+func (x *SetPressure) PGNNumber() uint32 { return 130315 }
 
 func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SetPressure{}
@@ -551,7 +551,7 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SetPressure-Instance: %w", err)
@@ -560,7 +560,7 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for SetPressure-Source: %w", err)
@@ -569,7 +569,7 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for SetPressure-Pressure: %w", err)
@@ -578,12 +578,12 @@ func DecodeSetPressure(Info MessageInfo, stream *PGNDataStream) (Message, error)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -598,7 +598,7 @@ func EncodeSetPressure(val *SetPressure) ([]byte, error) {
 		pressureRaw = &val.Pressure.Value
 	}
 	w.writeUnsignedResolution(pressureRaw, 32, 0.1)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -611,15 +611,15 @@ func encodeSetPressureMsg(v Message) ([]byte, error) {
 }
 
 type TemperatureExtendedRange struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Instance *uint8 `json:"instance"`
-	Source TemperatureSourceConst `json:"source"`
-	Temperature *units.Temperature `json:"temperature"`
-	SetTemperature *units.Temperature `json:"setTemperature"`
+	Info           MessageInfo            `json:"info"`
+	Sid            *uint8                 `json:"sid"`
+	Instance       *uint8                 `json:"instance"`
+	Source         TemperatureSourceConst `json:"source"`
+	Temperature    *units.Temperature     `json:"temperature"`
+	SetTemperature *units.Temperature     `json:"setTemperature"`
 }
 
-func (x *TemperatureExtendedRange) PGNNumber() uint32  { return 130316 }
+func (x *TemperatureExtendedRange) PGNNumber() uint32 { return 130316 }
 
 func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TemperatureExtendedRange{}
@@ -631,7 +631,7 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TemperatureExtendedRange-Instance: %w", err)
@@ -640,7 +640,7 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TemperatureExtendedRange-Source: %w", err)
@@ -649,7 +649,7 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(24, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TemperatureExtendedRange-Temperature: %w", err)
@@ -658,7 +658,7 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for TemperatureExtendedRange-SetTemperature: %w", err)
@@ -667,8 +667,8 @@ func DecodeTemperatureExtendedRange(Info MessageInfo, stream *PGNDataStream) (Me
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -700,20 +700,20 @@ func encodeTemperatureExtendedRangeMsg(v Message) ([]byte, error) {
 }
 
 type TideStationData struct {
-	Info MessageInfo `json:"info"`
-	Mode ResidualModeConst `json:"mode"`
-	TideTendency TideConst `json:"tideTendency"`
-	MeasurementDate *uint16 `json:"measurementDate"`
-	MeasurementTime *float32 `json:"measurementTime"`
-	StationLatitude *float64 `json:"stationLatitude"`
-	StationLongitude *float64 `json:"stationLongitude"`
-	TideLevel *units.Distance `json:"tideLevel"`
-	TideLevelStandardDeviation *units.Distance `json:"tideLevelStandardDeviation"`
-	StationId string `json:"stationId"`
-	StationName string `json:"stationName"`
+	Info                       MessageInfo       `json:"info"`
+	Mode                       ResidualModeConst `json:"mode"`
+	TideTendency               TideConst         `json:"tideTendency"`
+	MeasurementDate            *uint16           `json:"measurementDate"`
+	MeasurementTime            *float32          `json:"measurementTime"`
+	StationLatitude            *float64          `json:"stationLatitude"`
+	StationLongitude           *float64          `json:"stationLongitude"`
+	TideLevel                  *units.Distance   `json:"tideLevel"`
+	TideLevelStandardDeviation *units.Distance   `json:"tideLevelStandardDeviation"`
+	StationId                  string            `json:"stationId"`
+	StationName                string            `json:"stationName"`
 }
 
-func (x *TideStationData) PGNNumber() uint32  { return 130320 }
+func (x *TideStationData) PGNNumber() uint32 { return 130320 }
 
 func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TideStationData{}
@@ -725,7 +725,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-TideTendency: %w", err)
@@ -734,12 +734,12 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-MeasurementDate: %w", err)
 	} else {
@@ -747,7 +747,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-MeasurementTime: %w", err)
@@ -756,7 +756,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-StationLatitude: %w", err)
@@ -765,7 +765,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-StationLongitude: %w", err)
@@ -774,7 +774,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-TideLevel: %w", err)
@@ -783,7 +783,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-TideLevelStandardDeviation: %w", err)
@@ -792,7 +792,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-StationId: %w", err)
@@ -801,7 +801,7 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for TideStationData-StationName: %w", err)
@@ -810,8 +810,8 @@ func DecodeTideStationData(Info MessageInfo, stream *PGNDataStream) (Message, er
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -820,7 +820,7 @@ func EncodeTideStationData(val *TideStationData) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.Mode), 4)
 	w.writeLookupField(uint64(val.TideTendency), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt16(val.MeasurementDate, 16)
 	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
 	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)
@@ -849,19 +849,19 @@ func encodeTideStationDataMsg(v Message) ([]byte, error) {
 }
 
 type SalinityStationData struct {
-	Info MessageInfo `json:"info"`
-	Mode ResidualModeConst `json:"mode"`
-	MeasurementDate *uint16 `json:"measurementDate"`
-	MeasurementTime *float32 `json:"measurementTime"`
-	StationLatitude *float64 `json:"stationLatitude"`
-	StationLongitude *float64 `json:"stationLongitude"`
-	Salinity *float32 `json:"salinity"`
+	Info             MessageInfo        `json:"info"`
+	Mode             ResidualModeConst  `json:"mode"`
+	MeasurementDate  *uint16            `json:"measurementDate"`
+	MeasurementTime  *float32           `json:"measurementTime"`
+	StationLatitude  *float64           `json:"stationLatitude"`
+	StationLongitude *float64           `json:"stationLongitude"`
+	Salinity         *float32           `json:"salinity"`
 	WaterTemperature *units.Temperature `json:"waterTemperature"`
-	StationId string `json:"stationId"`
-	StationName string `json:"stationName"`
+	StationId        string             `json:"stationId"`
+	StationName      string             `json:"stationName"`
 }
 
-func (x *SalinityStationData) PGNNumber() uint32  { return 130321 }
+func (x *SalinityStationData) PGNNumber() uint32 { return 130321 }
 
 func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &SalinityStationData{}
@@ -873,12 +873,12 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-MeasurementDate: %w", err)
 	} else {
@@ -886,7 +886,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-MeasurementTime: %w", err)
@@ -895,7 +895,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-StationLatitude: %w", err)
@@ -904,7 +904,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-StationLongitude: %w", err)
@@ -913,7 +913,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFloat32(); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-Salinity: %w", err)
@@ -922,7 +922,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-WaterTemperature: %w", err)
@@ -931,7 +931,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-StationId: %w", err)
@@ -940,7 +940,7 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for SalinityStationData-StationName: %w", err)
@@ -949,8 +949,8 @@ func DecodeSalinityStationData(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -958,7 +958,7 @@ func EncodeSalinityStationData(val *SalinityStationData) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.Mode), 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt16(val.MeasurementDate, 16)
 	w.writeUnsignedResolution(val.MeasurementTime, 32, 0.0001)
 	w.writeSignedResolution64Override(val.StationLatitude, 32, 1e-07)

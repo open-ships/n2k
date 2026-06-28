@@ -75,7 +75,7 @@ func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.TemperatureSource), 8)
 	var actualTemperatureRaw *float32
@@ -83,7 +83,7 @@ func EncodeLowranceTemperature(val *LowranceTemperature) ([]byte, error) {
 		actualTemperatureRaw = &val.ActualTemperature.Value
 	}
 	w.writeUnsignedResolution(actualTemperatureRaw, 16, 0.01)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	return w.Bytes(), w.Err()
 }
 
@@ -221,7 +221,7 @@ func EncodeLowranceProductInformation(val *LowranceProductInformation) ([]byte, 
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProductCode, 16)
 	w.writeFixedString(val.Model, 256)

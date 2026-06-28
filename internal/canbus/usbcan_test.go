@@ -83,10 +83,10 @@ func TestParseFrames_ExtendedDataFrame(t *testing.T) {
 	dataLen := byte(2)
 	buf := []byte{
 		0xAA,
-		0xE0 | dataLen,             // extended frame, 2 bytes of data
-		0x83, 0x01, 0xF2, 0x09,     // ID = 0x09F20183 (little-endian)
-		0xDE, 0xAD,                 // 2 data bytes
-		0x55,                       // end byte
+		0xE0 | dataLen,         // extended frame, 2 bytes of data
+		0x83, 0x01, 0xF2, 0x09, // ID = 0x09F20183 (little-endian)
+		0xDE, 0xAD, // 2 data bytes
+		0x55, // end byte
 	}
 	err := usbChan.parseFrames(&buf)
 	assert.NoError(t, err)
@@ -157,8 +157,8 @@ func TestParseFrames_ErrorRecovery_SkipToNextAA(t *testing.T) {
 		0xAA,
 		0xC0 | dataLen, // standard frame, 1 byte of data
 		0x10, 0x00,     // ID = 0x0010
-		0xFF,           // 1 data byte
-		0x55,           // end byte
+		0xFF, // 1 data byte
+		0x55, // end byte
 	}
 	err := usbChan.parseFrames(&buf)
 	assert.NoError(t, err)
@@ -192,9 +192,9 @@ func TestParseFrames_BadEndByte(t *testing.T) {
 	buf := []byte{
 		0xAA,
 		0xC0 | dataLen,
-		0x10, 0x00,     // ID
-		0xAA, 0xBB,     // data
-		0x99,           // bad end byte (should be 0x55)
+		0x10, 0x00, // ID
+		0xAA, 0xBB, // data
+		0x99, // bad end byte (should be 0x55)
 	}
 	err := usbChan.parseFrames(&buf)
 	assert.NoError(t, err)
@@ -244,8 +244,8 @@ func TestParseFrames_IncompleteExtendedFrame(t *testing.T) {
 	// Extended frame header but truncated
 	buf := []byte{
 		0xAA,
-		0xE0 | 4,                   // extended frame, 4 data bytes
-		0x83, 0x01, 0xF2, 0x09,     // ID
+		0xE0 | 4,               // extended frame, 4 data bytes
+		0x83, 0x01, 0xF2, 0x09, // ID
 		// missing 4 data bytes and 0x55
 	}
 	err := usbChan.parseFrames(&buf)
@@ -319,7 +319,7 @@ func TestParseFrames_ZeroLengthDataFrame(t *testing.T) {
 	// Standard frame with 0 data bytes
 	buf := []byte{
 		0xAA,
-		0xC0, // standard frame, 0 data bytes
+		0xC0,       // standard frame, 0 data bytes
 		0x10, 0x00, // ID
 		0x55, // end byte
 	}

@@ -1,4 +1,5 @@
 golangci_lint_version := "v2.12.0"
+secure_go_toolchain := "go1.25.11"
 
 # list available recipes
 default:
@@ -29,6 +30,14 @@ setup:
 test:
     go test ./...
 
+# compare runtime PGN support against current canboat.json
+canboat-parity:
+    CANBOAT_PARITY=1 go test ./pgn -run TestCanboatParity -count=1 -v
+
+# regenerate CANboat-derived runtime metadata from upstream master
+generate-canboat:
+    go run ./cmd/canboatgen
+
 # run tests with verbose output
 test-v:
     go test -v ./...
@@ -49,14 +58,15 @@ fmt:
 pgn-manifest:
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
 
-# sync catalog-only PGNs from upstream canboat.json and regenerate pgn/manifest.json
+# sync generated CANboat metadata and regenerate pgn/manifest.json
 pgn-sync:
-    go run ./tools/pgnsync
+    go run ./cmd/canboatgen
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
 
-# check whether catalog-only PGNs match upstream canboat.json without writing files
+# check whether generated CANboat metadata and pgn/manifest.json are current
 pgn-sync-check:
-    go run ./tools/pgnsync --check
+    go run ./cmd/canboatgen --check
+    go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
 
 # run go vet
 vet:
@@ -68,8 +78,8 @@ lint:
 
 # run security review (vulnerability scan + static analysis)
 secure:
-    GOTOOLCHAIN=go1.25.11 govulncheck ./...
-    GOTOOLCHAIN=go1.25.11 gosec -exclude-generated -exclude=G115 ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} govulncheck ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} gosec -exclude-generated -exclude=G115 ./...
 
 # tidy go modules
 tidy:

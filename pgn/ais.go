@@ -7,27 +7,27 @@ import (
 )
 
 type AisClassAPositionReport struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Longitude *float64 `json:"longitude"`
-	Latitude *float64 `json:"latitude"`
-	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
-	Raim RaimFlagConst `json:"raim"`
-	TimeStamp TimeStampConst `json:"timeStamp"`
-	Cog *float32 `json:"cog"`
-	Sog *units.Velocity `json:"sog"`
-	CommunicationState []uint8 `json:"communicationState"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	Heading *float32 `json:"heading"`
-	RateOfTurn *float32 `json:"rateOfTurn"`
-	NavStatus NavStatusConst `json:"navStatus"`
-	SpecialManeuverIndicator AisSpecialManeuverConst `json:"specialManeuverIndicator"`
-	SequenceId *uint8 `json:"sequenceId"`
+	Info                      MessageInfo             `json:"info"`
+	MessageId                 AisMessageIdConst       `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst    `json:"repeatIndicator"`
+	UserId                    *uint32                 `json:"userId"`
+	Longitude                 *float64                `json:"longitude"`
+	Latitude                  *float64                `json:"latitude"`
+	PositionAccuracy          PositionAccuracyConst   `json:"positionAccuracy"`
+	Raim                      RaimFlagConst           `json:"raim"`
+	TimeStamp                 TimeStampConst          `json:"timeStamp"`
+	Cog                       *float32                `json:"cog"`
+	Sog                       *units.Velocity         `json:"sog"`
+	CommunicationState        []uint8                 `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst     `json:"aisTransceiverInformation"`
+	Heading                   *float32                `json:"heading"`
+	RateOfTurn                *float32                `json:"rateOfTurn"`
+	NavStatus                 NavStatusConst          `json:"navStatus"`
+	SpecialManeuverIndicator  AisSpecialManeuverConst `json:"specialManeuverIndicator"`
+	SequenceId                *uint8                  `json:"sequenceId"`
 }
 
-func (a *AisClassAPositionReport) PGNNumber() uint32  { return 129038 }
+func (a *AisClassAPositionReport) PGNNumber() uint32 { return 129038 }
 
 func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassAPositionReport{}
@@ -39,7 +39,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-RepeatIndicator: %w", err)
@@ -48,7 +48,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-UserId: %w", err)
@@ -57,7 +57,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Longitude: %w", err)
@@ -66,7 +66,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Latitude: %w", err)
@@ -75,7 +75,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-PositionAccuracy: %w", err)
@@ -84,7 +84,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Raim: %w", err)
@@ -93,7 +93,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-TimeStamp: %w", err)
@@ -102,7 +102,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Cog: %w", err)
@@ -111,7 +111,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Sog: %w", err)
@@ -120,7 +120,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(19); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-CommunicationState: %w", err)
@@ -129,7 +129,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-AisTransceiverInformation: %w", err)
@@ -138,7 +138,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-Heading: %w", err)
@@ -147,7 +147,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(16, 3.125e-05); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-RateOfTurn: %w", err)
@@ -156,7 +156,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-NavStatus: %w", err)
@@ -165,7 +165,7 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-SpecialManeuverIndicator: %w", err)
@@ -174,20 +174,20 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(5)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAPositionReport-SequenceId: %w", err)
 	} else {
@@ -195,8 +195,8 @@ func DecodeAisClassAPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -223,9 +223,9 @@ func EncodeAisClassAPositionReport(val *AisClassAPositionReport) ([]byte, error)
 	w.writeSignedResolution(val.RateOfTurn, 16, 3.125e-05)
 	w.writeLookupField(uint64(val.NavStatus), 4)
 	w.writeLookupField(uint64(val.SpecialManeuverIndicator), 2)
-	w.skipBits(2)
-	w.skipBits(3)
-	w.skipBits(5)
+	w.writeReservedBits(2)
+	w.writeSpareBits(3)
+	w.writeReservedBits(5)
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
@@ -239,30 +239,30 @@ func encodeAisClassAPositionReportMsg(v Message) ([]byte, error) {
 }
 
 type AisClassBPositionReport struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Longitude *float64 `json:"longitude"`
-	Latitude *float64 `json:"latitude"`
-	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
-	Raim RaimFlagConst `json:"raim"`
-	TimeStamp TimeStampConst `json:"timeStamp"`
-	Cog *float32 `json:"cog"`
-	Sog *units.Velocity `json:"sog"`
-	CommunicationState []uint8 `json:"communicationState"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	Heading *float32 `json:"heading"`
-	UnitType AisTypeConst `json:"unitType"`
-	IntegratedDisplay YesNoConst `json:"integratedDisplay"`
-	Dsc YesNoConst `json:"dsc"`
-	Band AisBandConst `json:"band"`
-	CanHandleMsg22 YesNoConst `json:"canHandleMsg22"`
-	AisMode AisModeConst `json:"aisMode"`
-	AisCommunicationState AisCommunicationStateConst `json:"aisCommunicationState"`
+	Info                      MessageInfo                `json:"info"`
+	MessageId                 AisMessageIdConst          `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst       `json:"repeatIndicator"`
+	UserId                    *uint32                    `json:"userId"`
+	Longitude                 *float64                   `json:"longitude"`
+	Latitude                  *float64                   `json:"latitude"`
+	PositionAccuracy          PositionAccuracyConst      `json:"positionAccuracy"`
+	Raim                      RaimFlagConst              `json:"raim"`
+	TimeStamp                 TimeStampConst             `json:"timeStamp"`
+	Cog                       *float32                   `json:"cog"`
+	Sog                       *units.Velocity            `json:"sog"`
+	CommunicationState        []uint8                    `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst        `json:"aisTransceiverInformation"`
+	Heading                   *float32                   `json:"heading"`
+	UnitType                  AisTypeConst               `json:"unitType"`
+	IntegratedDisplay         YesNoConst                 `json:"integratedDisplay"`
+	Dsc                       YesNoConst                 `json:"dsc"`
+	Band                      AisBandConst               `json:"band"`
+	CanHandleMsg22            YesNoConst                 `json:"canHandleMsg22"`
+	AisMode                   AisModeConst               `json:"aisMode"`
+	AisCommunicationState     AisCommunicationStateConst `json:"aisCommunicationState"`
 }
 
-func (a *AisClassBPositionReport) PGNNumber() uint32  { return 129039 }
+func (a *AisClassBPositionReport) PGNNumber() uint32 { return 129039 }
 
 func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBPositionReport{}
@@ -274,7 +274,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-RepeatIndicator: %w", err)
@@ -283,7 +283,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-UserId: %w", err)
@@ -292,7 +292,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Longitude: %w", err)
@@ -301,7 +301,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Latitude: %w", err)
@@ -310,7 +310,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-PositionAccuracy: %w", err)
@@ -319,7 +319,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Raim: %w", err)
@@ -328,7 +328,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-TimeStamp: %w", err)
@@ -337,7 +337,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Cog: %w", err)
@@ -346,7 +346,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Sog: %w", err)
@@ -355,7 +355,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(19); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-CommunicationState: %w", err)
@@ -364,7 +364,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-AisTransceiverInformation: %w", err)
@@ -373,7 +373,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Heading: %w", err)
@@ -382,16 +382,16 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-UnitType: %w", err)
 	} else {
@@ -399,7 +399,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-IntegratedDisplay: %w", err)
@@ -408,7 +408,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Dsc: %w", err)
@@ -417,7 +417,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-Band: %w", err)
@@ -426,7 +426,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-CanHandleMsg22: %w", err)
@@ -435,7 +435,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-AisMode: %w", err)
@@ -444,7 +444,7 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBPositionReport-AisCommunicationState: %w", err)
@@ -453,12 +453,12 @@ func DecodeAisClassBPositionReport(Info MessageInfo, stream *PGNDataStream) (Mes
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(15)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -482,8 +482,8 @@ func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error)
 	w.writeBinaryData(val.CommunicationState, 19)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.writeUnsignedResolution(val.Heading, 16, 0.0001)
-	w.skipBits(8)
-	w.skipBits(2)
+	w.writeSpareBits(8)
+	w.writeSpareBits(2)
 	w.writeLookupField(uint64(val.UnitType), 1)
 	w.writeLookupField(uint64(val.IntegratedDisplay), 1)
 	w.writeLookupField(uint64(val.Dsc), 1)
@@ -491,7 +491,7 @@ func EncodeAisClassBPositionReport(val *AisClassBPositionReport) ([]byte, error)
 	w.writeLookupField(uint64(val.CanHandleMsg22), 1)
 	w.writeLookupField(uint64(val.AisMode), 1)
 	w.writeLookupField(uint64(val.AisCommunicationState), 1)
-	w.skipBits(15)
+	w.writeReservedBits(15)
 	return w.Bytes(), w.Err()
 }
 
@@ -504,31 +504,31 @@ func encodeAisClassBPositionReportMsg(v Message) ([]byte, error) {
 }
 
 type AisClassBExtendedPositionReport struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Longitude *float64 `json:"longitude"`
-	Latitude *float64 `json:"latitude"`
-	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
-	Raim RaimFlagConst `json:"raim"`
-	TimeStamp TimeStampConst `json:"timeStamp"`
-	Cog *float32 `json:"cog"`
-	Sog *units.Velocity `json:"sog"`
-	TypeOfShip ShipTypeConst `json:"typeOfShip"`
-	TrueHeading *float32 `json:"trueHeading"`
-	GnssType PositionFixDeviceConst `json:"gnssType"`
-	Length *units.Distance `json:"length"`
-	Beam *units.Distance `json:"beam"`
-	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
-	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
-	Name string `json:"name"`
-	Dte AvailableConst `json:"dte"`
-	AisMode AisModeConst `json:"aisMode"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	Info                           MessageInfo            `json:"info"`
+	MessageId                      AisMessageIdConst      `json:"messageId"`
+	RepeatIndicator                RepeatIndicatorConst   `json:"repeatIndicator"`
+	UserId                         *uint32                `json:"userId"`
+	Longitude                      *float64               `json:"longitude"`
+	Latitude                       *float64               `json:"latitude"`
+	PositionAccuracy               PositionAccuracyConst  `json:"positionAccuracy"`
+	Raim                           RaimFlagConst          `json:"raim"`
+	TimeStamp                      TimeStampConst         `json:"timeStamp"`
+	Cog                            *float32               `json:"cog"`
+	Sog                            *units.Velocity        `json:"sog"`
+	TypeOfShip                     ShipTypeConst          `json:"typeOfShip"`
+	TrueHeading                    *float32               `json:"trueHeading"`
+	GnssType                       PositionFixDeviceConst `json:"gnssType"`
+	Length                         *units.Distance        `json:"length"`
+	Beam                           *units.Distance        `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance        `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow       *units.Distance        `json:"positionReferenceFromBow"`
+	Name                           string                 `json:"name"`
+	Dte                            AvailableConst         `json:"dte"`
+	AisMode                        AisModeConst           `json:"aisMode"`
+	AisTransceiverInformation      AisTransceiverConst    `json:"aisTransceiverInformation"`
 }
 
-func (a *AisClassBExtendedPositionReport) PGNNumber() uint32  { return 129040 }
+func (a *AisClassBExtendedPositionReport) PGNNumber() uint32 { return 129040 }
 
 func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBExtendedPositionReport{}
@@ -540,7 +540,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-RepeatIndicator: %w", err)
@@ -549,7 +549,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-UserId: %w", err)
@@ -558,7 +558,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Longitude: %w", err)
@@ -567,7 +567,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Latitude: %w", err)
@@ -576,7 +576,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-PositionAccuracy: %w", err)
@@ -585,7 +585,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Raim: %w", err)
@@ -594,7 +594,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-TimeStamp: %w", err)
@@ -603,7 +603,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Cog: %w", err)
@@ -612,7 +612,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Sog: %w", err)
@@ -621,20 +621,20 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-TypeOfShip: %w", err)
 	} else {
@@ -642,7 +642,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-TrueHeading: %w", err)
@@ -651,12 +651,12 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-GnssType: %w", err)
 	} else {
@@ -664,7 +664,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Length: %w", err)
@@ -673,7 +673,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Beam: %w", err)
@@ -682,7 +682,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-PositionReferenceFromStarboard: %w", err)
@@ -691,7 +691,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-PositionReferenceFromBow: %w", err)
@@ -700,7 +700,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(160); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Name: %w", err)
@@ -709,7 +709,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-Dte: %w", err)
@@ -718,7 +718,7 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-AisMode: %w", err)
@@ -727,12 +727,12 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBExtendedPositionReport-AisTransceiverInformation: %w", err)
 	} else {
@@ -740,12 +740,12 @@ func DecodeAisClassBExtendedPositionReport(Info MessageInfo, stream *PGNDataStre
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(5)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -766,12 +766,12 @@ func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport)
 		sogRaw = &val.Sog.Value
 	}
 	w.writeUnsignedResolution(sogRaw, 16, 0.01)
-	w.skipBits(8)
-	w.skipBits(4)
-	w.skipBits(4)
+	w.writeSpareBits(8)
+	w.writeSpareBits(4)
+	w.writeReservedBits(4)
 	w.writeLookupField(uint64(val.TypeOfShip), 8)
 	w.writeUnsignedResolution(val.TrueHeading, 16, 0.0001)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeLookupField(uint64(val.GnssType), 4)
 	var lengthRaw *float32
 	if val.Length != nil {
@@ -796,9 +796,9 @@ func EncodeAisClassBExtendedPositionReport(val *AisClassBExtendedPositionReport)
 	w.writeFixedString(val.Name, 160)
 	w.writeLookupField(uint64(val.Dte), 1)
 	w.writeLookupField(uint64(val.AisMode), 1)
-	w.skipBits(4)
+	w.writeSpareBits(4)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	return w.Bytes(), w.Err()
 }
 
@@ -811,30 +811,30 @@ func encodeAisClassBExtendedPositionReportMsg(v Message) ([]byte, error) {
 }
 
 type AisAidsToNavigationAtonReport struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Longitude *float64 `json:"longitude"`
-	Latitude *float64 `json:"latitude"`
-	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
-	Raim RaimFlagConst `json:"raim"`
-	TimeStamp TimeStampConst `json:"timeStamp"`
-	LengthDiameter *units.Distance `json:"lengthDiameter"`
-	BeamDiameter *units.Distance `json:"beamDiameter"`
-	PositionReferenceFromStarboardEdge *units.Distance `json:"positionReferenceFromStarboardEdge"`
-	PositionReferenceFromTrueNorthFacingEdge *units.Distance `json:"positionReferenceFromTrueNorthFacingEdge"`
-	AtonType AtonTypeConst `json:"atonType"`
-	OffPositionIndicator YesNoConst `json:"offPositionIndicator"`
-	VirtualAtonFlag YesNoConst `json:"virtualAtonFlag"`
-	AssignedModeFlag AisAssignedModeConst `json:"assignedModeFlag"`
-	PositionFixingDeviceType PositionFixDeviceConst `json:"positionFixingDeviceType"`
-	AtonStatus []uint8 `json:"atonStatus"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	AtonName string `json:"atonName"`
+	Info                                     MessageInfo            `json:"info"`
+	MessageId                                AisMessageIdConst      `json:"messageId"`
+	RepeatIndicator                          RepeatIndicatorConst   `json:"repeatIndicator"`
+	UserId                                   *uint32                `json:"userId"`
+	Longitude                                *float64               `json:"longitude"`
+	Latitude                                 *float64               `json:"latitude"`
+	PositionAccuracy                         PositionAccuracyConst  `json:"positionAccuracy"`
+	Raim                                     RaimFlagConst          `json:"raim"`
+	TimeStamp                                TimeStampConst         `json:"timeStamp"`
+	LengthDiameter                           *units.Distance        `json:"lengthDiameter"`
+	BeamDiameter                             *units.Distance        `json:"beamDiameter"`
+	PositionReferenceFromStarboardEdge       *units.Distance        `json:"positionReferenceFromStarboardEdge"`
+	PositionReferenceFromTrueNorthFacingEdge *units.Distance        `json:"positionReferenceFromTrueNorthFacingEdge"`
+	AtonType                                 AtonTypeConst          `json:"atonType"`
+	OffPositionIndicator                     YesNoConst             `json:"offPositionIndicator"`
+	VirtualAtonFlag                          YesNoConst             `json:"virtualAtonFlag"`
+	AssignedModeFlag                         AisAssignedModeConst   `json:"assignedModeFlag"`
+	PositionFixingDeviceType                 PositionFixDeviceConst `json:"positionFixingDeviceType"`
+	AtonStatus                               []uint8                `json:"atonStatus"`
+	AisTransceiverInformation                AisTransceiverConst    `json:"aisTransceiverInformation"`
+	AtonName                                 string                 `json:"atonName"`
 }
 
-func (a *AisAidsToNavigationAtonReport) PGNNumber() uint32  { return 129041 }
+func (a *AisAidsToNavigationAtonReport) PGNNumber() uint32 { return 129041 }
 
 func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAidsToNavigationAtonReport{}
@@ -846,7 +846,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-RepeatIndicator: %w", err)
@@ -855,7 +855,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-UserId: %w", err)
@@ -864,7 +864,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-Longitude: %w", err)
@@ -873,7 +873,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-Latitude: %w", err)
@@ -882,7 +882,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-PositionAccuracy: %w", err)
@@ -891,7 +891,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-Raim: %w", err)
@@ -900,7 +900,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-TimeStamp: %w", err)
@@ -909,7 +909,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-LengthDiameter: %w", err)
@@ -918,7 +918,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-BeamDiameter: %w", err)
@@ -927,7 +927,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-PositionReferenceFromStarboardEdge: %w", err)
@@ -936,7 +936,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-PositionReferenceFromTrueNorthFacingEdge: %w", err)
@@ -945,7 +945,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-AtonType: %w", err)
@@ -954,7 +954,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-OffPositionIndicator: %w", err)
@@ -963,7 +963,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-VirtualAtonFlag: %w", err)
@@ -972,7 +972,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-AssignedModeFlag: %w", err)
@@ -981,12 +981,12 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-PositionFixingDeviceType: %w", err)
 	} else {
@@ -994,12 +994,12 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readBinaryData(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-AtonStatus: %w", err)
 	} else {
@@ -1007,7 +1007,7 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-AisTransceiverInformation: %w", err)
@@ -1016,12 +1016,12 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readStringWithLengthAndControl(); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAidsToNavigationAtonReport-AtonName: %w", err)
 	} else {
@@ -1029,8 +1029,8 @@ func DecodeAisAidsToNavigationAtonReport(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1069,12 +1069,12 @@ func EncodeAisAidsToNavigationAtonReport(val *AisAidsToNavigationAtonReport) ([]
 	w.writeLookupField(uint64(val.OffPositionIndicator), 1)
 	w.writeLookupField(uint64(val.VirtualAtonFlag), 1)
 	w.writeLookupField(uint64(val.AssignedModeFlag), 1)
-	w.skipBits(1)
+	w.writeSpareBits(1)
 	w.writeLookupField(uint64(val.PositionFixingDeviceType), 4)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeBinaryData(val.AtonStatus, 8)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeStringWithLengthAndControl(val.AtonName)
 	return w.Bytes(), w.Err()
 }
@@ -1088,22 +1088,22 @@ func encodeAisAidsToNavigationAtonReportMsg(v Message) ([]byte, error) {
 }
 
 type AisUtcAndDateReport struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Longitude *float64 `json:"longitude"`
-	Latitude *float64 `json:"latitude"`
-	PositionAccuracy PositionAccuracyConst `json:"positionAccuracy"`
-	Raim RaimFlagConst `json:"raim"`
-	PositionTime *float32 `json:"positionTime"`
-	CommunicationState []uint8 `json:"communicationState"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	PositionDate *uint16 `json:"positionDate"`
-	GnssType PositionFixDeviceConst `json:"gnssType"`
+	Info                      MessageInfo            `json:"info"`
+	MessageId                 AisMessageIdConst      `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst   `json:"repeatIndicator"`
+	UserId                    *uint32                `json:"userId"`
+	Longitude                 *float64               `json:"longitude"`
+	Latitude                  *float64               `json:"latitude"`
+	PositionAccuracy          PositionAccuracyConst  `json:"positionAccuracy"`
+	Raim                      RaimFlagConst          `json:"raim"`
+	PositionTime              *float32               `json:"positionTime"`
+	CommunicationState        []uint8                `json:"communicationState"`
+	AisTransceiverInformation AisTransceiverConst    `json:"aisTransceiverInformation"`
+	PositionDate              *uint16                `json:"positionDate"`
+	GnssType                  PositionFixDeviceConst `json:"gnssType"`
 }
 
-func (a *AisUtcAndDateReport) PGNNumber() uint32  { return 129793 }
+func (a *AisUtcAndDateReport) PGNNumber() uint32 { return 129793 }
 
 func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisUtcAndDateReport{}
@@ -1115,7 +1115,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-RepeatIndicator: %w", err)
@@ -1124,7 +1124,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-UserId: %w", err)
@@ -1133,7 +1133,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-Longitude: %w", err)
@@ -1142,7 +1142,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-Latitude: %w", err)
@@ -1151,7 +1151,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-PositionAccuracy: %w", err)
@@ -1160,7 +1160,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-Raim: %w", err)
@@ -1169,12 +1169,12 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-PositionTime: %w", err)
 	} else {
@@ -1182,7 +1182,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(19); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-CommunicationState: %w", err)
@@ -1191,7 +1191,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-AisTransceiverInformation: %w", err)
@@ -1200,7 +1200,7 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-PositionDate: %w", err)
@@ -1209,12 +1209,12 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcAndDateReport-GnssType: %w", err)
 	} else {
@@ -1222,12 +1222,12 @@ func DecodeAisUtcAndDateReport(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(8)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1241,14 +1241,14 @@ func EncodeAisUtcAndDateReport(val *AisUtcAndDateReport) ([]byte, error) {
 	w.writeSignedResolution64Override(val.Latitude, 32, 1e-07)
 	w.writeLookupField(uint64(val.PositionAccuracy), 1)
 	w.writeLookupField(uint64(val.Raim), 1)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUnsignedResolution(val.PositionTime, 32, 0.0001)
 	w.writeBinaryData(val.CommunicationState, 19)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.writeUInt16(val.PositionDate, 16)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeLookupField(uint64(val.GnssType), 4)
-	w.skipBits(8)
+	w.writeSpareBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1261,29 +1261,29 @@ func encodeAisUtcAndDateReportMsg(v Message) ([]byte, error) {
 }
 
 type AisClassAStaticAndVoyageRelatedData struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	ImoNumber *uint32 `json:"imoNumber"`
-	Callsign string `json:"callsign"`
-	Name string `json:"name"`
-	TypeOfShip ShipTypeConst `json:"typeOfShip"`
-	Length *units.Distance `json:"length"`
-	Beam *units.Distance `json:"beam"`
-	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
-	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
-	EtaDate *uint16 `json:"etaDate"`
-	EtaTime *float32 `json:"etaTime"`
-	Draft *units.Distance `json:"draft"`
-	Destination string `json:"destination"`
-	AisVersionIndicator AisVersionConst `json:"aisVersionIndicator"`
-	GnssType PositionFixDeviceConst `json:"gnssType"`
-	Dte AvailableConst `json:"dte"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
+	Info                           MessageInfo            `json:"info"`
+	MessageId                      AisMessageIdConst      `json:"messageId"`
+	RepeatIndicator                RepeatIndicatorConst   `json:"repeatIndicator"`
+	UserId                         *uint32                `json:"userId"`
+	ImoNumber                      *uint32                `json:"imoNumber"`
+	Callsign                       string                 `json:"callsign"`
+	Name                           string                 `json:"name"`
+	TypeOfShip                     ShipTypeConst          `json:"typeOfShip"`
+	Length                         *units.Distance        `json:"length"`
+	Beam                           *units.Distance        `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance        `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow       *units.Distance        `json:"positionReferenceFromBow"`
+	EtaDate                        *uint16                `json:"etaDate"`
+	EtaTime                        *float32               `json:"etaTime"`
+	Draft                          *units.Distance        `json:"draft"`
+	Destination                    string                 `json:"destination"`
+	AisVersionIndicator            AisVersionConst        `json:"aisVersionIndicator"`
+	GnssType                       PositionFixDeviceConst `json:"gnssType"`
+	Dte                            AvailableConst         `json:"dte"`
+	AisTransceiverInformation      AisTransceiverConst    `json:"aisTransceiverInformation"`
 }
 
-func (a *AisClassAStaticAndVoyageRelatedData) PGNNumber() uint32  { return 129794 }
+func (a *AisClassAStaticAndVoyageRelatedData) PGNNumber() uint32 { return 129794 }
 
 func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassAStaticAndVoyageRelatedData{}
@@ -1295,7 +1295,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-RepeatIndicator: %w", err)
@@ -1304,7 +1304,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-UserId: %w", err)
@@ -1313,7 +1313,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-ImoNumber: %w", err)
@@ -1322,7 +1322,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(56); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Callsign: %w", err)
@@ -1331,7 +1331,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(160); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Name: %w", err)
@@ -1340,7 +1340,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-TypeOfShip: %w", err)
@@ -1349,7 +1349,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Length: %w", err)
@@ -1358,7 +1358,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Beam: %w", err)
@@ -1367,7 +1367,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-PositionReferenceFromStarboard: %w", err)
@@ -1376,7 +1376,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-PositionReferenceFromBow: %w", err)
@@ -1385,7 +1385,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-EtaDate: %w", err)
@@ -1394,7 +1394,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-EtaTime: %w", err)
@@ -1403,7 +1403,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Draft: %w", err)
@@ -1412,7 +1412,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(160); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Destination: %w", err)
@@ -1421,7 +1421,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-AisVersionIndicator: %w", err)
@@ -1430,7 +1430,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-GnssType: %w", err)
@@ -1439,7 +1439,7 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-Dte: %w", err)
@@ -1448,12 +1448,12 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassAStaticAndVoyageRelatedData-AisTransceiverInformation: %w", err)
 	} else {
@@ -1461,12 +1461,12 @@ func DecodeAisClassAStaticAndVoyageRelatedData(Info MessageInfo, stream *PGNData
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1511,9 +1511,9 @@ func EncodeAisClassAStaticAndVoyageRelatedData(val *AisClassAStaticAndVoyageRela
 	w.writeLookupField(uint64(val.AisVersionIndicator), 2)
 	w.writeLookupField(uint64(val.GnssType), 4)
 	w.writeLookupField(uint64(val.Dte), 1)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	return w.Bytes(), w.Err()
 }
 
@@ -1526,24 +1526,24 @@ func encodeAisClassAStaticAndVoyageRelatedDataMsg(v Message) ([]byte, error) {
 }
 
 type AisAddressedBinaryMessage struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	SequenceNumber *uint8 `json:"sequenceNumber"`
-	DestinationId *uint32 `json:"destinationId"`
-	RetransmitFlag *uint8 `json:"retransmitFlag"`
-	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
-	BinaryData []uint8 `json:"binaryData"`
+	Info                          MessageInfo          `json:"info"`
+	MessageId                     AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator               RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                      *uint32              `json:"sourceId"`
+	AisTransceiverInformation     AisTransceiverConst  `json:"aisTransceiverInformation"`
+	SequenceNumber                *uint8               `json:"sequenceNumber"`
+	DestinationId                 *uint32              `json:"destinationId"`
+	RetransmitFlag                *uint8               `json:"retransmitFlag"`
+	NumberOfBitsInBinaryDataField *uint16              `json:"numberOfBitsInBinaryDataField"`
+	BinaryData                    []uint8              `json:"binaryData"`
 }
 
-func (a *AisAddressedBinaryMessage) PGNNumber() uint32  { return 129795 }
+func (a *AisAddressedBinaryMessage) PGNNumber() uint32 { return 129795 }
 
 func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAddressedBinaryMessage{}
 	val.Info = Info
-		var binaryLength uint16 = 0
+	var binaryLength uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-MessageId: %w", err)
 	} else {
@@ -1551,7 +1551,7 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-RepeatIndicator: %w", err)
@@ -1560,7 +1560,7 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-SourceId: %w", err)
@@ -1569,12 +1569,12 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-AisTransceiverInformation: %w", err)
 	} else {
@@ -1582,7 +1582,7 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-SequenceNumber: %w", err)
@@ -1591,7 +1591,7 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-DestinationId: %w", err)
@@ -1600,12 +1600,12 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-RetransmitFlag: %w", err)
 	} else {
@@ -1613,12 +1613,12 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-NumberOfBitsInBinaryDataField: %w", err)
 	} else {
@@ -1629,7 +1629,7 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(binaryLength); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedBinaryMessage-BinaryData: %w", err)
@@ -1638,8 +1638,8 @@ func DecodeAisAddressedBinaryMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1649,13 +1649,13 @@ func EncodeAisAddressedBinaryMessage(val *AisAddressedBinaryMessage) ([]byte, er
 	w.writeLookupField(uint64(val.MessageId), 6)
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.writeUInt8(val.SequenceNumber, 2)
 	w.writeUInt32(val.DestinationId, 32)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUInt8(val.RetransmitFlag, 1)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
 	return w.Bytes(), w.Err()
 }
@@ -1669,17 +1669,17 @@ func encodeAisAddressedBinaryMessageMsg(v Message) ([]byte, error) {
 }
 
 type AisAcknowledge struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	DestinationId1 *uint32 `json:"destinationId1"`
-	SequenceNumberForId1 []uint8 `json:"sequenceNumberForId1"`
-	SequenceNumberForIdN []uint8 `json:"sequenceNumberForIdN"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                  *uint32              `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	DestinationId1            *uint32              `json:"destinationId1"`
+	SequenceNumberForId1      []uint8              `json:"sequenceNumberForId1"`
+	SequenceNumberForIdN      []uint8              `json:"sequenceNumberForIdN"`
 }
 
-func (a *AisAcknowledge) PGNNumber() uint32  { return 129796 }
+func (a *AisAcknowledge) PGNNumber() uint32 { return 129796 }
 
 func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAcknowledge{}
@@ -1691,7 +1691,7 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-RepeatIndicator: %w", err)
@@ -1700,7 +1700,7 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-SourceId: %w", err)
@@ -1709,12 +1709,12 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-AisTransceiverInformation: %w", err)
 	} else {
@@ -1722,12 +1722,12 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-DestinationId1: %w", err)
 	} else {
@@ -1735,7 +1735,7 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-SequenceNumberForId1: %w", err)
@@ -1744,12 +1744,12 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readBinaryData(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAcknowledge-SequenceNumberForIdN: %w", err)
 	} else {
@@ -1757,12 +1757,12 @@ func DecodeAisAcknowledge(Info MessageInfo, stream *PGNDataStream) (Message, err
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}	
+	}
 	return val, nil
 }
 
@@ -1772,14 +1772,14 @@ func EncodeAisAcknowledge(val *AisAcknowledge) ([]byte, error) {
 	w.writeLookupField(uint64(val.MessageId), 6)
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt32(val.DestinationId1, 32)
 	w.writeBinaryData(val.SequenceNumberForId1, 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeBinaryData(val.SequenceNumberForIdN, 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	return w.Bytes(), w.Err()
 }
 
@@ -1792,21 +1792,21 @@ func encodeAisAcknowledgeMsg(v Message) ([]byte, error) {
 }
 
 type AisBinaryBroadcastMessage struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	NumberOfBitsInBinaryDataField *uint16 `json:"numberOfBitsInBinaryDataField"`
-	BinaryData []uint8 `json:"binaryData"`
+	Info                          MessageInfo          `json:"info"`
+	MessageId                     AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator               RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                      *uint32              `json:"sourceId"`
+	AisTransceiverInformation     AisTransceiverConst  `json:"aisTransceiverInformation"`
+	NumberOfBitsInBinaryDataField *uint16              `json:"numberOfBitsInBinaryDataField"`
+	BinaryData                    []uint8              `json:"binaryData"`
 }
 
-func (a *AisBinaryBroadcastMessage) PGNNumber() uint32  { return 129797 }
+func (a *AisBinaryBroadcastMessage) PGNNumber() uint32 { return 129797 }
 
 func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisBinaryBroadcastMessage{}
 	val.Info = Info
-		var binaryLength uint16 = 0
+	var binaryLength uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-MessageId: %w", err)
 	} else {
@@ -1814,7 +1814,7 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-RepeatIndicator: %w", err)
@@ -1823,7 +1823,7 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-SourceId: %w", err)
@@ -1832,12 +1832,12 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-AisTransceiverInformation: %w", err)
 	} else {
@@ -1845,12 +1845,12 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-NumberOfBitsInBinaryDataField: %w", err)
 	} else {
@@ -1861,7 +1861,7 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readBinaryData(binaryLength); err != nil {
 		return nil, fmt.Errorf("parse failed for AisBinaryBroadcastMessage-BinaryData: %w", err)
@@ -1870,8 +1870,8 @@ func DecodeAisBinaryBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (M
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1881,9 +1881,9 @@ func EncodeAisBinaryBroadcastMessage(val *AisBinaryBroadcastMessage) ([]byte, er
 	w.writeLookupField(uint64(val.MessageId), 6)
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt16(val.NumberOfBitsInBinaryDataField, 16)
 	return w.Bytes(), w.Err()
 }
@@ -1897,15 +1897,15 @@ func encodeAisBinaryBroadcastMessageMsg(v Message) ([]byte, error) {
 }
 
 type AisUtcDateInquiry struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	DestinationId *uint32 `json:"destinationId"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                  *uint32              `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	DestinationId             *uint32              `json:"destinationId"`
 }
 
-func (a *AisUtcDateInquiry) PGNNumber() uint32  { return 129800 }
+func (a *AisUtcDateInquiry) PGNNumber() uint32 { return 129800 }
 
 func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisUtcDateInquiry{}
@@ -1917,7 +1917,7 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcDateInquiry-RepeatIndicator: %w", err)
@@ -1926,7 +1926,7 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcDateInquiry-SourceId: %w", err)
@@ -1935,7 +1935,7 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcDateInquiry-AisTransceiverInformation: %w", err)
@@ -1944,12 +1944,12 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisUtcDateInquiry-DestinationId: %w", err)
 	} else {
@@ -1957,8 +1957,8 @@ func DecodeAisUtcDateInquiry(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -1969,7 +1969,7 @@ func EncodeAisUtcDateInquiry(val *AisUtcDateInquiry) ([]byte, error) {
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeUInt32(val.DestinationId, 32)
 	return w.Bytes(), w.Err()
 }
@@ -1983,18 +1983,18 @@ func encodeAisUtcDateInquiryMsg(v Message) ([]byte, error) {
 }
 
 type AisAddressedSafetyRelatedMessage struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	SequenceNumber *uint8 `json:"sequenceNumber"`
-	DestinationId *uint32 `json:"destinationId"`
-	RetransmitFlag *uint8 `json:"retransmitFlag"`
-	SafetyRelatedText string `json:"safetyRelatedText"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                  *uint32              `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	SequenceNumber            *uint8               `json:"sequenceNumber"`
+	DestinationId             *uint32              `json:"destinationId"`
+	RetransmitFlag            *uint8               `json:"retransmitFlag"`
+	SafetyRelatedText         string               `json:"safetyRelatedText"`
 }
 
-func (a *AisAddressedSafetyRelatedMessage) PGNNumber() uint32  { return 129801 }
+func (a *AisAddressedSafetyRelatedMessage) PGNNumber() uint32 { return 129801 }
 
 func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisAddressedSafetyRelatedMessage{}
@@ -2006,7 +2006,7 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-RepeatIndicator: %w", err)
@@ -2015,7 +2015,7 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-SourceId: %w", err)
@@ -2024,7 +2024,7 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-AisTransceiverInformation: %w", err)
@@ -2033,7 +2033,7 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-SequenceNumber: %w", err)
@@ -2042,12 +2042,12 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-DestinationId: %w", err)
 	} else {
@@ -2055,7 +2055,7 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-RetransmitFlag: %w", err)
@@ -2064,12 +2064,12 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(7)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readFixedString(936); err != nil {
 		return nil, fmt.Errorf("parse failed for AisAddressedSafetyRelatedMessage-SafetyRelatedText: %w", err)
 	} else {
@@ -2077,8 +2077,8 @@ func DecodeAisAddressedSafetyRelatedMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2090,10 +2090,10 @@ func EncodeAisAddressedSafetyRelatedMessage(val *AisAddressedSafetyRelatedMessag
 	w.writeUInt32(val.SourceId, 32)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
 	w.writeUInt8(val.SequenceNumber, 2)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeUInt32(val.DestinationId, 32)
 	w.writeUInt8(val.RetransmitFlag, 1)
-	w.skipBits(7)
+	w.writeReservedBits(7)
 	w.writeFixedString(val.SafetyRelatedText, 936)
 	return w.Bytes(), w.Err()
 }
@@ -2107,15 +2107,15 @@ func encodeAisAddressedSafetyRelatedMessageMsg(v Message) ([]byte, error) {
 }
 
 type AisSafetyRelatedBroadcastMessage struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	SafetyRelatedText string `json:"safetyRelatedText"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                  *uint32              `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	SafetyRelatedText         string               `json:"safetyRelatedText"`
 }
 
-func (a *AisSafetyRelatedBroadcastMessage) PGNNumber() uint32  { return 129802 }
+func (a *AisSafetyRelatedBroadcastMessage) PGNNumber() uint32 { return 129802 }
 
 func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisSafetyRelatedBroadcastMessage{}
@@ -2127,7 +2127,7 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisSafetyRelatedBroadcastMessage-RepeatIndicator: %w", err)
@@ -2136,7 +2136,7 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisSafetyRelatedBroadcastMessage-SourceId: %w", err)
@@ -2145,7 +2145,7 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisSafetyRelatedBroadcastMessage-AisTransceiverInformation: %w", err)
@@ -2154,12 +2154,12 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readFixedString(1296); err != nil {
 		return nil, fmt.Errorf("parse failed for AisSafetyRelatedBroadcastMessage-SafetyRelatedText: %w", err)
 	} else {
@@ -2167,8 +2167,8 @@ func DecodeAisSafetyRelatedBroadcastMessage(Info MessageInfo, stream *PGNDataStr
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2179,7 +2179,7 @@ func EncodeAisSafetyRelatedBroadcastMessage(val *AisSafetyRelatedBroadcastMessag
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeFixedString(val.SafetyRelatedText, 1296)
 	return w.Bytes(), w.Err()
 }
@@ -2193,23 +2193,23 @@ func encodeAisSafetyRelatedBroadcastMessageMsg(v Message) ([]byte, error) {
 }
 
 type AisInterrogation struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	DestinationId1 *uint32 `json:"destinationId1"`
-	MessageId11 AisMessageIdConst `json:"messageId11"`
-	SlotOffset11 *uint16 `json:"slotOffset11"`
-	MessageId12 AisMessageIdConst `json:"messageId12"`
-	SlotOffset12 *uint16 `json:"slotOffset12"`
-	DestinationId2 *uint32 `json:"destinationId2"`
-	MessageId21 AisMessageIdConst `json:"messageId21"`
-	SlotOffset21 *uint16 `json:"slotOffset21"`
-	Sid *uint8 `json:"sid"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                  *uint32              `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	DestinationId1            *uint32              `json:"destinationId1"`
+	MessageId11               AisMessageIdConst    `json:"messageId11"`
+	SlotOffset11              *uint16              `json:"slotOffset11"`
+	MessageId12               AisMessageIdConst    `json:"messageId12"`
+	SlotOffset12              *uint16              `json:"slotOffset12"`
+	DestinationId2            *uint32              `json:"destinationId2"`
+	MessageId21               AisMessageIdConst    `json:"messageId21"`
+	SlotOffset21              *uint16              `json:"slotOffset21"`
+	Sid                       *uint8               `json:"sid"`
 }
 
-func (a *AisInterrogation) PGNNumber() uint32  { return 129803 }
+func (a *AisInterrogation) PGNNumber() uint32 { return 129803 }
 
 func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisInterrogation{}
@@ -2221,7 +2221,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-RepeatIndicator: %w", err)
@@ -2230,7 +2230,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-SourceId: %w", err)
@@ -2239,12 +2239,12 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(1)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-AisTransceiverInformation: %w", err)
 	} else {
@@ -2252,12 +2252,12 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-DestinationId1: %w", err)
 	} else {
@@ -2265,7 +2265,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-MessageId11: %w", err)
@@ -2274,7 +2274,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(12); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-SlotOffset11: %w", err)
@@ -2283,12 +2283,12 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-MessageId12: %w", err)
 	} else {
@@ -2296,7 +2296,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(12); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-SlotOffset12: %w", err)
@@ -2305,12 +2305,12 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-DestinationId2: %w", err)
 	} else {
@@ -2318,7 +2318,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-MessageId21: %w", err)
@@ -2327,7 +2327,7 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt16(12); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-SlotOffset21: %w", err)
@@ -2336,16 +2336,16 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisInterrogation-Sid: %w", err)
 	} else {
@@ -2353,8 +2353,8 @@ func DecodeAisInterrogation(Info MessageInfo, stream *PGNDataStream) (Message, e
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2364,21 +2364,21 @@ func EncodeAisInterrogation(val *AisInterrogation) ([]byte, error) {
 	w.writeLookupField(uint64(val.MessageId), 6)
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
-	w.skipBits(1)
+	w.writeReservedBits(1)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(2)
+	w.writeSpareBits(2)
 	w.writeUInt32(val.DestinationId1, 32)
 	w.writeLookupField(uint64(val.MessageId11), 6)
 	w.writeUInt16(val.SlotOffset11, 12)
-	w.skipBits(2)
+	w.writeSpareBits(2)
 	w.writeLookupField(uint64(val.MessageId12), 6)
 	w.writeUInt16(val.SlotOffset12, 12)
-	w.skipBits(2)
+	w.writeSpareBits(2)
 	w.writeUInt32(val.DestinationId2, 32)
 	w.writeLookupField(uint64(val.MessageId21), 6)
 	w.writeUInt16(val.SlotOffset21, 12)
-	w.skipBits(2)
-	w.skipBits(4)
+	w.writeSpareBits(2)
+	w.writeReservedBits(4)
 	w.writeUInt8(val.Sid, 8)
 	return w.Bytes(), w.Err()
 }
@@ -2392,27 +2392,27 @@ func encodeAisInterrogationMsg(v Message) ([]byte, error) {
 }
 
 type AisDataLinkManagementMessage struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	Repeating1 []AisDataLinkManagementMessageRepeating1 `json:"repeating1"`
+	Info                      MessageInfo                              `json:"info"`
+	MessageId                 AisMessageIdConst                        `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst                     `json:"repeatIndicator"`
+	SourceId                  *uint32                                  `json:"sourceId"`
+	AisTransceiverInformation AisTransceiverConst                      `json:"aisTransceiverInformation"`
+	Repeating1                []AisDataLinkManagementMessageRepeating1 `json:"repeating1"`
 }
 
 type AisDataLinkManagementMessageRepeating1 struct {
-	Offset *uint16 `json:"offset"`
-	NumberOfSlots *uint8 `json:"numberOfSlots"`
-	Timeout *uint8 `json:"timeout"`
-	Increment *uint16 `json:"increment"`
+	Offset        *uint16 `json:"offset"`
+	NumberOfSlots *uint8  `json:"numberOfSlots"`
+	Timeout       *uint8  `json:"timeout"`
+	Increment     *uint16 `json:"increment"`
 }
 
-func (a *AisDataLinkManagementMessage) PGNNumber() uint32  { return 129805 }
+func (a *AisDataLinkManagementMessage) PGNNumber() uint32 { return 129805 }
 
 func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisDataLinkManagementMessage{}
 	val.Info = Info
-		var repeat1Count uint16 = 0
+	var repeat1Count uint16 = 0
 	if v, err := stream.readLookupField(6); err != nil {
 		return nil, fmt.Errorf("parse failed for AisDataLinkManagementMessage-MessageId: %w", err)
 	} else {
@@ -2420,7 +2420,7 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisDataLinkManagementMessage-RepeatIndicator: %w", err)
@@ -2429,7 +2429,7 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisDataLinkManagementMessage-SourceId: %w", err)
@@ -2438,7 +2438,7 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisDataLinkManagementMessage-AisTransceiverInformation: %w", err)
@@ -2447,14 +2447,14 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	val.Repeating1 = make([]AisDataLinkManagementMessageRepeating1, 0)
-	i := 0 
+	i := 0
 	for {
 		var rep AisDataLinkManagementMessageRepeating1
 		if v, err := stream.readUInt16(16); err != nil {
@@ -2481,14 +2481,14 @@ func DecodeAisDataLinkManagementMessage(Info MessageInfo, stream *PGNDataStream)
 		if int(repeat1Count) == 0 {
 			if stream.isEOF() {
 				return val, nil
-			} 
+			}
 		} else {
 			i++
 			if i == int(repeat1Count) {
 				break
-			} 
-		} 
-	}	
+			}
+		}
+	}
 	return val, nil
 }
 
@@ -2499,7 +2499,7 @@ func EncodeAisDataLinkManagementMessage(val *AisDataLinkManagementMessage) ([]by
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	for _, rep := range val.Repeating1 {
 		w.writeUInt16(rep.Offset, 16)
 		w.writeUInt8(rep.NumberOfSlots, 8)
@@ -2518,26 +2518,26 @@ func encodeAisDataLinkManagementMessageMsg(v Message) ([]byte, error) {
 }
 
 type AisChannelManagement struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	SourceId *uint32 `json:"sourceId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	ChannelA *uint8 `json:"channelA"`
-	ChannelB *uint8 `json:"channelB"`
-	Power *uint8 `json:"power"`
-	TxRxMode *uint8 `json:"txRxMode"`
-	NorthEastLongitudeCorner1 *float64 `json:"northEastLongitudeCorner1"`
-	NorthEastLatitudeCorner1 *float64 `json:"northEastLatitudeCorner1"`
-	SouthWestLongitudeCorner1 *float64 `json:"southWestLongitudeCorner1"`
-	SouthWestLatitudeCorner2 *float64 `json:"southWestLatitudeCorner2"`
-	AddressedOrBroadcastMessageIndicator *uint8 `json:"addressedOrBroadcastMessageIndicator"`
-	ChannelABandwidth *uint8 `json:"channelABandwidth"`
-	ChannelBBandwidth *uint8 `json:"channelBBandwidth"`
-	TransitionalZoneSize *uint8 `json:"transitionalZoneSize"`
+	Info                                 MessageInfo          `json:"info"`
+	MessageId                            AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator                      RepeatIndicatorConst `json:"repeatIndicator"`
+	SourceId                             *uint32              `json:"sourceId"`
+	AisTransceiverInformation            AisTransceiverConst  `json:"aisTransceiverInformation"`
+	ChannelA                             *uint8               `json:"channelA"`
+	ChannelB                             *uint8               `json:"channelB"`
+	Power                                *uint8               `json:"power"`
+	TxRxMode                             *uint8               `json:"txRxMode"`
+	NorthEastLongitudeCorner1            *float64             `json:"northEastLongitudeCorner1"`
+	NorthEastLatitudeCorner1             *float64             `json:"northEastLatitudeCorner1"`
+	SouthWestLongitudeCorner1            *float64             `json:"southWestLongitudeCorner1"`
+	SouthWestLatitudeCorner2             *float64             `json:"southWestLatitudeCorner2"`
+	AddressedOrBroadcastMessageIndicator *uint8               `json:"addressedOrBroadcastMessageIndicator"`
+	ChannelABandwidth                    *uint8               `json:"channelABandwidth"`
+	ChannelBBandwidth                    *uint8               `json:"channelBBandwidth"`
+	TransitionalZoneSize                 *uint8               `json:"transitionalZoneSize"`
 }
 
-func (a *AisChannelManagement) PGNNumber() uint32  { return 129806 }
+func (a *AisChannelManagement) PGNNumber() uint32 { return 129806 }
 
 func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisChannelManagement{}
@@ -2549,7 +2549,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-RepeatIndicator: %w", err)
@@ -2558,7 +2558,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-SourceId: %w", err)
@@ -2567,7 +2567,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-AisTransceiverInformation: %w", err)
@@ -2576,12 +2576,12 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(7); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-ChannelA: %w", err)
 	} else {
@@ -2589,7 +2589,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(7); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-ChannelB: %w", err)
@@ -2598,12 +2598,12 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-Power: %w", err)
 	} else {
@@ -2611,7 +2611,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-TxRxMode: %w", err)
@@ -2620,7 +2620,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-NorthEastLongitudeCorner1: %w", err)
@@ -2629,7 +2629,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-NorthEastLatitudeCorner1: %w", err)
@@ -2638,7 +2638,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-SouthWestLongitudeCorner1: %w", err)
@@ -2647,7 +2647,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution64Override(32, 1e-07); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-SouthWestLatitudeCorner2: %w", err)
@@ -2656,12 +2656,12 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-AddressedOrBroadcastMessageIndicator: %w", err)
 	} else {
@@ -2669,7 +2669,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(7); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-ChannelABandwidth: %w", err)
@@ -2678,7 +2678,7 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(7); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-ChannelBBandwidth: %w", err)
@@ -2687,12 +2687,12 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisChannelManagement-TransitionalZoneSize: %w", err)
 	} else {
@@ -2700,8 +2700,8 @@ func DecodeAisChannelManagement(Info MessageInfo, stream *PGNDataStream) (Messag
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2712,21 +2712,21 @@ func EncodeAisChannelManagement(val *AisChannelManagement) ([]byte, error) {
 	w.writeLookupField(uint64(val.RepeatIndicator), 2)
 	w.writeUInt32(val.SourceId, 32)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeUInt8(val.ChannelA, 7)
 	w.writeUInt8(val.ChannelB, 7)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt8(val.Power, 8)
 	w.writeUInt8(val.TxRxMode, 8)
 	w.writeSignedResolution64Override(val.NorthEastLongitudeCorner1, 32, 1e-07)
 	w.writeSignedResolution64Override(val.NorthEastLatitudeCorner1, 32, 1e-07)
 	w.writeSignedResolution64Override(val.SouthWestLongitudeCorner1, 32, 1e-07)
 	w.writeSignedResolution64Override(val.SouthWestLatitudeCorner2, 32, 1e-07)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	w.writeUInt8(val.AddressedOrBroadcastMessageIndicator, 2)
 	w.writeUInt8(val.ChannelABandwidth, 7)
 	w.writeUInt8(val.ChannelBBandwidth, 7)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUInt8(val.TransitionalZoneSize, 8)
 	return w.Bytes(), w.Err()
 }
@@ -2740,16 +2740,16 @@ func encodeAisChannelManagementMsg(v Message) ([]byte, error) {
 }
 
 type AisClassBStaticDataMsg24PartA struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	Name string `json:"name"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	SequenceId *uint8 `json:"sequenceId"`
+	Info                      MessageInfo          `json:"info"`
+	MessageId                 AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator           RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId                    *uint32              `json:"userId"`
+	Name                      string               `json:"name"`
+	AisTransceiverInformation AisTransceiverConst  `json:"aisTransceiverInformation"`
+	SequenceId                *uint8               `json:"sequenceId"`
 }
 
-func (a *AisClassBStaticDataMsg24PartA) PGNNumber() uint32  { return 129809 }
+func (a *AisClassBStaticDataMsg24PartA) PGNNumber() uint32 { return 129809 }
 
 func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBStaticDataMsg24PartA{}
@@ -2761,7 +2761,7 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-RepeatIndicator: %w", err)
@@ -2770,7 +2770,7 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-UserId: %w", err)
@@ -2779,7 +2779,7 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(160); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-Name: %w", err)
@@ -2788,7 +2788,7 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-AisTransceiverInformation: %w", err)
@@ -2797,12 +2797,12 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartA-SequenceId: %w", err)
 	} else {
@@ -2810,8 +2810,8 @@ func DecodeAisClassBStaticDataMsg24PartA(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -2823,7 +2823,7 @@ func EncodeAisClassBStaticDataMsg24PartA(val *AisClassBStaticDataMsg24PartA) ([]
 	w.writeUInt32(val.UserId, 32)
 	w.writeFixedString(val.Name, 160)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }
@@ -2837,23 +2837,23 @@ func encodeAisClassBStaticDataMsg24PartAMsg(v Message) ([]byte, error) {
 }
 
 type AisClassBStaticDataMsg24PartB struct {
-	Info MessageInfo `json:"info"`
-	MessageId AisMessageIdConst `json:"messageId"`
-	RepeatIndicator RepeatIndicatorConst `json:"repeatIndicator"`
-	UserId *uint32 `json:"userId"`
-	TypeOfShip ShipTypeConst `json:"typeOfShip"`
-	VendorId string `json:"vendorId"`
-	Callsign string `json:"callsign"`
-	Length *units.Distance `json:"length"`
-	Beam *units.Distance `json:"beam"`
-	PositionReferenceFromStarboard *units.Distance `json:"positionReferenceFromStarboard"`
-	PositionReferenceFromBow *units.Distance `json:"positionReferenceFromBow"`
-	MothershipUserId *uint32 `json:"mothershipUserId"`
-	AisTransceiverInformation AisTransceiverConst `json:"aisTransceiverInformation"`
-	SequenceId *uint8 `json:"sequenceId"`
+	Info                           MessageInfo          `json:"info"`
+	MessageId                      AisMessageIdConst    `json:"messageId"`
+	RepeatIndicator                RepeatIndicatorConst `json:"repeatIndicator"`
+	UserId                         *uint32              `json:"userId"`
+	TypeOfShip                     ShipTypeConst        `json:"typeOfShip"`
+	VendorId                       string               `json:"vendorId"`
+	Callsign                       string               `json:"callsign"`
+	Length                         *units.Distance      `json:"length"`
+	Beam                           *units.Distance      `json:"beam"`
+	PositionReferenceFromStarboard *units.Distance      `json:"positionReferenceFromStarboard"`
+	PositionReferenceFromBow       *units.Distance      `json:"positionReferenceFromBow"`
+	MothershipUserId               *uint32              `json:"mothershipUserId"`
+	AisTransceiverInformation      AisTransceiverConst  `json:"aisTransceiverInformation"`
+	SequenceId                     *uint8               `json:"sequenceId"`
 }
 
-func (a *AisClassBStaticDataMsg24PartB) PGNNumber() uint32  { return 129810 }
+func (a *AisClassBStaticDataMsg24PartB) PGNNumber() uint32 { return 129810 }
 
 func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &AisClassBStaticDataMsg24PartB{}
@@ -2865,7 +2865,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-RepeatIndicator: %w", err)
@@ -2874,7 +2874,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-UserId: %w", err)
@@ -2883,7 +2883,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-TypeOfShip: %w", err)
@@ -2892,7 +2892,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(56); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-VendorId: %w", err)
@@ -2901,7 +2901,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(56); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-Callsign: %w", err)
@@ -2910,7 +2910,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-Length: %w", err)
@@ -2919,7 +2919,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-Beam: %w", err)
@@ -2928,7 +2928,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-PositionReferenceFromStarboard: %w", err)
@@ -2937,7 +2937,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.1); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-PositionReferenceFromBow: %w", err)
@@ -2946,7 +2946,7 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt32(32); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-MothershipUserId: %w", err)
@@ -2955,16 +2955,16 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	stream.skipBits(6)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readLookupField(5); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-AisTransceiverInformation: %w", err)
 	} else {
@@ -2972,12 +2972,12 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(3)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for AisClassBStaticDataMsg24PartB-SequenceId: %w", err)
 	} else {
@@ -2985,8 +2985,8 @@ func DecodeAisClassBStaticDataMsg24PartB(Info MessageInfo, stream *PGNDataStream
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -3020,10 +3020,10 @@ func EncodeAisClassBStaticDataMsg24PartB(val *AisClassBStaticDataMsg24PartB) ([]
 	}
 	w.writeUnsignedResolution(positionReferenceFromBowRaw, 16, 0.1)
 	w.writeUInt32(val.MothershipUserId, 32)
-	w.skipBits(2)
-	w.skipBits(6)
+	w.writeReservedBits(2)
+	w.writeSpareBits(6)
 	w.writeLookupField(uint64(val.AisTransceiverInformation), 5)
-	w.skipBits(3)
+	w.writeReservedBits(3)
 	w.writeUInt8(val.SequenceId, 8)
 	return w.Bytes(), w.Err()
 }

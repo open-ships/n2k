@@ -7,19 +7,19 @@ import (
 )
 
 type ThrusterControlStatus struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Identifier *uint8 `json:"identifier"`
+	Info             MessageInfo                   `json:"info"`
+	Sid              *uint8                        `json:"sid"`
+	Identifier       *uint8                        `json:"identifier"`
 	DirectionControl ThrusterDirectionControlConst `json:"directionControl"`
-	PowerEnabled OffOnConst `json:"powerEnabled"`
-	RetractControl ThrusterRetractControlConst `json:"retractControl"`
-	SpeedControl *uint8 `json:"speedControl"`
-	ControlEvents ThrusterControlEventsConst `json:"controlEvents"`
-	CommandTimeout *float32 `json:"commandTimeout"`
-	AzimuthControl *float32 `json:"azimuthControl"`
+	PowerEnabled     OffOnConst                    `json:"powerEnabled"`
+	RetractControl   ThrusterRetractControlConst   `json:"retractControl"`
+	SpeedControl     *uint8                        `json:"speedControl"`
+	ControlEvents    ThrusterControlEventsConst    `json:"controlEvents"`
+	CommandTimeout   *float32                      `json:"commandTimeout"`
+	AzimuthControl   *float32                      `json:"azimuthControl"`
 }
 
-func (x *ThrusterControlStatus) PGNNumber() uint32  { return 128006 }
+func (x *ThrusterControlStatus) PGNNumber() uint32 { return 128006 }
 
 func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ThrusterControlStatus{}
@@ -31,7 +31,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-Identifier: %w", err)
@@ -40,7 +40,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-DirectionControl: %w", err)
@@ -49,7 +49,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-PowerEnabled: %w", err)
@@ -58,7 +58,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-RetractControl: %w", err)
@@ -67,7 +67,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-SpeedControl: %w", err)
@@ -76,7 +76,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-ControlEvents: %w", err)
@@ -85,7 +85,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(8, 0.005); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-CommandTimeout: %w", err)
@@ -94,7 +94,7 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterControlStatus-AzimuthControl: %w", err)
@@ -103,8 +103,8 @@ func DecodeThrusterControlStatus(Info MessageInfo, stream *PGNDataStream) (Messa
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -132,15 +132,15 @@ func encodeThrusterControlStatusMsg(v Message) ([]byte, error) {
 }
 
 type ThrusterInformation struct {
-	Info MessageInfo `json:"info"`
-	Identifier *uint8 `json:"identifier"`
-	MotorType ThrusterMotorTypeConst `json:"motorType"`
-	PowerRating *uint16 `json:"powerRating"`
-	MaximumTemperatureRating *units.Temperature `json:"maximumTemperatureRating"`
-	MaximumRotationalSpeed *float32 `json:"maximumRotationalSpeed"`
+	Info                     MessageInfo            `json:"info"`
+	Identifier               *uint8                 `json:"identifier"`
+	MotorType                ThrusterMotorTypeConst `json:"motorType"`
+	PowerRating              *uint16                `json:"powerRating"`
+	MaximumTemperatureRating *units.Temperature     `json:"maximumTemperatureRating"`
+	MaximumRotationalSpeed   *float32               `json:"maximumRotationalSpeed"`
 }
 
-func (x *ThrusterInformation) PGNNumber() uint32  { return 128007 }
+func (x *ThrusterInformation) PGNNumber() uint32 { return 128007 }
 
 func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ThrusterInformation{}
@@ -152,7 +152,7 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(4); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-MotorType: %w", err)
@@ -161,12 +161,12 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(4)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUInt16(16); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-PowerRating: %w", err)
 	} else {
@@ -174,7 +174,7 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-MaximumTemperatureRating: %w", err)
@@ -183,7 +183,7 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.25); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterInformation-MaximumRotationalSpeed: %w", err)
@@ -192,8 +192,8 @@ func DecodeThrusterInformation(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -202,7 +202,7 @@ func EncodeThrusterInformation(val *ThrusterInformation) ([]byte, error) {
 	// TODO: cross-field validation not yet implemented
 	w.writeUInt8(val.Identifier, 8)
 	w.writeLookupField(uint64(val.MotorType), 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt16(val.PowerRating, 16)
 	var maximumTemperatureRatingRaw *float32
 	if val.MaximumTemperatureRating != nil {
@@ -222,16 +222,16 @@ func encodeThrusterInformationMsg(v Message) ([]byte, error) {
 }
 
 type ThrusterMotorStatus struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	Identifier *uint8 `json:"identifier"`
-	MotorEvents ThrusterMotorEventsConst `json:"motorEvents"`
-	Current *uint8 `json:"current"`
-	Temperature *units.Temperature `json:"temperature"`
-	OperatingTime *float32 `json:"operatingTime"`
+	Info          MessageInfo              `json:"info"`
+	Sid           *uint8                   `json:"sid"`
+	Identifier    *uint8                   `json:"identifier"`
+	MotorEvents   ThrusterMotorEventsConst `json:"motorEvents"`
+	Current       *uint8                   `json:"current"`
+	Temperature   *units.Temperature       `json:"temperature"`
+	OperatingTime *float32                 `json:"operatingTime"`
 }
 
-func (x *ThrusterMotorStatus) PGNNumber() uint32  { return 128008 }
+func (x *ThrusterMotorStatus) PGNNumber() uint32 { return 128008 }
 
 func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &ThrusterMotorStatus{}
@@ -243,7 +243,7 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-Identifier: %w", err)
@@ -252,7 +252,7 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-MotorEvents: %w", err)
@@ -261,7 +261,7 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-Current: %w", err)
@@ -270,7 +270,7 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-Temperature: %w", err)
@@ -279,7 +279,7 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 60); err != nil {
 		return nil, fmt.Errorf("parse failed for ThrusterMotorStatus-OperatingTime: %w", err)
@@ -288,8 +288,8 @@ func DecodeThrusterMotorStatus(Info MessageInfo, stream *PGNDataStream) (Message
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 

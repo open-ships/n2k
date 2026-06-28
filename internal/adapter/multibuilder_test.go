@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,23 +88,23 @@ func TestBigPacket(t *testing.T) {
 
 // TestFastPacket is a comprehensive test of the MultiBuilder that covers several scenarios:
 //
-// 1. Single-frame fast packet: A fast-packet PGN (130820) whose entire payload (5 bytes)
-//    fits in frame 0. The packet should be immediately Complete after a single Add() call.
+//  1. Single-frame fast packet: A fast-packet PGN (130820) whose entire payload (5 bytes)
+//     fits in frame 0. The packet should be immediately Complete after a single Add() call.
 //
-// 2. Out-of-order initial frame: Sending frame 1 before frame 0. The sequence should not
-//    be complete, and the sequence entry should exist in the MultiBuilder's map.
+//  2. Out-of-order initial frame: Sending frame 1 before frame 0. The sequence should not
+//     be complete, and the sequence entry should exist in the MultiBuilder's map.
 //
-// 3. Multi-frame in-order assembly: Sending frames 0-4 in order for a 32-byte payload.
-//    The packet should be Complete after frame 4 with exactly 32 bytes of data.
+//  3. Multi-frame in-order assembly: Sending frames 0-4 in order for a 32-byte payload.
+//     The packet should be Complete after frame 4 with exactly 32 bytes of data.
 //
-// 4. Multi-frame out-of-order assembly: Sending frame 0, then frames in non-sequential
-//    order (0, 3, 1, 2, 4). Frame 0 must still come first, but subsequent frames can
-//    arrive in any order. The assembled data should be identical to the in-order case.
+//  4. Multi-frame out-of-order assembly: Sending frame 0, then frames in non-sequential
+//     order (0, 3, 1, 2, 4). Frame 0 must still come first, but subsequent frames can
+//     arrive in any order. The assembled data should be identical to the in-order case.
 //
-// 5. Duplicate frame detection and reset: Sending a duplicate continuation frame (frame 1
-//    twice) triggers a sequence reset. After the reset, the sequence is incomplete and
-//    cannot be assembled because it's missing frames. The packet should NOT be Complete
-//    and its data should differ from the correctly assembled version.
+//  5. Duplicate frame detection and reset: Sending a duplicate continuation frame (frame 1
+//     twice) triggers a sequence reset. After the reset, the sequence is incomplete and
+//     cannot be assembled because it's missing frames. The packet should NOT be Complete
+//     and its data should differ from the correctly assembled version.
 func TestFastPacket(t *testing.T) {
 	m := NewMultiBuilder()
 

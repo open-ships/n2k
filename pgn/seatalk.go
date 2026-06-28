@@ -82,12 +82,12 @@ func EncodeSeatalkWirelessKeypadControl(val *SeatalkWirelessKeypadControl) ([]by
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Pid, 8)
 	w.writeUInt8(val.Variant, 8)
 	w.writeUInt8(val.BeepControl, 8)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	return w.Bytes(), w.Err()
 }
 
@@ -192,13 +192,13 @@ func EncodeSeatalkWirelessKeypadLightControl(val *SeatalkWirelessKeypadLightCont
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	w.writeUInt8(val.Variant, 8)
 	w.writeUInt8(val.WirelessSetting, 8)
 	w.writeUInt8(val.WiredSetting, 8)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -306,7 +306,7 @@ func EncodeSeatalkAlarm(val *SeatalkAlarm) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Sid, 8)
 	w.writeLookupField(uint64(val.AlarmStatus), 8)
@@ -394,11 +394,11 @@ func EncodeSeatalkPilotWindDatum(val *SeatalkPilotWindDatum) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUnsignedResolution(val.WindDatum, 16, 0.0001)
 	w.writeUnsignedResolution(val.RollingAverageWindAngle, 16, 0.0001)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -490,12 +490,12 @@ func EncodeSeatalkPilotHeading(val *SeatalkPilotHeading) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Sid, 8)
 	w.writeUnsignedResolution(val.HeadingTrue, 16, 0.0001)
 	w.writeUnsignedResolution(val.HeadingMagnetic, 16, 0.0001)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -587,12 +587,12 @@ func EncodeSeatalkPilotLockedHeading(val *SeatalkPilotLockedHeading) ([]byte, er
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Sid, 8)
 	w.writeUnsignedResolution(val.TargetHeadingTrue, 16, 0.0001)
 	w.writeUnsignedResolution(val.TargetHeadingMagnetic, 16, 0.0001)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -674,11 +674,11 @@ func EncodeSeatalkSilenceAlarm(val *SeatalkSilenceAlarm) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.AlarmId), 8)
 	w.writeLookupField(uint64(val.AlarmGroup), 8)
-	w.skipBits(32)
+	w.writeReservedBits(32)
 	return w.Bytes(), w.Err()
 }
 
@@ -804,16 +804,16 @@ func EncodeSeatalkKeypadMessage(val *SeatalkKeypadMessage) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	w.writeUInt8(val.FirstKey, 8)
 	w.writeUInt8(val.SecondKey, 8)
 	w.writeUInt8(val.FirstKeyState, 2)
 	w.writeUInt8(val.SecondKeyState, 2)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUInt8(val.EncoderPosition, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -905,12 +905,12 @@ func EncodeSeatalkKeypadHeartbeat(val *SeatalkKeypadHeartbeat) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	w.writeUInt8(val.Variant, 8)
 	w.writeUInt8(val.Status, 8)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	return w.Bytes(), w.Err()
 }
 
@@ -1002,12 +1002,12 @@ func EncodeSeatalkPilotMode(val *SeatalkPilotMode) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.PilotMode), 16)
 	w.writeBinaryData(val.SubMode, 16)
 	w.writeBinaryData(val.PilotModeData, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1105,11 +1105,11 @@ func EncodeSeatalk1DeviceIdentification(val *Seatalk1DeviceIdentification) ([]by
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProprietaryId, 16)
 	w.writeUInt8(val.Command, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.Device), 8)
 	return w.Bytes(), w.Err()
 }
@@ -1234,7 +1234,7 @@ func EncodeSeatalk1DisplayBrightness(val *Seatalk1DisplayBrightness) ([]byte, er
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProprietaryId, 16)
 	w.writeLookupField(uint64(val.Group), 8)
@@ -1365,7 +1365,7 @@ func EncodeSeatalk1DisplayColor(val *Seatalk1DisplayColor) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProprietaryId, 16)
 	w.writeLookupField(uint64(val.Group), 8)
@@ -1496,7 +1496,7 @@ func EncodeSeatalk1Keystroke(val *Seatalk1Keystroke) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProprietaryId, 16)
 	w.writeUInt8(val.Command, 8)
@@ -1637,7 +1637,7 @@ func EncodeSeatalk1PilotMode(val *Seatalk1PilotMode) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProprietaryId, 16)
 	w.writeUInt8(val.Command, 8)

@@ -7,24 +7,24 @@ import (
 )
 
 type TrackedTargetData struct {
-	Info MessageInfo `json:"info"`
-	Sid *uint8 `json:"sid"`
-	TargetId *uint8 `json:"targetId"`
-	TrackStatus TrackingConst `json:"trackStatus"`
-	ReportedTarget YesNoConst `json:"reportedTarget"`
-	TargetAcquisition TargetAcquisitionConst `json:"targetAcquisition"`
-	BearingReference DirectionReferenceConst `json:"bearingReference"`
-	Bearing *float32 `json:"bearing"`
-	Distance *units.Distance `json:"distance"`
-	Course *float32 `json:"course"`
-	Speed *units.Velocity `json:"speed"`
-	Cpa *units.Distance `json:"cpa"`
-	Tcpa *float32 `json:"tcpa"`
-	UtcOfFix *float32 `json:"utcOfFix"`
-	Name string `json:"name"`
+	Info              MessageInfo             `json:"info"`
+	Sid               *uint8                  `json:"sid"`
+	TargetId          *uint8                  `json:"targetId"`
+	TrackStatus       TrackingConst           `json:"trackStatus"`
+	ReportedTarget    YesNoConst              `json:"reportedTarget"`
+	TargetAcquisition TargetAcquisitionConst  `json:"targetAcquisition"`
+	BearingReference  DirectionReferenceConst `json:"bearingReference"`
+	Bearing           *float32                `json:"bearing"`
+	Distance          *units.Distance         `json:"distance"`
+	Course            *float32                `json:"course"`
+	Speed             *units.Velocity         `json:"speed"`
+	Cpa               *units.Distance         `json:"cpa"`
+	Tcpa              *float32                `json:"tcpa"`
+	UtcOfFix          *float32                `json:"utcOfFix"`
+	Name              string                  `json:"name"`
 }
 
-func (x *TrackedTargetData) PGNNumber() uint32  { return 128520 }
+func (x *TrackedTargetData) PGNNumber() uint32 { return 128520 }
 
 func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, error) {
 	val := &TrackedTargetData{}
@@ -36,7 +36,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUInt8(8); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-TargetId: %w", err)
@@ -45,7 +45,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-TrackStatus: %w", err)
@@ -54,7 +54,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-ReportedTarget: %w", err)
@@ -63,7 +63,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(1); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-TargetAcquisition: %w", err)
@@ -72,7 +72,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readLookupField(2); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-BearingReference: %w", err)
@@ -81,12 +81,12 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	stream.skipBits(2)
 	if stream.isEOF() {
 		return val, nil
-		}
+	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Bearing: %w", err)
 	} else {
@@ -94,7 +94,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Distance: %w", err)
@@ -103,7 +103,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Course: %w", err)
@@ -112,7 +112,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(16, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Speed: %w", err)
@@ -121,7 +121,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.01); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Cpa: %w", err)
@@ -130,7 +130,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readSignedResolution(32, 0.001); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Tcpa: %w", err)
@@ -139,7 +139,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readUnsignedResolution(32, 0.0001); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-UtcOfFix: %w", err)
@@ -148,7 +148,7 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
+		}
 	}
 	if v, err := stream.readFixedString(1784); err != nil {
 		return nil, fmt.Errorf("parse failed for TrackedTargetData-Name: %w", err)
@@ -157,8 +157,8 @@ func DecodeTrackedTargetData(Info MessageInfo, stream *PGNDataStream) (Message, 
 
 		if stream.isEOF() {
 			return val, nil
-		} 
-	}	
+		}
+	}
 	return val, nil
 }
 
@@ -171,7 +171,7 @@ func EncodeTrackedTargetData(val *TrackedTargetData) ([]byte, error) {
 	w.writeLookupField(uint64(val.ReportedTarget), 1)
 	w.writeLookupField(uint64(val.TargetAcquisition), 1)
 	w.writeLookupField(uint64(val.BearingReference), 2)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeUnsignedResolution(val.Bearing, 16, 0.0001)
 	var distanceRaw *float32
 	if val.Distance != nil {

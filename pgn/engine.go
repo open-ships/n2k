@@ -73,7 +73,7 @@ func EncodeEngineParametersRapidUpdate(val *EngineParametersRapidUpdate) ([]byte
 	}
 	w.writeUnsignedResolution(boostPressureRaw, 16, 100)
 	w.writeInt8(val.TiltTrim, 8)
-	w.skipBits(16)
+	w.writeReservedBits(16)
 	return w.Bytes(), w.Err()
 }
 
@@ -267,7 +267,7 @@ func EncodeEngineParametersDynamic(val *EngineParametersDynamic) ([]byte, error)
 		fuelPressureRaw = &val.FuelPressure.Value
 	}
 	w.writeUnsignedResolution(fuelPressureRaw, 16, 1000)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	w.writeLookupField(uint64(val.DiscreteStatus1), 16)
 	w.writeLookupField(uint64(val.DiscreteStatus2), 16)
 	w.writeInt8(val.EngineLoad, 8)
@@ -358,7 +358,7 @@ func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.Instance), 8)
 	w.writeLookupField(uint64(val.TransmissionGear), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	var oilPressureRaw *float32
 	if val.OilPressure != nil {
 		oilPressureRaw = &val.OilPressure.Value
@@ -370,7 +370,7 @@ func EncodeTransmissionParametersDynamic(val *TransmissionParametersDynamic) ([]
 	}
 	w.writeUnsignedResolution(oilTemperatureRaw, 16, 0.1)
 	w.writeUInt8(val.DiscreteStatus1, 8)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 

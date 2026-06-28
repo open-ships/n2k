@@ -65,10 +65,10 @@ func EncodeAirmarBootStateAcknowledgment(val *AirmarBootStateAcknowledgment) ([]
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.BootState), 3)
-	w.skipBits(45)
+	w.writeReservedBits(45)
 	return w.Bytes(), w.Err()
 }
 
@@ -130,9 +130,9 @@ func EncodeAirmarBootStateRequest(val *AirmarBootStateRequest) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
-	w.skipBits(48)
+	w.writeReservedBits(48)
 	return w.Bytes(), w.Err()
 }
 
@@ -224,11 +224,11 @@ func EncodeAirmarAccessLevel(val *AirmarAccessLevel) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.FormatCode, 8)
 	w.writeLookupField(uint64(val.AccessLevel), 3)
-	w.skipBits(5)
+	w.writeReservedBits(5)
 	w.writeUInt32(val.AccessSeedKey, 32)
 	return w.Bytes(), w.Err()
 }
@@ -311,11 +311,11 @@ func EncodeAirmarDepthQualityFactor(val *AirmarDepthQualityFactor) ([]byte, erro
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Sid, 8)
 	w.writeLookupField(uint64(val.DepthQualityFactor), 4)
-	w.skipBits(36)
+	w.writeReservedBits(36)
 	return w.Bytes(), w.Err()
 }
 
@@ -407,12 +407,12 @@ func EncodeAirmarSpeedPulseCount(val *AirmarSpeedPulseCount) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Sid, 8)
 	w.writeUnsignedResolution(val.DurationOfInterval, 16, 0.001)
 	w.writeUInt16(val.NumberOfPulsesReceived, 16)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -504,7 +504,7 @@ func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error)
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Sid, 8)
 	var internalDeviceTemperatureRaw *float32
@@ -513,7 +513,7 @@ func EncodeAirmarDeviceInformation(val *AirmarDeviceInformation) ([]byte, error)
 	}
 	w.writeUnsignedResolution(internalDeviceTemperatureRaw, 16, 0.01)
 	w.writeUnsignedResolution(val.SupplyVoltage, 16, 0.01)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -581,7 +581,7 @@ func EncodeAirmarAddressableMultiFrame(val *AirmarAddressableMultiFrame) ([]byte
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.ProprietaryId, 8)
 	return w.Bytes(), w.Err()
@@ -684,7 +684,7 @@ func EncodeAirmarAttitudeOffset(val *AirmarAttitudeOffset) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeSignedResolution(val.AzimuthOffset, 16, 0.0001)
@@ -880,7 +880,7 @@ func EncodeAirmarCalibrateCompass(val *AirmarCalibrateCompass) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.CalibrateFunction), 8)
@@ -979,7 +979,7 @@ func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	var speedOfSoundModeRaw *float32
@@ -987,7 +987,7 @@ func EncodeAirmarCalibrateDepth(val *AirmarCalibrateDepth) ([]byte, error) {
 		speedOfSoundModeRaw = &val.SpeedOfSoundMode.Value
 	}
 	w.writeUnsignedResolution(speedOfSoundModeRaw, 16, 0.1)
-	w.skipBits(8)
+	w.writeReservedBits(8)
 	return w.Bytes(), w.Err()
 }
 
@@ -1107,7 +1107,7 @@ func EncodeAirmarCalibrateSpeed(val *AirmarCalibrateSpeed) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.NumberOfPairsOfDataPoints, 8)
@@ -1213,11 +1213,11 @@ func EncodeAirmarCalibrateTemperature(val *AirmarCalibrateTemperature) ([]byte, 
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.TemperatureInstance), 2)
-	w.skipBits(6)
+	w.writeReservedBits(6)
 	var temperatureOffsetRaw *float32
 	if val.TemperatureOffset != nil {
 		temperatureOffsetRaw = &val.TemperatureOffset.Value
@@ -1307,11 +1307,11 @@ func EncodeAirmarNmea2000Options(val *AirmarNmea2000Options) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.TransmissionInterval), 2)
-	w.skipBits(22)
+	w.writeReservedBits(22)
 	return w.Bytes(), w.Err()
 }
 
@@ -1396,11 +1396,11 @@ func EncodeAirmarSimulateMode(val *AirmarSimulateMode) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.SimulateMode), 2)
-	w.skipBits(22)
+	w.writeReservedBits(22)
 	return w.Bytes(), w.Err()
 }
 
@@ -1508,11 +1508,11 @@ func EncodeAirmarSpeedFilterIir(val *AirmarSpeedFilterIir) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
 	return w.Bytes(), w.Err()
@@ -1612,11 +1612,11 @@ func EncodeAirmarSpeedFilterNone(val *AirmarSpeedFilterNone) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
@@ -1725,11 +1725,11 @@ func EncodeAirmarTemperatureFilterIir(val *AirmarTemperatureFilterIir) ([]byte, 
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	w.writeUnsignedResolution(val.FilterDuration, 16, 0.01)
 	return w.Bytes(), w.Err()
@@ -1829,11 +1829,11 @@ func EncodeAirmarTemperatureFilterNone(val *AirmarTemperatureFilterNone) ([]byte
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeUInt8(val.FilterType, 4)
-	w.skipBits(4)
+	w.writeReservedBits(4)
 	w.writeUnsignedResolution(val.SampleInterval, 16, 0.01)
 	return w.Bytes(), w.Err()
 }
@@ -1919,11 +1919,11 @@ func EncodeAirmarTrueWindOptions(val *AirmarTrueWindOptions) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeLookupField(uint64(val.ProprietaryId), 8)
 	w.writeLookupField(uint64(val.CogSubstitutionForHdg), 2)
-	w.skipBits(22)
+	w.writeReservedBits(22)
 	return w.Bytes(), w.Err()
 }
 

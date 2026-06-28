@@ -82,12 +82,12 @@ func EncodeNavicoWirelessBatteryStatus(val *NavicoWirelessBatteryStatus) ([]byte
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Status, 8)
 	w.writeUInt8(val.BatteryStatus, 8)
 	w.writeUInt8(val.BatteryChargeStatus, 8)
-	w.skipBits(24)
+	w.writeReservedBits(24)
 	return w.Bytes(), w.Err()
 }
 
@@ -169,11 +169,11 @@ func EncodeNavicoWirelessSignalStatus(val *NavicoWirelessSignalStatus) ([]byte, 
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.Unknown, 8)
 	w.writeUInt8(val.SignalStrength, 8)
-	w.skipBits(32)
+	w.writeReservedBits(32)
 	return w.Bytes(), w.Err()
 }
 
@@ -311,7 +311,7 @@ func EncodeNavicoProductInformation(val *NavicoProductInformation) ([]byte, erro
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt16(val.ProductCode, 16)
 	w.writeFixedString(val.Model, 256)
@@ -398,7 +398,7 @@ func EncodeNavicoAsciiData(val *NavicoAsciiData) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeUInt8(val.A, 8)
 	w.writeFixedString(val.Message, 2048)
@@ -469,7 +469,7 @@ func EncodeNavicoUnknown1(val *NavicoUnknown1) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Data, 1848)
 	return w.Bytes(), w.Err()
@@ -539,7 +539,7 @@ func EncodeNavicoUnknown2(val *NavicoUnknown2) ([]byte, error) {
 	w := NewPGNDataStreamWriter()
 	// TODO: cross-field validation not yet implemented
 	w.writeLookupField(uint64(val.ManufacturerCode), 11)
-	w.skipBits(2)
+	w.writeReservedBits(2)
 	w.writeLookupField(uint64(val.IndustryCode), 3)
 	w.writeBinaryData(val.Data, 80)
 	return w.Bytes(), w.Err()

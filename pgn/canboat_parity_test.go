@@ -1,0 +1,445 @@
+package pgn
+
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"math"
+	"net/http"
+	"os"
+	"sort"
+	"strings"
+	"testing"
+	"time"
+)
+
+const canboatParityURL = "https://raw.githubusercontent.com/canboat/canboat/refs/heads/master/docs/canboat.json"
+
+type canboatFile struct {
+	SchemaVersion string       `json:"SchemaVersion"`
+	Version       string       `json:"Version"`
+	PGNs          []canboatPGN `json:"PGNs"`
+}
+
+type canboatPGN struct {
+	PGN                          uint32         `json:"PGN"`
+	Id                           string         `json:"Id"`
+	Description                  string         `json:"Description"`
+	Explanation                  string         `json:"Explanation"`
+	URL                          string         `json:"URL"`
+	Type                         string         `json:"Type"`
+	Complete                     bool           `json:"Complete"`
+	Fallback                     bool           `json:"Fallback"`
+	Missing                      []string       `json:"Missing"`
+	FieldCount                   int            `json:"FieldCount"`
+	Length                       *int           `json:"Length"`
+	MinLength                    *int           `json:"MinLength"`
+	Priority                     *uint8         `json:"Priority"`
+	TransmissionInterval         *int           `json:"TransmissionInterval"`
+	TransmissionIrregular        *bool          `json:"TransmissionIrregular"`
+	RepeatingFieldSet1StartField *int           `json:"RepeatingFieldSet1StartField"`
+	RepeatingFieldSet1CountField *int           `json:"RepeatingFieldSet1CountField"`
+	RepeatingFieldSet1Size       *int           `json:"RepeatingFieldSet1Size"`
+	RepeatingFieldSet2StartField *int           `json:"RepeatingFieldSet2StartField"`
+	RepeatingFieldSet2CountField *int           `json:"RepeatingFieldSet2CountField"`
+	RepeatingFieldSet2Size       *int           `json:"RepeatingFieldSet2Size"`
+	Fields                       []canboatField `json:"Fields"`
+}
+
+type canboatField struct {
+	Order                               int      `json:"Order"`
+	Id                                  string   `json:"Id"`
+	Name                                string   `json:"Name"`
+	Description                         text     `json:"Description"`
+	BitLength                           *uint16  `json:"BitLength"`
+	BitLengthField                      *int     `json:"BitLengthField"`
+	BitLengthVariable                   bool     `json:"BitLengthVariable"`
+	BitOffset                           *uint16  `json:"BitOffset"`
+	BitStart                            *uint16  `json:"BitStart"`
+	Resolution                          *float64 `json:"Resolution"`
+	Signed                              bool     `json:"Signed"`
+	Unit                                string   `json:"Unit"`
+	FieldType                           string   `json:"FieldType"`
+	PhysicalQuantity                    string   `json:"PhysicalQuantity"`
+	LookupEnumeration                   string   `json:"LookupEnumeration"`
+	LookupBitEnumeration                string   `json:"LookupBitEnumeration"`
+	LookupIndirectEnumeration           string   `json:"LookupIndirectEnumeration"`
+	LookupIndirectEnumerationFieldOrder *int     `json:"LookupIndirectEnumerationFieldOrder"`
+	LookupFieldTypeEnumeration          string   `json:"LookupFieldTypeEnumeration"`
+	Match                               *int     `json:"Match"`
+	RangeMin                            *float64 `json:"RangeMin"`
+	RangeMax                            *float64 `json:"RangeMax"`
+	Offset                              *float64 `json:"Offset"`
+	OutOfRangeValue                     *int64   `json:"OutOfRangeValue"`
+	PartOfPrimaryKey                    *bool    `json:"PartOfPrimaryKey"`
+	ReservedValue                       *int64   `json:"ReservedValue"`
+	UnknownValue                        *int64   `json:"UnknownValue"`
+	Condition                           string   `json:"Condition"`
+}
+
+type text string
+
+func (t *text) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		*t = ""
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*t = text(s)
+		return nil
+	}
+	*t = text(string(data))
+	return nil
+}
+
+func TestCanboatParity(t *testing.T) {
+	if os.Getenv("CANBOAT_PARITY") == "" {
+		t.Skip("set CANBOAT_PARITY=1 to fetch current canboat.json and run parity checks")
+	}
+
+	raw, err := fetchCanboatParityJSON()
+	if err != nil {
+		t.Fatalf("fetch canboat.json: %v", err)
+	}
+
+	var upstream canboatFile
+	if err := json.Unmarshal(raw, &upstream); err != nil {
+		t.Fatalf("parse CANBOAT_JSON: %v", err)
+	}
+
+	registered := registryEntries(PgnInfoLookup)
+	unseen := registryEntries(UnseenLookup)
+	known := make(map[string]*PgnInfo, len(registered)+len(unseen))
+	for key, info := range registered {
+		known[key] = info
+	}
+	for key, info := range unseen {
+		if _, exists := known[key]; !exists {
+			known[key] = info
+		}
+	}
+
+	upstreamKeys := make(map[string]canboatPGN, len(upstream.PGNs))
+	missingRegisteredComplete := make([]string, 0)
+	missingKnown := make([]string, 0)
+	fieldMismatches := make([]string, 0)
+	upstreamFieldTypes := make(map[string]struct{})
+
+	for _, def := range upstream.PGNs {
+		key := canboatKey(def.PGN, def.Description)
+		upstreamKeys[key] = def
+		for _, field := range def.Fields {
+			upstreamFieldTypes[field.FieldType] = struct{}{}
+		}
+
+		if _, ok := known[key]; !ok {
+			missingKnown = append(missingKnown, formatCanboatPGN(def))
+		}
+		local, registeredOK := registered[key]
+		if def.Complete && !registeredOK {
+			missingRegisteredComplete = append(missingRegisteredComplete, formatCanboatPGN(def))
+		}
+		if registeredOK {
+			fieldMismatches = append(fieldMismatches, compareCanboatPGN(def, local)...)
+		}
+	}
+
+	staleRegistered := make([]string, 0)
+	for key, local := range registered {
+		if _, ok := upstreamKeys[key]; !ok {
+			staleRegistered = append(staleRegistered, fmt.Sprintf("%d %s", local.PGN, local.Description))
+		}
+	}
+	sort.Strings(staleRegistered)
+
+	unsupportedFieldTypes := missingFieldTypes(upstreamFieldTypes, localFieldTypes(registered))
+
+	t.Logf("CANboat %s schema %s: %d PGN entries", upstream.Version, upstream.SchemaVersion, len(upstream.PGNs))
+	if len(unsupportedFieldTypes) > 0 {
+		t.Errorf("unsupported CANboat field types: %s", strings.Join(unsupportedFieldTypes, ", "))
+	}
+	if len(missingRegisteredComplete) > 0 {
+		t.Errorf("complete CANboat PGNs not registered with decoders/encoders (%d):\n%s",
+			len(missingRegisteredComplete), sampleLines(missingRegisteredComplete, 25))
+	}
+	if len(missingKnown) > 0 {
+		t.Errorf("CANboat PGNs missing from registered+unseen runtime data (%d):\n%s",
+			len(missingKnown), sampleLines(missingKnown, 25))
+	}
+	if len(staleRegistered) > 0 {
+		t.Errorf("registered PGNs not present in current CANboat by PGN+description (%d):\n%s",
+			len(staleRegistered), sampleLines(staleRegistered, 25))
+	}
+	if len(fieldMismatches) > 0 {
+		t.Errorf("registered PGNs with field/layout mismatches (%d):\n%s",
+			len(fieldMismatches), sampleLines(fieldMismatches, 25))
+	}
+}
+
+func fetchCanboatParityJSON() ([]byte, error) {
+	client := http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Get(canboatParityURL)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("GET %s: %s", canboatParityURL, resp.Status)
+	}
+	return io.ReadAll(resp.Body)
+}
+
+func registryEntries(lookup map[uint32][]*PgnInfo) map[string]*PgnInfo {
+	entries := make(map[string]*PgnInfo)
+	for _, infos := range lookup {
+		for _, info := range infos {
+			entries[canboatKey(info.PGN, info.Description)] = info
+		}
+	}
+	return entries
+}
+
+func canboatKey(pgn uint32, description string) string {
+	return fmt.Sprintf("%d\x00%s", pgn, description)
+}
+
+func formatCanboatPGN(def canboatPGN) string {
+	return fmt.Sprintf("%d %s", def.PGN, def.Description)
+}
+
+func localFieldTypes(registered map[string]*PgnInfo) map[string]struct{} {
+	types := make(map[string]struct{})
+	for _, info := range registered {
+		for _, field := range info.Fields {
+			types[field.CanboatType] = struct{}{}
+		}
+	}
+	return types
+}
+
+func missingFieldTypes(upstream map[string]struct{}, local map[string]struct{}) []string {
+	missing := make([]string, 0)
+	for typ := range upstream {
+		if _, ok := local[typ]; ok {
+			continue
+		}
+		missing = append(missing, typ)
+	}
+	sort.Strings(missing)
+	return missing
+}
+
+func compareCanboatPGN(def canboatPGN, local *PgnInfo) []string {
+	mismatches := make([]string, 0)
+	prefix := fmt.Sprintf("%d %s", def.PGN, def.Description)
+	if local.CanboatId != def.Id {
+		mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", prefix, local.CanboatId, def.Id))
+	}
+	if local.Explanation != def.Explanation {
+		mismatches = append(mismatches, fmt.Sprintf("%s: explanation mismatch", prefix))
+	}
+	if local.URL != def.URL {
+		mismatches = append(mismatches, fmt.Sprintf("%s: url local=%s upstream=%s", prefix, local.URL, def.URL))
+	}
+	if local.Type != def.Type {
+		mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", prefix, local.Type, def.Type))
+	}
+	if local.Fast != (def.Type == "Fast") {
+		mismatches = append(mismatches, fmt.Sprintf("%s: fast local=%v upstream=%s", prefix, local.Fast, def.Type))
+	}
+	if local.Complete != def.Complete {
+		mismatches = append(mismatches, fmt.Sprintf("%s: complete local=%v upstream=%v", prefix, local.Complete, def.Complete))
+	}
+	if local.Fallback != def.Fallback {
+		mismatches = append(mismatches, fmt.Sprintf("%s: fallback local=%v upstream=%v", prefix, local.Fallback, def.Fallback))
+	}
+	if !equalStringSlices(local.Missing, def.Missing) {
+		mismatches = append(mismatches, fmt.Sprintf("%s: missing local=%v upstream=%v", prefix, local.Missing, def.Missing))
+	}
+	mismatches = append(mismatches, compareIntPtr(prefix, "length", local.Length, def.Length)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "minLength", local.MinLength, def.MinLength)...)
+	mismatches = append(mismatches, compareUint8Ptr(prefix, "priority", local.Priority, def.Priority)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "transmissionInterval", local.TransmissionInterval, def.TransmissionInterval)...)
+	mismatches = append(mismatches, compareBoolPtr(prefix, "transmissionIrregular", local.TransmissionIrregular, def.TransmissionIrregular)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet1StartField", local.RepeatingFieldSet1StartField, def.RepeatingFieldSet1StartField)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet1CountField", local.RepeatingFieldSet1CountField, def.RepeatingFieldSet1CountField)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet1Size", local.RepeatingFieldSet1Size, def.RepeatingFieldSet1Size)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2StartField", local.RepeatingFieldSet2StartField, def.RepeatingFieldSet2StartField)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2CountField", local.RepeatingFieldSet2CountField, def.RepeatingFieldSet2CountField)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2Size", local.RepeatingFieldSet2Size, def.RepeatingFieldSet2Size)...)
+
+	if local.Decoder == nil {
+		mismatches = append(mismatches, fmt.Sprintf("%s: decoder is nil", prefix))
+	}
+	if local.Encoder == nil {
+		mismatches = append(mismatches, fmt.Sprintf("%s: encoder is nil", prefix))
+	}
+	if len(local.Fields) != def.FieldCount {
+		mismatches = append(mismatches, fmt.Sprintf("%s: field count local=%d upstream=%d", prefix, len(local.Fields), def.FieldCount))
+	}
+
+	for _, upstreamField := range def.Fields {
+		localField := local.Fields[upstreamField.Order]
+		if localField == nil {
+			mismatches = append(mismatches, fmt.Sprintf("%d %s field %d: missing local field", def.PGN, def.Description, upstreamField.Order))
+			continue
+		}
+		fieldPrefix := fmt.Sprintf("%d %s field %d %s", def.PGN, def.Description, upstreamField.Order, upstreamField.Name)
+		if localField.CanboatId != upstreamField.Id {
+			mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", fieldPrefix, localField.CanboatId, upstreamField.Id))
+		}
+		if localField.Name != upstreamField.Name {
+			mismatches = append(mismatches, fmt.Sprintf("%s: name local=%s upstream=%s", fieldPrefix, localField.Name, upstreamField.Name))
+		}
+		if localField.Description != string(upstreamField.Description) {
+			mismatches = append(mismatches, fmt.Sprintf("%s: description mismatch", fieldPrefix))
+		}
+		if upstreamField.BitLength != nil && localField.BitLength != *upstreamField.BitLength {
+			mismatches = append(mismatches, fmt.Sprintf("%s: bitLength local=%d upstream=%d", fieldPrefix, localField.BitLength, *upstreamField.BitLength))
+		}
+		expectedVariable := upstreamField.BitLengthVariable || upstreamField.BitLength == nil
+		if localField.BitLengthVariable != expectedVariable {
+			mismatches = append(mismatches, fmt.Sprintf("%s: bitLengthVariable local=%v upstream=%v", fieldPrefix, localField.BitLengthVariable, expectedVariable))
+		}
+		mismatches = append(mismatches, compareIntPtr(fieldPrefix, "bitLengthField", localField.BitLengthField, upstreamField.BitLengthField)...)
+		if upstreamField.BitOffset != nil && localField.BitOffset != *upstreamField.BitOffset {
+			mismatches = append(mismatches, fmt.Sprintf("%s: bitOffset local=%d upstream=%d", fieldPrefix, localField.BitOffset, *upstreamField.BitOffset))
+		}
+		if upstreamField.BitStart != nil && localField.BitStart != *upstreamField.BitStart {
+			mismatches = append(mismatches, fmt.Sprintf("%s: bitStart local=%d upstream=%d", fieldPrefix, localField.BitStart, *upstreamField.BitStart))
+		}
+		if localField.CanboatType != upstreamField.FieldType {
+			mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", fieldPrefix, localField.CanboatType, upstreamField.FieldType))
+		}
+		if upstreamField.Resolution != nil && math.Abs(float64(localField.Resolution)-*upstreamField.Resolution) > 1e-6 {
+			mismatches = append(mismatches, fmt.Sprintf("%s: resolution local=%g upstream=%g", fieldPrefix, localField.Resolution, *upstreamField.Resolution))
+		}
+		if localField.Signed != upstreamField.Signed {
+			mismatches = append(mismatches, fmt.Sprintf("%s: signed local=%v upstream=%v", fieldPrefix, localField.Signed, upstreamField.Signed))
+		}
+		if localField.Unit != upstreamField.Unit {
+			mismatches = append(mismatches, fmt.Sprintf("%s: unit local=%s upstream=%s", fieldPrefix, localField.Unit, upstreamField.Unit))
+		}
+		if localField.PhysicalQuantity != upstreamField.PhysicalQuantity {
+			mismatches = append(mismatches, fmt.Sprintf("%s: physicalQuantity local=%s upstream=%s", fieldPrefix, localField.PhysicalQuantity, upstreamField.PhysicalQuantity))
+		}
+		if localField.LookupEnumeration != upstreamField.LookupEnumeration {
+			mismatches = append(mismatches, fmt.Sprintf("%s: lookupEnumeration local=%s upstream=%s", fieldPrefix, localField.LookupEnumeration, upstreamField.LookupEnumeration))
+		}
+		if localField.LookupBitEnumeration != upstreamField.LookupBitEnumeration {
+			mismatches = append(mismatches, fmt.Sprintf("%s: lookupBitEnumeration local=%s upstream=%s", fieldPrefix, localField.LookupBitEnumeration, upstreamField.LookupBitEnumeration))
+		}
+		if localField.LookupIndirectEnumeration != upstreamField.LookupIndirectEnumeration {
+			mismatches = append(mismatches, fmt.Sprintf("%s: lookupIndirectEnumeration local=%s upstream=%s", fieldPrefix, localField.LookupIndirectEnumeration, upstreamField.LookupIndirectEnumeration))
+		}
+		mismatches = append(mismatches, compareIntPtr(fieldPrefix, "lookupIndirectEnumerationFieldOrder", localField.LookupIndirectEnumerationFieldOrder, upstreamField.LookupIndirectEnumerationFieldOrder)...)
+		if localField.LookupFieldTypeEnumeration != upstreamField.LookupFieldTypeEnumeration {
+			mismatches = append(mismatches, fmt.Sprintf("%s: lookupFieldTypeEnumeration local=%s upstream=%s", fieldPrefix, localField.LookupFieldTypeEnumeration, upstreamField.LookupFieldTypeEnumeration))
+		}
+		if localField.Condition != upstreamField.Condition {
+			mismatches = append(mismatches, fmt.Sprintf("%s: condition local=%s upstream=%s", fieldPrefix, localField.Condition, upstreamField.Condition))
+		}
+		mismatches = append(mismatches, compareIntPtr(fieldPrefix, "match", localField.Match, upstreamField.Match)...)
+		mismatches = append(mismatches, compareFloatPtr(fieldPrefix, "rangeMin", localField.RangeMin, upstreamField.RangeMin)...)
+		mismatches = append(mismatches, compareFloatPtr(fieldPrefix, "rangeMax", localField.RangeMax, upstreamField.RangeMax)...)
+		mismatches = append(mismatches, compareFloatPtr(fieldPrefix, "offset", localField.Offset, upstreamField.Offset)...)
+		mismatches = append(mismatches, compareInt64Ptr(fieldPrefix, "outOfRangeValue", localField.OutOfRangeValue, upstreamField.OutOfRangeValue)...)
+		mismatches = append(mismatches, compareInt64Ptr(fieldPrefix, "reservedValue", localField.ReservedValue, upstreamField.ReservedValue)...)
+		mismatches = append(mismatches, compareInt64Ptr(fieldPrefix, "unknownValue", localField.UnknownValue, upstreamField.UnknownValue)...)
+		mismatches = append(mismatches, compareBoolPtr(fieldPrefix, "partOfPrimaryKey", localField.PartOfPrimaryKey, upstreamField.PartOfPrimaryKey)...)
+	}
+	return mismatches
+}
+
+func equalStringSlices(a []string, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func compareIntPtr(prefix string, name string, local *int, upstream *int) []string {
+	if local == nil || upstream == nil {
+		if local == upstream {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, formatPtr(local), formatPtr(upstream))}
+	}
+	if *local != *upstream {
+		return []string{fmt.Sprintf("%s: %s local=%d upstream=%d", prefix, name, *local, *upstream)}
+	}
+	return nil
+}
+
+func compareInt64Ptr(prefix string, name string, local *int64, upstream *int64) []string {
+	if local == nil || upstream == nil {
+		if local == upstream {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, formatPtr(local), formatPtr(upstream))}
+	}
+	if *local != *upstream {
+		return []string{fmt.Sprintf("%s: %s local=%d upstream=%d", prefix, name, *local, *upstream)}
+	}
+	return nil
+}
+
+func compareUint8Ptr(prefix string, name string, local *uint8, upstream *uint8) []string {
+	if local == nil || upstream == nil {
+		if local == upstream {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, formatPtr(local), formatPtr(upstream))}
+	}
+	if *local != *upstream {
+		return []string{fmt.Sprintf("%s: %s local=%d upstream=%d", prefix, name, *local, *upstream)}
+	}
+	return nil
+}
+
+func compareBoolPtr(prefix string, name string, local *bool, upstream *bool) []string {
+	if local == nil || upstream == nil {
+		if local == upstream {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, formatPtr(local), formatPtr(upstream))}
+	}
+	if *local != *upstream {
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, *local, *upstream)}
+	}
+	return nil
+}
+
+func compareFloatPtr(prefix string, name string, local *float64, upstream *float64) []string {
+	if local == nil || upstream == nil {
+		if local == upstream {
+			return nil
+		}
+		return []string{fmt.Sprintf("%s: %s local=%v upstream=%v", prefix, name, formatPtr(local), formatPtr(upstream))}
+	}
+	if math.Abs(*local-*upstream) > 1e-9 {
+		return []string{fmt.Sprintf("%s: %s local=%g upstream=%g", prefix, name, *local, *upstream)}
+	}
+	return nil
+}
+
+func formatPtr[T any](value *T) any {
+	if value == nil {
+		return nil
+	}
+	return *value
+}
+
+func sampleLines(lines []string, max int) string {
+	sort.Strings(lines)
+	if len(lines) <= max {
+		return strings.Join(lines, "\n")
+	}
+	return strings.Join(lines[:max], "\n") + fmt.Sprintf("\n... %d more", len(lines)-max)
+}
