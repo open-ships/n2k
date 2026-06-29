@@ -68,8 +68,8 @@ type PgnInfo struct {
 }
 
 // FieldDescriptor holds metadata about a single field within a PGN definition.
-// It is used at runtime by readVariableData and GetFieldDescriptor to handle fields
-// whose type or length cannot be fully resolved at code-generation time.
+// It is used at runtime by decode and encode helpers to handle fields whose type
+// or length cannot be fully resolved at code-generation time.
 type FieldDescriptor struct {
 	// CanboatId is the upstream source field Id.
 	CanboatId string `json:"canboatId"`

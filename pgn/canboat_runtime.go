@@ -626,15 +626,6 @@ func orderedFieldDescriptors(info *PgnInfo) []orderedCanboatField {
 	return fields
 }
 
-func orderedFields(info *PgnInfo) []*FieldDescriptor {
-	ordered := orderedFieldDescriptors(info)
-	fields := make([]*FieldDescriptor, 0, len(ordered))
-	for _, field := range ordered {
-		fields = append(fields, field.descriptor)
-	}
-	return fields
-}
-
 func readRawAt(data []uint8, bitOffset uint16, bitLength uint16) (uint64, error) {
 	stream := NewPgnDataStream(data)
 	stream.skipBits(bitOffset)
@@ -658,30 +649,6 @@ func signExtend(value uint64, bitLength uint16) int64 {
 	}
 	value ^= mask
 	return -int64(mask) + int64(value)
-}
-
-func jsonFieldName(field *FieldDescriptor) string {
-	if field.CanboatId != "" {
-		return field.CanboatId
-	}
-	name := strings.TrimSpace(field.Name)
-	if name == "" {
-		return "field"
-	}
-	parts := strings.FieldsFunc(name, func(r rune) bool {
-		return (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') && (r < '0' || r > '9')
-	})
-	for i := range parts {
-		parts[i] = strings.ToLower(parts[i])
-		if i > 0 && parts[i] != "" {
-			parts[i] = strings.ToUpper(parts[i][:1]) + parts[i][1:]
-		}
-	}
-	return strings.Join(parts, "")
-}
-
-func pgnDescriptionKey(pgn uint32, description string) string {
-	return fmt.Sprintf("%d\x00%s", pgn, description)
 }
 
 func exportedID(canboatID string, description string) string {

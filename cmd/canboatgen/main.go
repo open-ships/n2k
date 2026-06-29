@@ -299,7 +299,10 @@ func checkPGNFiles(outputs map[string][]byte) error {
 	}
 	paths := sortedPGNPaths(outputs)
 	for _, path := range paths {
-		current, err := os.ReadFile(path)
+		if err := validateGeneratedPath(path); err != nil {
+			return err
+		}
+		current, err := os.ReadFile(path) // #nosec G304 -- path is restricted to known generated files under pgn/.
 		if err != nil {
 			return err
 		}
@@ -308,6 +311,21 @@ func checkPGNFiles(outputs map[string][]byte) error {
 		}
 	}
 	return nil
+}
+
+func validateGeneratedPath(path string) error {
+	clean := filepath.Clean(path)
+	if path != clean || filepath.IsAbs(clean) || clean == ".." || strings.HasPrefix(clean, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("invalid generated path %q", path)
+	}
+	if filepath.Dir(clean) != "pgn" {
+		return fmt.Errorf("generated path %q must be under pgn", path)
+	}
+	base := filepath.Base(clean)
+	if base == filepath.Base(generatedDefinitionsPath) || base == filepath.Base(generatedPGNDispatchPath) || strings.HasSuffix(base, "_pgn_generated.go") {
+		return nil
+	}
+	return fmt.Errorf("unexpected generated path %q", path)
 }
 
 func removeStalePGNFiles(outputs map[string][]byte) error {

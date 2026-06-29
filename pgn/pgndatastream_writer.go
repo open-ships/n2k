@@ -338,20 +338,6 @@ func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 	w.writeBinaryData(sBytes, uint16(length)*8)
 }
 
-func (w *PGNDataStreamWriter) writeVariableData(data []uint8, pgn uint32, manID ManufacturerCodeConst, fieldIndex uint8) {
-	field, err := GetFieldDescriptor(pgn, manID, fieldIndex)
-	if err != nil {
-		w.setErr(err)
-		return
-	}
-	if field.BitLengthVariable && field.CanboatType == "STRING_LAU" {
-		w.writeStringWithLengthAndControl(string(data))
-		return
-	}
-	bitLen := (field.BitLength + 7) &^ 0x7
-	w.writeBinaryData(data, bitLen)
-}
-
 func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) {
 	sBytes := []uint8(s)
 	totalLength := uint8(len(sBytes) + 3)

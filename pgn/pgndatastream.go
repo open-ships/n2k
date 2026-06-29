@@ -579,31 +579,3 @@ func (s *PGNDataStream) getSignedNullableNumber(bitLength uint16) (*int64, error
 	vi := int64(*v)
 	return &vi, nil
 }
-
-// readVariableData reads a field whose length or encoding depends on its type descriptor.
-// It looks up the FieldDescriptor for the given PGN, manufacturer ID, and field index,
-// then dispatches to the appropriate reader:
-//   - For variable-length STRING_LAU fields: uses readStringWithLengthAndControl
-//   - For all other fields: reads BitLength bits (rounded up to a byte boundary) as raw binary
-//
-// This method is used by generated decoders for "KeyValue" style PGNs where the field
-// type is determined at runtime rather than at code-generation time.
-func (s *PGNDataStream) readVariableData(pgn uint32, manID ManufacturerCodeConst, fieldIndex uint8) ([]uint8, error) {
-	field, err := GetFieldDescriptor(pgn, manID, fieldIndex)
-	if err == nil {
-		if field.BitLengthVariable {
-			if field.CanboatType == "STRING_LAU" {
-				str, err := s.readStringWithLengthAndControl()
-				if err != nil {
-					return nil, err
-				}
-				return []uint8(str), nil
-			}
-		}
-		// Round BitLength up to the nearest byte boundary using bit-clear of the low 3 bits.
-		len := (field.BitLength + 7) &^ 0x7
-		return s.readBinaryData(len)
-	} else {
-		return nil, err
-	}
-}

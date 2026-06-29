@@ -1,16 +1,6 @@
 package pgn
 
-import (
-	"fmt"
-)
-
-func nullableUnit[T any, U any, V float32 | uint16 | int16 | uint32](u U, v *V, newer func(u U, v float32) T) *T {
-	if v == nil {
-		return nil
-	}
-	ov := newer(u, float32(*v))
-	return &ov
-}
+import "fmt"
 
 // Spit out global consts
 
