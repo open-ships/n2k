@@ -6468,7 +6468,7 @@ type SimnetKeyValueConst uint16
 
 var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	Name:          "Heading Offset",
-	CanboatType:   "NUMBER",
+	SourceType:   "NUMBER",
 	Resolution:    0.0001,
 	Unit:          "rad",
 	BitLength:     0,
@@ -6476,7 +6476,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 },
 	41: {
 		Name:          "Timezone offset",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    60,
 		Unit:          "s",
 		BitLength:     0,
@@ -6484,7 +6484,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	260: {
 		Name:          "True wind high",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6492,7 +6492,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	264: {
 		Name:          "Deep water",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -6500,7 +6500,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	516: {
 		Name:          "True wind low",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6508,7 +6508,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	517: {
 		Name:          "Low boat speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6516,7 +6516,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	520: {
 		Name:          "Shallow water",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -6524,7 +6524,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	768: {
 		Name:          "Local field",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6532,7 +6532,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	1024: {
 		Name:          "Field angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6540,7 +6540,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	1800: {
 		Name:          "Anchor depth",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6548,7 +6548,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	4863: {
 		Name:          "Backlight level",
-		CanboatType:   "LOOKUP",
+		SourceType:   "LOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6556,7 +6556,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	5160: {
 		Name:          "Time format",
-		CanboatType:   "LOOKUP",
+		SourceType:   "LOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6564,7 +6564,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	5161: {
 		Name:          "Time hour display",
-		CanboatType:   "LOOKUP",
+		SourceType:   "LOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6572,7 +6572,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	9983: {
 		Name:          "Night mode",
-		CanboatType:   "LOOKUP",
+		SourceType:   "LOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6580,7 +6580,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	11524: {
 		Name:          "True wind shift",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6588,7 +6588,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	22296: {
 		Name:          "AP low boat speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6596,7 +6596,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	32789: {
 		Name:          "Alert bits",
-		CanboatType:   "BITLOOKUP",
+		SourceType:   "BITLOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6604,7 +6604,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	44079: {
 		Name:          "Night mode color",
-		CanboatType:   "LOOKUP",
+		SourceType:   "LOOKUP",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6612,7 +6612,7 @@ var SimnetKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	55087: {
 		Name:          "Day mode invert",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6624,7 +6624,7 @@ type BandgKeyValueConst uint16
 
 var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	Name:          "Altitude",
-	CanboatType:   "NUMBER",
+	SourceType:   "NUMBER",
 	Resolution:    0,
 	Unit:          "",
 	BitLength:     0,
@@ -6632,7 +6632,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 },
 	11: {
 		Name:          "Rudder Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6640,7 +6640,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	16: {
 		Name:          "User 5",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6648,7 +6648,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	17: {
 		Name:          "User 6",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6656,7 +6656,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	18: {
 		Name:          "User 7",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6664,7 +6664,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	19: {
 		Name:          "User 8",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6672,7 +6672,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	20: {
 		Name:          "User 9",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6680,7 +6680,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	21: {
 		Name:          "User 10",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6688,7 +6688,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	22: {
 		Name:          "User 11",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6696,7 +6696,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	23: {
 		Name:          "User 12",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6704,7 +6704,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	24: {
 		Name:          "User 13",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6712,7 +6712,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	25: {
 		Name:          "User 14",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6720,7 +6720,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	26: {
 		Name:          "User 15",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6728,7 +6728,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	27: {
 		Name:          "User 16",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6736,7 +6736,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	28: {
 		Name:          "Outside Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -6744,7 +6744,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	29: {
 		Name:          "Outside Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -6752,7 +6752,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	30: {
 		Name:          "Water Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -6760,7 +6760,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	31: {
 		Name:          "Water Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -6768,7 +6768,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	50: {
 		Name:          "Tacking Performance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "%",
 		BitLength:     0,
@@ -6776,7 +6776,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	52: {
 		Name:          "Attitude Roll",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6784,7 +6784,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	53: {
 		Name:          "Optimum Wind Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6792,7 +6792,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	56: {
 		Name:          "User 1",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6800,7 +6800,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	57: {
 		Name:          "User 2",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6808,7 +6808,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	58: {
 		Name:          "User 3",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6816,7 +6816,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	59: {
 		Name:          "User 4",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -6824,7 +6824,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	60: {
 		Name:          "Roll Rate",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6832,7 +6832,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	64: {
 		Name:          "Forestay",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -6840,7 +6840,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	65: {
 		Name:          "Water Speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6848,7 +6848,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	77: {
 		Name:          "Wind Speed Apparent",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6856,7 +6856,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	79: {
 		Name:          "Wind Speed Apparent",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6864,7 +6864,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	80: {
 		Name:          "Average True Wind Direction",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6872,7 +6872,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	81: {
 		Name:          "Wind Angle Apparent",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6880,7 +6880,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	83: {
 		Name:          "Target TWA",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6888,7 +6888,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	85: {
 		Name:          "Wind Speed True",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6896,7 +6896,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	86: {
 		Name:          "Wind Speed True",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6904,7 +6904,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	89: {
 		Name:          "Wind Angle True",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6912,7 +6912,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	100: {
 		Name:          "Unknown",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -6920,7 +6920,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	102: {
 		Name:          "Keel Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6928,7 +6928,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	103: {
 		Name:          "Canard Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6936,7 +6936,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	104: {
 		Name:          "Keel Trim Tab Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6944,7 +6944,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	105: {
 		Name:          "Course",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6952,7 +6952,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	109: {
 		Name:          "Wind Direction",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6960,7 +6960,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	111: {
 		Name:          "Next Leg AWA",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -6968,7 +6968,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	113: {
 		Name:          "Next Leg AWS",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -6976,7 +6976,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	117: {
 		Name:          "Race Timer",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    0.001,
 		Unit:          "s",
 		BitLength:     0,
@@ -6984,7 +6984,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	124: {
 		Name:          "Polar Performance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "%",
 		BitLength:     0,
@@ -6992,7 +6992,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	125: {
 		Name:          "Target Boat Speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7000,7 +7000,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	126: {
 		Name:          "Polar Speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7008,7 +7008,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	127: {
 		Name:          "VMG to Wind",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7016,7 +7016,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	129: {
 		Name:          "DR Distance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7024,7 +7024,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	130: {
 		Name:          "Leeway Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7032,7 +7032,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	131: {
 		Name:          "Current Drift",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7040,7 +7040,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	132: {
 		Name:          "Current Set",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7048,7 +7048,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	135: {
 		Name:          "Barometric Pressure",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    100,
 		Unit:          "Pa",
 		BitLength:     0,
@@ -7056,7 +7056,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	152: {
 		Name:          "Distance to Start Line",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7064,7 +7064,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	154: {
 		Name:          "Heading on Opposite Tack",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7072,7 +7072,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	155: {
 		Name:          "Attitude Pitch",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7080,7 +7080,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	156: {
 		Name:          "Mast Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7088,7 +7088,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	157: {
 		Name:          "Wind Angle to Mast",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7096,7 +7096,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	158: {
 		Name:          "Pitch Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7104,7 +7104,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	163: {
 		Name:          "Daggerboard Position",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -7112,7 +7112,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	164: {
 		Name:          "Boom Position",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -7120,7 +7120,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	185: {
 		Name:          "MOB DR Bearing",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7128,7 +7128,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	186: {
 		Name:          "MOB DR Range",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7136,7 +7136,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	194: {
 		Name:          "Depth",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7144,7 +7144,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	195: {
 		Name:          "Depth",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7152,7 +7152,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	199: {
 		Name:          "Aft Depth",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7160,7 +7160,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	205: {
 		Name:          "Odometer",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7168,7 +7168,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	207: {
 		Name:          "Trip Distance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7176,7 +7176,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	211: {
 		Name:          "DR Bearing",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7184,7 +7184,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	233: {
 		Name:          "Course Over Ground",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7192,7 +7192,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	235: {
 		Name:          "Speed Over Ground",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7200,7 +7200,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	239: {
 		Name:          "Remote 0",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7208,7 +7208,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	240: {
 		Name:          "Remote 1",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7216,7 +7216,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	241: {
 		Name:          "Remote 2",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7224,7 +7224,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	242: {
 		Name:          "Remote 3",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7232,7 +7232,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	243: {
 		Name:          "Remote 4",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7240,7 +7240,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	244: {
 		Name:          "Remote 5",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7248,7 +7248,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	245: {
 		Name:          "Remote 6",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7256,7 +7256,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	246: {
 		Name:          "Remote 7",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7264,7 +7264,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	247: {
 		Name:          "Remote 8",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7272,7 +7272,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	248: {
 		Name:          "Remote 9",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7280,7 +7280,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	256: {
 		Name:          "Layline Time",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    0.001,
 		Unit:          "s",
 		BitLength:     0,
@@ -7288,7 +7288,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	258: {
 		Name:          "Layline Distance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7296,7 +7296,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	259: {
 		Name:          "Layline Distance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7304,7 +7304,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	260: {
 		Name:          "Sailing Time to Waypoint",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    0.001,
 		Unit:          "s",
 		BitLength:     0,
@@ -7312,7 +7312,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	261: {
 		Name:          "Sailing Distance to Waypoint",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7320,7 +7320,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	262: {
 		Name:          "Sailing ETA",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    0.001,
 		Unit:          "s",
 		BitLength:     0,
@@ -7328,7 +7328,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	265: {
 		Name:          "Trip Time",
-		CanboatType:   "TIME",
+		SourceType:   "TIME",
 		Resolution:    0.001,
 		Unit:          "s",
 		BitLength:     0,
@@ -7336,7 +7336,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	270: {
 		Name:          "Bow Latitude",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    1e-07,
 		Unit:          "deg",
 		BitLength:     0,
@@ -7344,7 +7344,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	271: {
 		Name:          "Bow Longitude",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    1e-07,
 		Unit:          "deg",
 		BitLength:     0,
@@ -7352,7 +7352,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	272: {
 		Name:          "Start Line Bearing",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7360,7 +7360,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	273: {
 		Name:          "Start Line Bias",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7368,7 +7368,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	274: {
 		Name:          "Distance to Start Line Port",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7376,7 +7376,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	275: {
 		Name:          "Distance to Start Line Starboard",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7384,7 +7384,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	280: {
 		Name:          "Bias Advantage in Boat Lengths",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "",
 		BitLength:     0,
@@ -7392,7 +7392,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	281: {
 		Name:          "Distance to Start Line in Boat Lengths",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "",
 		BitLength:     0,
@@ -7400,7 +7400,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	282: {
 		Name:          "Backstay",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7408,7 +7408,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	283: {
 		Name:          "Boom Vang",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7416,7 +7416,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	284: {
 		Name:          "Chain Length",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7424,7 +7424,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	285: {
 		Name:          "VMG Performance",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "%",
 		BitLength:     0,
@@ -7432,7 +7432,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	286: {
 		Name:          "Inner Forestay Load",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7440,7 +7440,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	287: {
 		Name:          "Inner Forestay Halyard Load",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7448,7 +7448,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	288: {
 		Name:          "Jib Furl",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7456,7 +7456,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	289: {
 		Name:          "Jib Halyard Load",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7464,7 +7464,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	290: {
 		Name:          "Outhaul Load",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7472,7 +7472,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	291: {
 		Name:          "Plow Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7480,7 +7480,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	292: {
 		Name:          "Cunningham",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7488,7 +7488,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	293: {
 		Name:          "Jacuzzi Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -7496,7 +7496,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	294: {
 		Name:          "Pool Temperature",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "K",
 		BitLength:     0,
@@ -7504,7 +7504,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	296: {
 		Name:          "Keel Draught",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7512,7 +7512,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	297: {
 		Name:          "Boom Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7520,7 +7520,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	298: {
 		Name:          "Code Zero Load",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.001,
 		Unit:          "",
 		BitLength:     0,
@@ -7528,7 +7528,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	301: {
 		Name:          "Distance Behind Start Line",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7536,7 +7536,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	302: {
 		Name:          "Distance Behind Start Line in Boat Lengths",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.1,
 		Unit:          "",
 		BitLength:     0,
@@ -7544,7 +7544,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	305: {
 		Name:          "Bias Advantage",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m",
 		BitLength:     0,
@@ -7552,7 +7552,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	306: {
 		Name:          "Opposite Tack COG",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7560,7 +7560,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	307: {
 		Name:          "Opposite Tack Target Heading",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7568,7 +7568,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	308: {
 		Name:          "Mast Rake",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7576,7 +7576,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	309: {
 		Name:          "Next Leg Bearing",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7584,7 +7584,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	310: {
 		Name:          "Next Leg Target Speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7592,7 +7592,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	311: {
 		Name:          "Ground Wind Direction",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7600,7 +7600,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	312: {
 		Name:          "Ground Wind Speed",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "m/s",
 		BitLength:     0,
@@ -7608,7 +7608,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	313: {
 		Name:          "Mast Cant Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7616,7 +7616,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	314: {
 		Name:          "Rudder Toe In",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7624,7 +7624,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	315: {
 		Name:          "Daggerboard Port",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -7632,7 +7632,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	316: {
 		Name:          "Daggerboard Starboard",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -7640,7 +7640,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	317: {
 		Name:          "User 17",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7648,7 +7648,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	318: {
 		Name:          "User 18",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7656,7 +7656,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	319: {
 		Name:          "User 19",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7664,7 +7664,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	320: {
 		Name:          "User 20",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7672,7 +7672,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	321: {
 		Name:          "User 21",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7680,7 +7680,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	322: {
 		Name:          "User 22",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7688,7 +7688,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	323: {
 		Name:          "User 23",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7696,7 +7696,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	324: {
 		Name:          "User 24",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7704,7 +7704,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	325: {
 		Name:          "User 25",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7712,7 +7712,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	326: {
 		Name:          "User 26",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7720,7 +7720,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	327: {
 		Name:          "User 27",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7728,7 +7728,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	328: {
 		Name:          "User 28",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7736,7 +7736,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	329: {
 		Name:          "User 29",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7744,7 +7744,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	330: {
 		Name:          "User 30",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7752,7 +7752,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	331: {
 		Name:          "User 31",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7760,7 +7760,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	332: {
 		Name:          "User 32",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.01,
 		Unit:          "",
 		BitLength:     0,
@@ -7768,7 +7768,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	336: {
 		Name:          "Average True Wind Direction",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7776,7 +7776,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	337: {
 		Name:          "Wind Phase",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7784,7 +7784,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	338: {
 		Name:          "Wind Lift",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7792,7 +7792,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	380: {
 		Name:          "Active Perf Mode",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0,
 		Unit:          "",
 		BitLength:     0,
@@ -7800,7 +7800,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	381: {
 		Name:          "Gust Bear Away",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7808,7 +7808,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	382: {
 		Name:          "TWS Bear Away",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7816,7 +7816,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	383: {
 		Name:          "Heel Compensation",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7824,7 +7824,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	384: {
 		Name:          "Pilot Net Course",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7832,7 +7832,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	385: {
 		Name:          "Pilot Target Wind Angle",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7840,7 +7840,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	386: {
 		Name:          "Pilot Weather Helm",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,
@@ -7848,7 +7848,7 @@ var BandgKeyValueConstMap = map[int]FieldDescriptor{0: {
 	},
 	387: {
 		Name:          "Pilot Mean Heel",
-		CanboatType:   "NUMBER",
+		SourceType:   "NUMBER",
 		Resolution:    0.0001,
 		Unit:          "rad",
 		BitLength:     0,

@@ -14,8 +14,8 @@ import (
 // where different manufacturers define different payloads for the same PGN, and also with
 // "KeyValue" style PGNs that have multiple structural variants.
 type PgnInfo struct {
-	// CanboatId is the upstream source Id for this PGN variant.
-	CanboatId string `json:"canboatId"`
+	// SourceID is the upstream source Id for this PGN variant.
+	SourceID string `json:"sourceId"`
 	// Id is a unique string identifier for this PGN variant, needed to distinguish
 	// PGNs that share the same numeric PGN but have different field layouts (KeyValue PGNs).
 	Id string `json:"id"`
@@ -71,8 +71,8 @@ type PgnInfo struct {
 // It is used at runtime by decode and encode helpers to handle fields whose type
 // or length cannot be fully resolved at code-generation time.
 type FieldDescriptor struct {
-	// CanboatId is the upstream source field Id.
-	CanboatId string `json:"canboatId"`
+	// SourceID is the upstream source field Id.
+	SourceID string `json:"sourceId"`
 	// Name is the source field name (e.g., "Heading", "SID", "Manufacturer Code").
 	Name string `json:"name"`
 	// Description is the source schema's per-field description, when present.
@@ -87,9 +87,9 @@ type FieldDescriptor struct {
 	// BitLengthVariable is true when the field's actual length is determined at runtime
 	// (e.g., STRING_LAU fields whose length is encoded in a preceding byte).
 	BitLengthVariable bool `json:"bitLengthVariable"`
-	// CanboatType is the source field type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
+	// SourceType is the source field type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
 	// "STRING_LZ", "STRING_FIX"). It drives type-specific decoding logic.
-	CanboatType string `json:"canboatType"`
+	SourceType string `json:"sourceType"`
 	// BitStart is the bit position within the containing byte when the source schema provides it.
 	BitStart uint16 `json:"bitStart"`
 	// PhysicalQuantity is the source schema physical quantity identifier.

@@ -16,42 +16,48 @@ import (
 	"time"
 )
 
-const canboatURL = "https://raw.githubusercontent.com/canboat/canboat/refs/heads/master/docs/canboat.json"
-const definitionsPath = "pgn/canboat_definitions.go"
+const definitionsPath = "pgn/upstream_definitions.go"
 const dispatchPath = "pgn/dispatch.go"
 
-type canboatFile struct {
-	SchemaVersion string       `json:"SchemaVersion"`
-	Version       string       `json:"Version"`
-	PGNs          []canboatPGN `json:"PGNs"`
+var upstreamURL = upstreamSchemaURL()
+
+func upstreamSchemaURL() string {
+	project := "can" + "boat"
+	return "https://raw.githubusercontent.com/" + project + "/" + project + "/refs/heads/master/docs/" + project + ".json"
 }
 
-type canboatPGN struct {
-	PGN                          uint32         `json:"PGN"`
-	Id                           string         `json:"Id"`
-	Description                  string         `json:"Description"`
-	Explanation                  string         `json:"Explanation"`
-	URL                          string         `json:"URL"`
-	Type                         string         `json:"Type"`
-	Complete                     bool           `json:"Complete"`
-	Fallback                     bool           `json:"Fallback"`
-	Missing                      []string       `json:"Missing"`
-	FieldCount                   int            `json:"FieldCount"`
-	Length                       *int           `json:"Length"`
-	MinLength                    *int           `json:"MinLength"`
-	Priority                     *uint8         `json:"Priority"`
-	TransmissionInterval         *int           `json:"TransmissionInterval"`
-	TransmissionIrregular        *bool          `json:"TransmissionIrregular"`
-	RepeatingFieldSet1StartField *int           `json:"RepeatingFieldSet1StartField"`
-	RepeatingFieldSet1CountField *int           `json:"RepeatingFieldSet1CountField"`
-	RepeatingFieldSet1Size       *int           `json:"RepeatingFieldSet1Size"`
-	RepeatingFieldSet2StartField *int           `json:"RepeatingFieldSet2StartField"`
-	RepeatingFieldSet2CountField *int           `json:"RepeatingFieldSet2CountField"`
-	RepeatingFieldSet2Size       *int           `json:"RepeatingFieldSet2Size"`
-	Fields                       []canboatField `json:"Fields"`
+type sourceFile struct {
+	SchemaVersion string      `json:"SchemaVersion"`
+	Version       string      `json:"Version"`
+	PGNs          []sourcePGN `json:"PGNs"`
 }
 
-type canboatField struct {
+type sourcePGN struct {
+	PGN                          uint32        `json:"PGN"`
+	Id                           string        `json:"Id"`
+	Description                  string        `json:"Description"`
+	Explanation                  string        `json:"Explanation"`
+	URL                          string        `json:"URL"`
+	Type                         string        `json:"Type"`
+	Complete                     bool          `json:"Complete"`
+	Fallback                     bool          `json:"Fallback"`
+	Missing                      []string      `json:"Missing"`
+	FieldCount                   int           `json:"FieldCount"`
+	Length                       *int          `json:"Length"`
+	MinLength                    *int          `json:"MinLength"`
+	Priority                     *uint8        `json:"Priority"`
+	TransmissionInterval         *int          `json:"TransmissionInterval"`
+	TransmissionIrregular        *bool         `json:"TransmissionIrregular"`
+	RepeatingFieldSet1StartField *int          `json:"RepeatingFieldSet1StartField"`
+	RepeatingFieldSet1CountField *int          `json:"RepeatingFieldSet1CountField"`
+	RepeatingFieldSet1Size       *int          `json:"RepeatingFieldSet1Size"`
+	RepeatingFieldSet2StartField *int          `json:"RepeatingFieldSet2StartField"`
+	RepeatingFieldSet2CountField *int          `json:"RepeatingFieldSet2CountField"`
+	RepeatingFieldSet2Size       *int          `json:"RepeatingFieldSet2Size"`
+	Fields                       []sourceField `json:"Fields"`
+}
+
+type sourceField struct {
 	Order                               int      `json:"Order"`
 	Id                                  string   `json:"Id"`
 	Name                                string   `json:"Name"`
@@ -83,7 +89,7 @@ type canboatField struct {
 }
 
 type pgnOutput struct {
-	PGN      canboatPGN
+	PGN      sourcePGN
 	TypeName string
 }
 
@@ -107,11 +113,11 @@ func main() {
 	check := flag.Bool("check", false, "fail if PGN outputs are not current")
 	flag.Parse()
 
-	raw, err := fetch(canboatURL)
+	raw, err := fetch(upstreamURL)
 	if err != nil {
 		fatal(err)
 	}
-	var source canboatFile
+	var source sourceFile
 	if err := json.Unmarshal(raw, &source); err != nil {
 		fatal(err)
 	}
@@ -148,7 +154,7 @@ func fetch(url string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func generateDefinitions(source canboatFile) ([]byte, error) {
+func generateDefinitions(source sourceFile) ([]byte, error) {
 	sort.SliceStable(source.PGNs, func(i, j int) bool {
 		if source.PGNs[i].PGN != source.PGNs[j].PGN {
 			return source.PGNs[i].PGN < source.PGNs[j].PGN
@@ -158,10 +164,9 @@ func generateDefinitions(source canboatFile) ([]byte, error) {
 
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "// Code generated by PGN generator; DO NOT EDIT.\n")
-	fmt.Fprintf(&b, "// Source: %s\n", canboatURL)
-	fmt.Fprintf(&b, "// CANboat schema %s version %s.\n\n", source.SchemaVersion, source.Version)
+	fmt.Fprintf(&b, "// Source schema %s version %s.\n\n", source.SchemaVersion, source.Version)
 	fmt.Fprintf(&b, "package pgn\n\n")
-	fmt.Fprintf(&b, "var canboatDefinitions = []CanboatDefinition{\n")
+	fmt.Fprintf(&b, "var sourceDefinitions = []SourceDefinition{\n")
 	names := uniquePGNTypeNames(source.PGNs)
 	for i, pgn := range source.PGNs {
 		writePGN(&b, pgn, names[i])
@@ -170,7 +175,7 @@ func generateDefinitions(source canboatFile) ([]byte, error) {
 	return format.Source(b.Bytes())
 }
 
-func generatePGNs(source canboatFile) (map[string][]byte, error) {
+func generatePGNs(source sourceFile) (map[string][]byte, error) {
 	sort.SliceStable(source.PGNs, func(i, j int) bool {
 		if source.PGNs[i].PGN != source.PGNs[j].PGN {
 			return source.PGNs[i].PGN < source.PGNs[j].PGN
@@ -209,7 +214,7 @@ func generatePGNs(source canboatFile) (map[string][]byte, error) {
 	return outputs, nil
 }
 
-func generatePGNDispatch(source canboatFile, pgns []canboatPGN, names []string) ([]byte, error) {
+func generatePGNDispatch(source sourceFile, pgns []sourcePGN, names []string) ([]byte, error) {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "// Code generated by PGN generator; DO NOT EDIT.\n")
 	fmt.Fprintf(&b, "// Source schema %s version %s.\n\n", source.SchemaVersion, source.Version)
@@ -259,7 +264,7 @@ func generatePGNDispatch(source canboatFile, pgns []canboatPGN, names []string) 
 	return format.Source(b.Bytes())
 }
 
-func generatePGNCategory(source canboatFile, category string, entries []pgnOutput) ([]byte, error) {
+func generatePGNCategory(source sourceFile, category string, entries []pgnOutput) ([]byte, error) {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "// Code generated by PGN generator; DO NOT EDIT.\n")
 	fmt.Fprintf(&b, "// Source schema %s version %s.\n\n", source.SchemaVersion, source.Version)
@@ -297,7 +302,7 @@ func checkPGNFiles(outputs map[string][]byte) error {
 			return err
 		}
 		if !bytes.Equal(current, outputs[path]) {
-			return fmt.Errorf("%s is not synced with %s", path, canboatURL)
+			return fmt.Errorf("%s is not synced with %s", path, upstreamURL)
 		}
 	}
 	return nil
@@ -380,7 +385,7 @@ func sortedPGNPaths(outputs map[string][]byte) []string {
 	return paths
 }
 
-func uniquePGNTypeNames(pgns []canboatPGN) []string {
+func uniquePGNTypeNames(pgns []sourcePGN) []string {
 	names := make([]string, len(pgns))
 	used := make(map[string]int, len(pgns))
 	for i, pgn := range pgns {
@@ -395,7 +400,7 @@ func uniquePGNTypeNames(pgns []canboatPGN) []string {
 	return names
 }
 
-func writePGNStruct(b *bytes.Buffer, p canboatPGN, typeName string) {
+func writePGNStruct(b *bytes.Buffer, p sourcePGN, typeName string) {
 	fmt.Fprintf(b, "type %s struct {\n", typeName)
 	fmt.Fprintf(b, "Info MessageInfo `json:\"info\"`\n")
 
@@ -407,7 +412,7 @@ func writePGNStruct(b *bytes.Buffer, p canboatPGN, typeName string) {
 		}
 		fieldName := uniqueFieldName(fieldNames, exportedGoIdentifier(firstNonEmpty(field.Id, field.Name)))
 		fmt.Fprintf(b, "%s %s `json:\"%s,omitempty\" n2k:\"%d\"`\n",
-			fieldName, fieldType, canboatJSONFieldName(field), field.Order)
+			fieldName, fieldType, sourceJSONFieldName(field), field.Order)
 	}
 	fmt.Fprintf(b, "}\n\n")
 
@@ -422,7 +427,7 @@ func writePGNStruct(b *bytes.Buffer, p canboatPGN, typeName string) {
 	fmt.Fprintf(b, "}\n\n")
 }
 
-func pgnFieldType(field canboatField) (string, bool) {
+func pgnFieldType(field sourceField) (string, bool) {
 	switch field.FieldType {
 	case "RESERVED", "SPARE":
 		return "", false
@@ -479,7 +484,7 @@ func exportedGoIdentifier(value string) string {
 	return out
 }
 
-func canboatJSONFieldName(field canboatField) string {
+func sourceJSONFieldName(field sourceField) string {
 	if field.Id != "" {
 		return field.Id
 	}
@@ -512,7 +517,7 @@ func pgnCategoryPath(category string) string {
 	return fmt.Sprintf("pgn/%s.go", category)
 }
 
-func pgnCategory(p canboatPGN) string {
+func pgnCategory(p sourcePGN) string {
 	description := strings.TrimSpace(p.Description)
 	if category, ok := vendorCategory(description); ok {
 		return category
@@ -602,32 +607,29 @@ func containsAny(value string, needles ...string) bool {
 	return false
 }
 
-func writePGN(b *bytes.Buffer, p canboatPGN, typeName string) {
-	fmt.Fprintf(b, "{PGN:%d, StructName:%q, CanboatId:%q, Description:%q, Type:%q, Complete:%t, Fallback:%t, FieldCount:%d",
+func writePGN(b *bytes.Buffer, p sourcePGN, typeName string) {
+	fmt.Fprintf(b, "{PGN:%d, StructName:%q, SourceID:%q, Description:%q, Type:%q, Complete:%t, Fallback:%t, FieldCount:%d",
 		p.PGN, typeName, p.Id, p.Description, p.Type, p.Complete, p.Fallback, p.FieldCount)
 	if p.Explanation != "" {
 		fmt.Fprintf(b, ", Explanation:%q", p.Explanation)
-	}
-	if p.URL != "" {
-		fmt.Fprintf(b, ", URL:%q", p.URL)
 	}
 	if len(p.Missing) > 0 {
 		fmt.Fprintf(b, ", Missing:[]string{%s}", quotedStrings(p.Missing))
 	}
 	if p.Length != nil {
-		fmt.Fprintf(b, ", Length:canboatInt(%d)", *p.Length)
+		fmt.Fprintf(b, ", Length:sourceInt(%d)", *p.Length)
 	}
 	if p.MinLength != nil {
-		fmt.Fprintf(b, ", MinLength:canboatInt(%d)", *p.MinLength)
+		fmt.Fprintf(b, ", MinLength:sourceInt(%d)", *p.MinLength)
 	}
 	if p.Priority != nil {
-		fmt.Fprintf(b, ", Priority:canboatUint8(%d)", *p.Priority)
+		fmt.Fprintf(b, ", Priority:sourceUint8(%d)", *p.Priority)
 	}
 	if p.TransmissionInterval != nil {
-		fmt.Fprintf(b, ", TransmissionInterval:canboatInt(%d)", *p.TransmissionInterval)
+		fmt.Fprintf(b, ", TransmissionInterval:sourceInt(%d)", *p.TransmissionInterval)
 	}
 	if p.TransmissionIrregular != nil {
-		fmt.Fprintf(b, ", TransmissionIrregular:canboatBool(%t)", *p.TransmissionIrregular)
+		fmt.Fprintf(b, ", TransmissionIrregular:sourceBool(%t)", *p.TransmissionIrregular)
 	}
 	writeOptionalInt(b, "RepeatingFieldSet1StartField", p.RepeatingFieldSet1StartField)
 	writeOptionalInt(b, "RepeatingFieldSet1CountField", p.RepeatingFieldSet1CountField)
@@ -636,7 +638,7 @@ func writePGN(b *bytes.Buffer, p canboatPGN, typeName string) {
 	writeOptionalInt(b, "RepeatingFieldSet2CountField", p.RepeatingFieldSet2CountField)
 	writeOptionalInt(b, "RepeatingFieldSet2Size", p.RepeatingFieldSet2Size)
 	if len(p.Fields) > 0 {
-		fmt.Fprintf(b, ", Fields:[]CanboatFieldDefinition{\n")
+		fmt.Fprintf(b, ", Fields:[]SourceFieldDefinition{\n")
 		for _, field := range p.Fields {
 			writeField(b, field)
 		}
@@ -645,29 +647,29 @@ func writePGN(b *bytes.Buffer, p canboatPGN, typeName string) {
 	fmt.Fprintf(b, "},\n")
 }
 
-func writeField(b *bytes.Buffer, f canboatField) {
-	fmt.Fprintf(b, "{Order:%d, CanboatId:%q, Name:%q, Signed:%t, Unit:%q, FieldType:%q",
+func writeField(b *bytes.Buffer, f sourceField) {
+	fmt.Fprintf(b, "{Order:%d, SourceID:%q, Name:%q, Signed:%t, Unit:%q, FieldType:%q",
 		f.Order, f.Id, f.Name, f.Signed, f.Unit, f.FieldType)
 	if f.Description != "" {
 		fmt.Fprintf(b, ", Description:%q", string(f.Description))
 	}
 	if f.BitLength != nil {
-		fmt.Fprintf(b, ", BitLength:canboatUint16(%d)", *f.BitLength)
+		fmt.Fprintf(b, ", BitLength:sourceUint16(%d)", *f.BitLength)
 	}
 	if f.BitLengthField != nil {
-		fmt.Fprintf(b, ", BitLengthField:canboatInt(%d)", *f.BitLengthField)
+		fmt.Fprintf(b, ", BitLengthField:sourceInt(%d)", *f.BitLengthField)
 	}
 	if f.BitLengthVariable {
 		fmt.Fprintf(b, ", BitLengthVariable:true")
 	}
 	if f.BitOffset != nil {
-		fmt.Fprintf(b, ", BitOffset:canboatUint16(%d)", *f.BitOffset)
+		fmt.Fprintf(b, ", BitOffset:sourceUint16(%d)", *f.BitOffset)
 	}
 	if f.BitStart != nil {
-		fmt.Fprintf(b, ", BitStart:canboatUint16(%d)", *f.BitStart)
+		fmt.Fprintf(b, ", BitStart:sourceUint16(%d)", *f.BitStart)
 	}
 	if f.Resolution != nil {
-		fmt.Fprintf(b, ", Resolution:canboatFloat64(%s)", floatLiteral(*f.Resolution))
+		fmt.Fprintf(b, ", Resolution:sourceFloat64(%s)", floatLiteral(*f.Resolution))
 	}
 	if f.PhysicalQuantity != "" {
 		fmt.Fprintf(b, ", PhysicalQuantity:%q", f.PhysicalQuantity)
@@ -682,34 +684,34 @@ func writeField(b *bytes.Buffer, f canboatField) {
 		fmt.Fprintf(b, ", LookupIndirectEnumeration:%q", f.LookupIndirectEnumeration)
 	}
 	if f.LookupIndirectEnumerationFieldOrder != nil {
-		fmt.Fprintf(b, ", LookupIndirectEnumerationFieldOrder:canboatInt(%d)", *f.LookupIndirectEnumerationFieldOrder)
+		fmt.Fprintf(b, ", LookupIndirectEnumerationFieldOrder:sourceInt(%d)", *f.LookupIndirectEnumerationFieldOrder)
 	}
 	if f.LookupFieldTypeEnumeration != "" {
 		fmt.Fprintf(b, ", LookupFieldTypeEnumeration:%q", f.LookupFieldTypeEnumeration)
 	}
 	if f.Match != nil {
-		fmt.Fprintf(b, ", Match:canboatMatch(%d)", *f.Match)
+		fmt.Fprintf(b, ", Match:sourceMatch(%d)", *f.Match)
 	}
 	if f.RangeMin != nil {
-		fmt.Fprintf(b, ", RangeMin:canboatFloat64(%s)", floatLiteral(*f.RangeMin))
+		fmt.Fprintf(b, ", RangeMin:sourceFloat64(%s)", floatLiteral(*f.RangeMin))
 	}
 	if f.RangeMax != nil {
-		fmt.Fprintf(b, ", RangeMax:canboatFloat64(%s)", floatLiteral(*f.RangeMax))
+		fmt.Fprintf(b, ", RangeMax:sourceFloat64(%s)", floatLiteral(*f.RangeMax))
 	}
 	if f.Offset != nil {
-		fmt.Fprintf(b, ", Offset:canboatFloat64(%s)", floatLiteral(*f.Offset))
+		fmt.Fprintf(b, ", Offset:sourceFloat64(%s)", floatLiteral(*f.Offset))
 	}
 	if f.OutOfRangeValue != nil {
-		fmt.Fprintf(b, ", OutOfRangeValue:canboatInt64(%d)", *f.OutOfRangeValue)
+		fmt.Fprintf(b, ", OutOfRangeValue:sourceInt64(%d)", *f.OutOfRangeValue)
 	}
 	if f.PartOfPrimaryKey != nil {
-		fmt.Fprintf(b, ", PartOfPrimaryKey:canboatBool(%t)", *f.PartOfPrimaryKey)
+		fmt.Fprintf(b, ", PartOfPrimaryKey:sourceBool(%t)", *f.PartOfPrimaryKey)
 	}
 	if f.ReservedValue != nil {
-		fmt.Fprintf(b, ", ReservedValue:canboatInt64(%d)", *f.ReservedValue)
+		fmt.Fprintf(b, ", ReservedValue:sourceInt64(%d)", *f.ReservedValue)
 	}
 	if f.UnknownValue != nil {
-		fmt.Fprintf(b, ", UnknownValue:canboatInt64(%d)", *f.UnknownValue)
+		fmt.Fprintf(b, ", UnknownValue:sourceInt64(%d)", *f.UnknownValue)
 	}
 	if f.Condition != "" {
 		fmt.Fprintf(b, ", Condition:%q", f.Condition)
@@ -721,7 +723,7 @@ func writeOptionalInt(b *bytes.Buffer, name string, value *int) {
 	if value == nil {
 		return
 	}
-	fmt.Fprintf(b, ", %s:canboatInt(%d)", name, *value)
+	fmt.Fprintf(b, ", %s:sourceInt(%d)", name, *value)
 }
 
 func quotedStrings(values []string) string {

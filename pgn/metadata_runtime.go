@@ -8,10 +8,10 @@ import (
 	"strings"
 )
 
-type CanboatDefinition struct {
+type SourceDefinition struct {
 	PGN                          uint32
 	StructName                   string
-	CanboatId                    string
+	SourceID                    string
 	Description                  string
 	Explanation                  string
 	URL                          string
@@ -31,12 +31,12 @@ type CanboatDefinition struct {
 	RepeatingFieldSet2StartField *int
 	RepeatingFieldSet2CountField *int
 	RepeatingFieldSet2Size       *int
-	Fields                       []CanboatFieldDefinition
+	Fields                       []SourceFieldDefinition
 }
 
-type CanboatFieldDefinition struct {
+type SourceFieldDefinition struct {
 	Order                               int
-	CanboatId                           string
+	SourceID                           string
 	Name                                string
 	Description                         string
 	BitLength                           *uint16
@@ -70,16 +70,16 @@ func init() {
 }
 
 func initPgnInfoLookup() {
-	if len(canboatDefinitions) == 0 {
+	if len(sourceDefinitions) == 0 {
 		return
 	}
 
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
 	UnseenLookup = make(map[uint32][]*PgnInfo)
 
-	infos := make([]*PgnInfo, 0, len(canboatDefinitions))
-	for _, def := range canboatDefinitions {
-		info := pgnInfoFromCanboat(def)
+	infos := make([]*PgnInfo, 0, len(sourceDefinitions))
+	for _, def := range sourceDefinitions {
+		info := pgnInfoFromSource(def)
 		infos = append(infos, info)
 	}
 
@@ -98,11 +98,11 @@ func initPgnInfoLookup() {
 	}
 }
 
-func pgnInfoFromCanboat(def CanboatDefinition) *PgnInfo {
+func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
 	fields := make(map[int]*FieldDescriptor, len(def.Fields))
 	var manID ManufacturerCodeConst
 	for _, field := range def.Fields {
-		fd := fieldDescriptorFromCanboat(field)
+		fd := fieldDescriptorFromSource(field)
 		fields[field.Order] = fd
 		if field.Name == "Manufacturer Code" && field.Match != nil {
 			manID = ManufacturerCodeConst(*field.Match)
@@ -110,8 +110,8 @@ func pgnInfoFromCanboat(def CanboatDefinition) *PgnInfo {
 	}
 
 	return &PgnInfo{
-		CanboatId:                    def.CanboatId,
-		Id:                           firstNonEmpty(def.StructName, exportedID(def.CanboatId, def.Description)),
+		SourceID:                    def.SourceID,
+		Id:                           firstNonEmpty(def.StructName, exportedID(def.SourceID, def.Description)),
 		PGN:                          def.PGN,
 		Description:                  def.Description,
 		Explanation:                  def.Explanation,
@@ -137,7 +137,7 @@ func pgnInfoFromCanboat(def CanboatDefinition) *PgnInfo {
 	}
 }
 
-func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
+func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
 	bitLength := uint16(0)
 	if field.BitLength != nil {
 		bitLength = *field.BitLength
@@ -155,14 +155,14 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 		resolution = float32(*field.Resolution)
 	}
 	return &FieldDescriptor{
-		CanboatId:                           field.CanboatId,
+		SourceID:                           field.SourceID,
 		Name:                                field.Name,
 		Description:                         field.Description,
 		BitLength:                           bitLength,
 		BitLengthField:                      field.BitLengthField,
 		BitOffset:                           bitOffset,
 		BitLengthVariable:                   field.BitLengthVariable || field.BitLength == nil,
-		CanboatType:                         field.FieldType,
+		SourceType:                         field.FieldType,
 		BitStart:                            bitStart,
 		PhysicalQuantity:                    field.PhysicalQuantity,
 		LookupEnumeration:                   field.LookupEnumeration,
@@ -186,7 +186,7 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 	}
 }
 
-func pgnFieldGoType(field CanboatFieldDefinition) string {
+func pgnFieldGoType(field SourceFieldDefinition) string {
 	switch field.FieldType {
 	case "RESERVED", "SPARE":
 		return ""
@@ -215,7 +215,7 @@ func decodeStructPayload(info *PgnInfo, target PGN, payload []uint8) error {
 	if !info.MatchesData(stream.data) {
 		return fmt.Errorf("match failed for %s", info.Description)
 	}
-	values, err := decodeCanboatFieldValues(info, stream)
+	values, err := decodeSourceFieldValues(info, stream)
 	if err != nil {
 		return err
 	}
@@ -230,14 +230,14 @@ func encodeStructPayload(info *PgnInfo, message PGN) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return encodeCanboatFieldValues(info, values)
+	return encodeSourceFieldValues(info, values)
 }
 
-func decodeCanboatFieldValues(info *PgnInfo, stream *PGNDataStream) (map[int]any, error) {
+func decodeSourceFieldValues(info *PgnInfo, stream *PGNDataStream) (map[int]any, error) {
 	fields := orderedFieldDescriptors(info)
 	values := make(map[int]any, len(fields))
 	for _, field := range fields {
-		value, hasValue, err := decodeCanboatFieldValue(field.descriptor, stream)
+		value, hasValue, err := decodeSourceFieldValue(field.descriptor, stream)
 		if err != nil {
 			return values, err
 		}
@@ -251,8 +251,8 @@ func decodeCanboatFieldValues(info *PgnInfo, stream *PGNDataStream) (map[int]any
 	return values, nil
 }
 
-func decodeCanboatFieldValue(field *FieldDescriptor, stream *PGNDataStream) (any, bool, error) {
-	switch field.CanboatType {
+func decodeSourceFieldValue(field *FieldDescriptor, stream *PGNDataStream) (any, bool, error) {
+	switch field.SourceType {
 	case "RESERVED", "SPARE":
 		stream.skipBits(field.BitLength)
 		return nil, false, nil
@@ -304,18 +304,18 @@ func decodeCanboatFieldValue(field *FieldDescriptor, stream *PGNDataStream) (any
 	}
 }
 
-func encodeCanboatFieldValues(info *PgnInfo, values map[int]any) ([]byte, error) {
-	return encodeCanboatFields(info, func(order int, field *FieldDescriptor) (any, bool) {
+func encodeSourceFieldValues(info *PgnInfo, values map[int]any) ([]byte, error) {
+	return encodeSourceFields(info, func(order int, field *FieldDescriptor) (any, bool) {
 		value, ok := values[order]
 		return value, ok
 	})
 }
 
-func encodeCanboatFields(info *PgnInfo, valueFor func(int, *FieldDescriptor) (any, bool)) ([]byte, error) {
+func encodeSourceFields(info *PgnInfo, valueFor func(int, *FieldDescriptor) (any, bool)) ([]byte, error) {
 	writer := NewPGNDataStreamWriter()
 	for _, field := range orderedFieldDescriptors(info) {
 		value, hasValue := valueFor(field.index, field.descriptor)
-		switch field.descriptor.CanboatType {
+		switch field.descriptor.SourceType {
 		case "RESERVED":
 			writer.writeReservedBits(field.descriptor.BitLength)
 		case "SPARE":
@@ -608,20 +608,20 @@ func FilterMatchingPgnInfos(candidates []*PgnInfo, data []uint8) []*PgnInfo {
 	return matched
 }
 
-type orderedCanboatField struct {
+type orderedSourceField struct {
 	index      int
 	descriptor *FieldDescriptor
 }
 
-func orderedFieldDescriptors(info *PgnInfo) []orderedCanboatField {
+func orderedFieldDescriptors(info *PgnInfo) []orderedSourceField {
 	indexes := make([]int, 0, len(info.Fields))
 	for index := range info.Fields {
 		indexes = append(indexes, index)
 	}
 	sort.Ints(indexes)
-	fields := make([]orderedCanboatField, 0, len(indexes))
+	fields := make([]orderedSourceField, 0, len(indexes))
 	for _, index := range indexes {
-		fields = append(fields, orderedCanboatField{index: index, descriptor: info.Fields[index]})
+		fields = append(fields, orderedSourceField{index: index, descriptor: info.Fields[index]})
 	}
 	return fields
 }
@@ -651,9 +651,9 @@ func signExtend(value uint64, bitLength uint16) int64 {
 	return -int64(mask) + int64(value)
 }
 
-func exportedID(canboatID string, description string) string {
-	if canboatID != "" {
-		return canboatID
+func exportedID(upstreamID string, description string) string {
+	if upstreamID != "" {
+		return upstreamID
 	}
 	return strings.ReplaceAll(description, " ", "")
 }
@@ -667,11 +667,11 @@ func firstNonEmpty(values ...string) string {
 	return ""
 }
 
-func canboatUint8(v uint8) *uint8       { return &v }
-func canboatInt(v int) *int             { return &v }
-func canboatUint16(v uint16) *uint16    { return &v }
-func canboatFloat64(v float64) *float64 { return &v }
-func canboatBool(v bool) *bool          { return &v }
-func canboatInt64(v int64) *int64       { return &v }
+func sourceUint8(v uint8) *uint8       { return &v }
+func sourceInt(v int) *int             { return &v }
+func sourceUint16(v uint16) *uint16    { return &v }
+func sourceFloat64(v float64) *float64 { return &v }
+func sourceBool(v bool) *bool          { return &v }
+func sourceInt64(v int64) *int64       { return &v }
 
-func canboatMatch(v int) *int { return &v }
+func sourceMatch(v int) *int { return &v }

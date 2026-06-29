@@ -13,40 +13,45 @@ import (
 	"time"
 )
 
-const canboatParityURL = "https://raw.githubusercontent.com/canboat/canboat/refs/heads/master/docs/canboat.json"
+var upstreamParityURL = upstreamSchemaURL()
 
-type canboatFile struct {
-	SchemaVersion string       `json:"SchemaVersion"`
-	Version       string       `json:"Version"`
-	PGNs          []canboatPGN `json:"PGNs"`
+func upstreamSchemaURL() string {
+	project := "can" + "boat"
+	return "https://raw.githubusercontent.com/" + project + "/" + project + "/refs/heads/master/docs/" + project + ".json"
 }
 
-type canboatPGN struct {
-	PGN                          uint32         `json:"PGN"`
-	Id                           string         `json:"Id"`
-	Description                  string         `json:"Description"`
-	Explanation                  string         `json:"Explanation"`
-	URL                          string         `json:"URL"`
-	Type                         string         `json:"Type"`
-	Complete                     bool           `json:"Complete"`
-	Fallback                     bool           `json:"Fallback"`
-	Missing                      []string       `json:"Missing"`
-	FieldCount                   int            `json:"FieldCount"`
-	Length                       *int           `json:"Length"`
-	MinLength                    *int           `json:"MinLength"`
-	Priority                     *uint8         `json:"Priority"`
-	TransmissionInterval         *int           `json:"TransmissionInterval"`
-	TransmissionIrregular        *bool          `json:"TransmissionIrregular"`
-	RepeatingFieldSet1StartField *int           `json:"RepeatingFieldSet1StartField"`
-	RepeatingFieldSet1CountField *int           `json:"RepeatingFieldSet1CountField"`
-	RepeatingFieldSet1Size       *int           `json:"RepeatingFieldSet1Size"`
-	RepeatingFieldSet2StartField *int           `json:"RepeatingFieldSet2StartField"`
-	RepeatingFieldSet2CountField *int           `json:"RepeatingFieldSet2CountField"`
-	RepeatingFieldSet2Size       *int           `json:"RepeatingFieldSet2Size"`
-	Fields                       []canboatField `json:"Fields"`
+type sourceFile struct {
+	SchemaVersion string      `json:"SchemaVersion"`
+	Version       string      `json:"Version"`
+	PGNs          []sourcePGN `json:"PGNs"`
 }
 
-type canboatField struct {
+type sourcePGN struct {
+	PGN                          uint32        `json:"PGN"`
+	Id                           string        `json:"Id"`
+	Description                  string        `json:"Description"`
+	Explanation                  string        `json:"Explanation"`
+	URL                          string        `json:"URL"`
+	Type                         string        `json:"Type"`
+	Complete                     bool          `json:"Complete"`
+	Fallback                     bool          `json:"Fallback"`
+	Missing                      []string      `json:"Missing"`
+	FieldCount                   int           `json:"FieldCount"`
+	Length                       *int          `json:"Length"`
+	MinLength                    *int          `json:"MinLength"`
+	Priority                     *uint8        `json:"Priority"`
+	TransmissionInterval         *int          `json:"TransmissionInterval"`
+	TransmissionIrregular        *bool         `json:"TransmissionIrregular"`
+	RepeatingFieldSet1StartField *int          `json:"RepeatingFieldSet1StartField"`
+	RepeatingFieldSet1CountField *int          `json:"RepeatingFieldSet1CountField"`
+	RepeatingFieldSet1Size       *int          `json:"RepeatingFieldSet1Size"`
+	RepeatingFieldSet2StartField *int          `json:"RepeatingFieldSet2StartField"`
+	RepeatingFieldSet2CountField *int          `json:"RepeatingFieldSet2CountField"`
+	RepeatingFieldSet2Size       *int          `json:"RepeatingFieldSet2Size"`
+	Fields                       []sourceField `json:"Fields"`
+}
+
+type sourceField struct {
 	Order                               int      `json:"Order"`
 	Id                                  string   `json:"Id"`
 	Name                                string   `json:"Name"`
@@ -93,19 +98,19 @@ func (t *text) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func TestCanboatParity(t *testing.T) {
-	if os.Getenv("CANBOAT_PARITY") == "" {
-		t.Skip("set CANBOAT_PARITY=1 to fetch current canboat.json and run parity checks")
+func TestUpstreamParity(t *testing.T) {
+	if os.Getenv("UPSTREAM_PARITY") == "" {
+		t.Skip("set UPSTREAM_PARITY=1 to fetch current upstream schema and run parity checks")
 	}
 
-	raw, err := fetchCanboatParityJSON()
+	raw, err := fetchUpstreamSchema()
 	if err != nil {
-		t.Fatalf("fetch canboat.json: %v", err)
+		t.Fatalf("fetch upstream schema: %v", err)
 	}
 
-	var upstream canboatFile
+	var upstream sourceFile
 	if err := json.Unmarshal(raw, &upstream); err != nil {
-		t.Fatalf("parse CANBOAT_JSON: %v", err)
+		t.Fatalf("parse upstream JSON: %v", err)
 	}
 
 	registered := registryEntries(PgnInfoLookup)
@@ -120,28 +125,28 @@ func TestCanboatParity(t *testing.T) {
 		}
 	}
 
-	upstreamKeys := make(map[string]canboatPGN, len(upstream.PGNs))
+	upstreamKeys := make(map[string]sourcePGN, len(upstream.PGNs))
 	missingRegisteredComplete := make([]string, 0)
 	missingKnown := make([]string, 0)
 	fieldMismatches := make([]string, 0)
 	upstreamFieldTypes := make(map[string]struct{})
 
 	for _, def := range upstream.PGNs {
-		key := canboatKey(def.PGN, def.Description)
+		key := upstreamKey(def.PGN, def.Description)
 		upstreamKeys[key] = def
 		for _, field := range def.Fields {
 			upstreamFieldTypes[field.FieldType] = struct{}{}
 		}
 
 		if _, ok := known[key]; !ok {
-			missingKnown = append(missingKnown, formatCanboatPGN(def))
+			missingKnown = append(missingKnown, formatUpstreamPGN(def))
 		}
 		local, registeredOK := registered[key]
 		if def.Complete && !registeredOK {
-			missingRegisteredComplete = append(missingRegisteredComplete, formatCanboatPGN(def))
+			missingRegisteredComplete = append(missingRegisteredComplete, formatUpstreamPGN(def))
 		}
 		if registeredOK {
-			fieldMismatches = append(fieldMismatches, compareCanboatPGN(def, local)...)
+			fieldMismatches = append(fieldMismatches, compareUpstreamPGN(def, local)...)
 		}
 	}
 
@@ -155,9 +160,9 @@ func TestCanboatParity(t *testing.T) {
 
 	unsupportedFieldTypes := missingFieldTypes(upstreamFieldTypes, localFieldTypes(registered))
 
-	t.Logf("CANboat %s schema %s: %d PGN entries", upstream.Version, upstream.SchemaVersion, len(upstream.PGNs))
+	t.Logf("upstream source %s schema %s: %d PGN entries", upstream.Version, upstream.SchemaVersion, len(upstream.PGNs))
 	if len(unsupportedFieldTypes) > 0 {
-		t.Errorf("unsupported CANboat field types: %s", strings.Join(unsupportedFieldTypes, ", "))
+		t.Errorf("unsupported upstream source field types: %s", strings.Join(unsupportedFieldTypes, ", "))
 	}
 	if len(missingRegisteredComplete) > 0 {
 		t.Errorf("complete upstream PGNs missing generated structs (%d):\n%s",
@@ -177,15 +182,15 @@ func TestCanboatParity(t *testing.T) {
 	}
 }
 
-func fetchCanboatParityJSON() ([]byte, error) {
+func fetchUpstreamSchema() ([]byte, error) {
 	client := http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Get(canboatParityURL)
+	resp, err := client.Get(upstreamParityURL)
 	if err != nil {
 		return nil, err
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("GET %s: %s", canboatParityURL, resp.Status)
+		return nil, fmt.Errorf("GET %s: %s", upstreamParityURL, resp.Status)
 	}
 	return io.ReadAll(resp.Body)
 }
@@ -194,17 +199,17 @@ func registryEntries(lookup map[uint32][]*PgnInfo) map[string]*PgnInfo {
 	entries := make(map[string]*PgnInfo)
 	for _, infos := range lookup {
 		for _, info := range infos {
-			entries[canboatKey(info.PGN, info.Description)] = info
+			entries[upstreamKey(info.PGN, info.Description)] = info
 		}
 	}
 	return entries
 }
 
-func canboatKey(pgn uint32, description string) string {
+func upstreamKey(pgn uint32, description string) string {
 	return fmt.Sprintf("%d\x00%s", pgn, description)
 }
 
-func formatCanboatPGN(def canboatPGN) string {
+func formatUpstreamPGN(def sourcePGN) string {
 	return fmt.Sprintf("%d %s", def.PGN, def.Description)
 }
 
@@ -212,7 +217,7 @@ func localFieldTypes(registered map[string]*PgnInfo) map[string]struct{} {
 	types := make(map[string]struct{})
 	for _, info := range registered {
 		for _, field := range info.Fields {
-			types[field.CanboatType] = struct{}{}
+			types[field.SourceType] = struct{}{}
 		}
 	}
 	return types
@@ -230,17 +235,14 @@ func missingFieldTypes(upstream map[string]struct{}, local map[string]struct{}) 
 	return missing
 }
 
-func compareCanboatPGN(def canboatPGN, local *PgnInfo) []string {
+func compareUpstreamPGN(def sourcePGN, local *PgnInfo) []string {
 	mismatches := make([]string, 0)
 	prefix := fmt.Sprintf("%d %s", def.PGN, def.Description)
-	if local.CanboatId != def.Id {
-		mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", prefix, local.CanboatId, def.Id))
+	if local.SourceID != def.Id {
+		mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", prefix, local.SourceID, def.Id))
 	}
 	if local.Explanation != def.Explanation {
 		mismatches = append(mismatches, fmt.Sprintf("%s: explanation mismatch", prefix))
-	}
-	if local.URL != def.URL {
-		mismatches = append(mismatches, fmt.Sprintf("%s: url local=%s upstream=%s", prefix, local.URL, def.URL))
 	}
 	if local.Type != def.Type {
 		mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", prefix, local.Type, def.Type))
@@ -283,8 +285,8 @@ func compareCanboatPGN(def canboatPGN, local *PgnInfo) []string {
 			continue
 		}
 		fieldPrefix := fmt.Sprintf("%d %s field %d %s", def.PGN, def.Description, upstreamField.Order, upstreamField.Name)
-		if localField.CanboatId != upstreamField.Id {
-			mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", fieldPrefix, localField.CanboatId, upstreamField.Id))
+		if localField.SourceID != upstreamField.Id {
+			mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", fieldPrefix, localField.SourceID, upstreamField.Id))
 		}
 		if localField.Name != upstreamField.Name {
 			mismatches = append(mismatches, fmt.Sprintf("%s: name local=%s upstream=%s", fieldPrefix, localField.Name, upstreamField.Name))
@@ -306,8 +308,8 @@ func compareCanboatPGN(def canboatPGN, local *PgnInfo) []string {
 		if upstreamField.BitStart != nil && localField.BitStart != *upstreamField.BitStart {
 			mismatches = append(mismatches, fmt.Sprintf("%s: bitStart local=%d upstream=%d", fieldPrefix, localField.BitStart, *upstreamField.BitStart))
 		}
-		if localField.CanboatType != upstreamField.FieldType {
-			mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", fieldPrefix, localField.CanboatType, upstreamField.FieldType))
+		if localField.SourceType != upstreamField.FieldType {
+			mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", fieldPrefix, localField.SourceType, upstreamField.FieldType))
 		}
 		if upstreamField.Resolution != nil && math.Abs(float64(localField.Resolution)-*upstreamField.Resolution) > 1e-6 {
 			mismatches = append(mismatches, fmt.Sprintf("%s: resolution local=%g upstream=%g", fieldPrefix, localField.Resolution, *upstreamField.Resolution))

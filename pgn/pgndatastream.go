@@ -347,8 +347,7 @@ func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
 	return arr, nil
 }
 
-// readStringStartStopByte method reads a string encoded as described in reference:
-// https://github.com/canboat/canboatjs/blob/b857a503323291b92dd0fe8c41ad6fa0d6bda088/lib/fromPgn.js#L752
+// readStringStartStopByte is retained as a reference for STRING_VAR parsing.
 /* func (s *PGNDataStream) readStringStartStopByte() (string, error) {
 	// guaranteed to be aligned on byte boundary
 	startByte, err := s.getNumberRaw(8)
@@ -375,7 +374,7 @@ func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
 }
 */
 
-// readStringWithLengthAndControl reads a Canboat "STRING_LAU" encoded string.
+// readStringWithLengthAndControl reads a source "STRING_LAU" encoded string.
 // Wire format:
 //   - Byte 0: total length in bytes (includes this byte, the control byte, the string chars, and a terminating zero)
 //   - Byte 1: control/encoding byte (0 = UNICODE/UTF-16, 1 = ASCII) -- currently ignored
@@ -402,7 +401,7 @@ func (s *PGNDataStream) readStringWithLengthAndControl() (string, error) {
 	return string(arr), nil
 }
 
-// readStringWithLength reads a Canboat "STRING_LZ" encoded string.
+// readStringWithLength reads a source "STRING_LZ" encoded string.
 // Wire format:
 //   - Byte 0: length of the string data in bytes (does NOT include this length byte itself)
 //   - Bytes 1..N: the string character data (may contain a trailing NUL)
@@ -471,8 +470,8 @@ func (s *PGNDataStream) readFixedString(bitLength uint16) (string, error) {
 //  4. OR the extracted bits into the result at the correct output position (outBitOffset).
 //  5. Advance both the stream cursor and the output position.
 //
-// Reference: loosely based on canboat/canboat pgn.c, but corrected for true LSB-first
-// byte ordering as observed on real CAN bus traffic.
+// Reference: loosely based on a public NMEA 2000 parser, but corrected for true
+// LSB-first byte ordering as observed on real CAN bus traffic.
 func (s *PGNDataStream) getNumberRaw(bitLength uint16) (uint64, error) {
 	var ret uint64
 

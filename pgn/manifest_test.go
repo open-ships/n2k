@@ -233,7 +233,7 @@ func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 	}
 	return pgnManifestEntry{
 		ID:             info.Id,
-		SourceID:       info.CanboatId,
+		SourceID:       info.SourceID,
 		PGN:            info.PGN,
 		Description:    info.Description,
 		Implementation: "typed",
@@ -309,7 +309,7 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 			BitLength:      field.BitLength,
 			BitOffset:      field.BitOffset,
 			VariableLength: field.BitLengthVariable,
-			FieldType:      field.CanboatType,
+			FieldType:      field.SourceType,
 			GoType:         field.GolangType,
 			Resolution:     field.Resolution,
 			Signed:         field.Signed,
