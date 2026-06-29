@@ -26,8 +26,6 @@ type PgnInfo struct {
 	Description string `json:"description"`
 	// Explanation is the source schema's longer PGN description, when present.
 	Explanation string `json:"explanation,omitempty"`
-	// URL is the source schema's reference URL for this PGN, when present.
-	URL string `json:"url,omitempty"`
 	// Fast indicates whether this PGN uses the NMEA 2000 fast-packet protocol.
 	// Fast-packet PGNs can carry more than 8 bytes by spanning multiple CAN frames;
 	// single-frame PGNs are limited to 8 bytes.

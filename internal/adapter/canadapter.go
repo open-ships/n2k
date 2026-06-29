@@ -85,7 +85,7 @@ func (c *CANAdapter) HandleMessage(f *can.Frame) {
 
 	// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
 
-	// If the packet already has parse errors (e.g., PGN not found in registry),
+	// If the packet already has parse errors (e.g., PGN not found in metadata),
 	// forward it immediately -- it will become an UnknownPGN downstream.
 	if len(packet.ParseErrors) > 0 {
 		c.packetReady(packet)

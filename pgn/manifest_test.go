@@ -77,7 +77,7 @@ type pgnManifestStructField struct {
 	JSONName string
 }
 
-func TestPGNManifestMatchesRegistry(t *testing.T) {
+func TestPGNManifestMatchesMetadata(t *testing.T) {
 	expectedManifest := buildExpectedManifest(t)
 	if os.Getenv("UPDATE_PGN_MANIFEST") == "1" {
 		raw, err := json.MarshalIndent(expectedManifest, "", "  ")
@@ -159,9 +159,9 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	categories := make(map[string]*pgnManifestCategory)
 	var categoryOrder []string
 	var typedVariants int
-	registryInfos := manifestRegistryInfos()
+	metadataInfos := manifestMetadataInfos()
 
-	for _, info := range registryInfos {
+	for _, info := range metadataInfos {
 		uniquePGNs[info.PGN] = struct{}{}
 		entry := manifestEntry(t, info)
 		typedVariants++
@@ -199,7 +199,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 		},
 		Counts: pgnManifestCounts{
 			Categories:          len(manifestCategories),
-			SupportedVariants:   len(registryInfos),
+			SupportedVariants:   len(metadataInfos),
 			UniqueSupportedPgns: len(uniquePGNs),
 			TypedVariants:       typedVariants,
 			UniqueTypedPgns:     len(uniqueTypedPGNs),
@@ -208,7 +208,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	}
 }
 
-func manifestRegistryInfos() []*PgnInfo {
+func manifestMetadataInfos() []*PgnInfo {
 	var infos []*PgnInfo
 	for _, pgnInfos := range PgnInfoLookup {
 		infos = append(infos, pgnInfos...)

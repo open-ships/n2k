@@ -31,7 +31,6 @@ type sourcePGN struct {
 	Id                           string        `json:"Id"`
 	Description                  string        `json:"Description"`
 	Explanation                  string        `json:"Explanation"`
-	URL                          string        `json:"URL"`
 	Type                         string        `json:"Type"`
 	Complete                     bool          `json:"Complete"`
 	Fallback                     bool          `json:"Fallback"`
@@ -113,10 +112,10 @@ func TestUpstreamParity(t *testing.T) {
 		t.Fatalf("parse upstream JSON: %v", err)
 	}
 
-	registered := registryEntries(PgnInfoLookup)
-	unseen := registryEntries(UnseenLookup)
-	known := make(map[string]*PgnInfo, len(registered)+len(unseen))
-	for key, info := range registered {
+	metadata := metadataEntries(PgnInfoLookup)
+	unseen := metadataEntries(UnseenLookup)
+	known := make(map[string]*PgnInfo, len(metadata)+len(unseen))
+	for key, info := range metadata {
 		known[key] = info
 	}
 	for key, info := range unseen {
@@ -126,7 +125,7 @@ func TestUpstreamParity(t *testing.T) {
 	}
 
 	upstreamKeys := make(map[string]sourcePGN, len(upstream.PGNs))
-	missingRegisteredComplete := make([]string, 0)
+	missingMetadataComplete := make([]string, 0)
 	missingKnown := make([]string, 0)
 	fieldMismatches := make([]string, 0)
 	upstreamFieldTypes := make(map[string]struct{})
@@ -141,40 +140,40 @@ func TestUpstreamParity(t *testing.T) {
 		if _, ok := known[key]; !ok {
 			missingKnown = append(missingKnown, formatUpstreamPGN(def))
 		}
-		local, registeredOK := registered[key]
-		if def.Complete && !registeredOK {
-			missingRegisteredComplete = append(missingRegisteredComplete, formatUpstreamPGN(def))
+		local, metadataOK := metadata[key]
+		if def.Complete && !metadataOK {
+			missingMetadataComplete = append(missingMetadataComplete, formatUpstreamPGN(def))
 		}
-		if registeredOK {
+		if metadataOK {
 			fieldMismatches = append(fieldMismatches, compareUpstreamPGN(def, local)...)
 		}
 	}
 
-	staleRegistered := make([]string, 0)
-	for key, local := range registered {
+	staleMetadata := make([]string, 0)
+	for key, local := range metadata {
 		if _, ok := upstreamKeys[key]; !ok {
-			staleRegistered = append(staleRegistered, fmt.Sprintf("%d %s", local.PGN, local.Description))
+			staleMetadata = append(staleMetadata, fmt.Sprintf("%d %s", local.PGN, local.Description))
 		}
 	}
-	sort.Strings(staleRegistered)
+	sort.Strings(staleMetadata)
 
-	unsupportedFieldTypes := missingFieldTypes(upstreamFieldTypes, localFieldTypes(registered))
+	unsupportedFieldTypes := missingFieldTypes(upstreamFieldTypes, localFieldTypes(metadata))
 
 	t.Logf("upstream source %s schema %s: %d PGN entries", upstream.Version, upstream.SchemaVersion, len(upstream.PGNs))
 	if len(unsupportedFieldTypes) > 0 {
 		t.Errorf("unsupported upstream source field types: %s", strings.Join(unsupportedFieldTypes, ", "))
 	}
-	if len(missingRegisteredComplete) > 0 {
+	if len(missingMetadataComplete) > 0 {
 		t.Errorf("complete upstream PGNs missing generated structs (%d):\n%s",
-			len(missingRegisteredComplete), sampleLines(missingRegisteredComplete, 25))
+			len(missingMetadataComplete), sampleLines(missingMetadataComplete, 25))
 	}
 	if len(missingKnown) > 0 {
 		t.Errorf("upstream PGNs missing from generated metadata (%d):\n%s",
 			len(missingKnown), sampleLines(missingKnown, 25))
 	}
-	if len(staleRegistered) > 0 {
+	if len(staleMetadata) > 0 {
 		t.Errorf("generated PGNs not present in current upstream source by PGN+description (%d):\n%s",
-			len(staleRegistered), sampleLines(staleRegistered, 25))
+			len(staleMetadata), sampleLines(staleMetadata, 25))
 	}
 	if len(fieldMismatches) > 0 {
 		t.Errorf("generated PGNs with field/layout mismatches (%d):\n%s",
@@ -195,7 +194,7 @@ func fetchUpstreamSchema() ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
-func registryEntries(lookup map[uint32][]*PgnInfo) map[string]*PgnInfo {
+func metadataEntries(lookup map[uint32][]*PgnInfo) map[string]*PgnInfo {
 	entries := make(map[string]*PgnInfo)
 	for _, infos := range lookup {
 		for _, info := range infos {
@@ -213,9 +212,9 @@ func formatUpstreamPGN(def sourcePGN) string {
 	return fmt.Sprintf("%d %s", def.PGN, def.Description)
 }
 
-func localFieldTypes(registered map[string]*PgnInfo) map[string]struct{} {
+func localFieldTypes(metadata map[string]*PgnInfo) map[string]struct{} {
 	types := make(map[string]struct{})
-	for _, info := range registered {
+	for _, info := range metadata {
 		for _, field := range info.Fields {
 			types[field.SourceType] = struct{}{}
 		}

@@ -54,19 +54,19 @@ test-cover:
 fmt:
     gofmt -w .
 
-# regenerate pgn/manifest.json from the initialized runtime PGN registry
+# regenerate pgn/manifest.json from the initialized runtime PGN metadata
 pgn-manifest:
-    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
 # sync generated upstream source metadata and regenerate the runtime PGN manifest
 pgn-sync:
     go run ./cmd/pgngen
-    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
 # check whether generated upstream source metadata and runtime PGN manifest are current
 pgn-sync-check:
     go run ./cmd/pgngen --check
-    go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
 # run go vet
 vet:

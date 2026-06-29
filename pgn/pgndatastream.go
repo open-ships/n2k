@@ -347,33 +347,6 @@ func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
 	return arr, nil
 }
 
-// readStringStartStopByte is retained as a reference for STRING_VAR parsing.
-/* func (s *PGNDataStream) readStringStartStopByte() (string, error) {
-	// guaranteed to be aligned on byte boundary
-	startByte, err := s.getNumberRaw(8)
-	if err != nil {
-		return "", err
-	}
-	// TO FIX: 0x0 or 0x1 indicates an empty string
-	// This format "STRING_VAR" not used by existing PGN definitions.
-	if startByte != 2 {
-		return "", fmt.Errorf("[Wrong start byte:%08X]", startByte)
-	}
-	arr := make([]uint8, 0, 64)
-	for {
-		b, err := s.getNumberRaw(8)
-		if err != nil {
-			return "", err
-		}
-		if b == 1 {
-			// Stop byte
-			return string(arr), nil
-		}
-		arr = append(arr, uint8(b))
-	}
-}
-*/
-
 // readStringWithLengthAndControl reads a source "STRING_LAU" encoded string.
 // Wire format:
 //   - Byte 0: total length in bytes (includes this byte, the control byte, the string chars, and a terminating zero)

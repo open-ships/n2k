@@ -91,7 +91,7 @@ type Packet struct {
 //   - info: MessageInfo containing PGN number, source, priority, destination, and timestamp.
 //   - data: Raw payload bytes from the CAN frame.
 //
-// Returns a *Packet. If the PGN is unknown (not in the registry), ParseErrors will contain
+// Returns a *Packet. If the PGN is unknown (not in metadata), ParseErrors will contain
 // a "no data for pgn" error but the packet is still returned for downstream handling as
 // an UnknownPGN.
 func NewPacket(info pgn.MessageInfo, data []byte) *Packet {

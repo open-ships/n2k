@@ -11,15 +11,13 @@ import (
 type SourceDefinition struct {
 	PGN                          uint32
 	StructName                   string
-	SourceID                    string
+	SourceID                     string
 	Description                  string
 	Explanation                  string
-	URL                          string
 	Type                         string
 	Complete                     bool
 	Fallback                     bool
 	Missing                      []string
-	FieldCount                   int
 	Length                       *int
 	MinLength                    *int
 	Priority                     *uint8
@@ -36,7 +34,7 @@ type SourceDefinition struct {
 
 type SourceFieldDefinition struct {
 	Order                               int
-	SourceID                           string
+	SourceID                            string
 	Name                                string
 	Description                         string
 	BitLength                           *uint16
@@ -110,12 +108,11 @@ func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
 	}
 
 	return &PgnInfo{
-		SourceID:                    def.SourceID,
+		SourceID:                     def.SourceID,
 		Id:                           firstNonEmpty(def.StructName, exportedID(def.SourceID, def.Description)),
 		PGN:                          def.PGN,
 		Description:                  def.Description,
 		Explanation:                  def.Explanation,
-		URL:                          def.URL,
 		Fast:                         def.Type == "Fast",
 		Type:                         def.Type,
 		Complete:                     def.Complete,
@@ -155,14 +152,14 @@ func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
 		resolution = float32(*field.Resolution)
 	}
 	return &FieldDescriptor{
-		SourceID:                           field.SourceID,
+		SourceID:                            field.SourceID,
 		Name:                                field.Name,
 		Description:                         field.Description,
 		BitLength:                           bitLength,
 		BitLengthField:                      field.BitLengthField,
 		BitOffset:                           bitOffset,
 		BitLengthVariable:                   field.BitLengthVariable || field.BitLength == nil,
-		SourceType:                         field.FieldType,
+		SourceType:                          field.FieldType,
 		BitStart:                            bitStart,
 		PhysicalQuantity:                    field.PhysicalQuantity,
 		LookupEnumeration:                   field.LookupEnumeration,

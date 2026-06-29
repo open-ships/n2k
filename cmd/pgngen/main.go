@@ -37,12 +37,10 @@ type sourcePGN struct {
 	Id                           string        `json:"Id"`
 	Description                  string        `json:"Description"`
 	Explanation                  string        `json:"Explanation"`
-	URL                          string        `json:"URL"`
 	Type                         string        `json:"Type"`
 	Complete                     bool          `json:"Complete"`
 	Fallback                     bool          `json:"Fallback"`
 	Missing                      []string      `json:"Missing"`
-	FieldCount                   int           `json:"FieldCount"`
 	Length                       *int          `json:"Length"`
 	MinLength                    *int          `json:"MinLength"`
 	Priority                     *uint8        `json:"Priority"`
@@ -608,8 +606,8 @@ func containsAny(value string, needles ...string) bool {
 }
 
 func writePGN(b *bytes.Buffer, p sourcePGN, typeName string) {
-	fmt.Fprintf(b, "{PGN:%d, StructName:%q, SourceID:%q, Description:%q, Type:%q, Complete:%t, Fallback:%t, FieldCount:%d",
-		p.PGN, typeName, p.Id, p.Description, p.Type, p.Complete, p.Fallback, p.FieldCount)
+	fmt.Fprintf(b, "{PGN:%d, StructName:%q, SourceID:%q, Description:%q, Type:%q, Complete:%t, Fallback:%t",
+		p.PGN, typeName, p.Id, p.Description, p.Type, p.Complete, p.Fallback)
 	if p.Explanation != "" {
 		fmt.Fprintf(b, ", Explanation:%q", p.Explanation)
 	}
