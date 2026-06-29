@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnNavicoWirelessBatteryStatus struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -16,10 +18,114 @@ func (m *PgnNavicoWirelessBatteryStatus) PGNNumber() uint32               { retu
 func (m *PgnNavicoWirelessBatteryStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoWirelessBatteryStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65309, "Navico: Wireless Battery Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Wireless Battery Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Wireless Battery Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BatteryStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BatteryChargeStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65309, "Navico: Wireless Battery Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BatteryStatus != nil {
+		writer.writeUInt64(m.BatteryStatus, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BatteryChargeStatus != nil {
+		writer.writeUInt64(m.BatteryChargeStatus, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoWirelessSignalStatus struct {
@@ -34,10 +140,99 @@ func (m *PgnNavicoWirelessSignalStatus) PGNNumber() uint32               { retur
 func (m *PgnNavicoWirelessSignalStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoWirelessSignalStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65312, "Navico: Wireless Signal Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Wireless Signal Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Wireless Signal Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SignalStrength = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65312, "Navico: Wireless Signal Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Unknown != nil {
+		writer.writeUInt64(m.Unknown, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SignalStrength != nil {
+		writer.writeUInt64(m.SignalStrength, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoDepthQuality struct {
@@ -52,10 +247,100 @@ func (m *PgnNavicoDepthQuality) PGNNumber() uint32               { return 65313 
 func (m *PgnNavicoDepthQuality) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoDepthQuality) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoDepthQuality) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65313, "Navico: Depth Quality"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Depth Quality")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Depth Quality")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.DepthQuality = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoDepthQuality) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65313, "Navico: Depth Quality"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DepthQuality != nil {
+		writer.writeInt64(m.DepthQuality, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	writer.writeReservedBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoProprietary2 struct {
@@ -69,10 +354,75 @@ func (m *PgnNavicoProprietary2) PGNNumber() uint32               { return 65317 
 func (m *PgnNavicoProprietary2) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoProprietary2) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoProprietary2) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65317, "Navico: Proprietary 2"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary 2")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary 2")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoProprietary2) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65317, "Navico: Proprietary 2"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoNaviopSwitchStatus struct {
@@ -86,10 +436,75 @@ func (m *PgnNavicoNaviopSwitchStatus) PGNNumber() uint32               { return 
 func (m *PgnNavicoNaviopSwitchStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoNaviopSwitchStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoNaviopSwitchStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65440, "Navico: Naviop Switch Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Naviop Switch Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Naviop Switch Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoNaviopSwitchStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65440, "Navico: Naviop Switch Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoNaviopSwitchControl struct {
@@ -103,10 +518,75 @@ func (m *PgnNavicoNaviopSwitchControl) PGNNumber() uint32               { return
 func (m *PgnNavicoNaviopSwitchControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoNaviopSwitchControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoNaviopSwitchControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65441, "Navico: Naviop Switch Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Naviop Switch Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Naviop Switch Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoNaviopSwitchControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65441, "Navico: Naviop Switch Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUnknown struct {
@@ -124,10 +604,139 @@ func (m *PgnNavicoUnknown) PGNNumber() uint32               { return 130817 }
 func (m *PgnNavicoUnknown) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUnknown) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUnknown) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130817, "Navico: Unknown"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Unknown")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Unknown")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUnknown) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130817, "Navico: Unknown"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoAsciiData struct {
@@ -142,10 +751,90 @@ func (m *PgnNavicoAsciiData) PGNNumber() uint32               { return 130821 }
 func (m *PgnNavicoAsciiData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoAsciiData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoAsciiData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130821, "Navico: ASCII Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: ASCII Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: ASCII Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(1840)
+		if err != nil {
+			return err
+		}
+		m.Message = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoAsciiData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130821, "Navico: ASCII Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.Message, 1840)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseBulkReport2 struct {
@@ -164,10 +853,164 @@ func (m *PgnNavicoUdbDatabaseBulkReport2) PGNNumber() uint32               { ret
 func (m *PgnNavicoUdbDatabaseBulkReport2) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseBulkReport2) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseBulkReport2) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 2"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 2")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 2")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 2 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 2")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1728)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseBulkReport2) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 2"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(2, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 1728)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseBulkReport3 struct {
@@ -186,10 +1029,164 @@ func (m *PgnNavicoUdbDatabaseBulkReport3) PGNNumber() uint32               { ret
 func (m *PgnNavicoUdbDatabaseBulkReport3) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseBulkReport3) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseBulkReport3) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 3"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 3")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 3")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 3 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 3")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1728)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseBulkReport3) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 3"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(3, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 1728)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseBulkReport4 struct {
@@ -208,10 +1205,164 @@ func (m *PgnNavicoUdbDatabaseBulkReport4) PGNNumber() uint32               { ret
 func (m *PgnNavicoUdbDatabaseBulkReport4) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseBulkReport4) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseBulkReport4) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 4"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 4")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 4")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Bulk Report 4")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1728)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseBulkReport4) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Bulk Report 4"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(4, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 1728)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseObjectDump struct {
@@ -236,10 +1387,253 @@ func (m *PgnNavicoUdbDatabaseObjectDump) PGNNumber() uint32               { retu
 func (m *PgnNavicoUdbDatabaseObjectDump) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseObjectDump) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseObjectDump) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Object Dump"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Dump")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Dump")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 6 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Dump")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ObjectValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.Sub = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Token = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Class = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DataType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseObjectDump) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Object Dump"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(6, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ObjectValue != nil {
+		writer.writeUInt64(m.ObjectValue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.Sub, 24)
+	if m.Token != nil {
+		writer.writeUInt64(m.Token, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Class != nil {
+		writer.writeUInt64(m.Class, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DataType != nil {
+		writer.writeUInt64(m.DataType, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseObjectPing struct {
@@ -257,10 +1651,153 @@ func (m *PgnNavicoUdbDatabaseObjectPing) PGNNumber() uint32               { retu
 func (m *PgnNavicoUdbDatabaseObjectPing) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseObjectPing) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseObjectPing) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Object Ping"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Ping")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Ping")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 0 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Object Ping")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseObjectPing) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Object Ping"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(0, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseShortReport5 struct {
@@ -279,10 +1816,164 @@ func (m *PgnNavicoUdbDatabaseShortReport5) PGNNumber() uint32               { re
 func (m *PgnNavicoUdbDatabaseShortReport5) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseShortReport5) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseShortReport5) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Short Report 5"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 5")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 5")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 5 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 5")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(32)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseShortReport5) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Short Report 5"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(5, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseShortReport7 struct {
@@ -301,10 +1992,164 @@ func (m *PgnNavicoUdbDatabaseShortReport7) PGNNumber() uint32               { re
 func (m *PgnNavicoUdbDatabaseShortReport7) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseShortReport7) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseShortReport7) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Short Report 7"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 7")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 7")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 7 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Short Report 7")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Section = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(32)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseShortReport7) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Short Report 7"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(7, 6)
+	}
+	writer.writeReservedBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Section != nil {
+		writer.writeUInt64(m.Section, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoUdbDatabaseSourceReport struct {
@@ -327,10 +2172,229 @@ func (m *PgnNavicoUdbDatabaseSourceReport) PGNNumber() uint32               { re
 func (m *PgnNavicoUdbDatabaseSourceReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoUdbDatabaseSourceReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoUdbDatabaseSourceReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Source Report"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Source Report")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Source Report")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 1 {
+		return fmt.Errorf("match failed for %s", "Navico: UDB Database, Source Report")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Marker = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceSettingId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ObjectValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.SourceSelectionMaster = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.Sub = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Token = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoUdbDatabaseSourceReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Navico: UDB Database, Source Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Marker != nil {
+		writer.writeUInt64(m.Marker, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 6)
+	} else {
+		writer.writeLookupField(1, 6)
+	}
+	writer.writeSpareBits(2)
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SourceSettingId != nil {
+		writer.writeUInt64(m.SourceSettingId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ObjectValue != nil {
+		writer.writeUInt64(m.ObjectValue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.SourceSelectionMaster != nil {
+		writer.writeUInt64(m.SourceSelectionMaster, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(3)
+	writer.writeBinaryData(m.Sub, 24)
+	if m.Token != nil {
+		writer.writeUInt64(m.Token, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoAlarm struct {
@@ -351,10 +2415,184 @@ func (m *PgnNavicoAlarm) PGNNumber() uint32               { return 130825 }
 func (m *PgnNavicoAlarm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoAlarm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130825, "Navico: Alarm"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Alarm")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Alarm")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.RecordId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.AlarmState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.ActionFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.AlarmSeverity = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoAlarm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130825, "Navico: Alarm"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.RecordId != nil {
+		writer.writeUInt64(m.RecordId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmType != nil {
+		writer.writeUInt64(m.AlarmType, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AlarmId != nil {
+		writer.writeUInt64(m.AlarmId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AlarmState != nil {
+		writer.writeUInt64(m.AlarmState, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	if m.ActionFlag != nil {
+		writer.writeUInt64(m.ActionFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AlarmSeverity != nil {
+		writer.writeUInt64(m.AlarmSeverity, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoAsciiIdentifier struct {
@@ -368,10 +2606,75 @@ func (m *PgnNavicoAsciiIdentifier) PGNNumber() uint32               { return 130
 func (m *PgnNavicoAsciiIdentifier) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoAsciiIdentifier) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoAsciiIdentifier) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130847, "Navico: ASCII Identifier"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: ASCII Identifier")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: ASCII Identifier")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Identifier = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoAsciiIdentifier) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130847, "Navico: ASCII Identifier"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeStringWithLength(m.Identifier)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoProprietaryFp struct {
@@ -384,10 +2687,64 @@ func (m *PgnNavicoProprietaryFp) PGNNumber() uint32               { return 13084
 func (m *PgnNavicoProprietaryFp) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoProprietaryFp) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoProprietaryFp) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130849, "Navico: Proprietary FP"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary FP")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary FP")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoProprietaryFp) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130849, "Navico: Proprietary FP"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnNavicoProprietary2Fp struct {
@@ -400,8 +2757,62 @@ func (m *PgnNavicoProprietary2Fp) PGNNumber() uint32               { return 1308
 func (m *PgnNavicoProprietary2Fp) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnNavicoProprietary2Fp) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnNavicoProprietary2Fp) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130852, "Navico: Proprietary 2 FP"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary 2 FP")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Navico: Proprietary 2 FP")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnNavicoProprietary2Fp) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130852, "Navico: Proprietary 2 FP"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }

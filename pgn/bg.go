@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnBGProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -14,10 +16,75 @@ func (m *PgnBGProprietary) PGNNumber() uint32               { return 65330 }
 func (m *PgnBGProprietary) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBGProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBGProprietary) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65330, "B&G: Proprietary"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 381 {
+		return fmt.Errorf("match failed for %s", "B&G: Proprietary")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "B&G: Proprietary")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBGProprietary) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65330, "B&G: Proprietary"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(381, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBGKeyValueData struct {
@@ -33,10 +100,108 @@ func (m *PgnBGKeyValueData) PGNNumber() uint32               { return 130824 }
 func (m *PgnBGKeyValueData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBGKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBGKeyValueData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130824, "B&G: key-value data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 381 {
+		return fmt.Errorf("match failed for %s", "B&G: key-value data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "B&G: key-value data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(12)
+		if err != nil {
+			return err
+		}
+		m.Key = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBGKeyValueData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130824, "B&G: key-value data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(381, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Key != nil {
+		writer.writeUInt64(m.Key, 12)
+	} else {
+		writer.setErr(writer.putNullUnsigned(12))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBGUserAndRemoteRename struct {
@@ -54,8 +219,134 @@ func (m *PgnBGUserAndRemoteRename) PGNNumber() uint32               { return 130
 func (m *PgnBGUserAndRemoteRename) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBGUserAndRemoteRename) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBGUserAndRemoteRename) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130833, "B&G: User and Remote rename"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 381 {
+		return fmt.Errorf("match failed for %s", "B&G: User and Remote rename")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "B&G: User and Remote rename")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(12)
+		if err != nil {
+			return err
+		}
+		m.DataType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Decimals = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(64)
+		if err != nil {
+			return err
+		}
+		m.ShortName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(128)
+		if err != nil {
+			return err
+		}
+		m.LongName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBGUserAndRemoteRename) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130833, "B&G: User and Remote rename"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(381, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.DataType != nil {
+		writer.writeUInt64(m.DataType, 12)
+	} else {
+		writer.setErr(writer.putNullUnsigned(12))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(8)
+	if m.Decimals != nil {
+		writer.writeUInt64(m.Decimals, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.ShortName, 64)
+	writer.writeFixedString(m.LongName, 128)
+	return writer.Bytes(), writer.Err()
 }

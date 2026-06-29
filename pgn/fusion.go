@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnFusionMediaControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -16,10 +18,118 @@ func (m *PgnFusionMediaControl) PGNNumber() uint32               { return 126720
 func (m *PgnFusionMediaControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMediaControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMediaControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Media Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media Control")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 3 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMediaControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Media Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(3, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionRequestStatus struct {
@@ -33,10 +143,88 @@ func (m *PgnFusionRequestStatus) PGNNumber() uint32               { return 12672
 func (m *PgnFusionRequestStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionRequestStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionRequestStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Request Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Request Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Request Status")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 1 {
+		return fmt.Errorf("match failed for %s", "Fusion: Request Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionRequestStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Request Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(1, 16)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetAllVolumes struct {
@@ -54,10 +242,148 @@ func (m *PgnFusionSetAllVolumes) PGNNumber() uint32               { return 12672
 func (m *PgnFusionSetAllVolumes) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetAllVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetAllVolumes) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Set All Volumes"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set All Volumes")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set All Volumes")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 25 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set All Volumes")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetAllVolumes) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Set All Volumes"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(25, 16)
+	}
+	if m.Zone1 != nil {
+		writer.writeUInt64(m.Zone1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone2 != nil {
+		writer.writeUInt64(m.Zone2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone3 != nil {
+		writer.writeUInt64(m.Zone3, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone4 != nil {
+		writer.writeUInt64(m.Zone4, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetMute struct {
@@ -72,10 +398,103 @@ func (m *PgnFusionSetMute) PGNNumber() uint32               { return 126720 }
 func (m *PgnFusionSetMute) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetMute) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetMute) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Mute"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Mute")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Mute")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 17 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Mute")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetMute) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Mute"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(17, 16)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetPower struct {
@@ -90,10 +509,103 @@ func (m *PgnFusionSetPower) PGNNumber() uint32               { return 126720 }
 func (m *PgnFusionSetPower) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetPower) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetPower) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Power "), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Power ")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Power ")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 28 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Power ")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Power = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetPower) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Power "), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(28, 16)
+	}
+	if m.Power != nil {
+		writer.writeUInt64(m.Power, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetSource struct {
@@ -108,10 +620,103 @@ func (m *PgnFusionSetSource) PGNNumber() uint32               { return 126720 }
 func (m *PgnFusionSetSource) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetSource) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetSource) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Source"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Source")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Source")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 2 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Source")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetSource) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Source"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(2, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetZoneVolume struct {
@@ -127,10 +732,118 @@ func (m *PgnFusionSetZoneVolume) PGNNumber() uint32               { return 12672
 func (m *PgnFusionSetZoneVolume) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetZoneVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetZoneVolume) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Zone Volume"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Zone Volume")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Zone Volume")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 24 {
+		return fmt.Errorf("match failed for %s", "Fusion: Set Zone Volume")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Volume = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetZoneVolume) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Set Zone Volume"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(24, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Volume != nil {
+		writer.writeUInt64(m.Volume, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusControl struct {
@@ -147,10 +860,133 @@ func (m *PgnFusionSiriusControl) PGNNumber() uint32               { return 12672
 func (m *PgnFusionSiriusControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Fusion: Sirius Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sirius Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sirius Control")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 30 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sirius Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Data = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Fusion: Sirius Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 16)
+	} else {
+		writer.writeLookupField(30, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Data != nil {
+		writer.writeUInt64(m.Data, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionAlbumName struct {
@@ -167,10 +1003,129 @@ func (m *PgnFusionAlbumName) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionAlbumName) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionAlbumName) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionAlbumName) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Album Name"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Album Name")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Album Name")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32775 {
+		return fmt.Errorf("match failed for %s", "Fusion: Album Name")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Index = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Album = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionAlbumName) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Album Name"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32775, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Index != nil {
+		writer.writeUInt64(m.Index, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Album)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionArtistName struct {
@@ -187,10 +1142,129 @@ func (m *PgnFusionArtistName) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionArtistName) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionArtistName) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionArtistName) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Artist Name"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Artist Name")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Artist Name")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32774 {
+		return fmt.Errorf("match failed for %s", "Fusion: Artist Name")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Index = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Artist = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionArtistName) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Artist Name"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32774, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Index != nil {
+		writer.writeUInt64(m.Index, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Artist)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionAuxGain struct {
@@ -206,10 +1280,118 @@ func (m *PgnFusionAuxGain) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionAuxGain) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionAuxGain) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionAuxGain) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Aux Gain"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Aux Gain")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Aux Gain")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32787 {
+		return fmt.Errorf("match failed for %s", "Fusion: Aux Gain")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Gain = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionAuxGain) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Aux Gain"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32787, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Gain != nil {
+		writer.writeUInt64(m.Gain, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionBalance struct {
@@ -225,10 +1407,118 @@ func (m *PgnFusionBalance) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionBalance) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionBalance) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionBalance) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Balance"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Balance")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Balance")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32792 {
+		return fmt.Errorf("match failed for %s", "Fusion: Balance")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionBalance) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Balance"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32792, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionCapabilities struct {
@@ -247,10 +1537,163 @@ func (m *PgnFusionCapabilities) PGNNumber() uint32               { return 130820
 func (m *PgnFusionCapabilities) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionCapabilities) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionCapabilities) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Capabilities"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Capabilities")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Capabilities")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32798 {
+		return fmt.Errorf("match failed for %s", "Fusion: Capabilities")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Zone1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Zone2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Zone3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Zone4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Global = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionCapabilities) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Capabilities"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32798, 16)
+	}
+	if m.Zone1 != nil {
+		writer.writeUInt64(m.Zone1, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Zone2 != nil {
+		writer.writeUInt64(m.Zone2, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Zone3 != nil {
+		writer.writeUInt64(m.Zone3, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Zone4 != nil {
+		writer.writeUInt64(m.Zone4, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Global != nil {
+		writer.writeUInt64(m.Global, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionDeviceName struct {
@@ -265,10 +1708,99 @@ func (m *PgnFusionDeviceName) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionDeviceName) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionDeviceName) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionDeviceName) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Device Name"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Device Name")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Device Name")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32801 {
+		return fmt.Errorf("match failed for %s", "Fusion: Device Name")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionDeviceName) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Device Name"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32801, 16)
+	}
+	writer.writeStringWithLength(m.Name)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionEq struct {
@@ -286,10 +1818,151 @@ func (m *PgnFusionEq) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionEq) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionEq) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionEq) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: EQ"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: EQ")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: EQ")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32795 {
+		return fmt.Errorf("match failed for %s", "Fusion: EQ")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.Bass = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.Mid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.Treble = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionEq) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: EQ"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32795, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Bass != nil {
+		writer.writeInt64(m.Bass, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	if m.Mid != nil {
+		writer.writeInt64(m.Mid, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	if m.Treble != nil {
+		writer.writeInt64(m.Treble, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionIgnitionSwitchState struct {
@@ -304,10 +1977,103 @@ func (m *PgnFusionIgnitionSwitchState) PGNNumber() uint32               { return
 func (m *PgnFusionIgnitionSwitchState) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionIgnitionSwitchState) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionIgnitionSwitchState) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Ignition Switch State"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Ignition Switch State")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Ignition Switch State")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32859 {
+		return fmt.Errorf("match failed for %s", "Fusion: Ignition Switch State")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.State = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionIgnitionSwitchState) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Ignition Switch State"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32859, 16)
+	}
+	if m.State != nil {
+		writer.writeUInt64(m.State, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionLineLevelControl struct {
@@ -323,10 +2089,118 @@ func (m *PgnFusionLineLevelControl) PGNNumber() uint32               { return 13
 func (m *PgnFusionLineLevelControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionLineLevelControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionLineLevelControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Line Level Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Line Level Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Line Level Control")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32799 {
+		return fmt.Errorf("match failed for %s", "Fusion: Line Level Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionLineLevelControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Line Level Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32799, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionLowPassFilter struct {
@@ -342,10 +2216,118 @@ func (m *PgnFusionLowPassFilter) PGNNumber() uint32               { return 13082
 func (m *PgnFusionLowPassFilter) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionLowPassFilter) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionLowPassFilter) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Low Pass Filter"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Low Pass Filter")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Low Pass Filter")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32793 {
+		return fmt.Errorf("match failed for %s", "Fusion: Low Pass Filter")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Filter = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionLowPassFilter) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Low Pass Filter"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32793, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Filter != nil {
+		writer.writeUInt64(m.Filter, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMarineTuner struct {
@@ -363,10 +2345,144 @@ func (m *PgnFusionMarineTuner) PGNNumber() uint32               { return 130820 
 func (m *PgnFusionMarineTuner) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMarineTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMarineTuner) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: MARINE_TUNER"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: MARINE_TUNER")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: MARINE_TUNER")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32780 {
+		return fmt.Errorf("match failed for %s", "Fusion: MARINE_TUNER")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SignalStrength = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMarineTuner) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: MARINE_TUNER"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32780, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SignalStrength != nil {
+		writer.writeUInt64(m.SignalStrength, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Name)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMarineScanMode struct {
@@ -382,10 +2498,118 @@ func (m *PgnFusionMarineScanMode) PGNNumber() uint32               { return 1308
 func (m *PgnFusionMarineScanMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMarineScanMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMarineScanMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Marine Scan Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Scan Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Scan Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32782 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Scan Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Scan = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMarineScanMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Marine Scan Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32782, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Scan != nil {
+		writer.writeUInt64(m.Scan, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMarineSquelch struct {
@@ -401,10 +2625,118 @@ func (m *PgnFusionMarineSquelch) PGNNumber() uint32               { return 13082
 func (m *PgnFusionMarineSquelch) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMarineSquelch) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMarineSquelch) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Marine Squelch"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Squelch")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Squelch")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32781 {
+		return fmt.Errorf("match failed for %s", "Fusion: Marine Squelch")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Squelch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMarineSquelch) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Marine Squelch"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32781, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Squelch != nil {
+		writer.writeUInt64(m.Squelch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMedia struct {
@@ -424,10 +2756,178 @@ func (m *PgnFusionMedia) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMedia) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMedia) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMedia) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Media"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32772 {
+		return fmt.Errorf("match failed for %s", "Fusion: Media")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Flags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Track = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TrackCount = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.PositionInTrack = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMedia) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Media"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32772, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Flags != nil {
+		writer.writeUInt64(m.Flags, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Track != nil {
+		writer.writeUInt64(m.Track, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.TrackCount != nil {
+		writer.writeUInt64(m.TrackCount, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.PositionInTrack != nil {
+		writer.writeUInt64(m.PositionInTrack, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMenuItem struct {
@@ -446,10 +2946,159 @@ func (m *PgnFusionMenuItem) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMenuItem) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMenuItem) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Menu Item"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Item")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Item")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32785 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Item")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.ItemIndex = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.LockId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMenuItem) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Menu Item"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32785, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ItemIndex != nil {
+		writer.writeUInt64(m.ItemIndex, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Flags != nil {
+		writer.writeUInt64(m.Flags, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.LockId != nil {
+		writer.writeUInt64(m.LockId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMenuLockId struct {
@@ -465,10 +3114,118 @@ func (m *PgnFusionMenuLockId) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMenuLockId) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMenuLockId) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMenuLockId) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Menu Lock Id"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Lock Id")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Lock Id")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32786 {
+		return fmt.Errorf("match failed for %s", "Fusion: Menu Lock Id")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.LockId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMenuLockId) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Menu Lock Id"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32786, 16)
+	}
+	if m.LockId != nil {
+		writer.writeUInt64(m.LockId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Flags != nil {
+		writer.writeUInt64(m.Flags, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMono struct {
@@ -484,10 +3241,118 @@ func (m *PgnFusionMono) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMono) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMono) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMono) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Mono"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mono")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mono")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32862 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mono")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Enabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMono) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Mono"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32862, 16)
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Enabled != nil {
+		writer.writeUInt64(m.Enabled, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMultiroom struct {
@@ -506,10 +3371,163 @@ func (m *PgnFusionMultiroom) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMultiroom) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMultiroom) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMultiroom) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Multiroom"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32824 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Enabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.IpAddress1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.IpAddress2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.IpAddress3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.IpAddress4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMultiroom) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Multiroom"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32824, 16)
+	}
+	if m.Enabled != nil {
+		writer.writeUInt64(m.Enabled, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.IpAddress1 != nil {
+		writer.writeUInt64(m.IpAddress1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.IpAddress2 != nil {
+		writer.writeUInt64(m.IpAddress2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.IpAddress3 != nil {
+		writer.writeUInt64(m.IpAddress3, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.IpAddress4 != nil {
+		writer.writeUInt64(m.IpAddress4, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMultiroomStatus struct {
@@ -524,10 +3542,103 @@ func (m *PgnFusionMultiroomStatus) PGNNumber() uint32               { return 130
 func (m *PgnFusionMultiroomStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMultiroomStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMultiroomStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Multiroom Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom Status")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32825 {
+		return fmt.Errorf("match failed for %s", "Fusion: Multiroom Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Available = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMultiroomStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Multiroom Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32825, 16)
+	}
+	if m.Available != nil {
+		writer.writeUInt64(m.Available, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionMute struct {
@@ -542,10 +3653,103 @@ func (m *PgnFusionMute) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionMute) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionMute) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionMute) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Mute"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mute")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mute")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32791 {
+		return fmt.Errorf("match failed for %s", "Fusion: Mute")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mute = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionMute) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Mute"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32791, 16)
+	}
+	if m.Mute != nil {
+		writer.writeUInt64(m.Mute, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionPowerState struct {
@@ -560,10 +3764,103 @@ func (m *PgnFusionPowerState) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionPowerState) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionPowerState) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionPowerState) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Power State"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Power State")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Power State")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32800 {
+		return fmt.Errorf("match failed for %s", "Fusion: Power State")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.State = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionPowerState) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Power State"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32800, 16)
+	}
+	if m.State != nil {
+		writer.writeUInt64(m.State, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionProcessingBypass struct {
@@ -578,10 +3875,103 @@ func (m *PgnFusionProcessingBypass) PGNNumber() uint32               { return 13
 func (m *PgnFusionProcessingBypass) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionProcessingBypass) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionProcessingBypass) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Processing Bypass"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Processing Bypass")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Processing Bypass")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32832 {
+		return fmt.Errorf("match failed for %s", "Fusion: Processing Bypass")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Bypass = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionProcessingBypass) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Processing Bypass"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32832, 16)
+	}
+	if m.Bypass != nil {
+		writer.writeUInt64(m.Bypass, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionRdsData struct {
@@ -599,10 +3989,144 @@ func (m *PgnFusionRdsData) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionRdsData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionRdsData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionRdsData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: RDS Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: RDS Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: RDS Data")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32850 {
+		return fmt.Errorf("match failed for %s", "Fusion: RDS Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.RdsType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProgrammeType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Rds = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionRdsData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: RDS Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32850, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.RdsType != nil {
+		writer.writeUInt64(m.RdsType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ProgrammeType != nil {
+		writer.writeUInt64(m.ProgrammeType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Rds)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSetting struct {
@@ -618,10 +4142,118 @@ func (m *PgnFusionSetting) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionSetting) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSetting) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSetting) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Setting"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Setting")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Setting")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32788 {
+		return fmt.Errorf("match failed for %s", "Fusion: Setting")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Id = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSetting) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Setting"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32788, 16)
+	}
+	if m.Id != nil {
+		writer.writeUInt64(m.Id, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSettings struct {
@@ -638,10 +4270,133 @@ func (m *PgnFusionSettings) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionSettings) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSettings) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSettings) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Settings"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Settings")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Settings")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32789 {
+		return fmt.Errorf("match failed for %s", "Fusion: Settings")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Count = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Id = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSettings) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Settings"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32789, 16)
+	}
+	if m.Count != nil {
+		writer.writeUInt64(m.Count, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Id != nil {
+		writer.writeUInt64(m.Id, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxm struct {
@@ -660,10 +4415,163 @@ func (m *PgnFusionSiriusxm) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionSiriusxm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32802 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ComState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Alert = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AdvisoryChannel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TuningMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32802, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ComState != nil {
+		writer.writeUInt64(m.ComState, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Alert != nil {
+		writer.writeUInt64(m.Alert, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AdvisoryChannel != nil {
+		writer.writeUInt64(m.AdvisoryChannel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.TuningMode != nil {
+		writer.writeUInt64(m.TuningMode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmArtist struct {
@@ -680,10 +4588,129 @@ func (m *PgnFusionSiriusxmArtist) PGNNumber() uint32               { return 1308
 func (m *PgnFusionSiriusxmArtist) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmArtist) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Artist"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Artist")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Artist")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32806 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Artist")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Artist = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmArtist) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Artist"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32806, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLength(m.Artist)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmCategory struct {
@@ -700,10 +4727,129 @@ func (m *PgnFusionSiriusxmCategory) PGNNumber() uint32               { return 13
 func (m *PgnFusionSiriusxmCategory) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmCategory) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmCategory) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Category"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Category")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Category")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32808 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Category")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmCategory) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Category"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32808, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLength(m.Name)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmChannel struct {
@@ -720,10 +4866,129 @@ func (m *PgnFusionSiriusxmChannel) PGNNumber() uint32               { return 130
 func (m *PgnFusionSiriusxmChannel) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmChannel) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmChannel) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Channel"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Channel")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Channel")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32804 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Channel")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ChannelNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Channel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmChannel) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Channel"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32804, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ChannelNumber != nil {
+		writer.writeUInt64(m.ChannelNumber, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLength(m.Channel)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmContentInfo struct {
@@ -740,10 +5005,129 @@ func (m *PgnFusionSiriusxmContentInfo) PGNNumber() uint32               { return
 func (m *PgnFusionSiriusxmContentInfo) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmContentInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmContentInfo) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Content Info"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Content Info")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Content Info")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32807 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Content Info")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Genre = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmContentInfo) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Content Info"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32807, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLength(m.Genre)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmPresets struct {
@@ -760,10 +5144,132 @@ func (m *PgnFusionSiriusxmPresets) PGNNumber() uint32               { return 130
 func (m *PgnFusionSiriusxmPresets) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmPresets) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmPresets) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Presets"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Presets")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Presets")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32812 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Presets")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Count = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Values = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmPresets) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Presets"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32812, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Count != nil {
+		writer.writeUInt64(m.Count, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	{
+		bitLength := uint16(len(m.Values) * 8)
+		writer.writeBinaryData(m.Values, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmSignal struct {
@@ -779,10 +5285,118 @@ func (m *PgnFusionSiriusxmSignal) PGNNumber() uint32               { return 1308
 func (m *PgnFusionSiriusxmSignal) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmSignal) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmSignal) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Signal"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Signal")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Signal")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32809 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Signal")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Signal = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmSignal) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Signal"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32809, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Signal != nil {
+		writer.writeUInt64(m.Signal, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSiriusxmTitle struct {
@@ -799,10 +5413,129 @@ func (m *PgnFusionSiriusxmTitle) PGNNumber() uint32               { return 13082
 func (m *PgnFusionSiriusxmTitle) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSiriusxmTitle) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSiriusxmTitle) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Title"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Title")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Title")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32805 {
+		return fmt.Errorf("match failed for %s", "Fusion: SiriusXM Title")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Title = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSiriusxmTitle) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: SiriusXM Title"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32805, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLength(m.Title)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSource struct {
@@ -821,10 +5554,159 @@ func (m *PgnFusionSource) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionSource) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSource) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSource) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Source"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32770 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CurrentSourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Source = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSource) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Source"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32770, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CurrentSourceId != nil {
+		writer.writeUInt64(m.CurrentSourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SourceType != nil {
+		writer.writeUInt64(m.SourceType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Flags != nil {
+		writer.writeUInt64(m.Flags, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Source)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSourceCount struct {
@@ -839,10 +5721,103 @@ func (m *PgnFusionSourceCount) PGNNumber() uint32               { return 130820 
 func (m *PgnFusionSourceCount) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSourceCount) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSourceCount) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Source Count"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source Count")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source Count")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32771 {
+		return fmt.Errorf("match failed for %s", "Fusion: Source Count")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceCount = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSourceCount) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Source Count"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32771, 16)
+	}
+	if m.SourceCount != nil {
+		writer.writeUInt64(m.SourceCount, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSpeedVolumeCurrentSpeed struct {
@@ -859,10 +5834,133 @@ func (m *PgnFusionSpeedVolumeCurrentSpeed) PGNNumber() uint32               { re
 func (m *PgnFusionSpeedVolumeCurrentSpeed) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSpeedVolumeCurrentSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSpeedVolumeCurrentSpeed) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Speed Volume Current Speed"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Speed Volume Current Speed")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Speed Volume Current Speed")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32863 {
+		return fmt.Errorf("match failed for %s", "Fusion: Speed Volume Current Speed")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Speed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Enabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSpeedVolumeCurrentSpeed) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Speed Volume Current Speed"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32863, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Speed != nil {
+		writer.writeUInt64(m.Speed, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Enabled != nil {
+		writer.writeUInt64(m.Enabled, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionSublevels struct {
@@ -880,10 +5978,148 @@ func (m *PgnFusionSublevels) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionSublevels) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionSublevels) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionSublevels) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Sublevels"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sublevels")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sublevels")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32794 {
+		return fmt.Errorf("match failed for %s", "Fusion: Sublevels")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionSublevels) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Sublevels"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32794, 16)
+	}
+	if m.Zone1 != nil {
+		writer.writeUInt64(m.Zone1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone2 != nil {
+		writer.writeUInt64(m.Zone2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone3 != nil {
+		writer.writeUInt64(m.Zone3, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone4 != nil {
+		writer.writeUInt64(m.Zone4, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionTrackName struct {
@@ -900,10 +6136,129 @@ func (m *PgnFusionTrackName) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionTrackName) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionTrackName) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionTrackName) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Track Name"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Name")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Name")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32773 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Name")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Index = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Track = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionTrackName) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Track Name"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32773, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Index != nil {
+		writer.writeUInt64(m.Index, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Track)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionTrackPosition struct {
@@ -919,10 +6274,118 @@ func (m *PgnFusionTrackPosition) PGNNumber() uint32               { return 13082
 func (m *PgnFusionTrackPosition) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionTrackPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionTrackPosition) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Track Position"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Position")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Position")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32777 {
+		return fmt.Errorf("match failed for %s", "Fusion: Track Position")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(24)
+		if err != nil {
+			return err
+		}
+		m.Progress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionTrackPosition) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Track Position"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32777, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Progress != nil {
+		writer.writeUInt64(m.Progress, 24)
+	} else {
+		writer.setErr(writer.putNullUnsigned(24))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionTuner struct {
@@ -941,10 +6404,159 @@ func (m *PgnFusionTuner) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionTuner) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionTuner) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Tuner"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Tuner")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Tuner")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32779 {
+		return fmt.Errorf("match failed for %s", "Fusion: Tuner")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Scanning = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Frequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SignalStrength = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Track = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionTuner) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Tuner"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32779, 16)
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Scanning != nil {
+		writer.writeUInt64(m.Scanning, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Frequency != nil {
+		writer.writeUInt64(m.Frequency, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.SignalStrength != nil {
+		writer.writeUInt64(m.SignalStrength, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Track)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionUsbRepeatStatus struct {
@@ -960,10 +6572,127 @@ func (m *PgnFusionUsbRepeatStatus) PGNNumber() uint32               { return 130
 func (m *PgnFusionUsbRepeatStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionUsbRepeatStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionUsbRepeatStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: USB Repeat Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: USB Repeat Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: USB Repeat Status")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32788 {
+		return fmt.Errorf("match failed for %s", "Fusion: USB Repeat Status")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(32)
+	match3, err := matchStream3.getNumberRaw(32)
+	if err != nil {
+		return err
+	}
+	if match3 != 9 {
+		return fmt.Errorf("match failed for %s", "Fusion: USB Repeat Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Id = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionUsbRepeatStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: USB Repeat Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32788, 16)
+	}
+	if m.Id != nil {
+		writer.writeUInt64(m.Id, 32)
+	} else {
+		writer.writeLookupField(9, 32)
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionVersions struct {
@@ -982,10 +6711,163 @@ func (m *PgnFusionVersions) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionVersions) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionVersions) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionVersions) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Versions"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Versions")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Versions")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32769 {
+		return fmt.Errorf("match failed for %s", "Fusion: Versions")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.HwVersionMajor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.HwVersionMinor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SwVersionMajor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SwVersionMinor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BuildNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionVersions) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Versions"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32769, 16)
+	}
+	if m.HwVersionMajor != nil {
+		writer.writeUInt64(m.HwVersionMajor, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.HwVersionMinor != nil {
+		writer.writeUInt64(m.HwVersionMinor, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.SwVersionMajor != nil {
+		writer.writeUInt64(m.SwVersionMajor, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SwVersionMinor != nil {
+		writer.writeUInt64(m.SwVersionMinor, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BuildNumber != nil {
+		writer.writeUInt64(m.BuildNumber, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionVolumeLimits struct {
@@ -1003,10 +6885,148 @@ func (m *PgnFusionVolumeLimits) PGNNumber() uint32               { return 130820
 func (m *PgnFusionVolumeLimits) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionVolumeLimits) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionVolumeLimits) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Volume Limits"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volume Limits")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volume Limits")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32796 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volume Limits")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone1VolumeLimit = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone2VolumeLimit = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone3VolumeLimit = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone4VolumeLimit = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionVolumeLimits) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Volume Limits"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32796, 16)
+	}
+	if m.Zone1VolumeLimit != nil {
+		writer.writeUInt64(m.Zone1VolumeLimit, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone2VolumeLimit != nil {
+		writer.writeUInt64(m.Zone2VolumeLimit, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone3VolumeLimit != nil {
+		writer.writeUInt64(m.Zone3VolumeLimit, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone4VolumeLimit != nil {
+		writer.writeUInt64(m.Zone4VolumeLimit, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionVolumes struct {
@@ -1024,10 +7044,148 @@ func (m *PgnFusionVolumes) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionVolumes) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionVolumes) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Volumes"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volumes")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volumes")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32797 {
+		return fmt.Errorf("match failed for %s", "Fusion: Volumes")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionVolumes) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Volumes"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32797, 16)
+	}
+	if m.Zone1 != nil {
+		writer.writeUInt64(m.Zone1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone2 != nil {
+		writer.writeUInt64(m.Zone2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone3 != nil {
+		writer.writeUInt64(m.Zone3, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone4 != nil {
+		writer.writeUInt64(m.Zone4, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFusionZoneName struct {
@@ -1043,8 +7201,112 @@ func (m *PgnFusionZoneName) PGNNumber() uint32               { return 130820 }
 func (m *PgnFusionZoneName) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFusionZoneName) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFusionZoneName) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Fusion: Zone Name"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 419 {
+		return fmt.Errorf("match failed for %s", "Fusion: Zone Name")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Fusion: Zone Name")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 32813 {
+		return fmt.Errorf("match failed for %s", "Fusion: Zone Name")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Number = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFusionZoneName) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Fusion: Zone Name"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(419, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 16)
+	} else {
+		writer.writeLookupField(32813, 16)
+	}
+	if m.Number != nil {
+		writer.writeUInt64(m.Number, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Name)
+	return writer.Bytes(), writer.Err()
 }

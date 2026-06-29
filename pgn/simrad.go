@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnSimradTextMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -20,10 +22,179 @@ func (m *PgnSimradTextMessage) PGNNumber() uint32               { return 130816 
 func (m *PgnSimradTextMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimradTextMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimradTextMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "Simrad: Text Message"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simrad: Text Message")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simrad: Text Message")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 50 {
+		return fmt.Errorf("match failed for %s", "Simrad: Text Message")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Prio = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(256)
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimradTextMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "Simrad: Text Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(50, 8)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Prio != nil {
+		writer.writeUInt64(m.Prio, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.Text, 256)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimradEngineData struct {
@@ -36,8 +207,62 @@ func (m *PgnSimradEngineData) PGNNumber() uint32               { return 130861 }
 func (m *PgnSimradEngineData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimradEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimradEngineData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130861, "Simrad: Engine Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simrad: Engine Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simrad: Engine Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimradEngineData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130861, "Simrad: Engine Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }

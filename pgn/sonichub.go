@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnSonichubAmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -20,10 +22,184 @@ func (m *PgnSonichubAmRadio) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubAmRadio) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubAmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubAmRadio) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: AM Radio"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: AM Radio")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: AM Radio")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: AM Radio")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Frequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.NoiseLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.SignalLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubAmRadio) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: AM Radio"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(4, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Frequency != nil {
+		writer.writeUInt64(m.Frequency, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.NoiseLevel != nil {
+		writer.writeUInt64(m.NoiseLevel, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SignalLevel != nil {
+		writer.writeUInt64(m.SignalLevel, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(2)
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubAlbum struct {
@@ -40,10 +216,134 @@ func (m *PgnSonichubAlbum) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubAlbum) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubAlbum) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubAlbum) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Album"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Album")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Album")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 16 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Album")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubAlbum) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Album"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(16, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubArtist struct {
@@ -60,10 +360,134 @@ func (m *PgnSonichubArtist) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubArtist) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubArtist) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Artist"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Artist")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Artist")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 15 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Artist")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubArtist) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Artist"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(15, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubControl struct {
@@ -79,10 +503,123 @@ func (m *PgnSonichubControl) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Control")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 9 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(9, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubFmRadio struct {
@@ -102,10 +639,184 @@ func (m *PgnSonichubFmRadio) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubFmRadio) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubFmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubFmRadio) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: FM Radio"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: FM Radio")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: FM Radio")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 12 {
+		return fmt.Errorf("match failed for %s", "SonicHub: FM Radio")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Frequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.NoiseLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.SignalLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubFmRadio) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: FM Radio"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(12, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Frequency != nil {
+		writer.writeUInt64(m.Frequency, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.NoiseLevel != nil {
+		writer.writeUInt64(m.NoiseLevel, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SignalLevel != nil {
+		writer.writeUInt64(m.SignalLevel, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(2)
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubInit1 struct {
@@ -120,10 +831,108 @@ func (m *PgnSonichubInit1) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubInit1) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubInit1) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubInit1) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #1"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #1")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #1")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 25 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #1")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubInit1) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #1"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(25, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubInit2 struct {
@@ -140,10 +949,138 @@ func (m *PgnSonichubInit2) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubInit2) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubInit2) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubInit2) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #2"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #2")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #2")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 1 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #2")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubInit2) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #2"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(1, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubInit3 struct {
@@ -160,10 +1097,138 @@ func (m *PgnSonichubInit3) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubInit3) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubInit3) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubInit3) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #3"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #3")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #3")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 50 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Init #3")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubInit3) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Init #3"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(50, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubMaxVolume struct {
@@ -180,10 +1245,138 @@ func (m *PgnSonichubMaxVolume) PGNNumber() uint32               { return 130816 
 func (m *PgnSonichubMaxVolume) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubMaxVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubMaxVolume) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Max Volume"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Max Volume")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Max Volume")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 23 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Max Volume")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Level = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubMaxVolume) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Max Volume"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(23, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Level != nil {
+		writer.writeUInt64(m.Level, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubMenuItem struct {
@@ -203,10 +1396,179 @@ func (m *PgnSonichubMenuItem) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubMenuItem) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubMenuItem) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Menu Item"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Menu Item")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Menu Item")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 19 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Menu Item")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubMenuItem) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Menu Item"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(19, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubPlaylist struct {
@@ -227,10 +1589,198 @@ func (m *PgnSonichubPlaylist) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubPlaylist) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubPlaylist) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubPlaylist) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Playlist"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Playlist")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Playlist")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 13 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Playlist")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.CurrentTrack = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Tracks = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.PositionInTrack = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubPlaylist) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Playlist"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(13, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CurrentTrack != nil {
+		writer.writeUInt64(m.CurrentTrack, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Tracks != nil {
+		writer.writeUInt64(m.Tracks, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.PositionInTrack != nil {
+		writer.writeUInt64(m.PositionInTrack, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubPosition struct {
@@ -246,10 +1796,123 @@ func (m *PgnSonichubPosition) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubPosition) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubPosition) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Position"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Position")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Position")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 48 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Position")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Position = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubPosition) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Position"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(48, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Position != nil {
+		writer.writeUInt64(m.Position, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubSource struct {
@@ -265,10 +1928,123 @@ func (m *PgnSonichubSource) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubSource) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubSource) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubSource) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Source"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 6 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Source = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubSource) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Source"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(6, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Source != nil {
+		writer.writeUInt64(m.Source, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubSourceList struct {
@@ -286,10 +2062,149 @@ func (m *PgnSonichubSourceList) PGNNumber() uint32               { return 130816
 func (m *PgnSonichubSourceList) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubSourceList) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubSourceList) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Source List"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source List")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source List")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 8 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Source List")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubSourceList) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Source List"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(8, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubTrack struct {
@@ -306,10 +2221,134 @@ func (m *PgnSonichubTrack) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubTrack) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubTrack) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubTrack) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Track"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Track")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Track")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 14 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Track")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Item = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLength()
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubTrack) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Track"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(14, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Item != nil {
+		writer.writeUInt64(m.Item, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeStringWithLength(m.Text)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubVolume struct {
@@ -326,10 +2365,138 @@ func (m *PgnSonichubVolume) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubVolume) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubVolume) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Volume"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Volume")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Volume")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 24 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Volume")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Level = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubVolume) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Volume"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(24, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Level != nil {
+		writer.writeUInt64(m.Level, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubZoneInfo struct {
@@ -345,10 +2512,123 @@ func (m *PgnSonichubZoneInfo) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubZoneInfo) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubZoneInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubZoneInfo) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Zone info"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zone info")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zone info")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 5 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zone info")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zone = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubZoneInfo) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Zone info"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zone != nil {
+		writer.writeUInt64(m.Zone, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSonichubZones struct {
@@ -364,8 +2644,121 @@ func (m *PgnSonichubZones) PGNNumber() uint32               { return 130816 }
 func (m *PgnSonichubZones) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSonichubZones) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSonichubZones) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "SonicHub: Zones"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 275 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zones")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zones")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 20 {
+		return fmt.Errorf("match failed for %s", "SonicHub: Zones")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Zones = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSonichubZones) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "SonicHub: Zones"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(275, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(20, 8)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Zones != nil {
+		writer.writeUInt64(m.Zones, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }

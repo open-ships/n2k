@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnWebastoStatus2 struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -19,10 +21,154 @@ func (m *PgnWebastoStatus2) PGNNumber() uint32               { return 130818 }
 func (m *PgnWebastoStatus2) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnWebastoStatus2) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnWebastoStatus2) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130818, "Webasto: Status 2"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 540 {
+		return fmt.Errorf("match failed for %s", "Webasto: Status 2")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Webasto: Status 2")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CanAddress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DeviceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SystemError = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SystemStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FreshAirBlowerSpeed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.VSeriesOutput = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnWebastoStatus2) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130818, "Webasto: Status 2"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(540, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.CanAddress != nil {
+		writer.writeUInt64(m.CanAddress, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DeviceId != nil {
+		writer.writeUInt64(m.DeviceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SystemError != nil {
+		writer.writeUInt64(m.SystemError, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.SystemStatus != nil {
+		writer.writeUInt64(m.SystemStatus, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.FreshAirBlowerSpeed != nil {
+		writer.writeUInt64(m.FreshAirBlowerSpeed, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.VSeriesOutput != nil {
+		writer.writeUInt64(m.VSeriesOutput, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnWebastoHvacCommand struct {
@@ -43,8 +189,192 @@ func (m *PgnWebastoHvacCommand) PGNNumber() uint32               { return 130819
 func (m *PgnWebastoHvacCommand) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnWebastoHvacCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnWebastoHvacCommand) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130819, "Webasto: HVAC Command"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 540 {
+		return fmt.Errorf("match failed for %s", "Webasto: HVAC Command")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Webasto: HVAC Command")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CanAddress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BlowerSpeed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.UnitOnOff = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SetTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.EcoMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.FunctionalMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Compressor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mask = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnWebastoHvacCommand) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130819, "Webasto: HVAC Command"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(540, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.CanAddress != nil {
+		writer.writeUInt64(m.CanAddress, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BlowerSpeed != nil {
+		writer.writeUInt64(m.BlowerSpeed, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.UnitOnOff != nil {
+		writer.writeUInt64(m.UnitOnOff, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.SetTemperature != nil {
+		writer.writeUInt64(m.SetTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.EcoMode != nil {
+		writer.writeUInt64(m.EcoMode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.FunctionalMode != nil {
+		writer.writeUInt64(m.FunctionalMode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Compressor != nil {
+		writer.writeUInt64(m.Compressor, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(2)
+	if m.Mask != nil {
+		writer.writeUInt64(m.Mask, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }

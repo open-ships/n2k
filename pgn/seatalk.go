@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnSeatalkWirelessKeypadControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -16,10 +18,114 @@ func (m *PgnSeatalkWirelessKeypadControl) PGNNumber() uint32               { ret
 func (m *PgnSeatalkWirelessKeypadControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkWirelessKeypadControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkWirelessKeypadControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(61184, "Seatalk: Wireless Keypad Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Wireless Keypad Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Wireless Keypad Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.PID = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Variant = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BeepControl = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkWirelessKeypadControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(61184, "Seatalk: Wireless Keypad Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.PID != nil {
+		writer.writeUInt64(m.PID, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Variant != nil {
+		writer.writeUInt64(m.Variant, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BeepControl != nil {
+		writer.writeUInt64(m.BeepControl, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkWirelessKeypadLightControl struct {
@@ -36,10 +142,138 @@ func (m *PgnSeatalkWirelessKeypadLightControl) PGNNumber() uint32               
 func (m *PgnSeatalkWirelessKeypadLightControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkWirelessKeypadLightControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkWirelessKeypadLightControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(61184, "Seatalk: Wireless Keypad Light Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Wireless Keypad Light Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Wireless Keypad Light Control")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 1 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Wireless Keypad Light Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Variant = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WirelessSetting = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WiredSetting = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkWirelessKeypadLightControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(61184, "Seatalk: Wireless Keypad Light Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(1, 8)
+	}
+	if m.Variant != nil {
+		writer.writeUInt64(m.Variant, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.WirelessSetting != nil {
+		writer.writeUInt64(m.WirelessSetting, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.WiredSetting != nil {
+		writer.writeUInt64(m.WiredSetting, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkAlarm struct {
@@ -57,10 +291,135 @@ func (m *PgnSeatalkAlarm) PGNNumber() uint32               { return 65288 }
 func (m *PgnSeatalkAlarm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkAlarm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65288, "Seatalk: Alarm"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Alarm")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Alarm")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AlarmStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AlarmId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AlarmGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmPriority = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkAlarm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65288, "Seatalk: Alarm"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmStatus != nil {
+		writer.writeUInt64(m.AlarmStatus, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmId != nil {
+		writer.writeUInt64(m.AlarmId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmGroup != nil {
+		writer.writeUInt64(m.AlarmGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.AlarmPriority, 16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkPilotWindDatum struct {
@@ -75,10 +434,99 @@ func (m *PgnSeatalkPilotWindDatum) PGNNumber() uint32               { return 653
 func (m *PgnSeatalkPilotWindDatum) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkPilotWindDatum) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkPilotWindDatum) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65345, "Seatalk: Pilot Wind Datum"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Wind Datum")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Wind Datum")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.WindDatum = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.RollingAverageWindAngle = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkPilotWindDatum) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65345, "Seatalk: Pilot Wind Datum"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.WindDatum != nil {
+		writer.writeUInt64(m.WindDatum, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.RollingAverageWindAngle != nil {
+		writer.writeUInt64(m.RollingAverageWindAngle, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkPilotHeading struct {
@@ -94,10 +542,114 @@ func (m *PgnSeatalkPilotHeading) PGNNumber() uint32               { return 65359
 func (m *PgnSeatalkPilotHeading) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkPilotHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkPilotHeading) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65359, "Seatalk: Pilot Heading"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Heading")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Heading")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.HeadingTrue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.HeadingMagnetic = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkPilotHeading) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65359, "Seatalk: Pilot Heading"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.HeadingTrue != nil {
+		writer.writeUInt64(m.HeadingTrue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.HeadingMagnetic != nil {
+		writer.writeUInt64(m.HeadingMagnetic, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkPilotLockedHeading struct {
@@ -113,10 +665,114 @@ func (m *PgnSeatalkPilotLockedHeading) PGNNumber() uint32               { return
 func (m *PgnSeatalkPilotLockedHeading) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkPilotLockedHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65360, "Seatalk: Pilot Locked Heading"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Locked Heading")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Locked Heading")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TargetHeadingTrue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TargetHeadingMagnetic = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65360, "Seatalk: Pilot Locked Heading"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TargetHeadingTrue != nil {
+		writer.writeUInt64(m.TargetHeadingTrue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.TargetHeadingMagnetic != nil {
+		writer.writeUInt64(m.TargetHeadingMagnetic, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkSilenceAlarm struct {
@@ -131,10 +787,99 @@ func (m *PgnSeatalkSilenceAlarm) PGNNumber() uint32               { return 65361
 func (m *PgnSeatalkSilenceAlarm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkSilenceAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkSilenceAlarm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65361, "Seatalk: Silence Alarm"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Silence Alarm")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Silence Alarm")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AlarmId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AlarmGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkSilenceAlarm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65361, "Seatalk: Silence Alarm"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.AlarmId != nil {
+		writer.writeUInt64(m.AlarmId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmGroup != nil {
+		writer.writeUInt64(m.AlarmGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkKeypadMessage struct {
@@ -153,10 +898,164 @@ func (m *PgnSeatalkKeypadMessage) PGNNumber() uint32               { return 6537
 func (m *PgnSeatalkKeypadMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkKeypadMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkKeypadMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65371, "Seatalk: Keypad Message"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Keypad Message")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Keypad Message")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FirstKey = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SecondKey = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.FirstKeyState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SecondKeyState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EncoderPosition = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkKeypadMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65371, "Seatalk: Keypad Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FirstKey != nil {
+		writer.writeUInt64(m.FirstKey, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SecondKey != nil {
+		writer.writeUInt64(m.SecondKey, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FirstKeyState != nil {
+		writer.writeUInt64(m.FirstKeyState, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SecondKeyState != nil {
+		writer.writeUInt64(m.SecondKeyState, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(4)
+	if m.EncoderPosition != nil {
+		writer.writeUInt64(m.EncoderPosition, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkKeypadHeartbeat struct {
@@ -172,10 +1071,114 @@ func (m *PgnSeatalkKeypadHeartbeat) PGNNumber() uint32               { return 65
 func (m *PgnSeatalkKeypadHeartbeat) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkKeypadHeartbeat) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkKeypadHeartbeat) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65374, "SeaTalk: Keypad Heartbeat"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Keypad Heartbeat")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Keypad Heartbeat")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Variant = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkKeypadHeartbeat) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65374, "SeaTalk: Keypad Heartbeat"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Variant != nil {
+		writer.writeUInt64(m.Variant, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkPilotMode struct {
@@ -191,10 +1194,106 @@ func (m *PgnSeatalkPilotMode) PGNNumber() uint32               { return 65379 }
 func (m *PgnSeatalkPilotMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkPilotMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65379, "Seatalk: Pilot Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PilotMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(16)
+		if err != nil {
+			return err
+		}
+		m.SubMode = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.PilotModeData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkPilotMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65379, "Seatalk: Pilot Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.PilotMode != nil {
+		writer.writeUInt64(m.PilotMode, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.SubMode, 16)
+	writer.writeBinaryData(m.PilotModeData, 8)
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1DeviceIdentification struct {
@@ -211,10 +1310,156 @@ func (m *PgnSeatalk1DeviceIdentification) PGNNumber() uint32               { ret
 func (m *PgnSeatalk1DeviceIdentification) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1DeviceIdentification) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1DeviceIdentification) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Device Identification"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Device Identification")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Device Identification")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 240 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Device Identification")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 129 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Device Identification")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 144 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Device Identification")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Seatalk1Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Device = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1DeviceIdentification) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Device Identification"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(240, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(129, 8)
+	}
+	if m.Seatalk1Command != nil {
+		writer.writeUInt64(m.Seatalk1Command, 8)
+	} else {
+		writer.writeLookupField(144, 8)
+	}
+	writer.writeReservedBits(8)
+	if m.Device != nil {
+		writer.writeUInt64(m.Device, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1DisplayBrightness struct {
@@ -234,10 +1479,192 @@ func (m *PgnSeatalk1DisplayBrightness) PGNNumber() uint32               { return
 func (m *PgnSeatalk1DisplayBrightness) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1DisplayBrightness) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Display Brightness"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Brightness")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Brightness")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 140 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Brightness")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 12 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Brightness")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(48)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 0 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Brightness")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Group = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Shared = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Brightness = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown2 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1DisplayBrightness) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Display Brightness"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(140, 8)
+	}
+	if m.Command1 != nil {
+		writer.writeUInt64(m.Command1, 8)
+	} else {
+		writer.writeLookupField(12, 8)
+	}
+	if m.Group != nil {
+		writer.writeUInt64(m.Group, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Shared != nil {
+		writer.writeUInt64(m.Shared, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(0, 8)
+	}
+	if m.Brightness != nil {
+		writer.writeUInt64(m.Brightness, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Unknown2, 8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1DisplayColor struct {
@@ -257,10 +1684,188 @@ func (m *PgnSeatalk1DisplayColor) PGNNumber() uint32               { return 1267
 func (m *PgnSeatalk1DisplayColor) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1DisplayColor) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1DisplayColor) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Display Color"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Color")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Color")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 140 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Color")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 12 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Color")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(48)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 1 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Display Color")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Group = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown1 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Color = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown2 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1DisplayColor) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Display Color"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(140, 8)
+	}
+	if m.Command1 != nil {
+		writer.writeUInt64(m.Command1, 8)
+	} else {
+		writer.writeLookupField(12, 8)
+	}
+	if m.Group != nil {
+		writer.writeUInt64(m.Group, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Unknown1, 8)
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(1, 8)
+	}
+	if m.Color != nil {
+		writer.writeUInt64(m.Color, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Unknown2, 8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1Keystroke struct {
@@ -280,10 +1885,192 @@ func (m *PgnSeatalk1Keystroke) PGNNumber() uint32               { return 126720 
 func (m *PgnSeatalk1Keystroke) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1Keystroke) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1Keystroke) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Keystroke"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Keystroke")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Keystroke")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 240 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Keystroke")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 129 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Keystroke")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 134 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Keystroke")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Seatalk1Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Device = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Key = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Keyinverted = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(112)
+		if err != nil {
+			return err
+		}
+		m.UnknownData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1Keystroke) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Keystroke"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(240, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(129, 8)
+	}
+	if m.Seatalk1Command != nil {
+		writer.writeUInt64(m.Seatalk1Command, 8)
+	} else {
+		writer.writeLookupField(134, 8)
+	}
+	if m.Device != nil {
+		writer.writeUInt64(m.Device, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Key != nil {
+		writer.writeUInt64(m.Key, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Keyinverted != nil {
+		writer.writeUInt64(m.Keyinverted, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.UnknownData, 112)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1PilotHullType struct {
@@ -301,10 +2088,149 @@ func (m *PgnSeatalk1PilotHullType) PGNNumber() uint32               { return 126
 func (m *PgnSeatalk1PilotHullType) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1PilotHullType) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1PilotHullType) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Pilot Hull Type"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Hull Type")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Hull Type")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 108 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Hull Type")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 22 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Hull Type")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.HullType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(64)
+		if err != nil {
+			return err
+		}
+		m.Unknown2 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1PilotHullType) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Pilot Hull Type"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(108, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(22, 8)
+	}
+	writer.writeBinaryData(m.Unknown, 8)
+	if m.HullType != nil {
+		writer.writeUInt64(m.HullType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Unknown2, 64)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalk1PilotMode struct {
@@ -325,10 +2251,199 @@ func (m *PgnSeatalk1PilotMode) PGNNumber() uint32               { return 126720 
 func (m *PgnSeatalk1PilotMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalk1PilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalk1PilotMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Pilot Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 240 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Mode")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 129 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Mode")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 132 {
+		return fmt.Errorf("match failed for %s", "Seatalk1: Pilot Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Seatalk1Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.Unknown1 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.PilotMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SubMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.PilotModeData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(80)
+		if err != nil {
+			return err
+		}
+		m.Unknown2 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalk1PilotMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk1: Pilot Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(240, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(129, 8)
+	}
+	if m.Seatalk1Command != nil {
+		writer.writeUInt64(m.Seatalk1Command, 8)
+	} else {
+		writer.writeLookupField(132, 8)
+	}
+	writer.writeBinaryData(m.Unknown1, 24)
+	if m.PilotMode != nil {
+		writer.writeUInt64(m.PilotMode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SubMode != nil {
+		writer.writeUInt64(m.SubMode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.PilotModeData, 8)
+	writer.writeBinaryData(m.Unknown2, 80)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkPilotAutoTurn struct {
@@ -347,10 +2462,164 @@ func (m *PgnSeatalkPilotAutoTurn) PGNNumber() uint32               { return 1267
 func (m *PgnSeatalkPilotAutoTurn) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkPilotAutoTurn) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkPilotAutoTurn) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Seatalk: Pilot Auto Turn"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Auto Turn")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Auto Turn")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 108 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Auto Turn")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 38 {
+		return fmt.Errorf("match failed for %s", "Seatalk: Pilot Auto Turn")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Enabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(16)
+		if err != nil {
+			return err
+		}
+		m.Unknown3 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkPilotAutoTurn) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Seatalk: Pilot Auto Turn"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(108, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.writeLookupField(38, 8)
+	}
+	writer.writeBinaryData(m.Unknown, 8)
+	if m.Enabled != nil {
+		writer.writeUInt64(m.Enabled, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Unknown2 != nil {
+		writer.writeUInt64(m.Unknown2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Unknown3, 16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkNodeStatistics struct {
@@ -368,10 +2637,139 @@ func (m *PgnSeatalkNodeStatistics) PGNNumber() uint32               { return 130
 func (m *PgnSeatalkNodeStatistics) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkNodeStatistics) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkNodeStatistics) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130847, "SeaTalk: Node Statistics"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Node Statistics")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Node Statistics")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProductCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Year = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Month = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DeviceNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NodeVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkNodeStatistics) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130847, "SeaTalk: Node Statistics"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProductCode != nil {
+		writer.writeUInt64(m.ProductCode, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Year != nil {
+		writer.writeUInt64(m.Year, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Month != nil {
+		writer.writeUInt64(m.Month, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DeviceNumber != nil {
+		writer.writeUInt64(m.DeviceNumber, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.NodeVoltage != nil {
+		writer.writeUInt64(m.NodeVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkWaypointInformation struct {
@@ -390,10 +2788,146 @@ func (m *PgnSeatalkWaypointInformation) PGNNumber() uint32               { retur
 func (m *PgnSeatalkWaypointInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkWaypointInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkWaypointInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130848, "SeaTalk: Waypoint Information"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Waypoint Information")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Waypoint Information")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(128)
+		if err != nil {
+			return err
+		}
+		m.WaypointName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(32)
+		if err != nil {
+			return err
+		}
+		m.WaypointSequence = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BearingToWaypointTrue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BearingToWaypointMagnetic = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DistanceToWaypoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkWaypointInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130848, "SeaTalk: Waypoint Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.WaypointName, 128)
+	writer.writeFixedString(m.WaypointSequence, 32)
+	if m.BearingToWaypointTrue != nil {
+		writer.writeUInt64(m.BearingToWaypointTrue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.BearingToWaypointMagnetic != nil {
+		writer.writeUInt64(m.BearingToWaypointMagnetic, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DistanceToWaypoint != nil {
+		writer.writeUInt64(m.DistanceToWaypoint, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSeatalkRouteInformation struct {
@@ -414,8 +2948,174 @@ func (m *PgnSeatalkRouteInformation) PGNNumber() uint32               { return 1
 func (m *PgnSeatalkRouteInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSeatalkRouteInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSeatalkRouteInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130918, "SeaTalk: Route Information"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1851 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Route Information")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "SeaTalk: Route Information")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.CurrentWaypointSequence = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(128)
+		if err != nil {
+			return err
+		}
+		m.CurrentWaypointName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NextWaypointSequence = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(128)
+		if err != nil {
+			return err
+		}
+		m.NextWaypointName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Unknown = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DistancePositionToNextWaypoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BearingPositionToNextWaypointTrue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BearingCurrentWaypointToNextWaypointTrue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSeatalkRouteInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130918, "SeaTalk: Route Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1851, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.CurrentWaypointSequence != nil {
+		writer.writeUInt64(m.CurrentWaypointSequence, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeFixedString(m.CurrentWaypointName, 128)
+	if m.NextWaypointSequence != nil {
+		writer.writeUInt64(m.NextWaypointSequence, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeFixedString(m.NextWaypointName, 128)
+	if m.Unknown != nil {
+		writer.writeUInt64(m.Unknown, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DistancePositionToNextWaypoint != nil {
+		writer.writeUInt64(m.DistancePositionToNextWaypoint, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.BearingPositionToNextWaypointTrue != nil {
+		writer.writeUInt64(m.BearingPositionToNextWaypointTrue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.BearingCurrentWaypointToNextWaypointTrue != nil {
+		writer.writeUInt64(m.BearingCurrentWaypointToNextWaypointTrue, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }

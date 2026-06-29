@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnFurunoHeave struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -14,10 +16,85 @@ func (m *PgnFurunoHeave) PGNNumber() uint32               { return 65280 }
 func (m *PgnFurunoHeave) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoHeave) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoHeave) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65280, "Furuno: Heave"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Heave")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Heave")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Heave = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoHeave) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65280, "Furuno: Heave"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Heave != nil {
+		writer.writeInt64(m.Heave, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoStatusAndVersionReport struct {
@@ -33,10 +110,114 @@ func (m *PgnFurunoStatusAndVersionReport) PGNNumber() uint32               { ret
 func (m *PgnFurunoStatusAndVersionReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoStatusAndVersionReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoStatusAndVersionReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "Furuno: Status and Version Report"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Status and Version Report")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Status and Version Report")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 0 {
+		return fmt.Errorf("match failed for %s", "Furuno: Status and Version Report")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.Status = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoStatusAndVersionReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "Furuno: Status and Version Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(0, 8)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLengthAndControl(m.Status)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoSvControl struct {
@@ -58,10 +239,187 @@ func (m *PgnFurunoSvControl) PGNNumber() uint32               { return 130817 }
 func (m *PgnFurunoSvControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoSvControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoSvControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130817, "Furuno: SV control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: SV control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: SV control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.F4 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.F5 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SbasMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SbasSatellite = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(16)
+		if err != nil {
+			return err
+		}
+		m.F8 = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.GpsDisable = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.GlonassDisable = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(40)
+		if err != nil {
+			return err
+		}
+		m.GalileoDisable = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(24)
+		if err != nil {
+			return err
+		}
+		m.QzssDisable = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoSvControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130817, "Furuno: SV control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.F4, 8)
+	writer.writeBinaryData(m.F5, 8)
+	if m.SbasMode != nil {
+		writer.writeUInt64(m.SbasMode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SbasSatellite != nil {
+		writer.writeUInt64(m.SbasSatellite, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.F8, 16)
+	if m.GpsDisable != nil {
+		writer.writeUInt64(m.GpsDisable, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.GlonassDisable != nil {
+		writer.writeUInt64(m.GlonassDisable, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.GalileoDisable != nil {
+		writer.writeUInt64(m.GalileoDisable, 40)
+	} else {
+		writer.setErr(writer.putNullUnsigned(40))
+	}
+	if m.QzssDisable != nil {
+		writer.writeUInt64(m.QzssDisable, 24)
+	} else {
+		writer.setErr(writer.putNullUnsigned(24))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoSensorSetup struct {
@@ -86,10 +444,252 @@ func (m *PgnFurunoSensorSetup) PGNNumber() uint32               { return 130818 
 func (m *PgnFurunoSensorSetup) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoSensorSetup) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoSensorSetup) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130818, "Furuno: Sensor setup"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Sensor setup")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Sensor setup")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.RotationSmoothing = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.HeadingOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.PitchOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.RollOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.F8 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.F9 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.SogAndCogSmoothing = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Pgn3AxisSpeedSmoothing = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Fc = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Pgn3AxisOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.AirPressureOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.AirTemperatureOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoSensorSetup) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130818, "Furuno: Sensor setup"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.RotationSmoothing != nil {
+		writer.writeUInt64(m.RotationSmoothing, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.HeadingOffset != nil {
+		writer.writeInt64(m.HeadingOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.PitchOffset != nil {
+		writer.writeInt64(m.PitchOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.RollOffset != nil {
+		writer.writeInt64(m.RollOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.F8 != nil {
+		writer.writeUInt64(m.F8, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.F9 != nil {
+		writer.writeUInt64(m.F9, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SogAndCogSmoothing != nil {
+		writer.writeInt64(m.SogAndCogSmoothing, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Pgn3AxisSpeedSmoothing != nil {
+		writer.writeInt64(m.Pgn3AxisSpeedSmoothing, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Fc != nil {
+		writer.writeUInt64(m.Fc, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Pgn3AxisOffset != nil {
+		writer.writeInt64(m.Pgn3AxisOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.AirPressureOffset != nil {
+		writer.writeInt64(m.AirPressureOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.AirTemperatureOffset != nil {
+		writer.writeInt64(m.AirTemperatureOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoDeadReckoningConfiguration struct {
@@ -110,10 +710,184 @@ func (m *PgnFurunoDeadReckoningConfiguration) PGNNumber() uint32               {
 func (m *PgnFurunoDeadReckoningConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoDeadReckoningConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoDeadReckoningConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130819, "Furuno: Dead Reckoning Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Dead Reckoning Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Dead Reckoning Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.F4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.F5 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.F6 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.F7 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.F8 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.DeadReckoningTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.F10 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.F11 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoDeadReckoningConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130819, "Furuno: Dead Reckoning Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.F4 != nil {
+		writer.writeUInt64(m.F4, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.F5 != nil {
+		writer.writeUInt64(m.F5, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.F6 != nil {
+		writer.writeUInt64(m.F6, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.F7 != nil {
+		writer.writeUInt64(m.F7, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.F8 != nil {
+		writer.writeUInt64(m.F8, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.DeadReckoningTime != nil {
+		writer.writeUInt64(m.DeadReckoningTime, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.F10 != nil {
+		writer.writeUInt64(m.F10, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.F11 != nil {
+		writer.writeUInt64(m.F11, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoUnknown130820 struct {
@@ -131,10 +905,139 @@ func (m *PgnFurunoUnknown130820) PGNNumber() uint32               { return 13082
 func (m *PgnFurunoUnknown130820) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoUnknown130820) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoUnknown130820) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Furuno: Unknown 130820"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Unknown 130820")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Unknown 130820")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoUnknown130820) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Furuno: Unknown 130820"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoUnknown130821 struct {
@@ -157,10 +1060,214 @@ func (m *PgnFurunoUnknown130821) PGNNumber() uint32               { return 13082
 func (m *PgnFurunoUnknown130821) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoUnknown130821) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoUnknown130821) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130821, "Furuno: Unknown 130821"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Unknown 130821")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Unknown 130821")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.F = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.G = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.H = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.I = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoUnknown130821) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130821, "Furuno: Unknown 130821"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.F != nil {
+		writer.writeUInt64(m.F, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.G != nil {
+		writer.writeUInt64(m.G, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.H != nil {
+		writer.writeUInt64(m.H, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.I != nil {
+		writer.writeUInt64(m.I, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoShipParametersAndAntennaPosition struct {
@@ -180,10 +1287,170 @@ func (m *PgnFurunoShipParametersAndAntennaPosition) PGNNumber() uint32          
 func (m *PgnFurunoShipParametersAndAntennaPosition) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoShipParametersAndAntennaPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoShipParametersAndAntennaPosition) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130833, "Furuno: Ship Parameters and Antenna Position"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Ship Parameters and Antenna Position")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Ship Parameters and Antenna Position")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EquipmentIdentification = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.AntennaPositionX = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AntennaPositionY = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AntennaPositionZ = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ShipSWidth = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ShipSLength = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ShipSHeight = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoShipParametersAndAntennaPosition) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130833, "Furuno: Ship Parameters and Antenna Position"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.EquipmentIdentification != nil {
+		writer.writeUInt64(m.EquipmentIdentification, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AntennaPositionX != nil {
+		writer.writeInt64(m.AntennaPositionX, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.AntennaPositionY != nil {
+		writer.writeUInt64(m.AntennaPositionY, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AntennaPositionZ != nil {
+		writer.writeUInt64(m.AntennaPositionZ, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ShipSWidth != nil {
+		writer.writeUInt64(m.ShipSWidth, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ShipSLength != nil {
+		writer.writeUInt64(m.ShipSLength, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ShipSHeight != nil {
+		writer.writeUInt64(m.ShipSHeight, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoSpeedCalculationPosition struct {
@@ -199,10 +1466,114 @@ func (m *PgnFurunoSpeedCalculationPosition) PGNNumber() uint32               { r
 func (m *PgnFurunoSpeedCalculationPosition) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoSpeedCalculationPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoSpeedCalculationPosition) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130834, "Furuno: Speed-calculation Position"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Speed-calculation Position")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Speed-calculation Position")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.PointIndex = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionY = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionZ = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoSpeedCalculationPosition) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130834, "Furuno: Speed-calculation Position"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.PointIndex != nil {
+		writer.writeUInt64(m.PointIndex, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(16)
+	if m.PositionY != nil {
+		writer.writeUInt64(m.PositionY, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionZ != nil {
+		writer.writeUInt64(m.PositionZ, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoSixDegreesOfFreedomMovement struct {
@@ -224,10 +1595,208 @@ func (m *PgnFurunoSixDegreesOfFreedomMovement) PGNNumber() uint32               
 func (m *PgnFurunoSixDegreesOfFreedomMovement) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoSixDegreesOfFreedomMovement) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoSixDegreesOfFreedomMovement) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130842, "Furuno: Six Degrees Of Freedom Movement"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Six Degrees Of Freedom Movement")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Six Degrees Of Freedom Movement")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.F = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.G = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.H = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.I = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoSixDegreesOfFreedomMovement) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130842, "Furuno: Six Degrees Of Freedom Movement"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.A != nil {
+		writer.writeInt64(m.A, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.B != nil {
+		writer.writeInt64(m.B, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.C != nil {
+		writer.writeInt64(m.C, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.D != nil {
+		writer.writeInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	if m.E != nil {
+		writer.writeInt64(m.E, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.F != nil {
+		writer.writeInt64(m.F, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.G != nil {
+		writer.writeInt64(m.G, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.H != nil {
+		writer.writeInt64(m.H, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.I != nil {
+		writer.writeInt64(m.I, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoHeelAngleRollInformation struct {
@@ -244,10 +1813,128 @@ func (m *PgnFurunoHeelAngleRollInformation) PGNNumber() uint32               { r
 func (m *PgnFurunoHeelAngleRollInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoHeelAngleRollInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoHeelAngleRollInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130843, "Furuno: Heel Angle, Roll Information"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Heel Angle, Roll Information")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Heel Angle, Roll Information")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Heel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Field4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Field6 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Field8 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoHeelAngleRollInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130843, "Furuno: Heel Angle, Roll Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Heel != nil {
+		writer.writeInt64(m.Heel, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Field4 != nil {
+		writer.writeInt64(m.Field4, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Field6 != nil {
+		writer.writeInt64(m.Field6, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Field8 != nil {
+		writer.writeInt64(m.Field8, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoMultiSatsInViewExtended struct {
@@ -271,10 +1958,238 @@ func (m *PgnFurunoMultiSatsInViewExtended) PGNNumber() uint32               { re
 func (m *PgnFurunoMultiSatsInViewExtended) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoMultiSatsInViewExtended) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoMultiSatsInViewExtended) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130845, "Furuno: Multi Sats In View Extended"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Multi Sats In View Extended")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Multi Sats In View Extended")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.ReportType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Antenna = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.PageType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Page = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SatsInView = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Prn = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Elevation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Azimuth = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Snr = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.RangeResidual = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoMultiSatsInViewExtended) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130845, "Furuno: Multi Sats In View Extended"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ReportType != nil {
+		writer.writeUInt64(m.ReportType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Antenna != nil {
+		writer.writeUInt64(m.Antenna, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.PageType != nil {
+		writer.writeUInt64(m.PageType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Page != nil {
+		writer.writeUInt64(m.Page, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(8)
+	if m.SatsInView != nil {
+		writer.writeUInt64(m.SatsInView, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Prn != nil {
+		writer.writeUInt64(m.Prn, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Elevation != nil {
+		writer.writeInt64(m.Elevation, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Azimuth != nil {
+		writer.writeInt64(m.Azimuth, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Snr != nil {
+		writer.writeInt64(m.Snr, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.RangeResidual != nil {
+		writer.writeInt64(m.RangeResidual, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnFurunoMotionSensorStatusExtended struct {
@@ -289,8 +2204,88 @@ func (m *PgnFurunoMotionSensorStatusExtended) PGNNumber() uint32               {
 func (m *PgnFurunoMotionSensorStatusExtended) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFurunoMotionSensorStatusExtended) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFurunoMotionSensorStatusExtended) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130846, "Furuno: Motion Sensor Status Extended"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1855 {
+		return fmt.Errorf("match failed for %s", "Furuno: Motion Sensor Status Extended")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Furuno: Motion Sensor Status Extended")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(200)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFurunoMotionSensorStatusExtended) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130846, "Furuno: Motion Sensor Status Extended"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1855, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 200)
+	return writer.Bytes(), writer.Err()
 }

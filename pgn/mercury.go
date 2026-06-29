@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnMercuryEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -14,10 +16,75 @@ func (m *PgnMercuryEngineData) PGNNumber() uint32               { return 65280 }
 func (m *PgnMercuryEngineData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryEngineData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65280, "Mercury: Engine Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryEngineData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65280, "Mercury: Engine Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryEngineTelemetryLowSpeed struct {
@@ -36,10 +103,154 @@ func (m *PgnMercuryEngineTelemetryLowSpeed) PGNNumber() uint32               { r
 func (m *PgnMercuryEngineTelemetryLowSpeed) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryEngineTelemetryLowSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryEngineTelemetryLowSpeed) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "Mercury: Engine Telemetry, Low Speed"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Telemetry, Low Speed")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Telemetry, Low Speed")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EngineInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MalfunctionIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.IntakeAirTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ExhaustGasTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Gpl = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EngineState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryEngineTelemetryLowSpeed) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "Mercury: Engine Telemetry, Low Speed"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.EngineInstance != nil {
+		writer.writeUInt64(m.EngineInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MalfunctionIndicator != nil {
+		writer.writeUInt64(m.MalfunctionIndicator, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.IntakeAirTemperature != nil {
+		writer.writeUInt64(m.IntakeAirTemperature, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ExhaustGasTemperature != nil {
+		writer.writeUInt64(m.ExhaustGasTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Gpl != nil {
+		writer.writeUInt64(m.Gpl, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.EngineState != nil {
+		writer.writeUInt64(m.EngineState, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryEngineKeyValueData struct {
@@ -55,10 +266,108 @@ func (m *PgnMercuryEngineKeyValueData) PGNNumber() uint32               { return
 func (m *PgnMercuryEngineKeyValueData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryEngineKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryEngineKeyValueData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130824, "Mercury: Engine Key-Value Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Key-Value Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Key-Value Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(12)
+		if err != nil {
+			return err
+		}
+		m.Key = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryEngineKeyValueData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130824, "Mercury: Engine Key-Value Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Key != nil {
+		writer.writeUInt64(m.Key, 12)
+	} else {
+		writer.setErr(writer.putNullUnsigned(12))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryCommandResponse struct {
@@ -73,10 +382,90 @@ func (m *PgnMercuryCommandResponse) PGNNumber() uint32               { return 13
 func (m *PgnMercuryCommandResponse) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryCommandResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryCommandResponse) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130825, "Mercury: Command/Response"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Command/Response")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Command/Response")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Opcode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(240)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryCommandResponse) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130825, "Mercury: Command/Response"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Opcode != nil {
+		writer.writeUInt64(m.Opcode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 240)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryCruiseControlData struct {
@@ -94,10 +483,158 @@ func (m *PgnMercuryCruiseControlData) PGNNumber() uint32               { return 
 func (m *PgnMercuryCruiseControlData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryCruiseControlData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryCruiseControlData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130825, "Mercury: Cruise Control Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Cruise Control Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Cruise Control Data")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Cruise Control Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Opcode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EngineInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CruiseState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.CruiseRpmSetpoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.CruiseSpeedSetpoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryCruiseControlData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130825, "Mercury: Cruise Control Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Opcode != nil {
+		writer.writeUInt64(m.Opcode, 8)
+	} else {
+		writer.writeLookupField(4, 8)
+	}
+	if m.EngineInstance != nil {
+		writer.writeUInt64(m.EngineInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.CruiseState != nil {
+		writer.writeUInt64(m.CruiseState, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CruiseRpmSetpoint != nil {
+		writer.writeUInt64(m.CruiseRpmSetpoint, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.CruiseSpeedSetpoint != nil {
+		writer.writeUInt64(m.CruiseSpeedSetpoint, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryBamDigitalDataProxy struct {
@@ -115,10 +652,140 @@ func (m *PgnMercuryBamDigitalDataProxy) PGNNumber() uint32               { retur
 func (m *PgnMercuryBamDigitalDataProxy) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryBamDigitalDataProxy) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryBamDigitalDataProxy) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130826, "Mercury: BAM Digital-Data Proxy"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: BAM Digital-Data Proxy")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: BAM Digital-Data Proxy")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Type = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Field4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(256)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryBamDigitalDataProxy) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130826, "Mercury: BAM Digital-Data Proxy"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Type != nil {
+		writer.writeUInt64(m.Type, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Field4 != nil {
+		writer.writeUInt64(m.Field4, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.Flag != nil {
+		writer.writeUInt64(m.Flag, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 256)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnMercuryEngineStatus struct {
@@ -135,8 +802,111 @@ func (m *PgnMercuryEngineStatus) PGNNumber() uint32               { return 13082
 func (m *PgnMercuryEngineStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnMercuryEngineStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnMercuryEngineStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130829, "Mercury: Engine Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 144 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Mercury: Engine Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.FieldA = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.SubHelm = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Helm = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.Capabilities = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnMercuryEngineStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130829, "Mercury: Engine Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(144, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(4)
+	writer.writeBinaryData(m.FieldA, 4)
+	writer.writeBinaryData(m.SubHelm, 4)
+	writer.writeBinaryData(m.Helm, 4)
+	writer.writeBinaryData(m.Capabilities, 8)
+	return writer.Bytes(), writer.Err()
 }

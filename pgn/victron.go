@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnVictronVeCanRegister struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -15,8 +17,91 @@ func (m *PgnVictronVeCanRegister) PGNNumber() uint32               { return 6118
 func (m *PgnVictronVeCanRegister) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnVictronVeCanRegister) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnVictronVeCanRegister) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(61184, "Victron: VE.Can Register"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 358 {
+		return fmt.Errorf("match failed for %s", "Victron: VE.Can Register")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Victron: VE.Can Register")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.RegisterId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnVictronVeCanRegister) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(61184, "Victron: VE.Can Register"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(358, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.RegisterId != nil {
+		writer.writeUInt64(m.RegisterId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }

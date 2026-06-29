@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnGarminAhrsAttCogSourceValidFlag struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -18,10 +20,175 @@ func (m *PgnGarminAhrsAttCogSourceValidFlag) PGNNumber() uint32               { 
 func (m *PgnGarminAhrsAttCogSourceValidFlag) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminAhrsAttCogSourceValidFlag) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminAhrsAttCogSourceValidFlag) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: COG Source Valid Flag"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 1900 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(32)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(40)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(48)
+	match5, err := matchStream5.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match5 != 67 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: COG Source Valid Flag")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SubProtocolId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AttMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.CogSourceFlags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminAhrsAttCogSourceValidFlag) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: COG Source Valid Flag"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.SubProtocolId != nil {
+		writer.writeUInt64(m.SubProtocolId, 16)
+	} else {
+		writer.writeLookupField(1900, 16)
+	}
+	if m.WrapperByte1 != nil {
+		writer.writeUInt64(m.WrapperByte1, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.WrapperByte2 != nil {
+		writer.writeUInt64(m.WrapperByte2, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.AttMessageId != nil {
+		writer.writeUInt64(m.AttMessageId, 16)
+	} else {
+		writer.writeLookupField(67, 16)
+	}
+	if m.CogSourceFlags != nil {
+		writer.writeUInt64(m.CogSourceFlags, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminAhrsAttDeviceFlags struct {
@@ -39,10 +206,175 @@ func (m *PgnGarminAhrsAttDeviceFlags) PGNNumber() uint32               { return 
 func (m *PgnGarminAhrsAttDeviceFlags) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminAhrsAttDeviceFlags) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminAhrsAttDeviceFlags) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Device Flags"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 1900 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(32)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(40)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(48)
+	match5, err := matchStream5.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match5 != 65 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Device Flags")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SubProtocolId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AttMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DeviceFlags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminAhrsAttDeviceFlags) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Device Flags"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.SubProtocolId != nil {
+		writer.writeUInt64(m.SubProtocolId, 16)
+	} else {
+		writer.writeLookupField(1900, 16)
+	}
+	if m.WrapperByte1 != nil {
+		writer.writeUInt64(m.WrapperByte1, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.WrapperByte2 != nil {
+		writer.writeUInt64(m.WrapperByte2, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.AttMessageId != nil {
+		writer.writeUInt64(m.AttMessageId, 16)
+	} else {
+		writer.writeLookupField(65, 16)
+	}
+	if m.DeviceFlags != nil {
+		writer.writeUInt64(m.DeviceFlags, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent struct {
@@ -62,10 +394,175 @@ func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) SetMessageInfo(info
 	m.Info = info
 }
 func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Non-default Calibration Matrix Present"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 1900 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(32)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(40)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(48)
+	match5, err := matchStream5.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match5 != 40 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Non-default Calibration Matrix Present")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SubProtocolId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AttMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CalibrationMatrixPresent = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Non-default Calibration Matrix Present"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.SubProtocolId != nil {
+		writer.writeUInt64(m.SubProtocolId, 16)
+	} else {
+		writer.writeLookupField(1900, 16)
+	}
+	if m.WrapperByte1 != nil {
+		writer.writeUInt64(m.WrapperByte1, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.WrapperByte2 != nil {
+		writer.writeUInt64(m.WrapperByte2, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.AttMessageId != nil {
+		writer.writeUInt64(m.AttMessageId, 16)
+	} else {
+		writer.writeLookupField(40, 16)
+	}
+	if m.CalibrationMatrixPresent != nil {
+		writer.writeUInt64(m.CalibrationMatrixPresent, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminAhrsAttSetNorthState struct {
@@ -83,10 +580,175 @@ func (m *PgnGarminAhrsAttSetNorthState) PGNNumber() uint32               { retur
 func (m *PgnGarminAhrsAttSetNorthState) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminAhrsAttSetNorthState) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminAhrsAttSetNorthState) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Set North State"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match2 != 1900 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(32)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(40)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 2 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(48)
+	match5, err := matchStream5.getNumberRaw(16)
+	if err != nil {
+		return err
+	}
+	if match5 != 52 {
+		return fmt.Errorf("match failed for %s", "Garmin AHRS ATT: Set North State")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SubProtocolId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.WrapperByte2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AttMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SetNorthState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminAhrsAttSetNorthState) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin AHRS ATT: Set North State"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.SubProtocolId != nil {
+		writer.writeUInt64(m.SubProtocolId, 16)
+	} else {
+		writer.writeLookupField(1900, 16)
+	}
+	if m.WrapperByte1 != nil {
+		writer.writeUInt64(m.WrapperByte1, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.WrapperByte2 != nil {
+		writer.writeUInt64(m.WrapperByte2, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.AttMessageId != nil {
+		writer.writeUInt64(m.AttMessageId, 16)
+	} else {
+		writer.writeLookupField(52, 16)
+	}
+	if m.SetNorthState != nil {
+		writer.writeUInt64(m.SetNorthState, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminColorMode struct {
@@ -105,10 +767,209 @@ func (m *PgnGarminColorMode) PGNNumber() uint32               { return 126720 }
 func (m *PgnGarminColorMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminColorMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminColorMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin: Color mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 222 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(40)
+	match5, err := matchStream5.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match5 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	matchStream6 := NewPgnDataStream(payload)
+	matchStream6.skipBits(64)
+	match6, err := matchStream6.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match6 != 13 {
+		return fmt.Errorf("match failed for %s", "Garmin: Color mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Color = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminColorMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin: Color mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.UnknownId1 != nil {
+		writer.writeUInt64(m.UnknownId1, 8)
+	} else {
+		writer.writeLookupField(222, 8)
+	}
+	if m.UnknownId2 != nil {
+		writer.writeUInt64(m.UnknownId2, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId3 != nil {
+		writer.writeUInt64(m.UnknownId3, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId4 != nil {
+		writer.writeUInt64(m.UnknownId4, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	writer.writeSpareBits(16)
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.writeLookupField(13, 8)
+	}
+	writer.writeSpareBits(8)
+	if m.Color != nil {
+		writer.writeUInt64(m.Color, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminDayMode struct {
@@ -127,10 +988,209 @@ func (m *PgnGarminDayMode) PGNNumber() uint32               { return 126720 }
 func (m *PgnGarminDayMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminDayMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminDayMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin: Day Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 222 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(40)
+	match5, err := matchStream5.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match5 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	matchStream6 := NewPgnDataStream(payload)
+	matchStream6.skipBits(64)
+	match6, err := matchStream6.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match6 != 0 {
+		return fmt.Errorf("match failed for %s", "Garmin: Day Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Backlight = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminDayMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin: Day Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.UnknownId1 != nil {
+		writer.writeUInt64(m.UnknownId1, 8)
+	} else {
+		writer.writeLookupField(222, 8)
+	}
+	if m.UnknownId2 != nil {
+		writer.writeUInt64(m.UnknownId2, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId3 != nil {
+		writer.writeUInt64(m.UnknownId3, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId4 != nil {
+		writer.writeUInt64(m.UnknownId4, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	writer.writeSpareBits(16)
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.writeLookupField(0, 8)
+	}
+	writer.writeSpareBits(8)
+	if m.Backlight != nil {
+		writer.writeUInt64(m.Backlight, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnGarminNightMode struct {
@@ -149,8 +1209,207 @@ func (m *PgnGarminNightMode) PGNNumber() uint32               { return 126720 }
 func (m *PgnGarminNightMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnGarminNightMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnGarminNightMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Garmin: Night Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 229 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 222 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream4 := NewPgnDataStream(payload)
+	matchStream4.skipBits(32)
+	match4, err := matchStream4.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match4 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream5 := NewPgnDataStream(payload)
+	matchStream5.skipBits(40)
+	match5, err := matchStream5.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match5 != 5 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	matchStream6 := NewPgnDataStream(payload)
+	matchStream6.skipBits(64)
+	match6, err := matchStream6.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match6 != 1 {
+		return fmt.Errorf("match failed for %s", "Garmin: Night Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownId4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Backlight = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnGarminNightMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Garmin: Night Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(229, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.UnknownId1 != nil {
+		writer.writeUInt64(m.UnknownId1, 8)
+	} else {
+		writer.writeLookupField(222, 8)
+	}
+	if m.UnknownId2 != nil {
+		writer.writeUInt64(m.UnknownId2, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId3 != nil {
+		writer.writeUInt64(m.UnknownId3, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	if m.UnknownId4 != nil {
+		writer.writeUInt64(m.UnknownId4, 8)
+	} else {
+		writer.writeLookupField(5, 8)
+	}
+	writer.writeSpareBits(16)
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.writeLookupField(1, 8)
+	}
+	writer.writeSpareBits(8)
+	if m.Backlight != nil {
+		writer.writeUInt64(m.Backlight, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }

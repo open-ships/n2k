@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnXantrexAcStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -24,10 +26,237 @@ func (m *PgnXantrexAcStatus) PGNNumber() uint32               { return 130900 }
 func (m *PgnXantrexAcStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnXantrexAcStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnXantrexAcStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130900, "Xantrex: AC Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 168 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AcInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfLines = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Line = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Acceptability = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.Waveform = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Voltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Current = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Frequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.RealPower = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.ReactivePower = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.PowerFactor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnXantrexAcStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130900, "Xantrex: AC Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(168, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.AcInstance != nil {
+		writer.writeUInt64(m.AcInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.NumberOfLines != nil {
+		writer.writeUInt64(m.NumberOfLines, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Line != nil {
+		writer.writeUInt64(m.Line, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Acceptability != nil {
+		writer.writeUInt64(m.Acceptability, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Waveform != nil {
+		writer.writeUInt64(m.Waveform, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeReservedBits(1)
+	if m.Voltage != nil {
+		writer.writeUInt64(m.Voltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Current != nil {
+		writer.writeUInt64(m.Current, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Frequency != nil {
+		writer.writeUInt64(m.Frequency, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.RealPower != nil {
+		writer.writeInt64(m.RealPower, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.ReactivePower != nil {
+		writer.writeInt64(m.ReactivePower, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PowerFactor != nil {
+		writer.writeInt64(m.PowerFactor, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnXantrexDcSourceConfigurationStatus struct {
@@ -49,10 +278,199 @@ func (m *PgnXantrexDcSourceConfigurationStatus) PGNNumber() uint32              
 func (m *PgnXantrexDcSourceConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnXantrexDcSourceConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnXantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130910, "Xantrex: DC Source Configuration Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 168 {
+		return fmt.Errorf("match failed for %s", "Xantrex: DC Source Configuration Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Xantrex: DC Source Configuration Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DcSourceInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcUvShutdownLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcUvWarningLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcUvShutdownDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcUvRecoverLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcOvShutdownLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcOvWarningLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcOvShutdownDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DcOvRecoverLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnXantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130910, "Xantrex: DC Source Configuration Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(168, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.DcSourceInstance != nil {
+		writer.writeUInt64(m.DcSourceInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DcUvShutdownLevel != nil {
+		writer.writeUInt64(m.DcUvShutdownLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcUvWarningLevel != nil {
+		writer.writeUInt64(m.DcUvWarningLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcUvShutdownDelay != nil {
+		writer.writeUInt64(m.DcUvShutdownDelay, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcUvRecoverLevel != nil {
+		writer.writeUInt64(m.DcUvRecoverLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcOvShutdownLevel != nil {
+		writer.writeUInt64(m.DcOvShutdownLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcOvWarningLevel != nil {
+		writer.writeUInt64(m.DcOvWarningLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcOvShutdownDelay != nil {
+		writer.writeUInt64(m.DcOvShutdownDelay, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DcOvRecoverLevel != nil {
+		writer.writeUInt64(m.DcOvRecoverLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnXantrexAcOutputConfigurationStatus struct {
@@ -73,10 +491,189 @@ func (m *PgnXantrexAcOutputConfigurationStatus) PGNNumber() uint32              
 func (m *PgnXantrexAcOutputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnXantrexAcOutputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnXantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130911, "Xantrex: AC Output Configuration Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 168 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Output Configuration Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Output Configuration Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AcSourceInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfLines = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Line = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Voltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Frequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.PowerLimit = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OvFaultLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.UvFaultLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnXantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130911, "Xantrex: AC Output Configuration Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(168, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.AcSourceInstance != nil {
+		writer.writeUInt64(m.AcSourceInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.NumberOfLines != nil {
+		writer.writeUInt64(m.NumberOfLines, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Line != nil {
+		writer.writeUInt64(m.Line, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.Voltage != nil {
+		writer.writeUInt64(m.Voltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Frequency != nil {
+		writer.writeUInt64(m.Frequency, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PowerLimit != nil {
+		writer.writeUInt64(m.PowerLimit, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.OvFaultLevel != nil {
+		writer.writeUInt64(m.OvFaultLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.UvFaultLevel != nil {
+		writer.writeUInt64(m.UvFaultLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnXantrexChargerConfigurationStatus struct {
@@ -100,10 +697,229 @@ func (m *PgnXantrexChargerConfigurationStatus) PGNNumber() uint32               
 func (m *PgnXantrexChargerConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnXantrexChargerConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnXantrexChargerConfigurationStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130912, "Xantrex: Charger Configuration Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 168 {
+		return fmt.Errorf("match failed for %s", "Xantrex: Charger Configuration Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Xantrex: Charger Configuration Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ChargeInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BatteryInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BulkVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BulkTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AbsorptionVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AbsorptionTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FloatVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FloatTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.EqualizationVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.GenericChargeVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.GenericChargeCurrent = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnXantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130912, "Xantrex: Charger Configuration Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(168, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ChargeInstance != nil {
+		writer.writeUInt64(m.ChargeInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BatteryInstance != nil {
+		writer.writeUInt64(m.BatteryInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BulkVoltage != nil {
+		writer.writeUInt64(m.BulkVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.BulkTime != nil {
+		writer.writeUInt64(m.BulkTime, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AbsorptionVoltage != nil {
+		writer.writeUInt64(m.AbsorptionVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AbsorptionTime != nil {
+		writer.writeUInt64(m.AbsorptionTime, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FloatVoltage != nil {
+		writer.writeUInt64(m.FloatVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FloatTime != nil {
+		writer.writeUInt64(m.FloatTime, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.EqualizationVoltage != nil {
+		writer.writeUInt64(m.EqualizationVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.GenericChargeVoltage != nil {
+		writer.writeUInt64(m.GenericChargeVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.GenericChargeCurrent != nil {
+		writer.writeUInt64(m.GenericChargeCurrent, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnXantrexAcInputConfigurationStatus struct {
@@ -129,8 +945,262 @@ func (m *PgnXantrexAcInputConfigurationStatus) PGNNumber() uint32               
 func (m *PgnXantrexAcInputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnXantrexAcInputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnXantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130913, "Xantrex: AC Input Configuration Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 168 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Input Configuration Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Xantrex: AC Input Configuration Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.AcSourceInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfLines = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Line = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BreakerSize = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcLostLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcUvLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcUvWarningLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcUvDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcOvLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcOvWarningLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcOvDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AcUfLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.AcOfLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnXantrexAcInputConfigurationStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130913, "Xantrex: AC Input Configuration Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(168, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.AcSourceInstance != nil {
+		writer.writeUInt64(m.AcSourceInstance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.NumberOfLines != nil {
+		writer.writeUInt64(m.NumberOfLines, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Line != nil {
+		writer.writeUInt64(m.Line, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.BreakerSize != nil {
+		writer.writeUInt64(m.BreakerSize, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcLostLevel != nil {
+		writer.writeUInt64(m.AcLostLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcUvLevel != nil {
+		writer.writeUInt64(m.AcUvLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcUvWarningLevel != nil {
+		writer.writeUInt64(m.AcUvWarningLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcUvDelay != nil {
+		writer.writeUInt64(m.AcUvDelay, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcOvLevel != nil {
+		writer.writeUInt64(m.AcOvLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcOvWarningLevel != nil {
+		writer.writeUInt64(m.AcOvWarningLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcOvDelay != nil {
+		writer.writeUInt64(m.AcOvDelay, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcUfLevel != nil {
+		writer.writeUInt64(m.AcUfLevel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AcOfLevel != nil {
+		writer.writeUInt64(m.AcOfLevel, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }

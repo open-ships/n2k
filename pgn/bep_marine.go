@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnBepMarineCzoneCircuitControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -23,10 +25,219 @@ func (m *PgnBepMarineCzoneCircuitControl) PGNNumber() uint32               { ret
 func (m *PgnBepMarineCzoneCircuitControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneCircuitControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneCircuitControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65280, "BEP Marine: CZone Circuit Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Circuit Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Circuit Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.CircuitId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FieldB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.LevelOrValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.UnknownA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.CommandActive = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.UnknownB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.UnknownC = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.UnknownD = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.UnknownE = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.UnknownF = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneCircuitControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65280, "BEP Marine: CZone Circuit Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.CircuitId != nil {
+		writer.writeUInt64(m.CircuitId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FieldB != nil {
+		writer.writeUInt64(m.FieldB, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.LevelOrValue != nil {
+		writer.writeUInt64(m.LevelOrValue, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.UnknownA != nil {
+		writer.writeUInt64(m.UnknownA, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.CommandActive != nil {
+		writer.writeUInt64(m.CommandActive, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.UnknownB != nil {
+		writer.writeUInt64(m.UnknownB, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UnknownC != nil {
+		writer.writeUInt64(m.UnknownC, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.UnknownD != nil {
+		writer.writeUInt64(m.UnknownD, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UnknownE != nil {
+		writer.writeUInt64(m.UnknownE, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.UnknownF != nil {
+		writer.writeUInt64(m.UnknownF, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(3)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65281 struct {
@@ -40,10 +251,75 @@ func (m *PgnBepMarineProprietaryPgn65281) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65281) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65281) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65281) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65281, "BEP Marine: Proprietary PGN 65281"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65281")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65281")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65281) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65281, "BEP Marine: Proprietary PGN 65281"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneAlarmEvent struct {
@@ -57,10 +333,89 @@ func (m *PgnBepMarineCzoneAlarmEvent) PGNNumber() uint32               { return 
 func (m *PgnBepMarineCzoneAlarmEvent) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneAlarmEvent) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneAlarmEvent) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65282, "BEP Marine: CZone Alarm Event"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm Event")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm Event")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Dipswitch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneAlarmEvent) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65282, "BEP Marine: CZone Alarm Event"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.Dipswitch != nil {
+		writer.writeUInt64(m.Dipswitch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneChannelState struct {
@@ -87,10 +442,279 @@ func (m *PgnBepMarineCzoneChannelState) PGNNumber() uint32               { retur
 func (m *PgnBepMarineCzoneChannelState) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneChannelState) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneChannelState) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65283, "BEP Marine: CZone Channel State"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Channel State")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Channel State")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Dipswitch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel0Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel1Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel2Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel3Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel4Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.Channel5Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel0Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel1Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel2Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel3Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel4Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Channel5Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Flag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneChannelState) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65283, "BEP Marine: CZone Channel State"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Dipswitch != nil {
+		writer.writeUInt64(m.Dipswitch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel0Mode != nil {
+		writer.writeUInt64(m.Channel0Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel1Mode != nil {
+		writer.writeUInt64(m.Channel1Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel2Mode != nil {
+		writer.writeUInt64(m.Channel2Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel3Mode != nil {
+		writer.writeUInt64(m.Channel3Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel4Mode != nil {
+		writer.writeUInt64(m.Channel4Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel5Mode != nil {
+		writer.writeUInt64(m.Channel5Mode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Channel0Value != nil {
+		writer.writeUInt64(m.Channel0Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Channel1Value != nil {
+		writer.writeUInt64(m.Channel1Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Channel2Value != nil {
+		writer.writeUInt64(m.Channel2Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Channel3Value != nil {
+		writer.writeUInt64(m.Channel3Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Channel4Value != nil {
+		writer.writeUInt64(m.Channel4Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Channel5Value != nil {
+		writer.writeUInt64(m.Channel5Value, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Flag != nil {
+		writer.writeUInt64(m.Flag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(3)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneCircuitStatus struct {
@@ -106,10 +730,105 @@ func (m *PgnBepMarineCzoneCircuitStatus) PGNNumber() uint32               { retu
 func (m *PgnBepMarineCzoneCircuitStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneCircuitStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneCircuitStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65284, "BEP Marine: CZone Circuit Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Circuit Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Circuit Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Dipswitch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Type = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(32)
+		if err != nil {
+			return err
+		}
+		m.Bitmap = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneCircuitStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65284, "BEP Marine: CZone Circuit Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Dipswitch != nil {
+		writer.writeUInt64(m.Dipswitch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Type != nil {
+		writer.writeUInt64(m.Type, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Bitmap, 32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneModuleAnnounce struct {
@@ -126,10 +845,124 @@ func (m *PgnBepMarineCzoneModuleAnnounce) PGNNumber() uint32               { ret
 func (m *PgnBepMarineCzoneModuleAnnounce) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneModuleAnnounce) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneModuleAnnounce) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65290, "BEP Marine: CZone Module Announce"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Module Announce")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Module Announce")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(20)
+		if err != nil {
+			return err
+		}
+		m.Unique = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(18)
+		if err != nil {
+			return err
+		}
+		m.FieldB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.FieldC = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Dipswitch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneModuleAnnounce) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65290, "BEP Marine: CZone Module Announce"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Unique != nil {
+		writer.writeUInt64(m.Unique, 20)
+	} else {
+		writer.setErr(writer.putNullUnsigned(20))
+	}
+	if m.FieldB != nil {
+		writer.writeUInt64(m.FieldB, 18)
+	} else {
+		writer.setErr(writer.putNullUnsigned(18))
+	}
+	if m.FieldC != nil {
+		writer.writeUInt64(m.FieldC, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.Dipswitch != nil {
+		writer.writeUInt64(m.Dipswitch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65294 struct {
@@ -143,10 +976,75 @@ func (m *PgnBepMarineProprietaryPgn65294) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65294) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65294) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65294) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65294, "BEP Marine: Proprietary PGN 65294"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65294")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65294")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65294) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65294, "BEP Marine: Proprietary PGN 65294"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneAlarm struct {
@@ -165,10 +1063,164 @@ func (m *PgnBepMarineCzoneAlarm) PGNNumber() uint32               { return 65295
 func (m *PgnBepMarineCzoneAlarm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneAlarm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65295, "BEP Marine: CZone Alarm"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DeviceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.SeverityCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.StateFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AckFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneAlarm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65295, "BEP Marine: CZone Alarm"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.DeviceId != nil {
+		writer.writeUInt64(m.DeviceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AlarmType != nil {
+		writer.writeUInt64(m.AlarmType, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.SeverityCode != nil {
+		writer.writeUInt64(m.SeverityCode, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.StateFlag != nil {
+		writer.writeUInt64(m.StateFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AckFlag != nil {
+		writer.writeUInt64(m.AckFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(2)
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65296 struct {
@@ -182,10 +1234,75 @@ func (m *PgnBepMarineProprietaryPgn65296) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65296) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65296) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65296) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65296, "BEP Marine: Proprietary PGN 65296"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65296")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65296")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65296) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65296, "BEP Marine: Proprietary PGN 65296"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65297 struct {
@@ -199,10 +1316,75 @@ func (m *PgnBepMarineProprietaryPgn65297) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65297) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65297) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65297) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65297, "BEP Marine: Proprietary PGN 65297"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65297")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65297")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65297) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65297, "BEP Marine: Proprietary PGN 65297"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneAlarmStringRequest struct {
@@ -218,10 +1400,105 @@ func (m *PgnBepMarineCzoneAlarmStringRequest) PGNNumber() uint32               {
 func (m *PgnBepMarineCzoneAlarmStringRequest) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneAlarmStringRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneAlarmStringRequest) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65299, "BEP Marine: CZone Alarm String Request"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm String Request")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm String Request")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DeviceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.Padding = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneAlarmStringRequest) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65299, "BEP Marine: CZone Alarm String Request"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.DeviceId != nil {
+		writer.writeUInt64(m.DeviceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.Padding, 24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65300 struct {
@@ -235,10 +1512,75 @@ func (m *PgnBepMarineProprietaryPgn65300) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65300) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65300) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65300) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65300, "BEP Marine: Proprietary PGN 65300"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65300")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65300")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65300) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65300, "BEP Marine: Proprietary PGN 65300"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzone65301 struct {
@@ -255,10 +1597,120 @@ func (m *PgnBepMarineCzone65301) PGNNumber() uint32               { return 65301
 func (m *PgnBepMarineCzone65301) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzone65301) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzone65301) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65301, "BEP Marine: CZone 65301"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone 65301")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone 65301")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Field1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.Field2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.Field3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(32)
+		if err != nil {
+			return err
+		}
+		m.StatusBitmap = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzone65301) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65301, "BEP Marine: CZone 65301"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Field1 != nil {
+		writer.writeUInt64(m.Field1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Field2 != nil {
+		writer.writeUInt64(m.Field2, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.Field3 != nil {
+		writer.writeUInt64(m.Field3, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeBinaryData(m.StatusBitmap, 32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65304 struct {
@@ -272,10 +1724,75 @@ func (m *PgnBepMarineProprietaryPgn65304) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65304) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65304) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65304) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65304, "BEP Marine: Proprietary PGN 65304"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65304")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65304")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65304) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65304, "BEP Marine: Proprietary PGN 65304"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65306 struct {
@@ -289,10 +1806,75 @@ func (m *PgnBepMarineProprietaryPgn65306) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65306) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65306) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65306) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65306, "BEP Marine: Proprietary PGN 65306"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65306")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65306")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65306) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65306, "BEP Marine: Proprietary PGN 65306"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65308 struct {
@@ -306,10 +1888,75 @@ func (m *PgnBepMarineProprietaryPgn65308) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65308) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65308) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65308) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65308, "BEP Marine: Proprietary PGN 65308"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65308")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65308")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65308) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65308, "BEP Marine: Proprietary PGN 65308"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65310 struct {
@@ -323,10 +1970,75 @@ func (m *PgnBepMarineProprietaryPgn65310) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65310) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65310) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65310) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65310, "BEP Marine: Proprietary PGN 65310"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65310")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65310")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65310) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65310, "BEP Marine: Proprietary PGN 65310"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65311 struct {
@@ -340,10 +2052,75 @@ func (m *PgnBepMarineProprietaryPgn65311) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65311) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65311) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65311) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65311, "BEP Marine: Proprietary PGN 65311"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65311")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65311")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65311) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65311, "BEP Marine: Proprietary PGN 65311"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65314 struct {
@@ -357,10 +2134,75 @@ func (m *PgnBepMarineProprietaryPgn65314) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65314) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65314) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65314) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65314, "BEP Marine: Proprietary PGN 65314"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65314")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65314")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65314) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65314, "BEP Marine: Proprietary PGN 65314"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65316 struct {
@@ -374,10 +2216,75 @@ func (m *PgnBepMarineProprietaryPgn65316) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65316) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65316) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65316) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65316, "BEP Marine: Proprietary PGN 65316"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65316")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65316")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65316) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65316, "BEP Marine: Proprietary PGN 65316"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn65325 struct {
@@ -391,10 +2298,75 @@ func (m *PgnBepMarineProprietaryPgn65325) PGNNumber() uint32               { ret
 func (m *PgnBepMarineProprietaryPgn65325) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn65325) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn65325) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65325, "BEP Marine: Proprietary PGN 65325"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65325")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 65325")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn65325) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65325, "BEP Marine: Proprietary PGN 65325"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneZcfBusDistribution struct {
@@ -410,10 +2382,110 @@ func (m *PgnBepMarineCzoneZcfBusDistribution) PGNNumber() uint32               {
 func (m *PgnBepMarineCzoneZcfBusDistribution) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneZcfBusDistribution) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneZcfBusDistribution) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130816, "BEP Marine: CZone .zcf Bus Distribution"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone .zcf Bus Distribution")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone .zcf Bus Distribution")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ChunkIndex = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(144)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1600)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneZcfBusDistribution) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130816, "BEP Marine: CZone .zcf Bus Distribution"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ChunkIndex != nil {
+		writer.writeUInt64(m.ChunkIndex, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Flag != nil {
+		writer.writeUInt64(m.Flag, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(144)
+	writer.writeBinaryData(m.Data, 1600)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneStatusExtended struct {
@@ -429,10 +2501,105 @@ func (m *PgnBepMarineCzoneStatusExtended) PGNNumber() uint32               { ret
 func (m *PgnBepMarineCzoneStatusExtended) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneStatusExtended) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneStatusExtended) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130817, "BEP Marine: CZone Status Extended"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Status Extended")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Status Extended")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Page = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Dipswitch = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(192)
+		if err != nil {
+			return err
+		}
+		m.Records = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneStatusExtended) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130817, "BEP Marine: CZone Status Extended"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Page != nil {
+		writer.writeUInt64(m.Page, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Dipswitch != nil {
+		writer.writeUInt64(m.Dipswitch, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Records, 192)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130818 struct {
@@ -446,10 +2613,75 @@ func (m *PgnBepMarineProprietaryPgn130818) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130818) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130818) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130818) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130818, "BEP Marine: Proprietary PGN 130818"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130818")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130818")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130818) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130818, "BEP Marine: Proprietary PGN 130818"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzone130819 struct {
@@ -470,10 +2702,184 @@ func (m *PgnBepMarineCzone130819) PGNNumber() uint32               { return 1308
 func (m *PgnBepMarineCzone130819) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzone130819) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzone130819) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130819, "BEP Marine: CZone 130819"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone 130819")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone 130819")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FieldA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FieldB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FieldC = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FieldD = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FieldE = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.FieldF = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FieldG = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzone130819) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130819, "BEP Marine: CZone 130819"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.FieldA != nil {
+		writer.writeUInt64(m.FieldA, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FieldB != nil {
+		writer.writeUInt64(m.FieldB, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FieldC != nil {
+		writer.writeUInt64(m.FieldC, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FieldD != nil {
+		writer.writeUInt64(m.FieldD, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FieldE != nil {
+		writer.writeUInt64(m.FieldE, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FieldF != nil {
+		writer.writeUInt64(m.FieldF, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.FieldG != nil {
+		writer.writeUInt64(m.FieldG, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Flag != nil {
+		writer.writeUInt64(m.Flag, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineCzoneAlarmStringResponse struct {
@@ -489,10 +2895,105 @@ func (m *PgnBepMarineCzoneAlarmStringResponse) PGNNumber() uint32               
 func (m *PgnBepMarineCzoneAlarmStringResponse) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineCzoneAlarmStringResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineCzoneAlarmStringResponse) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "BEP Marine: CZone Alarm String Response"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm String Response")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: CZone Alarm String Response")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DeviceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1736)
+		if err != nil {
+			return err
+		}
+		m.String = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineCzoneAlarmStringResponse) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "BEP Marine: CZone Alarm String Response"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.DeviceId != nil {
+		writer.writeUInt64(m.DeviceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.String, 1736)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130820 struct {
@@ -506,10 +3007,75 @@ func (m *PgnBepMarineProprietaryPgn130820) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130820) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130820) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130820) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "BEP Marine: Proprietary PGN 130820"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130820")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130820")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130820) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "BEP Marine: Proprietary PGN 130820"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130821 struct {
@@ -523,10 +3089,75 @@ func (m *PgnBepMarineProprietaryPgn130821) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130821) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130821) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130821) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130821, "BEP Marine: Proprietary PGN 130821"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130821")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130821")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130821) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130821, "BEP Marine: Proprietary PGN 130821"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130822 struct {
@@ -540,10 +3171,75 @@ func (m *PgnBepMarineProprietaryPgn130822) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130822) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130822) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130822) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130822, "BEP Marine: Proprietary PGN 130822"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130822")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130822")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130822) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130822, "BEP Marine: Proprietary PGN 130822"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130825 struct {
@@ -557,10 +3253,75 @@ func (m *PgnBepMarineProprietaryPgn130825) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130825) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130825) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130825) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130825, "BEP Marine: Proprietary PGN 130825"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130825")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130825")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130825) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130825, "BEP Marine: Proprietary PGN 130825"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnBepMarineProprietaryPgn130826 struct {
@@ -574,8 +3335,73 @@ func (m *PgnBepMarineProprietaryPgn130826) PGNNumber() uint32               { re
 func (m *PgnBepMarineProprietaryPgn130826) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnBepMarineProprietaryPgn130826) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnBepMarineProprietaryPgn130826) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130826, "BEP Marine: Proprietary PGN 130826"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 295 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130826")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "BEP Marine: Proprietary PGN 130826")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnBepMarineProprietaryPgn130826) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130826, "BEP Marine: Proprietary PGN 130826"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(295, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }

@@ -15,10 +15,78 @@ func (m *PgnEngineParametersRapidUpdate) PGNNumber() uint32               { retu
 func (m *PgnEngineParametersRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnEngineParametersRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnEngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127488, "Engine Parameters, Rapid Update"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Speed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BoostPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.TiltTrim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnEngineParametersRapidUpdate) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127488, "Engine Parameters, Rapid Update"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Speed != nil {
+		writer.writeUInt64(m.Speed, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.BoostPressure != nil {
+		writer.writeUInt64(m.BoostPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.TiltTrim != nil {
+		writer.writeInt64(m.TiltTrim, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnEngineParametersDynamic struct {
@@ -42,10 +110,216 @@ func (m *PgnEngineParametersDynamic) PGNNumber() uint32               { return 1
 func (m *PgnEngineParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnEngineParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnEngineParametersDynamic) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127489, "Engine Parameters, Dynamic"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OilPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OilTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Temperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.AlternatorPotential = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.FuelRate = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TotalEngineHours = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.CoolantPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FuelPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DiscreteStatus1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DiscreteStatus2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.EngineLoad = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.EngineTorque = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnEngineParametersDynamic) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127489, "Engine Parameters, Dynamic"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.OilPressure != nil {
+		writer.writeUInt64(m.OilPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.OilTemperature != nil {
+		writer.writeUInt64(m.OilTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Temperature != nil {
+		writer.writeUInt64(m.Temperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AlternatorPotential != nil {
+		writer.writeInt64(m.AlternatorPotential, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.FuelRate != nil {
+		writer.writeInt64(m.FuelRate, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.TotalEngineHours != nil {
+		writer.writeUInt64(m.TotalEngineHours, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.CoolantPressure != nil {
+		writer.writeUInt64(m.CoolantPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FuelPressure != nil {
+		writer.writeUInt64(m.FuelPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	if m.DiscreteStatus1 != nil {
+		writer.writeUInt64(m.DiscreteStatus1, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DiscreteStatus2 != nil {
+		writer.writeUInt64(m.DiscreteStatus2, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.EngineLoad != nil {
+		writer.writeInt64(m.EngineLoad, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	if m.EngineTorque != nil {
+		writer.writeInt64(m.EngineTorque, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnTransmissionParametersDynamic struct {
@@ -61,10 +335,97 @@ func (m *PgnTransmissionParametersDynamic) PGNNumber() uint32               { re
 func (m *PgnTransmissionParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnTransmissionParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnTransmissionParametersDynamic) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127493, "Transmission Parameters, Dynamic"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.TransmissionGear = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OilPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OilTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DiscreteStatus1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnTransmissionParametersDynamic) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127493, "Transmission Parameters, Dynamic"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TransmissionGear != nil {
+		writer.writeUInt64(m.TransmissionGear, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.OilPressure != nil {
+		writer.writeUInt64(m.OilPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.OilTemperature != nil {
+		writer.writeUInt64(m.OilTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DiscreteStatus1 != nil {
+		writer.writeUInt64(m.DiscreteStatus1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnTripParametersEngine struct {
@@ -80,10 +441,90 @@ func (m *PgnTripParametersEngine) PGNNumber() uint32               { return 1274
 func (m *PgnTripParametersEngine) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnTripParametersEngine) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnTripParametersEngine) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127497, "Trip Parameters, Engine"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TripFuelUsed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.FuelRateAverage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.FuelRateEconomy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.InstantaneousFuelEconomy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnTripParametersEngine) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127497, "Trip Parameters, Engine"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TripFuelUsed != nil {
+		writer.writeUInt64(m.TripFuelUsed, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FuelRateAverage != nil {
+		writer.writeInt64(m.FuelRateAverage, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.FuelRateEconomy != nil {
+		writer.writeInt64(m.FuelRateEconomy, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.InstantaneousFuelEconomy != nil {
+		writer.writeInt64(m.InstantaneousFuelEconomy, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnEngineParametersStatic struct {
@@ -98,8 +539,62 @@ func (m *PgnEngineParametersStatic) PGNNumber() uint32               { return 12
 func (m *PgnEngineParametersStatic) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnEngineParametersStatic) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnEngineParametersStatic) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127498, "Engine Parameters, Static"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.RatedEngineSpeed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.Vin = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.SoftwareId = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnEngineParametersStatic) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127498, "Engine Parameters, Static"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.RatedEngineSpeed != nil {
+		writer.writeUInt64(m.RatedEngineSpeed, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeStringWithLengthAndControl(m.Vin)
+	writer.writeStringWithLengthAndControl(m.SoftwareId)
+	return writer.Bytes(), writer.Err()
 }

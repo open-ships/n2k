@@ -28,10 +28,281 @@ func (m *PgnAisClassAPositionReport) PGNNumber() uint32               { return 1
 func (m *PgnAisClassAPositionReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassAPositionReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassAPositionReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129038, "AIS Class A Position Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.TimeStamp = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Cog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Heading = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.RateOfTurn = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.NavStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SpecialManeuverIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassAPositionReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129038, "AIS Class A Position Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TimeStamp != nil {
+		writer.writeUInt64(m.TimeStamp, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.Cog != nil {
+		writer.writeUInt64(m.Cog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Sog != nil {
+		writer.writeUInt64(m.Sog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.Heading != nil {
+		writer.writeUInt64(m.Heading, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.RateOfTurn != nil {
+		writer.writeInt64(m.RateOfTurn, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.NavStatus != nil {
+		writer.writeUInt64(m.NavStatus, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.SpecialManeuverIndicator != nil {
+		writer.writeUInt64(m.SpecialManeuverIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(2)
+	writer.writeSpareBits(3)
+	writer.writeReservedBits(5)
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassBPositionReport struct {
@@ -62,10 +333,325 @@ func (m *PgnAisClassBPositionReport) PGNNumber() uint32               { return 1
 func (m *PgnAisClassBPositionReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassBPositionReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassBPositionReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129039, "AIS Class B Position Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.TimeStamp = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Cog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Heading = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.UnitType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.IntegratedDisplay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Dsc = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Band = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.CanHandleMsg22 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AisMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AisCommunicationState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(15)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassBPositionReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129039, "AIS Class B Position Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TimeStamp != nil {
+		writer.writeUInt64(m.TimeStamp, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.Cog != nil {
+		writer.writeUInt64(m.Cog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Sog != nil {
+		writer.writeUInt64(m.Sog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.Heading != nil {
+		writer.writeUInt64(m.Heading, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(8)
+	writer.writeSpareBits(2)
+	if m.UnitType != nil {
+		writer.writeUInt64(m.UnitType, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.IntegratedDisplay != nil {
+		writer.writeUInt64(m.IntegratedDisplay, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Dsc != nil {
+		writer.writeUInt64(m.Dsc, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Band != nil {
+		writer.writeUInt64(m.Band, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.CanHandleMsg22 != nil {
+		writer.writeUInt64(m.CanHandleMsg22, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AisMode != nil {
+		writer.writeUInt64(m.AisMode, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AisCommunicationState != nil {
+		writer.writeUInt64(m.AisCommunicationState, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(15)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassBExtendedPositionReport struct {
@@ -97,10 +683,355 @@ func (m *PgnAisClassBExtendedPositionReport) PGNNumber() uint32               { 
 func (m *PgnAisClassBExtendedPositionReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassBExtendedPositionReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassBExtendedPositionReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129040, "AIS Class B Extended Position Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.TimeStamp = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Cog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TypeOfShip = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TrueHeading = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.GnssType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Beam = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromStarboard = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromBow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(160)
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Dte = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AisMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassBExtendedPositionReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129040, "AIS Class B Extended Position Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TimeStamp != nil {
+		writer.writeUInt64(m.TimeStamp, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.Cog != nil {
+		writer.writeUInt64(m.Cog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Sog != nil {
+		writer.writeUInt64(m.Sog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(8)
+	writer.writeSpareBits(4)
+	writer.writeReservedBits(4)
+	if m.TypeOfShip != nil {
+		writer.writeUInt64(m.TypeOfShip, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TrueHeading != nil {
+		writer.writeUInt64(m.TrueHeading, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(4)
+	if m.GnssType != nil {
+		writer.writeUInt64(m.GnssType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Beam != nil {
+		writer.writeUInt64(m.Beam, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromStarboard != nil {
+		writer.writeUInt64(m.PositionReferenceFromStarboard, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromBow != nil {
+		writer.writeUInt64(m.PositionReferenceFromBow, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeFixedString(m.Name, 160)
+	if m.Dte != nil {
+		writer.writeUInt64(m.Dte, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AisMode != nil {
+		writer.writeUInt64(m.AisMode, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(4)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(5)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAidsToNavigationAtonReport struct {
@@ -131,10 +1062,321 @@ func (m *PgnAisAidsToNavigationAtonReport) PGNNumber() uint32               { re
 func (m *PgnAisAidsToNavigationAtonReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAidsToNavigationAtonReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAidsToNavigationAtonReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129041, "AIS Aids to Navigation (AtoN) Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.TimeStamp = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.LengthDiameter = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.BeamDiameter = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromStarboardEdge = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromTrueNorthFacingEdge = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AtonType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.OffPositionIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.VirtualAtonFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AssignedModeFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.PositionFixingDeviceType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.AtonStatus = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.AtonName = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAidsToNavigationAtonReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129041, "AIS Aids to Navigation (AtoN) Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TimeStamp != nil {
+		writer.writeUInt64(m.TimeStamp, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.LengthDiameter != nil {
+		writer.writeUInt64(m.LengthDiameter, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.BeamDiameter != nil {
+		writer.writeUInt64(m.BeamDiameter, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromStarboardEdge != nil {
+		writer.writeUInt64(m.PositionReferenceFromStarboardEdge, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromTrueNorthFacingEdge != nil {
+		writer.writeUInt64(m.PositionReferenceFromTrueNorthFacingEdge, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AtonType != nil {
+		writer.writeUInt64(m.AtonType, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.OffPositionIndicator != nil {
+		writer.writeUInt64(m.OffPositionIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.VirtualAtonFlag != nil {
+		writer.writeUInt64(m.VirtualAtonFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.AssignedModeFlag != nil {
+		writer.writeUInt64(m.AssignedModeFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(1)
+	if m.PositionFixingDeviceType != nil {
+		writer.writeUInt64(m.PositionFixingDeviceType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(3)
+	writer.writeBinaryData(m.AtonStatus, 8)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(3)
+	writer.writeStringWithLengthAndControl(m.AtonName)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisDgnssBroadcastBinaryMessage struct {
@@ -153,10 +1395,153 @@ func (m *PgnAisDgnssBroadcastBinaryMessage) PGNNumber() uint32               { r
 func (m *PgnAisDgnssBroadcastBinaryMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisDgnssBroadcastBinaryMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisDgnssBroadcastBinaryMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129792, "AIS DGNSS Broadcast Binary Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisDgnssBroadcastBinaryMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129792, "AIS DGNSS Broadcast Binary Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	writer.writeReservedBits(3)
+	writer.writeSpareBits(5)
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisUtcAndDateReport struct {
@@ -179,10 +1564,200 @@ func (m *PgnAisUtcAndDateReport) PGNNumber() uint32               { return 12979
 func (m *PgnAisUtcAndDateReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisUtcAndDateReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisUtcAndDateReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129793, "AIS UTC and Date Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.PositionTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionDate = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.GnssType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisUtcAndDateReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129793, "AIS UTC and Date Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(6)
+	if m.PositionTime != nil {
+		writer.writeUInt64(m.PositionTime, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.PositionDate != nil {
+		writer.writeUInt64(m.PositionDate, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(4)
+	if m.GnssType != nil {
+		writer.writeUInt64(m.GnssType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassAStaticAndVoyageRelatedData struct {
@@ -212,10 +1787,295 @@ func (m *PgnAisClassAStaticAndVoyageRelatedData) PGNNumber() uint32             
 func (m *PgnAisClassAStaticAndVoyageRelatedData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassAStaticAndVoyageRelatedData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassAStaticAndVoyageRelatedData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129794, "AIS Class A Static and Voyage Related Data"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.ImoNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(56)
+		if err != nil {
+			return err
+		}
+		m.Callsign = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(160)
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TypeOfShip = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Beam = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromStarboard = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromBow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.EtaDate = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.EtaTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Draft = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(160)
+		if err != nil {
+			return err
+		}
+		m.Destination = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.AisVersionIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.GnssType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Dte = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassAStaticAndVoyageRelatedData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129794, "AIS Class A Static and Voyage Related Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.ImoNumber != nil {
+		writer.writeUInt64(m.ImoNumber, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeFixedString(m.Callsign, 56)
+	writer.writeFixedString(m.Name, 160)
+	if m.TypeOfShip != nil {
+		writer.writeUInt64(m.TypeOfShip, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Beam != nil {
+		writer.writeUInt64(m.Beam, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromStarboard != nil {
+		writer.writeUInt64(m.PositionReferenceFromStarboard, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromBow != nil {
+		writer.writeUInt64(m.PositionReferenceFromBow, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.EtaDate != nil {
+		writer.writeUInt64(m.EtaDate, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.EtaTime != nil {
+		writer.writeUInt64(m.EtaTime, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Draft != nil {
+		writer.writeUInt64(m.Draft, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeFixedString(m.Destination, 160)
+	if m.AisVersionIndicator != nil {
+		writer.writeUInt64(m.AisVersionIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.GnssType != nil {
+		writer.writeUInt64(m.GnssType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Dte != nil {
+		writer.writeUInt64(m.Dte, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(3)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAddressedBinaryMessage struct {
@@ -235,10 +2095,161 @@ func (m *PgnAisAddressedBinaryMessage) PGNNumber() uint32               { return
 func (m *PgnAisAddressedBinaryMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAddressedBinaryMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAddressedBinaryMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129795, "AIS Addressed Binary Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SequenceNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.RetransmitFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAddressedBinaryMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129795, "AIS Addressed Binary Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.SequenceNumber != nil {
+		writer.writeUInt64(m.SequenceNumber, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(6)
+	if m.RetransmitFlag != nil {
+		writer.writeUInt64(m.RetransmitFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(1)
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAcknowledge struct {
@@ -255,10 +2266,117 @@ func (m *PgnAisAcknowledge) PGNNumber() uint32               { return 129796 }
 func (m *PgnAisAcknowledge) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAcknowledge) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAcknowledge) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129796, "AIS Acknowledge"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SequenceNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAcknowledge) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129796, "AIS Acknowledge"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.SequenceNumber != nil {
+		writer.writeUInt64(m.SequenceNumber, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisBinaryBroadcastMessage struct {
@@ -275,10 +2393,111 @@ func (m *PgnAisBinaryBroadcastMessage) PGNNumber() uint32               { return
 func (m *PgnAisBinaryBroadcastMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisBinaryBroadcastMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisBinaryBroadcastMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129797, "AIS Binary Broadcast Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisBinaryBroadcastMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129797, "AIS Binary Broadcast Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisSarAircraftPositionReport struct {
@@ -304,10 +2523,242 @@ func (m *PgnAisSarAircraftPositionReport) PGNNumber() uint32               { ret
 func (m *PgnAisSarAircraftPositionReport) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisSarAircraftPositionReport) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisSarAircraftPositionReport) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129798, "AIS SAR Aircraft Position Report"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.TimeStamp = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Cog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Altitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(8)
+		if err != nil {
+			return err
+		}
+		m.ReservedForRegionalApplications = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Dte = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisSarAircraftPositionReport) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129798, "AIS SAR Aircraft Position Report"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TimeStamp != nil {
+		writer.writeUInt64(m.TimeStamp, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.Cog != nil {
+		writer.writeUInt64(m.Cog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Sog != nil {
+		writer.writeUInt64(m.Sog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.Altitude != nil {
+		writer.writeInt64(m.Altitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	writer.writeBinaryData(m.ReservedForRegionalApplications, 8)
+	if m.Dte != nil {
+		writer.writeUInt64(m.Dte, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(5)
+	writer.writeReservedBits(2)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisUtcDateInquiry struct {
@@ -323,10 +2774,97 @@ func (m *PgnAisUtcDateInquiry) PGNNumber() uint32               { return 129800 
 func (m *PgnAisUtcDateInquiry) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisUtcDateInquiry) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisUtcDateInquiry) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129800, "AIS UTC/Date Inquiry"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisUtcDateInquiry) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129800, "AIS UTC/Date Inquiry"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAddressedSafetyRelatedMessage struct {
@@ -345,10 +2883,143 @@ func (m *PgnAisAddressedSafetyRelatedMessage) PGNNumber() uint32               {
 func (m *PgnAisAddressedSafetyRelatedMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAddressedSafetyRelatedMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAddressedSafetyRelatedMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129801, "AIS Addressed Safety Related Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SequenceNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.RetransmitFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.SafetyRelatedText = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAddressedSafetyRelatedMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129801, "AIS Addressed Safety Related Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.SequenceNumber != nil {
+		writer.writeUInt64(m.SequenceNumber, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(6)
+	if m.RetransmitFlag != nil {
+		writer.writeUInt64(m.RetransmitFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(1)
+	writer.writeStringWithLengthAndControl(m.SafetyRelatedText)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisSafetyRelatedBroadcastMessage struct {
@@ -364,10 +3035,93 @@ func (m *PgnAisSafetyRelatedBroadcastMessage) PGNNumber() uint32               {
 func (m *PgnAisSafetyRelatedBroadcastMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisSafetyRelatedBroadcastMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisSafetyRelatedBroadcastMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129802, "AIS Safety Related Broadcast Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.SafetyRelatedText = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisSafetyRelatedBroadcastMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129802, "AIS Safety Related Broadcast Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	writer.writeStringWithLengthAndControl(m.SafetyRelatedText)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisInterrogation struct {
@@ -391,10 +3145,252 @@ func (m *PgnAisInterrogation) PGNNumber() uint32               { return 129803 }
 func (m *PgnAisInterrogation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisInterrogation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisInterrogation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129803, "AIS Interrogation"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId11 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SlotOffset11 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId12 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SlotOffset12 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId21 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SlotOffset21 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisInterrogation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129803, "AIS Interrogation"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.DestinationId1 != nil {
+		writer.writeUInt64(m.DestinationId1, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(2)
+	if m.MessageId11 != nil {
+		writer.writeUInt64(m.MessageId11, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.SlotOffset11 != nil {
+		writer.writeUInt64(m.SlotOffset11, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(2)
+	if m.MessageId12 != nil {
+		writer.writeUInt64(m.MessageId12, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.SlotOffset12 != nil {
+		writer.writeUInt64(m.SlotOffset12, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(6)
+	writer.writeReservedBits(2)
+	if m.DestinationId2 != nil {
+		writer.writeUInt64(m.DestinationId2, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(2)
+	if m.MessageId21 != nil {
+		writer.writeUInt64(m.MessageId21, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.SlotOffset21 != nil {
+		writer.writeUInt64(m.SlotOffset21, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(2)
+	writer.writeReservedBits(6)
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAssignmentModeCommand struct {
@@ -415,10 +3411,182 @@ func (m *PgnAisAssignmentModeCommand) PGNNumber() uint32               { return 
 func (m *PgnAisAssignmentModeCommand) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAssignmentModeCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAssignmentModeCommand) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129804, "AIS Assignment Mode Command"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationIdA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OffsetA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.IncrementA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationIdB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OffsetB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.IncrementB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAssignmentModeCommand) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129804, "AIS Assignment Mode Command"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.DestinationIdA != nil {
+		writer.writeUInt64(m.DestinationIdA, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.OffsetA != nil {
+		writer.writeUInt64(m.OffsetA, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.IncrementA != nil {
+		writer.writeUInt64(m.IncrementA, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DestinationIdB != nil {
+		writer.writeUInt64(m.DestinationIdB, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.OffsetB != nil {
+		writer.writeUInt64(m.OffsetB, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.IncrementB != nil {
+		writer.writeUInt64(m.IncrementB, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(4)
+	writer.writeReservedBits(4)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisDataLinkManagementMessage struct {
@@ -437,10 +3605,142 @@ func (m *PgnAisDataLinkManagementMessage) PGNNumber() uint32               { ret
 func (m *PgnAisDataLinkManagementMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisDataLinkManagementMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisDataLinkManagementMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129805, "AIS Data Link Management Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Offset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfSlots = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Timeout = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Increment = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisDataLinkManagementMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129805, "AIS Data Link Management Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.Offset != nil {
+		writer.writeUInt64(m.Offset, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.NumberOfSlots != nil {
+		writer.writeUInt64(m.NumberOfSlots, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Timeout != nil {
+		writer.writeUInt64(m.Timeout, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Increment != nil {
+		writer.writeUInt64(m.Increment, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisChannelManagement struct {
@@ -467,10 +3767,291 @@ func (m *PgnAisChannelManagement) PGNNumber() uint32               { return 1298
 func (m *PgnAisChannelManagement) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisChannelManagement) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisChannelManagement) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129806, "AIS Channel Management"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ChannelA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ChannelB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Power = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.TxRxMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.NorthEastLongitudeCorner1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.NorthEastLatitudeCorner1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.SouthWestLongitudeCorner2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.SouthWestLatitudeCorner2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.AddressedOrBroadcastMessageIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.ChannelABandwidth = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.ChannelBBandwidth = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.TransitionalZoneSize = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(23)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisChannelManagement) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129806, "AIS Channel Management"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(2)
+	if m.ChannelA != nil {
+		writer.writeUInt64(m.ChannelA, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ChannelB != nil {
+		writer.writeUInt64(m.ChannelB, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(3)
+	if m.Power != nil {
+		writer.writeUInt64(m.Power, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.TxRxMode != nil {
+		writer.writeUInt64(m.TxRxMode, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.NorthEastLongitudeCorner1 != nil {
+		writer.writeInt64(m.NorthEastLongitudeCorner1, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.NorthEastLatitudeCorner1 != nil {
+		writer.writeInt64(m.NorthEastLatitudeCorner1, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.SouthWestLongitudeCorner2 != nil {
+		writer.writeInt64(m.SouthWestLongitudeCorner2, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.SouthWestLatitudeCorner2 != nil {
+		writer.writeInt64(m.SouthWestLatitudeCorner2, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	writer.writeReservedBits(1)
+	if m.AddressedOrBroadcastMessageIndicator != nil {
+		writer.writeUInt64(m.AddressedOrBroadcastMessageIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.ChannelABandwidth != nil {
+		writer.writeUInt64(m.ChannelABandwidth, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.ChannelBBandwidth != nil {
+		writer.writeUInt64(m.ChannelBBandwidth, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(1)
+	if m.TransitionalZoneSize != nil {
+		writer.writeUInt64(m.TransitionalZoneSize, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeSpareBits(23)
+	writer.writeReservedBits(1)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassBGroupAssignment struct {
@@ -493,10 +4074,231 @@ func (m *PgnAisClassBGroupAssignment) PGNNumber() uint32               { return 
 func (m *PgnAisClassBGroupAssignment) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassBGroupAssignment) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassBGroupAssignment) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129807, "AIS Class B Group Assignment"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.TxRxMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.NorthEastLongitudeCorner1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.NorthEastLatitudeCorner1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.SouthWestLongitudeCorner2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.SouthWestLatitudeCorner2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.StationType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ShipAndCargoFilter = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(22)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.ReportingInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.QuietTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassBGroupAssignment) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129807, "AIS Class B Group Assignment"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeSpareBits(2)
+	if m.TxRxMode != nil {
+		writer.writeUInt64(m.TxRxMode, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(2)
+	if m.NorthEastLongitudeCorner1 != nil {
+		writer.writeInt64(m.NorthEastLongitudeCorner1, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.NorthEastLatitudeCorner1 != nil {
+		writer.writeInt64(m.NorthEastLatitudeCorner1, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.SouthWestLongitudeCorner2 != nil {
+		writer.writeInt64(m.SouthWestLongitudeCorner2, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.SouthWestLatitudeCorner2 != nil {
+		writer.writeInt64(m.SouthWestLatitudeCorner2, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.StationType != nil {
+		writer.writeUInt64(m.StationType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(4)
+	if m.ShipAndCargoFilter != nil {
+		writer.writeUInt64(m.ShipAndCargoFilter, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(22)
+	writer.writeReservedBits(2)
+	if m.ReportingInterval != nil {
+		writer.writeUInt64(m.ReportingInterval, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.QuietTime != nil {
+		writer.writeUInt64(m.QuietTime, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeSpareBits(6)
+	writer.writeReservedBits(2)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassBStaticDataMsg24PartA struct {
@@ -513,10 +4315,103 @@ func (m *PgnAisClassBStaticDataMsg24PartA) PGNNumber() uint32               { re
 func (m *PgnAisClassBStaticDataMsg24PartA) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassBStaticDataMsg24PartA) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129809, "AIS Class B static data (msg 24 Part A)"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(160)
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129809, "AIS Class B static data (msg 24 Part A)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeFixedString(m.Name, 160)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(3)
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisClassBStaticDataMsg24PartB struct {
@@ -541,10 +4436,229 @@ func (m *PgnAisClassBStaticDataMsg24PartB) PGNNumber() uint32               { re
 func (m *PgnAisClassBStaticDataMsg24PartB) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisClassBStaticDataMsg24PartB) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129810, "AIS Class B static data (msg 24 Part B)"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TypeOfShip = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(56)
+		if err != nil {
+			return err
+		}
+		m.VendorId = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(56)
+		if err != nil {
+			return err
+		}
+		m.Callsign = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Beam = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromStarboard = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromBow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.MothershipUserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.GnssType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129810, "AIS Class B static data (msg 24 Part B)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.TypeOfShip != nil {
+		writer.writeUInt64(m.TypeOfShip, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.VendorId, 56)
+	writer.writeFixedString(m.Callsign, 56)
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Beam != nil {
+		writer.writeUInt64(m.Beam, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromStarboard != nil {
+		writer.writeUInt64(m.PositionReferenceFromStarboard, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromBow != nil {
+		writer.writeUInt64(m.PositionReferenceFromBow, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.MothershipUserId != nil {
+		writer.writeUInt64(m.MothershipUserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(2)
+	writer.writeSpareBits(2)
+	if m.GnssType != nil {
+		writer.writeUInt64(m.GnssType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(3)
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisSingleSlotBinaryMessageDeprecated struct {
@@ -565,10 +4679,166 @@ func (m *PgnAisSingleSlotBinaryMessageDeprecated) PGNNumber() uint32            
 func (m *PgnAisSingleSlotBinaryMessageDeprecated) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisSingleSlotBinaryMessageDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisSingleSlotBinaryMessageDeprecated) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129811, "AIS Single Slot Binary Message (Deprecated)"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.DestinationIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.BinaryDataFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisSingleSlotBinaryMessageDeprecated) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129811, "AIS Single Slot Binary Message (Deprecated)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DestinationIndicator != nil {
+		writer.writeUInt64(m.DestinationIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.BinaryDataFlag != nil {
+		writer.writeUInt64(m.BinaryDataFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(1)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisMultiSlotBinaryMessageDeprecated struct {
@@ -591,10 +4861,207 @@ func (m *PgnAisMultiSlotBinaryMessageDeprecated) PGNNumber() uint32             
 func (m *PgnAisMultiSlotBinaryMessageDeprecated) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisMultiSlotBinaryMessageDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisMultiSlotBinaryMessageDeprecated) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129812, "AIS Multi Slot Binary Message (Deprecated)"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.DestinationIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.BinaryDataFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.CommunicationStateSelectorFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisMultiSlotBinaryMessageDeprecated) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129812, "AIS Multi Slot Binary Message (Deprecated)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DestinationIndicator != nil {
+		writer.writeUInt64(m.DestinationIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.BinaryDataFlag != nil {
+		writer.writeUInt64(m.BinaryDataFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(2)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeSpareBits(3)
+	if m.CommunicationStateSelectorFlag != nil {
+		writer.writeUInt64(m.CommunicationStateSelectorFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	writer.writeSpareBits(3)
+	writer.writeReservedBits(5)
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisLongRangeBroadcastMessage struct {
@@ -618,10 +5085,219 @@ func (m *PgnAisLongRangeBroadcastMessage) PGNNumber() uint32               { ret
 func (m *PgnAisLongRangeBroadcastMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisLongRangeBroadcastMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisLongRangeBroadcastMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129813, "AIS Long-Range Broadcast Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Longitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.Latitude = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionAccuracy = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Raim = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.NavStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.PositionLatency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Cog = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisLongRangeBroadcastMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129813, "AIS Long-Range Broadcast Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.Longitude != nil {
+		writer.writeInt64(m.Longitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.Latitude != nil {
+		writer.writeInt64(m.Latitude, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.PositionAccuracy != nil {
+		writer.writeUInt64(m.PositionAccuracy, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.Raim != nil {
+		writer.writeUInt64(m.Raim, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.NavStatus != nil {
+		writer.writeUInt64(m.NavStatus, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.PositionLatency != nil {
+		writer.writeUInt64(m.PositionLatency, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(1)
+	if m.Sog != nil {
+		writer.writeUInt64(m.Sog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Cog != nil {
+		writer.writeUInt64(m.Cog, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(3)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisSingleSlotBinaryMessage struct {
@@ -642,10 +5318,171 @@ func (m *PgnAisSingleSlotBinaryMessage) PGNNumber() uint32               { retur
 func (m *PgnAisSingleSlotBinaryMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisSingleSlotBinaryMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisSingleSlotBinaryMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129814, "AIS Single Slot Binary Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.DestinationIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.BinaryDataFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisSingleSlotBinaryMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129814, "AIS Single Slot Binary Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DestinationIndicator != nil {
+		writer.writeUInt64(m.DestinationIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.BinaryDataFlag != nil {
+		writer.writeUInt64(m.BinaryDataFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeSpareBits(1)
+	writer.writeReservedBits(8)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisMultiSlotBinaryMessage struct {
@@ -668,10 +5505,207 @@ func (m *PgnAisMultiSlotBinaryMessage) PGNNumber() uint32               { return
 func (m *PgnAisMultiSlotBinaryMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisMultiSlotBinaryMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisMultiSlotBinaryMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129815, "AIS Multi Slot Binary Message"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.DestinationIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.BinaryDataFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.CommunicationStateSelectorFlag = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(24)
+		if err != nil {
+			return err
+		}
+		m.CommunicationState = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(3)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfBitsInBinaryDataField = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.BinaryData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisMultiSlotBinaryMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129815, "AIS Multi Slot Binary Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DestinationIndicator != nil {
+		writer.writeUInt64(m.DestinationIndicator, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	if m.BinaryDataFlag != nil {
+		writer.writeUInt64(m.BinaryDataFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(2)
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeSpareBits(3)
+	if m.CommunicationStateSelectorFlag != nil {
+		writer.writeUInt64(m.CommunicationStateSelectorFlag, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeBinaryData(m.CommunicationState, 19)
+	writer.writeSpareBits(3)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeReservedBits(5)
+	if m.NumberOfBitsInBinaryDataField != nil {
+		writer.writeUInt64(m.NumberOfBitsInBinaryDataField, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	{
+		bitLength := uint16(len(m.BinaryData) * 8)
+		writer.writeBinaryData(m.BinaryData, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAisAcknowledgeBinary struct {
@@ -690,8 +5724,145 @@ func (m *PgnAisAcknowledgeBinary) PGNNumber() uint32               { return 1298
 func (m *PgnAisAcknowledgeBinary) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAisAcknowledgeBinary) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAisAcknowledgeBinary) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129816, "AIS Acknowledge (Binary)"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SequenceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.SourceId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(5)
+		if err != nil {
+			return err
+		}
+		m.AisTransceiverInformation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfAcknowledgments = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.DestinationId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SequenceNumber = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAisAcknowledgeBinary) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129816, "AIS Acknowledge (Binary)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.SequenceId != nil {
+		writer.writeUInt64(m.SequenceId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SourceId != nil {
+		writer.writeUInt64(m.SourceId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(2)
+	if m.AisTransceiverInformation != nil {
+		writer.writeUInt64(m.AisTransceiverInformation, 5)
+	} else {
+		writer.setErr(writer.putNullUnsigned(5))
+	}
+	writer.writeSpareBits(1)
+	if m.NumberOfAcknowledgments != nil {
+		writer.writeUInt64(m.NumberOfAcknowledgments, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DestinationId != nil {
+		writer.writeUInt64(m.DestinationId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.SequenceNumber != nil {
+		writer.writeUInt64(m.SequenceNumber, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	return writer.Bytes(), writer.Err()
 }

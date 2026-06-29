@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnSimnetConfigureTemperatureSensor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -13,10 +15,69 @@ func (m *PgnSimnetConfigureTemperatureSensor) PGNNumber() uint32               {
 func (m *PgnSimnetConfigureTemperatureSensor) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetConfigureTemperatureSensor) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetConfigureTemperatureSensor) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65287, "Simnet: Configure Temperature Sensor"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Configure Temperature Sensor")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Configure Temperature Sensor")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetConfigureTemperatureSensor) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65287, "Simnet: Configure Temperature Sensor"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetTrimTabSensorCalibration struct {
@@ -29,10 +90,69 @@ func (m *PgnSimnetTrimTabSensorCalibration) PGNNumber() uint32               { r
 func (m *PgnSimnetTrimTabSensorCalibration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetTrimTabSensorCalibration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetTrimTabSensorCalibration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65289, "Simnet: Trim Tab Sensor Calibration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Trim Tab Sensor Calibration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Trim Tab Sensor Calibration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetTrimTabSensorCalibration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65289, "Simnet: Trim Tab Sensor Calibration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetPaddleWheelSpeedConfiguration struct {
@@ -45,10 +165,69 @@ func (m *PgnSimnetPaddleWheelSpeedConfiguration) PGNNumber() uint32             
 func (m *PgnSimnetPaddleWheelSpeedConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetPaddleWheelSpeedConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetPaddleWheelSpeedConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65290, "Simnet: Paddle Wheel Speed Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Paddle Wheel Speed Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Paddle Wheel Speed Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetPaddleWheelSpeedConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65290, "Simnet: Paddle Wheel Speed Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetClearFluidLevelWarnings struct {
@@ -61,10 +240,69 @@ func (m *PgnSimnetClearFluidLevelWarnings) PGNNumber() uint32               { re
 func (m *PgnSimnetClearFluidLevelWarnings) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetClearFluidLevelWarnings) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetClearFluidLevelWarnings) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65292, "Simnet: Clear Fluid Level Warnings"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Clear Fluid Level Warnings")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Clear Fluid Level Warnings")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetClearFluidLevelWarnings) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65292, "Simnet: Clear Fluid Level Warnings"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetLgc2000Configuration struct {
@@ -77,10 +315,69 @@ func (m *PgnSimnetLgc2000Configuration) PGNNumber() uint32               { retur
 func (m *PgnSimnetLgc2000Configuration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetLgc2000Configuration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetLgc2000Configuration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65293, "Simnet: LGC-2000 Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: LGC-2000 Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: LGC-2000 Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetLgc2000Configuration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65293, "Simnet: LGC-2000 Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApUnknown1 struct {
@@ -95,10 +392,99 @@ func (m *PgnSimnetApUnknown1) PGNNumber() uint32               { return 65302 }
 func (m *PgnSimnetApUnknown1) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApUnknown1) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApUnknown1) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65302, "Simnet: AP Unknown 1"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 1")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 1")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Type = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApUnknown1) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65302, "Simnet: AP Unknown 1"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Type != nil {
+		writer.writeUInt64(m.Type, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetDeviceModeRequest struct {
@@ -113,10 +499,108 @@ func (m *PgnSimnetDeviceModeRequest) PGNNumber() uint32               { return 6
 func (m *PgnSimnetDeviceModeRequest) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetDeviceModeRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetDeviceModeRequest) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Mode Request"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Mode Request")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Mode Request")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 11 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Mode Request")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Model = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Report = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetDeviceModeRequest) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Mode Request"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Model != nil {
+		writer.writeUInt64(m.Model, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Report != nil {
+		writer.writeUInt64(m.Report, 8)
+	} else {
+		writer.writeLookupField(11, 8)
+	}
+	writer.writeSpareBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetDeviceStatus struct {
@@ -132,10 +616,123 @@ func (m *PgnSimnetDeviceStatus) PGNNumber() uint32               { return 65305 
 func (m *PgnSimnetDeviceStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetDeviceStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetDeviceStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 2 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Model = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Report = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetDeviceStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Model != nil {
+		writer.writeUInt64(m.Model, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Report != nil {
+		writer.writeUInt64(m.Report, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetDeviceStatusRequest struct {
@@ -150,10 +747,108 @@ func (m *PgnSimnetDeviceStatusRequest) PGNNumber() uint32               { return
 func (m *PgnSimnetDeviceStatusRequest) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetDeviceStatusRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetDeviceStatusRequest) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Status Request"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status Request")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status Request")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 3 {
+		return fmt.Errorf("match failed for %s", "Simnet: Device Status Request")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Model = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Report = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetDeviceStatusRequest) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65305, "Simnet: Device Status Request"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Model != nil {
+		writer.writeUInt64(m.Model, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Report != nil {
+		writer.writeUInt64(m.Report, 8)
+	} else {
+		writer.writeLookupField(3, 8)
+	}
+	writer.writeSpareBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetPilotMode struct {
@@ -169,10 +864,123 @@ func (m *PgnSimnetPilotMode) PGNNumber() uint32               { return 65305 }
 func (m *PgnSimnetPilotMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetPilotMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65305, "Simnet: Pilot Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Pilot Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Pilot Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Pilot Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Model = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Report = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetPilotMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65305, "Simnet: Pilot Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Model != nil {
+		writer.writeUInt64(m.Model, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Report != nil {
+		writer.writeUInt64(m.Report, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeSpareBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetSailingProcessorStatus struct {
@@ -188,10 +996,114 @@ func (m *PgnSimnetSailingProcessorStatus) PGNNumber() uint32               { ret
 func (m *PgnSimnetSailingProcessorStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetSailingProcessorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetSailingProcessorStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65305, "Simnet: Sailing Processor Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Sailing Processor Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Sailing Processor Status")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(24)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 23 {
+		return fmt.Errorf("match failed for %s", "Simnet: Sailing Processor Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Model = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Report = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(32)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetSailingProcessorStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65305, "Simnet: Sailing Processor Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Model != nil {
+		writer.writeUInt64(m.Model, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Report != nil {
+		writer.writeUInt64(m.Report, 8)
+	} else {
+		writer.writeLookupField(23, 8)
+	}
+	writer.writeBinaryData(m.Data, 32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApUnknown5 struct {
@@ -206,10 +1118,104 @@ func (m *PgnSimnetApUnknown5) PGNNumber() uint32               { return 65323 }
 func (m *PgnSimnetApUnknown5) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApUnknown5) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApUnknown5) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65323, "Simnet: AP Unknown 5"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 5")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 5")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApUnknown5) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65323, "Simnet: AP Unknown 5"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAnalogTelemetry struct {
@@ -225,10 +1231,109 @@ func (m *PgnSimnetAnalogTelemetry) PGNNumber() uint32               { return 653
 func (m *PgnSimnetAnalogTelemetry) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAnalogTelemetry) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAnalogTelemetry) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65324, "Simnet: Analog Telemetry"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Analog Telemetry")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Analog Telemetry")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SubType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Channel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAnalogTelemetry) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65324, "Simnet: Analog Telemetry"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.SubType != nil {
+		writer.writeUInt64(m.SubType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Channel != nil {
+		writer.writeUInt64(m.Channel, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAutopilotModeState struct {
@@ -246,10 +1351,144 @@ func (m *PgnSimnetAutopilotModeState) PGNNumber() uint32               { return 
 func (m *PgnSimnetAutopilotModeState) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAutopilotModeState) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAutopilotModeState) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65340, "Simnet: Autopilot Mode State"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Mode State")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Mode State")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ModeClass = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Flags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAutopilotModeState) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65340, "Simnet: Autopilot Mode State"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ModeClass != nil {
+		writer.writeUInt64(m.ModeClass, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(8)
+	if m.Flags != nil {
+		writer.writeUInt64(m.Flags, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAutopilotAngle struct {
@@ -264,10 +1503,104 @@ func (m *PgnSimnetAutopilotAngle) PGNNumber() uint32               { return 6534
 func (m *PgnSimnetAutopilotAngle) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAutopilotAngle) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAutopilotAngle) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65341, "Simnet: Autopilot Angle"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Angle")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Angle")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Angle = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAutopilotAngle) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65341, "Simnet: Autopilot Angle"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(16)
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.Angle != nil {
+		writer.writeUInt64(m.Angle, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetMagneticField struct {
@@ -282,10 +1615,80 @@ func (m *PgnSimnetMagneticField) PGNNumber() uint32               { return 65350
 func (m *PgnSimnetMagneticField) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetMagneticField) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetMagneticField) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65350, "Simnet: Magnetic Field"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetMagneticField) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65350, "Simnet: Magnetic Field"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.A != nil {
+		writer.writeInt64(m.A, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeInt64(m.C, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.D != nil {
+		writer.writeInt64(m.D, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApUnknown3 struct {
@@ -302,10 +1705,134 @@ func (m *PgnSimnetApUnknown3) PGNNumber() uint32               { return 65420 }
 func (m *PgnSimnetApUnknown3) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApUnknown3) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApUnknown3) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65420, "Simnet: AP Unknown 3"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 3")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 3")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.SubIndex = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApUnknown3) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65420, "Simnet: AP Unknown 3"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SubIndex != nil {
+		writer.writeUInt64(m.SubIndex, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(4)
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAutopilotMode struct {
@@ -318,10 +1845,69 @@ func (m *PgnSimnetAutopilotMode) PGNNumber() uint32               { return 65480
 func (m *PgnSimnetAutopilotMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAutopilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAutopilotMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65480, "Simnet: Autopilot Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Autopilot Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAutopilotMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65480, "Simnet: Autopilot Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetReprogramData struct {
@@ -337,10 +1923,105 @@ func (m *PgnSimnetReprogramData) PGNNumber() uint32               { return 13081
 func (m *PgnSimnetReprogramData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetReprogramData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetReprogramData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130818, "Simnet: Reprogram Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Reprogram Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Reprogram Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Version = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Sequence = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1736)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetReprogramData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130818, "Simnet: Reprogram Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Version != nil {
+		writer.writeUInt64(m.Version, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Sequence != nil {
+		writer.writeUInt64(m.Sequence, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeBinaryData(m.Data, 1736)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetRequestReprogram struct {
@@ -353,10 +2034,64 @@ func (m *PgnSimnetRequestReprogram) PGNNumber() uint32               { return 13
 func (m *PgnSimnetRequestReprogram) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetRequestReprogram) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetRequestReprogram) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130819, "Simnet: Request Reprogram"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Request Reprogram")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Request Reprogram")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetRequestReprogram) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130819, "Simnet: Request Reprogram"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetReprogramStatus struct {
@@ -370,10 +2105,89 @@ func (m *PgnSimnetReprogramStatus) PGNNumber() uint32               { return 130
 func (m *PgnSimnetReprogramStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetReprogramStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetReprogramStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130820, "Simnet: Reprogram Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Reprogram Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Reprogram Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetReprogramStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130820, "Simnet: Reprogram Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.Status != nil {
+		writer.writeUInt64(m.Status, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetSetSerialNumber struct {
@@ -386,10 +2200,64 @@ func (m *PgnSimnetSetSerialNumber) PGNNumber() uint32               { return 130
 func (m *PgnSimnetSetSerialNumber) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetSetSerialNumber) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetSetSerialNumber) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130828, "Simnet: Set Serial Number"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Set Serial Number")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Set Serial Number")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetSetSerialNumber) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130828, "Simnet: Set Serial Number"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetFuelUsedHighResolution struct {
@@ -402,10 +2270,64 @@ func (m *PgnSimnetFuelUsedHighResolution) PGNNumber() uint32               { ret
 func (m *PgnSimnetFuelUsedHighResolution) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetFuelUsedHighResolution) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetFuelUsedHighResolution) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130832, "Simnet: Fuel Used - High Resolution"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fuel Used - High Resolution")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fuel Used - High Resolution")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetFuelUsedHighResolution) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130832, "Simnet: Fuel Used - High Resolution"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetEngineAndTankConfiguration struct {
@@ -418,10 +2340,64 @@ func (m *PgnSimnetEngineAndTankConfiguration) PGNNumber() uint32               {
 func (m *PgnSimnetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130834, "Simnet: Engine and Tank Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Engine and Tank Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Engine and Tank Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130834, "Simnet: Engine and Tank Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetSetEngineAndTankConfiguration struct {
@@ -434,10 +2410,64 @@ func (m *PgnSimnetSetEngineAndTankConfiguration) PGNNumber() uint32             
 func (m *PgnSimnetSetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetSetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetSetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130835, "Simnet: Set Engine and Tank Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Set Engine and Tank Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Set Engine and Tank Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetSetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130835, "Simnet: Set Engine and Tank Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetFluidLevelSensorConfiguration struct {
@@ -459,10 +2489,201 @@ func (m *PgnSimnetFluidLevelSensorConfiguration) PGNNumber() uint32             
 func (m *PgnSimnetFluidLevelSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetFluidLevelSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetFluidLevelSensorConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130836, "Simnet: Fluid Level Sensor Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fluid Level Sensor Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fluid Level Sensor Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Device = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.F = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.TankType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Capacity = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.G = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.H = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 8)
+		m.I = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130836, "Simnet: Fluid Level Sensor Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Device != nil {
+		writer.writeUInt64(m.Device, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.F != nil {
+		writer.writeUInt64(m.F, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.TankType != nil {
+		writer.writeUInt64(m.TankType, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Capacity != nil {
+		writer.writeUInt64(m.Capacity, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.G != nil {
+		writer.writeUInt64(m.G, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.H != nil {
+		writer.writeInt64(m.H, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.I != nil {
+		writer.writeInt64(m.I, 8)
+	} else {
+		writer.setErr(writer.putNullSigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetFuelFlowTurbineConfiguration struct {
@@ -475,10 +2696,64 @@ func (m *PgnSimnetFuelFlowTurbineConfiguration) PGNNumber() uint32              
 func (m *PgnSimnetFuelFlowTurbineConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetFuelFlowTurbineConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetFuelFlowTurbineConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130837, "Simnet: Fuel Flow Turbine Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fuel Flow Turbine Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fuel Flow Turbine Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetFuelFlowTurbineConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130837, "Simnet: Fuel Flow Turbine Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetFluidLevelWarning struct {
@@ -491,10 +2766,64 @@ func (m *PgnSimnetFluidLevelWarning) PGNNumber() uint32               { return 1
 func (m *PgnSimnetFluidLevelWarning) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetFluidLevelWarning) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetFluidLevelWarning) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130838, "Simnet: Fluid Level Warning"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fluid Level Warning")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Fluid Level Warning")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetFluidLevelWarning) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130838, "Simnet: Fluid Level Warning"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetPressureSensorConfiguration struct {
@@ -507,10 +2836,64 @@ func (m *PgnSimnetPressureSensorConfiguration) PGNNumber() uint32               
 func (m *PgnSimnetPressureSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetPressureSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetPressureSensorConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130839, "Simnet: Pressure Sensor Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Pressure Sensor Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Pressure Sensor Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetPressureSensorConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130839, "Simnet: Pressure Sensor Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetDataSourceSelection struct {
@@ -528,10 +2911,154 @@ func (m *PgnSimnetDataSourceSelection) PGNNumber() uint32               { return
 func (m *PgnSimnetDataSourceSelection) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetDataSourceSelection) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetDataSourceSelection) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130840, "Simnet: Data Source Selection"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Data Source Selection")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Data Source Selection")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sequence = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DataType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(64)
+		if err != nil {
+			return err
+		}
+		m.Source = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetDataSourceSelection) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130840, "Simnet: Data Source Selection"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(8)
+	if m.Sequence != nil {
+		writer.writeUInt64(m.Sequence, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DataType != nil {
+		writer.writeUInt64(m.DataType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Source != nil {
+		writer.writeUInt64(m.Source, 64)
+	} else {
+		writer.setErr(writer.putNullUnsigned(64))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAisClassBStaticDataMsg24PartA struct {
@@ -550,10 +3077,159 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartA) PGNNumber() uint32             
 func (m *PgnSimnetAisClassBStaticDataMsg24PartA) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartA) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130842, "Simnet: AIS Class B static data (msg 24 Part A)"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part A)")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part A)")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 0 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part A)")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(160)
+		if err != nil {
+			return err
+		}
+		m.Name = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130842, "Simnet: AIS Class B static data (msg 24 Part A)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.writeLookupField(0, 6)
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeFixedString(m.Name, 160)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAisClassBStaticDataMsg24PartB struct {
@@ -579,10 +3255,270 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartB) PGNNumber() uint32             
 func (m *PgnSimnetAisClassBStaticDataMsg24PartB) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartB) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130842, "Simnet: AIS Class B static data (msg 24 Part B)"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part B)")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part B)")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(6)
+	if err != nil {
+		return err
+	}
+	if match2 != 1 {
+		return fmt.Errorf("match failed for %s", "Simnet: AIS Class B static data (msg 24 Part B)")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.MessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RepeatIndicator = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.UserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TypeOfShip = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(56)
+		if err != nil {
+			return err
+		}
+		m.VendorId = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(56)
+		if err != nil {
+			return err
+		}
+		m.Callsign = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Beam = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromStarboard = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PositionReferenceFromBow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.MothershipUserId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130842, "Simnet: AIS Class B static data (msg 24 Part B)"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageId != nil {
+		writer.writeUInt64(m.MessageId, 6)
+	} else {
+		writer.writeLookupField(1, 6)
+	}
+	if m.RepeatIndicator != nil {
+		writer.writeUInt64(m.RepeatIndicator, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.E != nil {
+		writer.writeUInt64(m.E, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.UserId != nil {
+		writer.writeUInt64(m.UserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.TypeOfShip != nil {
+		writer.writeUInt64(m.TypeOfShip, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.VendorId, 56)
+	writer.writeFixedString(m.Callsign, 56)
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Beam != nil {
+		writer.writeUInt64(m.Beam, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromStarboard != nil {
+		writer.writeUInt64(m.PositionReferenceFromStarboard, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PositionReferenceFromBow != nil {
+		writer.writeUInt64(m.PositionReferenceFromBow, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.MothershipUserId != nil {
+		writer.writeUInt64(m.MothershipUserId, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeSpareBits(6)
+	writer.writeReservedBits(2)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetSonarStatusFrequencyAndDspVoltage struct {
@@ -595,10 +3531,64 @@ func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) PGNNumber() uint32         
 func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130843, "Simnet: Sonar Status, Frequency and DSP Voltage"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Sonar Status, Frequency and DSP Voltage")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Sonar Status, Frequency and DSP Voltage")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130843, "Simnet: Sonar Status, Frequency and DSP Voltage"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetKeyValue struct {
@@ -618,10 +3608,168 @@ func (m *PgnSimnetKeyValue) PGNNumber() uint32               { return 130845 }
 func (m *PgnSimnetKeyValue) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetKeyValue) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetKeyValue) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130845, "Simnet: Key Value"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Key Value")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Key Value")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DisplayGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Source = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(24)
+		if err != nil {
+			return err
+		}
+		m.Key = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Operation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetKeyValue) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130845, "Simnet: Key Value"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DisplayGroup != nil {
+		writer.writeUInt64(m.DisplayGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Source != nil {
+		writer.writeUInt64(m.Source, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Key != nil {
+		writer.writeUInt64(m.Key, 24)
+	} else {
+		writer.setErr(writer.putNullUnsigned(24))
+	}
+	if m.Operation != nil {
+		writer.writeUInt64(m.Operation, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetParameterSet struct {
@@ -642,10 +3790,183 @@ func (m *PgnSimnetParameterSet) PGNNumber() uint32               { return 130846
 func (m *PgnSimnetParameterSet) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetParameterSet) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetParameterSet) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130846, "Simnet: Parameter Set"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Parameter Set")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Parameter Set")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DisplayGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Source = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(24)
+		if err != nil {
+			return err
+		}
+		m.Key = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Operation = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Length = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(0)
+		if err != nil {
+			return err
+		}
+		m.Value = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetParameterSet) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130846, "Simnet: Parameter Set"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DisplayGroup != nil {
+		writer.writeUInt64(m.DisplayGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Source != nil {
+		writer.writeUInt64(m.Source, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Key != nil {
+		writer.writeUInt64(m.Key, 24)
+	} else {
+		writer.setErr(writer.putNullUnsigned(24))
+	}
+	if m.Operation != nil {
+		writer.writeUInt64(m.Operation, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Length != nil {
+		writer.writeUInt64(m.Length, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	{
+		bitLength := uint16(len(m.Value) * 8)
+		writer.writeBinaryData(m.Value, bitLength)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApCommand struct {
@@ -662,10 +3983,173 @@ func (m *PgnSimnetApCommand) PGNNumber() uint32               { return 130850 }
 func (m *PgnSimnetApCommand) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApCommand) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: AP command"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApCommand) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: AP command"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAlarm struct {
@@ -685,10 +4169,188 @@ func (m *PgnSimnetAlarm) PGNNumber() uint32               { return 130850 }
 func (m *PgnSimnetAlarm) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAlarm) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Alarm"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Alarm")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Alarm")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 255 {
+		return fmt.Errorf("match failed for %s", "Simnet: Alarm")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EventType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Command = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.F = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.G = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAlarm) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Alarm"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.EventType != nil {
+		writer.writeUInt64(m.EventType, 8)
+	} else {
+		writer.writeLookupField(255, 8)
+	}
+	if m.Command != nil {
+		writer.writeUInt64(m.Command, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(8)
+	if m.AlarmId != nil {
+		writer.writeUInt64(m.AlarmId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.F != nil {
+		writer.writeUInt64(m.F, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.G != nil {
+		writer.writeUInt64(m.G, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApChangeCourse struct {
@@ -707,10 +4369,187 @@ func (m *PgnSimnetCommandApChangeCourse) PGNNumber() uint32               { retu
 func (m *PgnSimnetCommandApChangeCourse) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Change Course"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Change Course")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Change Course")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Change Course")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 26 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Change Course")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Direction = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Angle = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Change Course"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(26, 8)
+	}
+	writer.writeSpareBits(8)
+	if m.Direction != nil {
+		writer.writeUInt64(m.Direction, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Angle != nil {
+		writer.writeUInt64(m.Angle, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApFollowUp struct {
@@ -727,10 +4566,157 @@ func (m *PgnSimnetCommandApFollowUp) PGNNumber() uint32               { return 1
 func (m *PgnSimnetCommandApFollowUp) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApFollowUp) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApFollowUp) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Follow Up"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Follow Up")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Follow Up")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 2 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Follow Up")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 14 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Follow Up")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(32)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApFollowUp) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Follow Up"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(14, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(32)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApHeading struct {
@@ -747,10 +4733,157 @@ func (m *PgnSimnetCommandApHeading) PGNNumber() uint32               { return 13
 func (m *PgnSimnetCommandApHeading) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApHeading) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Heading"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Heading")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Heading")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Heading")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 9 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Heading")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApHeading) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Heading"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(9, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApNav struct {
@@ -767,10 +4900,157 @@ func (m *PgnSimnetCommandApNav) PGNNumber() uint32               { return 130850
 func (m *PgnSimnetCommandApNav) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApNav) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApNav) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Nav"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Nav")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Nav")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Nav")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Nav")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApNav) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Nav"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApNodrift struct {
@@ -787,10 +5067,157 @@ func (m *PgnSimnetCommandApNodrift) PGNNumber() uint32               { return 13
 func (m *PgnSimnetCommandApNodrift) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApNodrift) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApNodrift) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP NoDrift"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP NoDrift")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP NoDrift")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP NoDrift")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 12 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP NoDrift")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApNodrift) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP NoDrift"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(12, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApStandby struct {
@@ -807,10 +5234,157 @@ func (m *PgnSimnetCommandApStandby) PGNNumber() uint32               { return 13
 func (m *PgnSimnetCommandApStandby) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApStandby) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApStandby) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Standby"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Standby")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Standby")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Standby")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 6 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Standby")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApStandby) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Standby"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(6, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApTack struct {
@@ -829,10 +5403,182 @@ func (m *PgnSimnetCommandApTack) PGNNumber() uint32               { return 13085
 func (m *PgnSimnetCommandApTack) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApTack) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApTack) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Tack"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Tack")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Tack")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Tack")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 17 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Tack")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownA = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.UnknownB = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApTack) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Tack"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(17, 8)
+	}
+	if m.UnknownA != nil {
+		writer.writeUInt64(m.UnknownA, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.UnknownB != nil {
+		writer.writeUInt64(m.UnknownB, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetCommandApWind struct {
@@ -849,10 +5595,157 @@ func (m *PgnSimnetCommandApWind) PGNNumber() uint32               { return 13085
 func (m *PgnSimnetCommandApWind) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetCommandApWind) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetCommandApWind) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Wind"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Wind")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Wind")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Wind")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 15 {
+		return fmt.Errorf("match failed for %s", "Simnet: Command AP Wind")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetCommandApWind) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Command AP Wind"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(15, 8)
+	}
+	writer.writeSpareBits(8)
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetEvent struct {
@@ -867,10 +5760,134 @@ func (m *PgnSimnetEvent) PGNNumber() uint32               { return 130850 }
 func (m *PgnSimnetEvent) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetEvent) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetEvent) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Event"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Event")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Event")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetEvent) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Event"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetEventCommandTimer struct {
@@ -890,10 +5907,183 @@ func (m *PgnSimnetEventCommandTimer) PGNNumber() uint32               { return 1
 func (m *PgnSimnetEventCommandTimer) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetEventCommandTimer) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetEventCommandTimer) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130850, "Simnet: Event Command: Timer"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Event Command: Timer")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Event Command: Timer")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 23 {
+		return fmt.Errorf("match failed for %s", "Simnet: Event Command: Timer")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.EventType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Parameter1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Parameter2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Parameter3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetEventCommandTimer) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130850, "Simnet: Event Command: Timer"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.EventType != nil {
+		writer.writeUInt64(m.EventType, 8)
+	} else {
+		writer.writeLookupField(23, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Parameter1 != nil {
+		writer.writeUInt64(m.Parameter1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Parameter2 != nil {
+		writer.writeUInt64(m.Parameter2, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Parameter3 != nil {
+		writer.writeUInt64(m.Parameter3, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApCommandReply struct {
@@ -912,10 +6102,178 @@ func (m *PgnSimnetApCommandReply) PGNNumber() uint32               { return 1308
 func (m *PgnSimnetApCommandReply) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApCommandReply) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApCommandReply) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130851, "Simnet: AP command Reply"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Value = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApCommandReply) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130851, "Simnet: AP command Reply"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeSpareBits(8)
+	if m.D != nil {
+		writer.writeUInt64(m.D, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Value != nil {
+		writer.writeUInt64(m.Value, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApCommandReplyChangeCourse struct {
@@ -934,10 +6292,187 @@ func (m *PgnSimnetApCommandReplyChangeCourse) PGNNumber() uint32               {
 func (m *PgnSimnetApCommandReplyChangeCourse) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApCommandReplyChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130851, "Simnet: AP command Reply: Change Course"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply: Change Course")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply: Change Course")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(40)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 10 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply: Change Course")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(48)
+	match3, err := matchStream3.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match3 != 26 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP command Reply: Change Course")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Address = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NetworkGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Event = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Direction = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Angle = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130851, "Simnet: AP command Reply: Change Course"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Address != nil {
+		writer.writeUInt64(m.Address, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.NetworkGroup != nil {
+		writer.writeUInt64(m.NetworkGroup, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandType != nil {
+		writer.writeUInt64(m.CommandType, 8)
+	} else {
+		writer.writeLookupField(10, 8)
+	}
+	if m.Event != nil {
+		writer.writeUInt64(m.Event, 8)
+	} else {
+		writer.writeLookupField(26, 8)
+	}
+	writer.writeSpareBits(8)
+	if m.Direction != nil {
+		writer.writeUInt64(m.Direction, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.Angle != nil {
+		writer.writeUInt64(m.Angle, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetAlarmMessage struct {
@@ -954,10 +6489,120 @@ func (m *PgnSimnetAlarmMessage) PGNNumber() uint32               { return 130856
 func (m *PgnSimnetAlarmMessage) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetAlarmMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetAlarmMessage) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130856, "Simnet: Alarm Message"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: Alarm Message")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: Alarm Message")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AlarmId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(1784)
+		if err != nil {
+			return err
+		}
+		m.Text = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetAlarmMessage) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130856, "Simnet: Alarm Message"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.AlarmId != nil {
+		writer.writeUInt64(m.AlarmId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.B != nil {
+		writer.writeUInt64(m.B, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.Text, 1784)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnSimnetApUnknown4 struct {
@@ -976,8 +6621,155 @@ func (m *PgnSimnetApUnknown4) PGNNumber() uint32               { return 130860 }
 func (m *PgnSimnetApUnknown4) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnSimnetApUnknown4) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnSimnetApUnknown4) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130860, "Simnet: AP Unknown 4"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 1857 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 4")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Simnet: AP Unknown 4")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.A = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.B = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.D = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.E = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.F = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnSimnetApUnknown4) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130860, "Simnet: AP Unknown 4"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(1857, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.A != nil {
+		writer.writeUInt64(m.A, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.B != nil {
+		writer.writeInt64(m.B, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.C != nil {
+		writer.writeInt64(m.C, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.D != nil {
+		writer.writeUInt64(m.D, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.E != nil {
+		writer.writeInt64(m.E, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.F != nil {
+		writer.writeUInt64(m.F, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }

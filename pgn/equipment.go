@@ -15,10 +15,78 @@ func (m *PgnFluidLevel) PGNNumber() uint32               { return 127505 }
 func (m *PgnFluidLevel) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnFluidLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnFluidLevel) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(127505, "Fluid Level"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.Type = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.Level = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.Capacity = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnFluidLevel) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(127505, "Fluid Level"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Type != nil {
+		writer.writeUInt64(m.Type, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.Level != nil {
+		writer.writeInt64(m.Level, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.Capacity != nil {
+		writer.writeUInt64(m.Capacity, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnElevatorCarStatus struct {
@@ -58,10 +126,463 @@ func (m *PgnElevatorCarStatus) PGNNumber() uint32               { return 128538 
 func (m *PgnElevatorCarStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnElevatorCarStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnElevatorCarStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(128538, "Elevator Car Status"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarUsage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SmokeSensorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.LimitSwitchSensorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ProximitySwitchSensorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.InertialMeasurementUnitImuSensorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadLimitStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadBalanceStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadSensor1Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadSensor2Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadSensor3Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorLoadSensor4Status = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarMotionStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarDoorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarEmergencyButtonStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarBuzzerStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.OpenDoorButtonStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.CloseDoorButtonStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CurrentDeck = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DestinationDeck = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TotalNumberOfDecks = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.WeightOfLoadCell1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.WeightOfLoadCell2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.WeightOfLoadCell3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.WeightOfLoadCell4 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.SpeedOfElevatorCar = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorBrakeStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ElevatorMotorRotationControlStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnElevatorCarStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(128538, "Elevator Car Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarId != nil {
+		writer.writeUInt64(m.ElevatorCarId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarUsage != nil {
+		writer.writeUInt64(m.ElevatorCarUsage, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SmokeSensorStatus != nil {
+		writer.writeUInt64(m.SmokeSensorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.LimitSwitchSensorStatus != nil {
+		writer.writeUInt64(m.LimitSwitchSensorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ProximitySwitchSensorStatus != nil {
+		writer.writeUInt64(m.ProximitySwitchSensorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.InertialMeasurementUnitImuSensorStatus != nil {
+		writer.writeUInt64(m.InertialMeasurementUnitImuSensorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadLimitStatus != nil {
+		writer.writeUInt64(m.ElevatorLoadLimitStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadBalanceStatus != nil {
+		writer.writeUInt64(m.ElevatorLoadBalanceStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadSensor1Status != nil {
+		writer.writeUInt64(m.ElevatorLoadSensor1Status, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadSensor2Status != nil {
+		writer.writeUInt64(m.ElevatorLoadSensor2Status, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadSensor3Status != nil {
+		writer.writeUInt64(m.ElevatorLoadSensor3Status, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorLoadSensor4Status != nil {
+		writer.writeUInt64(m.ElevatorLoadSensor4Status, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(4)
+	if m.ElevatorCarMotionStatus != nil {
+		writer.writeUInt64(m.ElevatorCarMotionStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorCarDoorStatus != nil {
+		writer.writeUInt64(m.ElevatorCarDoorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorCarEmergencyButtonStatus != nil {
+		writer.writeUInt64(m.ElevatorCarEmergencyButtonStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorCarBuzzerStatus != nil {
+		writer.writeUInt64(m.ElevatorCarBuzzerStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.OpenDoorButtonStatus != nil {
+		writer.writeUInt64(m.OpenDoorButtonStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.CloseDoorButtonStatus != nil {
+		writer.writeUInt64(m.CloseDoorButtonStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(4)
+	if m.CurrentDeck != nil {
+		writer.writeUInt64(m.CurrentDeck, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DestinationDeck != nil {
+		writer.writeUInt64(m.DestinationDeck, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TotalNumberOfDecks != nil {
+		writer.writeUInt64(m.TotalNumberOfDecks, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.WeightOfLoadCell1 != nil {
+		writer.writeUInt64(m.WeightOfLoadCell1, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.WeightOfLoadCell2 != nil {
+		writer.writeUInt64(m.WeightOfLoadCell2, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.WeightOfLoadCell3 != nil {
+		writer.writeUInt64(m.WeightOfLoadCell3, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.WeightOfLoadCell4 != nil {
+		writer.writeUInt64(m.WeightOfLoadCell4, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.SpeedOfElevatorCar != nil {
+		writer.writeInt64(m.SpeedOfElevatorCar, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.ElevatorBrakeStatus != nil {
+		writer.writeUInt64(m.ElevatorBrakeStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ElevatorMotorRotationControlStatus != nil {
+		writer.writeUInt64(m.ElevatorMotorRotationControlStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(4)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnElevatorMotorControl struct {
@@ -77,10 +598,92 @@ func (m *PgnElevatorMotorControl) PGNNumber() uint32               { return 1287
 func (m *PgnElevatorMotorControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnElevatorMotorControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnElevatorMotorControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(128768, "Elevator Motor Control"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarUsage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.MotorAccelerationDecelerationProfileSelection = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.MotorRotationalControlStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(34)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnElevatorMotorControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(128768, "Elevator Motor Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarId != nil {
+		writer.writeUInt64(m.ElevatorCarId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarUsage != nil {
+		writer.writeUInt64(m.ElevatorCarUsage, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MotorAccelerationDecelerationProfileSelection != nil {
+		writer.writeUInt64(m.MotorAccelerationDecelerationProfileSelection, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.MotorRotationalControlStatus != nil {
+		writer.writeUInt64(m.MotorRotationalControlStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(34)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnElevatorDeckPushButton struct {
@@ -96,10 +699,92 @@ func (m *PgnElevatorDeckPushButton) PGNNumber() uint32               { return 12
 func (m *PgnElevatorDeckPushButton) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnElevatorDeckPushButton) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnElevatorDeckPushButton) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(128769, "Elevator Deck Push Button"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCallButtonId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DeckButtonId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarUsage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ElevatorCarButtonSelection = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnElevatorDeckPushButton) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(128769, "Elevator Deck Push Button"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCallButtonId != nil {
+		writer.writeUInt64(m.ElevatorCallButtonId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DeckButtonId != nil {
+		writer.writeUInt64(m.DeckButtonId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarUsage != nil {
+		writer.writeUInt64(m.ElevatorCarUsage, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ElevatorCarButtonSelection != nil {
+		writer.writeUInt64(m.ElevatorCarButtonSelection, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(24)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnLinearActuatorControlStatus struct {
@@ -115,10 +800,92 @@ func (m *PgnLinearActuatorControlStatus) PGNNumber() uint32               { retu
 func (m *PgnLinearActuatorControlStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnLinearActuatorControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnLinearActuatorControlStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(128780, "Linear Actuator Control/Status"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ActuatorIdentifier = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CommandedDevicePosition = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DevicePosition = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.MaximumDeviceTravel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DirectionOfTravel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnLinearActuatorControlStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(128780, "Linear Actuator Control/Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ActuatorIdentifier != nil {
+		writer.writeUInt64(m.ActuatorIdentifier, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CommandedDevicePosition != nil {
+		writer.writeUInt64(m.CommandedDevicePosition, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DevicePosition != nil {
+		writer.writeUInt64(m.DevicePosition, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MaximumDeviceTravel != nil {
+		writer.writeUInt64(m.MaximumDeviceTravel, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DirectionOfTravel != nil {
+		writer.writeUInt64(m.DirectionOfTravel, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnPayloadMass struct {
@@ -133,10 +900,82 @@ func (m *PgnPayloadMass) PGNNumber() uint32               { return 130560 }
 func (m *PgnPayloadMass) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnPayloadMass) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnPayloadMass) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130560, "Payload Mass"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.MeasurementStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MeasurementId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.PayloadMass = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnPayloadMass) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130560, "Payload Mass"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.MeasurementStatus != nil {
+		writer.writeUInt64(m.MeasurementStatus, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeReservedBits(5)
+	if m.MeasurementId != nil {
+		writer.writeUInt64(m.MeasurementId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.PayloadMass != nil {
+		writer.writeUInt64(m.PayloadMass, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnWatermakerInputSettingAndStatus struct {
@@ -169,8 +1008,348 @@ func (m *PgnWatermakerInputSettingAndStatus) PGNNumber() uint32               { 
 func (m *PgnWatermakerInputSettingAndStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnWatermakerInputSettingAndStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnWatermakerInputSettingAndStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130567, "Watermaker Input Setting and Status"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(6)
+		if err != nil {
+			return err
+		}
+		m.WatermakerOperatingState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ProductionStartStop = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.RinseStartStop = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.LowPressurePumpStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.HighPressurePumpStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.EmergencyStop = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ProductSolenoidValveStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.FlushModeStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SalinityStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SensorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.OilChangeIndicatorStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.FilterStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SystemStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Salinity = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ProductWaterTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PreFilterPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PostFilterPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.FeedPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SystemHighPressure = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.ProductWaterFlow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.BrineWaterFlow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.RunTime = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnWatermakerInputSettingAndStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130567, "Watermaker Input Setting and Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.WatermakerOperatingState != nil {
+		writer.writeUInt64(m.WatermakerOperatingState, 6)
+	} else {
+		writer.setErr(writer.putNullUnsigned(6))
+	}
+	if m.ProductionStartStop != nil {
+		writer.writeUInt64(m.ProductionStartStop, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.RinseStartStop != nil {
+		writer.writeUInt64(m.RinseStartStop, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.LowPressurePumpStatus != nil {
+		writer.writeUInt64(m.LowPressurePumpStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.HighPressurePumpStatus != nil {
+		writer.writeUInt64(m.HighPressurePumpStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.EmergencyStop != nil {
+		writer.writeUInt64(m.EmergencyStop, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.ProductSolenoidValveStatus != nil {
+		writer.writeUInt64(m.ProductSolenoidValveStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.FlushModeStatus != nil {
+		writer.writeUInt64(m.FlushModeStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SalinityStatus != nil {
+		writer.writeUInt64(m.SalinityStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SensorStatus != nil {
+		writer.writeUInt64(m.SensorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.OilChangeIndicatorStatus != nil {
+		writer.writeUInt64(m.OilChangeIndicatorStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.FilterStatus != nil {
+		writer.writeUInt64(m.FilterStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	if m.SystemStatus != nil {
+		writer.writeUInt64(m.SystemStatus, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(2)
+	if m.Salinity != nil {
+		writer.writeUInt64(m.Salinity, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ProductWaterTemperature != nil {
+		writer.writeUInt64(m.ProductWaterTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PreFilterPressure != nil {
+		writer.writeUInt64(m.PreFilterPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.PostFilterPressure != nil {
+		writer.writeUInt64(m.PostFilterPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FeedPressure != nil {
+		writer.writeInt64(m.FeedPressure, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.SystemHighPressure != nil {
+		writer.writeUInt64(m.SystemHighPressure, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.ProductWaterFlow != nil {
+		writer.writeInt64(m.ProductWaterFlow, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.BrineWaterFlow != nil {
+		writer.writeInt64(m.BrineWaterFlow, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.RunTime != nil {
+		writer.writeUInt64(m.RunTime, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }

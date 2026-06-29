@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnAirmarBootStateAcknowledgment struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -14,10 +16,84 @@ func (m *PgnAirmarBootStateAcknowledgment) PGNNumber() uint32               { re
 func (m *PgnAirmarBootStateAcknowledgment) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarBootStateAcknowledgment) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarBootStateAcknowledgment) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65285, "Airmar: Boot State Acknowledgment"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Boot State Acknowledgment")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Boot State Acknowledgment")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.BootState = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(45)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarBootStateAcknowledgment) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65285, "Airmar: Boot State Acknowledgment"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.BootState != nil {
+		writer.writeUInt64(m.BootState, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeReservedBits(45)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarBootStateRequest struct {
@@ -30,10 +106,69 @@ func (m *PgnAirmarBootStateRequest) PGNNumber() uint32               { return 65
 func (m *PgnAirmarBootStateRequest) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarBootStateRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarBootStateRequest) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65286, "Airmar: Boot State Request"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Boot State Request")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Boot State Request")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(48)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarBootStateRequest) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65286, "Airmar: Boot State Request"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarAccessLevel struct {
@@ -49,10 +184,114 @@ func (m *PgnAirmarAccessLevel) PGNNumber() uint32               { return 65287 }
 func (m *PgnAirmarAccessLevel) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarAccessLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarAccessLevel) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65287, "Airmar: Access Level"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Access Level")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Access Level")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FormatCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.AccessLevel = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.AccessSeedKey = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarAccessLevel) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65287, "Airmar: Access Level"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.FormatCode != nil {
+		writer.writeUInt64(m.FormatCode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.AccessLevel != nil {
+		writer.writeUInt64(m.AccessLevel, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	writer.writeReservedBits(5)
+	if m.AccessSeedKey != nil {
+		writer.writeUInt64(m.AccessSeedKey, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarDepthQualityFactor struct {
@@ -67,10 +306,99 @@ func (m *PgnAirmarDepthQualityFactor) PGNNumber() uint32               { return 
 func (m *PgnAirmarDepthQualityFactor) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarDepthQualityFactor) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarDepthQualityFactor) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65408, "Airmar: Depth Quality Factor"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Depth Quality Factor")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Depth Quality Factor")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.DepthQualityFactor = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(36)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarDepthQualityFactor) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65408, "Airmar: Depth Quality Factor"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DepthQualityFactor != nil {
+		writer.writeUInt64(m.DepthQualityFactor, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	writer.writeReservedBits(36)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarSpeedPulseCount struct {
@@ -86,10 +414,114 @@ func (m *PgnAirmarSpeedPulseCount) PGNNumber() uint32               { return 654
 func (m *PgnAirmarSpeedPulseCount) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarSpeedPulseCount) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarSpeedPulseCount) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65409, "Airmar: Speed Pulse Count"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Pulse Count")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Pulse Count")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DurationOfInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.NumberOfPulsesReceived = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarSpeedPulseCount) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65409, "Airmar: Speed Pulse Count"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DurationOfInterval != nil {
+		writer.writeUInt64(m.DurationOfInterval, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.NumberOfPulsesReceived != nil {
+		writer.writeUInt64(m.NumberOfPulsesReceived, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarDeviceInformation struct {
@@ -105,10 +537,114 @@ func (m *PgnAirmarDeviceInformation) PGNNumber() uint32               { return 6
 func (m *PgnAirmarDeviceInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarDeviceInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarDeviceInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65410, "Airmar: Device Information"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Device Information")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Device Information")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Sid = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.InternalDeviceTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SupplyVoltage = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarDeviceInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65410, "Airmar: Device Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Sid != nil {
+		writer.writeUInt64(m.Sid, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.InternalDeviceTemperature != nil {
+		writer.writeUInt64(m.InternalDeviceTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.SupplyVoltage != nil {
+		writer.writeUInt64(m.SupplyVoltage, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarAddressableMultiFrame struct {
@@ -122,10 +658,79 @@ func (m *PgnAirmarAddressableMultiFrame) PGNNumber() uint32               { retu
 func (m *PgnAirmarAddressableMultiFrame) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarAddressableMultiFrame) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarAddressableMultiFrame) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Addressable Multi-Frame"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Addressable Multi-Frame")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Addressable Multi-Frame")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarAddressableMultiFrame) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Addressable Multi-Frame"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarAttitudeOffset struct {
@@ -142,10 +747,136 @@ func (m *PgnAirmarAttitudeOffset) PGNNumber() uint32               { return 1267
 func (m *PgnAirmarAttitudeOffset) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarAttitudeOffset) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarAttitudeOffset) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Attitude Offset"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Attitude Offset")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Attitude Offset")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 32 {
+		return fmt.Errorf("match failed for %s", "Airmar: Attitude Offset")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.AzimuthOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.PitchOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.RollOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarAttitudeOffset) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Attitude Offset"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(32, 8)
+	}
+	if m.AzimuthOffset != nil {
+		writer.writeInt64(m.AzimuthOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.PitchOffset != nil {
+		writer.writeInt64(m.PitchOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.RollOffset != nil {
+		writer.writeInt64(m.RollOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarCalibrateCompass struct {
@@ -171,10 +902,277 @@ func (m *PgnAirmarCalibrateCompass) PGNNumber() uint32               { return 12
 func (m *PgnAirmarCalibrateCompass) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarCalibrateCompass) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarCalibrateCompass) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Compass"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Compass")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Compass")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 33 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Compass")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CalibrateFunction = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CalibrationStatus = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.VerifyScore = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.XAxisGainValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.YAxisGainValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.ZAxisGainValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.XAxisLinearOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.YAxisLinearOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.ZAxisLinearOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.XAxisAngularOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.PitchAndRollDamping = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.CompassRateGyroDamping = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarCalibrateCompass) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Compass"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(33, 8)
+	}
+	if m.CalibrateFunction != nil {
+		writer.writeUInt64(m.CalibrateFunction, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CalibrationStatus != nil {
+		writer.writeUInt64(m.CalibrationStatus, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.VerifyScore != nil {
+		writer.writeUInt64(m.VerifyScore, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.XAxisGainValue != nil {
+		writer.writeInt64(m.XAxisGainValue, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.YAxisGainValue != nil {
+		writer.writeInt64(m.YAxisGainValue, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.ZAxisGainValue != nil {
+		writer.writeInt64(m.ZAxisGainValue, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.XAxisLinearOffset != nil {
+		writer.writeInt64(m.XAxisLinearOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.YAxisLinearOffset != nil {
+		writer.writeInt64(m.YAxisLinearOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.ZAxisLinearOffset != nil {
+		writer.writeInt64(m.ZAxisLinearOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.XAxisAngularOffset != nil {
+		writer.writeInt64(m.XAxisAngularOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.PitchAndRollDamping != nil {
+		writer.writeInt64(m.PitchAndRollDamping, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	if m.CompassRateGyroDamping != nil {
+		writer.writeInt64(m.CompassRateGyroDamping, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarCalibrateDepth struct {
@@ -189,10 +1187,108 @@ func (m *PgnAirmarCalibrateDepth) PGNNumber() uint32               { return 1267
 func (m *PgnAirmarCalibrateDepth) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarCalibrateDepth) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarCalibrateDepth) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Depth"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Depth")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Depth")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 40 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Depth")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SpeedOfSoundMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarCalibrateDepth) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Depth"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(40, 8)
+	}
+	if m.SpeedOfSoundMode != nil {
+		writer.writeUInt64(m.SpeedOfSoundMode, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	writer.writeReservedBits(8)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarCalibrateSpeed struct {
@@ -209,10 +1305,133 @@ func (m *PgnAirmarCalibrateSpeed) PGNNumber() uint32               { return 1267
 func (m *PgnAirmarCalibrateSpeed) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarCalibrateSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarCalibrateSpeed) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Speed"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Speed")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Speed")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 41 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Speed")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfPairsOfDataPoints = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.InputFrequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.OutputSpeed = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarCalibrateSpeed) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Speed"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(41, 8)
+	}
+	if m.NumberOfPairsOfDataPoints != nil {
+		writer.writeUInt64(m.NumberOfPairsOfDataPoints, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.InputFrequency != nil {
+		writer.writeUInt64(m.InputFrequency, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.OutputSpeed != nil {
+		writer.writeUInt64(m.OutputSpeed, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarCalibrateTemperature struct {
@@ -228,10 +1447,124 @@ func (m *PgnAirmarCalibrateTemperature) PGNNumber() uint32               { retur
 func (m *PgnAirmarCalibrateTemperature) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarCalibrateTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Temperature"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Temperature")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Temperature")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 42 {
+		return fmt.Errorf("match failed for %s", "Airmar: Calibrate Temperature")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.TemperatureInstance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 16)
+		m.TemperatureOffset = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarCalibrateTemperature) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Calibrate Temperature"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(42, 8)
+	}
+	if m.TemperatureInstance != nil {
+		writer.writeUInt64(m.TemperatureInstance, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	if m.TemperatureOffset != nil {
+		writer.writeInt64(m.TemperatureOffset, 16)
+	} else {
+		writer.setErr(writer.putNullSigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarNmea2000Options struct {
@@ -246,10 +1579,108 @@ func (m *PgnAirmarNmea2000Options) PGNNumber() uint32               { return 126
 func (m *PgnAirmarNmea2000Options) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarNmea2000Options) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarNmea2000Options) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: NMEA 2000 options"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: NMEA 2000 options")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: NMEA 2000 options")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 46 {
+		return fmt.Errorf("match failed for %s", "Airmar: NMEA 2000 options")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.TransmissionInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(22)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarNmea2000Options) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: NMEA 2000 options"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(46, 8)
+	}
+	if m.TransmissionInterval != nil {
+		writer.writeUInt64(m.TransmissionInterval, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(22)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarSimulateMode struct {
@@ -264,10 +1695,108 @@ func (m *PgnAirmarSimulateMode) PGNNumber() uint32               { return 126720
 func (m *PgnAirmarSimulateMode) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarSimulateMode) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarSimulateMode) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Simulate Mode"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Simulate Mode")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Simulate Mode")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 35 {
+		return fmt.Errorf("match failed for %s", "Airmar: Simulate Mode")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.SimulateMode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(22)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarSimulateMode) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Simulate Mode"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(35, 8)
+	}
+	if m.SimulateMode != nil {
+		writer.writeUInt64(m.SimulateMode, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(22)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarSpeedFilterIir struct {
@@ -284,10 +1813,147 @@ func (m *PgnAirmarSpeedFilterIir) PGNNumber() uint32               { return 1267
 func (m *PgnAirmarSpeedFilterIir) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarSpeedFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarSpeedFilterIir) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Speed Filter IIR"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter IIR")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter IIR")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 43 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter IIR")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(4)
+	if err != nil {
+		return err
+	}
+	if match3 != 1 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter IIR")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.FilterType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SampleInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FilterDuration = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarSpeedFilterIir) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Speed Filter IIR"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(43, 8)
+	}
+	if m.FilterType != nil {
+		writer.writeUInt64(m.FilterType, 4)
+	} else {
+		writer.writeLookupField(1, 4)
+	}
+	writer.writeReservedBits(4)
+	if m.SampleInterval != nil {
+		writer.writeUInt64(m.SampleInterval, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FilterDuration != nil {
+		writer.writeUInt64(m.FilterDuration, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarSpeedFilterNone struct {
@@ -303,10 +1969,132 @@ func (m *PgnAirmarSpeedFilterNone) PGNNumber() uint32               { return 126
 func (m *PgnAirmarSpeedFilterNone) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarSpeedFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarSpeedFilterNone) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Speed Filter None"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter None")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter None")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 43 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter None")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(4)
+	if err != nil {
+		return err
+	}
+	if match3 != 0 {
+		return fmt.Errorf("match failed for %s", "Airmar: Speed Filter None")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.FilterType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SampleInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarSpeedFilterNone) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Speed Filter None"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(43, 8)
+	}
+	if m.FilterType != nil {
+		writer.writeUInt64(m.FilterType, 4)
+	} else {
+		writer.writeLookupField(0, 4)
+	}
+	writer.writeReservedBits(4)
+	if m.SampleInterval != nil {
+		writer.writeUInt64(m.SampleInterval, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarTemperatureFilterIir struct {
@@ -323,10 +2111,147 @@ func (m *PgnAirmarTemperatureFilterIir) PGNNumber() uint32               { retur
 func (m *PgnAirmarTemperatureFilterIir) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarTemperatureFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Temperature Filter IIR"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter IIR")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter IIR")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 44 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter IIR")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(4)
+	if err != nil {
+		return err
+	}
+	if match3 != 1 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter IIR")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.FilterType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SampleInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.FilterDuration = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Temperature Filter IIR"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(44, 8)
+	}
+	if m.FilterType != nil {
+		writer.writeUInt64(m.FilterType, 4)
+	} else {
+		writer.writeLookupField(1, 4)
+	}
+	writer.writeReservedBits(4)
+	if m.SampleInterval != nil {
+		writer.writeUInt64(m.SampleInterval, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.FilterDuration != nil {
+		writer.writeUInt64(m.FilterDuration, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarTemperatureFilterNone struct {
@@ -342,10 +2267,132 @@ func (m *PgnAirmarTemperatureFilterNone) PGNNumber() uint32               { retu
 func (m *PgnAirmarTemperatureFilterNone) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarTemperatureFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: Temperature Filter None"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter None")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter None")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 44 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter None")
+	}
+	matchStream3 := NewPgnDataStream(payload)
+	matchStream3.skipBits(24)
+	match3, err := matchStream3.getNumberRaw(4)
+	if err != nil {
+		return err
+	}
+	if match3 != 0 {
+		return fmt.Errorf("match failed for %s", "Airmar: Temperature Filter None")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.FilterType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(4)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.SampleInterval = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: Temperature Filter None"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(44, 8)
+	}
+	if m.FilterType != nil {
+		writer.writeUInt64(m.FilterType, 4)
+	} else {
+		writer.writeLookupField(0, 4)
+	}
+	writer.writeReservedBits(4)
+	if m.SampleInterval != nil {
+		writer.writeUInt64(m.SampleInterval, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarTrueWindOptions struct {
@@ -360,10 +2407,108 @@ func (m *PgnAirmarTrueWindOptions) PGNNumber() uint32               { return 126
 func (m *PgnAirmarTrueWindOptions) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarTrueWindOptions) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarTrueWindOptions) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Airmar: True Wind Options"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: True Wind Options")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: True Wind Options")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 34 {
+		return fmt.Errorf("match failed for %s", "Airmar: True Wind Options")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ProprietaryId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.CogSubstitutionForHdg = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(22)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarTrueWindOptions) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Airmar: True Wind Options"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.ProprietaryId != nil {
+		writer.writeUInt64(m.ProprietaryId, 8)
+	} else {
+		writer.writeLookupField(34, 8)
+	}
+	if m.CogSubstitutionForHdg != nil {
+		writer.writeUInt64(m.CogSubstitutionForHdg, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(22)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarAdditionalWeatherData struct {
@@ -380,10 +2525,124 @@ func (m *PgnAirmarAdditionalWeatherData) PGNNumber() uint32               { retu
 func (m *PgnAirmarAdditionalWeatherData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarAdditionalWeatherData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130880, "Airmar: Additional Weather Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Additional Weather Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Additional Weather Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ApparentWindchillTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TrueWindchillTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Dewpoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130880, "Airmar: Additional Weather Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ApparentWindchillTemperature != nil {
+		writer.writeUInt64(m.ApparentWindchillTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.TrueWindchillTemperature != nil {
+		writer.writeUInt64(m.TrueWindchillTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Dewpoint != nil {
+		writer.writeUInt64(m.Dewpoint, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarHeaterControl struct {
@@ -400,10 +2659,124 @@ func (m *PgnAirmarHeaterControl) PGNNumber() uint32               { return 13088
 func (m *PgnAirmarHeaterControl) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarHeaterControl) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarHeaterControl) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130881, "Airmar: Heater Control"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: Heater Control")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: Heater Control")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.C = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.PlateTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.AirTemperature = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.Dewpoint = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarHeaterControl) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130881, "Airmar: Heater Control"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.C != nil {
+		writer.writeUInt64(m.C, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.PlateTemperature != nil {
+		writer.writeUInt64(m.PlateTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.AirTemperature != nil {
+		writer.writeUInt64(m.AirTemperature, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Dewpoint != nil {
+		writer.writeUInt64(m.Dewpoint, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnAirmarPost struct {
@@ -420,8 +2793,127 @@ func (m *PgnAirmarPost) PGNNumber() uint32               { return 130944 }
 func (m *PgnAirmarPost) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnAirmarPost) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnAirmarPost) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130944, "Airmar: POST"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 135 {
+		return fmt.Errorf("match failed for %s", "Airmar: POST")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Airmar: POST")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Control = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(7)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NumberOfIdTestResultPairsToFollow = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TestId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.TestResult = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnAirmarPost) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130944, "Airmar: POST"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(135, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Control != nil {
+		writer.writeUInt64(m.Control, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(7)
+	if m.NumberOfIdTestResultPairsToFollow != nil {
+		writer.writeUInt64(m.NumberOfIdTestResultPairsToFollow, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TestId != nil {
+		writer.writeUInt64(m.TestId, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.TestResult != nil {
+		writer.writeUInt64(m.TestResult, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }

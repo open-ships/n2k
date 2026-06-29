@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnDiverseYachtServicesLoadCell struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -15,8 +17,97 @@ func (m *PgnDiverseYachtServicesLoadCell) PGNNumber() uint32               { ret
 func (m *PgnDiverseYachtServicesLoadCell) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnDiverseYachtServicesLoadCell) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnDiverseYachtServicesLoadCell) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65293, "Diverse Yacht Services: Load Cell"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 641 {
+		return fmt.Errorf("match failed for %s", "Diverse Yacht Services: Load Cell")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Diverse Yacht Services: Load Cell")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Instance = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(8)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.LoadCell = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnDiverseYachtServicesLoadCell) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65293, "Diverse Yacht Services: Load Cell"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(641, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.Instance != nil {
+		writer.writeUInt64(m.Instance, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(8)
+	if m.LoadCell != nil {
+		writer.writeUInt64(m.LoadCell, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	return writer.Bytes(), writer.Err()
 }

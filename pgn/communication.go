@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnRadioFrequencyModePower struct {
 	Info             MessageInfo `json:"info"`
 	RxFrequency      *uint64     `json:"rxFrequency,omitempty" n2k:"1"`
@@ -17,10 +19,98 @@ func (m *PgnRadioFrequencyModePower) PGNNumber() uint32               { return 1
 func (m *PgnRadioFrequencyModePower) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnRadioFrequencyModePower) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnRadioFrequencyModePower) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129799, "Radio Frequency/Mode/Power"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.RxFrequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TxFrequency = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.RadioChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.TxPower = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Mode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.ChannelBandwidth = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnRadioFrequencyModePower) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129799, "Radio Frequency/Mode/Power"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.RxFrequency != nil {
+		writer.writeUInt64(m.RxFrequency, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.TxFrequency != nil {
+		writer.writeUInt64(m.TxFrequency, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	writer.writeFixedString(m.RadioChannel, 48)
+	if m.TxPower != nil {
+		writer.writeUInt64(m.TxPower, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.Mode != nil {
+		writer.writeUInt64(m.Mode, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ChannelBandwidth != nil {
+		writer.writeUInt64(m.ChannelBandwidth, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnDscCallInformation struct {
@@ -52,10 +142,310 @@ func (m *PgnDscCallInformation) PGNNumber() uint32               { return 129808
 func (m *PgnDscCallInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnDscCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnDscCallInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129808, "DSC Call Information"), m, payload)
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscFormatSymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscCategorySymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(40)
+		if err != nil {
+			return err
+		}
+		m.DscMessageAddress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.Pgn1stTelecommand = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SubsequentCommunicationModeOr2ndTelecommand = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.ProposedRxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.ProposedTxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.TelephoneNumber = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.LatitudeOfVesselReported = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.LongitudeOfVesselReported = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TimeOfPosition = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(40)
+		if err != nil {
+			return err
+		}
+		m.MmsiOfShipInDistress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscEosSymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ExpansionEnabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.CallingRxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.CallingTxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TimeOfReceipt = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DateOfReceipt = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DscEquipmentAssignedMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscExpansionFieldSymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.DscExpansionFieldData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnDscCallInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129808, "DSC Call Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.DscFormatSymbol != nil {
+		writer.writeUInt64(m.DscFormatSymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DscCategorySymbol != nil {
+		writer.writeUInt64(m.DscCategorySymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DscMessageAddress != nil {
+		writer.writeUInt64(m.DscMessageAddress, 40)
+	} else {
+		writer.setErr(writer.putNullUnsigned(40))
+	}
+	if m.Pgn1stTelecommand != nil {
+		writer.writeUInt64(m.Pgn1stTelecommand, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SubsequentCommunicationModeOr2ndTelecommand != nil {
+		writer.writeUInt64(m.SubsequentCommunicationModeOr2ndTelecommand, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.ProposedRxFrequencyChannel, 48)
+	writer.writeFixedString(m.ProposedTxFrequencyChannel, 48)
+	writer.writeStringWithLengthAndControl(m.TelephoneNumber)
+	if m.LatitudeOfVesselReported != nil {
+		writer.writeInt64(m.LatitudeOfVesselReported, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.LongitudeOfVesselReported != nil {
+		writer.writeInt64(m.LongitudeOfVesselReported, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.TimeOfPosition != nil {
+		writer.writeUInt64(m.TimeOfPosition, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.MmsiOfShipInDistress != nil {
+		writer.writeUInt64(m.MmsiOfShipInDistress, 40)
+	} else {
+		writer.setErr(writer.putNullUnsigned(40))
+	}
+	if m.DscEosSymbol != nil {
+		writer.writeUInt64(m.DscEosSymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ExpansionEnabled != nil {
+		writer.writeUInt64(m.ExpansionEnabled, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	writer.writeFixedString(m.CallingRxFrequencyChannel, 48)
+	writer.writeFixedString(m.CallingTxFrequencyChannel, 48)
+	if m.TimeOfReceipt != nil {
+		writer.writeUInt64(m.TimeOfReceipt, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DateOfReceipt != nil {
+		writer.writeUInt64(m.DateOfReceipt, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DscEquipmentAssignedMessageId != nil {
+		writer.writeUInt64(m.DscEquipmentAssignedMessageId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DscExpansionFieldSymbol != nil {
+		writer.writeUInt64(m.DscExpansionFieldSymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLengthAndControl(m.DscExpansionFieldData)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnDscDistressCallInformation struct {
@@ -87,8 +477,317 @@ func (m *PgnDscDistressCallInformation) PGNNumber() uint32               { retur
 func (m *PgnDscDistressCallInformation) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnDscDistressCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnDscDistressCallInformation) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(129808, "DSC Distress Call Information"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	matchStream0.skipBits(8)
+	match0, err := matchStream0.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match0 != 112 {
+		return fmt.Errorf("match failed for %s", "DSC Distress Call Information")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscFormat = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscCategory = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(40)
+		if err != nil {
+			return err
+		}
+		m.DscMessageAddress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.NatureOfDistress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.SubsequentCommunicationModeOr2ndTelecommand = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.ProposedRxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.ProposedTxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.TelephoneNumber = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.LatitudeOfVesselReported = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		raw, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		value := signExtend(raw, 32)
+		m.LongitudeOfVesselReported = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TimeOfPosition = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(40)
+		if err != nil {
+			return err
+		}
+		m.MmsiOfShipInDistress = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscEosSymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(2)
+		if err != nil {
+			return err
+		}
+		m.ExpansionEnabled = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.CallingRxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readFixedString(48)
+		if err != nil {
+			return err
+		}
+		m.CallingTxFrequencyChannel = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(32)
+		if err != nil {
+			return err
+		}
+		m.TimeOfReceipt = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DateOfReceipt = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(16)
+		if err != nil {
+			return err
+		}
+		m.DscEquipmentAssignedMessageId = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DscExpansionFieldSymbol = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readStringWithLengthAndControl()
+		if err != nil {
+			return err
+		}
+		m.DscExpansionFieldData = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnDscDistressCallInformation) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(129808, "DSC Distress Call Information"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.DscFormat != nil {
+		writer.writeUInt64(m.DscFormat, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DscCategory != nil {
+		writer.writeUInt64(m.DscCategory, 8)
+	} else {
+		writer.writeLookupField(112, 8)
+	}
+	if m.DscMessageAddress != nil {
+		writer.writeUInt64(m.DscMessageAddress, 40)
+	} else {
+		writer.setErr(writer.putNullUnsigned(40))
+	}
+	if m.NatureOfDistress != nil {
+		writer.writeUInt64(m.NatureOfDistress, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.SubsequentCommunicationModeOr2ndTelecommand != nil {
+		writer.writeUInt64(m.SubsequentCommunicationModeOr2ndTelecommand, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeFixedString(m.ProposedRxFrequencyChannel, 48)
+	writer.writeFixedString(m.ProposedTxFrequencyChannel, 48)
+	writer.writeStringWithLengthAndControl(m.TelephoneNumber)
+	if m.LatitudeOfVesselReported != nil {
+		writer.writeInt64(m.LatitudeOfVesselReported, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.LongitudeOfVesselReported != nil {
+		writer.writeInt64(m.LongitudeOfVesselReported, 32)
+	} else {
+		writer.setErr(writer.putNullSigned(32))
+	}
+	if m.TimeOfPosition != nil {
+		writer.writeUInt64(m.TimeOfPosition, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.MmsiOfShipInDistress != nil {
+		writer.writeUInt64(m.MmsiOfShipInDistress, 40)
+	} else {
+		writer.setErr(writer.putNullUnsigned(40))
+	}
+	if m.DscEosSymbol != nil {
+		writer.writeUInt64(m.DscEosSymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ExpansionEnabled != nil {
+		writer.writeUInt64(m.ExpansionEnabled, 2)
+	} else {
+		writer.setErr(writer.putNullUnsigned(2))
+	}
+	writer.writeReservedBits(6)
+	writer.writeFixedString(m.CallingRxFrequencyChannel, 48)
+	writer.writeFixedString(m.CallingTxFrequencyChannel, 48)
+	if m.TimeOfReceipt != nil {
+		writer.writeUInt64(m.TimeOfReceipt, 32)
+	} else {
+		writer.setErr(writer.putNullUnsigned(32))
+	}
+	if m.DateOfReceipt != nil {
+		writer.writeUInt64(m.DateOfReceipt, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DscEquipmentAssignedMessageId != nil {
+		writer.writeUInt64(m.DscEquipmentAssignedMessageId, 16)
+	} else {
+		writer.setErr(writer.putNullUnsigned(16))
+	}
+	if m.DscExpansionFieldSymbol != nil {
+		writer.writeUInt64(m.DscExpansionFieldSymbol, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeStringWithLengthAndControl(m.DscExpansionFieldData)
+	return writer.Bytes(), writer.Err()
 }

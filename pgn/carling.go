@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnCarlingBreakerCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -19,10 +21,168 @@ func (m *PgnCarlingBreakerCommand) PGNNumber() uint32               { return 611
 func (m *PgnCarlingBreakerCommand) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnCarlingBreakerCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnCarlingBreakerCommand) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(61184, "Carling: Breaker Command"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 176 {
+		return fmt.Errorf("match failed for %s", "Carling: Breaker Command")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Carling: Breaker Command")
+	}
+	matchStream2 := NewPgnDataStream(payload)
+	matchStream2.skipBits(16)
+	match2, err := matchStream2.getNumberRaw(8)
+	if err != nil {
+		return err
+	}
+	if match2 != 2 {
+		return fmt.Errorf("match failed for %s", "Carling: Breaker Command")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MessageType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BreakerCommand = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DimValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnCarlingBreakerCommand) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(61184, "Carling: Breaker Command"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(176, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageType != nil {
+		writer.writeUInt64(m.MessageType, 8)
+	} else {
+		writer.writeLookupField(2, 8)
+	}
+	if m.BreakerMapping1 != nil {
+		writer.writeUInt64(m.BreakerMapping1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BreakerMapping2 != nil {
+		writer.writeUInt64(m.BreakerMapping2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(5)
+	if m.BreakerMapping3 != nil {
+		writer.writeUInt64(m.BreakerMapping3, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	if m.BreakerCommand != nil {
+		writer.writeUInt64(m.BreakerCommand, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.DimValue != nil {
+		writer.writeUInt64(m.DimValue, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnCarlingSwitchboardStatus struct {
@@ -37,10 +197,90 @@ func (m *PgnCarlingSwitchboardStatus) PGNNumber() uint32               { return 
 func (m *PgnCarlingSwitchboardStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnCarlingSwitchboardStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnCarlingSwitchboardStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65300, "Carling: Switchboard Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 176 {
+		return fmt.Errorf("match failed for %s", "Carling: Switchboard Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Carling: Switchboard Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MessageType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(40)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnCarlingSwitchboardStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65300, "Carling: Switchboard Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(176, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageType != nil {
+		writer.writeUInt64(m.MessageType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 40)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnCarlingDcConfigurationCommand struct {
@@ -67,10 +307,279 @@ func (m *PgnCarlingDcConfigurationCommand) PGNNumber() uint32               { re
 func (m *PgnCarlingDcConfigurationCommand) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnCarlingDcConfigurationCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnCarlingDcConfigurationCommand) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(126720, "Carling: DC Configuration Command"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 176 {
+		return fmt.Errorf("match failed for %s", "Carling: DC Configuration Command")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Carling: DC Configuration Command")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MessageType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping1 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping2 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(5)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.BreakerMapping3 = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.InrushDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.TripDelay = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.ConfigurationFlags = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.CurrentRating = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.FactoryMaxRating = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.ScheduleBLoadShedPriority = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.ScheduleALoadShedPriority = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.DimValue = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.BreakerGroup = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(4)
+		if err != nil {
+			return err
+		}
+		m.FlashMapIndex = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnCarlingDcConfigurationCommand) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(126720, "Carling: DC Configuration Command"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(176, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageType != nil {
+		writer.writeUInt64(m.MessageType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BreakerMapping1 != nil {
+		writer.writeUInt64(m.BreakerMapping1, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BreakerMapping2 != nil {
+		writer.writeUInt64(m.BreakerMapping2, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeReservedBits(5)
+	if m.BreakerMapping3 != nil {
+		writer.writeUInt64(m.BreakerMapping3, 3)
+	} else {
+		writer.setErr(writer.putNullUnsigned(3))
+	}
+	if m.InrushDelay != nil {
+		writer.writeUInt64(m.InrushDelay, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.TripDelay != nil {
+		writer.writeUInt64(m.TripDelay, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.ConfigurationFlags != nil {
+		writer.writeUInt64(m.ConfigurationFlags, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.CurrentRating != nil {
+		writer.writeUInt64(m.CurrentRating, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.FactoryMaxRating != nil {
+		writer.writeUInt64(m.FactoryMaxRating, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.ScheduleBLoadShedPriority != nil {
+		writer.writeUInt64(m.ScheduleBLoadShedPriority, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.ScheduleALoadShedPriority != nil {
+		writer.writeUInt64(m.ScheduleALoadShedPriority, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.DimValue != nil {
+		writer.writeUInt64(m.DimValue, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	if m.BreakerGroup != nil {
+		writer.writeUInt64(m.BreakerGroup, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	if m.FlashMapIndex != nil {
+		writer.writeUInt64(m.FlashMapIndex, 4)
+	} else {
+		writer.setErr(writer.putNullUnsigned(4))
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnCarlingProprietary struct {
@@ -84,10 +593,75 @@ func (m *PgnCarlingProprietary) PGNNumber() uint32               { return 130844
 func (m *PgnCarlingProprietary) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnCarlingProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnCarlingProprietary) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130844, "Carling: Proprietary"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 176 {
+		return fmt.Errorf("match failed for %s", "Carling: Proprietary")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Carling: Proprietary")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1768)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnCarlingProprietary) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130844, "Carling: Proprietary"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(176, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 1768)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnCarlingBreakerStatusAndConfiguration struct {
@@ -102,8 +676,88 @@ func (m *PgnCarlingBreakerStatusAndConfiguration) PGNNumber() uint32            
 func (m *PgnCarlingBreakerStatusAndConfiguration) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnCarlingBreakerStatusAndConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnCarlingBreakerStatusAndConfiguration) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130921, "Carling: Breaker Status and Configuration"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 176 {
+		return fmt.Errorf("match failed for %s", "Carling: Breaker Status and Configuration")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Carling: Breaker Status and Configuration")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(8)
+		if err != nil {
+			return err
+		}
+		m.MessageType = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(1752)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnCarlingBreakerStatusAndConfiguration) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130921, "Carling: Breaker Status and Configuration"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(176, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	if m.MessageType != nil {
+		writer.writeUInt64(m.MessageType, 8)
+	} else {
+		writer.setErr(writer.putNullUnsigned(8))
+	}
+	writer.writeBinaryData(m.Data, 1752)
+	return writer.Bytes(), writer.Err()
 }

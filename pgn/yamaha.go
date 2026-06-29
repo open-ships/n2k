@@ -3,6 +3,8 @@
 
 package pgn
 
+import "fmt"
+
 type PgnYamahaGearStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -14,10 +16,99 @@ func (m *PgnYamahaGearStatus) PGNNumber() uint32               { return 65314 }
 func (m *PgnYamahaGearStatus) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaGearStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaGearStatus) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65314, "Yamaha: Gear Status"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Gear Status")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Gear Status")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(24)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(1)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(1)
+		if err != nil {
+			return err
+		}
+		m.Neutral = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(6)
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(16)
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaGearStatus) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65314, "Yamaha: Gear Status"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeReservedBits(24)
+	writer.writeReservedBits(1)
+	if m.Neutral != nil {
+		writer.writeUInt64(m.Neutral, 1)
+	} else {
+		writer.setErr(writer.putNullUnsigned(1))
+	}
+	writer.writeReservedBits(6)
+	writer.writeReservedBits(16)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineDataA struct {
@@ -31,10 +122,75 @@ func (m *PgnYamahaEngineDataA) PGNNumber() uint32               { return 65329 }
 func (m *PgnYamahaEngineDataA) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineDataA) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65329, "Yamaha: Engine Data A"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data A")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data A")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineDataA) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65329, "Yamaha: Engine Data A"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineDataB struct {
@@ -48,10 +204,75 @@ func (m *PgnYamahaEngineDataB) PGNNumber() uint32               { return 65344 }
 func (m *PgnYamahaEngineDataB) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineDataB) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65344, "Yamaha: Engine Data B"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data B")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data B")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineDataB) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65344, "Yamaha: Engine Data B"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineDataC struct {
@@ -65,10 +286,75 @@ func (m *PgnYamahaEngineDataC) PGNNumber() uint32               { return 65424 }
 func (m *PgnYamahaEngineDataC) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineDataC) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65424, "Yamaha: Engine Data C"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data C")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data C")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineDataC) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65424, "Yamaha: Engine Data C"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineDataD struct {
@@ -82,10 +368,75 @@ func (m *PgnYamahaEngineDataD) PGNNumber() uint32               { return 65472 }
 func (m *PgnYamahaEngineDataD) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineDataD) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(65472, "Yamaha: Engine Data D"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data D")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data D")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.readBinaryData(48)
+		if err != nil {
+			return err
+		}
+		m.Data = value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineDataD) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(65472, "Yamaha: Engine Data D"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	writer.writeBinaryData(m.Data, 48)
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData struct {
@@ -98,10 +449,64 @@ func (m *PgnYamahaEngineData) PGNNumber() uint32               { return 130945 }
 func (m *PgnYamahaEngineData) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130945, "Yamaha: Engine Data"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130945, "Yamaha: Engine Data"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData2 struct {
@@ -114,10 +519,64 @@ func (m *PgnYamahaEngineData2) PGNNumber() uint32               { return 130946 
 func (m *PgnYamahaEngineData2) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData2) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData2) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130946, "Yamaha: Engine Data 2"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 2")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 2")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData2) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130946, "Yamaha: Engine Data 2"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData3 struct {
@@ -130,10 +589,64 @@ func (m *PgnYamahaEngineData3) PGNNumber() uint32               { return 130947 
 func (m *PgnYamahaEngineData3) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData3) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData3) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130947, "Yamaha: Engine Data 3"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 3")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 3")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData3) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130947, "Yamaha: Engine Data 3"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData4 struct {
@@ -146,10 +659,64 @@ func (m *PgnYamahaEngineData4) PGNNumber() uint32               { return 130951 
 func (m *PgnYamahaEngineData4) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData4) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData4) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(130951, "Yamaha: Engine Data 4"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 4")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 4")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData4) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(130951, "Yamaha: Engine Data 4"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData5 struct {
@@ -162,10 +729,64 @@ func (m *PgnYamahaEngineData5) PGNNumber() uint32               { return 131008 
 func (m *PgnYamahaEngineData5) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData5) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData5) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(131008, "Yamaha: Engine Data 5"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 5")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 5")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData5) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(131008, "Yamaha: Engine Data 5"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData6 struct {
@@ -178,10 +799,64 @@ func (m *PgnYamahaEngineData6) PGNNumber() uint32               { return 131011 
 func (m *PgnYamahaEngineData6) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData6) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData6) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(131011, "Yamaha: Engine Data 6"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 6")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 6")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData6) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(131011, "Yamaha: Engine Data 6"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
 
 type PgnYamahaEngineData7 struct {
@@ -194,8 +869,62 @@ func (m *PgnYamahaEngineData7) PGNNumber() uint32               { return 131012 
 func (m *PgnYamahaEngineData7) MessageInfo() MessageInfo        { return m.Info }
 func (m *PgnYamahaEngineData7) SetMessageInfo(info MessageInfo) { m.Info = info }
 func (m *PgnYamahaEngineData7) DecodePayload(payload []uint8) error {
-	return decodeStructPayload(lookupPgnInfo(131012, "Yamaha: Engine Data 7"), m, payload)
+	matchStream0 := NewPgnDataStream(payload)
+	match0, err := matchStream0.getNumberRaw(11)
+	if err != nil {
+		return err
+	}
+	if match0 != 198 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 7")
+	}
+	matchStream1 := NewPgnDataStream(payload)
+	matchStream1.skipBits(13)
+	match1, err := matchStream1.getNumberRaw(3)
+	if err != nil {
+		return err
+	}
+	if match1 != 4 {
+		return fmt.Errorf("match failed for %s", "Yamaha: Engine Data 7")
+	}
+	stream := NewPgnDataStream(payload)
+	{
+		value, err := stream.getNumberRaw(11)
+		if err != nil {
+			return err
+		}
+		m.ManufacturerCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	stream.skipBits(2)
+	if stream.isEOF() {
+		return nil
+	}
+	{
+		value, err := stream.getNumberRaw(3)
+		if err != nil {
+			return err
+		}
+		m.IndustryCode = &value
+	}
+	if stream.isEOF() {
+		return nil
+	}
+	return nil
 }
 func (m *PgnYamahaEngineData7) EncodePayload() ([]uint8, error) {
-	return encodeStructPayload(lookupPgnInfo(131012, "Yamaha: Engine Data 7"), m)
+	writer := NewPGNDataStreamWriter()
+	if m.ManufacturerCode != nil {
+		writer.writeUInt64(m.ManufacturerCode, 11)
+	} else {
+		writer.writeLookupField(198, 11)
+	}
+	writer.writeReservedBits(2)
+	if m.IndustryCode != nil {
+		writer.writeUInt64(m.IndustryCode, 3)
+	} else {
+		writer.writeLookupField(4, 3)
+	}
+	return writer.Bytes(), writer.Err()
 }
