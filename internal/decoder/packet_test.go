@@ -59,10 +59,10 @@ func TestGetSeqFrame(t *testing.T) {
 // proprietary PGN (130824). It checks:
 //   - MessageInfo fields are preserved (PGN, SourceId, Priority)
 //   - No parse errors for a valid, known PGN
-//   - Candidates are populated from generated CANboat metadata
+//   - Candidates are populated from generated PGN metadata
 //   - Fast flag is set (130824 is classified as a fast-packet PGN)
 //   - GetManCode correctly extracts manufacturer 381 (B&G) after initialization
-//   - AddDecoders keeps only the matching decoder
+//   - FilterCandidates keeps only matching PGN variants
 func TestNewPacket(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -80,18 +80,18 @@ func TestNewPacket(t *testing.T) {
 	assert.True(t, p.Fast)
 	p.GetManCode()
 	assert.Equal(t, pgn.ManufacturerCodeConst(381), p.Manufacturer)
-	p.AddDecoders()
-	assert.Equal(t, 1, len(p.Decoders))
+	p.FilterCandidates()
+	assert.Equal(t, 1, len(p.Candidates))
 }
 
-// TestFilterSlow verifies that AddDecoders correctly filters proprietary PGN candidates
+// TestFilterSlow verifies that FilterCandidates correctly filters proprietary PGN candidates
 // by manufacturer code. Two scenarios are tested:
 //
 //  1. Manufacturer 381 (B&G): matches one of the two PGN 130824 candidates, so exactly
-//     one decoder is added with no errors.
+//     one candidate remains with no errors.
 //
 //  2. Manufacturer 380 (not a known manufacturer for PGN 130824): no candidates match,
-//     so the Decoders slice remains empty. The "no decoders" error is deferred to the
+//     so the Candidates slice remains empty. The "no matching variant" error is deferred to the
 //     decode stage rather than being added here.
 func TestFilterSlow(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
@@ -102,9 +102,9 @@ func TestFilterSlow(t *testing.T) {
 		TargetId: &tgt,
 	}
 	p := NewPacket(pInfo, []uint8{(381 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
-	p.AddDecoders()
+	p.FilterCandidates()
 	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 1, len(p.Decoders))
+	assert.Equal(t, 1, len(p.Candidates))
 	pri2, tgt2 := uint8(1), uint8(0)
 	pInfo = pgn.MessageInfo{
 		PGN:      130824,
@@ -114,19 +114,19 @@ func TestFilterSlow(t *testing.T) {
 	}
 	// Use manufacturer code 380 (not matching any known PGN 130824 variant) to verify filtering.
 	p = NewPacket(pInfo, []uint8{(380 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
-	p.AddDecoders()
-	// assert.Equal(t, 1, len(p.ParseErrors)) p.decode() now handles the no decoders error
-	assert.Equal(t, 0, len(p.Decoders))
+	p.FilterCandidates()
+	// Decode now handles the no matching variant error.
+	assert.Equal(t, 0, len(p.Candidates))
 }
 
-// TestFilterFast verifies AddDecoders for PGN 130820, a fast-packet proprietary PGN with
+// TestFilterFast verifies FilterCandidates for PGN 130820, a fast-packet proprietary PGN with
 // many manufacturer-specific variants. The test simulates a complete fast packet by:
 //   - Stripping the first 2 bytes (sequence/length header) as sequence.complete() would
 //   - Setting Complete = true as the MultiBuilder would
 //   - Extracting the manufacturer code (419 = Maretron) and filtering decoders
 //
 // PGN 130820 has many candidate decoders. After filtering by manufacturer 419 (Maretron)
-// and applying CANboat match predicates, one decoder remains for this payload.
+// and applying match predicates, one candidate remains for this payload.
 func TestFilterFast(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -140,9 +140,9 @@ func TestFilterFast(t *testing.T) {
 	p.Data = p.Data[2:] // normally happens in sequence.complete()
 	p.Complete = true   // normally these 2 calls would happen by invoking b.process()
 	p.GetManCode()
-	p.AddDecoders()
+	p.FilterCandidates()
 	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 1, len(p.Decoders))
+	assert.Equal(t, 1, len(p.Candidates))
 }
 
 // TestBroadcast verifies that NewPacket handles broadcast PGNs (TargetId = 255) correctly.

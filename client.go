@@ -249,7 +249,7 @@ func (c *Client) initBus(cfg config) error {
 			}
 			packet := decoder.NewPacket(info, data)
 			packet.Complete = true
-			packet.AddDecoders()
+			packet.FilterCandidates()
 			c.readDecoder.Decode(*packet)
 		},
 		Logger: c.log,
@@ -415,7 +415,7 @@ func (h *clientDecoderHandler) HandleStruct(msg pgn.Message) {
 }
 
 // Write asynchronously encodes and transmits a PGN message. The message must
-// be a pointer to a PGN struct (e.g. *pgn.VesselHeading). The returned
+// be a pointer to a PGN struct (e.g. *pgn.PgnVesselHeading). The returned
 // WriteResult can be used to wait for completion and check for errors.
 // Writes are serialized through a single goroutine to guarantee FIFO ordering.
 func (c *Client) Write(msg pgn.Message) *WriteResult {

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// CAN frame for PGN 127501 (BinarySwitchBankStatus)
+// CAN frame for PGN 127501 (PgnBinarySwitchBankStatus)
 // CAN ID encodes: priority=2, PGN=0x1F20D (127501), source=0
 var testFrame127501 = can.Frame{
 	ID:     0x09F20D00,

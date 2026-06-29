@@ -9,9 +9,9 @@
 //
 //	*can.Frame (raw CAN bus frame)
 //	  -> NewPacketInfo() extracts PGN, source, priority, destination from CAN ID
-//	  -> NewPacket() creates a Packet with candidate decoders looked up from the PGN registry
+//	  -> NewPacket() creates a Packet with candidate metadata looked up by PGN
 //	  -> For fast packets: MultiBuilder assembles frames into a complete message
-//	  -> AddDecoders() filters candidates by manufacturer for proprietary PGNs
+//	  -> FilterCandidates() filters variants by manufacturer/match fields
 //	  -> Complete packet forwarded to PacketHandler
 package adapter
 
@@ -39,8 +39,7 @@ type CANAdapter struct {
 // Implementations receive fully assembled packets (both single-frame and multi-frame)
 // that are ready for decoding into typed PGN structs.
 type PacketHandler interface {
-	// Decode receives a complete Packet for decoding. The packet's Decoders slice
-	// is already populated and filtered by manufacturer for proprietary PGNs.
+	// Decode receives a complete Packet for decoding.
 	Decode(decoder.Packet)
 }
 
@@ -81,7 +80,7 @@ func (c *CANAdapter) HandleMessage(f *can.Frame) {
 	// the 29-bit extended CAN ID.
 	pInfo := NewPacketInfo(f)
 
-	// Create a Packet and look up candidate decoders from the canboat PGN registry.
+	// Create a Packet and look up candidate metadata.
 	packet := decoder.NewPacket(pInfo, f.Data[:])
 
 	// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
@@ -104,9 +103,9 @@ func (c *CANAdapter) HandleMessage(f *can.Frame) {
 	}
 
 	if packet.Complete {
-		// Packet is fully assembled. Filter candidate decoders by manufacturer code
-		// (for proprietary PGNs) and forward to the downstream handler.
-		packet.AddDecoders()
+		// Packet is fully assembled. Filter variants by manufacturer code and match
+		// fields, then forward to the downstream handler.
+		packet.FilterCandidates()
 		c.packetReady(packet)
 	}
 }

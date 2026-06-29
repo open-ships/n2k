@@ -32,10 +32,10 @@ if err != nil {
 }
 defer client.Close()
 
-// Write a message — the struct knows its own PGN number.
+// Write a message. The struct knows its own PGN number.
 // Priority defaults to 6, destination defaults to broadcast (255).
-h := float32(1.5708)
-heading := &pgn.VesselHeading{
+h := uint64(15708)
+heading := &pgn.PgnVesselHeading{
     Heading: &h,
 }
 result := client.Write(heading)
@@ -44,7 +44,7 @@ if err := result.Wait(); err != nil {
 }
 
 // Explicitly set priority and destination
-heading2 := &pgn.VesselHeading{
+heading2 := &pgn.PgnVesselHeading{
     Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
     Heading: &h,
 }
@@ -280,10 +280,6 @@ go run ./cmd/sniffer.go -i can0 | jq .
 MIT -- see LICENSE.
 
 ## Acknowledgments
-
-### [canboat](https://github.com/canboat/)
-
-The PGN definitions and decoders at the core of this library are generated from the canboat project's open-source NMEA 2000 database. canboat reverse-engineered the NMEA 2000 protocol through network observation and public sources, producing the comprehensive PGN catalog that makes libraries like this one possible. For deeper understanding of NMEA 2000 message semantics, field definitions, and manufacturer-specific PGNs, refer to the canboat documentation.
 
 ### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
 

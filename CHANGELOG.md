@@ -1,5 +1,15 @@
 ## Change Log for open-ships/n2k
 
+### 2026-06-29 - Unified PGN structs
+
+- Replaced multiple PGN implementation paths with one `Pgn*` struct per PGN shape.
+- Added the `pgn.PGN` interface: `PGNNumber`, `MessageInfo`, `SetMessageInfo`, `DecodePayload`, and `EncodePayload`.
+- Decode dispatch now returns `pgn.PGN` values directly through the generated PGN switch.
+- Removed the function-pointer registry and moved encode/decode behavior onto the structs themselves.
+- PGN files are grouped by category using `*_pgn_generated.go` filenames.
+
+---
+
 ### 2026-05-01 — Message interface and type-safe API
 
 Introduces the `pgn.Message` interface and eliminates redundant PGN specification when constructing messages. Users no longer need to pass the PGN number in `MessageInfo` — each struct knows its own PGN via its `PGNNumber()` method.
@@ -26,24 +36,24 @@ Introduces the `pgn.Message` interface and eliminates redundant PGN specificatio
 
 Before:
 ```go
-heading := &pgn.VesselHeading{
+heading := &pgn.PgnVesselHeading{
     Info:    pgn.MessageInfo{PGN: 127250, Priority: 2},
-    Heading: ptrFloat32(1.5708),
+    Heading: ptrUint64(15708),
 }
 ```
 
 After:
 ```go
-heading := &pgn.VesselHeading{
-    Heading: ptrFloat32(1.5708),
+heading := &pgn.PgnVesselHeading{
+    Heading: ptrUint64(15708),
 }
 ```
 
 With explicit priority/target:
 ```go
-heading := &pgn.VesselHeading{
+heading := &pgn.PgnVesselHeading{
     Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
-    Heading: ptrFloat32(1.5708),
+    Heading: ptrUint64(15708),
 }
 ```
 
@@ -70,9 +80,7 @@ Adds the `Client` API for bidirectional NMEA 2000 communication, PGN encoders, a
 **New: PGN encoders**
 
 - `pgn/pgndatastream_writer.go` — `PGNDataStreamWriter` for encoding fields back to wire format
-- Encoder functions for all PGN structs that have decoders
-- `EncoderLookup` map in `pgn/registry.go` for PGN-to-encoder dispatch
-- `PgnInfo.Encoder` field on PGN metadata
+- `EncodePayload` methods on PGN structs
 
 **New: frame encoding (`internal/framer/`)**
 
@@ -93,8 +101,7 @@ Adds the `Client` API for bidirectional NMEA 2000 communication, PGN encoders, a
 
 **New: PGN struct files**
 
-- Reorganized PGN structs from single generated file (`pgninfo_generated.go`) into category files: `ais.go`, `communication.go`, `electrical.go`, `engine.go`, `entertainment.go`, `environmental.go`, `lighting.go`, `navigation.go`, `other.go`, `propulsion.go`, `sensors.go`, `system.go`
-- `pgn/registry.go` — consolidated `pgnList`, `PgnInfoLookup`, `EncoderLookup`, and `init()`
+- Reorganized PGN structs into category files.
 - `pgn/enums.go` — NMEA 2000 enumeration constants
 
 **New: options**

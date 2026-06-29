@@ -2,7 +2,6 @@ package pgn
 
 import (
 	"fmt"
-	"math"
 	"reflect"
 	"sort"
 	"strconv"
@@ -11,6 +10,7 @@ import (
 
 type CanboatDefinition struct {
 	PGN                          uint32
+	StructName                   string
 	CanboatId                    string
 	Description                  string
 	Explanation                  string
@@ -65,60 +65,21 @@ type CanboatFieldDefinition struct {
 	BitLengthVariable                   bool
 }
 
-type GenericMessage struct {
-	Info        MessageInfo    `json:"info"`
-	CanboatId   string         `json:"canboatId"`
-	Description string         `json:"description"`
-	Fields      map[string]any `json:"fields"`
-	Raw         []uint8        `json:"raw,omitempty"`
+func init() {
+	initPgnInfoLookup()
 }
 
-func (m *GenericMessage) PGNNumber() uint32 {
-	return m.Info.PGN
-}
-
-type generatedCatalogDefinition struct {
-	Id      string
-	Decoder func(MessageInfo, *PGNDataStream) (Message, error)
-	Encoder func(Message) ([]byte, error)
-}
-
-func applyCanboatGeneratedOverlay() {
+func initPgnInfoLookup() {
 	if len(canboatGeneratedDefinitions) == 0 {
 		return
 	}
 
-	existing := make(map[string]*PgnInfo)
-	for _, infos := range PgnInfoLookup {
-		for _, info := range infos {
-			existing[pgnDescriptionKey(info.PGN, info.Description)] = info
-		}
-	}
-
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
 	UnseenLookup = make(map[uint32][]*PgnInfo)
-	EncoderLookup = make(map[uint32]func(Message) ([]byte, error))
 
 	generated := make([]*PgnInfo, 0, len(canboatGeneratedDefinitions))
 	for _, def := range canboatGeneratedDefinitions {
 		info := pgnInfoFromCanboat(def)
-		if old := existing[pgnDescriptionKey(info.PGN, info.Description)]; old != nil && pgnInfoLayoutCompatible(old, info) {
-			info.Id = old.Id
-			info.Decoder = old.Decoder
-			info.Encoder = old.Encoder
-		}
-		if catalog, ok := generatedCatalogDefinitions[pgnDescriptionKey(info.PGN, info.Description)]; ok && info.Decoder == nil {
-			info.Id = catalog.Id
-			info.Decoder = catalog.Decoder
-			info.Encoder = catalog.Encoder
-		}
-		if info.Decoder == nil {
-			info.Decoder = canboatGenericDecoder(info)
-		}
-		if info.Encoder == nil {
-			info.Encoder = canboatGenericEncoder(info)
-		}
-		info.Self = info
 		generated = append(generated, info)
 	}
 
@@ -134,71 +95,6 @@ func applyCanboatGeneratedOverlay() {
 		if !info.Complete || len(info.Missing) > 0 {
 			UnseenLookup[info.PGN] = append(UnseenLookup[info.PGN], info)
 		}
-		if _, exists := EncoderLookup[info.PGN]; !exists {
-			EncoderLookup[info.PGN] = info.Encoder
-		}
-	}
-}
-
-func pgnInfoLayoutCompatible(old *PgnInfo, current *PgnInfo) bool {
-	if old == nil || current == nil {
-		return false
-	}
-	if old.Fast != current.Fast {
-		return false
-	}
-	if len(old.Fields) != len(current.Fields) {
-		return false
-	}
-	for order, currentField := range current.Fields {
-		oldField := old.Fields[order]
-		if oldField == nil || currentField == nil {
-			return false
-		}
-		if oldField.BitLength != currentField.BitLength ||
-			oldField.BitOffset != currentField.BitOffset ||
-			oldField.BitLengthVariable != currentField.BitLengthVariable ||
-			oldField.Signed != currentField.Signed {
-			return false
-		}
-		if !compatibleCanboatType(oldField.CanboatType, currentField.CanboatType) {
-			return false
-		}
-		if math.Abs(float64(oldField.Resolution-currentField.Resolution)) > 1e-6 {
-			return false
-		}
-	}
-	return true
-}
-
-func compatibleCanboatType(oldType string, currentType string) bool {
-	if oldType == currentType {
-		return true
-	}
-	if numericCanboatType(oldType) && numericCanboatType(currentType) {
-		return true
-	}
-	switch currentType {
-	case "DYNAMIC_FIELD_KEY":
-		return oldType == "FIELDTYPE_LOOKUP"
-	case "DYNAMIC_FIELD_VALUE":
-		return oldType == "KEY_VALUE"
-	case "DYNAMIC_FIELD_LENGTH", "PGN", "ISO_NAME", "DECIMAL":
-		return oldType == "NUMBER"
-	case "DURATION":
-		return oldType == "TIME" || oldType == "NUMBER"
-	default:
-		return false
-	}
-}
-
-func numericCanboatType(fieldType string) bool {
-	switch fieldType {
-	case "BITLOOKUP", "DATE", "DECIMAL", "DURATION", "DYNAMIC_FIELD_KEY", "DYNAMIC_FIELD_LENGTH",
-		"FIELD_INDEX", "INDIRECT_LOOKUP", "ISO_NAME", "LOOKUP", "MMSI", "NUMBER", "PGN", "TIME":
-		return true
-	default:
-		return false
 	}
 }
 
@@ -215,7 +111,7 @@ func pgnInfoFromCanboat(def CanboatDefinition) *PgnInfo {
 
 	return &PgnInfo{
 		CanboatId:                    def.CanboatId,
-		Id:                           exportedID(def.CanboatId, def.Description),
+		Id:                           firstNonEmpty(def.StructName, exportedID(def.CanboatId, def.Description)),
 		PGN:                          def.PGN,
 		Description:                  def.Description,
 		Explanation:                  def.Explanation,
@@ -282,6 +178,7 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 		ReservedValue:                       field.ReservedValue,
 		UnknownValue:                        field.UnknownValue,
 		PartOfPrimaryKey:                    field.PartOfPrimaryKey,
+		GolangType:                          generatedFieldType(field),
 		Resolution:                          resolution,
 		Signed:                              field.Signed,
 		Unit:                                field.Unit,
@@ -289,32 +186,32 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 	}
 }
 
-func canboatGenericDecoder(info *PgnInfo) func(MessageInfo, *PGNDataStream) (Message, error) {
-	return func(messageInfo MessageInfo, stream *PGNDataStream) (Message, error) {
-		if !info.MatchesData(stream.data) {
-			return nil, fmt.Errorf("match failed for %s", info.Description)
+func generatedFieldType(field CanboatFieldDefinition) string {
+	switch field.FieldType {
+	case "RESERVED", "SPARE":
+		return ""
+	case "STRING_FIX", "STRING_LZ", "STRING_LAU":
+		return "string"
+	case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
+		return "[]uint8"
+	case "FLOAT":
+		return "*float32"
+	default:
+		if field.Signed {
+			return "*int64"
 		}
-		fields, err := decodeGenericFields(info, stream)
-		if err != nil {
-			return nil, err
-		}
-		return &GenericMessage{
-			Info:        messageInfo,
-			CanboatId:   info.CanboatId,
-			Description: info.Description,
-			Fields:      fields,
-			Raw:         append([]uint8(nil), stream.data...),
-		}, nil
+		return "*uint64"
 	}
 }
 
-func decodeGeneratedCatalog(info *PgnInfo, target Message, stream *PGNDataStream) error {
+func decodeStructPayload(info *PgnInfo, target PGN, payload []uint8) error {
 	if info == nil {
-		return fmt.Errorf("missing CANboat metadata for %T", target)
+		return fmt.Errorf("missing PGN metadata for %T", target)
 	}
 	if target == nil {
-		return fmt.Errorf("nil CANboat catalog target for %s", info.Description)
+		return fmt.Errorf("nil PGN target for %s", info.Description)
 	}
+	stream := NewPgnDataStream(payload)
 	if !info.MatchesData(stream.data) {
 		return fmt.Errorf("match failed for %s", info.Description)
 	}
@@ -322,50 +219,18 @@ func decodeGeneratedCatalog(info *PgnInfo, target Message, stream *PGNDataStream
 	if err != nil {
 		return err
 	}
-	return setGeneratedCatalogFields(target, values)
+	return setStructFields(target, values)
 }
 
-func encodeGeneratedCatalog(info *PgnInfo, message Message) ([]byte, error) {
+func encodeStructPayload(info *PgnInfo, message PGN) ([]byte, error) {
 	if info == nil {
-		return nil, fmt.Errorf("missing CANboat metadata for %T", message)
+		return nil, fmt.Errorf("missing PGN metadata for %T", message)
 	}
-	values, err := generatedCatalogFieldValues(message)
+	values, err := structFieldValues(message)
 	if err != nil {
 		return nil, err
 	}
 	return encodeCanboatFieldValues(info, values)
-}
-
-func canboatGenericEncoder(info *PgnInfo) func(Message) ([]byte, error) {
-	return func(message Message) ([]byte, error) {
-		generic, ok := message.(*GenericMessage)
-		if !ok {
-			return nil, fmt.Errorf("expected *GenericMessage for %s, got %T", info.Description, message)
-		}
-		if generic.PGNNumber() != info.PGN {
-			return nil, fmt.Errorf("expected PGN %d, got %d", info.PGN, generic.PGNNumber())
-		}
-		if len(generic.Raw) > 0 {
-			return append([]uint8(nil), generic.Raw...), nil
-		}
-		return encodeGenericFields(info, generic.Fields)
-	}
-}
-
-func decodeGenericFields(info *PgnInfo, stream *PGNDataStream) (map[string]any, error) {
-	fieldValues, err := decodeCanboatFieldValues(info, stream)
-	if err != nil {
-		return nil, err
-	}
-	fields := orderedFieldDescriptors(info)
-	values := make(map[string]any, len(fieldValues))
-	for _, field := range fields {
-		value, ok := fieldValues[field.index]
-		if ok {
-			values[jsonFieldName(field.descriptor)] = value
-		}
-	}
-	return values, nil
 }
 
 func decodeCanboatFieldValues(info *PgnInfo, stream *PGNDataStream) (map[int]any, error) {
@@ -439,12 +304,6 @@ func decodeCanboatFieldValue(field *FieldDescriptor, stream *PGNDataStream) (any
 	}
 }
 
-func encodeGenericFields(info *PgnInfo, values map[string]any) ([]byte, error) {
-	return encodeCanboatFields(info, func(order int, field *FieldDescriptor) (any, bool) {
-		return genericFieldValue(field, values)
-	})
-}
-
 func encodeCanboatFieldValues(info *PgnInfo, values map[int]any) ([]byte, error) {
 	return encodeCanboatFields(info, func(order int, field *FieldDescriptor) (any, bool) {
 		value, ok := values[order]
@@ -512,7 +371,7 @@ func encodeCanboatFields(info *PgnInfo, valueFor func(int, *FieldDescriptor) (an
 	return writer.Bytes(), writer.Err()
 }
 
-func setGeneratedCatalogFields(target Message, values map[int]any) error {
+func setStructFields(target PGN, values map[int]any) error {
 	rv := reflect.ValueOf(target)
 	if !rv.IsValid() || rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return fmt.Errorf("expected non-nil pointer target, got %T", target)
@@ -537,14 +396,14 @@ func setGeneratedCatalogFields(target Message, values map[int]any) error {
 		if !ok {
 			continue
 		}
-		if err := setGeneratedCatalogField(rv.Field(i), value); err != nil {
+		if err := setStructField(rv.Field(i), value); err != nil {
 			return fmt.Errorf("%s: %w", structField.Name, err)
 		}
 	}
 	return nil
 }
 
-func setGeneratedCatalogField(dst reflect.Value, value any) error {
+func setStructField(dst reflect.Value, value any) error {
 	if !dst.CanSet() || value == nil {
 		return nil
 	}
@@ -587,7 +446,7 @@ func setGeneratedCatalogField(dst reflect.Value, value any) error {
 	return fmt.Errorf("cannot assign %s to %s", src.Type(), dst.Type())
 }
 
-func generatedCatalogFieldValues(message Message) (map[int]any, error) {
+func structFieldValues(message PGN) (map[int]any, error) {
 	rv := reflect.ValueOf(message)
 	if !rv.IsValid() || rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return nil, fmt.Errorf("expected non-nil pointer message, got %T", message)
@@ -618,34 +477,13 @@ func generatedCatalogFieldValues(message Message) (map[int]any, error) {
 	return values, nil
 }
 
-func generatedCatalogInfo(pgn uint32, description string) *PgnInfo {
+func lookupPgnInfo(pgn uint32, description string) *PgnInfo {
 	for _, info := range PgnInfoLookup[pgn] {
 		if info.Description == description {
 			return info
 		}
 	}
 	return nil
-}
-
-func generatedCatalogTypeError(expected string, actual Message) error {
-	return fmt.Errorf("expected *%s, got %T", expected, actual)
-}
-
-func genericFieldValue(field *FieldDescriptor, values map[string]any) (any, bool) {
-	if len(values) == 0 {
-		return nil, false
-	}
-	keys := []string{jsonFieldName(field), field.CanboatId, field.Name}
-	for _, key := range keys {
-		if key == "" {
-			continue
-		}
-		value, ok := values[key]
-		if ok {
-			return value, true
-		}
-	}
-	return nil, false
 }
 
 func genericBytes(value any) ([]uint8, bool) {
@@ -851,6 +689,15 @@ func exportedID(canboatID string, description string) string {
 		return canboatID
 	}
 	return strings.ReplaceAll(description, " ", "")
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if value != "" {
+			return value
+		}
+	}
+	return ""
 }
 
 func canboatUint8(v uint8) *uint8       { return &v }

@@ -9,39 +9,28 @@ type Message interface {
 	PGNNumber() uint32
 }
 
-// EncodeMessage serializes msg using the encoder registered for its PGN variant.
-// Multiple CANboat variants can share a numeric PGN, so callers must not
-// select encoders by PGN number alone.
+type PGN interface {
+	Message
+	MessageInfo() MessageInfo
+	SetMessageInfo(MessageInfo)
+	DecodePayload([]uint8) error
+	EncodePayload() ([]uint8, error)
+}
+
+// DecodeMessage decodes a raw PGN payload into the matching PGN struct.
+func DecodeMessage(info MessageInfo, payload []uint8) (PGN, error) {
+	return DecodePayload(info, payload)
+}
+
+// EncodeMessage serializes msg by calling its EncodePayload method.
 func EncodeMessage(msg Message) ([]byte, error) {
 	if msg == nil {
 		return nil, errors.New("nil PGN message")
 	}
 
-	pgnNum := msg.PGNNumber()
-	candidates := PgnInfoLookup[pgnNum]
-	var errs []error
-	tried := false
-
-	for _, candidate := range candidates {
-		if candidate.Encoder == nil {
-			continue
-		}
-		tried = true
-		payload, err := candidate.Encoder(msg)
-		if err == nil {
-			return payload, nil
-		}
-		errs = append(errs, err)
+	pgnMsg, ok := msg.(PGN)
+	if !ok {
+		return nil, fmt.Errorf("%T does not implement pgn.PGN", msg)
 	}
-
-	// Preserve compatibility for callers/tests that populate EncoderLookup directly,
-	// while keeping PgnInfoLookup as the authoritative variant-aware registry.
-	if !tried {
-		if encoder, ok := EncoderLookup[pgnNum]; ok {
-			return encoder(msg)
-		}
-		return nil, fmt.Errorf("no encoder registered for PGN %d", pgnNum)
-	}
-
-	return nil, fmt.Errorf("no encoder matched %T for PGN %d: %w", msg, pgnNum, errors.Join(errs...))
+	return pgnMsg.EncodePayload()
 }

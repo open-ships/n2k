@@ -2,9 +2,8 @@
 //
 // The decoder package sits in the middle of the NMEA 2000 decoding pipeline. It receives raw
 // frame data from an adapter layer and produces decoded Go structs representing specific
-// PGN (Parameter Group Number) messages. The Packet type is the central data structure
-// that accumulates frame data, tracks fast-packet assembly state, and holds candidate
-// decoders for the final PGN interpretation.
+// PGN (Parameter Group Number) messages. The Packet type accumulates frame data and
+// tracks fast-packet assembly state.
 package decoder
 
 import (
@@ -16,7 +15,7 @@ import (
 // Packet is the core data type used in the package.
 // When complete a Packet contains the complete message (coallescing multiple fast packets if needed).
 // It connects the encoded frame format used as the NMNEA 2000 wire format with the
-// generic PGN data description derived from canboat.json.
+// PGN payload metadata.
 //
 // In our data flow it fits like this:
 //
@@ -31,7 +30,7 @@ import (
 // assembled into a single Packet via the sequence/MultiBuilder system before the Packet
 // is marked Complete and ready for decoding.
 type Packet struct {
-	// Info provides (for known PGNs), the generic description of the PGN derived from canboat.json.
+	// Info provides PGN number, source address, priority, destination, and timestamp.
 	// This includes metadata like PGN number, source address, priority, destination, and timestamp.
 	Info pgn.MessageInfo `json:"info"`
 
@@ -43,7 +42,7 @@ type Packet struct {
 	Data []uint8 `json:"data"`
 
 	// Fast (when complete) indicates if matching pgn variants are all fast or all slow.
-	// This is determined by looking up the PGN in the canboat-derived PgnInfoLookup table.
+	// This is determined by looking up the PGN in the generated PgnInfoLookup table.
 	// A "fast" PGN carries more than 8 bytes and must be split across multiple CAN frames.
 	// Note: PGN 130824 is a special case where some variants are fast and some are slow.
 	Fast bool `json:"fast"`
@@ -60,7 +59,7 @@ type Packet struct {
 
 	// Proprietary indicates if the PGN falls in the NMEA 2000 proprietary range.
 	// Proprietary PGNs encode a manufacturer ID and industry code in their first two data
-	// bytes, which is used to select the correct decoder from multiple candidates.
+	// bytes, which is used to select the correct variant.
 	Proprietary bool `json:"proprietary"`
 
 	// Complete is true for single-frame messages and for fast-packet messages when all
@@ -69,8 +68,7 @@ type Packet struct {
 	Complete bool `json:"complete"`
 
 	// Manufacturer is the Manufacturer ID extracted from the first two bytes of proprietary
-	// PGN data. Used to filter candidate decoders so only the matching manufacturer's
-	// decoder is applied.
+	// PGN data.
 	Manufacturer pgn.ManufacturerCodeConst `json:"manufacturer"`
 
 	// Candidates is the list of all possible PGN definitions that match this PGN number.
@@ -78,21 +76,15 @@ type Packet struct {
 	// messages under the same PGN number (e.g., PGN 130820 has many vendor-specific variants).
 	Candidates []*pgn.PgnInfo `json:"candidates"`
 
-	// Decoders is the filtered list of decoder functions derived from Candidates.
-	// After filtering by manufacturer ID (for proprietary PGNs), each remaining candidate's
-	// Decoder function is added here. Each decoder takes a MessageInfo and a PGNDataStream
-	// and returns a typed Go struct or an error if the data doesn't match.
-	Decoders []func(pgn.MessageInfo, *pgn.PGNDataStream) (pgn.Message, error) `json:"decoders"`
-
 	// ParseErrors tracks errors encountered during packet processing. Errors accumulate
-	// as validation fails, decoders are attempted, or assembly issues arise. If all decoders
-	// fail, these errors are bundled into the resulting UnknownPGN for debugging.
+	// as validation fails or assembly issues arise. Decode errors are bundled into the
+	// resulting UnknownPGN for debugging.
 	ParseErrors []error `json:"parseErrors"`
 }
 
 // NewPacket creates and returns a pointer to an initialized Packet from a MessageInfo and
 // raw data bytes. It performs initial validation, determines if the PGN is proprietary,
-// looks up candidate decoders from the canboat-derived PGN registry, and sets the Fast
+// looks up candidate metadata from the PGN metadata table, and sets the Fast
 // flag based on the first candidate's metadata.
 //
 // Parameters:
@@ -115,7 +107,7 @@ func NewPacket(info pgn.MessageInfo, data []byte) *Packet {
 		// there may be many (one per manufacturer that defines messages under this PGN).
 		p.Candidates = pgn.PgnInfoLookup[p.Info.PGN]
 		if len(p.Candidates) == 0 {
-			// PGN not found in the canboat-derived registry -- treat as unknown.
+			// PGN not found in generated metadata -- treat as unknown.
 			p.ParseErrors = append(p.ParseErrors, fmt.Errorf("no data for pgn"))
 		} else {
 			for _, candidate := range p.Candidates {
@@ -172,14 +164,8 @@ func (p *Packet) UnknownPGN() *pgn.UnknownPGN {
 	return buildUnknownPGN(p)
 }
 
-// AddDecoders populates the Decoders slice by filtering the Candidates list.
-// For proprietary PGNs, it first extracts the manufacturer code from the data and then
-// skips any candidate whose ManId doesn't match the packet's manufacturer. This ensures
-// that only the correct manufacturer's decoder is attempted.
-//
-// All remaining candidates are then filtered by CANboat Match predicates, which are
-// needed to distinguish variants that share a PGN and manufacturer.
-func (p *Packet) AddDecoders() {
+// FilterCandidates filters the candidate metadata to variants matching the payload.
+func (p *Packet) FilterCandidates() {
 	// Extract manufacturer code from the data payload (only meaningful for proprietary PGNs).
 	p.GetManCode() // sets p.Manufacturer
 	candidates := make([]*pgn.PgnInfo, 0, len(p.Candidates))
@@ -190,13 +176,7 @@ func (p *Packet) AddDecoders() {
 		}
 		candidates = append(candidates, d)
 	}
-	candidates = pgn.FilterMatchingPgnInfos(candidates, p.Data)
-	for _, d := range candidates {
-		if d.Decoder == nil {
-			continue
-		}
-		p.Decoders = append(p.Decoders, d.Decoder)
-	}
+	p.Candidates = pgn.FilterMatchingPgnInfos(candidates, p.Data)
 }
 
 // GetManCode extracts and sets the Manufacturer code from the packet data.

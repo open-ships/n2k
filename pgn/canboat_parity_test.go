@@ -160,19 +160,19 @@ func TestCanboatParity(t *testing.T) {
 		t.Errorf("unsupported CANboat field types: %s", strings.Join(unsupportedFieldTypes, ", "))
 	}
 	if len(missingRegisteredComplete) > 0 {
-		t.Errorf("complete CANboat PGNs not registered with decoders/encoders (%d):\n%s",
+		t.Errorf("complete upstream PGNs missing generated structs (%d):\n%s",
 			len(missingRegisteredComplete), sampleLines(missingRegisteredComplete, 25))
 	}
 	if len(missingKnown) > 0 {
-		t.Errorf("CANboat PGNs missing from registered+unseen runtime data (%d):\n%s",
+		t.Errorf("upstream PGNs missing from generated metadata (%d):\n%s",
 			len(missingKnown), sampleLines(missingKnown, 25))
 	}
 	if len(staleRegistered) > 0 {
-		t.Errorf("registered PGNs not present in current CANboat by PGN+description (%d):\n%s",
+		t.Errorf("generated PGNs not present in current upstream source by PGN+description (%d):\n%s",
 			len(staleRegistered), sampleLines(staleRegistered, 25))
 	}
 	if len(fieldMismatches) > 0 {
-		t.Errorf("registered PGNs with field/layout mismatches (%d):\n%s",
+		t.Errorf("generated PGNs with field/layout mismatches (%d):\n%s",
 			len(fieldMismatches), sampleLines(fieldMismatches, 25))
 	}
 }
@@ -269,11 +269,8 @@ func compareCanboatPGN(def canboatPGN, local *PgnInfo) []string {
 	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2CountField", local.RepeatingFieldSet2CountField, def.RepeatingFieldSet2CountField)...)
 	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2Size", local.RepeatingFieldSet2Size, def.RepeatingFieldSet2Size)...)
 
-	if local.Decoder == nil {
-		mismatches = append(mismatches, fmt.Sprintf("%s: decoder is nil", prefix))
-	}
-	if local.Encoder == nil {
-		mismatches = append(mismatches, fmt.Sprintf("%s: encoder is nil", prefix))
+	if local.Id == "" {
+		mismatches = append(mismatches, fmt.Sprintf("%s: struct id is empty", prefix))
 	}
 	if len(local.Fields) != def.FieldCount {
 		mismatches = append(mismatches, fmt.Sprintf("%s: field count local=%d upstream=%d", prefix, len(local.Fields), def.FieldCount))

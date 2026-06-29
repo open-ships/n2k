@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
-	"runtime"
 	"sort"
 	"strings"
 	"testing"
@@ -28,8 +27,6 @@ type pgnManifestCounts struct {
 	UniqueSupportedPgns int `json:"uniqueSupportedPgns"`
 	TypedVariants       int `json:"typedVariants"`
 	UniqueTypedPgns     int `json:"uniqueTypedPgns"`
-	GenericVariants     int `json:"genericVariants"`
-	UniqueGenericPgns   int `json:"uniqueGenericPgns"`
 }
 
 type pgnManifestCategory struct {
@@ -103,8 +100,8 @@ func TestPGNManifestMatchesRegistry(t *testing.T) {
 	if err := json.Unmarshal(raw, &manifest); err != nil {
 		t.Fatalf("parse manifest: %v", err)
 	}
-	if manifest.SchemaVersion != 2 {
-		t.Fatalf("schemaVersion = %d, want 2", manifest.SchemaVersion)
+	if manifest.SchemaVersion != 3 {
+		t.Fatalf("schemaVersion = %d, want 3", manifest.SchemaVersion)
 	}
 
 	actual := make(map[string]pgnManifestEntry)
@@ -159,26 +156,16 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 
 	uniquePGNs := make(map[uint32]struct{})
 	uniqueTypedPGNs := make(map[uint32]struct{})
-	uniqueGenericPGNs := make(map[uint32]struct{})
 	categories := make(map[string]*pgnManifestCategory)
 	var categoryOrder []string
 	var typedVariants int
-	var genericVariants int
 	registryInfos := manifestRegistryInfos()
 
 	for _, info := range registryInfos {
 		uniquePGNs[info.PGN] = struct{}{}
 		entry := manifestEntry(t, info)
-		switch entry.Implementation {
-		case "typed":
-			typedVariants++
-			uniqueTypedPGNs[entry.PGN] = struct{}{}
-		case "generic":
-			genericVariants++
-			uniqueGenericPGNs[entry.PGN] = struct{}{}
-		default:
-			t.Fatalf("%s has unknown implementation %q", entry.ID, entry.Implementation)
-		}
+		typedVariants++
+		uniqueTypedPGNs[entry.PGN] = struct{}{}
 		categoryID := functionCategory(entry.SourceFile)
 		category, ok := categories[categoryID]
 		if !ok {
@@ -198,20 +185,17 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	}
 
 	return pgnManifest{
-		SchemaVersion: 2,
+		SchemaVersion: 3,
 		Package:       "github.com/open-ships/n2k/pgn",
-		Source:        "pgn.PgnInfoLookup after generated metadata overlay",
-		Description:   "Runtime NMEA 2000 PGN variants decoded and encoded by this package.",
+		Source:        "Generated Pgn* structs and PgnInfoLookup metadata",
+		Description:   "NMEA 2000 PGN variants decoded and encoded by this package.",
 		Notes: []string{
-			"Each entry is a runtime PGN variant wired into PgnInfoLookup after package initialization.",
-			"Curated typed entries use domain-specific catalog message structs and generated typed decoders/encoders.",
-			"Generated catalog entries use catalog Pgn* message structs when no curated struct matches the PGN shape.",
-			"GenericMessage is a fallback path only; genericVariants is expected to remain zero.",
-			"Categories are grouped by the pgn package source file that owns each decoder implementation.",
+			"Each entry corresponds to one Pgn* struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
+			"Categories are grouped by the pgn package source file that owns each PGN struct.",
 			"Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
 			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
 			"Examples are deterministic sample JSON objects; they illustrate shape and are not captured bus values.",
-			"Incomplete upstream definitions are included when the runtime has a catalog generated struct for them.",
+			"Incomplete upstream definitions are included when a generated PGN struct exists for them.",
 		},
 		Counts: pgnManifestCounts{
 			Categories:          len(manifestCategories),
@@ -219,8 +203,6 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 			UniqueSupportedPgns: len(uniquePGNs),
 			TypedVariants:       typedVariants,
 			UniqueTypedPgns:     len(uniqueTypedPGNs),
-			GenericVariants:     genericVariants,
-			UniqueGenericPgns:   len(uniqueGenericPGNs),
 		},
 		Categories: manifestCategories,
 	}
@@ -245,14 +227,16 @@ func manifestRegistryInfos() []*PgnInfo {
 
 func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 	t.Helper()
-	_, sourceFile := functionSource(info.Decoder)
-	implementation := manifestImplementation(sourceFile)
+	sourceFile := manifestStructSourceFiles(t)[info.Id]
+	if sourceFile == "" {
+		t.Fatalf("missing source file for %s", info.Id)
+	}
 	return pgnManifestEntry{
 		ID:             info.Id,
 		SourceID:       info.CanboatId,
 		PGN:            info.PGN,
 		Description:    info.Description,
-		Implementation: implementation,
+		Implementation: "typed",
 		Complete:       info.Complete,
 		Fallback:       info.Fallback,
 		Missing:        append([]string(nil), info.Missing...),
@@ -261,15 +245,8 @@ func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 		Proprietary:    IsProprietaryPGN(info.PGN),
 		SourceFile:     sourceFile,
 		PayloadShape:   manifestPayloadShape(info.Fields),
-		Example:        manifestExample(t, info, implementation),
+		Example:        manifestExample(t, info),
 	}
-}
-
-func manifestImplementation(sourceFile string) string {
-	if sourceFile == "canboat_runtime.go" {
-		return "generic"
-	}
-	return "typed"
 }
 
 func manifestEntryMap(manifest pgnManifest) map[string]pgnManifestEntry {
@@ -282,20 +259,9 @@ func manifestEntryMap(manifest pgnManifest) map[string]pgnManifestEntry {
 	return entries
 }
 
-func functionSource(fn any) (category string, sourceFile string) {
-	if fn == nil {
-		return "", ""
-	}
-	pc := reflect.ValueOf(fn).Pointer()
-	file, _ := runtime.FuncForPC(pc).FileLine(pc)
-	sourceFile = filepath.Base(file)
-	category = strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
-	return category, sourceFile
-}
-
 func functionCategory(sourceFile string) string {
 	category := strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
-	return strings.TrimSuffix(category, "_catalog_generated")
+	return strings.TrimSuffix(category, "_pgn_generated")
 }
 
 func manifestCategoryName(categoryID string) string {
@@ -364,11 +330,8 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 	}
 }
 
-func manifestExample(t *testing.T, info *PgnInfo, implementation string) map[string]any {
+func manifestExample(t *testing.T, info *PgnInfo) map[string]any {
 	t.Helper()
-	if implementation == "generic" {
-		return manifestGenericExample(t, info)
-	}
 	return manifestTypedExample(t, info.Id, info.PGN)
 }
 
@@ -380,37 +343,6 @@ func manifestTypedExample(t *testing.T, structName string, pgn uint32) map[strin
 		example[field.JSONName] = manifestExampleValue(t, field.Type, field.JSONName, pgn)
 	}
 	return example
-}
-
-func manifestGenericExample(t *testing.T, info *PgnInfo) map[string]any {
-	t.Helper()
-	fields := make(map[string]any, len(info.Fields))
-	for _, field := range orderedFields(info) {
-		switch field.CanboatType {
-		case "RESERVED", "SPARE":
-			continue
-		case "STRING_FIX", "STRING_LZ", "STRING_LAU":
-			fields[jsonFieldName(field)] = "example"
-		case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
-			fields[jsonFieldName(field)] = []any{float64(1), float64(2), float64(3)}
-		case "FLOAT":
-			fields[jsonFieldName(field)] = 1.23
-		default:
-			if field.Signed {
-				fields[jsonFieldName(field)] = float64(-1)
-			} else if field.Match != nil {
-				fields[jsonFieldName(field)] = float64(*field.Match)
-			} else {
-				fields[jsonFieldName(field)] = float64(1)
-			}
-		}
-	}
-	return map[string]any{
-		"info":        manifestExampleValue(t, "MessageInfo", "info", info.PGN),
-		"sourceId":    info.CanboatId,
-		"description": info.Description,
-		"fields":      fields,
-	}
 }
 
 func manifestExampleValue(t *testing.T, goType string, jsonName string, pgn uint32) any {
@@ -524,6 +456,31 @@ func manifestStructFieldCache(t *testing.T) map[string][]pgnManifestStructField 
 	return manifestStructFieldsCache
 }
 
+func manifestStructSourceFiles(t *testing.T) map[string]string {
+	t.Helper()
+	if manifestStructSourceFilesCache != nil {
+		return manifestStructSourceFilesCache
+	}
+
+	files, err := filepath.Glob("*_pgn_generated.go")
+	if err != nil {
+		t.Fatalf("glob PGN source files: %v", err)
+	}
+
+	manifestStructSourceFilesCache = make(map[string]string)
+	for _, file := range files {
+		raw, err := os.ReadFile(file)
+		if err != nil {
+			t.Fatalf("read %s: %v", file, err)
+		}
+		for name := range parseManifestStructFields(string(raw)) {
+			manifestStructSourceFilesCache[name] = filepath.Base(file)
+		}
+	}
+
+	return manifestStructSourceFilesCache
+}
+
 func parseManifestStructFields(source string) map[string][]pgnManifestStructField {
 	structs := make(map[string][]pgnManifestStructField)
 	structRE := regexp.MustCompile(`type\s+([A-Za-z_][A-Za-z0-9_]*)\s+struct\s+\{`)
@@ -561,3 +518,4 @@ func parseManifestStructFields(source string) map[string][]pgnManifestStructFiel
 }
 
 var manifestStructFieldsCache map[string][]pgnManifestStructField
+var manifestStructSourceFilesCache map[string]string

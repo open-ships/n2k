@@ -5,129 +5,117 @@ import (
 	"go/parser"
 	"go/token"
 	"path/filepath"
-	"reflect"
-	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
 )
 
-type registrySourceFacts struct {
-	decoders   map[string]string
-	encoders   map[string]string
-	pgnMethods map[string]uint32
+type pgnStructFacts struct {
+	structs map[string]string
+	methods map[string]map[string]struct{}
+	pgns    map[string]uint32
 }
 
-func TestPgnListMatchesCodeImplementation(t *testing.T) {
-	facts := collectRegistrySourceFacts(t)
+func TestPGNMetadataMatchesGeneratedStructs(t *testing.T) {
+	facts := collectPGNStructFacts(t)
 
-	registeredIDs := make(map[string]struct{}, len(pgnList))
-	registeredDecoders := make(map[string]struct{}, len(pgnList))
-	registeredEncoders := make(map[string]struct{}, len(pgnList))
-
-	for _, info := range pgnList {
-		if info.Id == "" {
-			t.Fatalf("pgnList contains entry with empty Id for PGN %d", info.PGN)
-		}
-		if _, exists := registeredIDs[info.Id]; exists {
-			t.Fatalf("pgnList contains duplicate Id %q", info.Id)
-		}
-		registeredIDs[info.Id] = struct{}{}
-
-		if info.Decoder == nil {
-			t.Errorf("%s has nil Decoder", info.Id)
-		} else {
-			decoderName := registryFuncName(info.Decoder)
-			registeredDecoders[decoderName] = struct{}{}
-			if decoderName != "Decode"+info.Id {
-				t.Errorf("%s decoder = %s, want Decode%s", info.Id, decoderName, info.Id)
+	metadataIDs := make(map[string]uint32)
+	for _, infos := range PgnInfoLookup {
+		for _, info := range infos {
+			if info.Id == "" {
+				t.Fatalf("PgnInfoLookup contains entry with empty Id for PGN %d", info.PGN)
 			}
-			if _, exists := facts.decoders[decoderName]; !exists {
-				t.Errorf("%s references decoder %s, but no matching function exists", info.Id, decoderName)
+			if existing, exists := metadataIDs[info.Id]; exists {
+				t.Fatalf("PgnInfoLookup contains duplicate Id %q for PGNs %d and %d", info.Id, existing, info.PGN)
+			}
+			metadataIDs[info.Id] = info.PGN
+
+			if _, exists := facts.structs[info.Id]; !exists {
+				t.Errorf("%s is present in PgnInfoLookup but has no generated struct", info.Id)
+				continue
+			}
+			methodPGN, exists := facts.pgns[info.Id]
+			if !exists {
+				t.Errorf("%s has no PGNNumber method", info.Id)
+			} else if methodPGN != info.PGN {
+				t.Errorf("%s PGNNumber() = %d, PgnInfoLookup PGN = %d", info.Id, methodPGN, info.PGN)
 			}
 		}
+	}
 
-		if info.Encoder == nil {
-			t.Errorf("%s has nil Encoder", info.Id)
-		} else {
-			encoderName := registryFuncName(info.Encoder)
-			registeredEncoders[encoderName] = struct{}{}
-			if _, exists := facts.encoders[encoderName]; !exists {
-				t.Errorf("%s references encoder %s, but no matching function exists", info.Id, encoderName)
-			}
-		}
-
-		methodPGN, exists := facts.pgnMethods[info.Id]
+	requiredMethods := []string{"PGNNumber", "MessageInfo", "SetMessageInfo", "DecodePayload", "EncodePayload"}
+	for structName := range facts.structs {
+		pgn, exists := metadataIDs[structName]
 		if !exists {
-			t.Errorf("%s has no PGNNumber method", info.Id)
-		} else if methodPGN != info.PGN {
-			t.Errorf("%s PGNNumber() = %d, typedPgnList PGN = %d", info.Id, methodPGN, info.PGN)
+			t.Errorf("%s has a generated struct but is missing from PgnInfoLookup", structName)
+			continue
 		}
-	}
-
-	for decoder := range facts.decoders {
-		if _, exists := registeredDecoders[decoder]; !exists {
-			t.Errorf("decoder %s exists in code but is missing from pgnList", decoder)
+		for _, method := range requiredMethods {
+			if _, exists := facts.methods[structName][method]; !exists {
+				t.Errorf("%s is missing %s method", structName, method)
+			}
 		}
-	}
-	for encoder := range facts.encoders {
-		if _, exists := registeredEncoders[encoder]; !exists {
-			t.Errorf("encoder %s exists in code but is missing from pgnList", encoder)
-		}
-	}
-	for structName := range facts.pgnMethods {
-		if _, exists := registeredIDs[structName]; !exists {
-			t.Errorf("%s has PGNNumber() but is missing from pgnList", structName)
+		if facts.pgns[structName] != pgn {
+			t.Errorf("%s PGN mismatch: method=%d metadata=%d", structName, facts.pgns[structName], pgn)
 		}
 	}
 }
 
-func collectRegistrySourceFacts(t *testing.T) registrySourceFacts {
+func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 	t.Helper()
 
-	files, err := filepath.Glob("*.go")
+	files, err := filepath.Glob("*_pgn_generated.go")
 	if err != nil {
-		t.Fatalf("glob pgn source files: %v", err)
+		t.Fatalf("glob PGN source files: %v", err)
 	}
+	sort.Strings(files)
 
-	facts := registrySourceFacts{
-		decoders:   make(map[string]string),
-		encoders:   make(map[string]string),
-		pgnMethods: make(map[string]uint32),
+	facts := pgnStructFacts{
+		structs: make(map[string]string),
+		methods: make(map[string]map[string]struct{}),
+		pgns:    make(map[string]uint32),
 	}
 
 	fset := token.NewFileSet()
 	for _, file := range files {
-		if strings.HasSuffix(file, "_test.go") || file == "registry.go" || file == "catalog_generated.go" || strings.HasSuffix(file, "_catalog_generated.go") {
-			continue
-		}
-
 		parsed, err := parser.ParseFile(fset, file, nil, 0)
 		if err != nil {
 			t.Fatalf("parse %s: %v", file, err)
 		}
 
 		for _, decl := range parsed.Decls {
-			fn, ok := decl.(*ast.FuncDecl)
-			if !ok {
-				continue
-			}
-			name := fn.Name.Name
-			switch {
-			case fn.Recv == nil && strings.HasPrefix(name, "Decode"):
-				facts.decoders[name] = file
-			case fn.Recv == nil && strings.HasPrefix(name, "encode") && strings.HasSuffix(name, "Msg"):
-				facts.encoders[name] = file
-			case name == "PGNNumber" && fn.Recv != nil:
-				structName, ok := receiverStructName(fn)
-				if !ok || structName == "UnknownPGN" || structName == "GenericMessage" {
+			switch d := decl.(type) {
+			case *ast.GenDecl:
+				for _, spec := range d.Specs {
+					typeSpec, ok := spec.(*ast.TypeSpec)
+					if !ok || !strings.HasPrefix(typeSpec.Name.Name, "Pgn") {
+						continue
+					}
+					if _, ok := typeSpec.Type.(*ast.StructType); !ok {
+						continue
+					}
+					facts.structs[typeSpec.Name.Name] = file
+				}
+			case *ast.FuncDecl:
+				if d.Recv == nil {
 					continue
 				}
-				pgn, ok := returnedUint32Literal(fn)
-				if !ok {
-					t.Fatalf("%s PGNNumber() must return a uint32 literal", structName)
+				structName, ok := receiverStructName(d)
+				if !ok || !strings.HasPrefix(structName, "Pgn") {
+					continue
 				}
-				facts.pgnMethods[structName] = pgn
+				if facts.methods[structName] == nil {
+					facts.methods[structName] = make(map[string]struct{})
+				}
+				facts.methods[structName][d.Name.Name] = struct{}{}
+				if d.Name.Name == "PGNNumber" {
+					pgn, ok := returnedUint32Literal(d)
+					if !ok {
+						t.Fatalf("%s PGNNumber() must return a uint32 literal", structName)
+					}
+					facts.pgns[structName] = pgn
+				}
 			}
 		}
 	}
@@ -167,15 +155,4 @@ func returnedUint32Literal(fn *ast.FuncDecl) (uint32, bool) {
 		return 0, false
 	}
 	return uint32(value), true
-}
-
-func registryFuncName(fn any) string {
-	if fn == nil {
-		return ""
-	}
-	fullName := runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name()
-	if idx := strings.LastIndex(fullName, "."); idx >= 0 {
-		return fullName[idx+1:]
-	}
-	return fullName
 }

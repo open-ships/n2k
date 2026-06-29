@@ -1,61 +1,56 @@
-// Package pgn uses data from canboat.json to convert NMEA 2000 messages to strongly-typed golang data.
-// It provides the runtime support (stream decoding, PGN lookup, field descriptors) that the
-// PGN decoder functions rely on.
+// Package pgn converts NMEA 2000 messages to strongly typed Go data.
+// It provides PGN structs, payload encode/decode methods, and field metadata.
 package pgn
 
 import (
 	"fmt"
 )
 
-// PgnInfo describes a known NMEA 2000 message type. Entries are collected in pgnList
-// and indexed into PgnInfoLookup at init time for fast access by PGN number. Entries
-// without typed decoders keep their canboat catalog metadata but have a nil Decoder.
+// PgnInfo describes a known NMEA 2000 message type. Entries are generated from
+// upstream metadata and indexed into PgnInfoLookup at init time for fast access by
+// PGN number.
 //
 // Multiple PgnInfo entries can share the same PGN number. This happens with proprietary PGNs
 // where different manufacturers define different payloads for the same PGN, and also with
 // "KeyValue" style PGNs that have multiple structural variants.
 type PgnInfo struct {
-	// CanboatId is the upstream canboat.json Id for this PGN variant.
+	// CanboatId is the upstream source Id for this PGN variant.
 	CanboatId string `json:"canboatId"`
 	// Id is a unique string identifier for this PGN variant, needed to distinguish
 	// PGNs that share the same numeric PGN but have different field layouts (KeyValue PGNs).
 	Id string `json:"id"`
-	// Self is a pointer back to this PgnInfo's location in the pgnList slice.
-	// It is set during init() and allows code to cheaply reference
-	// the PgnInfo without a map lookup.
-	Self *PgnInfo `json:"self"`
 	// PGN is the NMEA 2000 Parameter Group Number that identifies this message type
 	// on the CAN bus. Values range from 0 to ~131071 (0x1FFFF).
 	PGN uint32 `json:"pgn"`
 	// Description is a human-readable name for this PGN (e.g., "Vessel Heading").
 	Description string `json:"description"`
-	// Explanation is CANboat's longer PGN description, when present.
+	// Explanation is the source schema's longer PGN description, when present.
 	Explanation string `json:"explanation,omitempty"`
-	// URL is CANboat's reference URL for this PGN, when present.
+	// URL is the source schema's reference URL for this PGN, when present.
 	URL string `json:"url,omitempty"`
 	// Fast indicates whether this PGN uses the NMEA 2000 fast-packet protocol.
 	// Fast-packet PGNs can carry more than 8 bytes by spanning multiple CAN frames;
 	// single-frame PGNs are limited to 8 bytes.
 	Fast bool `json:"fast"`
-	// Type is the CANboat transport type string (Single, Fast, ISO, or Mixed).
+	// Type is the source schema transport type string (Single, Fast, ISO, or Mixed).
 	Type string `json:"type"`
-	// Complete mirrors CANboat's confidence flag for fully described PGNs.
+	// Complete mirrors the source schema's confidence flag for fully described PGNs.
 	Complete bool `json:"complete"`
-	// Fallback marks range fallback definitions from CANboat.
+	// Fallback marks range fallback definitions from the source schema.
 	Fallback bool `json:"fallback"`
-	// Missing lists CANboat metadata categories still missing for this PGN.
+	// Missing lists source metadata categories still missing for this PGN.
 	Missing []string `json:"missing,omitempty"`
-	// Length is the nominal payload length in bytes when CANboat provides one.
+	// Length is the nominal payload length in bytes when the source schema provides one.
 	Length *int `json:"length,omitempty"`
-	// MinLength is the minimum payload length in bytes when CANboat provides one.
+	// MinLength is the minimum payload length in bytes when the source schema provides one.
 	MinLength *int `json:"minLength,omitempty"`
-	// Priority is the default CAN priority when CANboat provides one.
+	// Priority is the default CAN priority when the source schema provides one.
 	Priority *uint8 `json:"priority,omitempty"`
 	// TransmissionInterval is the default transmission interval in milliseconds.
 	TransmissionInterval *int `json:"transmissionInterval,omitempty"`
 	// TransmissionIrregular marks PGNs whose transmission is event/request driven.
 	TransmissionIrregular *bool `json:"transmissionIrregular,omitempty"`
-	// RepeatingFieldSet metadata mirrors CANboat's repeating field-set annotations.
+	// RepeatingFieldSet metadata mirrors the source schema's repeating field-set annotations.
 	RepeatingFieldSet1StartField *int `json:"repeatingFieldSet1StartField,omitempty"`
 	RepeatingFieldSet1CountField *int `json:"repeatingFieldSet1CountField,omitempty"`
 	RepeatingFieldSet1Size       *int `json:"repeatingFieldSet1Size,omitempty"`
@@ -66,14 +61,7 @@ type PgnInfo struct {
 	// (non-proprietary) PGNs. Used to select the correct variant when multiple
 	// manufacturers define different payloads for the same proprietary PGN number.
 	ManId ManufacturerCodeConst `json:"manId"`
-	// Decoder is the decoder function that reads fields from a PGNDataStream and
-	// returns a strongly-typed Go struct implementing Message (e.g., VesselHeading, RateOfTurn).
-	Decoder func(MessageInfo, *PGNDataStream) (Message, error) `json:"decoder"`
-	// Encoder is the encoder function that serializes a strongly-typed Go struct
-	// back into raw NMEA 2000 payload bytes. It is the inverse of Decoder.
-	// Not all PGNs have encoders; this field is nil when no encoder is available.
-	Encoder func(Message) ([]byte, error) `json:"encoder"`
-	// Fields maps field index (1-based, matching the canboat field order) to
+	// Fields maps field index (1-based, matching the source field order) to
 	// FieldDescriptor. This is needed at runtime for variable-length and KeyValue
 	// fields where the decoder must inspect field metadata dynamically.
 	Fields map[int]*FieldDescriptor `json:"fields"`
@@ -83,11 +71,11 @@ type PgnInfo struct {
 // It is used at runtime by readVariableData and GetFieldDescriptor to handle fields
 // whose type or length cannot be fully resolved at code-generation time.
 type FieldDescriptor struct {
-	// CanboatId is the upstream canboat.json field Id.
+	// CanboatId is the upstream source field Id.
 	CanboatId string `json:"canboatId"`
-	// Name is the Canboat field name (e.g., "Heading", "SID", "Manufacturer Code").
+	// Name is the source field name (e.g., "Heading", "SID", "Manufacturer Code").
 	Name string `json:"name"`
-	// Description is CANboat's per-field description, when present.
+	// Description is the source schema's per-field description, when present.
 	Description string `json:"description,omitempty"`
 	// BitLength is the width of this field in bits. For variable-length fields,
 	// this may be a nominal/default length.
@@ -99,35 +87,35 @@ type FieldDescriptor struct {
 	// BitLengthVariable is true when the field's actual length is determined at runtime
 	// (e.g., STRING_LAU fields whose length is encoded in a preceding byte).
 	BitLengthVariable bool `json:"bitLengthVariable"`
-	// CanboatType is the Canboat type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
+	// CanboatType is the source field type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
 	// "STRING_LZ", "STRING_FIX"). It drives type-specific decoding logic.
 	CanboatType string `json:"canboatType"`
-	// BitStart is the bit position within the containing byte when CANboat provides it.
+	// BitStart is the bit position within the containing byte when the source schema provides it.
 	BitStart uint16 `json:"bitStart"`
-	// PhysicalQuantity is the CANboat physical quantity identifier.
+	// PhysicalQuantity is the source schema physical quantity identifier.
 	PhysicalQuantity string `json:"physicalQuantity,omitempty"`
-	// LookupEnumeration is the CANboat lookup enumeration name, when present.
+	// LookupEnumeration is the source lookup enumeration name, when present.
 	LookupEnumeration string `json:"lookupEnumeration,omitempty"`
-	// LookupBitEnumeration is the CANboat bit lookup enumeration name, when present.
+	// LookupBitEnumeration is the source bit lookup enumeration name, when present.
 	LookupBitEnumeration string `json:"lookupBitEnumeration,omitempty"`
-	// LookupIndirectEnumeration is the CANboat indirect lookup enumeration name, when present.
+	// LookupIndirectEnumeration is the source indirect lookup enumeration name, when present.
 	LookupIndirectEnumeration string `json:"lookupIndirectEnumeration,omitempty"`
-	// LookupFieldTypeEnumeration is the CANboat field-type lookup name, when present.
+	// LookupFieldTypeEnumeration is the source field-type lookup name, when present.
 	LookupFieldTypeEnumeration string `json:"lookupFieldTypeEnumeration,omitempty"`
 	// LookupIndirectEnumerationFieldOrder identifies the field that selects an indirect lookup.
 	LookupIndirectEnumerationFieldOrder *int `json:"lookupIndirectEnumerationFieldOrder,omitempty"`
-	// Condition is CANboat's field-level inclusion predicate, when present.
+	// Condition is the source field-level inclusion predicate, when present.
 	Condition string `json:"condition,omitempty"`
-	// Offset is an additive physical-value offset from CANboat.
+	// Offset is an additive physical-value offset from the source schema.
 	Offset *float64 `json:"offset,omitempty"`
-	// RangeMin and RangeMax are the physical-value bounds from CANboat.
+	// RangeMin and RangeMax are the physical-value bounds from the source schema.
 	RangeMin *float64 `json:"rangeMin,omitempty"`
 	RangeMax *float64 `json:"rangeMax,omitempty"`
-	// CANboat sentinel values for nullable and special numeric states.
+	// Source sentinel values for nullable and special numeric states.
 	OutOfRangeValue *int64 `json:"outOfRangeValue,omitempty"`
 	ReservedValue   *int64 `json:"reservedValue,omitempty"`
 	UnknownValue    *int64 `json:"unknownValue,omitempty"`
-	// PartOfPrimaryKey marks fields CANboat uses to identify repeated rows.
+	// PartOfPrimaryKey marks fields the source schema uses to identify repeated rows.
 	PartOfPrimaryKey *bool `json:"partOfPrimaryKey,omitempty"`
 	// GolangType is the Go type name used in the generated struct field (e.g., "*uint8", "float32").
 	GolangType string `json:"golangType"`
@@ -136,7 +124,7 @@ type FieldDescriptor struct {
 	Resolution float32 `json:"resolution"`
 	// Signed indicates whether this numeric field uses two's-complement signed encoding.
 	Signed bool `json:"signed"`
-	// Unit is the physical unit string from canboat (e.g., "rad", "m/s", "K").
+	// Unit is the physical unit string from the source schema (e.g., "rad", "m/s", "K").
 	Unit string `json:"unit"`
 	// BitLookupName is the name of the bit-enumeration lookup table, if this field
 	// is a bitfield-type enum. Empty for non-lookup fields.
@@ -153,9 +141,9 @@ type FieldDescriptor struct {
 // different manufacturers).
 var PgnInfoLookup map[uint32][]*PgnInfo
 
-// UnseenLookup maps PGN numbers that are defined in the canboat database but do not
-// have typed decoders in this package yet. These entries are still present in
-// PgnInfoLookup as catalog metadata, but their Decoder fields are nil.
+// UnseenLookup maps PGN numbers that are defined by the source schema but are
+// marked incomplete or missing metadata. These entries are still present in
+// PgnInfoLookup when a PGN struct exists for them.
 var UnseenLookup map[uint32][]*PgnInfo
 
 // IsProprietaryPGN returns true if the given PGN number falls within one of the four
@@ -218,7 +206,7 @@ func GetProprietaryInfo(data []uint8) (ManufacturerCodeConst, IndustryCodeConst,
 //   - pgn: the PGN number to look up
 //   - manID: the manufacturer code, used to disambiguate proprietary PGN variants
 //     (pass 0 for standard/non-proprietary PGNs)
-//   - fieldIndex: the 1-based field index matching the canboat field order
+//   - fieldIndex: the 1-based field index matching the source field order
 //
 // For non-proprietary PGNs, the first (and usually only) variant is used.
 // For proprietary PGNs, the variant matching manID is selected. If manID is 0 and
@@ -265,9 +253,8 @@ func GetFieldDescriptor(pgn uint32, manID ManufacturerCodeConst, fieldIndex uint
 	return nil, fmt.Errorf("PGN not found")
 }
 
-// SearchUnseenList returns true if the given PGN number appears in the catalog-only
-// list, meaning it is defined in the canboat database but has no typed decoder in this
-// package yet.
+// SearchUnseenList returns true if the given PGN number has incomplete or missing
+// upstream metadata.
 func SearchUnseenList(pgn uint32) bool {
 	return UnseenLookup[pgn] != nil
 }
