@@ -1,10 +1,6 @@
 package decoder
 
-import (
-	"fmt"
-
-	"github.com/open-ships/n2k/pgn"
-)
+import "github.com/open-ships/n2k/pgn"
 
 type Handler interface {
 	HandleStruct(pgn.Message)
@@ -23,24 +19,13 @@ func (ps *Decoder) SetOutput(sh Handler) {
 }
 
 func (ps *Decoder) Decode(pkt Packet) {
-	if len(pkt.Decoders) > 0 {
-		for _, dec := range pkt.Decoders {
-			stream := pgn.NewPgnDataStream(pkt.Data)
-			ret, err := dec(pkt.Info, stream)
-			if err != nil {
-				pkt.ParseErrors = append(pkt.ParseErrors, err)
-				continue
-			} else {
-				ps.pgnReady(ret)
-				return
-			}
-		}
-
+	msg, err := pgn.DecodePayload(pkt.Info, pkt.Data)
+	if err != nil {
+		pkt.ParseErrors = append(pkt.ParseErrors, err)
 		ps.pgnReady(pkt.UnknownPGN())
-	} else {
-		pkt.ParseErrors = append(pkt.ParseErrors, fmt.Errorf("no matching decoder"))
-		ps.pgnReady(pkt.UnknownPGN())
+		return
 	}
+	ps.pgnReady(msg)
 }
 
 func (ps *Decoder) pgnReady(fullPGN pgn.Message) {

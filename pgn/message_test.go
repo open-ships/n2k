@@ -6,16 +6,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEncodeMessage_SelectsConcreteVariantForDuplicatePGN(t *testing.T) {
+func TestEncodeMessage_SelectsVariantForDuplicatePGN(t *testing.T) {
 	msg := &GarminColorMode{
-		ManufacturerCode: 229,
-		IndustryCode:     4,
-		UnknownId1:       ptrUint8(222),
-		UnknownId2:       ptrUint8(5),
-		UnknownId3:       ptrUint8(5),
-		UnknownId4:       ptrUint8(5),
-		Mode:             GarminColorModeConst(13),
-		Color:            GarminColorConst(1),
+		ManufacturerCode: ptrUint64(229),
+		IndustryCode:     ptrUint64(4),
+		UnknownId1:       ptrUint64(222),
+		UnknownId2:       ptrUint64(5),
+		UnknownId3:       ptrUint64(5),
+		UnknownId4:       ptrUint64(5),
+		Mode:             ptrUint64(13),
+		Color:            ptrUint64(1),
 	}
 
 	payload, err := EncodeMessage(msg)
@@ -29,5 +29,5 @@ func TestEncodeMessage_NoEncoder(t *testing.T) {
 
 	_, err := EncodeMessage(msg)
 	require.Error(t, err)
-	require.Contains(t, err.Error(), "no encoder registered")
+	require.Contains(t, err.Error(), "does not implement pgn.PGN")
 }

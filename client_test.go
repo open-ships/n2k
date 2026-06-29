@@ -55,7 +55,7 @@ func TestClient_Write_EncodesAndFrames(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	heading := float32(1.5)
+	heading := uint64(15000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
@@ -78,7 +78,7 @@ func TestClient_Write_UsesPriorityFromInfo(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	heading := float32(0.5)
+	heading := uint64(5000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
@@ -99,7 +99,7 @@ func TestClient_Write_DefaultPriority(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	heading := float32(0.5)
+	heading := uint64(5000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 		// Priority left nil => default to 6
@@ -120,15 +120,14 @@ func TestClient_Write_NoEncoder(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	// Use a PGN struct with a PGN number that has no encoder registered.
-	// We use an unknown PGN and set the PGN via Info().
+	// UnknownPGN is a decoded fallback, not a serializable PGN struct.
 	msg := &pgn.UnknownPGN{}
-	msg.Info.PGN = 999999 // unlikely to have an encoder
+	msg.Info.PGN = 999999
 
 	wr := c.Write(msg)
 	err = wr.Wait()
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "no encoder registered")
+	assert.Contains(t, err.Error(), "does not implement pgn.PGN")
 }
 
 func TestClient_Write_AfterClose(t *testing.T) {
@@ -137,7 +136,7 @@ func TestClient_Write_AfterClose(t *testing.T) {
 
 	require.NoError(t, c.Close())
 
-	heading := float32(1.0)
+	heading := uint64(10000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
@@ -149,13 +148,11 @@ func TestClient_Write_AfterClose(t *testing.T) {
 
 func TestClient_Replay_Receive(t *testing.T) {
 	// Build a pre-encoded VesselHeading frame for replay.
-	heading := float32(1.5)
+	heading := uint64(15000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
-	encoder := pgn.EncoderLookup[127250]
-	require.NotNil(t, encoder, "VesselHeading encoder must exist")
-	payload, err := encoder(msg)
+	payload, err := msg.EncodePayload()
 	require.NoError(t, err)
 
 	canID := framer.BuildCANID(127250, 2, 42, 255)
@@ -175,17 +172,15 @@ func TestClient_Replay_Receive(t *testing.T) {
 	vh, ok := received[0].(*pgn.VesselHeading)
 	require.True(t, ok, "expected *pgn.VesselHeading, got %T", received[0])
 	require.NotNil(t, vh.Heading)
-	assert.InDelta(t, 1.5, float64(*vh.Heading), 0.001)
+	assert.Equal(t, uint64(15000), *vh.Heading)
 }
 
 func TestClient_Scanner(t *testing.T) {
-	heading := float32(2.0)
+	heading := uint64(20000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
-	encoder := pgn.EncoderLookup[127250]
-	require.NotNil(t, encoder)
-	payload, err := encoder(msg)
+	payload, err := msg.EncodePayload()
 	require.NoError(t, err)
 
 	canID := framer.BuildCANID(127250, 2, 42, 255)
@@ -200,7 +195,7 @@ func TestClient_Scanner(t *testing.T) {
 	vh, ok := s.Message().(*pgn.VesselHeading)
 	require.True(t, ok, "expected *pgn.VesselHeading, got %T", s.Message())
 	require.NotNil(t, vh.Heading)
-	assert.InDelta(t, 2.0, float64(*vh.Heading), 0.001)
+	assert.Equal(t, uint64(20000), *vh.Heading)
 	assert.False(t, s.Next())
 	assert.NoError(t, s.Err())
 }
@@ -229,7 +224,7 @@ func TestClient_MultipleWrites(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	heading := float32(0.1)
+	heading := uint64(1000)
 	for i := 0; i < 3; i++ {
 		msg := &pgn.VesselHeading{
 			Heading: &heading,
@@ -250,10 +245,10 @@ func TestClient_Write_FastPacket(t *testing.T) {
 
 	// ProductInformation (PGN 126996) is a fast-packet PGN. Its string fields
 	// produce a payload larger than 8 bytes, exercising the fast-packet framing path.
-	ver := float32(2.0)
-	code := uint16(1234)
-	cert := uint8(1)
-	load := uint8(1)
+	ver := uint64(200)
+	code := uint64(1234)
+	cert := uint64(1)
+	load := uint64(1)
 	msg := &pgn.ProductInformation{
 		Nmea2000Version:     &ver,
 		ProductCode:         &code,
@@ -301,9 +296,8 @@ func TestClient_CANSource_NoLongerStubbed(t *testing.T) {
 
 // --- Pointer helpers for building test PGN structs ---
 
-func ptrFloat32(v float32) *float32 { return &v }
-func ptrUint8(v uint8) *uint8       { return &v }
-func ptrUint16(v uint16) *uint16    { return &v }
+func ptrUint8(v uint8) *uint8    { return &v }
+func ptrUint64(v uint64) *uint64 { return &v }
 
 // --- End-to-end integration tests (write -> read round-trip) ---
 
@@ -312,8 +306,8 @@ func TestClient_RoundTrip_SingleFrame(t *testing.T) {
 
 	// 1. Build a VesselHeading with known values.
 	original := &pgn.VesselHeading{
-		Sid:     ptrUint8(0),
-		Heading: ptrFloat32(1.5708),
+		Sid:     ptrUint64(0),
+		Heading: ptrUint64(15708),
 	}
 	original.Info.Priority = ptrUint8(2)
 
@@ -342,10 +336,10 @@ func TestClient_RoundTrip_SingleFrame(t *testing.T) {
 	require.True(t, ok, "expected *pgn.VesselHeading, got %T", decoded[0])
 
 	require.NotNil(t, vh.Heading, "Heading should not be nil")
-	assert.InDelta(t, 1.5708, float64(*vh.Heading), 0.001, "Heading should round-trip within tolerance")
+	assert.Equal(t, uint64(15708), *vh.Heading, "Heading should round-trip")
 
 	require.NotNil(t, vh.Sid, "Sid should not be nil")
-	assert.Equal(t, uint8(0), *vh.Sid, "Sid should match")
+	assert.Equal(t, uint64(0), *vh.Sid, "Sid should match")
 }
 
 func TestClient_RoundTrip_FastPacket(t *testing.T) {
@@ -353,14 +347,14 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 
 	// 1. Build a ProductInformation with known values.
 	original := &pgn.ProductInformation{
-		Nmea2000Version:     ptrFloat32(2.0),
-		ProductCode:         ptrUint16(42),
+		Nmea2000Version:     ptrUint64(200),
+		ProductCode:         ptrUint64(42),
 		ModelId:             "TestModel",
 		SoftwareVersionCode: "1.0.0",
 		ModelVersion:        "v2",
 		ModelSerialCode:     "SN12345",
-		CertificationLevel:  ptrUint8(1),
-		LoadEquivalency:     ptrUint8(1),
+		CertificationLevel:  ptrUint64(1),
+		LoadEquivalency:     ptrUint64(1),
 	}
 	original.Info.Priority = ptrUint8(6)
 
@@ -389,10 +383,10 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 	require.True(t, ok, "expected *pgn.ProductInformation, got %T", decoded[0])
 
 	require.NotNil(t, pi.ProductCode, "ProductCode should not be nil")
-	assert.Equal(t, uint16(42), *pi.ProductCode, "ProductCode should match")
+	assert.Equal(t, uint64(42), *pi.ProductCode, "ProductCode should match")
 
 	require.NotNil(t, pi.Nmea2000Version, "Nmea2000Version should not be nil")
-	assert.InDelta(t, 2.0, float64(*pi.Nmea2000Version), 0.01, "Nmea2000Version should round-trip")
+	assert.Equal(t, uint64(200), *pi.Nmea2000Version, "Nmea2000Version should round-trip")
 
 	// String fields are fixed-width on the wire, so decoded strings may have trailing padding.
 	trimmed := func(s string) string {
@@ -407,10 +401,10 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 	assert.Equal(t, "SN12345", trimmed(pi.ModelSerialCode), "ModelSerialCode should match")
 
 	require.NotNil(t, pi.CertificationLevel, "CertificationLevel should not be nil")
-	assert.Equal(t, uint8(1), *pi.CertificationLevel, "CertificationLevel should match")
+	assert.Equal(t, uint64(1), *pi.CertificationLevel, "CertificationLevel should match")
 
 	require.NotNil(t, pi.LoadEquivalency, "LoadEquivalency should not be nil")
-	assert.Equal(t, uint8(1), *pi.LoadEquivalency, "LoadEquivalency should match")
+	assert.Equal(t, uint64(1), *pi.LoadEquivalency, "LoadEquivalency should match")
 }
 
 func TestClient_Write_FIFO_Ordering(t *testing.T) {
@@ -425,8 +419,8 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 	const count = 10
 	for i := 0; i < count; i++ {
 		msg := &pgn.VesselHeading{
-			Sid:     ptrUint8(uint8(i)),
-			Heading: ptrFloat32(float32(i) * 0.1),
+			Sid:     ptrUint64(uint64(i)),
+			Heading: ptrUint64(uint64(i) * 1000),
 		}
 		msg.Info.Priority = ptrUint8(2)
 		wr := writer.Write(msg)
@@ -456,11 +450,10 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 	// Verify ordering: each message's Sid should match its sequence position.
 	for i, vh := range decoded {
 		require.NotNil(t, vh.Sid, "message %d Sid should not be nil", i)
-		assert.Equal(t, uint8(i), *vh.Sid, "message %d Sid should reflect write order", i)
+		assert.Equal(t, uint64(i), *vh.Sid, "message %d Sid should reflect write order", i)
 
 		require.NotNil(t, vh.Heading, "message %d Heading should not be nil", i)
-		assert.InDelta(t, float64(i)*0.1, float64(*vh.Heading), 0.001,
-			"message %d Heading should match write order", i)
+		assert.Equal(t, uint64(i)*1000, *vh.Heading, "message %d Heading should match write order", i)
 	}
 }
 
@@ -548,7 +541,7 @@ func TestClient_Write(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 
-	heading := float32(1.5)
+	heading := uint64(15000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
@@ -580,13 +573,11 @@ func TestClient_Receive(t *testing.T) {
 	require.NoError(t, err)
 
 	// Build and inject a VesselHeading frame into the mock bus.
-	heading := float32(1.5)
+	heading := uint64(15000)
 	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
-	encoder := pgn.EncoderLookup[127250]
-	require.NotNil(t, encoder)
-	payload, err := encoder(msg)
+	payload, err := msg.EncodePayload()
 	require.NoError(t, err)
 
 	canID := framer.BuildCANID(127250, 2, 42, 255)
@@ -623,7 +614,7 @@ func TestClient_Receive(t *testing.T) {
 
 	require.NotNil(t, received, "should have received a decoded VesselHeading")
 	require.NotNil(t, received.Heading)
-	assert.InDelta(t, 1.5, float64(*received.Heading), 0.001)
+	assert.Equal(t, uint64(15000), *received.Heading)
 
 	_ = c.Close()
 }
@@ -640,17 +631,13 @@ func TestClient_FilterPGN(t *testing.T) {
 	require.NoError(t, err)
 
 	// Build a VesselHeading frame (should pass filter).
-	heading := float32(1.5)
-	encoder := pgn.EncoderLookup[127250]
-	require.NotNil(t, encoder)
-	payload, err := encoder(&pgn.VesselHeading{Heading: &heading})
+	heading := uint64(15000)
+	payload, err := (&pgn.VesselHeading{Heading: &heading}).EncodePayload()
 	require.NoError(t, err)
 	headingFrame := framer.FrameSingle(framer.BuildCANID(127250, 2, 42, 255), payload)
 
 	// Build a SystemTime frame PGN 126992 (should be filtered out).
-	sysEncoder := pgn.EncoderLookup[126992]
-	require.NotNil(t, sysEncoder)
-	sysPayload, err := sysEncoder(&pgn.SystemTime{})
+	sysPayload, err := (&pgn.SystemTime{}).EncodePayload()
 	require.NoError(t, err)
 	sysFrame := framer.FrameSingle(framer.BuildCANID(126992, 3, 42, 255), sysPayload)
 

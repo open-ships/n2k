@@ -30,13 +30,13 @@ setup:
 test:
     go test ./...
 
-# compare runtime PGN support against current canboat.json
-canboat-parity:
-    CANBOAT_PARITY=1 go test ./pgn -run TestCanboatParity -count=1 -v
+# compare runtime PGN support against the current upstream schema
+upstream-parity:
+    UPSTREAM_PARITY=1 go test ./pgn -run TestUpstreamParity -count=1 -v
 
-# regenerate CANboat-derived runtime metadata from upstream master
-generate-canboat:
-    go run ./cmd/canboatgen
+# regenerate upstream source-derived runtime metadata from upstream master
+generate-pgn:
+    go run ./cmd/pgngen
 
 # run tests with verbose output
 test-v:
@@ -54,19 +54,19 @@ test-cover:
 fmt:
     gofmt -w .
 
-# regenerate pgn/manifest.json from pgn/registry.go
+# regenerate pgn/manifest.json from the initialized runtime PGN metadata
 pgn-manifest:
-    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
-# sync generated CANboat metadata and regenerate pgn/manifest.json
+# sync generated upstream source metadata and regenerate the runtime PGN manifest
 pgn-sync:
-    go run ./cmd/canboatgen
-    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    go run ./cmd/pgngen
+    UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
-# check whether generated CANboat metadata and pgn/manifest.json are current
+# check whether generated upstream source metadata and runtime PGN manifest are current
 pgn-sync-check:
-    go run ./cmd/canboatgen --check
-    go test ./pgn -run TestPGNManifestMatchesRegistry -count=1
+    go run ./cmd/pgngen --check
+    go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
 # run go vet
 vet:

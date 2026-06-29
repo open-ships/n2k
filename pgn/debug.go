@@ -14,7 +14,7 @@ import (
 // Embedded MessageInfo fields are flattened (not nested), and the Timestamp field is omitted
 // for brevity since it is usually available from other context.
 //
-// Example output: "VesselHeading: PGN=pgn.VesselHeadingPgn(127250), SourceId=..., Heading=1.5"
+// Example output: "VesselHeading: PGN=127250, SourceId=..., Heading=15708"
 func DebugDumpPGN(p any) string {
 	tp := reflect.TypeOf(p)
 	rv := reflect.ValueOf(p)

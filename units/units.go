@@ -45,6 +45,6 @@ type Unit[T ~int] struct {
 	Value float32
 
 	// Unit identifies which unit the Value is expressed in (e.g., Meter, Foot, Knots, etc.).
-	// The concrete type depends on the physical quantity (DistanceUnit, VelocityUnit, etc.).
+	// The catalog type depends on the physical quantity (DistanceUnit, VelocityUnit, etc.).
 	Unit T
 }

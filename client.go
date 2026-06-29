@@ -249,7 +249,7 @@ func (c *Client) initBus(cfg config) error {
 			}
 			packet := decoder.NewPacket(info, data)
 			packet.Complete = true
-			packet.AddDecoders()
+			packet.FilterCandidates()
 			c.readDecoder.Decode(*packet)
 		},
 		Logger: c.log,
