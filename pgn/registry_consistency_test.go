@@ -32,7 +32,7 @@ func TestPGNMetadataMatchesGeneratedStructs(t *testing.T) {
 			metadataIDs[info.Id] = info.PGN
 
 			if _, exists := facts.structs[info.Id]; !exists {
-				t.Errorf("%s is present in PgnInfoLookup but has no generated struct", info.Id)
+				t.Errorf("%s is present in PgnInfoLookup but has no PGN struct", info.Id)
 				continue
 			}
 			methodPGN, exists := facts.pgns[info.Id]
@@ -45,10 +45,10 @@ func TestPGNMetadataMatchesGeneratedStructs(t *testing.T) {
 	}
 
 	requiredMethods := []string{"PGNNumber", "MessageInfo", "SetMessageInfo", "DecodePayload", "EncodePayload"}
-	for structName := range facts.structs {
+	for structName := range facts.pgns {
 		pgn, exists := metadataIDs[structName]
 		if !exists {
-			t.Errorf("%s has a generated struct but is missing from PgnInfoLookup", structName)
+			t.Errorf("%s has a PGN struct but is missing from PgnInfoLookup", structName)
 			continue
 		}
 		for _, method := range requiredMethods {
@@ -65,7 +65,7 @@ func TestPGNMetadataMatchesGeneratedStructs(t *testing.T) {
 func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 	t.Helper()
 
-	files, err := filepath.Glob("*_pgn_generated.go")
+	files, err := filepath.Glob("*.go")
 	if err != nil {
 		t.Fatalf("glob PGN source files: %v", err)
 	}
@@ -79,6 +79,9 @@ func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 
 	fset := token.NewFileSet()
 	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
 		parsed, err := parser.ParseFile(fset, file, nil, 0)
 		if err != nil {
 			t.Fatalf("parse %s: %v", file, err)

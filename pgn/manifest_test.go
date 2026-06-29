@@ -187,7 +187,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	return pgnManifest{
 		SchemaVersion: 3,
 		Package:       "github.com/open-ships/n2k/pgn",
-		Source:        "Generated Pgn* structs and PgnInfoLookup metadata",
+		Source:        "Pgn* structs and PgnInfoLookup metadata",
 		Description:   "NMEA 2000 PGN variants decoded and encoded by this package.",
 		Notes: []string{
 			"Each entry corresponds to one Pgn* struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
@@ -195,7 +195,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 			"Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
 			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
 			"Examples are deterministic sample JSON objects; they illustrate shape and are not captured bus values.",
-			"Incomplete upstream definitions are included when a generated PGN struct exists for them.",
+			"Incomplete upstream definitions are included when a PGN struct exists for them.",
 		},
 		Counts: pgnManifestCounts{
 			Categories:          len(manifestCategories),
@@ -260,8 +260,7 @@ func manifestEntryMap(manifest pgnManifest) map[string]pgnManifestEntry {
 }
 
 func functionCategory(sourceFile string) string {
-	category := strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
-	return strings.TrimSuffix(category, "_pgn_generated")
+	return strings.TrimSuffix(sourceFile, filepath.Ext(sourceFile))
 }
 
 func manifestCategoryName(categoryID string) string {
@@ -462,13 +461,16 @@ func manifestStructSourceFiles(t *testing.T) map[string]string {
 		return manifestStructSourceFilesCache
 	}
 
-	files, err := filepath.Glob("*_pgn_generated.go")
+	files, err := filepath.Glob("*.go")
 	if err != nil {
 		t.Fatalf("glob PGN source files: %v", err)
 	}
 
 	manifestStructSourceFilesCache = make(map[string]string)
 	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
 		raw, err := os.ReadFile(file)
 		if err != nil {
 			t.Fatalf("read %s: %v", file, err)

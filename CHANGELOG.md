@@ -4,9 +4,9 @@
 
 - Replaced multiple PGN implementation paths with one `Pgn*` struct per PGN shape.
 - Added the `pgn.PGN` interface: `PGNNumber`, `MessageInfo`, `SetMessageInfo`, `DecodePayload`, and `EncodePayload`.
-- Decode dispatch now returns `pgn.PGN` values directly through the generated PGN switch.
+- Decode dispatch now returns `pgn.PGN` values directly through the PGN switch.
 - Removed the function-pointer registry and moved encode/decode behavior onto the structs themselves.
-- PGN files are grouped by category using `*_pgn_generated.go` filenames.
+- PGN files are grouped by category using filenames such as `navigation.go` and `system.go`.
 
 ---
 

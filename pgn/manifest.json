@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "package": "github.com/open-ships/n2k/pgn",
-  "source": "Generated Pgn* structs and PgnInfoLookup metadata",
+  "source": "Pgn* structs and PgnInfoLookup metadata",
   "description": "NMEA 2000 PGN variants decoded and encoded by this package.",
   "notes": [
     "Each entry corresponds to one Pgn* struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
@@ -9,7 +9,7 @@
     "Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
     "Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
     "Examples are deterministic sample JSON objects; they illustrate shape and are not captured bus values.",
-    "Incomplete upstream definitions are included when a generated PGN struct exists for them."
+    "Incomplete upstream definitions are included when a PGN struct exists for them."
   ],
   "counts": {
     "categories": 35,
@@ -40,7 +40,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 1,
             "fields": [
@@ -77,7 +77,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -147,7 +147,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 1,
             "fields": [
@@ -184,7 +184,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -232,7 +232,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -303,7 +303,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -385,7 +385,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -467,7 +467,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -549,7 +549,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -631,7 +631,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -774,7 +774,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": true,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -851,7 +851,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -924,7 +924,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -1078,7 +1078,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": true,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -1156,7 +1156,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 1,
             "fields": [
@@ -1193,7 +1193,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -1286,7 +1286,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -1395,7 +1395,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -1543,7 +1543,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -1702,7 +1702,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -1808,7 +1808,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -1967,7 +1967,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -2126,7 +2126,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -2181,7 +2181,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": true,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -2258,7 +2258,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 1,
             "fields": [
@@ -2298,7 +2298,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 21,
             "fields": [
@@ -2558,7 +2558,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -2719,7 +2719,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -2883,7 +2883,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -3080,7 +3080,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -3266,7 +3266,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -3435,7 +3435,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -3518,7 +3518,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -3611,7 +3611,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -3725,7 +3725,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -3787,7 +3787,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -4018,7 +4018,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -4084,7 +4084,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -4144,7 +4144,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -4228,7 +4228,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -4322,7 +4322,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -4399,7 +4399,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -4472,7 +4472,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -4567,7 +4567,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -4684,7 +4684,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -4744,7 +4744,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -4841,7 +4841,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "system_pgn_generated.go",
+          "sourceFile": "system.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -5070,7 +5070,7 @@
           "fastPacket": false,
           "manufacturerId": 176,
           "proprietary": true,
-          "sourceFile": "carling_pgn_generated.go",
+          "sourceFile": "carling.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -5215,7 +5215,7 @@
           "fastPacket": false,
           "manufacturerId": 176,
           "proprietary": true,
-          "sourceFile": "carling_pgn_generated.go",
+          "sourceFile": "carling.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -5304,7 +5304,7 @@
           "fastPacket": true,
           "manufacturerId": 176,
           "proprietary": true,
-          "sourceFile": "carling_pgn_generated.go",
+          "sourceFile": "carling.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -5536,7 +5536,7 @@
           "fastPacket": true,
           "manufacturerId": 176,
           "proprietary": true,
-          "sourceFile": "carling_pgn_generated.go",
+          "sourceFile": "carling.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -5614,7 +5614,7 @@
           "fastPacket": true,
           "manufacturerId": 176,
           "proprietary": true,
-          "sourceFile": "carling_pgn_generated.go",
+          "sourceFile": "carling.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -5709,7 +5709,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -5820,7 +5820,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -5943,7 +5943,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -6065,7 +6065,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -6167,7 +6167,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -6277,7 +6277,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -6387,7 +6387,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -6487,7 +6487,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -6642,7 +6642,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -6753,7 +6753,7 @@
           "fastPacket": false,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -6864,7 +6864,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -6989,7 +6989,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -7137,7 +7137,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -7284,7 +7284,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -7431,7 +7431,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -7555,7 +7555,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -7713,7 +7713,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -7849,7 +7849,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -7972,7 +7972,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -8108,7 +8108,7 @@
           "fastPacket": true,
           "manufacturerId": 1851,
           "proprietary": true,
-          "sourceFile": "seatalk_pgn_generated.go",
+          "sourceFile": "seatalk.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -8272,7 +8272,7 @@
           "fastPacket": false,
           "manufacturerId": 358,
           "proprietary": true,
-          "sourceFile": "victron_pgn_generated.go",
+          "sourceFile": "victron.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -8364,7 +8364,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8440,7 +8440,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8516,7 +8516,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8595,7 +8595,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8674,7 +8674,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -8727,7 +8727,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8802,7 +8802,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -8855,7 +8855,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -8932,7 +8932,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9007,7 +9007,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9060,7 +9060,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9137,7 +9137,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9212,7 +9212,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9265,7 +9265,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9342,7 +9342,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9417,7 +9417,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9470,7 +9470,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9550,7 +9550,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9603,7 +9603,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9678,7 +9678,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9731,7 +9731,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9808,7 +9808,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -9883,7 +9883,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -9936,7 +9936,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -10013,7 +10013,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -10088,7 +10088,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -10141,7 +10141,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -10218,7 +10218,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -10293,7 +10293,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -10346,7 +10346,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -10426,7 +10426,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -10575,7 +10575,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -10785,7 +10785,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -10902,7 +10902,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 29,
             "fields": [
@@ -11250,7 +11250,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 29,
             "fields": [
@@ -11595,7 +11595,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -11760,7 +11760,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -11925,7 +11925,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -12044,7 +12044,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -12159,7 +12159,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -12243,7 +12243,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -12335,7 +12335,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -12484,7 +12484,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -12600,7 +12600,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -12742,7 +12742,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -12817,7 +12817,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -12892,7 +12892,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -12967,7 +12967,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -13054,7 +13054,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -13141,7 +13141,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -13229,7 +13229,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -13318,7 +13318,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -13428,7 +13428,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 26,
             "fields": [
@@ -13753,7 +13753,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -13916,7 +13916,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -14102,7 +14102,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -14266,7 +14266,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -14496,7 +14496,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -14583,7 +14583,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -14703,7 +14703,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -14791,7 +14791,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "electrical_pgn_generated.go",
+          "sourceFile": "electrical.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -15020,7 +15020,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -15208,7 +15208,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -15286,7 +15286,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -15386,7 +15386,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -15618,7 +15618,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -15718,7 +15718,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -15829,7 +15829,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -15907,7 +15907,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -16062,7 +16062,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16140,7 +16140,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16218,7 +16218,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -16318,7 +16318,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16396,7 +16396,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -16507,7 +16507,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16585,7 +16585,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16663,7 +16663,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16741,7 +16741,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16819,7 +16819,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16897,7 +16897,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -16975,7 +16975,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17053,7 +17053,7 @@
           "fastPacket": false,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17128,7 +17128,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -17239,7 +17239,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -17339,7 +17339,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17417,7 +17417,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -17572,7 +17572,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -17672,7 +17672,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17750,7 +17750,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17828,7 +17828,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17906,7 +17906,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -17984,7 +17984,7 @@
           "fastPacket": true,
           "manufacturerId": 295,
           "proprietary": true,
-          "sourceFile": "bep_marine_pgn_generated.go",
+          "sourceFile": "bep_marine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -18068,7 +18068,7 @@
           "fastPacket": false,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -18158,7 +18158,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -18259,7 +18259,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -18425,7 +18425,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -18633,7 +18633,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -18788,7 +18788,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -18910,7 +18910,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -19087,7 +19087,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -19237,7 +19237,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -19350,7 +19350,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -19515,7 +19515,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -19630,7 +19630,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -19833,7 +19833,7 @@
           "fastPacket": true,
           "manufacturerId": 1855,
           "proprietary": true,
-          "sourceFile": "furuno_pgn_generated.go",
+          "sourceFile": "furuno.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -19929,7 +19929,7 @@
           "fastPacket": false,
           "manufacturerId": 175,
           "proprietary": true,
-          "sourceFile": "honda_pgn_generated.go",
+          "sourceFile": "honda.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -20008,7 +20008,7 @@
           "fastPacket": false,
           "manufacturerId": 175,
           "proprietary": true,
-          "sourceFile": "honda_pgn_generated.go",
+          "sourceFile": "honda.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -20087,7 +20087,7 @@
           "fastPacket": true,
           "manufacturerId": 175,
           "proprietary": true,
-          "sourceFile": "honda_pgn_generated.go",
+          "sourceFile": "honda.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -20160,7 +20160,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -20235,7 +20235,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -20332,7 +20332,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -20444,7 +20444,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -20522,7 +20522,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -20644,7 +20644,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -20766,7 +20766,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -20877,7 +20877,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -20988,7 +20988,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -21099,7 +21099,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -21210,7 +21210,7 @@
           "fastPacket": false,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -21285,7 +21285,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -21398,7 +21398,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -21507,7 +21507,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -21618,7 +21618,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -21715,7 +21715,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -21837,7 +21837,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -22014,7 +22014,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -22213,7 +22213,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -22412,7 +22412,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -22586,7 +22586,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -22710,7 +22710,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -22829,7 +22829,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -22948,7 +22948,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -23048,7 +23048,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -23214,7 +23214,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -23358,7 +23358,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -23436,7 +23436,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -23591,7 +23591,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -23691,7 +23691,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -23824,7 +23824,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -23918,7 +23918,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -24080,7 +24080,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -24251,7 +24251,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -24329,7 +24329,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -24429,7 +24429,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -24507,7 +24507,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -24717,7 +24717,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -24795,7 +24795,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -24873,7 +24873,7 @@
           "fastPacket": true,
           "manufacturerId": 137,
           "proprietary": true,
-          "sourceFile": "maretron_pgn_generated.go",
+          "sourceFile": "maretron.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -24958,7 +24958,7 @@
           "fastPacket": false,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -25037,7 +25037,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -25168,7 +25168,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -25268,7 +25268,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -25357,7 +25357,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -25504,7 +25504,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -25637,7 +25637,7 @@
           "fastPacket": true,
           "manufacturerId": 144,
           "proprietary": true,
-          "sourceFile": "mercury_pgn_generated.go",
+          "sourceFile": "mercury.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -25766,7 +25766,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -25845,7 +25845,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -25924,7 +25924,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26003,7 +26003,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26082,7 +26082,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26161,7 +26161,7 @@
           "fastPacket": false,
           "manufacturerId": 172,
           "proprietary": true,
-          "sourceFile": "yanmar_pgn_generated.go",
+          "sourceFile": "yanmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26242,7 +26242,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -26328,7 +26328,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26403,7 +26403,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -26514,7 +26514,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -26611,7 +26611,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -26722,7 +26722,7 @@
           "fastPacket": false,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -26835,7 +26835,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -26907,7 +26907,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -27019,7 +27019,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -27230,7 +27230,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -27326,7 +27326,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -27434,7 +27434,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -27541,7 +27541,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -27636,7 +27636,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -27731,7 +27731,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -27851,7 +27851,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -27959,7 +27959,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -28079,7 +28079,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -28192,7 +28192,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -28294,7 +28294,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -28409,7 +28409,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -28524,7 +28524,7 @@
           "fastPacket": true,
           "manufacturerId": 135,
           "proprietary": true,
-          "sourceFile": "airmar_pgn_generated.go",
+          "sourceFile": "airmar.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -28649,7 +28649,7 @@
           "fastPacket": false,
           "manufacturerId": 140,
           "proprietary": true,
-          "sourceFile": "lowrance_pgn_generated.go",
+          "sourceFile": "lowrance.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -28749,7 +28749,7 @@
           "fastPacket": true,
           "manufacturerId": 140,
           "proprietary": true,
-          "sourceFile": "lowrance_pgn_generated.go",
+          "sourceFile": "lowrance.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -28905,7 +28905,7 @@
           "fastPacket": true,
           "manufacturerId": 140,
           "proprietary": true,
-          "sourceFile": "lowrance_pgn_generated.go",
+          "sourceFile": "lowrance.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -29045,7 +29045,7 @@
           "fastPacket": false,
           "manufacturerId": 409,
           "proprietary": true,
-          "sourceFile": "chetco_pgn_generated.go",
+          "sourceFile": "chetco.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -29184,7 +29184,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -29262,7 +29262,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -29340,7 +29340,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -29418,7 +29418,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -29496,7 +29496,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -29573,7 +29573,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -29667,7 +29667,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -29765,7 +29765,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -29871,7 +29871,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -29969,7 +29969,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -30080,7 +30080,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -30180,7 +30180,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -30291,7 +30291,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -30390,7 +30390,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -30523,7 +30523,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -30636,7 +30636,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -30726,7 +30726,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -30859,7 +30859,7 @@
           "fastPacket": false,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -30937,7 +30937,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -31036,7 +31036,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31102,7 +31102,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -31203,7 +31203,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31271,7 +31271,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31339,7 +31339,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31407,7 +31407,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31474,7 +31474,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -31642,7 +31642,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31710,7 +31710,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31778,7 +31778,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -31844,7 +31844,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -32000,7 +32000,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -32134,7 +32134,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -32372,7 +32372,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -32438,7 +32438,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -32581,7 +32581,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -32735,7 +32735,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -32934,7 +32934,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -33101,7 +33101,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -33270,7 +33270,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -33416,7 +33416,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -33562,7 +33562,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -33708,7 +33708,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -33854,7 +33854,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -34000,7 +34000,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -34157,7 +34157,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -34302,7 +34302,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -34479,7 +34479,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -34635,7 +34635,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -34802,7 +34802,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -34970,7 +34970,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -35080,7 +35080,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simnet_pgn_generated.go",
+          "sourceFile": "simnet.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -35217,7 +35217,7 @@
           "fastPacket": false,
           "manufacturerId": 641,
           "proprietary": true,
-          "sourceFile": "diverse_yacht_services_pgn_generated.go",
+          "sourceFile": "diverse_yacht_services.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -35324,7 +35324,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35403,7 +35403,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35482,7 +35482,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35561,7 +35561,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35640,7 +35640,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35719,7 +35719,7 @@
           "fastPacket": false,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -35798,7 +35798,7 @@
           "fastPacket": true,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -35866,7 +35866,7 @@
           "fastPacket": true,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -35934,7 +35934,7 @@
           "fastPacket": true,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -36002,7 +36002,7 @@
           "fastPacket": true,
           "manufacturerId": 586,
           "proprietary": true,
-          "sourceFile": "suzuki_pgn_generated.go",
+          "sourceFile": "suzuki.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -36075,7 +36075,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -36186,7 +36186,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -36284,7 +36284,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -36385,7 +36385,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -36464,7 +36464,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -36543,7 +36543,7 @@
           "fastPacket": false,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -36621,7 +36621,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -36743,7 +36743,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -36833,7 +36833,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -36979,7 +36979,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -37125,7 +37125,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -37270,7 +37270,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -37481,7 +37481,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -37616,7 +37616,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -37762,7 +37762,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -37907,7 +37907,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -38107,7 +38107,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -38262,7 +38262,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -38341,7 +38341,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -38409,7 +38409,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "navico_pgn_generated.go",
+          "sourceFile": "navico.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -38483,7 +38483,7 @@
           "fastPacket": false,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -38606,7 +38606,7 @@
           "fastPacket": false,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -38685,7 +38685,7 @@
           "fastPacket": false,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -38764,7 +38764,7 @@
           "fastPacket": false,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -38843,7 +38843,7 @@
           "fastPacket": false,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -38922,7 +38922,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -38990,7 +38990,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39058,7 +39058,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39126,7 +39126,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39194,7 +39194,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39262,7 +39262,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39330,7 +39330,7 @@
           "fastPacket": true,
           "manufacturerId": 198,
           "proprietary": true,
-          "sourceFile": "yamaha_pgn_generated.go",
+          "sourceFile": "yamaha.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -39404,7 +39404,7 @@
           "fastPacket": false,
           "manufacturerId": 381,
           "proprietary": true,
-          "sourceFile": "bg_pgn_generated.go",
+          "sourceFile": "bg.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -39479,7 +39479,7 @@
           "fastPacket": true,
           "manufacturerId": 381,
           "proprietary": true,
-          "sourceFile": "bg_pgn_generated.go",
+          "sourceFile": "bg.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -39579,7 +39579,7 @@
           "fastPacket": true,
           "manufacturerId": 381,
           "proprietary": true,
-          "sourceFile": "bg_pgn_generated.go",
+          "sourceFile": "bg.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -39719,7 +39719,7 @@
           "fastPacket": false,
           "manufacturerId": 798,
           "proprietary": true,
-          "sourceFile": "lumishore_pgn_generated.go",
+          "sourceFile": "lumishore.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -39852,7 +39852,7 @@
           "fastPacket": true,
           "manufacturerId": 798,
           "proprietary": true,
-          "sourceFile": "lumishore_pgn_generated.go",
+          "sourceFile": "lumishore.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -39931,7 +39931,7 @@
           "fastPacket": true,
           "manufacturerId": 798,
           "proprietary": true,
-          "sourceFile": "lumishore_pgn_generated.go",
+          "sourceFile": "lumishore.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -40100,7 +40100,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -40198,7 +40198,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -40274,7 +40274,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -40394,7 +40394,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -40484,7 +40484,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -40571,7 +40571,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -40658,7 +40658,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -40756,7 +40756,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -40865,7 +40865,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -40974,7 +40974,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -41083,7 +41083,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -41181,7 +41181,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -41279,7 +41279,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -41410,7 +41410,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -41497,7 +41497,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -41617,7 +41617,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -41704,7 +41704,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -41802,7 +41802,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -41900,7 +41900,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -42020,7 +42020,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -42118,7 +42118,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -42216,7 +42216,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -42360,7 +42360,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -42491,7 +42491,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -42589,7 +42589,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -42687,7 +42687,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -42818,7 +42818,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -42905,7 +42905,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -42992,7 +42992,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -43079,7 +43079,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -43166,7 +43166,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -43286,7 +43286,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -43384,7 +43384,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -43493,7 +43493,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -43624,7 +43624,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -43733,7 +43733,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -43842,7 +43842,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -43951,7 +43951,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -44060,7 +44060,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -44169,7 +44169,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -44267,7 +44267,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -44376,7 +44376,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -44507,7 +44507,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -44594,7 +44594,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -44703,7 +44703,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -44823,7 +44823,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -44932,7 +44932,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -45031,7 +45031,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -45163,7 +45163,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -45262,7 +45262,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -45393,7 +45393,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -45513,7 +45513,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -45633,7 +45633,7 @@
           "fastPacket": true,
           "manufacturerId": 419,
           "proprietary": true,
-          "sourceFile": "fusion_pgn_generated.go",
+          "sourceFile": "fusion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -45740,7 +45740,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -45866,7 +45866,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -45992,7 +45992,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -46118,7 +46118,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -46244,7 +46244,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -46404,7 +46404,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -46564,7 +46564,7 @@
           "fastPacket": true,
           "manufacturerId": 229,
           "proprietary": true,
-          "sourceFile": "garmin_pgn_generated.go",
+          "sourceFile": "garmin.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -46724,7 +46724,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -46957,7 +46957,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -47059,7 +47059,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -47140,7 +47140,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -47214,7 +47214,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 2,
             "fields": [
@@ -47264,7 +47264,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -47361,7 +47361,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -47437,7 +47437,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -47543,7 +47543,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -47774,7 +47774,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -47836,7 +47836,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -47920,7 +47920,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -48064,7 +48064,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -48157,7 +48157,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -48356,7 +48356,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -48527,7 +48527,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -48613,7 +48613,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -48751,7 +48751,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -48902,7 +48902,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -49005,7 +49005,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -49159,7 +49159,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -49352,7 +49352,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -49476,7 +49476,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -49618,7 +49618,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -49703,7 +49703,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -49824,7 +49824,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -49975,7 +49975,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -50079,7 +50079,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -50263,7 +50263,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -50446,7 +50446,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -50647,7 +50647,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -50848,7 +50848,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -50933,7 +50933,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -51093,7 +51093,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -51218,7 +51218,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -51379,7 +51379,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -51506,7 +51506,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -51609,7 +51609,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -51735,7 +51735,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -51838,7 +51838,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -51930,7 +51930,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -52011,7 +52011,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -52115,7 +52115,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -52242,7 +52242,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "navigation_pgn_generated.go",
+          "sourceFile": "navigation.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -52390,7 +52390,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -52490,7 +52490,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -52614,7 +52614,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -52798,7 +52798,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -52907,7 +52907,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -53038,7 +53038,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -53136,7 +53136,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "propulsion_pgn_generated.go",
+          "sourceFile": "propulsion.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -53237,7 +53237,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "engine_pgn_generated.go",
+          "sourceFile": "engine.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -53321,7 +53321,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "engine_pgn_generated.go",
+          "sourceFile": "engine.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -53511,7 +53511,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "engine_pgn_generated.go",
+          "sourceFile": "engine.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -53616,7 +53616,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "engine_pgn_generated.go",
+          "sourceFile": "engine.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -53701,7 +53701,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "engine_pgn_generated.go",
+          "sourceFile": "engine.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -53778,7 +53778,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -53868,7 +53868,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 32,
             "fields": [
@@ -54254,7 +54254,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -54353,7 +54353,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -54451,7 +54451,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -54548,7 +54548,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -54643,7 +54643,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "equipment_pgn_generated.go",
+          "sourceFile": "equipment.go",
           "payloadShape": {
             "fieldCount": 23,
             "fields": [
@@ -54937,7 +54937,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -55013,7 +55013,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -55197,7 +55197,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -55338,7 +55338,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -55444,7 +55444,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -55544,7 +55544,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -55663,7 +55663,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -55810,7 +55810,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -55893,7 +55893,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -55977,7 +55977,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -56072,7 +56072,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -56166,7 +56166,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -56260,7 +56260,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -56342,7 +56342,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -56424,7 +56424,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -56507,7 +56507,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -56663,7 +56663,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -56808,7 +56808,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -56988,7 +56988,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -57191,7 +57191,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 18,
             "fields": [
@@ -57435,7 +57435,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -57523,7 +57523,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -57744,7 +57744,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -57909,7 +57909,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -58041,7 +58041,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -58216,7 +58216,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -58304,7 +58304,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -58418,7 +58418,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -58479,7 +58479,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -58582,7 +58582,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -58679,7 +58679,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -58754,7 +58754,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -58840,7 +58840,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -58949,7 +58949,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -59034,7 +59034,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -59143,7 +59143,7 @@
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 5,
             "fields": [
@@ -59229,7 +59229,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -59414,7 +59414,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": true,
-          "sourceFile": "environmental_pgn_generated.go",
+          "sourceFile": "environmental.go",
           "payloadShape": {
             "fieldCount": 4,
             "fields": [
@@ -59490,7 +59490,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 20,
             "fields": [
@@ -59742,7 +59742,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 23,
             "fields": [
@@ -60029,7 +60029,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 27,
             "fields": [
@@ -60361,7 +60361,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 23,
             "fields": [
@@ -60649,7 +60649,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -60809,7 +60809,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -60993,7 +60993,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 21,
             "fields": [
@@ -61257,7 +61257,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -61415,7 +61415,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -61540,7 +61540,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -61657,7 +61657,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -61878,7 +61878,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -61984,7 +61984,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -62134,7 +62134,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -62243,7 +62243,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 22,
             "fields": [
@@ -62514,7 +62514,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -62697,7 +62697,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 10,
             "fields": [
@@ -62837,7 +62837,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 23,
             "fields": [
@@ -63123,7 +63123,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 19,
             "fields": [
@@ -63363,7 +63363,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -63466,7 +63466,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -63690,7 +63690,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -63844,7 +63844,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -64053,7 +64053,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -64255,7 +64255,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -64420,7 +64420,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 16,
             "fields": [
@@ -64629,7 +64629,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "ais_pgn_generated.go",
+          "sourceFile": "ais.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -64782,7 +64782,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "communication_pgn_generated.go",
+          "sourceFile": "communication.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -64884,7 +64884,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "communication_pgn_generated.go",
+          "sourceFile": "communication.go",
           "payloadShape": {
             "fieldCount": 22,
             "fields": [
@@ -65163,7 +65163,7 @@
           "fastPacket": true,
           "manufacturerId": 0,
           "proprietary": false,
-          "sourceFile": "communication_pgn_generated.go",
+          "sourceFile": "communication.go",
           "payloadShape": {
             "fieldCount": 22,
             "fields": [
@@ -65450,7 +65450,7 @@
           "fastPacket": true,
           "manufacturerId": 285,
           "proprietary": true,
-          "sourceFile": "sea_recovery_pgn_generated.go",
+          "sourceFile": "sea_recovery.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [
@@ -65677,7 +65677,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simrad_pgn_generated.go",
+          "sourceFile": "simrad.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -65834,7 +65834,7 @@
           "fastPacket": true,
           "manufacturerId": 1857,
           "proprietary": true,
-          "sourceFile": "simrad_pgn_generated.go",
+          "sourceFile": "simrad.go",
           "payloadShape": {
             "fieldCount": 3,
             "fields": [
@@ -65908,7 +65908,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -66076,7 +66076,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -66199,7 +66199,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -66322,7 +66322,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -66434,7 +66434,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -66602,7 +66602,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 6,
             "fields": [
@@ -66704,7 +66704,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -66828,7 +66828,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -66951,7 +66951,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -67074,7 +67074,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 11,
             "fields": [
@@ -67230,7 +67230,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -67399,7 +67399,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -67512,7 +67512,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -67624,7 +67624,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -67758,7 +67758,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -67878,7 +67878,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 8,
             "fields": [
@@ -68001,7 +68001,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -68113,7 +68113,7 @@
           "fastPacket": true,
           "manufacturerId": 275,
           "proprietary": true,
-          "sourceFile": "sonichub_pgn_generated.go",
+          "sourceFile": "sonichub.go",
           "payloadShape": {
             "fieldCount": 7,
             "fields": [
@@ -68232,7 +68232,7 @@
           "fastPacket": true,
           "manufacturerId": 540,
           "proprietary": true,
-          "sourceFile": "webasto_pgn_generated.go",
+          "sourceFile": "webasto.go",
           "payloadShape": {
             "fieldCount": 9,
             "fields": [
@@ -68365,7 +68365,7 @@
           "fastPacket": true,
           "manufacturerId": 540,
           "proprietary": true,
-          "sourceFile": "webasto_pgn_generated.go",
+          "sourceFile": "webasto.go",
           "payloadShape": {
             "fieldCount": 13,
             "fields": [
@@ -68550,7 +68550,7 @@
           "fastPacket": true,
           "manufacturerId": 168,
           "proprietary": true,
-          "sourceFile": "xantrex_pgn_generated.go",
+          "sourceFile": "xantrex.go",
           "payloadShape": {
             "fieldCount": 15,
             "fields": [
@@ -68753,7 +68753,7 @@
           "fastPacket": true,
           "manufacturerId": 168,
           "proprietary": true,
-          "sourceFile": "xantrex_pgn_generated.go",
+          "sourceFile": "xantrex.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -68928,7 +68928,7 @@
           "fastPacket": true,
           "manufacturerId": 168,
           "proprietary": true,
-          "sourceFile": "xantrex_pgn_generated.go",
+          "sourceFile": "xantrex.go",
           "payloadShape": {
             "fieldCount": 12,
             "fields": [
@@ -69098,7 +69098,7 @@
           "fastPacket": true,
           "manufacturerId": 168,
           "proprietary": true,
-          "sourceFile": "xantrex_pgn_generated.go",
+          "sourceFile": "xantrex.go",
           "payloadShape": {
             "fieldCount": 14,
             "fields": [
@@ -69292,7 +69292,7 @@
           "fastPacket": true,
           "manufacturerId": 168,
           "proprietary": true,
-          "sourceFile": "xantrex_pgn_generated.go",
+          "sourceFile": "xantrex.go",
           "payloadShape": {
             "fieldCount": 17,
             "fields": [

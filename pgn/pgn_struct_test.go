@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGeneratedPGNRoundTripVesselHeading(t *testing.T) {
+func TestPGNRoundTripVesselHeading(t *testing.T) {
 	msg := &PgnVesselHeading{
 		Info:      MessageInfo{PGN: 127250},
 		Sid:       ptrUint64(5),
@@ -33,7 +33,7 @@ func TestGeneratedPGNRoundTripVesselHeading(t *testing.T) {
 	require.Equal(t, uint64(1), *result.Reference)
 }
 
-func TestGeneratedPGNDecodeUsesVariantMatches(t *testing.T) {
+func TestPGNDecodeUsesVariantMatches(t *testing.T) {
 	msg := &PgnBGKeyValueData{
 		Info:             MessageInfo{PGN: 130824},
 		ManufacturerCode: ptrUint64(381),
@@ -52,7 +52,7 @@ func TestGeneratedPGNDecodeUsesVariantMatches(t *testing.T) {
 	require.True(t, ok, "expected *pgn.PgnBGKeyValueData, got %T", decoded)
 }
 
-func TestGeneratedPGNMetadata(t *testing.T) {
+func TestPGNMetadata(t *testing.T) {
 	infos := PgnInfoLookup[127250]
 	require.Len(t, infos, 1)
 	require.Equal(t, "PgnVesselHeading", infos[0].Id)
@@ -66,7 +66,7 @@ func TestGeneratedPGNMetadata(t *testing.T) {
 	require.Equal(t, "*uint64", fd.GolangType)
 }
 
-func TestDebugDumpPGNGeneratedStruct(t *testing.T) {
+func TestDebugDumpPGNStruct(t *testing.T) {
 	msg := &PgnVesselHeading{
 		Info:    MessageInfo{PGN: 127250, SourceId: 7, Priority: ptrUint8(3)},
 		Sid:     ptrUint64(3),

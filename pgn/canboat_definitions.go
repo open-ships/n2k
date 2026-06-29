@@ -4,7 +4,7 @@
 
 package pgn
 
-var canboatGeneratedDefinitions = []CanboatDefinition{
+var canboatDefinitions = []CanboatDefinition{
 	{PGN: 59392, StructName: "PgnPgn0xe8000xee00StandardizedSingleFrameAddressed", CanboatId: "0xe8000xee00StandardizedSingleFrameAddressed", Description: "0xE800-0xEE00: Standardized single-frame addressed", Type: "Single", Complete: false, Fallback: true, FieldCount: 1, Explanation: "Standardized PGNs in PDU1 (addressed) single-frame PGN range 0xE800 to 0xEE00 (59392 - 60928). When this is shown during analysis it means the PGN is not reverse engineered yet.", Missing: []string{"Fields", "FieldLengths", "Resolution", "Interval"}, Length: canboatInt(8), Priority: canboatUint8(6), Fields: []CanboatFieldDefinition{
 		{Order: 1, CanboatId: "data", Name: "Data", Signed: false, Unit: "", FieldType: "BINARY", BitLength: canboatUint16(64), BitOffset: canboatUint16(0), BitStart: canboatUint16(0), Resolution: canboatFloat64(1)},
 	}},

@@ -70,27 +70,27 @@ func init() {
 }
 
 func initPgnInfoLookup() {
-	if len(canboatGeneratedDefinitions) == 0 {
+	if len(canboatDefinitions) == 0 {
 		return
 	}
 
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
 	UnseenLookup = make(map[uint32][]*PgnInfo)
 
-	generated := make([]*PgnInfo, 0, len(canboatGeneratedDefinitions))
-	for _, def := range canboatGeneratedDefinitions {
+	infos := make([]*PgnInfo, 0, len(canboatDefinitions))
+	for _, def := range canboatDefinitions {
 		info := pgnInfoFromCanboat(def)
-		generated = append(generated, info)
+		infos = append(infos, info)
 	}
 
-	sort.SliceStable(generated, func(i, j int) bool {
-		if generated[i].PGN != generated[j].PGN {
-			return generated[i].PGN < generated[j].PGN
+	sort.SliceStable(infos, func(i, j int) bool {
+		if infos[i].PGN != infos[j].PGN {
+			return infos[i].PGN < infos[j].PGN
 		}
-		return generated[i].Description < generated[j].Description
+		return infos[i].Description < infos[j].Description
 	})
 
-	for _, info := range generated {
+	for _, info := range infos {
 		PgnInfoLookup[info.PGN] = append(PgnInfoLookup[info.PGN], info)
 		if !info.Complete || len(info.Missing) > 0 {
 			UnseenLookup[info.PGN] = append(UnseenLookup[info.PGN], info)
@@ -178,7 +178,7 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 		ReservedValue:                       field.ReservedValue,
 		UnknownValue:                        field.UnknownValue,
 		PartOfPrimaryKey:                    field.PartOfPrimaryKey,
-		GolangType:                          generatedFieldType(field),
+		GolangType:                          pgnFieldGoType(field),
 		Resolution:                          resolution,
 		Signed:                              field.Signed,
 		Unit:                                field.Unit,
@@ -186,7 +186,7 @@ func fieldDescriptorFromCanboat(field CanboatFieldDefinition) *FieldDescriptor {
 	}
 }
 
-func generatedFieldType(field CanboatFieldDefinition) string {
+func pgnFieldGoType(field CanboatFieldDefinition) string {
 	switch field.FieldType {
 	case "RESERVED", "SPARE":
 		return ""
