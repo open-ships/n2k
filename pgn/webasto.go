@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnWebastoStatus2 struct {
+type WebastoStatus2 struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -17,10 +17,10 @@ type PgnWebastoStatus2 struct {
 	VSeriesOutput       *uint64     `json:"vSeriesOutput,omitempty" n2k:"9"`
 }
 
-func (m *PgnWebastoStatus2) PGNNumber() uint32               { return 130818 }
-func (m *PgnWebastoStatus2) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWebastoStatus2) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWebastoStatus2) DecodePayload(payload []uint8) error {
+func (m *WebastoStatus2) PGNNumber() uint32               { return 130818 }
+func (m *WebastoStatus2) MessageInfo() MessageInfo        { return m.Info }
+func (m *WebastoStatus2) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WebastoStatus2) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -125,7 +125,7 @@ func (m *PgnWebastoStatus2) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnWebastoStatus2) EncodePayload() ([]uint8, error) {
+func (m *WebastoStatus2) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -171,7 +171,7 @@ func (m *PgnWebastoStatus2) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnWebastoHvacCommand struct {
+type WebastoHvacCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -185,10 +185,10 @@ type PgnWebastoHvacCommand struct {
 	Mask             *uint64     `json:"mask,omitempty" n2k:"13"`
 }
 
-func (m *PgnWebastoHvacCommand) PGNNumber() uint32               { return 130819 }
-func (m *PgnWebastoHvacCommand) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWebastoHvacCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWebastoHvacCommand) DecodePayload(payload []uint8) error {
+func (m *WebastoHvacCommand) PGNNumber() uint32               { return 130819 }
+func (m *WebastoHvacCommand) MessageInfo() MessageInfo        { return m.Info }
+func (m *WebastoHvacCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WebastoHvacCommand) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -321,7 +321,7 @@ func (m *PgnWebastoHvacCommand) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnWebastoHvacCommand) EncodePayload() ([]uint8, error) {
+func (m *WebastoHvacCommand) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

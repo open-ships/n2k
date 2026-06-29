@@ -168,7 +168,7 @@ func TestPgnInfoLookup_Populated(t *testing.T) {
 func TestPgnInfoLookup_PGNDetails(t *testing.T) {
 	infos := PgnInfoLookup[127250]
 	assert.Equal(t, 1, len(infos))
-	assert.Equal(t, "PgnVesselHeading", infos[0].Id)
+	assert.Equal(t, "VesselHeading", infos[0].Id)
 	assert.Equal(t, uint32(127250), infos[0].PGN)
 	assert.Equal(t, "Vessel Heading", infos[0].Description)
 	assert.False(t, infos[0].Fast)
@@ -186,7 +186,7 @@ func TestPgnInfoLookup_UnknownPGN(t *testing.T) {
 func TestPgnInfoLookup_PGNStructMetadata(t *testing.T) {
 	infos := PgnInfoLookup[127490]
 	assert.NotEmpty(t, infos)
-	assert.Equal(t, "PgnElectricDriveStatusDynamic", infos[0].Id)
+	assert.Equal(t, "ElectricDriveStatusDynamic", infos[0].Id)
 	assert.Equal(t, uint32(127490), infos[0].PGN)
 	assert.Equal(t, "Electric Drive Status, Dynamic", infos[0].Description)
 	assert.NotEmpty(t, infos[0].Fields)

@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnBGProprietary struct {
+type BGProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnBGProprietary) PGNNumber() uint32               { return 65330 }
-func (m *PgnBGProprietary) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBGProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBGProprietary) DecodePayload(payload []uint8) error {
+func (m *BGProprietary) PGNNumber() uint32               { return 65330 }
+func (m *BGProprietary) MessageInfo() MessageInfo        { return m.Info }
+func (m *BGProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BGProprietary) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnBGProprietary) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBGProprietary) EncodePayload() ([]uint8, error) {
+func (m *BGProprietary) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,7 +87,7 @@ func (m *PgnBGProprietary) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBGKeyValueData struct {
+type BGKeyValueData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -96,10 +96,10 @@ type PgnBGKeyValueData struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnBGKeyValueData) PGNNumber() uint32               { return 130824 }
-func (m *PgnBGKeyValueData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBGKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBGKeyValueData) DecodePayload(payload []uint8) error {
+func (m *BGKeyValueData) PGNNumber() uint32               { return 130824 }
+func (m *BGKeyValueData) MessageInfo() MessageInfo        { return m.Info }
+func (m *BGKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BGKeyValueData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -174,7 +174,7 @@ func (m *PgnBGKeyValueData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBGKeyValueData) EncodePayload() ([]uint8, error) {
+func (m *BGKeyValueData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -204,7 +204,7 @@ func (m *PgnBGKeyValueData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBGUserAndRemoteRename struct {
+type BGUserAndRemoteRename struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -215,10 +215,10 @@ type PgnBGUserAndRemoteRename struct {
 	LongName         string      `json:"longName,omitempty" n2k:"9"`
 }
 
-func (m *PgnBGUserAndRemoteRename) PGNNumber() uint32               { return 130833 }
-func (m *PgnBGUserAndRemoteRename) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBGUserAndRemoteRename) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBGUserAndRemoteRename) DecodePayload(payload []uint8) error {
+func (m *BGUserAndRemoteRename) PGNNumber() uint32               { return 130833 }
+func (m *BGUserAndRemoteRename) MessageInfo() MessageInfo        { return m.Info }
+func (m *BGUserAndRemoteRename) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BGUserAndRemoteRename) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -317,7 +317,7 @@ func (m *PgnBGUserAndRemoteRename) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBGUserAndRemoteRename) EncodePayload() ([]uint8, error) {
+func (m *BGUserAndRemoteRename) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnVictronVeCanRegister struct {
+type VictronVeCanRegister struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -13,10 +13,10 @@ type PgnVictronVeCanRegister struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"5"`
 }
 
-func (m *PgnVictronVeCanRegister) PGNNumber() uint32               { return 61184 }
-func (m *PgnVictronVeCanRegister) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnVictronVeCanRegister) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnVictronVeCanRegister) DecodePayload(payload []uint8) error {
+func (m *VictronVeCanRegister) PGNNumber() uint32               { return 61184 }
+func (m *VictronVeCanRegister) MessageInfo() MessageInfo        { return m.Info }
+func (m *VictronVeCanRegister) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *VictronVeCanRegister) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -81,7 +81,7 @@ func (m *PgnVictronVeCanRegister) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnVictronVeCanRegister) EncodePayload() ([]uint8, error) {
+func (m *VictronVeCanRegister) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

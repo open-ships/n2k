@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnYamahaGearStatus struct {
+type YamahaGearStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Neutral          *uint64     `json:"neutral,omitempty" n2k:"6"`
 }
 
-func (m *PgnYamahaGearStatus) PGNNumber() uint32               { return 65314 }
-func (m *PgnYamahaGearStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaGearStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaGearStatus) DecodePayload(payload []uint8) error {
+func (m *YamahaGearStatus) PGNNumber() uint32               { return 65314 }
+func (m *YamahaGearStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaGearStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaGearStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -86,7 +86,7 @@ func (m *PgnYamahaGearStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaGearStatus) EncodePayload() ([]uint8, error) {
+func (m *YamahaGearStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -111,17 +111,17 @@ func (m *PgnYamahaGearStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineDataA struct {
+type YamahaEngineDataA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYamahaEngineDataA) PGNNumber() uint32               { return 65329 }
-func (m *PgnYamahaEngineDataA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineDataA) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineDataA) PGNNumber() uint32               { return 65329 }
+func (m *YamahaEngineDataA) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineDataA) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -176,7 +176,7 @@ func (m *PgnYamahaEngineDataA) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineDataA) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineDataA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -193,17 +193,17 @@ func (m *PgnYamahaEngineDataA) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineDataB struct {
+type YamahaEngineDataB struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYamahaEngineDataB) PGNNumber() uint32               { return 65344 }
-func (m *PgnYamahaEngineDataB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineDataB) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineDataB) PGNNumber() uint32               { return 65344 }
+func (m *YamahaEngineDataB) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineDataB) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -258,7 +258,7 @@ func (m *PgnYamahaEngineDataB) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineDataB) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineDataB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -275,17 +275,17 @@ func (m *PgnYamahaEngineDataB) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineDataC struct {
+type YamahaEngineDataC struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYamahaEngineDataC) PGNNumber() uint32               { return 65424 }
-func (m *PgnYamahaEngineDataC) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineDataC) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineDataC) PGNNumber() uint32               { return 65424 }
+func (m *YamahaEngineDataC) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineDataC) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -340,7 +340,7 @@ func (m *PgnYamahaEngineDataC) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineDataC) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineDataC) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -357,17 +357,17 @@ func (m *PgnYamahaEngineDataC) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineDataD struct {
+type YamahaEngineDataD struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYamahaEngineDataD) PGNNumber() uint32               { return 65472 }
-func (m *PgnYamahaEngineDataD) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineDataD) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineDataD) PGNNumber() uint32               { return 65472 }
+func (m *YamahaEngineDataD) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineDataD) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -422,7 +422,7 @@ func (m *PgnYamahaEngineDataD) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineDataD) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineDataD) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -439,16 +439,16 @@ func (m *PgnYamahaEngineDataD) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData struct {
+type YamahaEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData) PGNNumber() uint32               { return 130945 }
-func (m *PgnYamahaEngineData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData) PGNNumber() uint32               { return 130945 }
+func (m *YamahaEngineData) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -493,7 +493,7 @@ func (m *PgnYamahaEngineData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -509,16 +509,16 @@ func (m *PgnYamahaEngineData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData2 struct {
+type YamahaEngineData2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData2) PGNNumber() uint32               { return 130946 }
-func (m *PgnYamahaEngineData2) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData2) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData2) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData2) PGNNumber() uint32               { return 130946 }
+func (m *YamahaEngineData2) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData2) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData2) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -563,7 +563,7 @@ func (m *PgnYamahaEngineData2) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData2) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData2) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -579,16 +579,16 @@ func (m *PgnYamahaEngineData2) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData3 struct {
+type YamahaEngineData3 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData3) PGNNumber() uint32               { return 130947 }
-func (m *PgnYamahaEngineData3) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData3) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData3) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData3) PGNNumber() uint32               { return 130947 }
+func (m *YamahaEngineData3) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData3) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData3) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -633,7 +633,7 @@ func (m *PgnYamahaEngineData3) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData3) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData3) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -649,16 +649,16 @@ func (m *PgnYamahaEngineData3) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData4 struct {
+type YamahaEngineData4 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData4) PGNNumber() uint32               { return 130951 }
-func (m *PgnYamahaEngineData4) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData4) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData4) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData4) PGNNumber() uint32               { return 130951 }
+func (m *YamahaEngineData4) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData4) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData4) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -703,7 +703,7 @@ func (m *PgnYamahaEngineData4) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData4) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData4) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -719,16 +719,16 @@ func (m *PgnYamahaEngineData4) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData5 struct {
+type YamahaEngineData5 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData5) PGNNumber() uint32               { return 131008 }
-func (m *PgnYamahaEngineData5) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData5) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData5) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData5) PGNNumber() uint32               { return 131008 }
+func (m *YamahaEngineData5) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData5) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData5) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -773,7 +773,7 @@ func (m *PgnYamahaEngineData5) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData5) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData5) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -789,16 +789,16 @@ func (m *PgnYamahaEngineData5) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData6 struct {
+type YamahaEngineData6 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData6) PGNNumber() uint32               { return 131011 }
-func (m *PgnYamahaEngineData6) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData6) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData6) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData6) PGNNumber() uint32               { return 131011 }
+func (m *YamahaEngineData6) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData6) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData6) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -843,7 +843,7 @@ func (m *PgnYamahaEngineData6) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData6) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData6) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -859,16 +859,16 @@ func (m *PgnYamahaEngineData6) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYamahaEngineData7 struct {
+type YamahaEngineData7 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnYamahaEngineData7) PGNNumber() uint32               { return 131012 }
-func (m *PgnYamahaEngineData7) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYamahaEngineData7) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYamahaEngineData7) DecodePayload(payload []uint8) error {
+func (m *YamahaEngineData7) PGNNumber() uint32               { return 131012 }
+func (m *YamahaEngineData7) MessageInfo() MessageInfo        { return m.Info }
+func (m *YamahaEngineData7) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YamahaEngineData7) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -913,7 +913,7 @@ func (m *PgnYamahaEngineData7) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYamahaEngineData7) EncodePayload() ([]uint8, error) {
+func (m *YamahaEngineData7) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

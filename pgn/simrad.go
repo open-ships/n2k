@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnSimradTextMessage struct {
+type SimradTextMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -18,10 +18,10 @@ type PgnSimradTextMessage struct {
 	Text             string      `json:"text,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimradTextMessage) PGNNumber() uint32               { return 130816 }
-func (m *PgnSimradTextMessage) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimradTextMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimradTextMessage) DecodePayload(payload []uint8) error {
+func (m *SimradTextMessage) PGNNumber() uint32               { return 130816 }
+func (m *SimradTextMessage) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimradTextMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimradTextMessage) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -149,7 +149,7 @@ func (m *PgnSimradTextMessage) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimradTextMessage) EncodePayload() ([]uint8, error) {
+func (m *SimradTextMessage) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -197,16 +197,16 @@ func (m *PgnSimradTextMessage) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimradEngineData struct {
+type SimradEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimradEngineData) PGNNumber() uint32               { return 130861 }
-func (m *PgnSimradEngineData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimradEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimradEngineData) DecodePayload(payload []uint8) error {
+func (m *SimradEngineData) PGNNumber() uint32               { return 130861 }
+func (m *SimradEngineData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimradEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimradEngineData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -251,7 +251,7 @@ func (m *PgnSimradEngineData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimradEngineData) EncodePayload() ([]uint8, error) {
+func (m *SimradEngineData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

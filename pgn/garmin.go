@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnGarminAhrsAttCogSourceValidFlag struct {
+type GarminAhrsAttCogSourceValidFlag struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -16,10 +16,10 @@ type PgnGarminAhrsAttCogSourceValidFlag struct {
 	CogSourceFlags   *uint64     `json:"cogSourceFlags,omitempty" n2k:"8"`
 }
 
-func (m *PgnGarminAhrsAttCogSourceValidFlag) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminAhrsAttCogSourceValidFlag) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminAhrsAttCogSourceValidFlag) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminAhrsAttCogSourceValidFlag) DecodePayload(payload []uint8) error {
+func (m *GarminAhrsAttCogSourceValidFlag) PGNNumber() uint32               { return 126720 }
+func (m *GarminAhrsAttCogSourceValidFlag) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminAhrsAttCogSourceValidFlag) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminAhrsAttCogSourceValidFlag) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -150,7 +150,7 @@ func (m *PgnGarminAhrsAttCogSourceValidFlag) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnGarminAhrsAttCogSourceValidFlag) EncodePayload() ([]uint8, error) {
+func (m *GarminAhrsAttCogSourceValidFlag) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -191,7 +191,7 @@ func (m *PgnGarminAhrsAttCogSourceValidFlag) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminAhrsAttDeviceFlags struct {
+type GarminAhrsAttDeviceFlags struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -202,10 +202,10 @@ type PgnGarminAhrsAttDeviceFlags struct {
 	DeviceFlags      *uint64     `json:"deviceFlags,omitempty" n2k:"8"`
 }
 
-func (m *PgnGarminAhrsAttDeviceFlags) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminAhrsAttDeviceFlags) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminAhrsAttDeviceFlags) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminAhrsAttDeviceFlags) DecodePayload(payload []uint8) error {
+func (m *GarminAhrsAttDeviceFlags) PGNNumber() uint32               { return 126720 }
+func (m *GarminAhrsAttDeviceFlags) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminAhrsAttDeviceFlags) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminAhrsAttDeviceFlags) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -336,7 +336,7 @@ func (m *PgnGarminAhrsAttDeviceFlags) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGarminAhrsAttDeviceFlags) EncodePayload() ([]uint8, error) {
+func (m *GarminAhrsAttDeviceFlags) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -377,7 +377,7 @@ func (m *PgnGarminAhrsAttDeviceFlags) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent struct {
+type GarminAhrsAttNonDefaultCalibrationMatrixPresent struct {
 	Info                     MessageInfo `json:"info"`
 	ManufacturerCode         *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode             *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -388,12 +388,12 @@ type PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent struct {
 	CalibrationMatrixPresent *uint64     `json:"calibrationMatrixPresent,omitempty" n2k:"8"`
 }
 
-func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) PGNNumber() uint32        { return 126720 }
-func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) MessageInfo() MessageInfo { return m.Info }
-func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) SetMessageInfo(info MessageInfo) {
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) PGNNumber() uint32        { return 126720 }
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) MessageInfo() MessageInfo { return m.Info }
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) SetMessageInfo(info MessageInfo) {
 	m.Info = info
 }
-func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) DecodePayload(payload []uint8) error {
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -524,7 +524,7 @@ func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) DecodePayload(paylo
 	}
 	return nil
 }
-func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) EncodePayload() ([]uint8, error) {
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -565,7 +565,7 @@ func (m *PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent) EncodePayload() ([]
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminAhrsAttSetNorthState struct {
+type GarminAhrsAttSetNorthState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -576,10 +576,10 @@ type PgnGarminAhrsAttSetNorthState struct {
 	SetNorthState    *uint64     `json:"setNorthState,omitempty" n2k:"8"`
 }
 
-func (m *PgnGarminAhrsAttSetNorthState) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminAhrsAttSetNorthState) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminAhrsAttSetNorthState) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminAhrsAttSetNorthState) DecodePayload(payload []uint8) error {
+func (m *GarminAhrsAttSetNorthState) PGNNumber() uint32               { return 126720 }
+func (m *GarminAhrsAttSetNorthState) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminAhrsAttSetNorthState) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminAhrsAttSetNorthState) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -710,7 +710,7 @@ func (m *PgnGarminAhrsAttSetNorthState) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGarminAhrsAttSetNorthState) EncodePayload() ([]uint8, error) {
+func (m *GarminAhrsAttSetNorthState) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -751,7 +751,7 @@ func (m *PgnGarminAhrsAttSetNorthState) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminColorMode struct {
+type GarminColorMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -763,10 +763,10 @@ type PgnGarminColorMode struct {
 	Color            *uint64     `json:"color,omitempty" n2k:"11"`
 }
 
-func (m *PgnGarminColorMode) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminColorMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminColorMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminColorMode) DecodePayload(payload []uint8) error {
+func (m *GarminColorMode) PGNNumber() uint32               { return 126720 }
+func (m *GarminColorMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminColorMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminColorMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -924,7 +924,7 @@ func (m *PgnGarminColorMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGarminColorMode) EncodePayload() ([]uint8, error) {
+func (m *GarminColorMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -972,7 +972,7 @@ func (m *PgnGarminColorMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminDayMode struct {
+type GarminDayMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -984,10 +984,10 @@ type PgnGarminDayMode struct {
 	Backlight        *uint64     `json:"backlight,omitempty" n2k:"11"`
 }
 
-func (m *PgnGarminDayMode) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminDayMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminDayMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminDayMode) DecodePayload(payload []uint8) error {
+func (m *GarminDayMode) PGNNumber() uint32               { return 126720 }
+func (m *GarminDayMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminDayMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminDayMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1145,7 +1145,7 @@ func (m *PgnGarminDayMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGarminDayMode) EncodePayload() ([]uint8, error) {
+func (m *GarminDayMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1193,7 +1193,7 @@ func (m *PgnGarminDayMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGarminNightMode struct {
+type GarminNightMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1205,10 +1205,10 @@ type PgnGarminNightMode struct {
 	Backlight        *uint64     `json:"backlight,omitempty" n2k:"11"`
 }
 
-func (m *PgnGarminNightMode) PGNNumber() uint32               { return 126720 }
-func (m *PgnGarminNightMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGarminNightMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGarminNightMode) DecodePayload(payload []uint8) error {
+func (m *GarminNightMode) PGNNumber() uint32               { return 126720 }
+func (m *GarminNightMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *GarminNightMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GarminNightMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1366,7 +1366,7 @@ func (m *PgnGarminNightMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGarminNightMode) EncodePayload() ([]uint8, error) {
+func (m *GarminNightMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

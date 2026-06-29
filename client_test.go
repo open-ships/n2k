@@ -56,7 +56,7 @@ func TestClient_Write_EncodesAndFrames(t *testing.T) {
 	defer func() { _ = c.Close() }()
 
 	heading := uint64(15000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	msg.Info.Priority = ptrUint8(2)
@@ -79,7 +79,7 @@ func TestClient_Write_UsesPriorityFromInfo(t *testing.T) {
 	defer func() { _ = c.Close() }()
 
 	heading := uint64(5000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	msg.Info.Priority = ptrUint8(3)
@@ -100,7 +100,7 @@ func TestClient_Write_DefaultPriority(t *testing.T) {
 	defer func() { _ = c.Close() }()
 
 	heading := uint64(5000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 		// Priority left nil => default to 6
 	}
@@ -137,7 +137,7 @@ func TestClient_Write_AfterClose(t *testing.T) {
 	require.NoError(t, c.Close())
 
 	heading := uint64(10000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	wr := c.Write(msg)
@@ -149,7 +149,7 @@ func TestClient_Write_AfterClose(t *testing.T) {
 func TestClient_Replay_Receive(t *testing.T) {
 	// Build a pre-encoded VesselHeading frame for replay.
 	heading := uint64(15000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	payload, err := msg.EncodePayload()
@@ -169,15 +169,15 @@ func TestClient_Replay_Receive(t *testing.T) {
 	}
 	require.Len(t, received, 1)
 
-	vh, ok := received[0].(*pgn.PgnVesselHeading)
-	require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", received[0])
+	vh, ok := received[0].(*pgn.VesselHeading)
+	require.True(t, ok, "expected *pgn.VesselHeading, got %T", received[0])
 	require.NotNil(t, vh.Heading)
 	assert.Equal(t, uint64(15000), *vh.Heading)
 }
 
 func TestClient_Scanner(t *testing.T) {
 	heading := uint64(20000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	payload, err := msg.EncodePayload()
@@ -192,8 +192,8 @@ func TestClient_Scanner(t *testing.T) {
 
 	s := c.Scanner()
 	require.True(t, s.Next())
-	vh, ok := s.Message().(*pgn.PgnVesselHeading)
-	require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", s.Message())
+	vh, ok := s.Message().(*pgn.VesselHeading)
+	require.True(t, ok, "expected *pgn.VesselHeading, got %T", s.Message())
 	require.NotNil(t, vh.Heading)
 	assert.Equal(t, uint64(20000), *vh.Heading)
 	assert.False(t, s.Next())
@@ -226,7 +226,7 @@ func TestClient_MultipleWrites(t *testing.T) {
 
 	heading := uint64(1000)
 	for i := 0; i < 3; i++ {
-		msg := &pgn.PgnVesselHeading{
+		msg := &pgn.VesselHeading{
 			Heading: &heading,
 		}
 		msg.Info.Priority = ptrUint8(2)
@@ -249,7 +249,7 @@ func TestClient_Write_FastPacket(t *testing.T) {
 	code := uint64(1234)
 	cert := uint64(1)
 	load := uint64(1)
-	msg := &pgn.PgnProductInformation{
+	msg := &pgn.ProductInformation{
 		Nmea2000Version:     &ver,
 		ProductCode:         &code,
 		ModelId:             "TestModel",
@@ -305,7 +305,7 @@ func TestClient_RoundTrip_SingleFrame(t *testing.T) {
 	ctx := context.Background()
 
 	// 1. Build a VesselHeading with known values.
-	original := &pgn.PgnVesselHeading{
+	original := &pgn.VesselHeading{
 		Sid:     ptrUint64(0),
 		Heading: ptrUint64(15708),
 	}
@@ -332,8 +332,8 @@ func TestClient_RoundTrip_SingleFrame(t *testing.T) {
 	require.Len(t, decoded, 1, "should decode exactly 1 message from the captured frames")
 
 	// 5. Assert the decoded VesselHeading matches.
-	vh, ok := decoded[0].(*pgn.PgnVesselHeading)
-	require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", decoded[0])
+	vh, ok := decoded[0].(*pgn.VesselHeading)
+	require.True(t, ok, "expected *pgn.VesselHeading, got %T", decoded[0])
 
 	require.NotNil(t, vh.Heading, "Heading should not be nil")
 	assert.Equal(t, uint64(15708), *vh.Heading, "Heading should round-trip")
@@ -346,7 +346,7 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 	ctx := context.Background()
 
 	// 1. Build a ProductInformation with known values.
-	original := &pgn.PgnProductInformation{
+	original := &pgn.ProductInformation{
 		Nmea2000Version:     ptrUint64(200),
 		ProductCode:         ptrUint64(42),
 		ModelId:             "TestModel",
@@ -379,8 +379,8 @@ func TestClient_RoundTrip_FastPacket(t *testing.T) {
 	require.Len(t, decoded, 1, "should decode exactly 1 ProductInformation from the captured frames")
 
 	// 5. Assert decoded ProductInformation matches.
-	pi, ok := decoded[0].(*pgn.PgnProductInformation)
-	require.True(t, ok, "expected *pgn.PgnProductInformation, got %T", decoded[0])
+	pi, ok := decoded[0].(*pgn.ProductInformation)
+	require.True(t, ok, "expected *pgn.ProductInformation, got %T", decoded[0])
 
 	require.NotNil(t, pi.ProductCode, "ProductCode should not be nil")
 	assert.Equal(t, uint64(42), *pi.ProductCode, "ProductCode should match")
@@ -418,7 +418,7 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 	// 2. Write 10 VesselHeading messages sequentially.
 	const count = 10
 	for i := 0; i < count; i++ {
-		msg := &pgn.PgnVesselHeading{
+		msg := &pgn.VesselHeading{
 			Sid:     ptrUint64(uint64(i)),
 			Heading: ptrUint64(uint64(i) * 1000),
 		}
@@ -438,11 +438,11 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 	}
 
 	// 5. Feed all frames into Receive, verify 10 messages come out in order.
-	var decoded []*pgn.PgnVesselHeading
+	var decoded []*pgn.VesselHeading
 	for msg, err := range Receive(ctx, Replay(frames)) {
 		require.NoError(t, err)
-		vh, ok := msg.(*pgn.PgnVesselHeading)
-		require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", msg)
+		vh, ok := msg.(*pgn.VesselHeading)
+		require.True(t, ok, "expected *pgn.VesselHeading, got %T", msg)
 		decoded = append(decoded, vh)
 	}
 	require.Len(t, decoded, count, "should decode exactly %d messages", count)
@@ -542,7 +542,7 @@ func TestClient_Write(t *testing.T) {
 	defer func() { _ = c.Close() }()
 
 	heading := uint64(15000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	msg.Info.Priority = ptrUint8(2)
@@ -574,7 +574,7 @@ func TestClient_Receive(t *testing.T) {
 
 	// Build and inject a VesselHeading frame into the mock bus.
 	heading := uint64(15000)
-	msg := &pgn.PgnVesselHeading{
+	msg := &pgn.VesselHeading{
 		Heading: &heading,
 	}
 	payload, err := msg.EncodePayload()
@@ -591,7 +591,7 @@ func TestClient_Receive(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	var received *pgn.PgnVesselHeading
+	var received *pgn.VesselHeading
 	done := make(chan struct{})
 	go func() {
 		defer close(done)
@@ -599,7 +599,7 @@ func TestClient_Receive(t *testing.T) {
 			if err != nil {
 				return
 			}
-			if vh, ok := m.(*pgn.PgnVesselHeading); ok {
+			if vh, ok := m.(*pgn.VesselHeading); ok {
 				received = vh
 				return
 			}
@@ -632,12 +632,12 @@ func TestClient_FilterPGN(t *testing.T) {
 
 	// Build a VesselHeading frame (should pass filter).
 	heading := uint64(15000)
-	payload, err := (&pgn.PgnVesselHeading{Heading: &heading}).EncodePayload()
+	payload, err := (&pgn.VesselHeading{Heading: &heading}).EncodePayload()
 	require.NoError(t, err)
 	headingFrame := framer.FrameSingle(framer.BuildCANID(127250, 2, 42, 255), payload)
 
 	// Build a SystemTime frame PGN 126992 (should be filtered out).
-	sysPayload, err := (&pgn.PgnSystemTime{}).EncodePayload()
+	sysPayload, err := (&pgn.SystemTime{}).EncodePayload()
 	require.NoError(t, err)
 	sysFrame := framer.FrameSingle(framer.BuildCANID(126992, 3, 42, 255), sysPayload)
 
@@ -669,8 +669,8 @@ func TestClient_FilterPGN(t *testing.T) {
 	}
 
 	require.NotNil(t, received)
-	_, ok := received.(*pgn.PgnVesselHeading)
-	assert.True(t, ok, "expected PgnVesselHeading, got %T", received)
+	_, ok := received.(*pgn.VesselHeading)
+	assert.True(t, ok, "expected VesselHeading, got %T", received)
 
 	_ = c.Close()
 }

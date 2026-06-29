@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnYanmarEngineDataA struct {
+type YanmarEngineDataA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataA) PGNNumber() uint32               { return 65280 }
-func (m *PgnYanmarEngineDataA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataA) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataA) PGNNumber() uint32               { return 65280 }
+func (m *YanmarEngineDataA) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataA) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnYanmarEngineDataA) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataA) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,17 +87,17 @@ func (m *PgnYanmarEngineDataA) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYanmarEngineDataB struct {
+type YanmarEngineDataB struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataB) PGNNumber() uint32               { return 65281 }
-func (m *PgnYanmarEngineDataB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataB) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataB) PGNNumber() uint32               { return 65281 }
+func (m *YanmarEngineDataB) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataB) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -152,7 +152,7 @@ func (m *PgnYanmarEngineDataB) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataB) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -169,17 +169,17 @@ func (m *PgnYanmarEngineDataB) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYanmarEngineDataC struct {
+type YanmarEngineDataC struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataC) PGNNumber() uint32               { return 65332 }
-func (m *PgnYanmarEngineDataC) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataC) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataC) PGNNumber() uint32               { return 65332 }
+func (m *YanmarEngineDataC) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataC) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -234,7 +234,7 @@ func (m *PgnYanmarEngineDataC) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataC) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataC) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -251,17 +251,17 @@ func (m *PgnYanmarEngineDataC) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYanmarEngineDataD struct {
+type YanmarEngineDataD struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataD) PGNNumber() uint32               { return 65346 }
-func (m *PgnYanmarEngineDataD) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataD) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataD) PGNNumber() uint32               { return 65346 }
+func (m *YanmarEngineDataD) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataD) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -316,7 +316,7 @@ func (m *PgnYanmarEngineDataD) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataD) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataD) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -333,17 +333,17 @@ func (m *PgnYanmarEngineDataD) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYanmarEngineDataE struct {
+type YanmarEngineDataE struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataE) PGNNumber() uint32               { return 65348 }
-func (m *PgnYanmarEngineDataE) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataE) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataE) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataE) PGNNumber() uint32               { return 65348 }
+func (m *YanmarEngineDataE) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataE) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataE) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -398,7 +398,7 @@ func (m *PgnYanmarEngineDataE) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataE) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataE) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -415,17 +415,17 @@ func (m *PgnYanmarEngineDataE) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnYanmarEngineDataF struct {
+type YanmarEngineDataF struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnYanmarEngineDataF) PGNNumber() uint32               { return 65349 }
-func (m *PgnYanmarEngineDataF) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnYanmarEngineDataF) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnYanmarEngineDataF) DecodePayload(payload []uint8) error {
+func (m *YanmarEngineDataF) PGNNumber() uint32               { return 65349 }
+func (m *YanmarEngineDataF) MessageInfo() MessageInfo        { return m.Info }
+func (m *YanmarEngineDataF) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *YanmarEngineDataF) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -480,7 +480,7 @@ func (m *PgnYanmarEngineDataF) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnYanmarEngineDataF) EncodePayload() ([]uint8, error) {
+func (m *YanmarEngineDataF) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

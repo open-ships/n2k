@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnAirmarBootStateAcknowledgment struct {
+type AirmarBootStateAcknowledgment struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	BootState        *uint64     `json:"bootState,omitempty" n2k:"4"`
 }
 
-func (m *PgnAirmarBootStateAcknowledgment) PGNNumber() uint32               { return 65285 }
-func (m *PgnAirmarBootStateAcknowledgment) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarBootStateAcknowledgment) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarBootStateAcknowledgment) DecodePayload(payload []uint8) error {
+func (m *AirmarBootStateAcknowledgment) PGNNumber() uint32               { return 65285 }
+func (m *AirmarBootStateAcknowledgment) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarBootStateAcknowledgment) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarBootStateAcknowledgment) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -74,7 +74,7 @@ func (m *PgnAirmarBootStateAcknowledgment) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnAirmarBootStateAcknowledgment) EncodePayload() ([]uint8, error) {
+func (m *AirmarBootStateAcknowledgment) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -96,16 +96,16 @@ func (m *PgnAirmarBootStateAcknowledgment) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarBootStateRequest struct {
+type AirmarBootStateRequest struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnAirmarBootStateRequest) PGNNumber() uint32               { return 65286 }
-func (m *PgnAirmarBootStateRequest) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarBootStateRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarBootStateRequest) DecodePayload(payload []uint8) error {
+func (m *AirmarBootStateRequest) PGNNumber() uint32               { return 65286 }
+func (m *AirmarBootStateRequest) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarBootStateRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarBootStateRequest) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -154,7 +154,7 @@ func (m *PgnAirmarBootStateRequest) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarBootStateRequest) EncodePayload() ([]uint8, error) {
+func (m *AirmarBootStateRequest) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -171,7 +171,7 @@ func (m *PgnAirmarBootStateRequest) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarAccessLevel struct {
+type AirmarAccessLevel struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -180,10 +180,10 @@ type PgnAirmarAccessLevel struct {
 	AccessSeedKey    *uint64     `json:"accessSeedKey,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarAccessLevel) PGNNumber() uint32               { return 65287 }
-func (m *PgnAirmarAccessLevel) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarAccessLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarAccessLevel) DecodePayload(payload []uint8) error {
+func (m *AirmarAccessLevel) PGNNumber() uint32               { return 65287 }
+func (m *AirmarAccessLevel) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarAccessLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarAccessLevel) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -262,7 +262,7 @@ func (m *PgnAirmarAccessLevel) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarAccessLevel) EncodePayload() ([]uint8, error) {
+func (m *AirmarAccessLevel) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -294,7 +294,7 @@ func (m *PgnAirmarAccessLevel) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarDepthQualityFactor struct {
+type AirmarDepthQualityFactor struct {
 	Info               MessageInfo `json:"info"`
 	ManufacturerCode   *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode       *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -302,10 +302,10 @@ type PgnAirmarDepthQualityFactor struct {
 	DepthQualityFactor *uint64     `json:"depthQualityFactor,omitempty" n2k:"5"`
 }
 
-func (m *PgnAirmarDepthQualityFactor) PGNNumber() uint32               { return 65408 }
-func (m *PgnAirmarDepthQualityFactor) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarDepthQualityFactor) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarDepthQualityFactor) DecodePayload(payload []uint8) error {
+func (m *AirmarDepthQualityFactor) PGNNumber() uint32               { return 65408 }
+func (m *AirmarDepthQualityFactor) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarDepthQualityFactor) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarDepthQualityFactor) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -374,7 +374,7 @@ func (m *PgnAirmarDepthQualityFactor) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarDepthQualityFactor) EncodePayload() ([]uint8, error) {
+func (m *AirmarDepthQualityFactor) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -401,7 +401,7 @@ func (m *PgnAirmarDepthQualityFactor) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarSpeedPulseCount struct {
+type AirmarSpeedPulseCount struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode           *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -410,10 +410,10 @@ type PgnAirmarSpeedPulseCount struct {
 	NumberOfPulsesReceived *uint64     `json:"numberOfPulsesReceived,omitempty" n2k:"6"`
 }
 
-func (m *PgnAirmarSpeedPulseCount) PGNNumber() uint32               { return 65409 }
-func (m *PgnAirmarSpeedPulseCount) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarSpeedPulseCount) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarSpeedPulseCount) DecodePayload(payload []uint8) error {
+func (m *AirmarSpeedPulseCount) PGNNumber() uint32               { return 65409 }
+func (m *AirmarSpeedPulseCount) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarSpeedPulseCount) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarSpeedPulseCount) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -492,7 +492,7 @@ func (m *PgnAirmarSpeedPulseCount) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarSpeedPulseCount) EncodePayload() ([]uint8, error) {
+func (m *AirmarSpeedPulseCount) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -524,7 +524,7 @@ func (m *PgnAirmarSpeedPulseCount) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarDeviceInformation struct {
+type AirmarDeviceInformation struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode              *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -533,10 +533,10 @@ type PgnAirmarDeviceInformation struct {
 	SupplyVoltage             *uint64     `json:"supplyVoltage,omitempty" n2k:"6"`
 }
 
-func (m *PgnAirmarDeviceInformation) PGNNumber() uint32               { return 65410 }
-func (m *PgnAirmarDeviceInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarDeviceInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarDeviceInformation) DecodePayload(payload []uint8) error {
+func (m *AirmarDeviceInformation) PGNNumber() uint32               { return 65410 }
+func (m *AirmarDeviceInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarDeviceInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarDeviceInformation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -615,7 +615,7 @@ func (m *PgnAirmarDeviceInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarDeviceInformation) EncodePayload() ([]uint8, error) {
+func (m *AirmarDeviceInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -647,17 +647,17 @@ func (m *PgnAirmarDeviceInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarAddressableMultiFrame struct {
+type AirmarAddressableMultiFrame struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	ProprietaryId    *uint64     `json:"proprietaryId,omitempty" n2k:"4"`
 }
 
-func (m *PgnAirmarAddressableMultiFrame) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarAddressableMultiFrame) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarAddressableMultiFrame) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarAddressableMultiFrame) DecodePayload(payload []uint8) error {
+func (m *AirmarAddressableMultiFrame) PGNNumber() uint32               { return 126720 }
+func (m *AirmarAddressableMultiFrame) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarAddressableMultiFrame) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarAddressableMultiFrame) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -712,7 +712,7 @@ func (m *PgnAirmarAddressableMultiFrame) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarAddressableMultiFrame) EncodePayload() ([]uint8, error) {
+func (m *AirmarAddressableMultiFrame) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -733,7 +733,7 @@ func (m *PgnAirmarAddressableMultiFrame) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarAttitudeOffset struct {
+type AirmarAttitudeOffset struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -743,10 +743,10 @@ type PgnAirmarAttitudeOffset struct {
 	RollOffset       *int64      `json:"rollOffset,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarAttitudeOffset) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarAttitudeOffset) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarAttitudeOffset) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarAttitudeOffset) DecodePayload(payload []uint8) error {
+func (m *AirmarAttitudeOffset) PGNNumber() uint32               { return 126720 }
+func (m *AirmarAttitudeOffset) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarAttitudeOffset) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarAttitudeOffset) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -843,7 +843,7 @@ func (m *PgnAirmarAttitudeOffset) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarAttitudeOffset) EncodePayload() ([]uint8, error) {
+func (m *AirmarAttitudeOffset) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -879,7 +879,7 @@ func (m *PgnAirmarAttitudeOffset) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarCalibrateCompass struct {
+type AirmarCalibrateCompass struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode           *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -898,10 +898,10 @@ type PgnAirmarCalibrateCompass struct {
 	CompassRateGyroDamping *int64      `json:"compassRateGyroDamping,omitempty" n2k:"16"`
 }
 
-func (m *PgnAirmarCalibrateCompass) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarCalibrateCompass) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarCalibrateCompass) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarCalibrateCompass) DecodePayload(payload []uint8) error {
+func (m *AirmarCalibrateCompass) PGNNumber() uint32               { return 126720 }
+func (m *AirmarCalibrateCompass) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarCalibrateCompass) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarCalibrateCompass) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1094,7 +1094,7 @@ func (m *PgnAirmarCalibrateCompass) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarCalibrateCompass) EncodePayload() ([]uint8, error) {
+func (m *AirmarCalibrateCompass) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1175,7 +1175,7 @@ func (m *PgnAirmarCalibrateCompass) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarCalibrateDepth struct {
+type AirmarCalibrateDepth struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1183,10 +1183,10 @@ type PgnAirmarCalibrateDepth struct {
 	SpeedOfSoundMode *uint64     `json:"speedOfSoundMode,omitempty" n2k:"5"`
 }
 
-func (m *PgnAirmarCalibrateDepth) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarCalibrateDepth) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarCalibrateDepth) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarCalibrateDepth) DecodePayload(payload []uint8) error {
+func (m *AirmarCalibrateDepth) PGNNumber() uint32               { return 126720 }
+func (m *AirmarCalibrateDepth) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarCalibrateDepth) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarCalibrateDepth) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1264,7 +1264,7 @@ func (m *PgnAirmarCalibrateDepth) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarCalibrateDepth) EncodePayload() ([]uint8, error) {
+func (m *AirmarCalibrateDepth) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1291,7 +1291,7 @@ func (m *PgnAirmarCalibrateDepth) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarCalibrateSpeed struct {
+type AirmarCalibrateSpeed struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode              *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1301,10 +1301,10 @@ type PgnAirmarCalibrateSpeed struct {
 	OutputSpeed               *uint64     `json:"outputSpeed,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarCalibrateSpeed) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarCalibrateSpeed) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarCalibrateSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarCalibrateSpeed) DecodePayload(payload []uint8) error {
+func (m *AirmarCalibrateSpeed) PGNNumber() uint32               { return 126720 }
+func (m *AirmarCalibrateSpeed) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarCalibrateSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarCalibrateSpeed) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1398,7 +1398,7 @@ func (m *PgnAirmarCalibrateSpeed) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarCalibrateSpeed) EncodePayload() ([]uint8, error) {
+func (m *AirmarCalibrateSpeed) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1434,7 +1434,7 @@ func (m *PgnAirmarCalibrateSpeed) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarCalibrateTemperature struct {
+type AirmarCalibrateTemperature struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1443,10 +1443,10 @@ type PgnAirmarCalibrateTemperature struct {
 	TemperatureOffset   *int64      `json:"temperatureOffset,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarCalibrateTemperature) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarCalibrateTemperature) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarCalibrateTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
+func (m *AirmarCalibrateTemperature) PGNNumber() uint32               { return 126720 }
+func (m *AirmarCalibrateTemperature) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarCalibrateTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1535,7 +1535,7 @@ func (m *PgnAirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarCalibrateTemperature) EncodePayload() ([]uint8, error) {
+func (m *AirmarCalibrateTemperature) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1567,7 +1567,7 @@ func (m *PgnAirmarCalibrateTemperature) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarNmea2000Options struct {
+type AirmarNmea2000Options struct {
 	Info                 MessageInfo `json:"info"`
 	ManufacturerCode     *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode         *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1575,10 +1575,10 @@ type PgnAirmarNmea2000Options struct {
 	TransmissionInterval *uint64     `json:"transmissionInterval,omitempty" n2k:"5"`
 }
 
-func (m *PgnAirmarNmea2000Options) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarNmea2000Options) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarNmea2000Options) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarNmea2000Options) DecodePayload(payload []uint8) error {
+func (m *AirmarNmea2000Options) PGNNumber() uint32               { return 126720 }
+func (m *AirmarNmea2000Options) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarNmea2000Options) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarNmea2000Options) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1656,7 +1656,7 @@ func (m *PgnAirmarNmea2000Options) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarNmea2000Options) EncodePayload() ([]uint8, error) {
+func (m *AirmarNmea2000Options) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1683,7 +1683,7 @@ func (m *PgnAirmarNmea2000Options) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarSimulateMode struct {
+type AirmarSimulateMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1691,10 +1691,10 @@ type PgnAirmarSimulateMode struct {
 	SimulateMode     *uint64     `json:"simulateMode,omitempty" n2k:"5"`
 }
 
-func (m *PgnAirmarSimulateMode) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarSimulateMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarSimulateMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarSimulateMode) DecodePayload(payload []uint8) error {
+func (m *AirmarSimulateMode) PGNNumber() uint32               { return 126720 }
+func (m *AirmarSimulateMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarSimulateMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarSimulateMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1772,7 +1772,7 @@ func (m *PgnAirmarSimulateMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarSimulateMode) EncodePayload() ([]uint8, error) {
+func (m *AirmarSimulateMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1799,7 +1799,7 @@ func (m *PgnAirmarSimulateMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarSpeedFilterIir struct {
+type AirmarSpeedFilterIir struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1809,10 +1809,10 @@ type PgnAirmarSpeedFilterIir struct {
 	FilterDuration   *uint64     `json:"filterDuration,omitempty" n2k:"8"`
 }
 
-func (m *PgnAirmarSpeedFilterIir) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarSpeedFilterIir) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarSpeedFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarSpeedFilterIir) DecodePayload(payload []uint8) error {
+func (m *AirmarSpeedFilterIir) PGNNumber() uint32               { return 126720 }
+func (m *AirmarSpeedFilterIir) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarSpeedFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarSpeedFilterIir) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1919,7 +1919,7 @@ func (m *PgnAirmarSpeedFilterIir) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarSpeedFilterIir) EncodePayload() ([]uint8, error) {
+func (m *AirmarSpeedFilterIir) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1956,7 +1956,7 @@ func (m *PgnAirmarSpeedFilterIir) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarSpeedFilterNone struct {
+type AirmarSpeedFilterNone struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1965,10 +1965,10 @@ type PgnAirmarSpeedFilterNone struct {
 	SampleInterval   *uint64     `json:"sampleInterval,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarSpeedFilterNone) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarSpeedFilterNone) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarSpeedFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarSpeedFilterNone) DecodePayload(payload []uint8) error {
+func (m *AirmarSpeedFilterNone) PGNNumber() uint32               { return 126720 }
+func (m *AirmarSpeedFilterNone) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarSpeedFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarSpeedFilterNone) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2065,7 +2065,7 @@ func (m *PgnAirmarSpeedFilterNone) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarSpeedFilterNone) EncodePayload() ([]uint8, error) {
+func (m *AirmarSpeedFilterNone) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2097,7 +2097,7 @@ func (m *PgnAirmarSpeedFilterNone) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarTemperatureFilterIir struct {
+type AirmarTemperatureFilterIir struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2107,10 +2107,10 @@ type PgnAirmarTemperatureFilterIir struct {
 	FilterDuration   *uint64     `json:"filterDuration,omitempty" n2k:"8"`
 }
 
-func (m *PgnAirmarTemperatureFilterIir) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarTemperatureFilterIir) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarTemperatureFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
+func (m *AirmarTemperatureFilterIir) PGNNumber() uint32               { return 126720 }
+func (m *AirmarTemperatureFilterIir) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarTemperatureFilterIir) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2217,7 +2217,7 @@ func (m *PgnAirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) {
+func (m *AirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2254,7 +2254,7 @@ func (m *PgnAirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarTemperatureFilterNone struct {
+type AirmarTemperatureFilterNone struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2263,10 +2263,10 @@ type PgnAirmarTemperatureFilterNone struct {
 	SampleInterval   *uint64     `json:"sampleInterval,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarTemperatureFilterNone) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarTemperatureFilterNone) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarTemperatureFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
+func (m *AirmarTemperatureFilterNone) PGNNumber() uint32               { return 126720 }
+func (m *AirmarTemperatureFilterNone) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarTemperatureFilterNone) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2363,7 +2363,7 @@ func (m *PgnAirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) {
+func (m *AirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2395,7 +2395,7 @@ func (m *PgnAirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarTrueWindOptions struct {
+type AirmarTrueWindOptions struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode          *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2403,10 +2403,10 @@ type PgnAirmarTrueWindOptions struct {
 	CogSubstitutionForHdg *uint64     `json:"cogSubstitutionForHdg,omitempty" n2k:"5"`
 }
 
-func (m *PgnAirmarTrueWindOptions) PGNNumber() uint32               { return 126720 }
-func (m *PgnAirmarTrueWindOptions) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarTrueWindOptions) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarTrueWindOptions) DecodePayload(payload []uint8) error {
+func (m *AirmarTrueWindOptions) PGNNumber() uint32               { return 126720 }
+func (m *AirmarTrueWindOptions) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarTrueWindOptions) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarTrueWindOptions) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2484,7 +2484,7 @@ func (m *PgnAirmarTrueWindOptions) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarTrueWindOptions) EncodePayload() ([]uint8, error) {
+func (m *AirmarTrueWindOptions) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2511,7 +2511,7 @@ func (m *PgnAirmarTrueWindOptions) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarAdditionalWeatherData struct {
+type AirmarAdditionalWeatherData struct {
 	Info                         MessageInfo `json:"info"`
 	ManufacturerCode             *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                 *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2521,10 +2521,10 @@ type PgnAirmarAdditionalWeatherData struct {
 	Dewpoint                     *uint64     `json:"dewpoint,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarAdditionalWeatherData) PGNNumber() uint32               { return 130880 }
-func (m *PgnAirmarAdditionalWeatherData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarAdditionalWeatherData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
+func (m *AirmarAdditionalWeatherData) PGNNumber() uint32               { return 130880 }
+func (m *AirmarAdditionalWeatherData) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarAdditionalWeatherData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2609,7 +2609,7 @@ func (m *PgnAirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) {
+func (m *AirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2645,7 +2645,7 @@ func (m *PgnAirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarHeaterControl struct {
+type AirmarHeaterControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2655,10 +2655,10 @@ type PgnAirmarHeaterControl struct {
 	Dewpoint         *uint64     `json:"dewpoint,omitempty" n2k:"7"`
 }
 
-func (m *PgnAirmarHeaterControl) PGNNumber() uint32               { return 130881 }
-func (m *PgnAirmarHeaterControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarHeaterControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarHeaterControl) DecodePayload(payload []uint8) error {
+func (m *AirmarHeaterControl) PGNNumber() uint32               { return 130881 }
+func (m *AirmarHeaterControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarHeaterControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarHeaterControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2743,7 +2743,7 @@ func (m *PgnAirmarHeaterControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarHeaterControl) EncodePayload() ([]uint8, error) {
+func (m *AirmarHeaterControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2779,7 +2779,7 @@ func (m *PgnAirmarHeaterControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAirmarPost struct {
+type AirmarPost struct {
 	Info                              MessageInfo `json:"info"`
 	ManufacturerCode                  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                      *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2789,10 +2789,10 @@ type PgnAirmarPost struct {
 	TestResult                        *uint64     `json:"testResult,omitempty" n2k:"8"`
 }
 
-func (m *PgnAirmarPost) PGNNumber() uint32               { return 130944 }
-func (m *PgnAirmarPost) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAirmarPost) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAirmarPost) DecodePayload(payload []uint8) error {
+func (m *AirmarPost) PGNNumber() uint32               { return 130944 }
+func (m *AirmarPost) MessageInfo() MessageInfo        { return m.Info }
+func (m *AirmarPost) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AirmarPost) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2881,7 +2881,7 @@ func (m *PgnAirmarPost) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAirmarPost) EncodePayload() ([]uint8, error) {
+func (m *AirmarPost) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

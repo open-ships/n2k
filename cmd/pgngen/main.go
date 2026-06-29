@@ -396,7 +396,7 @@ func uniquePGNTypeNames(pgns []sourcePGN) []string {
 	names := make([]string, len(pgns))
 	used := make(map[string]int, len(pgns))
 	for i, pgn := range pgns {
-		base := "Pgn" + exportedGoIdentifier(firstNonEmpty(pgn.Id, pgn.Description))
+		base := pgnStructTypeName(firstNonEmpty(pgn.Id, pgn.Description))
 		count := used[base]
 		used[base] = count + 1
 		if count > 0 {
@@ -405,6 +405,24 @@ func uniquePGNTypeNames(pgns []sourcePGN) []string {
 		names[i] = base
 	}
 	return names
+}
+
+func pgnStructTypeName(value string) string {
+	name := exportedGoIdentifier(value)
+	if strings.HasPrefix(strings.ToLower(strings.TrimSpace(value)), "pgn") && strings.HasPrefix(name, "Pgn") {
+		name = "ParameterGroupNumber" + strings.TrimPrefix(name, "Pgn")
+	}
+	if strings.HasPrefix(name, "PGN") {
+		name = "ParameterGroupNumber" + strings.TrimPrefix(name, "PGN")
+	}
+	name = strings.TrimPrefix(name, "Pgn")
+	if name == "" {
+		name = "Message"
+	}
+	if name[0] >= '0' && name[0] <= '9' {
+		name = "Message" + name
+	}
+	return name
 }
 
 func writePGNStruct(b *bytes.Buffer, p sourcePGN, typeName string) {

@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnChetcoDimmer struct {
+type ChetcoDimmer struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -17,10 +17,10 @@ type PgnChetcoDimmer struct {
 	Control          *uint64     `json:"control,omitempty" n2k:"9"`
 }
 
-func (m *PgnChetcoDimmer) PGNNumber() uint32               { return 65286 }
-func (m *PgnChetcoDimmer) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnChetcoDimmer) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnChetcoDimmer) DecodePayload(payload []uint8) error {
+func (m *ChetcoDimmer) PGNNumber() uint32               { return 65286 }
+func (m *ChetcoDimmer) MessageInfo() MessageInfo        { return m.Info }
+func (m *ChetcoDimmer) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ChetcoDimmer) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -125,7 +125,7 @@ func (m *PgnChetcoDimmer) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnChetcoDimmer) EncodePayload() ([]uint8, error) {
+func (m *ChetcoDimmer) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnMaretronKeelPosition struct {
+type MaretronKeelPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronKeelPosition) PGNNumber() uint32               { return 65280 }
-func (m *PgnMaretronKeelPosition) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronKeelPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronKeelPosition) DecodePayload(payload []uint8) error {
+func (m *MaretronKeelPosition) PGNNumber() uint32               { return 65280 }
+func (m *MaretronKeelPosition) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronKeelPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronKeelPosition) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnMaretronKeelPosition) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronKeelPosition) EncodePayload() ([]uint8, error) {
+func (m *MaretronKeelPosition) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,7 +87,7 @@ func (m *PgnMaretronKeelPosition) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronNumberOfChannels struct {
+type MaretronNumberOfChannels struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -95,10 +95,10 @@ type PgnMaretronNumberOfChannels struct {
 	NumberOfChannels *uint64     `json:"numberOfChannels,omitempty" n2k:"5"`
 }
 
-func (m *PgnMaretronNumberOfChannels) PGNNumber() uint32               { return 65282 }
-func (m *PgnMaretronNumberOfChannels) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronNumberOfChannels) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronNumberOfChannels) DecodePayload(payload []uint8) error {
+func (m *MaretronNumberOfChannels) PGNNumber() uint32               { return 65282 }
+func (m *MaretronNumberOfChannels) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronNumberOfChannels) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronNumberOfChannels) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -167,7 +167,7 @@ func (m *PgnMaretronNumberOfChannels) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronNumberOfChannels) EncodePayload() ([]uint8, error) {
+func (m *MaretronNumberOfChannels) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -194,7 +194,7 @@ func (m *PgnMaretronNumberOfChannels) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronProprietaryDcBreakerCurrent struct {
+type MaretronProprietaryDcBreakerCurrent struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -203,10 +203,10 @@ type PgnMaretronProprietaryDcBreakerCurrent struct {
 	BreakerCurrent   *int64      `json:"breakerCurrent,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronProprietaryDcBreakerCurrent) PGNNumber() uint32               { return 65284 }
-func (m *PgnMaretronProprietaryDcBreakerCurrent) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronProprietaryDcBreakerCurrent) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronProprietaryDcBreakerCurrent) DecodePayload(payload []uint8) error {
+func (m *MaretronProprietaryDcBreakerCurrent) PGNNumber() uint32               { return 65284 }
+func (m *MaretronProprietaryDcBreakerCurrent) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronProprietaryDcBreakerCurrent) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronProprietaryDcBreakerCurrent) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -286,7 +286,7 @@ func (m *PgnMaretronProprietaryDcBreakerCurrent) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnMaretronProprietaryDcBreakerCurrent) EncodePayload() ([]uint8, error) {
+func (m *MaretronProprietaryDcBreakerCurrent) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -318,17 +318,17 @@ func (m *PgnMaretronProprietaryDcBreakerCurrent) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronUniversalConfigurationSf struct {
+type MaretronUniversalConfigurationSf struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronUniversalConfigurationSf) PGNNumber() uint32               { return 65285 }
-func (m *PgnMaretronUniversalConfigurationSf) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronUniversalConfigurationSf) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronUniversalConfigurationSf) DecodePayload(payload []uint8) error {
+func (m *MaretronUniversalConfigurationSf) PGNNumber() uint32               { return 65285 }
+func (m *MaretronUniversalConfigurationSf) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronUniversalConfigurationSf) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronUniversalConfigurationSf) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -383,7 +383,7 @@ func (m *PgnMaretronUniversalConfigurationSf) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronUniversalConfigurationSf) EncodePayload() ([]uint8, error) {
+func (m *MaretronUniversalConfigurationSf) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -400,7 +400,7 @@ func (m *PgnMaretronUniversalConfigurationSf) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronFluidFlowRate struct {
+type MaretronFluidFlowRate struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -410,10 +410,10 @@ type PgnMaretronFluidFlowRate struct {
 	FluidFlowRate    *int64      `json:"fluidFlowRate,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronFluidFlowRate) PGNNumber() uint32               { return 65286 }
-func (m *PgnMaretronFluidFlowRate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronFluidFlowRate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronFluidFlowRate) DecodePayload(payload []uint8) error {
+func (m *MaretronFluidFlowRate) PGNNumber() uint32               { return 65286 }
+func (m *MaretronFluidFlowRate) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronFluidFlowRate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronFluidFlowRate) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -503,7 +503,7 @@ func (m *PgnMaretronFluidFlowRate) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronFluidFlowRate) EncodePayload() ([]uint8, error) {
+func (m *MaretronFluidFlowRate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -540,7 +540,7 @@ func (m *PgnMaretronFluidFlowRate) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronTripVolume struct {
+type MaretronTripVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -550,10 +550,10 @@ type PgnMaretronTripVolume struct {
 	TripVolume       *uint64     `json:"tripVolume,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronTripVolume) PGNNumber() uint32               { return 65287 }
-func (m *PgnMaretronTripVolume) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronTripVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronTripVolume) DecodePayload(payload []uint8) error {
+func (m *MaretronTripVolume) PGNNumber() uint32               { return 65287 }
+func (m *MaretronTripVolume) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronTripVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronTripVolume) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -642,7 +642,7 @@ func (m *PgnMaretronTripVolume) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronTripVolume) EncodePayload() ([]uint8, error) {
+func (m *MaretronTripVolume) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -679,7 +679,7 @@ func (m *PgnMaretronTripVolume) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretron420Ma struct {
+type Maretron420Ma struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -688,10 +688,10 @@ type PgnMaretron420Ma struct {
 	Pgn420MaData     *uint64     `json:"420MaData,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretron420Ma) PGNNumber() uint32               { return 65288 }
-func (m *PgnMaretron420Ma) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretron420Ma) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretron420Ma) DecodePayload(payload []uint8) error {
+func (m *Maretron420Ma) PGNNumber() uint32               { return 65288 }
+func (m *Maretron420Ma) MessageInfo() MessageInfo        { return m.Info }
+func (m *Maretron420Ma) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Maretron420Ma) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -770,7 +770,7 @@ func (m *PgnMaretron420Ma) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretron420Ma) EncodePayload() ([]uint8, error) {
+func (m *Maretron420Ma) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -802,7 +802,7 @@ func (m *PgnMaretron420Ma) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretron010V struct {
+type Maretron010V struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -811,10 +811,10 @@ type PgnMaretron010V struct {
 	Pgn010VData      *uint64     `json:"010VData,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretron010V) PGNNumber() uint32               { return 65289 }
-func (m *PgnMaretron010V) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretron010V) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretron010V) DecodePayload(payload []uint8) error {
+func (m *Maretron010V) PGNNumber() uint32               { return 65289 }
+func (m *Maretron010V) MessageInfo() MessageInfo        { return m.Info }
+func (m *Maretron010V) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Maretron010V) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -893,7 +893,7 @@ func (m *PgnMaretron010V) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretron010V) EncodePayload() ([]uint8, error) {
+func (m *Maretron010V) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -925,7 +925,7 @@ func (m *PgnMaretron010V) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronRotationalRate struct {
+type MaretronRotationalRate struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -934,10 +934,10 @@ type PgnMaretronRotationalRate struct {
 	RotationalRate   *int64      `json:"rotationalRate,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronRotationalRate) PGNNumber() uint32               { return 65290 }
-func (m *PgnMaretronRotationalRate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronRotationalRate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronRotationalRate) DecodePayload(payload []uint8) error {
+func (m *MaretronRotationalRate) PGNNumber() uint32               { return 65290 }
+func (m *MaretronRotationalRate) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronRotationalRate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronRotationalRate) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1017,7 +1017,7 @@ func (m *PgnMaretronRotationalRate) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronRotationalRate) EncodePayload() ([]uint8, error) {
+func (m *MaretronRotationalRate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1049,7 +1049,7 @@ func (m *PgnMaretronRotationalRate) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronResistance struct {
+type MaretronResistance struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1058,10 +1058,10 @@ type PgnMaretronResistance struct {
 	Resistance       *uint64     `json:"resistance,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronResistance) PGNNumber() uint32               { return 65291 }
-func (m *PgnMaretronResistance) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronResistance) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronResistance) DecodePayload(payload []uint8) error {
+func (m *MaretronResistance) PGNNumber() uint32               { return 65291 }
+func (m *MaretronResistance) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronResistance) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronResistance) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1140,7 +1140,7 @@ func (m *PgnMaretronResistance) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronResistance) EncodePayload() ([]uint8, error) {
+func (m *MaretronResistance) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1172,17 +1172,17 @@ func (m *PgnMaretronResistance) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAutomationFunctionMaster struct {
+type MaretronAutomationFunctionMaster struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronAutomationFunctionMaster) PGNNumber() uint32               { return 65292 }
-func (m *PgnMaretronAutomationFunctionMaster) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAutomationFunctionMaster) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAutomationFunctionMaster) DecodePayload(payload []uint8) error {
+func (m *MaretronAutomationFunctionMaster) PGNNumber() uint32               { return 65292 }
+func (m *MaretronAutomationFunctionMaster) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAutomationFunctionMaster) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAutomationFunctionMaster) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1237,7 +1237,7 @@ func (m *PgnMaretronAutomationFunctionMaster) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronAutomationFunctionMaster) EncodePayload() ([]uint8, error) {
+func (m *MaretronAutomationFunctionMaster) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1254,7 +1254,7 @@ func (m *PgnMaretronAutomationFunctionMaster) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronDeviationCalibrationResponse struct {
+type MaretronDeviationCalibrationResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1264,10 +1264,10 @@ type PgnMaretronDeviationCalibrationResponse struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"7"`
 }
 
-func (m *PgnMaretronDeviationCalibrationResponse) PGNNumber() uint32               { return 126720 }
-func (m *PgnMaretronDeviationCalibrationResponse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronDeviationCalibrationResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronDeviationCalibrationResponse) DecodePayload(payload []uint8) error {
+func (m *MaretronDeviationCalibrationResponse) PGNNumber() uint32               { return 126720 }
+func (m *MaretronDeviationCalibrationResponse) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronDeviationCalibrationResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronDeviationCalibrationResponse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1370,7 +1370,7 @@ func (m *PgnMaretronDeviationCalibrationResponse) DecodePayload(payload []uint8)
 	}
 	return nil
 }
-func (m *PgnMaretronDeviationCalibrationResponse) EncodePayload() ([]uint8, error) {
+func (m *MaretronDeviationCalibrationResponse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1406,7 +1406,7 @@ func (m *PgnMaretronDeviationCalibrationResponse) EncodePayload() ([]uint8, erro
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronProprietaryConfiguration struct {
+type MaretronProprietaryConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1416,10 +1416,10 @@ type PgnMaretronProprietaryConfiguration struct {
 	Payload          []uint8     `json:"payload,omitempty" n2k:"7"`
 }
 
-func (m *PgnMaretronProprietaryConfiguration) PGNNumber() uint32               { return 126720 }
-func (m *PgnMaretronProprietaryConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronProprietaryConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronProprietaryConfiguration) DecodePayload(payload []uint8) error {
+func (m *MaretronProprietaryConfiguration) PGNNumber() uint32               { return 126720 }
+func (m *MaretronProprietaryConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronProprietaryConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronProprietaryConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1504,7 +1504,7 @@ func (m *PgnMaretronProprietaryConfiguration) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronProprietaryConfiguration) EncodePayload() ([]uint8, error) {
+func (m *MaretronProprietaryConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1536,7 +1536,7 @@ func (m *PgnMaretronProprietaryConfiguration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSlaveResponse struct {
+type MaretronSlaveResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1546,10 +1546,10 @@ type PgnMaretronSlaveResponse struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"7"`
 }
 
-func (m *PgnMaretronSlaveResponse) PGNNumber() uint32               { return 126720 }
-func (m *PgnMaretronSlaveResponse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSlaveResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSlaveResponse) DecodePayload(payload []uint8) error {
+func (m *MaretronSlaveResponse) PGNNumber() uint32               { return 126720 }
+func (m *MaretronSlaveResponse) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSlaveResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSlaveResponse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1634,7 +1634,7 @@ func (m *PgnMaretronSlaveResponse) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronSlaveResponse) EncodePayload() ([]uint8, error) {
+func (m *MaretronSlaveResponse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1670,7 +1670,7 @@ func (m *PgnMaretronSlaveResponse) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAnnunciatorCapabilities struct {
+type MaretronAnnunciatorCapabilities struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1679,10 +1679,10 @@ type PgnMaretronAnnunciatorCapabilities struct {
 	Tone                *uint64     `json:"tone,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronAnnunciatorCapabilities) PGNNumber() uint32               { return 130817 }
-func (m *PgnMaretronAnnunciatorCapabilities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAnnunciatorCapabilities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAnnunciatorCapabilities) DecodePayload(payload []uint8) error {
+func (m *MaretronAnnunciatorCapabilities) PGNNumber() uint32               { return 130817 }
+func (m *MaretronAnnunciatorCapabilities) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAnnunciatorCapabilities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAnnunciatorCapabilities) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1757,7 +1757,7 @@ func (m *PgnMaretronAnnunciatorCapabilities) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnMaretronAnnunciatorCapabilities) EncodePayload() ([]uint8, error) {
+func (m *MaretronAnnunciatorCapabilities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1788,7 +1788,7 @@ func (m *PgnMaretronAnnunciatorCapabilities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronLabel struct {
+type MaretronLabel struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1799,10 +1799,10 @@ type PgnMaretronLabel struct {
 	HardwareChannel  *uint64     `json:"hardwareChannel,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronLabel) PGNNumber() uint32               { return 130818 }
-func (m *PgnMaretronLabel) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronLabel) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronLabel) DecodePayload(payload []uint8) error {
+func (m *MaretronLabel) PGNNumber() uint32               { return 130818 }
+func (m *MaretronLabel) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronLabel) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronLabel) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1897,7 +1897,7 @@ func (m *PgnMaretronLabel) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronLabel) EncodePayload() ([]uint8, error) {
+func (m *MaretronLabel) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1934,7 +1934,7 @@ func (m *PgnMaretronLabel) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAlertTransmission struct {
+type MaretronAlertTransmission struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode            *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1950,10 +1950,10 @@ type PgnMaretronAlertTransmission struct {
 	MaretronExtension       []uint8     `json:"maretronExtension,omitempty" n2k:"13"`
 }
 
-func (m *PgnMaretronAlertTransmission) PGNNumber() uint32               { return 130819 }
-func (m *PgnMaretronAlertTransmission) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAlertTransmission) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAlertTransmission) DecodePayload(payload []uint8) error {
+func (m *MaretronAlertTransmission) PGNNumber() uint32               { return 130819 }
+func (m *MaretronAlertTransmission) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAlertTransmission) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAlertTransmission) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2098,7 +2098,7 @@ func (m *PgnMaretronAlertTransmission) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronAlertTransmission) EncodePayload() ([]uint8, error) {
+func (m *MaretronAlertTransmission) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2160,7 +2160,7 @@ func (m *PgnMaretronAlertTransmission) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAlertResponse struct {
+type MaretronAlertResponse struct {
 	Info                           MessageInfo `json:"info"`
 	ManufacturerCode               *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                   *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2177,10 +2177,10 @@ type PgnMaretronAlertResponse struct {
 	ResponseCommand                *uint64     `json:"responseCommand,omitempty" n2k:"14"`
 }
 
-func (m *PgnMaretronAlertResponse) PGNNumber() uint32               { return 130820 }
-func (m *PgnMaretronAlertResponse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAlertResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAlertResponse) DecodePayload(payload []uint8) error {
+func (m *MaretronAlertResponse) PGNNumber() uint32               { return 130820 }
+func (m *MaretronAlertResponse) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAlertResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAlertResponse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2339,7 +2339,7 @@ func (m *PgnMaretronAlertResponse) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronAlertResponse) EncodePayload() ([]uint8, error) {
+func (m *MaretronAlertResponse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2411,7 +2411,7 @@ func (m *PgnMaretronAlertResponse) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAlertText struct {
+type MaretronAlertText struct {
 	Info                         MessageInfo `json:"info"`
 	ManufacturerCode             *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                 *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2429,10 +2429,10 @@ type PgnMaretronAlertText struct {
 	AlertLocationTextDescription string      `json:"alertLocationTextDescription,omitempty" n2k:"15"`
 }
 
-func (m *PgnMaretronAlertText) PGNNumber() uint32               { return 130821 }
-func (m *PgnMaretronAlertText) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAlertText) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAlertText) DecodePayload(payload []uint8) error {
+func (m *MaretronAlertText) PGNNumber() uint32               { return 130821 }
+func (m *MaretronAlertText) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAlertText) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAlertText) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2597,7 +2597,7 @@ func (m *PgnMaretronAlertText) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronAlertText) EncodePayload() ([]uint8, error) {
+func (m *MaretronAlertText) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2665,7 +2665,7 @@ func (m *PgnMaretronAlertText) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAlertControl struct {
+type MaretronAlertControl struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode            *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2681,10 +2681,10 @@ type PgnMaretronAlertControl struct {
 	MaretronExtension       []uint8     `json:"maretronExtension,omitempty" n2k:"13"`
 }
 
-func (m *PgnMaretronAlertControl) PGNNumber() uint32               { return 130822 }
-func (m *PgnMaretronAlertControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAlertControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAlertControl) DecodePayload(payload []uint8) error {
+func (m *MaretronAlertControl) PGNNumber() uint32               { return 130822 }
+func (m *MaretronAlertControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAlertControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAlertControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2829,7 +2829,7 @@ func (m *PgnMaretronAlertControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronAlertControl) EncodePayload() ([]uint8, error) {
+func (m *MaretronAlertControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2891,7 +2891,7 @@ func (m *PgnMaretronAlertControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronProprietaryTemperatureHighRange struct {
+type MaretronProprietaryTemperatureHighRange struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode      *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2902,10 +2902,10 @@ type PgnMaretronProprietaryTemperatureHighRange struct {
 	SetTemperature    *uint64     `json:"setTemperature,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronProprietaryTemperatureHighRange) PGNNumber() uint32               { return 130823 }
-func (m *PgnMaretronProprietaryTemperatureHighRange) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronProprietaryTemperatureHighRange) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronProprietaryTemperatureHighRange) DecodePayload(payload []uint8) error {
+func (m *MaretronProprietaryTemperatureHighRange) PGNNumber() uint32               { return 130823 }
+func (m *MaretronProprietaryTemperatureHighRange) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronProprietaryTemperatureHighRange) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronProprietaryTemperatureHighRange) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3000,7 +3000,7 @@ func (m *PgnMaretronProprietaryTemperatureHighRange) DecodePayload(payload []uin
 	}
 	return nil
 }
-func (m *PgnMaretronProprietaryTemperatureHighRange) EncodePayload() ([]uint8, error) {
+func (m *MaretronProprietaryTemperatureHighRange) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3041,7 +3041,7 @@ func (m *PgnMaretronProprietaryTemperatureHighRange) EncodePayload() ([]uint8, e
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronAnnunciator struct {
+type MaretronAnnunciator struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3052,10 +3052,10 @@ type PgnMaretronAnnunciator struct {
 	Field8           *uint64     `json:"field8,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronAnnunciator) PGNNumber() uint32               { return 130824 }
-func (m *PgnMaretronAnnunciator) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronAnnunciator) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronAnnunciator) DecodePayload(payload []uint8) error {
+func (m *MaretronAnnunciator) PGNNumber() uint32               { return 130824 }
+func (m *MaretronAnnunciator) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronAnnunciator) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronAnnunciator) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3150,7 +3150,7 @@ func (m *PgnMaretronAnnunciator) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronAnnunciator) EncodePayload() ([]uint8, error) {
+func (m *MaretronAnnunciator) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3191,7 +3191,7 @@ func (m *PgnMaretronAnnunciator) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronDataInstanceChannelCorrelation struct {
+type MaretronDataInstanceChannelCorrelation struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3202,10 +3202,10 @@ type PgnMaretronDataInstanceChannelCorrelation struct {
 	DataIndicator    *uint64     `json:"dataIndicator,omitempty" n2k:"8"`
 }
 
-func (m *PgnMaretronDataInstanceChannelCorrelation) PGNNumber() uint32               { return 130825 }
-func (m *PgnMaretronDataInstanceChannelCorrelation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronDataInstanceChannelCorrelation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronDataInstanceChannelCorrelation) DecodePayload(payload []uint8) error {
+func (m *MaretronDataInstanceChannelCorrelation) PGNNumber() uint32               { return 130825 }
+func (m *MaretronDataInstanceChannelCorrelation) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronDataInstanceChannelCorrelation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronDataInstanceChannelCorrelation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3300,7 +3300,7 @@ func (m *PgnMaretronDataInstanceChannelCorrelation) DecodePayload(payload []uint
 	}
 	return nil
 }
-func (m *PgnMaretronDataInstanceChannelCorrelation) EncodePayload() ([]uint8, error) {
+func (m *MaretronDataInstanceChannelCorrelation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3341,7 +3341,7 @@ func (m *PgnMaretronDataInstanceChannelCorrelation) EncodePayload() ([]uint8, er
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSwitchIndicatorStatus struct {
+type MaretronSwitchIndicatorStatus struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode          *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3350,10 +3350,10 @@ type PgnMaretronSwitchIndicatorStatus struct {
 	IndicatorStatus       *uint64     `json:"indicatorStatus,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronSwitchIndicatorStatus) PGNNumber() uint32               { return 130826 }
-func (m *PgnMaretronSwitchIndicatorStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSwitchIndicatorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSwitchIndicatorStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronSwitchIndicatorStatus) PGNNumber() uint32               { return 130826 }
+func (m *MaretronSwitchIndicatorStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSwitchIndicatorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSwitchIndicatorStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3428,7 +3428,7 @@ func (m *PgnMaretronSwitchIndicatorStatus) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnMaretronSwitchIndicatorStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronSwitchIndicatorStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3459,7 +3459,7 @@ func (m *PgnMaretronSwitchIndicatorStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronDometicHvacControlStatus struct {
+type MaretronDometicHvacControlStatus struct {
 	Info                        MessageInfo `json:"info"`
 	ManufacturerCode            *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3474,10 +3474,10 @@ type PgnMaretronDometicHvacControlStatus struct {
 	AdditionalSensorTemperature *uint64     `json:"additionalSensorTemperature,omitempty" n2k:"12"`
 }
 
-func (m *PgnMaretronDometicHvacControlStatus) PGNNumber() uint32               { return 130828 }
-func (m *PgnMaretronDometicHvacControlStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronDometicHvacControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronDometicHvacControlStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronDometicHvacControlStatus) PGNNumber() uint32               { return 130828 }
+func (m *MaretronDometicHvacControlStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronDometicHvacControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronDometicHvacControlStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3612,7 +3612,7 @@ func (m *PgnMaretronDometicHvacControlStatus) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronDometicHvacControlStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronDometicHvacControlStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3673,7 +3673,7 @@ func (m *PgnMaretronDometicHvacControlStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronDometicHvacStatus struct {
+type MaretronDometicHvacStatus struct {
 	Info                        MessageInfo `json:"info"`
 	ManufacturerCode            *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3686,10 +3686,10 @@ type PgnMaretronDometicHvacStatus struct {
 	CompressorCurrent           *uint64     `json:"compressorCurrent,omitempty" n2k:"10"`
 }
 
-func (m *PgnMaretronDometicHvacStatus) PGNNumber() uint32               { return 130830 }
-func (m *PgnMaretronDometicHvacStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronDometicHvacStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronDometicHvacStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronDometicHvacStatus) PGNNumber() uint32               { return 130830 }
+func (m *MaretronDometicHvacStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronDometicHvacStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronDometicHvacStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3804,7 +3804,7 @@ func (m *PgnMaretronDometicHvacStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronDometicHvacStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronDometicHvacStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3855,17 +3855,17 @@ func (m *PgnMaretronDometicHvacStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronUniversalConfigurationFp struct {
+type MaretronUniversalConfigurationFp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronUniversalConfigurationFp) PGNNumber() uint32               { return 130831 }
-func (m *PgnMaretronUniversalConfigurationFp) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronUniversalConfigurationFp) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronUniversalConfigurationFp) DecodePayload(payload []uint8) error {
+func (m *MaretronUniversalConfigurationFp) PGNNumber() uint32               { return 130831 }
+func (m *MaretronUniversalConfigurationFp) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronUniversalConfigurationFp) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronUniversalConfigurationFp) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3920,7 +3920,7 @@ func (m *PgnMaretronUniversalConfigurationFp) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronUniversalConfigurationFp) EncodePayload() ([]uint8, error) {
+func (m *MaretronUniversalConfigurationFp) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3937,7 +3937,7 @@ func (m *PgnMaretronUniversalConfigurationFp) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronVesselOperatingMode struct {
+type MaretronVesselOperatingMode struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode           *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3950,10 +3950,10 @@ type PgnMaretronVesselOperatingMode struct {
 	InIndependentMode      *uint64     `json:"inIndependentMode,omitempty" n2k:"10"`
 }
 
-func (m *PgnMaretronVesselOperatingMode) PGNNumber() uint32               { return 130832 }
-func (m *PgnMaretronVesselOperatingMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronVesselOperatingMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronVesselOperatingMode) DecodePayload(payload []uint8) error {
+func (m *MaretronVesselOperatingMode) PGNNumber() uint32               { return 130832 }
+func (m *MaretronVesselOperatingMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronVesselOperatingMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronVesselOperatingMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4072,7 +4072,7 @@ func (m *PgnMaretronVesselOperatingMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronVesselOperatingMode) EncodePayload() ([]uint8, error) {
+func (m *MaretronVesselOperatingMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4124,7 +4124,7 @@ func (m *PgnMaretronVesselOperatingMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronVesselDataRecorderStatus struct {
+type MaretronVesselDataRecorderStatus struct {
 	Info               MessageInfo `json:"info"`
 	ManufacturerCode   *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode       *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4133,10 +4133,10 @@ type PgnMaretronVesselDataRecorderStatus struct {
 	MemoryUsed         *uint64     `json:"memoryUsed,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronVesselDataRecorderStatus) PGNNumber() uint32               { return 130833 }
-func (m *PgnMaretronVesselDataRecorderStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronVesselDataRecorderStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronVesselDataRecorderStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronVesselDataRecorderStatus) PGNNumber() uint32               { return 130833 }
+func (m *MaretronVesselDataRecorderStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronVesselDataRecorderStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronVesselDataRecorderStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4211,7 +4211,7 @@ func (m *PgnMaretronVesselDataRecorderStatus) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnMaretronVesselDataRecorderStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronVesselDataRecorderStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4242,7 +4242,7 @@ func (m *PgnMaretronVesselDataRecorderStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSmsStatus struct {
+type MaretronSmsStatus struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4254,10 +4254,10 @@ type PgnMaretronSmsStatus struct {
 	NetworkOperatorName string      `json:"networkOperatorName,omitempty" n2k:"9"`
 }
 
-func (m *PgnMaretronSmsStatus) PGNNumber() uint32               { return 130834 }
-func (m *PgnMaretronSmsStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSmsStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSmsStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronSmsStatus) PGNNumber() uint32               { return 130834 }
+func (m *MaretronSmsStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSmsStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSmsStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4362,7 +4362,7 @@ func (m *PgnMaretronSmsStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronSmsStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronSmsStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4400,7 +4400,7 @@ func (m *PgnMaretronSmsStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSmsTextMessage struct {
+type MaretronSmsTextMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4409,10 +4409,10 @@ type PgnMaretronSmsTextMessage struct {
 	Message          string      `json:"message,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronSmsTextMessage) PGNNumber() uint32               { return 130835 }
-func (m *PgnMaretronSmsTextMessage) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSmsTextMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSmsTextMessage) DecodePayload(payload []uint8) error {
+func (m *MaretronSmsTextMessage) PGNNumber() uint32               { return 130835 }
+func (m *MaretronSmsTextMessage) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSmsTextMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSmsTextMessage) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4487,7 +4487,7 @@ func (m *PgnMaretronSmsTextMessage) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronSmsTextMessage) EncodePayload() ([]uint8, error) {
+func (m *MaretronSmsTextMessage) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4510,7 +4510,7 @@ func (m *PgnMaretronSmsTextMessage) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSwitchStatusCounter struct {
+type MaretronSwitchStatusCounter struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4524,10 +4524,10 @@ type PgnMaretronSwitchStatusCounter struct {
 	SwitchStatus     *uint64     `json:"switchStatus,omitempty" n2k:"11"`
 }
 
-func (m *PgnMaretronSwitchStatusCounter) PGNNumber() uint32               { return 130836 }
-func (m *PgnMaretronSwitchStatusCounter) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSwitchStatusCounter) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSwitchStatusCounter) DecodePayload(payload []uint8) error {
+func (m *MaretronSwitchStatusCounter) PGNNumber() uint32               { return 130836 }
+func (m *MaretronSwitchStatusCounter) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSwitchStatusCounter) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSwitchStatusCounter) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4656,7 +4656,7 @@ func (m *PgnMaretronSwitchStatusCounter) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronSwitchStatusCounter) EncodePayload() ([]uint8, error) {
+func (m *MaretronSwitchStatusCounter) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4713,7 +4713,7 @@ func (m *PgnMaretronSwitchStatusCounter) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronSwitchStatusTimer struct {
+type MaretronSwitchStatusTimer struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode           *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4727,10 +4727,10 @@ type PgnMaretronSwitchStatusTimer struct {
 	SwitchStatus           *uint64     `json:"switchStatus,omitempty" n2k:"11"`
 }
 
-func (m *PgnMaretronSwitchStatusTimer) PGNNumber() uint32               { return 130837 }
-func (m *PgnMaretronSwitchStatusTimer) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronSwitchStatusTimer) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronSwitchStatusTimer) DecodePayload(payload []uint8) error {
+func (m *MaretronSwitchStatusTimer) PGNNumber() uint32               { return 130837 }
+func (m *MaretronSwitchStatusTimer) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronSwitchStatusTimer) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronSwitchStatusTimer) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4859,7 +4859,7 @@ func (m *PgnMaretronSwitchStatusTimer) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronSwitchStatusTimer) EncodePayload() ([]uint8, error) {
+func (m *MaretronSwitchStatusTimer) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4916,17 +4916,17 @@ func (m *PgnMaretronSwitchStatusTimer) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronBnwas struct {
+type MaretronBnwas struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronBnwas) PGNNumber() uint32               { return 130838 }
-func (m *PgnMaretronBnwas) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronBnwas) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronBnwas) DecodePayload(payload []uint8) error {
+func (m *MaretronBnwas) PGNNumber() uint32               { return 130838 }
+func (m *MaretronBnwas) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronBnwas) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronBnwas) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4981,7 +4981,7 @@ func (m *PgnMaretronBnwas) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronBnwas) EncodePayload() ([]uint8, error) {
+func (m *MaretronBnwas) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4998,7 +4998,7 @@ func (m *PgnMaretronBnwas) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronGenericSensor struct {
+type MaretronGenericSensor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5007,10 +5007,10 @@ type PgnMaretronGenericSensor struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnMaretronGenericSensor) PGNNumber() uint32               { return 130840 }
-func (m *PgnMaretronGenericSensor) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronGenericSensor) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronGenericSensor) DecodePayload(payload []uint8) error {
+func (m *MaretronGenericSensor) PGNNumber() uint32               { return 130840 }
+func (m *MaretronGenericSensor) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronGenericSensor) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronGenericSensor) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5085,7 +5085,7 @@ func (m *PgnMaretronGenericSensor) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronGenericSensor) EncodePayload() ([]uint8, error) {
+func (m *MaretronGenericSensor) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5112,17 +5112,17 @@ func (m *PgnMaretronGenericSensor) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronCanFrameForwarding struct {
+type MaretronCanFrameForwarding struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronCanFrameForwarding) PGNNumber() uint32               { return 130841 }
-func (m *PgnMaretronCanFrameForwarding) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronCanFrameForwarding) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronCanFrameForwarding) DecodePayload(payload []uint8) error {
+func (m *MaretronCanFrameForwarding) PGNNumber() uint32               { return 130841 }
+func (m *MaretronCanFrameForwarding) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronCanFrameForwarding) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronCanFrameForwarding) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5177,7 +5177,7 @@ func (m *PgnMaretronCanFrameForwarding) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronCanFrameForwarding) EncodePayload() ([]uint8, error) {
+func (m *MaretronCanFrameForwarding) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5194,7 +5194,7 @@ func (m *PgnMaretronCanFrameForwarding) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronWindlassOperatingStatus struct {
+type MaretronWindlassOperatingStatus struct {
 	Info                     MessageInfo `json:"info"`
 	ManufacturerCode         *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode             *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5213,10 +5213,10 @@ type PgnMaretronWindlassOperatingStatus struct {
 	AuxiliaryDControl        *uint64     `json:"auxiliaryDControl,omitempty" n2k:"16"`
 }
 
-func (m *PgnMaretronWindlassOperatingStatus) PGNNumber() uint32               { return 130842 }
-func (m *PgnMaretronWindlassOperatingStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronWindlassOperatingStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronWindlassOperatingStatus) DecodePayload(payload []uint8) error {
+func (m *MaretronWindlassOperatingStatus) PGNNumber() uint32               { return 130842 }
+func (m *MaretronWindlassOperatingStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronWindlassOperatingStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronWindlassOperatingStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5391,7 +5391,7 @@ func (m *PgnMaretronWindlassOperatingStatus) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnMaretronWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
+func (m *MaretronWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5472,17 +5472,17 @@ func (m *PgnMaretronWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronWindlassControlCommand struct {
+type MaretronWindlassControlCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronWindlassControlCommand) PGNNumber() uint32               { return 130843 }
-func (m *PgnMaretronWindlassControlCommand) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronWindlassControlCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronWindlassControlCommand) DecodePayload(payload []uint8) error {
+func (m *MaretronWindlassControlCommand) PGNNumber() uint32               { return 130843 }
+func (m *MaretronWindlassControlCommand) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronWindlassControlCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronWindlassControlCommand) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5537,7 +5537,7 @@ func (m *PgnMaretronWindlassControlCommand) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnMaretronWindlassControlCommand) EncodePayload() ([]uint8, error) {
+func (m *MaretronWindlassControlCommand) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5554,17 +5554,17 @@ func (m *PgnMaretronWindlassControlCommand) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronDcEnergy struct {
+type MaretronDcEnergy struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronDcEnergy) PGNNumber() uint32               { return 130845 }
-func (m *PgnMaretronDcEnergy) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronDcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronDcEnergy) DecodePayload(payload []uint8) error {
+func (m *MaretronDcEnergy) PGNNumber() uint32               { return 130845 }
+func (m *MaretronDcEnergy) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronDcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronDcEnergy) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5619,7 +5619,7 @@ func (m *PgnMaretronDcEnergy) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronDcEnergy) EncodePayload() ([]uint8, error) {
+func (m *MaretronDcEnergy) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5636,17 +5636,17 @@ func (m *PgnMaretronDcEnergy) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMaretronBatteryAmpHourRecord struct {
+type MaretronBatteryAmpHourRecord struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMaretronBatteryAmpHourRecord) PGNNumber() uint32               { return 130846 }
-func (m *PgnMaretronBatteryAmpHourRecord) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMaretronBatteryAmpHourRecord) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMaretronBatteryAmpHourRecord) DecodePayload(payload []uint8) error {
+func (m *MaretronBatteryAmpHourRecord) PGNNumber() uint32               { return 130846 }
+func (m *MaretronBatteryAmpHourRecord) MessageInfo() MessageInfo        { return m.Info }
+func (m *MaretronBatteryAmpHourRecord) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MaretronBatteryAmpHourRecord) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5701,7 +5701,7 @@ func (m *PgnMaretronBatteryAmpHourRecord) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMaretronBatteryAmpHourRecord) EncodePayload() ([]uint8, error) {
+func (m *MaretronBatteryAmpHourRecord) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

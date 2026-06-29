@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnSeaRecoveryWatermakerStatus struct {
+type SeaRecoveryWatermakerStatus struct {
 	Info                     MessageInfo `json:"info"`
 	ManufacturerCode         *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode             *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -24,10 +24,10 @@ type PgnSeaRecoveryWatermakerStatus struct {
 	SystemStatus             *uint64     `json:"systemStatus,omitempty" n2k:"16"`
 }
 
-func (m *PgnSeaRecoveryWatermakerStatus) PGNNumber() uint32               { return 130816 }
-func (m *PgnSeaRecoveryWatermakerStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeaRecoveryWatermakerStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeaRecoveryWatermakerStatus) DecodePayload(payload []uint8) error {
+func (m *SeaRecoveryWatermakerStatus) PGNNumber() uint32               { return 130816 }
+func (m *SeaRecoveryWatermakerStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeaRecoveryWatermakerStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeaRecoveryWatermakerStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -207,7 +207,7 @@ func (m *PgnSeaRecoveryWatermakerStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeaRecoveryWatermakerStatus) EncodePayload() ([]uint8, error) {
+func (m *SeaRecoveryWatermakerStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

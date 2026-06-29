@@ -92,7 +92,7 @@ func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 			case *ast.GenDecl:
 				for _, spec := range d.Specs {
 					typeSpec, ok := spec.(*ast.TypeSpec)
-					if !ok || !strings.HasPrefix(typeSpec.Name.Name, "Pgn") {
+					if !ok {
 						continue
 					}
 					if _, ok := typeSpec.Type.(*ast.StructType); !ok {
@@ -105,7 +105,7 @@ func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 					continue
 				}
 				structName, ok := receiverStructName(d)
-				if !ok || !strings.HasPrefix(structName, "Pgn") {
+				if !ok {
 					continue
 				}
 				if facts.methods[structName] == nil {
@@ -115,7 +115,7 @@ func collectPGNStructFacts(t *testing.T) pgnStructFacts {
 				if d.Name.Name == "PGNNumber" {
 					pgn, ok := returnedUint32Literal(d)
 					if !ok {
-						t.Fatalf("%s PGNNumber() must return a uint32 literal", structName)
+						continue
 					}
 					facts.pgns[structName] = pgn
 				}

@@ -3,17 +3,17 @@
 
 package pgn
 
-type PgnBus1PhaseCBasicAcQuantities struct {
+type Bus1PhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
 	AcFrequency             *uint64     `json:"acFrequency,omitempty" n2k:"3"`
 }
 
-func (m *PgnBus1PhaseCBasicAcQuantities) PGNNumber() uint32               { return 65001 }
-func (m *PgnBus1PhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBus1PhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBus1PhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *Bus1PhaseCBasicAcQuantities) PGNNumber() uint32               { return 65001 }
+func (m *Bus1PhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *Bus1PhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Bus1PhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -51,7 +51,7 @@ func (m *PgnBus1PhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBus1PhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *Bus1PhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -72,17 +72,17 @@ func (m *PgnBus1PhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBus1PhaseBBasicAcQuantities struct {
+type Bus1PhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
 	AcFrequency             *uint64     `json:"acFrequency,omitempty" n2k:"3"`
 }
 
-func (m *PgnBus1PhaseBBasicAcQuantities) PGNNumber() uint32               { return 65002 }
-func (m *PgnBus1PhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBus1PhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBus1PhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *Bus1PhaseBBasicAcQuantities) PGNNumber() uint32               { return 65002 }
+func (m *Bus1PhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *Bus1PhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Bus1PhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -120,7 +120,7 @@ func (m *PgnBus1PhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBus1PhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *Bus1PhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -141,17 +141,17 @@ func (m *PgnBus1PhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBus1PhaseABasicAcQuantities struct {
+type Bus1PhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
 	AcFrequency             *uint64     `json:"acFrequency,omitempty" n2k:"3"`
 }
 
-func (m *PgnBus1PhaseABasicAcQuantities) PGNNumber() uint32               { return 65003 }
-func (m *PgnBus1PhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBus1PhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBus1PhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *Bus1PhaseABasicAcQuantities) PGNNumber() uint32               { return 65003 }
+func (m *Bus1PhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *Bus1PhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Bus1PhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -189,7 +189,7 @@ func (m *PgnBus1PhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBus1PhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *Bus1PhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -210,17 +210,17 @@ func (m *PgnBus1PhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBus1AverageBasicAcQuantities struct {
+type Bus1AverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
 	AcFrequency             *uint64     `json:"acFrequency,omitempty" n2k:"3"`
 }
 
-func (m *PgnBus1AverageBasicAcQuantities) PGNNumber() uint32               { return 65004 }
-func (m *PgnBus1AverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBus1AverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBus1AverageBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *Bus1AverageBasicAcQuantities) PGNNumber() uint32               { return 65004 }
+func (m *Bus1AverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *Bus1AverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Bus1AverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -258,7 +258,7 @@ func (m *PgnBus1AverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBus1AverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *Bus1AverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -279,16 +279,16 @@ func (m *PgnBus1AverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityTotalAcEnergy struct {
+type UtilityTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
 	TotalEnergyImport *uint64     `json:"totalEnergyImport,omitempty" n2k:"2"`
 }
 
-func (m *PgnUtilityTotalAcEnergy) PGNNumber() uint32               { return 65005 }
-func (m *PgnUtilityTotalAcEnergy) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityTotalAcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityTotalAcEnergy) DecodePayload(payload []uint8) error {
+func (m *UtilityTotalAcEnergy) PGNNumber() uint32               { return 65005 }
+func (m *UtilityTotalAcEnergy) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityTotalAcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityTotalAcEnergy) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(32)
@@ -312,7 +312,7 @@ func (m *PgnUtilityTotalAcEnergy) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityTotalAcEnergy) EncodePayload() ([]uint8, error) {
+func (m *UtilityTotalAcEnergy) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.TotalEnergyExport != nil {
 		writer.writeUInt64(m.TotalEnergyExport, 32)
@@ -327,17 +327,17 @@ func (m *PgnUtilityTotalAcEnergy) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseCAcReactivePower struct {
+type UtilityPhaseCAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *uint64     `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnUtilityPhaseCAcReactivePower) PGNNumber() uint32               { return 65006 }
-func (m *PgnUtilityPhaseCAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseCAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseCAcReactivePower) PGNNumber() uint32               { return 65006 }
+func (m *UtilityPhaseCAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseCAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -375,7 +375,7 @@ func (m *PgnUtilityPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeUInt64(m.ReactivePower, 16)
@@ -396,16 +396,16 @@ func (m *PgnUtilityPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseCAcPower struct {
+type UtilityPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnUtilityPhaseCAcPower) PGNNumber() uint32               { return 65007 }
-func (m *PgnUtilityPhaseCAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseCAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseCAcPower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseCAcPower) PGNNumber() uint32               { return 65007 }
+func (m *UtilityPhaseCAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseCAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseCAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -431,7 +431,7 @@ func (m *PgnUtilityPhaseCAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseCAcPower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseCAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -446,7 +446,7 @@ func (m *PgnUtilityPhaseCAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseCBasicAcQuantities struct {
+type UtilityPhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -454,10 +454,10 @@ type PgnUtilityPhaseCBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnUtilityPhaseCBasicAcQuantities) PGNNumber() uint32               { return 65008 }
-func (m *PgnUtilityPhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseCBasicAcQuantities) PGNNumber() uint32               { return 65008 }
+func (m *UtilityPhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -501,7 +501,7 @@ func (m *PgnUtilityPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -526,17 +526,17 @@ func (m *PgnUtilityPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseBAcReactivePower struct {
+type UtilityPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *uint64     `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnUtilityPhaseBAcReactivePower) PGNNumber() uint32               { return 65009 }
-func (m *PgnUtilityPhaseBAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseBAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseBAcReactivePower) PGNNumber() uint32               { return 65009 }
+func (m *UtilityPhaseBAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseBAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -574,7 +574,7 @@ func (m *PgnUtilityPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeUInt64(m.ReactivePower, 16)
@@ -595,16 +595,16 @@ func (m *PgnUtilityPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseBAcPower struct {
+type UtilityPhaseBAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnUtilityPhaseBAcPower) PGNNumber() uint32               { return 65010 }
-func (m *PgnUtilityPhaseBAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseBAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseBAcPower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseBAcPower) PGNNumber() uint32               { return 65010 }
+func (m *UtilityPhaseBAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseBAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseBAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -630,7 +630,7 @@ func (m *PgnUtilityPhaseBAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseBAcPower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseBAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -645,7 +645,7 @@ func (m *PgnUtilityPhaseBAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseBBasicAcQuantities struct {
+type UtilityPhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -653,10 +653,10 @@ type PgnUtilityPhaseBBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnUtilityPhaseBBasicAcQuantities) PGNNumber() uint32               { return 65011 }
-func (m *PgnUtilityPhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseBBasicAcQuantities) PGNNumber() uint32               { return 65011 }
+func (m *UtilityPhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -700,7 +700,7 @@ func (m *PgnUtilityPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -725,17 +725,17 @@ func (m *PgnUtilityPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseAAcReactivePower struct {
+type UtilityPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnUtilityPhaseAAcReactivePower) PGNNumber() uint32               { return 65012 }
-func (m *PgnUtilityPhaseAAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseAAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseAAcReactivePower) PGNNumber() uint32               { return 65012 }
+func (m *UtilityPhaseAAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseAAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -774,7 +774,7 @@ func (m *PgnUtilityPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -795,16 +795,16 @@ func (m *PgnUtilityPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseAAcPower struct {
+type UtilityPhaseAAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnUtilityPhaseAAcPower) PGNNumber() uint32               { return 65013 }
-func (m *PgnUtilityPhaseAAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseAAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseAAcPower) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseAAcPower) PGNNumber() uint32               { return 65013 }
+func (m *UtilityPhaseAAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseAAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseAAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -830,7 +830,7 @@ func (m *PgnUtilityPhaseAAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseAAcPower) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseAAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -845,7 +845,7 @@ func (m *PgnUtilityPhaseAAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityPhaseABasicAcQuantities struct {
+type UtilityPhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -853,10 +853,10 @@ type PgnUtilityPhaseABasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnUtilityPhaseABasicAcQuantities) PGNNumber() uint32               { return 65014 }
-func (m *PgnUtilityPhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityPhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *UtilityPhaseABasicAcQuantities) PGNNumber() uint32               { return 65014 }
+func (m *UtilityPhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityPhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -900,7 +900,7 @@ func (m *PgnUtilityPhaseABasicAcQuantities) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnUtilityPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *UtilityPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -925,17 +925,17 @@ func (m *PgnUtilityPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityTotalAcReactivePower struct {
+type UtilityTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnUtilityTotalAcReactivePower) PGNNumber() uint32               { return 65015 }
-func (m *PgnUtilityTotalAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityTotalAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityTotalAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *UtilityTotalAcReactivePower) PGNNumber() uint32               { return 65015 }
+func (m *UtilityTotalAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityTotalAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityTotalAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -974,7 +974,7 @@ func (m *PgnUtilityTotalAcReactivePower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityTotalAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *UtilityTotalAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -995,16 +995,16 @@ func (m *PgnUtilityTotalAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityTotalAcPower struct {
+type UtilityTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnUtilityTotalAcPower) PGNNumber() uint32               { return 65016 }
-func (m *PgnUtilityTotalAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityTotalAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityTotalAcPower) DecodePayload(payload []uint8) error {
+func (m *UtilityTotalAcPower) PGNNumber() uint32               { return 65016 }
+func (m *UtilityTotalAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityTotalAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityTotalAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1030,7 +1030,7 @@ func (m *PgnUtilityTotalAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnUtilityTotalAcPower) EncodePayload() ([]uint8, error) {
+func (m *UtilityTotalAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -1045,7 +1045,7 @@ func (m *PgnUtilityTotalAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnUtilityAverageBasicAcQuantities struct {
+type UtilityAverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -1053,10 +1053,10 @@ type PgnUtilityAverageBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnUtilityAverageBasicAcQuantities) PGNNumber() uint32               { return 65017 }
-func (m *PgnUtilityAverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnUtilityAverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnUtilityAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *UtilityAverageBasicAcQuantities) PGNNumber() uint32               { return 65017 }
+func (m *UtilityAverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *UtilityAverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *UtilityAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -1100,7 +1100,7 @@ func (m *PgnUtilityAverageBasicAcQuantities) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnUtilityAverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *UtilityAverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -1125,16 +1125,16 @@ func (m *PgnUtilityAverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorTotalAcEnergy struct {
+type GeneratorTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
 	TotalEnergyImport *uint64     `json:"totalEnergyImport,omitempty" n2k:"2"`
 }
 
-func (m *PgnGeneratorTotalAcEnergy) PGNNumber() uint32               { return 65018 }
-func (m *PgnGeneratorTotalAcEnergy) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorTotalAcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorTotalAcEnergy) DecodePayload(payload []uint8) error {
+func (m *GeneratorTotalAcEnergy) PGNNumber() uint32               { return 65018 }
+func (m *GeneratorTotalAcEnergy) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorTotalAcEnergy) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorTotalAcEnergy) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(32)
@@ -1158,7 +1158,7 @@ func (m *PgnGeneratorTotalAcEnergy) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGeneratorTotalAcEnergy) EncodePayload() ([]uint8, error) {
+func (m *GeneratorTotalAcEnergy) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.TotalEnergyExport != nil {
 		writer.writeUInt64(m.TotalEnergyExport, 32)
@@ -1173,17 +1173,17 @@ func (m *PgnGeneratorTotalAcEnergy) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseCAcReactivePower struct {
+type GeneratorPhaseCAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnGeneratorPhaseCAcReactivePower) PGNNumber() uint32               { return 65019 }
-func (m *PgnGeneratorPhaseCAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseCAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseCAcReactivePower) PGNNumber() uint32               { return 65019 }
+func (m *GeneratorPhaseCAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseCAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1222,7 +1222,7 @@ func (m *PgnGeneratorPhaseCAcReactivePower) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -1243,16 +1243,16 @@ func (m *PgnGeneratorPhaseCAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseCAcPower struct {
+type GeneratorPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnGeneratorPhaseCAcPower) PGNNumber() uint32               { return 65020 }
-func (m *PgnGeneratorPhaseCAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseCAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseCAcPower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseCAcPower) PGNNumber() uint32               { return 65020 }
+func (m *GeneratorPhaseCAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseCAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseCAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1278,7 +1278,7 @@ func (m *PgnGeneratorPhaseCAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseCAcPower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseCAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -1293,7 +1293,7 @@ func (m *PgnGeneratorPhaseCAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseCBasicAcQuantities struct {
+type GeneratorPhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -1301,10 +1301,10 @@ type PgnGeneratorPhaseCBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnGeneratorPhaseCBasicAcQuantities) PGNNumber() uint32               { return 65021 }
-func (m *PgnGeneratorPhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseCBasicAcQuantities) PGNNumber() uint32               { return 65021 }
+func (m *GeneratorPhaseCBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseCBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -1348,7 +1348,7 @@ func (m *PgnGeneratorPhaseCBasicAcQuantities) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -1373,17 +1373,17 @@ func (m *PgnGeneratorPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseBAcReactivePower struct {
+type GeneratorPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnGeneratorPhaseBAcReactivePower) PGNNumber() uint32               { return 65022 }
-func (m *PgnGeneratorPhaseBAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseBAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseBAcReactivePower) PGNNumber() uint32               { return 65022 }
+func (m *GeneratorPhaseBAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseBAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1422,7 +1422,7 @@ func (m *PgnGeneratorPhaseBAcReactivePower) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -1443,16 +1443,16 @@ func (m *PgnGeneratorPhaseBAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseBAcPower struct {
+type GeneratorPhaseBAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnGeneratorPhaseBAcPower) PGNNumber() uint32               { return 65023 }
-func (m *PgnGeneratorPhaseBAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseBAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseBAcPower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseBAcPower) PGNNumber() uint32               { return 65023 }
+func (m *GeneratorPhaseBAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseBAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseBAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1478,7 +1478,7 @@ func (m *PgnGeneratorPhaseBAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseBAcPower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseBAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -1493,7 +1493,7 @@ func (m *PgnGeneratorPhaseBAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseBBasicAcQuantities struct {
+type GeneratorPhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -1501,10 +1501,10 @@ type PgnGeneratorPhaseBBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnGeneratorPhaseBBasicAcQuantities) PGNNumber() uint32               { return 65024 }
-func (m *PgnGeneratorPhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseBBasicAcQuantities) PGNNumber() uint32               { return 65024 }
+func (m *GeneratorPhaseBBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseBBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -1548,7 +1548,7 @@ func (m *PgnGeneratorPhaseBBasicAcQuantities) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -1573,17 +1573,17 @@ func (m *PgnGeneratorPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseAAcReactivePower struct {
+type GeneratorPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnGeneratorPhaseAAcReactivePower) PGNNumber() uint32               { return 65025 }
-func (m *PgnGeneratorPhaseAAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseAAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseAAcReactivePower) PGNNumber() uint32               { return 65025 }
+func (m *GeneratorPhaseAAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseAAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1622,7 +1622,7 @@ func (m *PgnGeneratorPhaseAAcReactivePower) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -1643,16 +1643,16 @@ func (m *PgnGeneratorPhaseAAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseAAcPower struct {
+type GeneratorPhaseAAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnGeneratorPhaseAAcPower) PGNNumber() uint32               { return 65026 }
-func (m *PgnGeneratorPhaseAAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseAAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseAAcPower) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseAAcPower) PGNNumber() uint32               { return 65026 }
+func (m *GeneratorPhaseAAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseAAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseAAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1678,7 +1678,7 @@ func (m *PgnGeneratorPhaseAAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseAAcPower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseAAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -1693,7 +1693,7 @@ func (m *PgnGeneratorPhaseAAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorPhaseABasicAcQuantities struct {
+type GeneratorPhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -1701,10 +1701,10 @@ type PgnGeneratorPhaseABasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnGeneratorPhaseABasicAcQuantities) PGNNumber() uint32               { return 65027 }
-func (m *PgnGeneratorPhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorPhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *GeneratorPhaseABasicAcQuantities) PGNNumber() uint32               { return 65027 }
+func (m *GeneratorPhaseABasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorPhaseABasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -1748,7 +1748,7 @@ func (m *PgnGeneratorPhaseABasicAcQuantities) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnGeneratorPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *GeneratorPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -1773,17 +1773,17 @@ func (m *PgnGeneratorPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorTotalAcReactivePower struct {
+type GeneratorTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
 	PowerFactor        *uint64     `json:"powerFactor,omitempty" n2k:"2"`
 	PowerFactorLagging *uint64     `json:"powerFactorLagging,omitempty" n2k:"3"`
 }
 
-func (m *PgnGeneratorTotalAcReactivePower) PGNNumber() uint32               { return 65028 }
-func (m *PgnGeneratorTotalAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorTotalAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorTotalAcReactivePower) DecodePayload(payload []uint8) error {
+func (m *GeneratorTotalAcReactivePower) PGNNumber() uint32               { return 65028 }
+func (m *GeneratorTotalAcReactivePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorTotalAcReactivePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorTotalAcReactivePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1822,7 +1822,7 @@ func (m *PgnGeneratorTotalAcReactivePower) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnGeneratorTotalAcReactivePower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorTotalAcReactivePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ReactivePower != nil {
 		writer.writeInt64(m.ReactivePower, 32)
@@ -1843,16 +1843,16 @@ func (m *PgnGeneratorTotalAcReactivePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorTotalAcPower struct {
+type GeneratorTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
 	ApparentPower *int64      `json:"apparentPower,omitempty" n2k:"2"`
 }
 
-func (m *PgnGeneratorTotalAcPower) PGNNumber() uint32               { return 65029 }
-func (m *PgnGeneratorTotalAcPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorTotalAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorTotalAcPower) DecodePayload(payload []uint8) error {
+func (m *GeneratorTotalAcPower) PGNNumber() uint32               { return 65029 }
+func (m *GeneratorTotalAcPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorTotalAcPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorTotalAcPower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(32)
@@ -1878,7 +1878,7 @@ func (m *PgnGeneratorTotalAcPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnGeneratorTotalAcPower) EncodePayload() ([]uint8, error) {
+func (m *GeneratorTotalAcPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RealPower != nil {
 		writer.writeInt64(m.RealPower, 32)
@@ -1893,7 +1893,7 @@ func (m *PgnGeneratorTotalAcPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnGeneratorAverageBasicAcQuantities struct {
+type GeneratorAverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
 	LineNeutralAcRmsVoltage *uint64     `json:"lineNeutralAcRmsVoltage,omitempty" n2k:"2"`
@@ -1901,10 +1901,10 @@ type PgnGeneratorAverageBasicAcQuantities struct {
 	AcRmsCurrent            *uint64     `json:"acRmsCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnGeneratorAverageBasicAcQuantities) PGNNumber() uint32               { return 65030 }
-func (m *PgnGeneratorAverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnGeneratorAverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnGeneratorAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
+func (m *GeneratorAverageBasicAcQuantities) PGNNumber() uint32               { return 65030 }
+func (m *GeneratorAverageBasicAcQuantities) MessageInfo() MessageInfo        { return m.Info }
+func (m *GeneratorAverageBasicAcQuantities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *GeneratorAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -1948,7 +1948,7 @@ func (m *PgnGeneratorAverageBasicAcQuantities) DecodePayload(payload []uint8) er
 	}
 	return nil
 }
-func (m *PgnGeneratorAverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
+func (m *GeneratorAverageBasicAcQuantities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LineLineAcRmsVoltage != nil {
 		writer.writeUInt64(m.LineLineAcRmsVoltage, 16)
@@ -1973,7 +1973,7 @@ func (m *PgnGeneratorAverageBasicAcQuantities) EncodePayload() ([]uint8, error) 
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricEnergyStorageStatusDynamic struct {
+type ElectricEnergyStorageStatusDynamic struct {
 	Info                    MessageInfo `json:"info"`
 	EnergyStorageIdentifier *uint64     `json:"energyStorageIdentifier,omitempty" n2k:"1"`
 	StateOfCharge           *uint64     `json:"stateOfCharge,omitempty" n2k:"2"`
@@ -1987,10 +1987,10 @@ type PgnElectricEnergyStorageStatusDynamic struct {
 	HeatingSystemStatus     *uint64     `json:"heatingSystemStatus,omitempty" n2k:"10"`
 }
 
-func (m *PgnElectricEnergyStorageStatusDynamic) PGNNumber() uint32               { return 127491 }
-func (m *PgnElectricEnergyStorageStatusDynamic) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricEnergyStorageStatusDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricEnergyStorageStatusDynamic) DecodePayload(payload []uint8) error {
+func (m *ElectricEnergyStorageStatusDynamic) PGNNumber() uint32               { return 127491 }
+func (m *ElectricEnergyStorageStatusDynamic) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricEnergyStorageStatusDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricEnergyStorageStatusDynamic) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -2096,7 +2096,7 @@ func (m *PgnElectricEnergyStorageStatusDynamic) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnElectricEnergyStorageStatusDynamic) EncodePayload() ([]uint8, error) {
+func (m *ElectricEnergyStorageStatusDynamic) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.EnergyStorageIdentifier != nil {
 		writer.writeUInt64(m.EnergyStorageIdentifier, 8)
@@ -2151,7 +2151,7 @@ func (m *PgnElectricEnergyStorageStatusDynamic) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricEnergyStorageInformation struct {
+type ElectricEnergyStorageInformation struct {
 	Info                       MessageInfo `json:"info"`
 	EnergyStorageIdentifier    *uint64     `json:"energyStorageIdentifier,omitempty" n2k:"1"`
 	MotorType                  *uint64     `json:"motorType,omitempty" n2k:"2"`
@@ -2169,10 +2169,10 @@ type PgnElectricEnergyStorageInformation struct {
 	MinimumChargeSoc           *uint64     `json:"minimumChargeSoc,omitempty" n2k:"16"`
 }
 
-func (m *PgnElectricEnergyStorageInformation) PGNNumber() uint32               { return 127495 }
-func (m *PgnElectricEnergyStorageInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricEnergyStorageInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricEnergyStorageInformation) DecodePayload(payload []uint8) error {
+func (m *ElectricEnergyStorageInformation) PGNNumber() uint32               { return 127495 }
+func (m *ElectricEnergyStorageInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricEnergyStorageInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricEnergyStorageInformation) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -2324,7 +2324,7 @@ func (m *PgnElectricEnergyStorageInformation) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnElectricEnergyStorageInformation) EncodePayload() ([]uint8, error) {
+func (m *ElectricEnergyStorageInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.EnergyStorageIdentifier != nil {
 		writer.writeUInt64(m.EnergyStorageIdentifier, 8)
@@ -2401,7 +2401,7 @@ func (m *PgnElectricEnergyStorageInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLoadControllerConnectionStateControl struct {
+type LoadControllerConnectionStateControl struct {
 	Info                     MessageInfo `json:"info"`
 	SequenceId               *uint64     `json:"sequenceId,omitempty" n2k:"1"`
 	ConnectionId             *uint64     `json:"connectionId,omitempty" n2k:"2"`
@@ -2413,10 +2413,10 @@ type PgnLoadControllerConnectionStateControl struct {
 	Timeoff                  *uint64     `json:"timeoff,omitempty" n2k:"8"`
 }
 
-func (m *PgnLoadControllerConnectionStateControl) PGNNumber() uint32               { return 127500 }
-func (m *PgnLoadControllerConnectionStateControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLoadControllerConnectionStateControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLoadControllerConnectionStateControl) DecodePayload(payload []uint8) error {
+func (m *LoadControllerConnectionStateControl) PGNNumber() uint32               { return 127500 }
+func (m *LoadControllerConnectionStateControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *LoadControllerConnectionStateControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LoadControllerConnectionStateControl) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -2500,7 +2500,7 @@ func (m *PgnLoadControllerConnectionStateControl) DecodePayload(payload []uint8)
 	}
 	return nil
 }
-func (m *PgnLoadControllerConnectionStateControl) EncodePayload() ([]uint8, error) {
+func (m *LoadControllerConnectionStateControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.SequenceId != nil {
 		writer.writeUInt64(m.SequenceId, 8)
@@ -2545,7 +2545,7 @@ func (m *PgnLoadControllerConnectionStateControl) EncodePayload() ([]uint8, erro
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBinarySwitchBankStatus struct {
+type BinarySwitchBankStatus struct {
 	Info        MessageInfo `json:"info"`
 	Instance    *uint64     `json:"instance,omitempty" n2k:"1"`
 	Indicator1  *uint64     `json:"indicator1,omitempty" n2k:"2"`
@@ -2578,10 +2578,10 @@ type PgnBinarySwitchBankStatus struct {
 	Indicator28 *uint64     `json:"indicator28,omitempty" n2k:"29"`
 }
 
-func (m *PgnBinarySwitchBankStatus) PGNNumber() uint32               { return 127501 }
-func (m *PgnBinarySwitchBankStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBinarySwitchBankStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBinarySwitchBankStatus) DecodePayload(payload []uint8) error {
+func (m *BinarySwitchBankStatus) PGNNumber() uint32               { return 127501 }
+func (m *BinarySwitchBankStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *BinarySwitchBankStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BinarySwitchBankStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -2875,7 +2875,7 @@ func (m *PgnBinarySwitchBankStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBinarySwitchBankStatus) EncodePayload() ([]uint8, error) {
+func (m *BinarySwitchBankStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -3025,7 +3025,7 @@ func (m *PgnBinarySwitchBankStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSwitchBankControl struct {
+type SwitchBankControl struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
 	Switch1  *uint64     `json:"switch1,omitempty" n2k:"2"`
@@ -3058,10 +3058,10 @@ type PgnSwitchBankControl struct {
 	Switch28 *uint64     `json:"switch28,omitempty" n2k:"29"`
 }
 
-func (m *PgnSwitchBankControl) PGNNumber() uint32               { return 127502 }
-func (m *PgnSwitchBankControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSwitchBankControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSwitchBankControl) DecodePayload(payload []uint8) error {
+func (m *SwitchBankControl) PGNNumber() uint32               { return 127502 }
+func (m *SwitchBankControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *SwitchBankControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SwitchBankControl) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3355,7 +3355,7 @@ func (m *PgnSwitchBankControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSwitchBankControl) EncodePayload() ([]uint8, error) {
+func (m *SwitchBankControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -3505,7 +3505,7 @@ func (m *PgnSwitchBankControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcInputStatus struct {
+type AcInputStatus struct {
 	Info          MessageInfo `json:"info"`
 	Instance      *uint64     `json:"instance,omitempty" n2k:"1"`
 	NumberOfLines *uint64     `json:"numberOfLines,omitempty" n2k:"2"`
@@ -3520,10 +3520,10 @@ type PgnAcInputStatus struct {
 	PowerFactor   *int64      `json:"powerFactor,omitempty" n2k:"12"`
 }
 
-func (m *PgnAcInputStatus) PGNNumber() uint32               { return 127503 }
-func (m *PgnAcInputStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcInputStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcInputStatus) DecodePayload(payload []uint8) error {
+func (m *AcInputStatus) PGNNumber() uint32               { return 127503 }
+func (m *AcInputStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcInputStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcInputStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3642,7 +3642,7 @@ func (m *PgnAcInputStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcInputStatus) EncodePayload() ([]uint8, error) {
+func (m *AcInputStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -3703,7 +3703,7 @@ func (m *PgnAcInputStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcOutputStatus struct {
+type AcOutputStatus struct {
 	Info          MessageInfo `json:"info"`
 	Instance      *uint64     `json:"instance,omitempty" n2k:"1"`
 	NumberOfLines *uint64     `json:"numberOfLines,omitempty" n2k:"2"`
@@ -3718,10 +3718,10 @@ type PgnAcOutputStatus struct {
 	PowerFactor   *int64      `json:"powerFactor,omitempty" n2k:"12"`
 }
 
-func (m *PgnAcOutputStatus) PGNNumber() uint32               { return 127504 }
-func (m *PgnAcOutputStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcOutputStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcOutputStatus) DecodePayload(payload []uint8) error {
+func (m *AcOutputStatus) PGNNumber() uint32               { return 127504 }
+func (m *AcOutputStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcOutputStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcOutputStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3840,7 +3840,7 @@ func (m *PgnAcOutputStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcOutputStatus) EncodePayload() ([]uint8, error) {
+func (m *AcOutputStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -3901,7 +3901,7 @@ func (m *PgnAcOutputStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnDcDetailedStatus struct {
+type DcDetailedStatus struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance          *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -3913,10 +3913,10 @@ type PgnDcDetailedStatus struct {
 	RemainingCapacity *uint64     `json:"remainingCapacity,omitempty" n2k:"8"`
 }
 
-func (m *PgnDcDetailedStatus) PGNNumber() uint32               { return 127506 }
-func (m *PgnDcDetailedStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnDcDetailedStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnDcDetailedStatus) DecodePayload(payload []uint8) error {
+func (m *DcDetailedStatus) PGNNumber() uint32               { return 127506 }
+func (m *DcDetailedStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *DcDetailedStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *DcDetailedStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4000,7 +4000,7 @@ func (m *PgnDcDetailedStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnDcDetailedStatus) EncodePayload() ([]uint8, error) {
+func (m *DcDetailedStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -4045,7 +4045,7 @@ func (m *PgnDcDetailedStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnChargerStatus struct {
+type ChargerStatus struct {
 	Info                      MessageInfo `json:"info"`
 	Instance                  *uint64     `json:"instance,omitempty" n2k:"1"`
 	BatteryInstance           *uint64     `json:"batteryInstance,omitempty" n2k:"2"`
@@ -4056,10 +4056,10 @@ type PgnChargerStatus struct {
 	EqualizationTimeRemaining *uint64     `json:"equalizationTimeRemaining,omitempty" n2k:"8"`
 }
 
-func (m *PgnChargerStatus) PGNNumber() uint32               { return 127507 }
-func (m *PgnChargerStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnChargerStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnChargerStatus) DecodePayload(payload []uint8) error {
+func (m *ChargerStatus) PGNNumber() uint32               { return 127507 }
+func (m *ChargerStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *ChargerStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ChargerStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4137,7 +4137,7 @@ func (m *PgnChargerStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnChargerStatus) EncodePayload() ([]uint8, error) {
+func (m *ChargerStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4178,7 +4178,7 @@ func (m *PgnChargerStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBatteryStatus struct {
+type BatteryStatus struct {
 	Info        MessageInfo `json:"info"`
 	Instance    *uint64     `json:"instance,omitempty" n2k:"1"`
 	Voltage     *int64      `json:"voltage,omitempty" n2k:"2"`
@@ -4187,10 +4187,10 @@ type PgnBatteryStatus struct {
 	Sid         *uint64     `json:"sid,omitempty" n2k:"5"`
 }
 
-func (m *PgnBatteryStatus) PGNNumber() uint32               { return 127508 }
-func (m *PgnBatteryStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBatteryStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBatteryStatus) DecodePayload(payload []uint8) error {
+func (m *BatteryStatus) PGNNumber() uint32               { return 127508 }
+func (m *BatteryStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *BatteryStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BatteryStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4246,7 +4246,7 @@ func (m *PgnBatteryStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBatteryStatus) EncodePayload() ([]uint8, error) {
+func (m *BatteryStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4276,7 +4276,7 @@ func (m *PgnBatteryStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnInverterStatus struct {
+type InverterStatus struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
 	AcInstance     *uint64     `json:"acInstance,omitempty" n2k:"2"`
@@ -4285,10 +4285,10 @@ type PgnInverterStatus struct {
 	InverterEnable *uint64     `json:"inverterEnable,omitempty" n2k:"5"`
 }
 
-func (m *PgnInverterStatus) PGNNumber() uint32               { return 127509 }
-func (m *PgnInverterStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnInverterStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnInverterStatus) DecodePayload(payload []uint8) error {
+func (m *InverterStatus) PGNNumber() uint32               { return 127509 }
+func (m *InverterStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *InverterStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *InverterStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4346,7 +4346,7 @@ func (m *PgnInverterStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnInverterStatus) EncodePayload() ([]uint8, error) {
+func (m *InverterStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4377,7 +4377,7 @@ func (m *PgnInverterStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnChargerConfigurationStatus struct {
+type ChargerConfigurationStatus struct {
 	Info                         MessageInfo `json:"info"`
 	Instance                     *uint64     `json:"instance,omitempty" n2k:"1"`
 	BatteryInstance              *uint64     `json:"batteryInstance,omitempty" n2k:"2"`
@@ -4391,10 +4391,10 @@ type PgnChargerConfigurationStatus struct {
 	EqualizeTime                 *uint64     `json:"equalizeTime,omitempty" n2k:"11"`
 }
 
-func (m *PgnChargerConfigurationStatus) PGNNumber() uint32               { return 127510 }
-func (m *PgnChargerConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnChargerConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnChargerConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *ChargerConfigurationStatus) PGNNumber() uint32               { return 127510 }
+func (m *ChargerConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *ChargerConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ChargerConfigurationStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4502,7 +4502,7 @@ func (m *PgnChargerConfigurationStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *ChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4558,7 +4558,7 @@ func (m *PgnChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnInverterConfigurationStatus struct {
+type InverterConfigurationStatus struct {
 	Info                    MessageInfo `json:"info"`
 	Instance                *uint64     `json:"instance,omitempty" n2k:"1"`
 	AcInstance              *uint64     `json:"acInstance,omitempty" n2k:"2"`
@@ -4570,10 +4570,10 @@ type PgnInverterConfigurationStatus struct {
 	LoadSenseInterval       *uint64     `json:"loadSenseInterval,omitempty" n2k:"8"`
 }
 
-func (m *PgnInverterConfigurationStatus) PGNNumber() uint32               { return 127511 }
-func (m *PgnInverterConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnInverterConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnInverterConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *InverterConfigurationStatus) PGNNumber() uint32               { return 127511 }
+func (m *InverterConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *InverterConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *InverterConfigurationStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4657,7 +4657,7 @@ func (m *PgnInverterConfigurationStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnInverterConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *InverterConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4702,7 +4702,7 @@ func (m *PgnInverterConfigurationStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBatteryConfigurationStatus struct {
+type BatteryConfigurationStatus struct {
 	Info                   MessageInfo `json:"info"`
 	Instance               *uint64     `json:"instance,omitempty" n2k:"1"`
 	BatteryType            *uint64     `json:"batteryType,omitempty" n2k:"2"`
@@ -4715,10 +4715,10 @@ type PgnBatteryConfigurationStatus struct {
 	ChargeEfficiencyFactor *int64      `json:"chargeEfficiencyFactor,omitempty" n2k:"10"`
 }
 
-func (m *PgnBatteryConfigurationStatus) PGNNumber() uint32               { return 127513 }
-func (m *PgnBatteryConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBatteryConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBatteryConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *BatteryConfigurationStatus) PGNNumber() uint32               { return 127513 }
+func (m *BatteryConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *BatteryConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BatteryConfigurationStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4818,7 +4818,7 @@ func (m *PgnBatteryConfigurationStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBatteryConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *BatteryConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -4869,7 +4869,7 @@ func (m *PgnBatteryConfigurationStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcPowerCurrentPhaseA struct {
+type AcPowerCurrentPhaseA struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -4877,10 +4877,10 @@ type PgnAcPowerCurrentPhaseA struct {
 	Power            *int64      `json:"power,omitempty" n2k:"4"`
 }
 
-func (m *PgnAcPowerCurrentPhaseA) PGNNumber() uint32               { return 127744 }
-func (m *PgnAcPowerCurrentPhaseA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcPowerCurrentPhaseA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcPowerCurrentPhaseA) DecodePayload(payload []uint8) error {
+func (m *AcPowerCurrentPhaseA) PGNNumber() uint32               { return 127744 }
+func (m *AcPowerCurrentPhaseA) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcPowerCurrentPhaseA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcPowerCurrentPhaseA) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4925,7 +4925,7 @@ func (m *PgnAcPowerCurrentPhaseA) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcPowerCurrentPhaseA) EncodePayload() ([]uint8, error) {
+func (m *AcPowerCurrentPhaseA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -4950,7 +4950,7 @@ func (m *PgnAcPowerCurrentPhaseA) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcPowerCurrentPhaseB struct {
+type AcPowerCurrentPhaseB struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -4958,10 +4958,10 @@ type PgnAcPowerCurrentPhaseB struct {
 	Power            *int64      `json:"power,omitempty" n2k:"4"`
 }
 
-func (m *PgnAcPowerCurrentPhaseB) PGNNumber() uint32               { return 127745 }
-func (m *PgnAcPowerCurrentPhaseB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcPowerCurrentPhaseB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcPowerCurrentPhaseB) DecodePayload(payload []uint8) error {
+func (m *AcPowerCurrentPhaseB) PGNNumber() uint32               { return 127745 }
+func (m *AcPowerCurrentPhaseB) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcPowerCurrentPhaseB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcPowerCurrentPhaseB) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5006,7 +5006,7 @@ func (m *PgnAcPowerCurrentPhaseB) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcPowerCurrentPhaseB) EncodePayload() ([]uint8, error) {
+func (m *AcPowerCurrentPhaseB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5031,7 +5031,7 @@ func (m *PgnAcPowerCurrentPhaseB) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcPowerCurrentPhaseC struct {
+type AcPowerCurrentPhaseC struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -5039,10 +5039,10 @@ type PgnAcPowerCurrentPhaseC struct {
 	Power            *int64      `json:"power,omitempty" n2k:"4"`
 }
 
-func (m *PgnAcPowerCurrentPhaseC) PGNNumber() uint32               { return 127746 }
-func (m *PgnAcPowerCurrentPhaseC) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcPowerCurrentPhaseC) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcPowerCurrentPhaseC) DecodePayload(payload []uint8) error {
+func (m *AcPowerCurrentPhaseC) PGNNumber() uint32               { return 127746 }
+func (m *AcPowerCurrentPhaseC) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcPowerCurrentPhaseC) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcPowerCurrentPhaseC) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5087,7 +5087,7 @@ func (m *PgnAcPowerCurrentPhaseC) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcPowerCurrentPhaseC) EncodePayload() ([]uint8, error) {
+func (m *AcPowerCurrentPhaseC) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5112,7 +5112,7 @@ func (m *PgnAcPowerCurrentPhaseC) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcVoltageFrequencyPhaseA struct {
+type AcVoltageFrequencyPhaseA struct {
 	Info                   MessageInfo `json:"info"`
 	Sid                    *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber       *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -5121,10 +5121,10 @@ type PgnAcVoltageFrequencyPhaseA struct {
 	Frequency              *uint64     `json:"frequency,omitempty" n2k:"5"`
 }
 
-func (m *PgnAcVoltageFrequencyPhaseA) PGNNumber() uint32               { return 127747 }
-func (m *PgnAcVoltageFrequencyPhaseA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcVoltageFrequencyPhaseA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcVoltageFrequencyPhaseA) DecodePayload(payload []uint8) error {
+func (m *AcVoltageFrequencyPhaseA) PGNNumber() uint32               { return 127747 }
+func (m *AcVoltageFrequencyPhaseA) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcVoltageFrequencyPhaseA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcVoltageFrequencyPhaseA) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5178,7 +5178,7 @@ func (m *PgnAcVoltageFrequencyPhaseA) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcVoltageFrequencyPhaseA) EncodePayload() ([]uint8, error) {
+func (m *AcVoltageFrequencyPhaseA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5208,7 +5208,7 @@ func (m *PgnAcVoltageFrequencyPhaseA) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcVoltageFrequencyPhaseB struct {
+type AcVoltageFrequencyPhaseB struct {
 	Info                   MessageInfo `json:"info"`
 	Sid                    *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber       *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -5217,10 +5217,10 @@ type PgnAcVoltageFrequencyPhaseB struct {
 	Frequency              *uint64     `json:"frequency,omitempty" n2k:"5"`
 }
 
-func (m *PgnAcVoltageFrequencyPhaseB) PGNNumber() uint32               { return 127748 }
-func (m *PgnAcVoltageFrequencyPhaseB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcVoltageFrequencyPhaseB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcVoltageFrequencyPhaseB) DecodePayload(payload []uint8) error {
+func (m *AcVoltageFrequencyPhaseB) PGNNumber() uint32               { return 127748 }
+func (m *AcVoltageFrequencyPhaseB) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcVoltageFrequencyPhaseB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcVoltageFrequencyPhaseB) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5274,7 +5274,7 @@ func (m *PgnAcVoltageFrequencyPhaseB) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcVoltageFrequencyPhaseB) EncodePayload() ([]uint8, error) {
+func (m *AcVoltageFrequencyPhaseB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5304,7 +5304,7 @@ func (m *PgnAcVoltageFrequencyPhaseB) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAcVoltageFrequencyPhaseC struct {
+type AcVoltageFrequencyPhaseC struct {
 	Info                   MessageInfo `json:"info"`
 	Sid                    *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber       *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -5313,10 +5313,10 @@ type PgnAcVoltageFrequencyPhaseC struct {
 	Frequency              *uint64     `json:"frequency,omitempty" n2k:"5"`
 }
 
-func (m *PgnAcVoltageFrequencyPhaseC) PGNNumber() uint32               { return 127749 }
-func (m *PgnAcVoltageFrequencyPhaseC) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAcVoltageFrequencyPhaseC) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAcVoltageFrequencyPhaseC) DecodePayload(payload []uint8) error {
+func (m *AcVoltageFrequencyPhaseC) PGNNumber() uint32               { return 127749 }
+func (m *AcVoltageFrequencyPhaseC) MessageInfo() MessageInfo        { return m.Info }
+func (m *AcVoltageFrequencyPhaseC) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AcVoltageFrequencyPhaseC) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5370,7 +5370,7 @@ func (m *PgnAcVoltageFrequencyPhaseC) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAcVoltageFrequencyPhaseC) EncodePayload() ([]uint8, error) {
+func (m *AcVoltageFrequencyPhaseC) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5400,7 +5400,7 @@ func (m *PgnAcVoltageFrequencyPhaseC) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnDcVoltageCurrent struct {
+type DcVoltageCurrent struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
 	ConnectionNumber *uint64     `json:"connectionNumber,omitempty" n2k:"2"`
@@ -5408,10 +5408,10 @@ type PgnDcVoltageCurrent struct {
 	DcCurrent        *int64      `json:"dcCurrent,omitempty" n2k:"4"`
 }
 
-func (m *PgnDcVoltageCurrent) PGNNumber() uint32               { return 127751 }
-func (m *PgnDcVoltageCurrent) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnDcVoltageCurrent) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnDcVoltageCurrent) DecodePayload(payload []uint8) error {
+func (m *DcVoltageCurrent) PGNNumber() uint32               { return 127751 }
+func (m *DcVoltageCurrent) MessageInfo() MessageInfo        { return m.Info }
+func (m *DcVoltageCurrent) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *DcVoltageCurrent) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5460,7 +5460,7 @@ func (m *PgnDcVoltageCurrent) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnDcVoltageCurrent) EncodePayload() ([]uint8, error) {
+func (m *DcVoltageCurrent) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -5486,7 +5486,7 @@ func (m *PgnDcVoltageCurrent) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricEnergyStorageStatusRapidUpdate struct {
+type ElectricEnergyStorageStatusRapidUpdate struct {
 	Info                    MessageInfo `json:"info"`
 	EnergyStorageIdentifier *uint64     `json:"energyStorageIdentifier,omitempty" n2k:"1"`
 	BatteryStatus           *uint64     `json:"batteryStatus,omitempty" n2k:"2"`
@@ -5496,10 +5496,10 @@ type PgnElectricEnergyStorageStatusRapidUpdate struct {
 	BatteryCurrent          *int64      `json:"batteryCurrent,omitempty" n2k:"6"`
 }
 
-func (m *PgnElectricEnergyStorageStatusRapidUpdate) PGNNumber() uint32               { return 128003 }
-func (m *PgnElectricEnergyStorageStatusRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricEnergyStorageStatusRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricEnergyStorageStatusRapidUpdate) DecodePayload(payload []uint8) error {
+func (m *ElectricEnergyStorageStatusRapidUpdate) PGNNumber() uint32               { return 128003 }
+func (m *ElectricEnergyStorageStatusRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricEnergyStorageStatusRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricEnergyStorageStatusRapidUpdate) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5568,7 +5568,7 @@ func (m *PgnElectricEnergyStorageStatusRapidUpdate) DecodePayload(payload []uint
 	}
 	return nil
 }
-func (m *PgnElectricEnergyStorageStatusRapidUpdate) EncodePayload() ([]uint8, error) {
+func (m *ElectricEnergyStorageStatusRapidUpdate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.EnergyStorageIdentifier != nil {
 		writer.writeUInt64(m.EnergyStorageIdentifier, 8)
@@ -5604,7 +5604,7 @@ func (m *PgnElectricEnergyStorageStatusRapidUpdate) EncodePayload() ([]uint8, er
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnHvacStatus struct {
+type HvacStatus struct {
 	Info                          MessageInfo `json:"info"`
 	HvacIdentifier                *uint64     `json:"hvacIdentifier,omitempty" n2k:"1"`
 	Location                      *uint64     `json:"location,omitempty" n2k:"2"`
@@ -5634,10 +5634,10 @@ type PgnHvacStatus struct {
 	InletHumidity                 *int64      `json:"inletHumidity,omitempty" n2k:"26"`
 }
 
-func (m *PgnHvacStatus) PGNNumber() uint32               { return 130329 }
-func (m *PgnHvacStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnHvacStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnHvacStatus) DecodePayload(payload []uint8) error {
+func (m *HvacStatus) PGNNumber() uint32               { return 130329 }
+func (m *HvacStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *HvacStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *HvacStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -5905,7 +5905,7 @@ func (m *PgnHvacStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnHvacStatus) EncodePayload() ([]uint8, error) {
+func (m *HvacStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.HvacIdentifier != nil {
 		writer.writeUInt64(m.HvacIdentifier, 8)
@@ -6040,7 +6040,7 @@ func (m *PgnHvacStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingSystemSettings struct {
+type LightingSystemSettings struct {
 	Info                        MessageInfo `json:"info"`
 	GlobalEnable                *uint64     `json:"globalEnable,omitempty" n2k:"1"`
 	DefaultSettingsCommand      *uint64     `json:"defaultSettingsCommand,omitempty" n2k:"2"`
@@ -6055,10 +6055,10 @@ type PgnLightingSystemSettings struct {
 	IdentifyDevice              *uint64     `json:"identifyDevice,omitempty" n2k:"12"`
 }
 
-func (m *PgnLightingSystemSettings) PGNNumber() uint32               { return 130330 }
-func (m *PgnLightingSystemSettings) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingSystemSettings) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingSystemSettings) DecodePayload(payload []uint8) error {
+func (m *LightingSystemSettings) PGNNumber() uint32               { return 130330 }
+func (m *LightingSystemSettings) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingSystemSettings) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingSystemSettings) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(2)
@@ -6176,7 +6176,7 @@ func (m *PgnLightingSystemSettings) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingSystemSettings) EncodePayload() ([]uint8, error) {
+func (m *LightingSystemSettings) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.GlobalEnable != nil {
 		writer.writeUInt64(m.GlobalEnable, 2)
@@ -6233,7 +6233,7 @@ func (m *PgnLightingSystemSettings) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingZone struct {
+type LightingZone struct {
 	Info                      MessageInfo `json:"info"`
 	ZoneIndex                 *uint64     `json:"zoneIndex,omitempty" n2k:"1"`
 	ZoneName                  string      `json:"zoneName,omitempty" n2k:"2"`
@@ -6250,10 +6250,10 @@ type PgnLightingZone struct {
 	ZoneEnabled               *uint64     `json:"zoneEnabled,omitempty" n2k:"13"`
 }
 
-func (m *PgnLightingZone) PGNNumber() uint32               { return 130561 }
-func (m *PgnLightingZone) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingZone) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingZone) DecodePayload(payload []uint8) error {
+func (m *LightingZone) PGNNumber() uint32               { return 130561 }
+func (m *LightingZone) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingZone) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingZone) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -6391,7 +6391,7 @@ func (m *PgnLightingZone) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingZone) EncodePayload() ([]uint8, error) {
+func (m *LightingZone) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ZoneIndex != nil {
 		writer.writeUInt64(m.ZoneIndex, 8)
@@ -6458,7 +6458,7 @@ func (m *PgnLightingZone) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingScene struct {
+type LightingScene struct {
 	Info                      MessageInfo `json:"info"`
 	SceneIndex                *uint64     `json:"sceneIndex,omitempty" n2k:"1"`
 	ZoneName                  string      `json:"zoneName,omitempty" n2k:"2"`
@@ -6474,10 +6474,10 @@ type PgnLightingScene struct {
 	ProgramColorSequenceRate  *uint64     `json:"programColorSequenceRate,omitempty" n2k:"12"`
 }
 
-func (m *PgnLightingScene) PGNNumber() uint32               { return 130562 }
-func (m *PgnLightingScene) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingScene) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingScene) DecodePayload(payload []uint8) error {
+func (m *LightingScene) PGNNumber() uint32               { return 130562 }
+func (m *LightingScene) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingScene) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingScene) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -6601,7 +6601,7 @@ func (m *PgnLightingScene) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingScene) EncodePayload() ([]uint8, error) {
+func (m *LightingScene) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.SceneIndex != nil {
 		writer.writeUInt64(m.SceneIndex, 8)
@@ -6662,7 +6662,7 @@ func (m *PgnLightingScene) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingDevice struct {
+type LightingDevice struct {
 	Info                      MessageInfo `json:"info"`
 	DeviceId                  *uint64     `json:"deviceId,omitempty" n2k:"1"`
 	DeviceCapabilities        *uint64     `json:"deviceCapabilities,omitempty" n2k:"2"`
@@ -6683,10 +6683,10 @@ type PgnLightingDevice struct {
 	Enabled                   *uint64     `json:"enabled,omitempty" n2k:"17"`
 }
 
-func (m *PgnLightingDevice) PGNNumber() uint32               { return 130563 }
-func (m *PgnLightingDevice) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingDevice) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingDevice) DecodePayload(payload []uint8) error {
+func (m *LightingDevice) PGNNumber() uint32               { return 130563 }
+func (m *LightingDevice) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingDevice) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingDevice) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(32)
@@ -6864,7 +6864,7 @@ func (m *PgnLightingDevice) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingDevice) EncodePayload() ([]uint8, error) {
+func (m *LightingDevice) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.DeviceId != nil {
 		writer.writeUInt64(m.DeviceId, 32)
@@ -6951,7 +6951,7 @@ func (m *PgnLightingDevice) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingDeviceEnumeration struct {
+type LightingDeviceEnumeration struct {
 	Info                 MessageInfo `json:"info"`
 	IndexOfFirstDevice   *uint64     `json:"indexOfFirstDevice,omitempty" n2k:"1"`
 	TotalNumberOfDevices *uint64     `json:"totalNumberOfDevices,omitempty" n2k:"2"`
@@ -6960,10 +6960,10 @@ type PgnLightingDeviceEnumeration struct {
 	Status               *uint64     `json:"status,omitempty" n2k:"5"`
 }
 
-func (m *PgnLightingDeviceEnumeration) PGNNumber() uint32               { return 130564 }
-func (m *PgnLightingDeviceEnumeration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingDeviceEnumeration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingDeviceEnumeration) DecodePayload(payload []uint8) error {
+func (m *LightingDeviceEnumeration) PGNNumber() uint32               { return 130564 }
+func (m *LightingDeviceEnumeration) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingDeviceEnumeration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingDeviceEnumeration) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -7017,7 +7017,7 @@ func (m *PgnLightingDeviceEnumeration) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingDeviceEnumeration) EncodePayload() ([]uint8, error) {
+func (m *LightingDeviceEnumeration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.IndexOfFirstDevice != nil {
 		writer.writeUInt64(m.IndexOfFirstDevice, 16)
@@ -7047,7 +7047,7 @@ func (m *PgnLightingDeviceEnumeration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingColorSequence struct {
+type LightingColorSequence struct {
 	Info             MessageInfo `json:"info"`
 	SequenceIndex    *uint64     `json:"sequenceIndex,omitempty" n2k:"1"`
 	ColorCount       *uint64     `json:"colorCount,omitempty" n2k:"2"`
@@ -7059,10 +7059,10 @@ type PgnLightingColorSequence struct {
 	Intensity        *uint64     `json:"intensity,omitempty" n2k:"8"`
 }
 
-func (m *PgnLightingColorSequence) PGNNumber() uint32               { return 130565 }
-func (m *PgnLightingColorSequence) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingColorSequence) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingColorSequence) DecodePayload(payload []uint8) error {
+func (m *LightingColorSequence) PGNNumber() uint32               { return 130565 }
+func (m *LightingColorSequence) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingColorSequence) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingColorSequence) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -7146,7 +7146,7 @@ func (m *PgnLightingColorSequence) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingColorSequence) EncodePayload() ([]uint8, error) {
+func (m *LightingColorSequence) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.SequenceIndex != nil {
 		writer.writeUInt64(m.SequenceIndex, 8)
@@ -7191,7 +7191,7 @@ func (m *PgnLightingColorSequence) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLightingProgram struct {
+type LightingProgram struct {
 	Info                MessageInfo `json:"info"`
 	ProgramId           *uint64     `json:"programId,omitempty" n2k:"1"`
 	NameOfProgram       string      `json:"nameOfProgram,omitempty" n2k:"2"`
@@ -7199,10 +7199,10 @@ type PgnLightingProgram struct {
 	ProgramCapabilities *uint64     `json:"programCapabilities,omitempty" n2k:"4"`
 }
 
-func (m *PgnLightingProgram) PGNNumber() uint32               { return 130566 }
-func (m *PgnLightingProgram) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLightingProgram) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLightingProgram) DecodePayload(payload []uint8) error {
+func (m *LightingProgram) PGNNumber() uint32               { return 130566 }
+func (m *LightingProgram) MessageInfo() MessageInfo        { return m.Info }
+func (m *LightingProgram) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LightingProgram) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -7250,7 +7250,7 @@ func (m *PgnLightingProgram) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLightingProgram) EncodePayload() ([]uint8, error) {
+func (m *LightingProgram) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ProgramId != nil {
 		writer.writeUInt64(m.ProgramId, 8)
@@ -7268,7 +7268,7 @@ func (m *PgnLightingProgram) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCurrentStatusAndFile struct {
+type CurrentStatusAndFile struct {
 	Info                 MessageInfo `json:"info"`
 	Zone                 *uint64     `json:"zone,omitempty" n2k:"1"`
 	Source               *uint64     `json:"source,omitempty" n2k:"2"`
@@ -7289,10 +7289,10 @@ type PgnCurrentStatusAndFile struct {
 	TotalNumberOfTracks  *uint64     `json:"totalNumberOfTracks,omitempty" n2k:"17"`
 }
 
-func (m *PgnCurrentStatusAndFile) PGNNumber() uint32               { return 130569 }
-func (m *PgnCurrentStatusAndFile) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCurrentStatusAndFile) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCurrentStatusAndFile) DecodePayload(payload []uint8) error {
+func (m *CurrentStatusAndFile) PGNNumber() uint32               { return 130569 }
+func (m *CurrentStatusAndFile) MessageInfo() MessageInfo        { return m.Info }
+func (m *CurrentStatusAndFile) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CurrentStatusAndFile) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -7466,7 +7466,7 @@ func (m *PgnCurrentStatusAndFile) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnCurrentStatusAndFile) EncodePayload() ([]uint8, error) {
+func (m *CurrentStatusAndFile) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Zone != nil {
 		writer.writeUInt64(m.Zone, 8)

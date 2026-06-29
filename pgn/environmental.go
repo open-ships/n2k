@@ -3,7 +3,7 @@
 
 package pgn
 
-type PgnWaterDepth struct {
+type WaterDepth struct {
 	Info   MessageInfo `json:"info"`
 	Sid    *uint64     `json:"sid,omitempty" n2k:"1"`
 	Depth  *uint64     `json:"depth,omitempty" n2k:"2"`
@@ -11,10 +11,10 @@ type PgnWaterDepth struct {
 	Range  *uint64     `json:"range,omitempty" n2k:"4"`
 }
 
-func (m *PgnWaterDepth) PGNNumber() uint32               { return 128267 }
-func (m *PgnWaterDepth) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWaterDepth) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWaterDepth) DecodePayload(payload []uint8) error {
+func (m *WaterDepth) PGNNumber() uint32               { return 128267 }
+func (m *WaterDepth) MessageInfo() MessageInfo        { return m.Info }
+func (m *WaterDepth) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WaterDepth) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -59,7 +59,7 @@ func (m *PgnWaterDepth) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnWaterDepth) EncodePayload() ([]uint8, error) {
+func (m *WaterDepth) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -84,7 +84,7 @@ func (m *PgnWaterDepth) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnWindlassControlStatus struct {
+type WindlassControlStatus struct {
 	Info                     MessageInfo `json:"info"`
 	Sid                      *uint64     `json:"sid,omitempty" n2k:"1"`
 	WindlassId               *uint64     `json:"windlassId,omitempty" n2k:"2"`
@@ -100,10 +100,10 @@ type PgnWindlassControlStatus struct {
 	WindlassControlEvents    *uint64     `json:"windlassControlEvents,omitempty" n2k:"13"`
 }
 
-func (m *PgnWindlassControlStatus) PGNNumber() uint32               { return 128776 }
-func (m *PgnWindlassControlStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWindlassControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWindlassControlStatus) DecodePayload(payload []uint8) error {
+func (m *WindlassControlStatus) PGNNumber() uint32               { return 128776 }
+func (m *WindlassControlStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *WindlassControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WindlassControlStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -235,7 +235,7 @@ func (m *PgnWindlassControlStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnWindlassControlStatus) EncodePayload() ([]uint8, error) {
+func (m *WindlassControlStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -298,7 +298,7 @@ func (m *PgnWindlassControlStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAnchorWindlassOperatingStatus struct {
+type AnchorWindlassOperatingStatus struct {
 	Info                     MessageInfo `json:"info"`
 	Sid                      *uint64     `json:"sid,omitempty" n2k:"1"`
 	WindlassId               *uint64     `json:"windlassId,omitempty" n2k:"2"`
@@ -311,10 +311,10 @@ type PgnAnchorWindlassOperatingStatus struct {
 	WindlassOperatingEvents  *uint64     `json:"windlassOperatingEvents,omitempty" n2k:"10"`
 }
 
-func (m *PgnAnchorWindlassOperatingStatus) PGNNumber() uint32               { return 128777 }
-func (m *PgnAnchorWindlassOperatingStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAnchorWindlassOperatingStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAnchorWindlassOperatingStatus) DecodePayload(payload []uint8) error {
+func (m *AnchorWindlassOperatingStatus) PGNNumber() uint32               { return 128777 }
+func (m *AnchorWindlassOperatingStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *AnchorWindlassOperatingStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AnchorWindlassOperatingStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -412,7 +412,7 @@ func (m *PgnAnchorWindlassOperatingStatus) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnAnchorWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
+func (m *AnchorWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -463,7 +463,7 @@ func (m *PgnAnchorWindlassOperatingStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAnchorWindlassMonitoringStatus struct {
+type AnchorWindlassMonitoringStatus struct {
 	Info                     MessageInfo `json:"info"`
 	Sid                      *uint64     `json:"sid,omitempty" n2k:"1"`
 	WindlassId               *uint64     `json:"windlassId,omitempty" n2k:"2"`
@@ -473,10 +473,10 @@ type PgnAnchorWindlassMonitoringStatus struct {
 	TotalMotorTime           *uint64     `json:"totalMotorTime,omitempty" n2k:"6"`
 }
 
-func (m *PgnAnchorWindlassMonitoringStatus) PGNNumber() uint32               { return 128778 }
-func (m *PgnAnchorWindlassMonitoringStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAnchorWindlassMonitoringStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAnchorWindlassMonitoringStatus) DecodePayload(payload []uint8) error {
+func (m *AnchorWindlassMonitoringStatus) PGNNumber() uint32               { return 128778 }
+func (m *AnchorWindlassMonitoringStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *AnchorWindlassMonitoringStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AnchorWindlassMonitoringStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -544,7 +544,7 @@ func (m *PgnAnchorWindlassMonitoringStatus) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnAnchorWindlassMonitoringStatus) EncodePayload() ([]uint8, error) {
+func (m *AnchorWindlassMonitoringStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -580,7 +580,7 @@ func (m *PgnAnchorWindlassMonitoringStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSetDriftRapidUpdate struct {
+type SetDriftRapidUpdate struct {
 	Info         MessageInfo `json:"info"`
 	Sid          *uint64     `json:"sid,omitempty" n2k:"1"`
 	SetReference *uint64     `json:"setReference,omitempty" n2k:"2"`
@@ -588,10 +588,10 @@ type PgnSetDriftRapidUpdate struct {
 	Drift        *uint64     `json:"drift,omitempty" n2k:"5"`
 }
 
-func (m *PgnSetDriftRapidUpdate) PGNNumber() uint32               { return 129291 }
-func (m *PgnSetDriftRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSetDriftRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSetDriftRapidUpdate) DecodePayload(payload []uint8) error {
+func (m *SetDriftRapidUpdate) PGNNumber() uint32               { return 129291 }
+func (m *SetDriftRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
+func (m *SetDriftRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SetDriftRapidUpdate) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -643,7 +643,7 @@ func (m *PgnSetDriftRapidUpdate) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSetDriftRapidUpdate) EncodePayload() ([]uint8, error) {
+func (m *SetDriftRapidUpdate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -670,7 +670,7 @@ func (m *PgnSetDriftRapidUpdate) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLabel struct {
+type Label struct {
 	Info                            MessageInfo `json:"info"`
 	HardwareChannelId               *uint64     `json:"hardwareChannelId,omitempty" n2k:"1"`
 	Pgn                             *uint64     `json:"pgn,omitempty" n2k:"2"`
@@ -682,10 +682,10 @@ type PgnLabel struct {
 	Label                           string      `json:"label,omitempty" n2k:"8"`
 }
 
-func (m *PgnLabel) PGNNumber() uint32               { return 130060 }
-func (m *PgnLabel) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLabel) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLabel) DecodePayload(payload []uint8) error {
+func (m *Label) PGNNumber() uint32               { return 130060 }
+func (m *Label) MessageInfo() MessageInfo        { return m.Info }
+func (m *Label) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Label) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -769,7 +769,7 @@ func (m *PgnLabel) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLabel) EncodePayload() ([]uint8, error) {
+func (m *Label) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.HardwareChannelId != nil {
 		writer.writeUInt64(m.HardwareChannelId, 8)
@@ -810,7 +810,7 @@ func (m *PgnLabel) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnChannelSourceConfiguration struct {
+type ChannelSourceConfiguration struct {
 	Info                            MessageInfo `json:"info"`
 	DataSourceChannelId             *uint64     `json:"dataSourceChannelId,omitempty" n2k:"1"`
 	SourceSelectionStatus           *uint64     `json:"sourceSelectionStatus,omitempty" n2k:"2"`
@@ -824,10 +824,10 @@ type PgnChannelSourceConfiguration struct {
 	ParameterFieldNumber            *uint64     `json:"parameterFieldNumber,omitempty" n2k:"11"`
 }
 
-func (m *PgnChannelSourceConfiguration) PGNNumber() uint32               { return 130061 }
-func (m *PgnChannelSourceConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnChannelSourceConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnChannelSourceConfiguration) DecodePayload(payload []uint8) error {
+func (m *ChannelSourceConfiguration) PGNNumber() uint32               { return 130061 }
+func (m *ChannelSourceConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *ChannelSourceConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ChannelSourceConfiguration) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -935,7 +935,7 @@ func (m *PgnChannelSourceConfiguration) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnChannelSourceConfiguration) EncodePayload() ([]uint8, error) {
+func (m *ChannelSourceConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.DataSourceChannelId != nil {
 		writer.writeUInt64(m.DataSourceChannelId, 8)
@@ -987,7 +987,7 @@ func (m *PgnChannelSourceConfiguration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnWindData struct {
+type WindData struct {
 	Info      MessageInfo `json:"info"`
 	Sid       *uint64     `json:"sid,omitempty" n2k:"1"`
 	WindSpeed *uint64     `json:"windSpeed,omitempty" n2k:"2"`
@@ -995,10 +995,10 @@ type PgnWindData struct {
 	Reference *uint64     `json:"reference,omitempty" n2k:"4"`
 }
 
-func (m *PgnWindData) PGNNumber() uint32               { return 130306 }
-func (m *PgnWindData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWindData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWindData) DecodePayload(payload []uint8) error {
+func (m *WindData) PGNNumber() uint32               { return 130306 }
+func (m *WindData) MessageInfo() MessageInfo        { return m.Info }
+func (m *WindData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WindData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1046,7 +1046,7 @@ func (m *PgnWindData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnWindData) EncodePayload() ([]uint8, error) {
+func (m *WindData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1072,7 +1072,7 @@ func (m *PgnWindData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEnvironmentalParametersObsolete struct {
+type EnvironmentalParametersObsolete struct {
 	Info                         MessageInfo `json:"info"`
 	Sid                          *uint64     `json:"sid,omitempty" n2k:"1"`
 	WaterTemperature             *uint64     `json:"waterTemperature,omitempty" n2k:"2"`
@@ -1080,10 +1080,10 @@ type PgnEnvironmentalParametersObsolete struct {
 	AtmosphericPressure          *uint64     `json:"atmosphericPressure,omitempty" n2k:"4"`
 }
 
-func (m *PgnEnvironmentalParametersObsolete) PGNNumber() uint32               { return 130310 }
-func (m *PgnEnvironmentalParametersObsolete) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEnvironmentalParametersObsolete) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEnvironmentalParametersObsolete) DecodePayload(payload []uint8) error {
+func (m *EnvironmentalParametersObsolete) PGNNumber() uint32               { return 130310 }
+func (m *EnvironmentalParametersObsolete) MessageInfo() MessageInfo        { return m.Info }
+func (m *EnvironmentalParametersObsolete) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EnvironmentalParametersObsolete) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1131,7 +1131,7 @@ func (m *PgnEnvironmentalParametersObsolete) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnEnvironmentalParametersObsolete) EncodePayload() ([]uint8, error) {
+func (m *EnvironmentalParametersObsolete) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1157,7 +1157,7 @@ func (m *PgnEnvironmentalParametersObsolete) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEnvironmentalParameters struct {
+type EnvironmentalParameters struct {
 	Info                MessageInfo `json:"info"`
 	Sid                 *uint64     `json:"sid,omitempty" n2k:"1"`
 	TemperatureSource   *uint64     `json:"temperatureSource,omitempty" n2k:"2"`
@@ -1167,10 +1167,10 @@ type PgnEnvironmentalParameters struct {
 	AtmosphericPressure *uint64     `json:"atmosphericPressure,omitempty" n2k:"6"`
 }
 
-func (m *PgnEnvironmentalParameters) PGNNumber() uint32               { return 130311 }
-func (m *PgnEnvironmentalParameters) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEnvironmentalParameters) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEnvironmentalParameters) DecodePayload(payload []uint8) error {
+func (m *EnvironmentalParameters) PGNNumber() uint32               { return 130311 }
+func (m *EnvironmentalParameters) MessageInfo() MessageInfo        { return m.Info }
+func (m *EnvironmentalParameters) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EnvironmentalParameters) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1235,7 +1235,7 @@ func (m *PgnEnvironmentalParameters) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnEnvironmentalParameters) EncodePayload() ([]uint8, error) {
+func (m *EnvironmentalParameters) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1270,7 +1270,7 @@ func (m *PgnEnvironmentalParameters) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnTemperature struct {
+type Temperature struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance          *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -1279,10 +1279,10 @@ type PgnTemperature struct {
 	SetTemperature    *uint64     `json:"setTemperature,omitempty" n2k:"5"`
 }
 
-func (m *PgnTemperature) PGNNumber() uint32               { return 130312 }
-func (m *PgnTemperature) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnTemperature) DecodePayload(payload []uint8) error {
+func (m *Temperature) PGNNumber() uint32               { return 130312 }
+func (m *Temperature) MessageInfo() MessageInfo        { return m.Info }
+func (m *Temperature) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Temperature) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1340,7 +1340,7 @@ func (m *PgnTemperature) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnTemperature) EncodePayload() ([]uint8, error) {
+func (m *Temperature) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1371,7 +1371,7 @@ func (m *PgnTemperature) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnHumidity struct {
+type Humidity struct {
 	Info           MessageInfo `json:"info"`
 	Sid            *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -1380,10 +1380,10 @@ type PgnHumidity struct {
 	SetHumidity    *int64      `json:"setHumidity,omitempty" n2k:"5"`
 }
 
-func (m *PgnHumidity) PGNNumber() uint32               { return 130313 }
-func (m *PgnHumidity) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnHumidity) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnHumidity) DecodePayload(payload []uint8) error {
+func (m *Humidity) PGNNumber() uint32               { return 130313 }
+func (m *Humidity) MessageInfo() MessageInfo        { return m.Info }
+func (m *Humidity) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Humidity) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1443,7 +1443,7 @@ func (m *PgnHumidity) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnHumidity) EncodePayload() ([]uint8, error) {
+func (m *Humidity) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1474,7 +1474,7 @@ func (m *PgnHumidity) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnActualPressure struct {
+type ActualPressure struct {
 	Info     MessageInfo `json:"info"`
 	Sid      *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -1482,10 +1482,10 @@ type PgnActualPressure struct {
 	Pressure *int64      `json:"pressure,omitempty" n2k:"4"`
 }
 
-func (m *PgnActualPressure) PGNNumber() uint32               { return 130314 }
-func (m *PgnActualPressure) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnActualPressure) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnActualPressure) DecodePayload(payload []uint8) error {
+func (m *ActualPressure) PGNNumber() uint32               { return 130314 }
+func (m *ActualPressure) MessageInfo() MessageInfo        { return m.Info }
+func (m *ActualPressure) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ActualPressure) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1534,7 +1534,7 @@ func (m *PgnActualPressure) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnActualPressure) EncodePayload() ([]uint8, error) {
+func (m *ActualPressure) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1560,7 +1560,7 @@ func (m *PgnActualPressure) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSetPressure struct {
+type SetPressure struct {
 	Info     MessageInfo `json:"info"`
 	Sid      *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -1568,10 +1568,10 @@ type PgnSetPressure struct {
 	Pressure *int64      `json:"pressure,omitempty" n2k:"4"`
 }
 
-func (m *PgnSetPressure) PGNNumber() uint32               { return 130315 }
-func (m *PgnSetPressure) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSetPressure) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSetPressure) DecodePayload(payload []uint8) error {
+func (m *SetPressure) PGNNumber() uint32               { return 130315 }
+func (m *SetPressure) MessageInfo() MessageInfo        { return m.Info }
+func (m *SetPressure) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SetPressure) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1620,7 +1620,7 @@ func (m *PgnSetPressure) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSetPressure) EncodePayload() ([]uint8, error) {
+func (m *SetPressure) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1646,7 +1646,7 @@ func (m *PgnSetPressure) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnTemperatureExtendedRange struct {
+type TemperatureExtendedRange struct {
 	Info           MessageInfo `json:"info"`
 	Sid            *uint64     `json:"sid,omitempty" n2k:"1"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"2"`
@@ -1655,10 +1655,10 @@ type PgnTemperatureExtendedRange struct {
 	SetTemperature *uint64     `json:"setTemperature,omitempty" n2k:"5"`
 }
 
-func (m *PgnTemperatureExtendedRange) PGNNumber() uint32               { return 130316 }
-func (m *PgnTemperatureExtendedRange) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnTemperatureExtendedRange) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnTemperatureExtendedRange) DecodePayload(payload []uint8) error {
+func (m *TemperatureExtendedRange) PGNNumber() uint32               { return 130316 }
+func (m *TemperatureExtendedRange) MessageInfo() MessageInfo        { return m.Info }
+func (m *TemperatureExtendedRange) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *TemperatureExtendedRange) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -1712,7 +1712,7 @@ func (m *PgnTemperatureExtendedRange) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnTemperatureExtendedRange) EncodePayload() ([]uint8, error) {
+func (m *TemperatureExtendedRange) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -1742,7 +1742,7 @@ func (m *PgnTemperatureExtendedRange) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnTideStationData struct {
+type TideStationData struct {
 	Info                       MessageInfo `json:"info"`
 	Mode                       *uint64     `json:"mode,omitempty" n2k:"1"`
 	TideTendency               *uint64     `json:"tideTendency,omitempty" n2k:"2"`
@@ -1756,10 +1756,10 @@ type PgnTideStationData struct {
 	StationName                string      `json:"stationName,omitempty" n2k:"11"`
 }
 
-func (m *PgnTideStationData) PGNNumber() uint32               { return 130320 }
-func (m *PgnTideStationData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnTideStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnTideStationData) DecodePayload(payload []uint8) error {
+func (m *TideStationData) PGNNumber() uint32               { return 130320 }
+func (m *TideStationData) MessageInfo() MessageInfo        { return m.Info }
+func (m *TideStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *TideStationData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -1870,7 +1870,7 @@ func (m *PgnTideStationData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnTideStationData) EncodePayload() ([]uint8, error) {
+func (m *TideStationData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Mode != nil {
 		writer.writeUInt64(m.Mode, 4)
@@ -1918,7 +1918,7 @@ func (m *PgnTideStationData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSalinityStationData struct {
+type SalinityStationData struct {
 	Info             MessageInfo `json:"info"`
 	Mode             *uint64     `json:"mode,omitempty" n2k:"1"`
 	MeasurementDate  *uint64     `json:"measurementDate,omitempty" n2k:"3"`
@@ -1931,10 +1931,10 @@ type PgnSalinityStationData struct {
 	StationName      string      `json:"stationName,omitempty" n2k:"10"`
 }
 
-func (m *PgnSalinityStationData) PGNNumber() uint32               { return 130321 }
-func (m *PgnSalinityStationData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSalinityStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSalinityStationData) DecodePayload(payload []uint8) error {
+func (m *SalinityStationData) PGNNumber() uint32               { return 130321 }
+func (m *SalinityStationData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SalinityStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SalinityStationData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -2034,7 +2034,7 @@ func (m *PgnSalinityStationData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSalinityStationData) EncodePayload() ([]uint8, error) {
+func (m *SalinityStationData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Mode != nil {
 		writer.writeUInt64(m.Mode, 4)
@@ -2073,7 +2073,7 @@ func (m *PgnSalinityStationData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCurrentStationData struct {
+type CurrentStationData struct {
 	Info                 MessageInfo `json:"info"`
 	Mode                 *uint64     `json:"mode,omitempty" n2k:"1"`
 	State                *uint64     `json:"state,omitempty" n2k:"2"`
@@ -2089,10 +2089,10 @@ type PgnCurrentStationData struct {
 	StationName          string      `json:"stationName,omitempty" n2k:"13"`
 }
 
-func (m *PgnCurrentStationData) PGNNumber() uint32               { return 130322 }
-func (m *PgnCurrentStationData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCurrentStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCurrentStationData) DecodePayload(payload []uint8) error {
+func (m *CurrentStationData) PGNNumber() uint32               { return 130322 }
+func (m *CurrentStationData) MessageInfo() MessageInfo        { return m.Info }
+func (m *CurrentStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CurrentStationData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -2222,7 +2222,7 @@ func (m *PgnCurrentStationData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnCurrentStationData) EncodePayload() ([]uint8, error) {
+func (m *CurrentStationData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Mode != nil {
 		writer.writeUInt64(m.Mode, 4)
@@ -2280,7 +2280,7 @@ func (m *PgnCurrentStationData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMeteorologicalStationData struct {
+type MeteorologicalStationData struct {
 	Info                MessageInfo `json:"info"`
 	Mode                *uint64     `json:"mode,omitempty" n2k:"1"`
 	MeasurementDate     *uint64     `json:"measurementDate,omitempty" n2k:"3"`
@@ -2297,10 +2297,10 @@ type PgnMeteorologicalStationData struct {
 	StationName         string      `json:"stationName,omitempty" n2k:"15"`
 }
 
-func (m *PgnMeteorologicalStationData) PGNNumber() uint32               { return 130323 }
-func (m *PgnMeteorologicalStationData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMeteorologicalStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMeteorologicalStationData) DecodePayload(payload []uint8) error {
+func (m *MeteorologicalStationData) PGNNumber() uint32               { return 130323 }
+func (m *MeteorologicalStationData) MessageInfo() MessageInfo        { return m.Info }
+func (m *MeteorologicalStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MeteorologicalStationData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -2444,7 +2444,7 @@ func (m *PgnMeteorologicalStationData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMeteorologicalStationData) EncodePayload() ([]uint8, error) {
+func (m *MeteorologicalStationData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Mode != nil {
 		writer.writeUInt64(m.Mode, 4)
@@ -2508,7 +2508,7 @@ func (m *PgnMeteorologicalStationData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMooredBuoyStationData struct {
+type MooredBuoyStationData struct {
 	Info                 MessageInfo `json:"info"`
 	Mode                 *uint64     `json:"mode,omitempty" n2k:"1"`
 	MeasurementDate      *uint64     `json:"measurementDate,omitempty" n2k:"3"`
@@ -2528,10 +2528,10 @@ type PgnMooredBuoyStationData struct {
 	StationId            string      `json:"stationId,omitempty" n2k:"18"`
 }
 
-func (m *PgnMooredBuoyStationData) PGNNumber() uint32               { return 130324 }
-func (m *PgnMooredBuoyStationData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMooredBuoyStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMooredBuoyStationData) DecodePayload(payload []uint8) error {
+func (m *MooredBuoyStationData) PGNNumber() uint32               { return 130324 }
+func (m *MooredBuoyStationData) MessageInfo() MessageInfo        { return m.Info }
+func (m *MooredBuoyStationData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MooredBuoyStationData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -2706,7 +2706,7 @@ func (m *PgnMooredBuoyStationData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMooredBuoyStationData) EncodePayload() ([]uint8, error) {
+func (m *MooredBuoyStationData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Mode != nil {
 		writer.writeUInt64(m.Mode, 4)
@@ -2789,7 +2789,7 @@ func (m *PgnMooredBuoyStationData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEntertainmentDiagnosticStatus struct {
+type EntertainmentDiagnosticStatus struct {
 	Info           MessageInfo `json:"info"`
 	Source         *uint64     `json:"source,omitempty" n2k:"1"`
 	Number         *uint64     `json:"number,omitempty" n2k:"2"`
@@ -2797,10 +2797,10 @@ type PgnEntertainmentDiagnosticStatus struct {
 	DiagnosticData string      `json:"diagnosticData,omitempty" n2k:"5"`
 }
 
-func (m *PgnEntertainmentDiagnosticStatus) PGNNumber() uint32               { return 130568 }
-func (m *PgnEntertainmentDiagnosticStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEntertainmentDiagnosticStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEntertainmentDiagnosticStatus) DecodePayload(payload []uint8) error {
+func (m *EntertainmentDiagnosticStatus) PGNNumber() uint32               { return 130568 }
+func (m *EntertainmentDiagnosticStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *EntertainmentDiagnosticStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EntertainmentDiagnosticStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -2848,7 +2848,7 @@ func (m *PgnEntertainmentDiagnosticStatus) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnEntertainmentDiagnosticStatus) EncodePayload() ([]uint8, error) {
+func (m *EntertainmentDiagnosticStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Source != nil {
 		writer.writeUInt64(m.Source, 8)
@@ -2870,7 +2870,7 @@ func (m *PgnEntertainmentDiagnosticStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLibraryDataFile struct {
+type LibraryDataFile struct {
 	Info           MessageInfo `json:"info"`
 	Source         *uint64     `json:"source,omitempty" n2k:"1"`
 	Number         *uint64     `json:"number,omitempty" n2k:"2"`
@@ -2890,10 +2890,10 @@ type PgnLibraryDataFile struct {
 	StationName    string      `json:"stationName,omitempty" n2k:"17"`
 }
 
-func (m *PgnLibraryDataFile) PGNNumber() uint32               { return 130570 }
-func (m *PgnLibraryDataFile) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLibraryDataFile) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLibraryDataFile) DecodePayload(payload []uint8) error {
+func (m *LibraryDataFile) PGNNumber() uint32               { return 130570 }
+func (m *LibraryDataFile) MessageInfo() MessageInfo        { return m.Info }
+func (m *LibraryDataFile) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LibraryDataFile) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3061,7 +3061,7 @@ func (m *PgnLibraryDataFile) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLibraryDataFile) EncodePayload() ([]uint8, error) {
+func (m *LibraryDataFile) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Source != nil {
 		writer.writeUInt64(m.Source, 8)
@@ -3131,7 +3131,7 @@ func (m *PgnLibraryDataFile) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLibraryDataGroup struct {
+type LibraryDataGroup struct {
 	Info         MessageInfo `json:"info"`
 	Source       *uint64     `json:"source,omitempty" n2k:"1"`
 	Number       *uint64     `json:"number,omitempty" n2k:"2"`
@@ -3147,10 +3147,10 @@ type PgnLibraryDataGroup struct {
 	Artist       string      `json:"artist,omitempty" n2k:"12"`
 }
 
-func (m *PgnLibraryDataGroup) PGNNumber() uint32               { return 130571 }
-func (m *PgnLibraryDataGroup) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLibraryDataGroup) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLibraryDataGroup) DecodePayload(payload []uint8) error {
+func (m *LibraryDataGroup) PGNNumber() uint32               { return 130571 }
+func (m *LibraryDataGroup) MessageInfo() MessageInfo        { return m.Info }
+func (m *LibraryDataGroup) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LibraryDataGroup) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3274,7 +3274,7 @@ func (m *PgnLibraryDataGroup) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLibraryDataGroup) EncodePayload() ([]uint8, error) {
+func (m *LibraryDataGroup) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Source != nil {
 		writer.writeUInt64(m.Source, 8)
@@ -3331,7 +3331,7 @@ func (m *PgnLibraryDataGroup) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLibraryDataSearch struct {
+type LibraryDataSearch struct {
 	Info       MessageInfo `json:"info"`
 	Source     *uint64     `json:"source,omitempty" n2k:"1"`
 	Number     *uint64     `json:"number,omitempty" n2k:"2"`
@@ -3344,10 +3344,10 @@ type PgnLibraryDataSearch struct {
 	GroupName3 string      `json:"groupName3,omitempty" n2k:"9"`
 }
 
-func (m *PgnLibraryDataSearch) PGNNumber() uint32               { return 130572 }
-func (m *PgnLibraryDataSearch) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLibraryDataSearch) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLibraryDataSearch) DecodePayload(payload []uint8) error {
+func (m *LibraryDataSearch) PGNNumber() uint32               { return 130572 }
+func (m *LibraryDataSearch) MessageInfo() MessageInfo        { return m.Info }
+func (m *LibraryDataSearch) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LibraryDataSearch) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3441,7 +3441,7 @@ func (m *PgnLibraryDataSearch) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLibraryDataSearch) EncodePayload() ([]uint8, error) {
+func (m *LibraryDataSearch) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Source != nil {
 		writer.writeUInt64(m.Source, 8)
@@ -3479,7 +3479,7 @@ func (m *PgnLibraryDataSearch) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSupportedSourceData struct {
+type SupportedSourceData struct {
 	Info           MessageInfo `json:"info"`
 	IdOffset       *uint64     `json:"idOffset,omitempty" n2k:"1"`
 	IdCount        *uint64     `json:"idCount,omitempty" n2k:"2"`
@@ -3496,10 +3496,10 @@ type PgnSupportedSourceData struct {
 	ShuffleSupport *uint64     `json:"shuffleSupport,omitempty" n2k:"13"`
 }
 
-func (m *PgnSupportedSourceData) PGNNumber() uint32               { return 130573 }
-func (m *PgnSupportedSourceData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSupportedSourceData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSupportedSourceData) DecodePayload(payload []uint8) error {
+func (m *SupportedSourceData) PGNNumber() uint32               { return 130573 }
+func (m *SupportedSourceData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SupportedSourceData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SupportedSourceData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(16)
@@ -3633,7 +3633,7 @@ func (m *PgnSupportedSourceData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSupportedSourceData) EncodePayload() ([]uint8, error) {
+func (m *SupportedSourceData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.IdOffset != nil {
 		writer.writeUInt64(m.IdOffset, 16)
@@ -3699,7 +3699,7 @@ func (m *PgnSupportedSourceData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSupportedZoneData struct {
+type SupportedZoneData struct {
 	Info           MessageInfo `json:"info"`
 	FirstZoneId    *uint64     `json:"firstZoneId,omitempty" n2k:"1"`
 	ZoneCount      *uint64     `json:"zoneCount,omitempty" n2k:"2"`
@@ -3708,10 +3708,10 @@ type PgnSupportedZoneData struct {
 	Name           string      `json:"name,omitempty" n2k:"5"`
 }
 
-func (m *PgnSupportedZoneData) PGNNumber() uint32               { return 130574 }
-func (m *PgnSupportedZoneData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSupportedZoneData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSupportedZoneData) DecodePayload(payload []uint8) error {
+func (m *SupportedZoneData) PGNNumber() uint32               { return 130574 }
+func (m *SupportedZoneData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SupportedZoneData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SupportedZoneData) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3765,7 +3765,7 @@ func (m *PgnSupportedZoneData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSupportedZoneData) EncodePayload() ([]uint8, error) {
+func (m *SupportedZoneData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.FirstZoneId != nil {
 		writer.writeUInt64(m.FirstZoneId, 8)
@@ -3791,7 +3791,7 @@ func (m *PgnSupportedZoneData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEntertainmentParentalControlStatus struct {
+type EntertainmentParentalControlStatus struct {
 	Info           MessageInfo `json:"info"`
 	Source         *uint64     `json:"source,omitempty" n2k:"1"`
 	Number         *uint64     `json:"number,omitempty" n2k:"2"`
@@ -3802,10 +3802,10 @@ type PgnEntertainmentParentalControlStatus struct {
 	NewPincode     string      `json:"newPincode,omitempty" n2k:"8"`
 }
 
-func (m *PgnEntertainmentParentalControlStatus) PGNNumber() uint32               { return 130575 }
-func (m *PgnEntertainmentParentalControlStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEntertainmentParentalControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEntertainmentParentalControlStatus) DecodePayload(payload []uint8) error {
+func (m *EntertainmentParentalControlStatus) PGNNumber() uint32               { return 130575 }
+func (m *EntertainmentParentalControlStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *EntertainmentParentalControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EntertainmentParentalControlStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -3883,7 +3883,7 @@ func (m *PgnEntertainmentParentalControlStatus) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnEntertainmentParentalControlStatus) EncodePayload() ([]uint8, error) {
+func (m *EntertainmentParentalControlStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Source != nil {
 		writer.writeUInt64(m.Source, 8)
@@ -3916,16 +3916,16 @@ func (m *PgnEntertainmentParentalControlStatus) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSmallCraftStatus struct {
+type SmallCraftStatus struct {
 	Info             MessageInfo `json:"info"`
 	PortTrimTab      *int64      `json:"portTrimTab,omitempty" n2k:"1"`
 	StarboardTrimTab *int64      `json:"starboardTrimTab,omitempty" n2k:"2"`
 }
 
-func (m *PgnSmallCraftStatus) PGNNumber() uint32               { return 130576 }
-func (m *PgnSmallCraftStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSmallCraftStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSmallCraftStatus) DecodePayload(payload []uint8) error {
+func (m *SmallCraftStatus) PGNNumber() uint32               { return 130576 }
+func (m *SmallCraftStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *SmallCraftStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SmallCraftStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(8)
@@ -3955,7 +3955,7 @@ func (m *PgnSmallCraftStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSmallCraftStatus) EncodePayload() ([]uint8, error) {
+func (m *SmallCraftStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.PortTrimTab != nil {
 		writer.writeInt64(m.PortTrimTab, 8)
@@ -3971,7 +3971,7 @@ func (m *PgnSmallCraftStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnVesselSpeedComponents struct {
+type VesselSpeedComponents struct {
 	Info                              MessageInfo `json:"info"`
 	LongitudinalSpeedWaterReferenced  *int64      `json:"longitudinalSpeedWaterReferenced,omitempty" n2k:"1"`
 	TransverseSpeedWaterReferenced    *int64      `json:"transverseSpeedWaterReferenced,omitempty" n2k:"2"`
@@ -3981,10 +3981,10 @@ type PgnVesselSpeedComponents struct {
 	SternSpeedGroundReferenced        *int64      `json:"sternSpeedGroundReferenced,omitempty" n2k:"6"`
 }
 
-func (m *PgnVesselSpeedComponents) PGNNumber() uint32               { return 130578 }
-func (m *PgnVesselSpeedComponents) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnVesselSpeedComponents) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnVesselSpeedComponents) DecodePayload(payload []uint8) error {
+func (m *VesselSpeedComponents) PGNNumber() uint32               { return 130578 }
+func (m *VesselSpeedComponents) MessageInfo() MessageInfo        { return m.Info }
+func (m *VesselSpeedComponents) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *VesselSpeedComponents) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(16)
@@ -4054,7 +4054,7 @@ func (m *PgnVesselSpeedComponents) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnVesselSpeedComponents) EncodePayload() ([]uint8, error) {
+func (m *VesselSpeedComponents) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.LongitudinalSpeedWaterReferenced != nil {
 		writer.writeInt64(m.LongitudinalSpeedWaterReferenced, 16)
@@ -4089,7 +4089,7 @@ func (m *PgnVesselSpeedComponents) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSystemConfiguration struct {
+type SystemConfiguration struct {
 	Info            MessageInfo `json:"info"`
 	Power           *uint64     `json:"power,omitempty" n2k:"1"`
 	DefaultSettings *uint64     `json:"defaultSettings,omitempty" n2k:"2"`
@@ -4098,10 +4098,10 @@ type PgnSystemConfiguration struct {
 	VideoProtocols  *uint64     `json:"videoProtocols,omitempty" n2k:"5"`
 }
 
-func (m *PgnSystemConfiguration) PGNNumber() uint32               { return 130579 }
-func (m *PgnSystemConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSystemConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSystemConfiguration) DecodePayload(payload []uint8) error {
+func (m *SystemConfiguration) PGNNumber() uint32               { return 130579 }
+func (m *SystemConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SystemConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SystemConfiguration) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(2)
@@ -4159,7 +4159,7 @@ func (m *PgnSystemConfiguration) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSystemConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SystemConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Power != nil {
 		writer.writeUInt64(m.Power, 2)
@@ -4190,7 +4190,7 @@ func (m *PgnSystemConfiguration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSystemConfigurationDeprecated struct {
+type SystemConfigurationDeprecated struct {
 	Info            MessageInfo `json:"info"`
 	Power           *uint64     `json:"power,omitempty" n2k:"1"`
 	DefaultSettings *uint64     `json:"defaultSettings,omitempty" n2k:"2"`
@@ -4198,10 +4198,10 @@ type PgnSystemConfigurationDeprecated struct {
 	MaxFavorites    *uint64     `json:"maxFavorites,omitempty" n2k:"4"`
 }
 
-func (m *PgnSystemConfigurationDeprecated) PGNNumber() uint32               { return 130580 }
-func (m *PgnSystemConfigurationDeprecated) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSystemConfigurationDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSystemConfigurationDeprecated) DecodePayload(payload []uint8) error {
+func (m *SystemConfigurationDeprecated) PGNNumber() uint32               { return 130580 }
+func (m *SystemConfigurationDeprecated) MessageInfo() MessageInfo        { return m.Info }
+func (m *SystemConfigurationDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SystemConfigurationDeprecated) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(2)
@@ -4245,7 +4245,7 @@ func (m *PgnSystemConfigurationDeprecated) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnSystemConfigurationDeprecated) EncodePayload() ([]uint8, error) {
+func (m *SystemConfigurationDeprecated) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Power != nil {
 		writer.writeUInt64(m.Power, 2)
@@ -4270,7 +4270,7 @@ func (m *PgnSystemConfigurationDeprecated) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnZoneConfigurationDeprecated struct {
+type ZoneConfigurationDeprecated struct {
 	Info           MessageInfo `json:"info"`
 	FirstZoneId    *uint64     `json:"firstZoneId,omitempty" n2k:"1"`
 	ZoneCount      *uint64     `json:"zoneCount,omitempty" n2k:"2"`
@@ -4279,10 +4279,10 @@ type PgnZoneConfigurationDeprecated struct {
 	ZoneName       string      `json:"zoneName,omitempty" n2k:"5"`
 }
 
-func (m *PgnZoneConfigurationDeprecated) PGNNumber() uint32               { return 130581 }
-func (m *PgnZoneConfigurationDeprecated) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnZoneConfigurationDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnZoneConfigurationDeprecated) DecodePayload(payload []uint8) error {
+func (m *ZoneConfigurationDeprecated) PGNNumber() uint32               { return 130581 }
+func (m *ZoneConfigurationDeprecated) MessageInfo() MessageInfo        { return m.Info }
+func (m *ZoneConfigurationDeprecated) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ZoneConfigurationDeprecated) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4336,7 +4336,7 @@ func (m *PgnZoneConfigurationDeprecated) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnZoneConfigurationDeprecated) EncodePayload() ([]uint8, error) {
+func (m *ZoneConfigurationDeprecated) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.FirstZoneId != nil {
 		writer.writeUInt64(m.FirstZoneId, 8)
@@ -4362,7 +4362,7 @@ func (m *PgnZoneConfigurationDeprecated) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnZoneVolume struct {
+type ZoneVolume struct {
 	Info         MessageInfo `json:"info"`
 	ZoneId       *uint64     `json:"zoneId,omitempty" n2k:"1"`
 	Volume       *uint64     `json:"volume,omitempty" n2k:"2"`
@@ -4371,10 +4371,10 @@ type PgnZoneVolume struct {
 	Channel      *uint64     `json:"channel,omitempty" n2k:"6"`
 }
 
-func (m *PgnZoneVolume) PGNNumber() uint32               { return 130582 }
-func (m *PgnZoneVolume) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnZoneVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnZoneVolume) DecodePayload(payload []uint8) error {
+func (m *ZoneVolume) PGNNumber() uint32               { return 130582 }
+func (m *ZoneVolume) MessageInfo() MessageInfo        { return m.Info }
+func (m *ZoneVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ZoneVolume) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4436,7 +4436,7 @@ func (m *PgnZoneVolume) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnZoneVolume) EncodePayload() ([]uint8, error) {
+func (m *ZoneVolume) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ZoneId != nil {
 		writer.writeUInt64(m.ZoneId, 8)
@@ -4468,7 +4468,7 @@ func (m *PgnZoneVolume) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAvailableAudioEqPresets struct {
+type AvailableAudioEqPresets struct {
 	Info             MessageInfo `json:"info"`
 	FirstPreset      *uint64     `json:"firstPreset,omitempty" n2k:"1"`
 	PresetCount      *uint64     `json:"presetCount,omitempty" n2k:"2"`
@@ -4477,10 +4477,10 @@ type PgnAvailableAudioEqPresets struct {
 	PresetName       string      `json:"presetName,omitempty" n2k:"5"`
 }
 
-func (m *PgnAvailableAudioEqPresets) PGNNumber() uint32               { return 130583 }
-func (m *PgnAvailableAudioEqPresets) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAvailableAudioEqPresets) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAvailableAudioEqPresets) DecodePayload(payload []uint8) error {
+func (m *AvailableAudioEqPresets) PGNNumber() uint32               { return 130583 }
+func (m *AvailableAudioEqPresets) MessageInfo() MessageInfo        { return m.Info }
+func (m *AvailableAudioEqPresets) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AvailableAudioEqPresets) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4534,7 +4534,7 @@ func (m *PgnAvailableAudioEqPresets) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAvailableAudioEqPresets) EncodePayload() ([]uint8, error) {
+func (m *AvailableAudioEqPresets) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.FirstPreset != nil {
 		writer.writeUInt64(m.FirstPreset, 8)
@@ -4560,7 +4560,7 @@ func (m *PgnAvailableAudioEqPresets) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnAvailableBluetoothAddresses struct {
+type AvailableBluetoothAddresses struct {
 	Info              MessageInfo `json:"info"`
 	FirstAddress      *uint64     `json:"firstAddress,omitempty" n2k:"1"`
 	AddressCount      *uint64     `json:"addressCount,omitempty" n2k:"2"`
@@ -4571,10 +4571,10 @@ type PgnAvailableBluetoothAddresses struct {
 	SignalStrength    *uint64     `json:"signalStrength,omitempty" n2k:"7"`
 }
 
-func (m *PgnAvailableBluetoothAddresses) PGNNumber() uint32               { return 130584 }
-func (m *PgnAvailableBluetoothAddresses) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnAvailableBluetoothAddresses) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnAvailableBluetoothAddresses) DecodePayload(payload []uint8) error {
+func (m *AvailableBluetoothAddresses) PGNNumber() uint32               { return 130584 }
+func (m *AvailableBluetoothAddresses) MessageInfo() MessageInfo        { return m.Info }
+func (m *AvailableBluetoothAddresses) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *AvailableBluetoothAddresses) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4648,7 +4648,7 @@ func (m *PgnAvailableBluetoothAddresses) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnAvailableBluetoothAddresses) EncodePayload() ([]uint8, error) {
+func (m *AvailableBluetoothAddresses) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.FirstAddress != nil {
 		writer.writeUInt64(m.FirstAddress, 8)
@@ -4680,7 +4680,7 @@ func (m *PgnAvailableBluetoothAddresses) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnBluetoothSourceStatus struct {
+type BluetoothSourceStatus struct {
 	Info             MessageInfo `json:"info"`
 	SourceNumber     *uint64     `json:"sourceNumber,omitempty" n2k:"1"`
 	Status           *uint64     `json:"status,omitempty" n2k:"2"`
@@ -4689,10 +4689,10 @@ type PgnBluetoothSourceStatus struct {
 	BluetoothAddress []uint8     `json:"bluetoothAddress,omitempty" n2k:"5"`
 }
 
-func (m *PgnBluetoothSourceStatus) PGNNumber() uint32               { return 130585 }
-func (m *PgnBluetoothSourceStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnBluetoothSourceStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnBluetoothSourceStatus) DecodePayload(payload []uint8) error {
+func (m *BluetoothSourceStatus) PGNNumber() uint32               { return 130585 }
+func (m *BluetoothSourceStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *BluetoothSourceStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *BluetoothSourceStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4746,7 +4746,7 @@ func (m *PgnBluetoothSourceStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnBluetoothSourceStatus) EncodePayload() ([]uint8, error) {
+func (m *BluetoothSourceStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.SourceNumber != nil {
 		writer.writeUInt64(m.SourceNumber, 8)
@@ -4772,7 +4772,7 @@ func (m *PgnBluetoothSourceStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnZoneConfiguration struct {
+type ZoneConfiguration struct {
 	Info                    MessageInfo `json:"info"`
 	ZoneId                  *uint64     `json:"zoneId,omitempty" n2k:"1"`
 	VolumeLimit             *uint64     `json:"volumeLimit,omitempty" n2k:"2"`
@@ -4789,10 +4789,10 @@ type PgnZoneConfiguration struct {
 	Channel                 *uint64     `json:"channel,omitempty" n2k:"13"`
 }
 
-func (m *PgnZoneConfiguration) PGNNumber() uint32               { return 130586 }
-func (m *PgnZoneConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnZoneConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnZoneConfiguration) DecodePayload(payload []uint8) error {
+func (m *ZoneConfiguration) PGNNumber() uint32               { return 130586 }
+func (m *ZoneConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *ZoneConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ZoneConfiguration) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -4931,7 +4931,7 @@ func (m *PgnZoneConfiguration) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnZoneConfiguration) EncodePayload() ([]uint8, error) {
+func (m *ZoneConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ZoneId != nil {
 		writer.writeUInt64(m.ZoneId, 8)
@@ -5001,23 +5001,23 @@ func (m *PgnZoneConfiguration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed struct {
+type Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) PGNNumber() uint32 {
+func (m *Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) PGNNumber() uint32 {
 	return 130816
 }
-func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) MessageInfo() MessageInfo {
+func (m *Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) MessageInfo() MessageInfo {
 	return m.Info
 }
-func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) SetMessageInfo(info MessageInfo) {
+func (m *Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) SetMessageInfo(info MessageInfo) {
 	m.Info = info
 }
-func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) DecodePayload(payload []uint8) error {
+func (m *Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(11)
@@ -5055,7 +5055,7 @@ func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) DecodeP
 	}
 	return nil
 }
-func (m *PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) EncodePayload() ([]uint8, error) {
+func (m *Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

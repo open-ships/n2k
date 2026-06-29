@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnXantrexAcStatus struct {
+type XantrexAcStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -22,10 +22,10 @@ type PgnXantrexAcStatus struct {
 	PowerFactor      *int64      `json:"powerFactor,omitempty" n2k:"15"`
 }
 
-func (m *PgnXantrexAcStatus) PGNNumber() uint32               { return 130900 }
-func (m *PgnXantrexAcStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnXantrexAcStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnXantrexAcStatus) DecodePayload(payload []uint8) error {
+func (m *XantrexAcStatus) PGNNumber() uint32               { return 130900 }
+func (m *XantrexAcStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *XantrexAcStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *XantrexAcStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -187,7 +187,7 @@ func (m *PgnXantrexAcStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnXantrexAcStatus) EncodePayload() ([]uint8, error) {
+func (m *XantrexAcStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -259,7 +259,7 @@ func (m *PgnXantrexAcStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnXantrexDcSourceConfigurationStatus struct {
+type XantrexDcSourceConfigurationStatus struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode      *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -274,10 +274,10 @@ type PgnXantrexDcSourceConfigurationStatus struct {
 	DcOvRecoverLevel  *uint64     `json:"dcOvRecoverLevel,omitempty" n2k:"12"`
 }
 
-func (m *PgnXantrexDcSourceConfigurationStatus) PGNNumber() uint32               { return 130910 }
-func (m *PgnXantrexDcSourceConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnXantrexDcSourceConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnXantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *XantrexDcSourceConfigurationStatus) PGNNumber() uint32               { return 130910 }
+func (m *XantrexDcSourceConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *XantrexDcSourceConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *XantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -412,7 +412,7 @@ func (m *PgnXantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnXantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *XantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -473,7 +473,7 @@ func (m *PgnXantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnXantrexAcOutputConfigurationStatus struct {
+type XantrexAcOutputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -487,10 +487,10 @@ type PgnXantrexAcOutputConfigurationStatus struct {
 	UvFaultLevel     *uint64     `json:"uvFaultLevel,omitempty" n2k:"12"`
 }
 
-func (m *PgnXantrexAcOutputConfigurationStatus) PGNNumber() uint32               { return 130911 }
-func (m *PgnXantrexAcOutputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnXantrexAcOutputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnXantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *XantrexAcOutputConfigurationStatus) PGNNumber() uint32               { return 130911 }
+func (m *XantrexAcOutputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *XantrexAcOutputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *XantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -619,7 +619,7 @@ func (m *PgnXantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnXantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *XantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -676,7 +676,7 @@ func (m *PgnXantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnXantrexChargerConfigurationStatus struct {
+type XantrexChargerConfigurationStatus struct {
 	Info                 MessageInfo `json:"info"`
 	ManufacturerCode     *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode         *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -693,10 +693,10 @@ type PgnXantrexChargerConfigurationStatus struct {
 	GenericChargeCurrent *uint64     `json:"genericChargeCurrent,omitempty" n2k:"14"`
 }
 
-func (m *PgnXantrexChargerConfigurationStatus) PGNNumber() uint32               { return 130912 }
-func (m *PgnXantrexChargerConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnXantrexChargerConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnXantrexChargerConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *XantrexChargerConfigurationStatus) PGNNumber() uint32               { return 130912 }
+func (m *XantrexChargerConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *XantrexChargerConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *XantrexChargerConfigurationStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -851,7 +851,7 @@ func (m *PgnXantrexChargerConfigurationStatus) DecodePayload(payload []uint8) er
 	}
 	return nil
 }
-func (m *PgnXantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *XantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -922,7 +922,7 @@ func (m *PgnXantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) 
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnXantrexAcInputConfigurationStatus struct {
+type XantrexAcInputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -941,10 +941,10 @@ type PgnXantrexAcInputConfigurationStatus struct {
 	AcOfLevel        *uint64     `json:"acOfLevel,omitempty" n2k:"17"`
 }
 
-func (m *PgnXantrexAcInputConfigurationStatus) PGNNumber() uint32               { return 130913 }
-func (m *PgnXantrexAcInputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnXantrexAcInputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnXantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) error {
+func (m *XantrexAcInputConfigurationStatus) PGNNumber() uint32               { return 130913 }
+func (m *XantrexAcInputConfigurationStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *XantrexAcInputConfigurationStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *XantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1123,7 +1123,7 @@ func (m *PgnXantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) er
 	}
 	return nil
 }
-func (m *PgnXantrexAcInputConfigurationStatus) EncodePayload() ([]uint8, error) {
+func (m *XantrexAcInputConfigurationStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

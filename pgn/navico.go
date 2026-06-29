@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnNavicoWirelessBatteryStatus struct {
+type NavicoWirelessBatteryStatus struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -14,10 +14,10 @@ type PgnNavicoWirelessBatteryStatus struct {
 	BatteryChargeStatus *uint64     `json:"batteryChargeStatus,omitempty" n2k:"6"`
 }
 
-func (m *PgnNavicoWirelessBatteryStatus) PGNNumber() uint32               { return 65309 }
-func (m *PgnNavicoWirelessBatteryStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoWirelessBatteryStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
+func (m *NavicoWirelessBatteryStatus) PGNNumber() uint32               { return 65309 }
+func (m *NavicoWirelessBatteryStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoWirelessBatteryStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -96,7 +96,7 @@ func (m *PgnNavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) {
+func (m *NavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -128,7 +128,7 @@ func (m *PgnNavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoWirelessSignalStatus struct {
+type NavicoWirelessSignalStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -136,10 +136,10 @@ type PgnNavicoWirelessSignalStatus struct {
 	SignalStrength   *uint64     `json:"signalStrength,omitempty" n2k:"5"`
 }
 
-func (m *PgnNavicoWirelessSignalStatus) PGNNumber() uint32               { return 65312 }
-func (m *PgnNavicoWirelessSignalStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoWirelessSignalStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
+func (m *NavicoWirelessSignalStatus) PGNNumber() uint32               { return 65312 }
+func (m *NavicoWirelessSignalStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoWirelessSignalStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -208,7 +208,7 @@ func (m *PgnNavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) {
+func (m *NavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -235,7 +235,7 @@ func (m *PgnNavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoDepthQuality struct {
+type NavicoDepthQuality struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -243,10 +243,10 @@ type PgnNavicoDepthQuality struct {
 	DepthQuality     *int64      `json:"depthQuality,omitempty" n2k:"5"`
 }
 
-func (m *PgnNavicoDepthQuality) PGNNumber() uint32               { return 65313 }
-func (m *PgnNavicoDepthQuality) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoDepthQuality) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoDepthQuality) DecodePayload(payload []uint8) error {
+func (m *NavicoDepthQuality) PGNNumber() uint32               { return 65313 }
+func (m *NavicoDepthQuality) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoDepthQuality) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoDepthQuality) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -316,7 +316,7 @@ func (m *PgnNavicoDepthQuality) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoDepthQuality) EncodePayload() ([]uint8, error) {
+func (m *NavicoDepthQuality) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -343,17 +343,17 @@ func (m *PgnNavicoDepthQuality) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoProprietary2 struct {
+type NavicoProprietary2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnNavicoProprietary2) PGNNumber() uint32               { return 65317 }
-func (m *PgnNavicoProprietary2) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoProprietary2) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoProprietary2) DecodePayload(payload []uint8) error {
+func (m *NavicoProprietary2) PGNNumber() uint32               { return 65317 }
+func (m *NavicoProprietary2) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoProprietary2) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoProprietary2) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -408,7 +408,7 @@ func (m *PgnNavicoProprietary2) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoProprietary2) EncodePayload() ([]uint8, error) {
+func (m *NavicoProprietary2) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -425,17 +425,17 @@ func (m *PgnNavicoProprietary2) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoNaviopSwitchStatus struct {
+type NavicoNaviopSwitchStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnNavicoNaviopSwitchStatus) PGNNumber() uint32               { return 65440 }
-func (m *PgnNavicoNaviopSwitchStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoNaviopSwitchStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoNaviopSwitchStatus) DecodePayload(payload []uint8) error {
+func (m *NavicoNaviopSwitchStatus) PGNNumber() uint32               { return 65440 }
+func (m *NavicoNaviopSwitchStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoNaviopSwitchStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoNaviopSwitchStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -490,7 +490,7 @@ func (m *PgnNavicoNaviopSwitchStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoNaviopSwitchStatus) EncodePayload() ([]uint8, error) {
+func (m *NavicoNaviopSwitchStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -507,17 +507,17 @@ func (m *PgnNavicoNaviopSwitchStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoNaviopSwitchControl struct {
+type NavicoNaviopSwitchControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnNavicoNaviopSwitchControl) PGNNumber() uint32               { return 65441 }
-func (m *PgnNavicoNaviopSwitchControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoNaviopSwitchControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoNaviopSwitchControl) DecodePayload(payload []uint8) error {
+func (m *NavicoNaviopSwitchControl) PGNNumber() uint32               { return 65441 }
+func (m *NavicoNaviopSwitchControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoNaviopSwitchControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoNaviopSwitchControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -572,7 +572,7 @@ func (m *PgnNavicoNaviopSwitchControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoNaviopSwitchControl) EncodePayload() ([]uint8, error) {
+func (m *NavicoNaviopSwitchControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -589,7 +589,7 @@ func (m *PgnNavicoNaviopSwitchControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUnknown struct {
+type NavicoUnknown struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -600,10 +600,10 @@ type PgnNavicoUnknown struct {
 	E                *uint64     `json:"e,omitempty" n2k:"8"`
 }
 
-func (m *PgnNavicoUnknown) PGNNumber() uint32               { return 130817 }
-func (m *PgnNavicoUnknown) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUnknown) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUnknown) DecodePayload(payload []uint8) error {
+func (m *NavicoUnknown) PGNNumber() uint32               { return 130817 }
+func (m *NavicoUnknown) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUnknown) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUnknown) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -698,7 +698,7 @@ func (m *PgnNavicoUnknown) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUnknown) EncodePayload() ([]uint8, error) {
+func (m *NavicoUnknown) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -739,7 +739,7 @@ func (m *PgnNavicoUnknown) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoAsciiData struct {
+type NavicoAsciiData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -747,10 +747,10 @@ type PgnNavicoAsciiData struct {
 	Message          string      `json:"message,omitempty" n2k:"5"`
 }
 
-func (m *PgnNavicoAsciiData) PGNNumber() uint32               { return 130821 }
-func (m *PgnNavicoAsciiData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoAsciiData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoAsciiData) DecodePayload(payload []uint8) error {
+func (m *NavicoAsciiData) PGNNumber() uint32               { return 130821 }
+func (m *NavicoAsciiData) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoAsciiData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoAsciiData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -815,7 +815,7 @@ func (m *PgnNavicoAsciiData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoAsciiData) EncodePayload() ([]uint8, error) {
+func (m *NavicoAsciiData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -837,7 +837,7 @@ func (m *PgnNavicoAsciiData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseBulkReport2 struct {
+type NavicoUdbDatabaseBulkReport2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -849,10 +849,10 @@ type PgnNavicoUdbDatabaseBulkReport2 struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"10"`
 }
 
-func (m *PgnNavicoUdbDatabaseBulkReport2) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseBulkReport2) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseBulkReport2) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseBulkReport2) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseBulkReport2) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseBulkReport2) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseBulkReport2) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseBulkReport2) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -970,7 +970,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport2) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseBulkReport2) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseBulkReport2) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1013,7 +1013,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport2) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseBulkReport3 struct {
+type NavicoUdbDatabaseBulkReport3 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1025,10 +1025,10 @@ type PgnNavicoUdbDatabaseBulkReport3 struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"10"`
 }
 
-func (m *PgnNavicoUdbDatabaseBulkReport3) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseBulkReport3) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseBulkReport3) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseBulkReport3) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseBulkReport3) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseBulkReport3) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseBulkReport3) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseBulkReport3) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1146,7 +1146,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport3) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseBulkReport3) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseBulkReport3) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1189,7 +1189,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport3) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseBulkReport4 struct {
+type NavicoUdbDatabaseBulkReport4 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1201,10 +1201,10 @@ type PgnNavicoUdbDatabaseBulkReport4 struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"10"`
 }
 
-func (m *PgnNavicoUdbDatabaseBulkReport4) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseBulkReport4) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseBulkReport4) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseBulkReport4) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseBulkReport4) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseBulkReport4) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseBulkReport4) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseBulkReport4) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1322,7 +1322,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport4) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseBulkReport4) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseBulkReport4) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1365,7 +1365,7 @@ func (m *PgnNavicoUdbDatabaseBulkReport4) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseObjectDump struct {
+type NavicoUdbDatabaseObjectDump struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1383,10 +1383,10 @@ type PgnNavicoUdbDatabaseObjectDump struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"16"`
 }
 
-func (m *PgnNavicoUdbDatabaseObjectDump) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseObjectDump) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseObjectDump) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseObjectDump) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseObjectDump) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseObjectDump) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseObjectDump) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseObjectDump) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1564,7 +1564,7 @@ func (m *PgnNavicoUdbDatabaseObjectDump) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseObjectDump) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseObjectDump) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1636,7 +1636,7 @@ func (m *PgnNavicoUdbDatabaseObjectDump) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseObjectPing struct {
+type NavicoUdbDatabaseObjectPing struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1647,10 +1647,10 @@ type PgnNavicoUdbDatabaseObjectPing struct {
 	Item             *uint64     `json:"item,omitempty" n2k:"9"`
 }
 
-func (m *PgnNavicoUdbDatabaseObjectPing) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseObjectPing) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseObjectPing) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseObjectPing) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseObjectPing) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseObjectPing) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseObjectPing) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseObjectPing) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1758,7 +1758,7 @@ func (m *PgnNavicoUdbDatabaseObjectPing) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseObjectPing) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseObjectPing) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1800,7 +1800,7 @@ func (m *PgnNavicoUdbDatabaseObjectPing) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseShortReport5 struct {
+type NavicoUdbDatabaseShortReport5 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1812,10 +1812,10 @@ type PgnNavicoUdbDatabaseShortReport5 struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"10"`
 }
 
-func (m *PgnNavicoUdbDatabaseShortReport5) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseShortReport5) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseShortReport5) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseShortReport5) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseShortReport5) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseShortReport5) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseShortReport5) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseShortReport5) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1933,7 +1933,7 @@ func (m *PgnNavicoUdbDatabaseShortReport5) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseShortReport5) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseShortReport5) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1976,7 +1976,7 @@ func (m *PgnNavicoUdbDatabaseShortReport5) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseShortReport7 struct {
+type NavicoUdbDatabaseShortReport7 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1988,10 +1988,10 @@ type PgnNavicoUdbDatabaseShortReport7 struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"10"`
 }
 
-func (m *PgnNavicoUdbDatabaseShortReport7) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseShortReport7) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseShortReport7) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseShortReport7) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseShortReport7) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseShortReport7) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseShortReport7) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseShortReport7) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2109,7 +2109,7 @@ func (m *PgnNavicoUdbDatabaseShortReport7) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseShortReport7) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseShortReport7) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2152,7 +2152,7 @@ func (m *PgnNavicoUdbDatabaseShortReport7) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoUdbDatabaseSourceReport struct {
+type NavicoUdbDatabaseSourceReport struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode          *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2168,10 +2168,10 @@ type PgnNavicoUdbDatabaseSourceReport struct {
 	Token                 *uint64     `json:"token,omitempty" n2k:"15"`
 }
 
-func (m *PgnNavicoUdbDatabaseSourceReport) PGNNumber() uint32               { return 130822 }
-func (m *PgnNavicoUdbDatabaseSourceReport) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoUdbDatabaseSourceReport) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoUdbDatabaseSourceReport) DecodePayload(payload []uint8) error {
+func (m *NavicoUdbDatabaseSourceReport) PGNNumber() uint32               { return 130822 }
+func (m *NavicoUdbDatabaseSourceReport) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoUdbDatabaseSourceReport) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoUdbDatabaseSourceReport) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2333,7 +2333,7 @@ func (m *PgnNavicoUdbDatabaseSourceReport) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnNavicoUdbDatabaseSourceReport) EncodePayload() ([]uint8, error) {
+func (m *NavicoUdbDatabaseSourceReport) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2397,7 +2397,7 @@ func (m *PgnNavicoUdbDatabaseSourceReport) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoAlarm struct {
+type NavicoAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2411,10 +2411,10 @@ type PgnNavicoAlarm struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"11"`
 }
 
-func (m *PgnNavicoAlarm) PGNNumber() uint32               { return 130825 }
-func (m *PgnNavicoAlarm) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoAlarm) DecodePayload(payload []uint8) error {
+func (m *NavicoAlarm) PGNNumber() uint32               { return 130825 }
+func (m *NavicoAlarm) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoAlarm) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2539,7 +2539,7 @@ func (m *PgnNavicoAlarm) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoAlarm) EncodePayload() ([]uint8, error) {
+func (m *NavicoAlarm) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2595,17 +2595,17 @@ func (m *PgnNavicoAlarm) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoAsciiIdentifier struct {
+type NavicoAsciiIdentifier struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Identifier       string      `json:"identifier,omitempty" n2k:"4"`
 }
 
-func (m *PgnNavicoAsciiIdentifier) PGNNumber() uint32               { return 130847 }
-func (m *PgnNavicoAsciiIdentifier) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoAsciiIdentifier) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoAsciiIdentifier) DecodePayload(payload []uint8) error {
+func (m *NavicoAsciiIdentifier) PGNNumber() uint32               { return 130847 }
+func (m *NavicoAsciiIdentifier) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoAsciiIdentifier) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoAsciiIdentifier) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2660,7 +2660,7 @@ func (m *PgnNavicoAsciiIdentifier) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoAsciiIdentifier) EncodePayload() ([]uint8, error) {
+func (m *NavicoAsciiIdentifier) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2677,16 +2677,16 @@ func (m *PgnNavicoAsciiIdentifier) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoProprietaryFp struct {
+type NavicoProprietaryFp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnNavicoProprietaryFp) PGNNumber() uint32               { return 130849 }
-func (m *PgnNavicoProprietaryFp) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoProprietaryFp) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoProprietaryFp) DecodePayload(payload []uint8) error {
+func (m *NavicoProprietaryFp) PGNNumber() uint32               { return 130849 }
+func (m *NavicoProprietaryFp) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoProprietaryFp) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoProprietaryFp) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2731,7 +2731,7 @@ func (m *PgnNavicoProprietaryFp) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoProprietaryFp) EncodePayload() ([]uint8, error) {
+func (m *NavicoProprietaryFp) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2747,16 +2747,16 @@ func (m *PgnNavicoProprietaryFp) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnNavicoProprietary2Fp struct {
+type NavicoProprietary2Fp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnNavicoProprietary2Fp) PGNNumber() uint32               { return 130852 }
-func (m *PgnNavicoProprietary2Fp) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnNavicoProprietary2Fp) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnNavicoProprietary2Fp) DecodePayload(payload []uint8) error {
+func (m *NavicoProprietary2Fp) PGNNumber() uint32               { return 130852 }
+func (m *NavicoProprietary2Fp) MessageInfo() MessageInfo        { return m.Info }
+func (m *NavicoProprietary2Fp) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *NavicoProprietary2Fp) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2801,7 +2801,7 @@ func (m *PgnNavicoProprietary2Fp) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnNavicoProprietary2Fp) EncodePayload() ([]uint8, error) {
+func (m *NavicoProprietary2Fp) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

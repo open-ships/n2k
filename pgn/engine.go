@@ -3,7 +3,7 @@
 
 package pgn
 
-type PgnEngineParametersRapidUpdate struct {
+type EngineParametersRapidUpdate struct {
 	Info          MessageInfo `json:"info"`
 	Instance      *uint64     `json:"instance,omitempty" n2k:"1"`
 	Speed         *uint64     `json:"speed,omitempty" n2k:"2"`
@@ -11,10 +11,10 @@ type PgnEngineParametersRapidUpdate struct {
 	TiltTrim      *int64      `json:"tiltTrim,omitempty" n2k:"4"`
 }
 
-func (m *PgnEngineParametersRapidUpdate) PGNNumber() uint32               { return 127488 }
-func (m *PgnEngineParametersRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEngineParametersRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
+func (m *EngineParametersRapidUpdate) PGNNumber() uint32               { return 127488 }
+func (m *EngineParametersRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
+func (m *EngineParametersRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -63,7 +63,7 @@ func (m *PgnEngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnEngineParametersRapidUpdate) EncodePayload() ([]uint8, error) {
+func (m *EngineParametersRapidUpdate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -89,7 +89,7 @@ func (m *PgnEngineParametersRapidUpdate) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEngineParametersDynamic struct {
+type EngineParametersDynamic struct {
 	Info                MessageInfo `json:"info"`
 	Instance            *uint64     `json:"instance,omitempty" n2k:"1"`
 	OilPressure         *uint64     `json:"oilPressure,omitempty" n2k:"2"`
@@ -106,10 +106,10 @@ type PgnEngineParametersDynamic struct {
 	EngineTorque        *int64      `json:"engineTorque,omitempty" n2k:"14"`
 }
 
-func (m *PgnEngineParametersDynamic) PGNNumber() uint32               { return 127489 }
-func (m *PgnEngineParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEngineParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEngineParametersDynamic) DecodePayload(payload []uint8) error {
+func (m *EngineParametersDynamic) PGNNumber() uint32               { return 127489 }
+func (m *EngineParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
+func (m *EngineParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EngineParametersDynamic) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -251,7 +251,7 @@ func (m *PgnEngineParametersDynamic) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnEngineParametersDynamic) EncodePayload() ([]uint8, error) {
+func (m *EngineParametersDynamic) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -322,7 +322,7 @@ func (m *PgnEngineParametersDynamic) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnTransmissionParametersDynamic struct {
+type TransmissionParametersDynamic struct {
 	Info             MessageInfo `json:"info"`
 	Instance         *uint64     `json:"instance,omitempty" n2k:"1"`
 	TransmissionGear *uint64     `json:"transmissionGear,omitempty" n2k:"2"`
@@ -331,10 +331,10 @@ type PgnTransmissionParametersDynamic struct {
 	DiscreteStatus1  *uint64     `json:"discreteStatus1,omitempty" n2k:"6"`
 }
 
-func (m *PgnTransmissionParametersDynamic) PGNNumber() uint32               { return 127493 }
-func (m *PgnTransmissionParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnTransmissionParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnTransmissionParametersDynamic) DecodePayload(payload []uint8) error {
+func (m *TransmissionParametersDynamic) PGNNumber() uint32               { return 127493 }
+func (m *TransmissionParametersDynamic) MessageInfo() MessageInfo        { return m.Info }
+func (m *TransmissionParametersDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *TransmissionParametersDynamic) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -396,7 +396,7 @@ func (m *PgnTransmissionParametersDynamic) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnTransmissionParametersDynamic) EncodePayload() ([]uint8, error) {
+func (m *TransmissionParametersDynamic) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -428,7 +428,7 @@ func (m *PgnTransmissionParametersDynamic) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnTripParametersEngine struct {
+type TripParametersEngine struct {
 	Info                     MessageInfo `json:"info"`
 	Instance                 *uint64     `json:"instance,omitempty" n2k:"1"`
 	TripFuelUsed             *uint64     `json:"tripFuelUsed,omitempty" n2k:"2"`
@@ -437,10 +437,10 @@ type PgnTripParametersEngine struct {
 	InstantaneousFuelEconomy *int64      `json:"instantaneousFuelEconomy,omitempty" n2k:"5"`
 }
 
-func (m *PgnTripParametersEngine) PGNNumber() uint32               { return 127497 }
-func (m *PgnTripParametersEngine) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnTripParametersEngine) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnTripParametersEngine) DecodePayload(payload []uint8) error {
+func (m *TripParametersEngine) PGNNumber() uint32               { return 127497 }
+func (m *TripParametersEngine) MessageInfo() MessageInfo        { return m.Info }
+func (m *TripParametersEngine) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *TripParametersEngine) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -497,7 +497,7 @@ func (m *PgnTripParametersEngine) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnTripParametersEngine) EncodePayload() ([]uint8, error) {
+func (m *TripParametersEngine) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -527,7 +527,7 @@ func (m *PgnTripParametersEngine) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnEngineParametersStatic struct {
+type EngineParametersStatic struct {
 	Info             MessageInfo `json:"info"`
 	Instance         *uint64     `json:"instance,omitempty" n2k:"1"`
 	RatedEngineSpeed *uint64     `json:"ratedEngineSpeed,omitempty" n2k:"2"`
@@ -535,10 +535,10 @@ type PgnEngineParametersStatic struct {
 	SoftwareId       string      `json:"softwareId,omitempty" n2k:"4"`
 }
 
-func (m *PgnEngineParametersStatic) PGNNumber() uint32               { return 127498 }
-func (m *PgnEngineParametersStatic) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnEngineParametersStatic) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnEngineParametersStatic) DecodePayload(payload []uint8) error {
+func (m *EngineParametersStatic) PGNNumber() uint32               { return 127498 }
+func (m *EngineParametersStatic) MessageInfo() MessageInfo        { return m.Info }
+func (m *EngineParametersStatic) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *EngineParametersStatic) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -582,7 +582,7 @@ func (m *PgnEngineParametersStatic) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnEngineParametersStatic) EncodePayload() ([]uint8, error) {
+func (m *EngineParametersStatic) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)

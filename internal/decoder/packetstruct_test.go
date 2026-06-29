@@ -33,7 +33,7 @@ func TestDecode_ValidPGN(t *testing.T) {
 	handler := &mockHandler{}
 	ps.SetOutput(handler)
 
-	payload, err := (&pgn.PgnVesselHeading{
+	payload, err := (&pgn.VesselHeading{
 		Sid:     ptrUint64(1),
 		Heading: ptrUint64(15000),
 	}).EncodePayload()
@@ -45,8 +45,8 @@ func TestDecode_ValidPGN(t *testing.T) {
 	})
 
 	require.Len(t, handler.received, 1)
-	vh, ok := handler.received[0].(*pgn.PgnVesselHeading)
-	require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", handler.received[0])
+	vh, ok := handler.received[0].(*pgn.VesselHeading)
+	require.True(t, ok, "expected *pgn.VesselHeading, got %T", handler.received[0])
 	assert.Equal(t, uint32(127250), vh.Info.PGN)
 	assert.Equal(t, uint8(1), vh.Info.SourceId)
 	require.NotNil(t, vh.Heading)
@@ -75,7 +75,7 @@ func TestDecode_PgnStructFromMetadata(t *testing.T) {
 	handler := &mockHandler{}
 	ps.SetOutput(handler)
 
-	payload, err := (&pgn.PgnElectricDriveStatusDynamic{
+	payload, err := (&pgn.ElectricDriveStatusDynamic{
 		InverterMotorIdentifier: ptrUint64(1),
 		OperatingMode:           ptrUint64(2),
 		MotorTemperature:        ptrUint64(3000),
@@ -92,8 +92,8 @@ func TestDecode_PgnStructFromMetadata(t *testing.T) {
 	})
 
 	require.Len(t, handler.received, 1)
-	msg, ok := handler.received[0].(*pgn.PgnElectricDriveStatusDynamic)
-	require.True(t, ok, "expected *pgn.PgnElectricDriveStatusDynamic, got %T", handler.received[0])
+	msg, ok := handler.received[0].(*pgn.ElectricDriveStatusDynamic)
+	require.True(t, ok, "expected *pgn.ElectricDriveStatusDynamic, got %T", handler.received[0])
 	assert.Equal(t, uint32(127490), msg.Info.PGN)
 	require.NotNil(t, msg.InverterMotorIdentifier)
 	assert.Equal(t, uint64(1), *msg.InverterMotorIdentifier)
@@ -101,7 +101,7 @@ func TestDecode_PgnStructFromMetadata(t *testing.T) {
 
 func TestDecode_NoHandler(t *testing.T) {
 	ps := New()
-	payload, err := (&pgn.PgnVesselHeading{
+	payload, err := (&pgn.VesselHeading{
 		Heading: ptrUint64(15000),
 	}).EncodePayload()
 	require.NoError(t, err)

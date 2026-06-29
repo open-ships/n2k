@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnSuzukiEngineDataA struct {
+type SuzukiEngineDataA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiEngineDataA) PGNNumber() uint32               { return 65298 }
-func (m *PgnSuzukiEngineDataA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineDataA) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineDataA) PGNNumber() uint32               { return 65298 }
+func (m *SuzukiEngineDataA) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineDataA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineDataA) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnSuzukiEngineDataA) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineDataA) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineDataA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,17 +87,17 @@ func (m *PgnSuzukiEngineDataA) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineDataB struct {
+type SuzukiEngineDataB struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiEngineDataB) PGNNumber() uint32               { return 65299 }
-func (m *PgnSuzukiEngineDataB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineDataB) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineDataB) PGNNumber() uint32               { return 65299 }
+func (m *SuzukiEngineDataB) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineDataB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineDataB) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -152,7 +152,7 @@ func (m *PgnSuzukiEngineDataB) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineDataB) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineDataB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -169,17 +169,17 @@ func (m *PgnSuzukiEngineDataB) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineDataC struct {
+type SuzukiEngineDataC struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiEngineDataC) PGNNumber() uint32               { return 65300 }
-func (m *PgnSuzukiEngineDataC) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineDataC) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineDataC) PGNNumber() uint32               { return 65300 }
+func (m *SuzukiEngineDataC) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineDataC) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineDataC) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -234,7 +234,7 @@ func (m *PgnSuzukiEngineDataC) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineDataC) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineDataC) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -251,17 +251,17 @@ func (m *PgnSuzukiEngineDataC) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineDataD struct {
+type SuzukiEngineDataD struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiEngineDataD) PGNNumber() uint32               { return 65303 }
-func (m *PgnSuzukiEngineDataD) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineDataD) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineDataD) PGNNumber() uint32               { return 65303 }
+func (m *SuzukiEngineDataD) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineDataD) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineDataD) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -316,7 +316,7 @@ func (m *PgnSuzukiEngineDataD) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineDataD) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineDataD) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -333,17 +333,17 @@ func (m *PgnSuzukiEngineDataD) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineDataE struct {
+type SuzukiEngineDataE struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiEngineDataE) PGNNumber() uint32               { return 65304 }
-func (m *PgnSuzukiEngineDataE) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineDataE) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineDataE) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineDataE) PGNNumber() uint32               { return 65304 }
+func (m *SuzukiEngineDataE) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineDataE) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineDataE) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -398,7 +398,7 @@ func (m *PgnSuzukiEngineDataE) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineDataE) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineDataE) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -415,17 +415,17 @@ func (m *PgnSuzukiEngineDataE) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiTrollModeControl struct {
+type SuzukiTrollModeControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnSuzukiTrollModeControl) PGNNumber() uint32               { return 65315 }
-func (m *PgnSuzukiTrollModeControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiTrollModeControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiTrollModeControl) DecodePayload(payload []uint8) error {
+func (m *SuzukiTrollModeControl) PGNNumber() uint32               { return 65315 }
+func (m *SuzukiTrollModeControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiTrollModeControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiTrollModeControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -480,7 +480,7 @@ func (m *PgnSuzukiTrollModeControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiTrollModeControl) EncodePayload() ([]uint8, error) {
+func (m *SuzukiTrollModeControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -497,16 +497,16 @@ func (m *PgnSuzukiTrollModeControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineData struct {
+type SuzukiEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSuzukiEngineData) PGNNumber() uint32               { return 130830 }
-func (m *PgnSuzukiEngineData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineData) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineData) PGNNumber() uint32               { return 130830 }
+func (m *SuzukiEngineData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -551,7 +551,7 @@ func (m *PgnSuzukiEngineData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineData) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -567,16 +567,16 @@ func (m *PgnSuzukiEngineData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineAndStorageDeviceConfig struct {
+type SuzukiEngineAndStorageDeviceConfig struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSuzukiEngineAndStorageDeviceConfig) PGNNumber() uint32               { return 130831 }
-func (m *PgnSuzukiEngineAndStorageDeviceConfig) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineAndStorageDeviceConfig) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineAndStorageDeviceConfig) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineAndStorageDeviceConfig) PGNNumber() uint32               { return 130831 }
+func (m *SuzukiEngineAndStorageDeviceConfig) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineAndStorageDeviceConfig) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineAndStorageDeviceConfig) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -621,7 +621,7 @@ func (m *PgnSuzukiEngineAndStorageDeviceConfig) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineAndStorageDeviceConfig) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineAndStorageDeviceConfig) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -637,16 +637,16 @@ func (m *PgnSuzukiEngineAndStorageDeviceConfig) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiEngineSensorData struct {
+type SuzukiEngineSensorData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSuzukiEngineSensorData) PGNNumber() uint32               { return 130837 }
-func (m *PgnSuzukiEngineSensorData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiEngineSensorData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiEngineSensorData) DecodePayload(payload []uint8) error {
+func (m *SuzukiEngineSensorData) PGNNumber() uint32               { return 130837 }
+func (m *SuzukiEngineSensorData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiEngineSensorData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiEngineSensorData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -691,7 +691,7 @@ func (m *PgnSuzukiEngineSensorData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiEngineSensorData) EncodePayload() ([]uint8, error) {
+func (m *SuzukiEngineSensorData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -707,16 +707,16 @@ func (m *PgnSuzukiEngineSensorData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSuzukiFuelManagement struct {
+type SuzukiFuelManagement struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSuzukiFuelManagement) PGNNumber() uint32               { return 130838 }
-func (m *PgnSuzukiFuelManagement) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSuzukiFuelManagement) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSuzukiFuelManagement) DecodePayload(payload []uint8) error {
+func (m *SuzukiFuelManagement) PGNNumber() uint32               { return 130838 }
+func (m *SuzukiFuelManagement) MessageInfo() MessageInfo        { return m.Info }
+func (m *SuzukiFuelManagement) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SuzukiFuelManagement) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -761,7 +761,7 @@ func (m *PgnSuzukiFuelManagement) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSuzukiFuelManagement) EncodePayload() ([]uint8, error) {
+func (m *SuzukiFuelManagement) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

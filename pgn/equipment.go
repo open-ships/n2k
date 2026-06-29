@@ -3,7 +3,7 @@
 
 package pgn
 
-type PgnFluidLevel struct {
+type FluidLevel struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
 	Type     *uint64     `json:"type,omitempty" n2k:"2"`
@@ -11,10 +11,10 @@ type PgnFluidLevel struct {
 	Capacity *uint64     `json:"capacity,omitempty" n2k:"4"`
 }
 
-func (m *PgnFluidLevel) PGNNumber() uint32               { return 127505 }
-func (m *PgnFluidLevel) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFluidLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFluidLevel) DecodePayload(payload []uint8) error {
+func (m *FluidLevel) PGNNumber() uint32               { return 127505 }
+func (m *FluidLevel) MessageInfo() MessageInfo        { return m.Info }
+func (m *FluidLevel) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FluidLevel) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(4)
@@ -63,7 +63,7 @@ func (m *PgnFluidLevel) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFluidLevel) EncodePayload() ([]uint8, error) {
+func (m *FluidLevel) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 4)
@@ -89,7 +89,7 @@ func (m *PgnFluidLevel) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElevatorCarStatus struct {
+type ElevatorCarStatus struct {
 	Info                                   MessageInfo `json:"info"`
 	Sid                                    *uint64     `json:"sid,omitempty" n2k:"1"`
 	ElevatorCarId                          *uint64     `json:"elevatorCarId,omitempty" n2k:"2"`
@@ -122,10 +122,10 @@ type PgnElevatorCarStatus struct {
 	ElevatorMotorRotationControlStatus     *uint64     `json:"elevatorMotorRotationControlStatus,omitempty" n2k:"31"`
 }
 
-func (m *PgnElevatorCarStatus) PGNNumber() uint32               { return 128538 }
-func (m *PgnElevatorCarStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElevatorCarStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElevatorCarStatus) DecodePayload(payload []uint8) error {
+func (m *ElevatorCarStatus) PGNNumber() uint32               { return 128538 }
+func (m *ElevatorCarStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElevatorCarStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElevatorCarStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -432,7 +432,7 @@ func (m *PgnElevatorCarStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnElevatorCarStatus) EncodePayload() ([]uint8, error) {
+func (m *ElevatorCarStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -585,7 +585,7 @@ func (m *PgnElevatorCarStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElevatorMotorControl struct {
+type ElevatorMotorControl struct {
 	Info                                          MessageInfo `json:"info"`
 	Sid                                           *uint64     `json:"sid,omitempty" n2k:"1"`
 	ElevatorCarId                                 *uint64     `json:"elevatorCarId,omitempty" n2k:"2"`
@@ -594,10 +594,10 @@ type PgnElevatorMotorControl struct {
 	MotorRotationalControlStatus                  *uint64     `json:"motorRotationalControlStatus,omitempty" n2k:"5"`
 }
 
-func (m *PgnElevatorMotorControl) PGNNumber() uint32               { return 128768 }
-func (m *PgnElevatorMotorControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElevatorMotorControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElevatorMotorControl) DecodePayload(payload []uint8) error {
+func (m *ElevatorMotorControl) PGNNumber() uint32               { return 128768 }
+func (m *ElevatorMotorControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElevatorMotorControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElevatorMotorControl) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -655,7 +655,7 @@ func (m *PgnElevatorMotorControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnElevatorMotorControl) EncodePayload() ([]uint8, error) {
+func (m *ElevatorMotorControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -686,7 +686,7 @@ func (m *PgnElevatorMotorControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElevatorDeckPushButton struct {
+type ElevatorDeckPushButton struct {
 	Info                       MessageInfo `json:"info"`
 	Sid                        *uint64     `json:"sid,omitempty" n2k:"1"`
 	ElevatorCallButtonId       *uint64     `json:"elevatorCallButtonId,omitempty" n2k:"2"`
@@ -695,10 +695,10 @@ type PgnElevatorDeckPushButton struct {
 	ElevatorCarButtonSelection *uint64     `json:"elevatorCarButtonSelection,omitempty" n2k:"5"`
 }
 
-func (m *PgnElevatorDeckPushButton) PGNNumber() uint32               { return 128769 }
-func (m *PgnElevatorDeckPushButton) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElevatorDeckPushButton) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElevatorDeckPushButton) DecodePayload(payload []uint8) error {
+func (m *ElevatorDeckPushButton) PGNNumber() uint32               { return 128769 }
+func (m *ElevatorDeckPushButton) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElevatorDeckPushButton) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElevatorDeckPushButton) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -756,7 +756,7 @@ func (m *PgnElevatorDeckPushButton) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnElevatorDeckPushButton) EncodePayload() ([]uint8, error) {
+func (m *ElevatorDeckPushButton) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -787,7 +787,7 @@ func (m *PgnElevatorDeckPushButton) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLinearActuatorControlStatus struct {
+type LinearActuatorControlStatus struct {
 	Info                    MessageInfo `json:"info"`
 	ActuatorIdentifier      *uint64     `json:"actuatorIdentifier,omitempty" n2k:"1"`
 	CommandedDevicePosition *uint64     `json:"commandedDevicePosition,omitempty" n2k:"2"`
@@ -796,10 +796,10 @@ type PgnLinearActuatorControlStatus struct {
 	DirectionOfTravel       *uint64     `json:"directionOfTravel,omitempty" n2k:"5"`
 }
 
-func (m *PgnLinearActuatorControlStatus) PGNNumber() uint32               { return 128780 }
-func (m *PgnLinearActuatorControlStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLinearActuatorControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLinearActuatorControlStatus) DecodePayload(payload []uint8) error {
+func (m *LinearActuatorControlStatus) PGNNumber() uint32               { return 128780 }
+func (m *LinearActuatorControlStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *LinearActuatorControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LinearActuatorControlStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -857,7 +857,7 @@ func (m *PgnLinearActuatorControlStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLinearActuatorControlStatus) EncodePayload() ([]uint8, error) {
+func (m *LinearActuatorControlStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ActuatorIdentifier != nil {
 		writer.writeUInt64(m.ActuatorIdentifier, 8)
@@ -888,7 +888,7 @@ func (m *PgnLinearActuatorControlStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnPayloadMass struct {
+type PayloadMass struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
 	MeasurementStatus *uint64     `json:"measurementStatus,omitempty" n2k:"2"`
@@ -896,10 +896,10 @@ type PgnPayloadMass struct {
 	PayloadMass       *uint64     `json:"payloadMass,omitempty" n2k:"5"`
 }
 
-func (m *PgnPayloadMass) PGNNumber() uint32               { return 130560 }
-func (m *PgnPayloadMass) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnPayloadMass) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnPayloadMass) DecodePayload(payload []uint8) error {
+func (m *PayloadMass) PGNNumber() uint32               { return 130560 }
+func (m *PayloadMass) MessageInfo() MessageInfo        { return m.Info }
+func (m *PayloadMass) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *PayloadMass) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -951,7 +951,7 @@ func (m *PgnPayloadMass) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnPayloadMass) EncodePayload() ([]uint8, error) {
+func (m *PayloadMass) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -978,7 +978,7 @@ func (m *PgnPayloadMass) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnWatermakerInputSettingAndStatus struct {
+type WatermakerInputSettingAndStatus struct {
 	Info                       MessageInfo `json:"info"`
 	WatermakerOperatingState   *uint64     `json:"watermakerOperatingState,omitempty" n2k:"1"`
 	ProductionStartStop        *uint64     `json:"productionStartStop,omitempty" n2k:"2"`
@@ -1004,10 +1004,10 @@ type PgnWatermakerInputSettingAndStatus struct {
 	RunTime                    *uint64     `json:"runTime,omitempty" n2k:"23"`
 }
 
-func (m *PgnWatermakerInputSettingAndStatus) PGNNumber() uint32               { return 130567 }
-func (m *PgnWatermakerInputSettingAndStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnWatermakerInputSettingAndStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnWatermakerInputSettingAndStatus) DecodePayload(payload []uint8) error {
+func (m *WatermakerInputSettingAndStatus) PGNNumber() uint32               { return 130567 }
+func (m *WatermakerInputSettingAndStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *WatermakerInputSettingAndStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *WatermakerInputSettingAndStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(6)
@@ -1238,7 +1238,7 @@ func (m *PgnWatermakerInputSettingAndStatus) DecodePayload(payload []uint8) erro
 	}
 	return nil
 }
-func (m *PgnWatermakerInputSettingAndStatus) EncodePayload() ([]uint8, error) {
+func (m *WatermakerInputSettingAndStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.WatermakerOperatingState != nil {
 		writer.writeUInt64(m.WatermakerOperatingState, 6)

@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnRadioFrequencyModePower struct {
+type RadioFrequencyModePower struct {
 	Info             MessageInfo `json:"info"`
 	RxFrequency      *uint64     `json:"rxFrequency,omitempty" n2k:"1"`
 	TxFrequency      *uint64     `json:"txFrequency,omitempty" n2k:"2"`
@@ -15,10 +15,10 @@ type PgnRadioFrequencyModePower struct {
 	ChannelBandwidth *uint64     `json:"channelBandwidth,omitempty" n2k:"6"`
 }
 
-func (m *PgnRadioFrequencyModePower) PGNNumber() uint32               { return 129799 }
-func (m *PgnRadioFrequencyModePower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnRadioFrequencyModePower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnRadioFrequencyModePower) DecodePayload(payload []uint8) error {
+func (m *RadioFrequencyModePower) PGNNumber() uint32               { return 129799 }
+func (m *RadioFrequencyModePower) MessageInfo() MessageInfo        { return m.Info }
+func (m *RadioFrequencyModePower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *RadioFrequencyModePower) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(32)
@@ -82,7 +82,7 @@ func (m *PgnRadioFrequencyModePower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnRadioFrequencyModePower) EncodePayload() ([]uint8, error) {
+func (m *RadioFrequencyModePower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.RxFrequency != nil {
 		writer.writeUInt64(m.RxFrequency, 32)
@@ -113,7 +113,7 @@ func (m *PgnRadioFrequencyModePower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnDscCallInformation struct {
+type DscCallInformation struct {
 	Info                                        MessageInfo `json:"info"`
 	DscFormatSymbol                             *uint64     `json:"dscFormatSymbol,omitempty" n2k:"1"`
 	DscCategorySymbol                           *uint64     `json:"dscCategorySymbol,omitempty" n2k:"2"`
@@ -138,10 +138,10 @@ type PgnDscCallInformation struct {
 	DscExpansionFieldData                       string      `json:"dscExpansionFieldData,omitempty" n2k:"22"`
 }
 
-func (m *PgnDscCallInformation) PGNNumber() uint32               { return 129808 }
-func (m *PgnDscCallInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnDscCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnDscCallInformation) DecodePayload(payload []uint8) error {
+func (m *DscCallInformation) PGNNumber() uint32               { return 129808 }
+func (m *DscCallInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *DscCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *DscCallInformation) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -361,7 +361,7 @@ func (m *PgnDscCallInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnDscCallInformation) EncodePayload() ([]uint8, error) {
+func (m *DscCallInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.DscFormatSymbol != nil {
 		writer.writeUInt64(m.DscFormatSymbol, 8)
@@ -448,7 +448,7 @@ func (m *PgnDscCallInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnDscDistressCallInformation struct {
+type DscDistressCallInformation struct {
 	Info                                        MessageInfo `json:"info"`
 	DscFormat                                   *uint64     `json:"dscFormat,omitempty" n2k:"1"`
 	DscCategory                                 *uint64     `json:"dscCategory,omitempty" n2k:"2"`
@@ -473,10 +473,10 @@ type PgnDscDistressCallInformation struct {
 	DscExpansionFieldData                       string      `json:"dscExpansionFieldData,omitempty" n2k:"22"`
 }
 
-func (m *PgnDscDistressCallInformation) PGNNumber() uint32               { return 129808 }
-func (m *PgnDscDistressCallInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnDscDistressCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnDscDistressCallInformation) DecodePayload(payload []uint8) error {
+func (m *DscDistressCallInformation) PGNNumber() uint32               { return 129808 }
+func (m *DscDistressCallInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *DscDistressCallInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *DscDistressCallInformation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	matchStream0.skipBits(8)
 	match0, err := matchStream0.getNumberRaw(8)
@@ -705,7 +705,7 @@ func (m *PgnDscDistressCallInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnDscDistressCallInformation) EncodePayload() ([]uint8, error) {
+func (m *DscDistressCallInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.DscFormat != nil {
 		writer.writeUInt64(m.DscFormat, 8)

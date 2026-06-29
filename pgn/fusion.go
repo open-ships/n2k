@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnFusionMediaControl struct {
+type FusionMediaControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -14,10 +14,10 @@ type PgnFusionMediaControl struct {
 	Command          *uint64     `json:"command,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionMediaControl) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionMediaControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMediaControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMediaControl) DecodePayload(payload []uint8) error {
+func (m *FusionMediaControl) PGNNumber() uint32               { return 126720 }
+func (m *FusionMediaControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMediaControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMediaControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -101,7 +101,7 @@ func (m *PgnFusionMediaControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMediaControl) EncodePayload() ([]uint8, error) {
+func (m *FusionMediaControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -132,17 +132,17 @@ func (m *PgnFusionMediaControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionRequestStatus struct {
+type FusionRequestStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	ProprietaryId    *uint64     `json:"proprietaryId,omitempty" n2k:"4"`
 }
 
-func (m *PgnFusionRequestStatus) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionRequestStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionRequestStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionRequestStatus) DecodePayload(payload []uint8) error {
+func (m *FusionRequestStatus) PGNNumber() uint32               { return 126720 }
+func (m *FusionRequestStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionRequestStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionRequestStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -206,7 +206,7 @@ func (m *PgnFusionRequestStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionRequestStatus) EncodePayload() ([]uint8, error) {
+func (m *FusionRequestStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -227,7 +227,7 @@ func (m *PgnFusionRequestStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetAllVolumes struct {
+type FusionSetAllVolumes struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -238,10 +238,10 @@ type PgnFusionSetAllVolumes struct {
 	Zone4            *uint64     `json:"zone4,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionSetAllVolumes) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSetAllVolumes) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetAllVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetAllVolumes) DecodePayload(payload []uint8) error {
+func (m *FusionSetAllVolumes) PGNNumber() uint32               { return 126720 }
+func (m *FusionSetAllVolumes) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetAllVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetAllVolumes) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -345,7 +345,7 @@ func (m *PgnFusionSetAllVolumes) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetAllVolumes) EncodePayload() ([]uint8, error) {
+func (m *FusionSetAllVolumes) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -386,7 +386,7 @@ func (m *PgnFusionSetAllVolumes) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetMute struct {
+type FusionSetMute struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -394,10 +394,10 @@ type PgnFusionSetMute struct {
 	Command          *uint64     `json:"command,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionSetMute) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSetMute) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetMute) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetMute) DecodePayload(payload []uint8) error {
+func (m *FusionSetMute) PGNNumber() uint32               { return 126720 }
+func (m *FusionSetMute) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetMute) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetMute) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -471,7 +471,7 @@ func (m *PgnFusionSetMute) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetMute) EncodePayload() ([]uint8, error) {
+func (m *FusionSetMute) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -497,7 +497,7 @@ func (m *PgnFusionSetMute) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetPower struct {
+type FusionSetPower struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -505,10 +505,10 @@ type PgnFusionSetPower struct {
 	Power            *uint64     `json:"power,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionSetPower) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSetPower) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetPower) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetPower) DecodePayload(payload []uint8) error {
+func (m *FusionSetPower) PGNNumber() uint32               { return 126720 }
+func (m *FusionSetPower) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetPower) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetPower) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -582,7 +582,7 @@ func (m *PgnFusionSetPower) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetPower) EncodePayload() ([]uint8, error) {
+func (m *FusionSetPower) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -608,7 +608,7 @@ func (m *PgnFusionSetPower) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetSource struct {
+type FusionSetSource struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -616,10 +616,10 @@ type PgnFusionSetSource struct {
 	SourceId         *uint64     `json:"sourceId,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionSetSource) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSetSource) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetSource) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetSource) DecodePayload(payload []uint8) error {
+func (m *FusionSetSource) PGNNumber() uint32               { return 126720 }
+func (m *FusionSetSource) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetSource) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetSource) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -693,7 +693,7 @@ func (m *PgnFusionSetSource) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetSource) EncodePayload() ([]uint8, error) {
+func (m *FusionSetSource) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -719,7 +719,7 @@ func (m *PgnFusionSetSource) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetZoneVolume struct {
+type FusionSetZoneVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -728,10 +728,10 @@ type PgnFusionSetZoneVolume struct {
 	Volume           *uint64     `json:"volume,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionSetZoneVolume) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSetZoneVolume) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetZoneVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetZoneVolume) DecodePayload(payload []uint8) error {
+func (m *FusionSetZoneVolume) PGNNumber() uint32               { return 126720 }
+func (m *FusionSetZoneVolume) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetZoneVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetZoneVolume) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -815,7 +815,7 @@ func (m *PgnFusionSetZoneVolume) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetZoneVolume) EncodePayload() ([]uint8, error) {
+func (m *FusionSetZoneVolume) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -846,7 +846,7 @@ func (m *PgnFusionSetZoneVolume) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusControl struct {
+type FusionSiriusControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -856,10 +856,10 @@ type PgnFusionSiriusControl struct {
 	Data             *uint64     `json:"data,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusControl) PGNNumber() uint32               { return 126720 }
-func (m *PgnFusionSiriusControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusControl) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusControl) PGNNumber() uint32               { return 126720 }
+func (m *FusionSiriusControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -953,7 +953,7 @@ func (m *PgnFusionSiriusControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusControl) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -989,7 +989,7 @@ func (m *PgnFusionSiriusControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionAlbumName struct {
+type FusionAlbumName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -999,10 +999,10 @@ type PgnFusionAlbumName struct {
 	Album            string      `json:"album,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionAlbumName) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionAlbumName) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionAlbumName) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionAlbumName) DecodePayload(payload []uint8) error {
+func (m *FusionAlbumName) PGNNumber() uint32               { return 130820 }
+func (m *FusionAlbumName) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionAlbumName) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionAlbumName) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1096,7 +1096,7 @@ func (m *PgnFusionAlbumName) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionAlbumName) EncodePayload() ([]uint8, error) {
+func (m *FusionAlbumName) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1128,7 +1128,7 @@ func (m *PgnFusionAlbumName) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionArtistName struct {
+type FusionArtistName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1138,10 +1138,10 @@ type PgnFusionArtistName struct {
 	Artist           string      `json:"artist,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionArtistName) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionArtistName) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionArtistName) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionArtistName) DecodePayload(payload []uint8) error {
+func (m *FusionArtistName) PGNNumber() uint32               { return 130820 }
+func (m *FusionArtistName) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionArtistName) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionArtistName) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1235,7 +1235,7 @@ func (m *PgnFusionArtistName) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionArtistName) EncodePayload() ([]uint8, error) {
+func (m *FusionArtistName) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1267,7 +1267,7 @@ func (m *PgnFusionArtistName) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionAuxGain struct {
+type FusionAuxGain struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1276,10 +1276,10 @@ type PgnFusionAuxGain struct {
 	Gain             *uint64     `json:"gain,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionAuxGain) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionAuxGain) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionAuxGain) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionAuxGain) DecodePayload(payload []uint8) error {
+func (m *FusionAuxGain) PGNNumber() uint32               { return 130820 }
+func (m *FusionAuxGain) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionAuxGain) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionAuxGain) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1363,7 +1363,7 @@ func (m *PgnFusionAuxGain) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionAuxGain) EncodePayload() ([]uint8, error) {
+func (m *FusionAuxGain) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1394,7 +1394,7 @@ func (m *PgnFusionAuxGain) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionBalance struct {
+type FusionBalance struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1403,10 +1403,10 @@ type PgnFusionBalance struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionBalance) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionBalance) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionBalance) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionBalance) DecodePayload(payload []uint8) error {
+func (m *FusionBalance) PGNNumber() uint32               { return 130820 }
+func (m *FusionBalance) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionBalance) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionBalance) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1490,7 +1490,7 @@ func (m *PgnFusionBalance) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionBalance) EncodePayload() ([]uint8, error) {
+func (m *FusionBalance) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1521,7 +1521,7 @@ func (m *PgnFusionBalance) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionCapabilities struct {
+type FusionCapabilities struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1533,10 +1533,10 @@ type PgnFusionCapabilities struct {
 	Global           *uint64     `json:"global,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionCapabilities) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionCapabilities) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionCapabilities) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionCapabilities) DecodePayload(payload []uint8) error {
+func (m *FusionCapabilities) PGNNumber() uint32               { return 130820 }
+func (m *FusionCapabilities) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionCapabilities) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionCapabilities) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1650,7 +1650,7 @@ func (m *PgnFusionCapabilities) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionCapabilities) EncodePayload() ([]uint8, error) {
+func (m *FusionCapabilities) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1696,7 +1696,7 @@ func (m *PgnFusionCapabilities) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionDeviceName struct {
+type FusionDeviceName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1704,10 +1704,10 @@ type PgnFusionDeviceName struct {
 	Name             string      `json:"name,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionDeviceName) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionDeviceName) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionDeviceName) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionDeviceName) DecodePayload(payload []uint8) error {
+func (m *FusionDeviceName) PGNNumber() uint32               { return 130820 }
+func (m *FusionDeviceName) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionDeviceName) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionDeviceName) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1781,7 +1781,7 @@ func (m *PgnFusionDeviceName) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionDeviceName) EncodePayload() ([]uint8, error) {
+func (m *FusionDeviceName) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1803,7 +1803,7 @@ func (m *PgnFusionDeviceName) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionEq struct {
+type FusionEq struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1814,10 +1814,10 @@ type PgnFusionEq struct {
 	Treble           *int64      `json:"treble,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionEq) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionEq) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionEq) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionEq) DecodePayload(payload []uint8) error {
+func (m *FusionEq) PGNNumber() uint32               { return 130820 }
+func (m *FusionEq) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionEq) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionEq) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1924,7 +1924,7 @@ func (m *PgnFusionEq) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionEq) EncodePayload() ([]uint8, error) {
+func (m *FusionEq) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1965,7 +1965,7 @@ func (m *PgnFusionEq) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionIgnitionSwitchState struct {
+type FusionIgnitionSwitchState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1973,10 +1973,10 @@ type PgnFusionIgnitionSwitchState struct {
 	State            *uint64     `json:"state,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionIgnitionSwitchState) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionIgnitionSwitchState) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionIgnitionSwitchState) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionIgnitionSwitchState) DecodePayload(payload []uint8) error {
+func (m *FusionIgnitionSwitchState) PGNNumber() uint32               { return 130820 }
+func (m *FusionIgnitionSwitchState) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionIgnitionSwitchState) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionIgnitionSwitchState) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2050,7 +2050,7 @@ func (m *PgnFusionIgnitionSwitchState) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionIgnitionSwitchState) EncodePayload() ([]uint8, error) {
+func (m *FusionIgnitionSwitchState) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2076,7 +2076,7 @@ func (m *PgnFusionIgnitionSwitchState) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionLineLevelControl struct {
+type FusionLineLevelControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2085,10 +2085,10 @@ type PgnFusionLineLevelControl struct {
 	Control          *uint64     `json:"control,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionLineLevelControl) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionLineLevelControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionLineLevelControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionLineLevelControl) DecodePayload(payload []uint8) error {
+func (m *FusionLineLevelControl) PGNNumber() uint32               { return 130820 }
+func (m *FusionLineLevelControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionLineLevelControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionLineLevelControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2172,7 +2172,7 @@ func (m *PgnFusionLineLevelControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionLineLevelControl) EncodePayload() ([]uint8, error) {
+func (m *FusionLineLevelControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2203,7 +2203,7 @@ func (m *PgnFusionLineLevelControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionLowPassFilter struct {
+type FusionLowPassFilter struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2212,10 +2212,10 @@ type PgnFusionLowPassFilter struct {
 	Filter           *uint64     `json:"filter,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionLowPassFilter) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionLowPassFilter) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionLowPassFilter) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionLowPassFilter) DecodePayload(payload []uint8) error {
+func (m *FusionLowPassFilter) PGNNumber() uint32               { return 130820 }
+func (m *FusionLowPassFilter) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionLowPassFilter) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionLowPassFilter) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2299,7 +2299,7 @@ func (m *PgnFusionLowPassFilter) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionLowPassFilter) EncodePayload() ([]uint8, error) {
+func (m *FusionLowPassFilter) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2330,7 +2330,7 @@ func (m *PgnFusionLowPassFilter) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMarineTuner struct {
+type FusionMarineTuner struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2341,10 +2341,10 @@ type PgnFusionMarineTuner struct {
 	Name             string      `json:"name,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionMarineTuner) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMarineTuner) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMarineTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMarineTuner) DecodePayload(payload []uint8) error {
+func (m *FusionMarineTuner) PGNNumber() uint32               { return 130820 }
+func (m *FusionMarineTuner) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMarineTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMarineTuner) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2448,7 +2448,7 @@ func (m *PgnFusionMarineTuner) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMarineTuner) EncodePayload() ([]uint8, error) {
+func (m *FusionMarineTuner) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2485,7 +2485,7 @@ func (m *PgnFusionMarineTuner) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMarineScanMode struct {
+type FusionMarineScanMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2494,10 +2494,10 @@ type PgnFusionMarineScanMode struct {
 	Scan             *uint64     `json:"scan,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionMarineScanMode) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMarineScanMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMarineScanMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMarineScanMode) DecodePayload(payload []uint8) error {
+func (m *FusionMarineScanMode) PGNNumber() uint32               { return 130820 }
+func (m *FusionMarineScanMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMarineScanMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMarineScanMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2581,7 +2581,7 @@ func (m *PgnFusionMarineScanMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMarineScanMode) EncodePayload() ([]uint8, error) {
+func (m *FusionMarineScanMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2612,7 +2612,7 @@ func (m *PgnFusionMarineScanMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMarineSquelch struct {
+type FusionMarineSquelch struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2621,10 +2621,10 @@ type PgnFusionMarineSquelch struct {
 	Squelch          *uint64     `json:"squelch,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionMarineSquelch) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMarineSquelch) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMarineSquelch) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMarineSquelch) DecodePayload(payload []uint8) error {
+func (m *FusionMarineSquelch) PGNNumber() uint32               { return 130820 }
+func (m *FusionMarineSquelch) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMarineSquelch) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMarineSquelch) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2708,7 +2708,7 @@ func (m *PgnFusionMarineSquelch) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMarineSquelch) EncodePayload() ([]uint8, error) {
+func (m *FusionMarineSquelch) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2739,7 +2739,7 @@ func (m *PgnFusionMarineSquelch) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMedia struct {
+type FusionMedia struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2752,10 +2752,10 @@ type PgnFusionMedia struct {
 	PositionInTrack  *uint64     `json:"positionInTrack,omitempty" n2k:"10"`
 }
 
-func (m *PgnFusionMedia) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMedia) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMedia) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMedia) DecodePayload(payload []uint8) error {
+func (m *FusionMedia) PGNNumber() uint32               { return 130820 }
+func (m *FusionMedia) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMedia) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMedia) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2879,7 +2879,7 @@ func (m *PgnFusionMedia) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMedia) EncodePayload() ([]uint8, error) {
+func (m *FusionMedia) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2930,7 +2930,7 @@ func (m *PgnFusionMedia) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMenuItem struct {
+type FusionMenuItem struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2942,10 +2942,10 @@ type PgnFusionMenuItem struct {
 	Text             string      `json:"text,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionMenuItem) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMenuItem) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMenuItem) DecodePayload(payload []uint8) error {
+func (m *FusionMenuItem) PGNNumber() uint32               { return 130820 }
+func (m *FusionMenuItem) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMenuItem) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3059,7 +3059,7 @@ func (m *PgnFusionMenuItem) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMenuItem) EncodePayload() ([]uint8, error) {
+func (m *FusionMenuItem) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3101,7 +3101,7 @@ func (m *PgnFusionMenuItem) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMenuLockId struct {
+type FusionMenuLockId struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3110,10 +3110,10 @@ type PgnFusionMenuLockId struct {
 	Flags            *uint64     `json:"flags,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionMenuLockId) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMenuLockId) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMenuLockId) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMenuLockId) DecodePayload(payload []uint8) error {
+func (m *FusionMenuLockId) PGNNumber() uint32               { return 130820 }
+func (m *FusionMenuLockId) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMenuLockId) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMenuLockId) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3197,7 +3197,7 @@ func (m *PgnFusionMenuLockId) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMenuLockId) EncodePayload() ([]uint8, error) {
+func (m *FusionMenuLockId) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3228,7 +3228,7 @@ func (m *PgnFusionMenuLockId) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMono struct {
+type FusionMono struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3237,10 +3237,10 @@ type PgnFusionMono struct {
 	Enabled          *uint64     `json:"enabled,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionMono) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMono) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMono) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMono) DecodePayload(payload []uint8) error {
+func (m *FusionMono) PGNNumber() uint32               { return 130820 }
+func (m *FusionMono) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMono) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMono) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3324,7 +3324,7 @@ func (m *PgnFusionMono) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMono) EncodePayload() ([]uint8, error) {
+func (m *FusionMono) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3355,7 +3355,7 @@ func (m *PgnFusionMono) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMultiroom struct {
+type FusionMultiroom struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3367,10 +3367,10 @@ type PgnFusionMultiroom struct {
 	IpAddress4       *uint64     `json:"ipAddress4,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionMultiroom) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMultiroom) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMultiroom) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMultiroom) DecodePayload(payload []uint8) error {
+func (m *FusionMultiroom) PGNNumber() uint32               { return 130820 }
+func (m *FusionMultiroom) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMultiroom) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMultiroom) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3484,7 +3484,7 @@ func (m *PgnFusionMultiroom) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMultiroom) EncodePayload() ([]uint8, error) {
+func (m *FusionMultiroom) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3530,7 +3530,7 @@ func (m *PgnFusionMultiroom) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMultiroomStatus struct {
+type FusionMultiroomStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3538,10 +3538,10 @@ type PgnFusionMultiroomStatus struct {
 	Available        *uint64     `json:"available,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionMultiroomStatus) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMultiroomStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMultiroomStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMultiroomStatus) DecodePayload(payload []uint8) error {
+func (m *FusionMultiroomStatus) PGNNumber() uint32               { return 130820 }
+func (m *FusionMultiroomStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMultiroomStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMultiroomStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3615,7 +3615,7 @@ func (m *PgnFusionMultiroomStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMultiroomStatus) EncodePayload() ([]uint8, error) {
+func (m *FusionMultiroomStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3641,7 +3641,7 @@ func (m *PgnFusionMultiroomStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionMute struct {
+type FusionMute struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3649,10 +3649,10 @@ type PgnFusionMute struct {
 	Mute             *uint64     `json:"mute,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionMute) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionMute) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionMute) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionMute) DecodePayload(payload []uint8) error {
+func (m *FusionMute) PGNNumber() uint32               { return 130820 }
+func (m *FusionMute) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionMute) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionMute) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3726,7 +3726,7 @@ func (m *PgnFusionMute) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionMute) EncodePayload() ([]uint8, error) {
+func (m *FusionMute) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3752,7 +3752,7 @@ func (m *PgnFusionMute) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionPowerState struct {
+type FusionPowerState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3760,10 +3760,10 @@ type PgnFusionPowerState struct {
 	State            *uint64     `json:"state,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionPowerState) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionPowerState) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionPowerState) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionPowerState) DecodePayload(payload []uint8) error {
+func (m *FusionPowerState) PGNNumber() uint32               { return 130820 }
+func (m *FusionPowerState) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionPowerState) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionPowerState) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3837,7 +3837,7 @@ func (m *PgnFusionPowerState) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionPowerState) EncodePayload() ([]uint8, error) {
+func (m *FusionPowerState) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3863,7 +3863,7 @@ func (m *PgnFusionPowerState) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionProcessingBypass struct {
+type FusionProcessingBypass struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3871,10 +3871,10 @@ type PgnFusionProcessingBypass struct {
 	Bypass           *uint64     `json:"bypass,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionProcessingBypass) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionProcessingBypass) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionProcessingBypass) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionProcessingBypass) DecodePayload(payload []uint8) error {
+func (m *FusionProcessingBypass) PGNNumber() uint32               { return 130820 }
+func (m *FusionProcessingBypass) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionProcessingBypass) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionProcessingBypass) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3948,7 +3948,7 @@ func (m *PgnFusionProcessingBypass) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionProcessingBypass) EncodePayload() ([]uint8, error) {
+func (m *FusionProcessingBypass) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3974,7 +3974,7 @@ func (m *PgnFusionProcessingBypass) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionRdsData struct {
+type FusionRdsData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3985,10 +3985,10 @@ type PgnFusionRdsData struct {
 	Rds              string      `json:"rds,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionRdsData) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionRdsData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionRdsData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionRdsData) DecodePayload(payload []uint8) error {
+func (m *FusionRdsData) PGNNumber() uint32               { return 130820 }
+func (m *FusionRdsData) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionRdsData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionRdsData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4092,7 +4092,7 @@ func (m *PgnFusionRdsData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionRdsData) EncodePayload() ([]uint8, error) {
+func (m *FusionRdsData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4129,7 +4129,7 @@ func (m *PgnFusionRdsData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSetting struct {
+type FusionSetting struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4138,10 +4138,10 @@ type PgnFusionSetting struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionSetting) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSetting) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSetting) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSetting) DecodePayload(payload []uint8) error {
+func (m *FusionSetting) PGNNumber() uint32               { return 130820 }
+func (m *FusionSetting) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSetting) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSetting) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4225,7 +4225,7 @@ func (m *PgnFusionSetting) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSetting) EncodePayload() ([]uint8, error) {
+func (m *FusionSetting) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4256,7 +4256,7 @@ func (m *PgnFusionSetting) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSettings struct {
+type FusionSettings struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4266,10 +4266,10 @@ type PgnFusionSettings struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSettings) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSettings) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSettings) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSettings) DecodePayload(payload []uint8) error {
+func (m *FusionSettings) PGNNumber() uint32               { return 130820 }
+func (m *FusionSettings) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSettings) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSettings) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4363,7 +4363,7 @@ func (m *PgnFusionSettings) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSettings) EncodePayload() ([]uint8, error) {
+func (m *FusionSettings) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4399,7 +4399,7 @@ func (m *PgnFusionSettings) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxm struct {
+type FusionSiriusxm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4411,10 +4411,10 @@ type PgnFusionSiriusxm struct {
 	TuningMode       *uint64     `json:"tuningMode,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionSiriusxm) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxm) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxm) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxm) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxm) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxm) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxm) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxm) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4528,7 +4528,7 @@ func (m *PgnFusionSiriusxm) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxm) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxm) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4574,7 +4574,7 @@ func (m *PgnFusionSiriusxm) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmArtist struct {
+type FusionSiriusxmArtist struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4584,10 +4584,10 @@ type PgnFusionSiriusxmArtist struct {
 	Artist           string      `json:"artist,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmArtist) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmArtist) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmArtist) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmArtist) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmArtist) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmArtist) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4681,7 +4681,7 @@ func (m *PgnFusionSiriusxmArtist) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmArtist) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmArtist) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4713,7 +4713,7 @@ func (m *PgnFusionSiriusxmArtist) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmCategory struct {
+type FusionSiriusxmCategory struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4723,10 +4723,10 @@ type PgnFusionSiriusxmCategory struct {
 	Name             string      `json:"name,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmCategory) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmCategory) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmCategory) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmCategory) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmCategory) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmCategory) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmCategory) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmCategory) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4820,7 +4820,7 @@ func (m *PgnFusionSiriusxmCategory) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmCategory) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmCategory) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4852,7 +4852,7 @@ func (m *PgnFusionSiriusxmCategory) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmChannel struct {
+type FusionSiriusxmChannel struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4862,10 +4862,10 @@ type PgnFusionSiriusxmChannel struct {
 	Channel          string      `json:"channel,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmChannel) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmChannel) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmChannel) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmChannel) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmChannel) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmChannel) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmChannel) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmChannel) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4959,7 +4959,7 @@ func (m *PgnFusionSiriusxmChannel) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmChannel) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmChannel) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4991,7 +4991,7 @@ func (m *PgnFusionSiriusxmChannel) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmContentInfo struct {
+type FusionSiriusxmContentInfo struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5001,10 +5001,10 @@ type PgnFusionSiriusxmContentInfo struct {
 	Genre            string      `json:"genre,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmContentInfo) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmContentInfo) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmContentInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmContentInfo) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmContentInfo) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmContentInfo) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmContentInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmContentInfo) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5098,7 +5098,7 @@ func (m *PgnFusionSiriusxmContentInfo) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmContentInfo) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmContentInfo) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5130,7 +5130,7 @@ func (m *PgnFusionSiriusxmContentInfo) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmPresets struct {
+type FusionSiriusxmPresets struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5140,10 +5140,10 @@ type PgnFusionSiriusxmPresets struct {
 	Values           []uint8     `json:"values,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmPresets) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmPresets) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmPresets) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmPresets) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmPresets) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmPresets) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmPresets) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmPresets) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5237,7 +5237,7 @@ func (m *PgnFusionSiriusxmPresets) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmPresets) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmPresets) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5272,7 +5272,7 @@ func (m *PgnFusionSiriusxmPresets) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmSignal struct {
+type FusionSiriusxmSignal struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5281,10 +5281,10 @@ type PgnFusionSiriusxmSignal struct {
 	Signal           *uint64     `json:"signal,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionSiriusxmSignal) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmSignal) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmSignal) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmSignal) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmSignal) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmSignal) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmSignal) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmSignal) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5368,7 +5368,7 @@ func (m *PgnFusionSiriusxmSignal) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmSignal) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmSignal) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5399,7 +5399,7 @@ func (m *PgnFusionSiriusxmSignal) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSiriusxmTitle struct {
+type FusionSiriusxmTitle struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5409,10 +5409,10 @@ type PgnFusionSiriusxmTitle struct {
 	Title            string      `json:"title,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSiriusxmTitle) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSiriusxmTitle) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSiriusxmTitle) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSiriusxmTitle) DecodePayload(payload []uint8) error {
+func (m *FusionSiriusxmTitle) PGNNumber() uint32               { return 130820 }
+func (m *FusionSiriusxmTitle) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSiriusxmTitle) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSiriusxmTitle) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5506,7 +5506,7 @@ func (m *PgnFusionSiriusxmTitle) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSiriusxmTitle) EncodePayload() ([]uint8, error) {
+func (m *FusionSiriusxmTitle) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5538,7 +5538,7 @@ func (m *PgnFusionSiriusxmTitle) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSource struct {
+type FusionSource struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5550,10 +5550,10 @@ type PgnFusionSource struct {
 	Source           string      `json:"source,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionSource) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSource) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSource) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSource) DecodePayload(payload []uint8) error {
+func (m *FusionSource) PGNNumber() uint32               { return 130820 }
+func (m *FusionSource) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSource) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSource) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5667,7 +5667,7 @@ func (m *PgnFusionSource) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSource) EncodePayload() ([]uint8, error) {
+func (m *FusionSource) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5709,7 +5709,7 @@ func (m *PgnFusionSource) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSourceCount struct {
+type FusionSourceCount struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5717,10 +5717,10 @@ type PgnFusionSourceCount struct {
 	SourceCount      *uint64     `json:"sourceCount,omitempty" n2k:"5"`
 }
 
-func (m *PgnFusionSourceCount) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSourceCount) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSourceCount) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSourceCount) DecodePayload(payload []uint8) error {
+func (m *FusionSourceCount) PGNNumber() uint32               { return 130820 }
+func (m *FusionSourceCount) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSourceCount) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSourceCount) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5794,7 +5794,7 @@ func (m *PgnFusionSourceCount) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSourceCount) EncodePayload() ([]uint8, error) {
+func (m *FusionSourceCount) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5820,7 +5820,7 @@ func (m *PgnFusionSourceCount) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSpeedVolumeCurrentSpeed struct {
+type FusionSpeedVolumeCurrentSpeed struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5830,10 +5830,10 @@ type PgnFusionSpeedVolumeCurrentSpeed struct {
 	Enabled          *uint64     `json:"enabled,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionSpeedVolumeCurrentSpeed) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSpeedVolumeCurrentSpeed) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSpeedVolumeCurrentSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSpeedVolumeCurrentSpeed) DecodePayload(payload []uint8) error {
+func (m *FusionSpeedVolumeCurrentSpeed) PGNNumber() uint32               { return 130820 }
+func (m *FusionSpeedVolumeCurrentSpeed) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSpeedVolumeCurrentSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSpeedVolumeCurrentSpeed) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5927,7 +5927,7 @@ func (m *PgnFusionSpeedVolumeCurrentSpeed) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnFusionSpeedVolumeCurrentSpeed) EncodePayload() ([]uint8, error) {
+func (m *FusionSpeedVolumeCurrentSpeed) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5963,7 +5963,7 @@ func (m *PgnFusionSpeedVolumeCurrentSpeed) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionSublevels struct {
+type FusionSublevels struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5974,10 +5974,10 @@ type PgnFusionSublevels struct {
 	Zone4            *uint64     `json:"zone4,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionSublevels) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionSublevels) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionSublevels) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionSublevels) DecodePayload(payload []uint8) error {
+func (m *FusionSublevels) PGNNumber() uint32               { return 130820 }
+func (m *FusionSublevels) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionSublevels) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionSublevels) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6081,7 +6081,7 @@ func (m *PgnFusionSublevels) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionSublevels) EncodePayload() ([]uint8, error) {
+func (m *FusionSublevels) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6122,7 +6122,7 @@ func (m *PgnFusionSublevels) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionTrackName struct {
+type FusionTrackName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6132,10 +6132,10 @@ type PgnFusionTrackName struct {
 	Track            string      `json:"track,omitempty" n2k:"7"`
 }
 
-func (m *PgnFusionTrackName) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionTrackName) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionTrackName) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionTrackName) DecodePayload(payload []uint8) error {
+func (m *FusionTrackName) PGNNumber() uint32               { return 130820 }
+func (m *FusionTrackName) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionTrackName) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionTrackName) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6229,7 +6229,7 @@ func (m *PgnFusionTrackName) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionTrackName) EncodePayload() ([]uint8, error) {
+func (m *FusionTrackName) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6261,7 +6261,7 @@ func (m *PgnFusionTrackName) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionTrackPosition struct {
+type FusionTrackPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6270,10 +6270,10 @@ type PgnFusionTrackPosition struct {
 	Progress         *uint64     `json:"progress,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionTrackPosition) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionTrackPosition) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionTrackPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionTrackPosition) DecodePayload(payload []uint8) error {
+func (m *FusionTrackPosition) PGNNumber() uint32               { return 130820 }
+func (m *FusionTrackPosition) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionTrackPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionTrackPosition) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6357,7 +6357,7 @@ func (m *PgnFusionTrackPosition) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionTrackPosition) EncodePayload() ([]uint8, error) {
+func (m *FusionTrackPosition) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6388,7 +6388,7 @@ func (m *PgnFusionTrackPosition) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionTuner struct {
+type FusionTuner struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6400,10 +6400,10 @@ type PgnFusionTuner struct {
 	Track            string      `json:"track,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionTuner) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionTuner) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionTuner) DecodePayload(payload []uint8) error {
+func (m *FusionTuner) PGNNumber() uint32               { return 130820 }
+func (m *FusionTuner) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionTuner) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionTuner) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6517,7 +6517,7 @@ func (m *PgnFusionTuner) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionTuner) EncodePayload() ([]uint8, error) {
+func (m *FusionTuner) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6559,7 +6559,7 @@ func (m *PgnFusionTuner) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionUsbRepeatStatus struct {
+type FusionUsbRepeatStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6568,10 +6568,10 @@ type PgnFusionUsbRepeatStatus struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionUsbRepeatStatus) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionUsbRepeatStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionUsbRepeatStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionUsbRepeatStatus) DecodePayload(payload []uint8) error {
+func (m *FusionUsbRepeatStatus) PGNNumber() uint32               { return 130820 }
+func (m *FusionUsbRepeatStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionUsbRepeatStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionUsbRepeatStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6664,7 +6664,7 @@ func (m *PgnFusionUsbRepeatStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionUsbRepeatStatus) EncodePayload() ([]uint8, error) {
+func (m *FusionUsbRepeatStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6695,7 +6695,7 @@ func (m *PgnFusionUsbRepeatStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionVersions struct {
+type FusionVersions struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6707,10 +6707,10 @@ type PgnFusionVersions struct {
 	BuildNumber      *uint64     `json:"buildNumber,omitempty" n2k:"9"`
 }
 
-func (m *PgnFusionVersions) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionVersions) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionVersions) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionVersions) DecodePayload(payload []uint8) error {
+func (m *FusionVersions) PGNNumber() uint32               { return 130820 }
+func (m *FusionVersions) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionVersions) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionVersions) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6824,7 +6824,7 @@ func (m *PgnFusionVersions) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionVersions) EncodePayload() ([]uint8, error) {
+func (m *FusionVersions) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6870,7 +6870,7 @@ func (m *PgnFusionVersions) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionVolumeLimits struct {
+type FusionVolumeLimits struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6881,10 +6881,10 @@ type PgnFusionVolumeLimits struct {
 	Zone4VolumeLimit *uint64     `json:"zone4VolumeLimit,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionVolumeLimits) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionVolumeLimits) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionVolumeLimits) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionVolumeLimits) DecodePayload(payload []uint8) error {
+func (m *FusionVolumeLimits) PGNNumber() uint32               { return 130820 }
+func (m *FusionVolumeLimits) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionVolumeLimits) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionVolumeLimits) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6988,7 +6988,7 @@ func (m *PgnFusionVolumeLimits) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionVolumeLimits) EncodePayload() ([]uint8, error) {
+func (m *FusionVolumeLimits) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -7029,7 +7029,7 @@ func (m *PgnFusionVolumeLimits) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionVolumes struct {
+type FusionVolumes struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -7040,10 +7040,10 @@ type PgnFusionVolumes struct {
 	Zone4            *uint64     `json:"zone4,omitempty" n2k:"8"`
 }
 
-func (m *PgnFusionVolumes) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionVolumes) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionVolumes) DecodePayload(payload []uint8) error {
+func (m *FusionVolumes) PGNNumber() uint32               { return 130820 }
+func (m *FusionVolumes) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionVolumes) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionVolumes) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -7147,7 +7147,7 @@ func (m *PgnFusionVolumes) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionVolumes) EncodePayload() ([]uint8, error) {
+func (m *FusionVolumes) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -7188,7 +7188,7 @@ func (m *PgnFusionVolumes) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnFusionZoneName struct {
+type FusionZoneName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -7197,10 +7197,10 @@ type PgnFusionZoneName struct {
 	Name             string      `json:"name,omitempty" n2k:"6"`
 }
 
-func (m *PgnFusionZoneName) PGNNumber() uint32               { return 130820 }
-func (m *PgnFusionZoneName) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnFusionZoneName) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnFusionZoneName) DecodePayload(payload []uint8) error {
+func (m *FusionZoneName) PGNNumber() uint32               { return 130820 }
+func (m *FusionZoneName) MessageInfo() MessageInfo        { return m.Info }
+func (m *FusionZoneName) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *FusionZoneName) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -7284,7 +7284,7 @@ func (m *PgnFusionZoneName) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnFusionZoneName) EncodePayload() ([]uint8, error) {
+func (m *FusionZoneName) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

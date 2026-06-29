@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnMercuryEngineData struct {
+type MercuryEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnMercuryEngineData) PGNNumber() uint32               { return 65280 }
-func (m *PgnMercuryEngineData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryEngineData) DecodePayload(payload []uint8) error {
+func (m *MercuryEngineData) PGNNumber() uint32               { return 65280 }
+func (m *MercuryEngineData) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryEngineData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnMercuryEngineData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryEngineData) EncodePayload() ([]uint8, error) {
+func (m *MercuryEngineData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,7 +87,7 @@ func (m *PgnMercuryEngineData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryEngineTelemetryLowSpeed struct {
+type MercuryEngineTelemetryLowSpeed struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode          *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -99,10 +99,10 @@ type PgnMercuryEngineTelemetryLowSpeed struct {
 	EngineState           *uint64     `json:"engineState,omitempty" n2k:"9"`
 }
 
-func (m *PgnMercuryEngineTelemetryLowSpeed) PGNNumber() uint32               { return 130822 }
-func (m *PgnMercuryEngineTelemetryLowSpeed) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryEngineTelemetryLowSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryEngineTelemetryLowSpeed) DecodePayload(payload []uint8) error {
+func (m *MercuryEngineTelemetryLowSpeed) PGNNumber() uint32               { return 130822 }
+func (m *MercuryEngineTelemetryLowSpeed) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryEngineTelemetryLowSpeed) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryEngineTelemetryLowSpeed) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -207,7 +207,7 @@ func (m *PgnMercuryEngineTelemetryLowSpeed) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnMercuryEngineTelemetryLowSpeed) EncodePayload() ([]uint8, error) {
+func (m *MercuryEngineTelemetryLowSpeed) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -253,7 +253,7 @@ func (m *PgnMercuryEngineTelemetryLowSpeed) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryEngineKeyValueData struct {
+type MercuryEngineKeyValueData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -262,10 +262,10 @@ type PgnMercuryEngineKeyValueData struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnMercuryEngineKeyValueData) PGNNumber() uint32               { return 130824 }
-func (m *PgnMercuryEngineKeyValueData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryEngineKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryEngineKeyValueData) DecodePayload(payload []uint8) error {
+func (m *MercuryEngineKeyValueData) PGNNumber() uint32               { return 130824 }
+func (m *MercuryEngineKeyValueData) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryEngineKeyValueData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryEngineKeyValueData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -340,7 +340,7 @@ func (m *PgnMercuryEngineKeyValueData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryEngineKeyValueData) EncodePayload() ([]uint8, error) {
+func (m *MercuryEngineKeyValueData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -370,7 +370,7 @@ func (m *PgnMercuryEngineKeyValueData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryCommandResponse struct {
+type MercuryCommandResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -378,10 +378,10 @@ type PgnMercuryCommandResponse struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"5"`
 }
 
-func (m *PgnMercuryCommandResponse) PGNNumber() uint32               { return 130825 }
-func (m *PgnMercuryCommandResponse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryCommandResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryCommandResponse) DecodePayload(payload []uint8) error {
+func (m *MercuryCommandResponse) PGNNumber() uint32               { return 130825 }
+func (m *MercuryCommandResponse) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryCommandResponse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryCommandResponse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -446,7 +446,7 @@ func (m *PgnMercuryCommandResponse) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryCommandResponse) EncodePayload() ([]uint8, error) {
+func (m *MercuryCommandResponse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -468,7 +468,7 @@ func (m *PgnMercuryCommandResponse) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryCruiseControlData struct {
+type MercuryCruiseControlData struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode        *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -479,10 +479,10 @@ type PgnMercuryCruiseControlData struct {
 	CruiseSpeedSetpoint *uint64     `json:"cruiseSpeedSetpoint,omitempty" n2k:"9"`
 }
 
-func (m *PgnMercuryCruiseControlData) PGNNumber() uint32               { return 130825 }
-func (m *PgnMercuryCruiseControlData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryCruiseControlData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryCruiseControlData) DecodePayload(payload []uint8) error {
+func (m *MercuryCruiseControlData) PGNNumber() uint32               { return 130825 }
+func (m *MercuryCruiseControlData) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryCruiseControlData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryCruiseControlData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -594,7 +594,7 @@ func (m *PgnMercuryCruiseControlData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryCruiseControlData) EncodePayload() ([]uint8, error) {
+func (m *MercuryCruiseControlData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -637,7 +637,7 @@ func (m *PgnMercuryCruiseControlData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryBamDigitalDataProxy struct {
+type MercuryBamDigitalDataProxy struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -648,10 +648,10 @@ type PgnMercuryBamDigitalDataProxy struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"9"`
 }
 
-func (m *PgnMercuryBamDigitalDataProxy) PGNNumber() uint32               { return 130826 }
-func (m *PgnMercuryBamDigitalDataProxy) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryBamDigitalDataProxy) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryBamDigitalDataProxy) DecodePayload(payload []uint8) error {
+func (m *MercuryBamDigitalDataProxy) PGNNumber() uint32               { return 130826 }
+func (m *MercuryBamDigitalDataProxy) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryBamDigitalDataProxy) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryBamDigitalDataProxy) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -750,7 +750,7 @@ func (m *PgnMercuryBamDigitalDataProxy) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryBamDigitalDataProxy) EncodePayload() ([]uint8, error) {
+func (m *MercuryBamDigitalDataProxy) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -788,7 +788,7 @@ func (m *PgnMercuryBamDigitalDataProxy) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnMercuryEngineStatus struct {
+type MercuryEngineStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -798,10 +798,10 @@ type PgnMercuryEngineStatus struct {
 	Capabilities     []uint8     `json:"capabilities,omitempty" n2k:"8"`
 }
 
-func (m *PgnMercuryEngineStatus) PGNNumber() uint32               { return 130829 }
-func (m *PgnMercuryEngineStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnMercuryEngineStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnMercuryEngineStatus) DecodePayload(payload []uint8) error {
+func (m *MercuryEngineStatus) PGNNumber() uint32               { return 130829 }
+func (m *MercuryEngineStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *MercuryEngineStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *MercuryEngineStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -890,7 +890,7 @@ func (m *PgnMercuryEngineStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnMercuryEngineStatus) EncodePayload() ([]uint8, error) {
+func (m *MercuryEngineStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

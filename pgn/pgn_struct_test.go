@@ -7,7 +7,7 @@ import (
 )
 
 func TestPGNRoundTripVesselHeading(t *testing.T) {
-	msg := &PgnVesselHeading{
+	msg := &VesselHeading{
 		Info:      MessageInfo{PGN: 127250},
 		Sid:       ptrUint64(5),
 		Heading:   ptrUint64(15708),
@@ -22,8 +22,8 @@ func TestPGNRoundTripVesselHeading(t *testing.T) {
 	decoded, err := DecodePayload(MessageInfo{PGN: 127250, SourceId: 4}, payload)
 	require.NoError(t, err)
 
-	result, ok := decoded.(*PgnVesselHeading)
-	require.True(t, ok, "expected *pgn.PgnVesselHeading, got %T", decoded)
+	result, ok := decoded.(*VesselHeading)
+	require.True(t, ok, "expected *pgn.VesselHeading, got %T", decoded)
 	require.Equal(t, uint32(127250), result.PGNNumber())
 	require.Equal(t, uint8(4), result.Info.SourceId)
 	require.Equal(t, uint64(5), *result.Sid)
@@ -34,7 +34,7 @@ func TestPGNRoundTripVesselHeading(t *testing.T) {
 }
 
 func TestPGNDecodeUsesVariantMatches(t *testing.T) {
-	msg := &PgnBGKeyValueData{
+	msg := &BGKeyValueData{
 		Info:             MessageInfo{PGN: 130824},
 		ManufacturerCode: ptrUint64(381),
 		IndustryCode:     ptrUint64(4),
@@ -48,14 +48,14 @@ func TestPGNDecodeUsesVariantMatches(t *testing.T) {
 
 	decoded, err := DecodePayload(MessageInfo{PGN: 130824}, payload)
 	require.NoError(t, err)
-	_, ok := decoded.(*PgnBGKeyValueData)
-	require.True(t, ok, "expected *pgn.PgnBGKeyValueData, got %T", decoded)
+	_, ok := decoded.(*BGKeyValueData)
+	require.True(t, ok, "expected *pgn.BGKeyValueData, got %T", decoded)
 }
 
 func TestPGNMetadata(t *testing.T) {
 	infos := PgnInfoLookup[127250]
 	require.Len(t, infos, 1)
-	require.Equal(t, "PgnVesselHeading", infos[0].Id)
+	require.Equal(t, "VesselHeading", infos[0].Id)
 	require.Equal(t, "Vessel Heading", infos[0].Description)
 	require.False(t, infos[0].Fast)
 	require.NotEmpty(t, infos[0].Fields)
@@ -67,14 +67,14 @@ func TestPGNMetadata(t *testing.T) {
 }
 
 func TestDebugDumpPGNStruct(t *testing.T) {
-	msg := &PgnVesselHeading{
+	msg := &VesselHeading{
 		Info:    MessageInfo{PGN: 127250, SourceId: 7, Priority: ptrUint8(3)},
 		Sid:     ptrUint64(3),
 		Heading: ptrUint64(15000),
 	}
 
 	result := DebugDumpPGN(msg)
-	require.Contains(t, result, "PgnVesselHeading:")
+	require.Contains(t, result, "VesselHeading:")
 	require.Contains(t, result, "PGN=")
 	require.Contains(t, result, "127250")
 	require.Contains(t, result, "SourceId=")

@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnDiverseYachtServicesLoadCell struct {
+type DiverseYachtServicesLoadCell struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -13,10 +13,10 @@ type PgnDiverseYachtServicesLoadCell struct {
 	LoadCell         *uint64     `json:"loadCell,omitempty" n2k:"6"`
 }
 
-func (m *PgnDiverseYachtServicesLoadCell) PGNNumber() uint32               { return 65293 }
-func (m *PgnDiverseYachtServicesLoadCell) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnDiverseYachtServicesLoadCell) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnDiverseYachtServicesLoadCell) DecodePayload(payload []uint8) error {
+func (m *DiverseYachtServicesLoadCell) PGNNumber() uint32               { return 65293 }
+func (m *DiverseYachtServicesLoadCell) MessageInfo() MessageInfo        { return m.Info }
+func (m *DiverseYachtServicesLoadCell) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *DiverseYachtServicesLoadCell) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -85,7 +85,7 @@ func (m *PgnDiverseYachtServicesLoadCell) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnDiverseYachtServicesLoadCell) EncodePayload() ([]uint8, error) {
+func (m *DiverseYachtServicesLoadCell) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

@@ -5,17 +5,17 @@ package pgn
 
 import "fmt"
 
-type PgnHondaEngineData struct {
+type HondaEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnHondaEngineData) PGNNumber() uint32               { return 65280 }
-func (m *PgnHondaEngineData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnHondaEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnHondaEngineData) DecodePayload(payload []uint8) error {
+func (m *HondaEngineData) PGNNumber() uint32               { return 65280 }
+func (m *HondaEngineData) MessageInfo() MessageInfo        { return m.Info }
+func (m *HondaEngineData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *HondaEngineData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -70,7 +70,7 @@ func (m *PgnHondaEngineData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnHondaEngineData) EncodePayload() ([]uint8, error) {
+func (m *HondaEngineData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -87,17 +87,17 @@ func (m *PgnHondaEngineData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnHondaEngineAlerts struct {
+type HondaEngineAlerts struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnHondaEngineAlerts) PGNNumber() uint32               { return 65284 }
-func (m *PgnHondaEngineAlerts) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnHondaEngineAlerts) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnHondaEngineAlerts) DecodePayload(payload []uint8) error {
+func (m *HondaEngineAlerts) PGNNumber() uint32               { return 65284 }
+func (m *HondaEngineAlerts) MessageInfo() MessageInfo        { return m.Info }
+func (m *HondaEngineAlerts) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *HondaEngineAlerts) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -152,7 +152,7 @@ func (m *PgnHondaEngineAlerts) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnHondaEngineAlerts) EncodePayload() ([]uint8, error) {
+func (m *HondaEngineAlerts) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -169,16 +169,16 @@ func (m *PgnHondaEngineAlerts) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnHondaEngineStatus struct {
+type HondaEngineStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnHondaEngineStatus) PGNNumber() uint32               { return 130816 }
-func (m *PgnHondaEngineStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnHondaEngineStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnHondaEngineStatus) DecodePayload(payload []uint8) error {
+func (m *HondaEngineStatus) PGNNumber() uint32               { return 130816 }
+func (m *HondaEngineStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *HondaEngineStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *HondaEngineStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -223,7 +223,7 @@ func (m *PgnHondaEngineStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnHondaEngineStatus) EncodePayload() ([]uint8, error) {
+func (m *HondaEngineStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

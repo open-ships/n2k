@@ -187,10 +187,10 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	return pgnManifest{
 		SchemaVersion: 3,
 		Package:       "github.com/open-ships/n2k/pgn",
-		Source:        "Pgn* structs and PgnInfoLookup metadata",
+		Source:        "PGN structs and PgnInfoLookup metadata",
 		Description:   "NMEA 2000 PGN variants decoded and encoded by this package.",
 		Notes: []string{
-			"Each entry corresponds to one Pgn* struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
+			"Each entry corresponds to one PGN struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
 			"Categories are grouped by the pgn package source file that owns each PGN struct.",
 			"Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
 			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",

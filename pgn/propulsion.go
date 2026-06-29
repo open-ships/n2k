@@ -3,7 +3,7 @@
 
 package pgn
 
-type PgnRudder struct {
+type Rudder struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
 	DirectionOrder *uint64     `json:"directionOrder,omitempty" n2k:"2"`
@@ -11,10 +11,10 @@ type PgnRudder struct {
 	Position       *int64      `json:"position,omitempty" n2k:"5"`
 }
 
-func (m *PgnRudder) PGNNumber() uint32               { return 127245 }
-func (m *PgnRudder) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnRudder) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnRudder) DecodePayload(payload []uint8) error {
+func (m *Rudder) PGNNumber() uint32               { return 127245 }
+func (m *Rudder) MessageInfo() MessageInfo        { return m.Info }
+func (m *Rudder) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Rudder) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -68,7 +68,7 @@ func (m *PgnRudder) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnRudder) EncodePayload() ([]uint8, error) {
+func (m *Rudder) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Instance != nil {
 		writer.writeUInt64(m.Instance, 8)
@@ -95,7 +95,7 @@ func (m *PgnRudder) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricDriveStatusDynamic struct {
+type ElectricDriveStatusDynamic struct {
 	Info                    MessageInfo `json:"info"`
 	InverterMotorIdentifier *uint64     `json:"inverterMotorIdentifier,omitempty" n2k:"1"`
 	OperatingMode           *uint64     `json:"operatingMode,omitempty" n2k:"2"`
@@ -106,10 +106,10 @@ type PgnElectricDriveStatusDynamic struct {
 	ShaftTorque             *uint64     `json:"shaftTorque,omitempty" n2k:"8"`
 }
 
-func (m *PgnElectricDriveStatusDynamic) PGNNumber() uint32               { return 127490 }
-func (m *PgnElectricDriveStatusDynamic) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricDriveStatusDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricDriveStatusDynamic) DecodePayload(payload []uint8) error {
+func (m *ElectricDriveStatusDynamic) PGNNumber() uint32               { return 127490 }
+func (m *ElectricDriveStatusDynamic) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricDriveStatusDynamic) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricDriveStatusDynamic) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -187,7 +187,7 @@ func (m *PgnElectricDriveStatusDynamic) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnElectricDriveStatusDynamic) EncodePayload() ([]uint8, error) {
+func (m *ElectricDriveStatusDynamic) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.InverterMotorIdentifier != nil {
 		writer.writeUInt64(m.InverterMotorIdentifier, 8)
@@ -228,7 +228,7 @@ func (m *PgnElectricDriveStatusDynamic) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricDriveInformation struct {
+type ElectricDriveInformation struct {
 	Info                               MessageInfo `json:"info"`
 	InverterMotorIdentifier            *uint64     `json:"inverterMotorIdentifier,omitempty" n2k:"1"`
 	MotorType                          *uint64     `json:"motorType,omitempty" n2k:"2"`
@@ -244,10 +244,10 @@ type PgnElectricDriveInformation struct {
 	DriveMotorHours                    *uint64     `json:"driveMotorHours,omitempty" n2k:"13"`
 }
 
-func (m *PgnElectricDriveInformation) PGNNumber() uint32               { return 127494 }
-func (m *PgnElectricDriveInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricDriveInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricDriveInformation) DecodePayload(payload []uint8) error {
+func (m *ElectricDriveInformation) PGNNumber() uint32               { return 127494 }
+func (m *ElectricDriveInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricDriveInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricDriveInformation) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -375,7 +375,7 @@ func (m *PgnElectricDriveInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnElectricDriveInformation) EncodePayload() ([]uint8, error) {
+func (m *ElectricDriveInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.InverterMotorIdentifier != nil {
 		writer.writeUInt64(m.InverterMotorIdentifier, 8)
@@ -441,7 +441,7 @@ func (m *PgnElectricDriveInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnElectricDriveStatusRapidUpdate struct {
+type ElectricDriveStatusRapidUpdate struct {
 	Info                    MessageInfo `json:"info"`
 	InverterMotorController *uint64     `json:"inverterMotorController,omitempty" n2k:"1"`
 	ActiveMotorMode         *uint64     `json:"activeMotorMode,omitempty" n2k:"2"`
@@ -451,10 +451,10 @@ type PgnElectricDriveStatusRapidUpdate struct {
 	MotorDcCurrent          *int64      `json:"motorDcCurrent,omitempty" n2k:"7"`
 }
 
-func (m *PgnElectricDriveStatusRapidUpdate) PGNNumber() uint32               { return 128002 }
-func (m *PgnElectricDriveStatusRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnElectricDriveStatusRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnElectricDriveStatusRapidUpdate) DecodePayload(payload []uint8) error {
+func (m *ElectricDriveStatusRapidUpdate) PGNNumber() uint32               { return 128002 }
+func (m *ElectricDriveStatusRapidUpdate) MessageInfo() MessageInfo        { return m.Info }
+func (m *ElectricDriveStatusRapidUpdate) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ElectricDriveStatusRapidUpdate) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -523,7 +523,7 @@ func (m *PgnElectricDriveStatusRapidUpdate) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnElectricDriveStatusRapidUpdate) EncodePayload() ([]uint8, error) {
+func (m *ElectricDriveStatusRapidUpdate) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.InverterMotorController != nil {
 		writer.writeUInt64(m.InverterMotorController, 8)
@@ -559,7 +559,7 @@ func (m *PgnElectricDriveStatusRapidUpdate) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnThrusterControlStatus struct {
+type ThrusterControlStatus struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
 	Identifier       *uint64     `json:"identifier,omitempty" n2k:"2"`
@@ -572,10 +572,10 @@ type PgnThrusterControlStatus struct {
 	AzimuthControl   *uint64     `json:"azimuthControl,omitempty" n2k:"9"`
 }
 
-func (m *PgnThrusterControlStatus) PGNNumber() uint32               { return 128006 }
-func (m *PgnThrusterControlStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnThrusterControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnThrusterControlStatus) DecodePayload(payload []uint8) error {
+func (m *ThrusterControlStatus) PGNNumber() uint32               { return 128006 }
+func (m *ThrusterControlStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *ThrusterControlStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ThrusterControlStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -669,7 +669,7 @@ func (m *PgnThrusterControlStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnThrusterControlStatus) EncodePayload() ([]uint8, error) {
+func (m *ThrusterControlStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)
@@ -719,7 +719,7 @@ func (m *PgnThrusterControlStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnThrusterInformation struct {
+type ThrusterInformation struct {
 	Info                     MessageInfo `json:"info"`
 	Identifier               *uint64     `json:"identifier,omitempty" n2k:"1"`
 	MotorType                *uint64     `json:"motorType,omitempty" n2k:"2"`
@@ -728,10 +728,10 @@ type PgnThrusterInformation struct {
 	MaximumRotationalSpeed   *uint64     `json:"maximumRotationalSpeed,omitempty" n2k:"6"`
 }
 
-func (m *PgnThrusterInformation) PGNNumber() uint32               { return 128007 }
-func (m *PgnThrusterInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnThrusterInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnThrusterInformation) DecodePayload(payload []uint8) error {
+func (m *ThrusterInformation) PGNNumber() uint32               { return 128007 }
+func (m *ThrusterInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *ThrusterInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ThrusterInformation) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -789,7 +789,7 @@ func (m *PgnThrusterInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnThrusterInformation) EncodePayload() ([]uint8, error) {
+func (m *ThrusterInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Identifier != nil {
 		writer.writeUInt64(m.Identifier, 8)
@@ -820,7 +820,7 @@ func (m *PgnThrusterInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnThrusterMotorStatus struct {
+type ThrusterMotorStatus struct {
 	Info          MessageInfo `json:"info"`
 	Sid           *uint64     `json:"sid,omitempty" n2k:"1"`
 	Identifier    *uint64     `json:"identifier,omitempty" n2k:"2"`
@@ -830,10 +830,10 @@ type PgnThrusterMotorStatus struct {
 	OperatingTime *uint64     `json:"operatingTime,omitempty" n2k:"6"`
 }
 
-func (m *PgnThrusterMotorStatus) PGNNumber() uint32               { return 128008 }
-func (m *PgnThrusterMotorStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnThrusterMotorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnThrusterMotorStatus) DecodePayload(payload []uint8) error {
+func (m *ThrusterMotorStatus) PGNNumber() uint32               { return 128008 }
+func (m *ThrusterMotorStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *ThrusterMotorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *ThrusterMotorStatus) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		value, err := stream.getNumberRaw(8)
@@ -897,7 +897,7 @@ func (m *PgnThrusterMotorStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnThrusterMotorStatus) EncodePayload() ([]uint8, error) {
+func (m *ThrusterMotorStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.Sid != nil {
 		writer.writeUInt64(m.Sid, 8)

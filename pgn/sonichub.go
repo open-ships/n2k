@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnSonichubAmRadio struct {
+type SonichubAmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -18,10 +18,10 @@ type PgnSonichubAmRadio struct {
 	Text             string      `json:"text,omitempty" n2k:"12"`
 }
 
-func (m *PgnSonichubAmRadio) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubAmRadio) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubAmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubAmRadio) DecodePayload(payload []uint8) error {
+func (m *SonichubAmRadio) PGNNumber() uint32               { return 130816 }
+func (m *SonichubAmRadio) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubAmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubAmRadio) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -153,7 +153,7 @@ func (m *PgnSonichubAmRadio) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubAmRadio) EncodePayload() ([]uint8, error) {
+func (m *SonichubAmRadio) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -202,7 +202,7 @@ func (m *PgnSonichubAmRadio) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubAlbum struct {
+type SonichubAlbum struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -212,10 +212,10 @@ type PgnSonichubAlbum struct {
 	Text             string      `json:"text,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubAlbum) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubAlbum) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubAlbum) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubAlbum) DecodePayload(payload []uint8) error {
+func (m *SonichubAlbum) PGNNumber() uint32               { return 130816 }
+func (m *SonichubAlbum) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubAlbum) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubAlbum) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -313,7 +313,7 @@ func (m *PgnSonichubAlbum) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubAlbum) EncodePayload() ([]uint8, error) {
+func (m *SonichubAlbum) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -346,7 +346,7 @@ func (m *PgnSonichubAlbum) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubArtist struct {
+type SonichubArtist struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -356,10 +356,10 @@ type PgnSonichubArtist struct {
 	Text             string      `json:"text,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubArtist) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubArtist) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubArtist) DecodePayload(payload []uint8) error {
+func (m *SonichubArtist) PGNNumber() uint32               { return 130816 }
+func (m *SonichubArtist) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubArtist) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubArtist) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -457,7 +457,7 @@ func (m *PgnSonichubArtist) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubArtist) EncodePayload() ([]uint8, error) {
+func (m *SonichubArtist) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -490,7 +490,7 @@ func (m *PgnSonichubArtist) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubControl struct {
+type SonichubControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -499,10 +499,10 @@ type PgnSonichubControl struct {
 	Item             *uint64     `json:"item,omitempty" n2k:"7"`
 }
 
-func (m *PgnSonichubControl) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubControl) DecodePayload(payload []uint8) error {
+func (m *SonichubControl) PGNNumber() uint32               { return 130816 }
+func (m *SonichubControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -590,7 +590,7 @@ func (m *PgnSonichubControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubControl) EncodePayload() ([]uint8, error) {
+func (m *SonichubControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -622,7 +622,7 @@ func (m *PgnSonichubControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubFmRadio struct {
+type SonichubFmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -635,10 +635,10 @@ type PgnSonichubFmRadio struct {
 	Text             string      `json:"text,omitempty" n2k:"12"`
 }
 
-func (m *PgnSonichubFmRadio) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubFmRadio) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubFmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubFmRadio) DecodePayload(payload []uint8) error {
+func (m *SonichubFmRadio) PGNNumber() uint32               { return 130816 }
+func (m *SonichubFmRadio) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubFmRadio) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubFmRadio) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -770,7 +770,7 @@ func (m *PgnSonichubFmRadio) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubFmRadio) EncodePayload() ([]uint8, error) {
+func (m *SonichubFmRadio) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -819,7 +819,7 @@ func (m *PgnSonichubFmRadio) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubInit1 struct {
+type SonichubInit1 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -827,10 +827,10 @@ type PgnSonichubInit1 struct {
 	Control          *uint64     `json:"control,omitempty" n2k:"6"`
 }
 
-func (m *PgnSonichubInit1) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubInit1) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubInit1) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubInit1) DecodePayload(payload []uint8) error {
+func (m *SonichubInit1) PGNNumber() uint32               { return 130816 }
+func (m *SonichubInit1) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubInit1) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubInit1) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -908,7 +908,7 @@ func (m *PgnSonichubInit1) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubInit1) EncodePayload() ([]uint8, error) {
+func (m *SonichubInit1) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -935,7 +935,7 @@ func (m *PgnSonichubInit1) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubInit2 struct {
+type SonichubInit2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -945,10 +945,10 @@ type PgnSonichubInit2 struct {
 	B                *uint64     `json:"b,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubInit2) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubInit2) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubInit2) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubInit2) DecodePayload(payload []uint8) error {
+func (m *SonichubInit2) PGNNumber() uint32               { return 130816 }
+func (m *SonichubInit2) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubInit2) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubInit2) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1046,7 +1046,7 @@ func (m *PgnSonichubInit2) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubInit2) EncodePayload() ([]uint8, error) {
+func (m *SonichubInit2) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1083,7 +1083,7 @@ func (m *PgnSonichubInit2) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubInit3 struct {
+type SonichubInit3 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1093,10 +1093,10 @@ type PgnSonichubInit3 struct {
 	B                *uint64     `json:"b,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubInit3) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubInit3) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubInit3) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubInit3) DecodePayload(payload []uint8) error {
+func (m *SonichubInit3) PGNNumber() uint32               { return 130816 }
+func (m *SonichubInit3) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubInit3) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubInit3) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1194,7 +1194,7 @@ func (m *PgnSonichubInit3) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubInit3) EncodePayload() ([]uint8, error) {
+func (m *SonichubInit3) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1231,7 +1231,7 @@ func (m *PgnSonichubInit3) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubMaxVolume struct {
+type SonichubMaxVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1241,10 +1241,10 @@ type PgnSonichubMaxVolume struct {
 	Level            *uint64     `json:"level,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubMaxVolume) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubMaxVolume) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubMaxVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubMaxVolume) DecodePayload(payload []uint8) error {
+func (m *SonichubMaxVolume) PGNNumber() uint32               { return 130816 }
+func (m *SonichubMaxVolume) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubMaxVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubMaxVolume) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1342,7 +1342,7 @@ func (m *PgnSonichubMaxVolume) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubMaxVolume) EncodePayload() ([]uint8, error) {
+func (m *SonichubMaxVolume) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1379,7 +1379,7 @@ func (m *PgnSonichubMaxVolume) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubMenuItem struct {
+type SonichubMenuItem struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1392,10 +1392,10 @@ type PgnSonichubMenuItem struct {
 	Text             string      `json:"text,omitempty" n2k:"11"`
 }
 
-func (m *PgnSonichubMenuItem) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubMenuItem) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubMenuItem) DecodePayload(payload []uint8) error {
+func (m *SonichubMenuItem) PGNNumber() uint32               { return 130816 }
+func (m *SonichubMenuItem) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubMenuItem) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubMenuItem) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1523,7 +1523,7 @@ func (m *PgnSonichubMenuItem) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubMenuItem) EncodePayload() ([]uint8, error) {
+func (m *SonichubMenuItem) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1571,7 +1571,7 @@ func (m *PgnSonichubMenuItem) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubPlaylist struct {
+type SonichubPlaylist struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1585,10 +1585,10 @@ type PgnSonichubPlaylist struct {
 	PositionInTrack  *uint64     `json:"positionInTrack,omitempty" n2k:"12"`
 }
 
-func (m *PgnSonichubPlaylist) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubPlaylist) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubPlaylist) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubPlaylist) DecodePayload(payload []uint8) error {
+func (m *SonichubPlaylist) PGNNumber() uint32               { return 130816 }
+func (m *SonichubPlaylist) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubPlaylist) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubPlaylist) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1726,7 +1726,7 @@ func (m *PgnSonichubPlaylist) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubPlaylist) EncodePayload() ([]uint8, error) {
+func (m *SonichubPlaylist) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1783,7 +1783,7 @@ func (m *PgnSonichubPlaylist) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubPosition struct {
+type SonichubPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1792,10 +1792,10 @@ type PgnSonichubPosition struct {
 	Position         *uint64     `json:"position,omitempty" n2k:"7"`
 }
 
-func (m *PgnSonichubPosition) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubPosition) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubPosition) DecodePayload(payload []uint8) error {
+func (m *SonichubPosition) PGNNumber() uint32               { return 130816 }
+func (m *SonichubPosition) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubPosition) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubPosition) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1883,7 +1883,7 @@ func (m *PgnSonichubPosition) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubPosition) EncodePayload() ([]uint8, error) {
+func (m *SonichubPosition) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1915,7 +1915,7 @@ func (m *PgnSonichubPosition) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubSource struct {
+type SonichubSource struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1924,10 +1924,10 @@ type PgnSonichubSource struct {
 	Source           *uint64     `json:"source,omitempty" n2k:"7"`
 }
 
-func (m *PgnSonichubSource) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubSource) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubSource) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubSource) DecodePayload(payload []uint8) error {
+func (m *SonichubSource) PGNNumber() uint32               { return 130816 }
+func (m *SonichubSource) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubSource) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubSource) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2015,7 +2015,7 @@ func (m *PgnSonichubSource) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubSource) EncodePayload() ([]uint8, error) {
+func (m *SonichubSource) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2047,7 +2047,7 @@ func (m *PgnSonichubSource) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubSourceList struct {
+type SonichubSourceList struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2058,10 +2058,10 @@ type PgnSonichubSourceList struct {
 	Text             string      `json:"text,omitempty" n2k:"9"`
 }
 
-func (m *PgnSonichubSourceList) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubSourceList) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubSourceList) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubSourceList) DecodePayload(payload []uint8) error {
+func (m *SonichubSourceList) PGNNumber() uint32               { return 130816 }
+func (m *SonichubSourceList) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubSourceList) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubSourceList) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2169,7 +2169,7 @@ func (m *PgnSonichubSourceList) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubSourceList) EncodePayload() ([]uint8, error) {
+func (m *SonichubSourceList) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2207,7 +2207,7 @@ func (m *PgnSonichubSourceList) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubTrack struct {
+type SonichubTrack struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2217,10 +2217,10 @@ type PgnSonichubTrack struct {
 	Text             string      `json:"text,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubTrack) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubTrack) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubTrack) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubTrack) DecodePayload(payload []uint8) error {
+func (m *SonichubTrack) PGNNumber() uint32               { return 130816 }
+func (m *SonichubTrack) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubTrack) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubTrack) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2318,7 +2318,7 @@ func (m *PgnSonichubTrack) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubTrack) EncodePayload() ([]uint8, error) {
+func (m *SonichubTrack) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2351,7 +2351,7 @@ func (m *PgnSonichubTrack) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubVolume struct {
+type SonichubVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2361,10 +2361,10 @@ type PgnSonichubVolume struct {
 	Level            *uint64     `json:"level,omitempty" n2k:"8"`
 }
 
-func (m *PgnSonichubVolume) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubVolume) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubVolume) DecodePayload(payload []uint8) error {
+func (m *SonichubVolume) PGNNumber() uint32               { return 130816 }
+func (m *SonichubVolume) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubVolume) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubVolume) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2462,7 +2462,7 @@ func (m *PgnSonichubVolume) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubVolume) EncodePayload() ([]uint8, error) {
+func (m *SonichubVolume) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2499,7 +2499,7 @@ func (m *PgnSonichubVolume) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubZoneInfo struct {
+type SonichubZoneInfo struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2508,10 +2508,10 @@ type PgnSonichubZoneInfo struct {
 	Zone             *uint64     `json:"zone,omitempty" n2k:"7"`
 }
 
-func (m *PgnSonichubZoneInfo) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubZoneInfo) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubZoneInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubZoneInfo) DecodePayload(payload []uint8) error {
+func (m *SonichubZoneInfo) PGNNumber() uint32               { return 130816 }
+func (m *SonichubZoneInfo) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubZoneInfo) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubZoneInfo) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2599,7 +2599,7 @@ func (m *PgnSonichubZoneInfo) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubZoneInfo) EncodePayload() ([]uint8, error) {
+func (m *SonichubZoneInfo) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2631,7 +2631,7 @@ func (m *PgnSonichubZoneInfo) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSonichubZones struct {
+type SonichubZones struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2640,10 +2640,10 @@ type PgnSonichubZones struct {
 	Zones            *uint64     `json:"zones,omitempty" n2k:"7"`
 }
 
-func (m *PgnSonichubZones) PGNNumber() uint32               { return 130816 }
-func (m *PgnSonichubZones) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSonichubZones) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSonichubZones) DecodePayload(payload []uint8) error {
+func (m *SonichubZones) PGNNumber() uint32               { return 130816 }
+func (m *SonichubZones) MessageInfo() MessageInfo        { return m.Info }
+func (m *SonichubZones) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SonichubZones) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2731,7 +2731,7 @@ func (m *PgnSonichubZones) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSonichubZones) EncodePayload() ([]uint8, error) {
+func (m *SonichubZones) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

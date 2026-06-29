@@ -36,7 +36,7 @@ Introduces the `pgn.Message` interface and eliminates redundant PGN specificatio
 
 Before:
 ```go
-heading := &pgn.PgnVesselHeading{
+heading := &pgn.VesselHeading{
     Info:    pgn.MessageInfo{PGN: 127250, Priority: 2},
     Heading: ptrUint64(15708),
 }
@@ -44,14 +44,14 @@ heading := &pgn.PgnVesselHeading{
 
 After:
 ```go
-heading := &pgn.PgnVesselHeading{
+heading := &pgn.VesselHeading{
     Heading: ptrUint64(15708),
 }
 ```
 
 With explicit priority/target:
 ```go
-heading := &pgn.PgnVesselHeading{
+heading := &pgn.VesselHeading{
     Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
     Heading: ptrUint64(15708),
 }

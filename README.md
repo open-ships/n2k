@@ -35,7 +35,7 @@ defer client.Close()
 // Write a message. The struct knows its own PGN number.
 // Priority defaults to 6, destination defaults to broadcast (255).
 h := uint64(15708)
-heading := &pgn.PgnVesselHeading{
+heading := &pgn.VesselHeading{
     Heading: &h,
 }
 result := client.Write(heading)
@@ -44,7 +44,7 @@ if err := result.Wait(); err != nil {
 }
 
 // Explicitly set priority and destination
-heading2 := &pgn.PgnVesselHeading{
+heading2 := &pgn.VesselHeading{
     Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
     Heading: &h,
 }

@@ -12,1629 +12,1629 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 	switch info.PGN {
 	case 59392:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0xe8000xee00StandardizedSingleFrameAddressed{Info: info},
-			&PgnIsoAcknowledgement{Info: info},
+			&Message0xe8000xee00StandardizedSingleFrameAddressed{Info: info},
+			&IsoAcknowledgement{Info: info},
 		)
 	case 59904:
 		return decodePGNCandidates(info, payload,
-			&PgnIsoRequest{Info: info},
+			&IsoRequest{Info: info},
 		)
 	case 60160:
 		return decodePGNCandidates(info, payload,
-			&PgnIsoTransportProtocolDataTransfer{Info: info},
+			&IsoTransportProtocolDataTransfer{Info: info},
 		)
 	case 60416:
 		return decodePGNCandidates(info, payload,
-			&PgnIsoTransportProtocolConnectionManagementAbort{Info: info},
-			&PgnIsoTransportProtocolConnectionManagementBroadcastAnnounce{Info: info},
-			&PgnIsoTransportProtocolConnectionManagementClearToSend{Info: info},
-			&PgnIsoTransportProtocolConnectionManagementEndOfMessage{Info: info},
-			&PgnIsoTransportProtocolConnectionManagementRequestToSend{Info: info},
+			&IsoTransportProtocolConnectionManagementAbort{Info: info},
+			&IsoTransportProtocolConnectionManagementBroadcastAnnounce{Info: info},
+			&IsoTransportProtocolConnectionManagementClearToSend{Info: info},
+			&IsoTransportProtocolConnectionManagementEndOfMessage{Info: info},
+			&IsoTransportProtocolConnectionManagementRequestToSend{Info: info},
 		)
 	case 60928:
 		return decodePGNCandidates(info, payload,
-			&PgnIsoAddressClaim{Info: info},
+			&IsoAddressClaim{Info: info},
 		)
 	case 61184:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0xef00ManufacturerProprietarySingleFrameAddressed{Info: info},
-			&PgnCarlingBreakerCommand{Info: info},
-			&PgnSeatalkWirelessKeypadControl{Info: info},
-			&PgnSeatalkWirelessKeypadLightControl{Info: info},
-			&PgnVictronVeCanRegister{Info: info},
+			&Message0xef00ManufacturerProprietarySingleFrameAddressed{Info: info},
+			&CarlingBreakerCommand{Info: info},
+			&SeatalkWirelessKeypadControl{Info: info},
+			&SeatalkWirelessKeypadLightControl{Info: info},
+			&VictronVeCanRegister{Info: info},
 		)
 	case 61440:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0xf0000xfeffStandardizedSingleFrameNonAddressed{Info: info},
+			&Message0xf0000xfeffStandardizedSingleFrameNonAddressed{Info: info},
 		)
 	case 65001:
 		return decodePGNCandidates(info, payload,
-			&PgnBus1PhaseCBasicAcQuantities{Info: info},
+			&Bus1PhaseCBasicAcQuantities{Info: info},
 		)
 	case 65002:
 		return decodePGNCandidates(info, payload,
-			&PgnBus1PhaseBBasicAcQuantities{Info: info},
+			&Bus1PhaseBBasicAcQuantities{Info: info},
 		)
 	case 65003:
 		return decodePGNCandidates(info, payload,
-			&PgnBus1PhaseABasicAcQuantities{Info: info},
+			&Bus1PhaseABasicAcQuantities{Info: info},
 		)
 	case 65004:
 		return decodePGNCandidates(info, payload,
-			&PgnBus1AverageBasicAcQuantities{Info: info},
+			&Bus1AverageBasicAcQuantities{Info: info},
 		)
 	case 65005:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityTotalAcEnergy{Info: info},
+			&UtilityTotalAcEnergy{Info: info},
 		)
 	case 65006:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseCAcReactivePower{Info: info},
+			&UtilityPhaseCAcReactivePower{Info: info},
 		)
 	case 65007:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseCAcPower{Info: info},
+			&UtilityPhaseCAcPower{Info: info},
 		)
 	case 65008:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseCBasicAcQuantities{Info: info},
+			&UtilityPhaseCBasicAcQuantities{Info: info},
 		)
 	case 65009:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseBAcReactivePower{Info: info},
+			&UtilityPhaseBAcReactivePower{Info: info},
 		)
 	case 65010:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseBAcPower{Info: info},
+			&UtilityPhaseBAcPower{Info: info},
 		)
 	case 65011:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseBBasicAcQuantities{Info: info},
+			&UtilityPhaseBBasicAcQuantities{Info: info},
 		)
 	case 65012:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseAAcReactivePower{Info: info},
+			&UtilityPhaseAAcReactivePower{Info: info},
 		)
 	case 65013:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseAAcPower{Info: info},
+			&UtilityPhaseAAcPower{Info: info},
 		)
 	case 65014:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityPhaseABasicAcQuantities{Info: info},
+			&UtilityPhaseABasicAcQuantities{Info: info},
 		)
 	case 65015:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityTotalAcReactivePower{Info: info},
+			&UtilityTotalAcReactivePower{Info: info},
 		)
 	case 65016:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityTotalAcPower{Info: info},
+			&UtilityTotalAcPower{Info: info},
 		)
 	case 65017:
 		return decodePGNCandidates(info, payload,
-			&PgnUtilityAverageBasicAcQuantities{Info: info},
+			&UtilityAverageBasicAcQuantities{Info: info},
 		)
 	case 65018:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorTotalAcEnergy{Info: info},
+			&GeneratorTotalAcEnergy{Info: info},
 		)
 	case 65019:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseCAcReactivePower{Info: info},
+			&GeneratorPhaseCAcReactivePower{Info: info},
 		)
 	case 65020:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseCAcPower{Info: info},
+			&GeneratorPhaseCAcPower{Info: info},
 		)
 	case 65021:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseCBasicAcQuantities{Info: info},
+			&GeneratorPhaseCBasicAcQuantities{Info: info},
 		)
 	case 65022:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseBAcReactivePower{Info: info},
+			&GeneratorPhaseBAcReactivePower{Info: info},
 		)
 	case 65023:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseBAcPower{Info: info},
+			&GeneratorPhaseBAcPower{Info: info},
 		)
 	case 65024:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseBBasicAcQuantities{Info: info},
+			&GeneratorPhaseBBasicAcQuantities{Info: info},
 		)
 	case 65025:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseAAcReactivePower{Info: info},
+			&GeneratorPhaseAAcReactivePower{Info: info},
 		)
 	case 65026:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseAAcPower{Info: info},
+			&GeneratorPhaseAAcPower{Info: info},
 		)
 	case 65027:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorPhaseABasicAcQuantities{Info: info},
+			&GeneratorPhaseABasicAcQuantities{Info: info},
 		)
 	case 65028:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorTotalAcReactivePower{Info: info},
+			&GeneratorTotalAcReactivePower{Info: info},
 		)
 	case 65029:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorTotalAcPower{Info: info},
+			&GeneratorTotalAcPower{Info: info},
 		)
 	case 65030:
 		return decodePGNCandidates(info, payload,
-			&PgnGeneratorAverageBasicAcQuantities{Info: info},
+			&GeneratorAverageBasicAcQuantities{Info: info},
 		)
 	case 65240:
 		return decodePGNCandidates(info, payload,
-			&PgnIsoCommandedAddress{Info: info},
+			&IsoCommandedAddress{Info: info},
 		)
 	case 65280:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0xff000xffffManufacturerProprietarySingleFrameNonAddressed{Info: info},
-			&PgnBepMarineCzoneCircuitControl{Info: info},
-			&PgnFurunoHeave{Info: info},
-			&PgnHondaEngineData{Info: info},
-			&PgnMaretronKeelPosition{Info: info},
-			&PgnMercuryEngineData{Info: info},
-			&PgnYanmarEngineDataA{Info: info},
+			&Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed{Info: info},
+			&BepMarineCzoneCircuitControl{Info: info},
+			&FurunoHeave{Info: info},
+			&HondaEngineData{Info: info},
+			&MaretronKeelPosition{Info: info},
+			&MercuryEngineData{Info: info},
+			&YanmarEngineDataA{Info: info},
 		)
 	case 65281:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65281{Info: info},
-			&PgnYanmarEngineDataB{Info: info},
+			&BepMarineProprietaryPgn65281{Info: info},
+			&YanmarEngineDataB{Info: info},
 		)
 	case 65282:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneAlarmEvent{Info: info},
-			&PgnMaretronNumberOfChannels{Info: info},
+			&BepMarineCzoneAlarmEvent{Info: info},
+			&MaretronNumberOfChannels{Info: info},
 		)
 	case 65283:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneChannelState{Info: info},
+			&BepMarineCzoneChannelState{Info: info},
 		)
 	case 65284:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneCircuitStatus{Info: info},
-			&PgnHondaEngineAlerts{Info: info},
-			&PgnMaretronProprietaryDcBreakerCurrent{Info: info},
+			&BepMarineCzoneCircuitStatus{Info: info},
+			&HondaEngineAlerts{Info: info},
+			&MaretronProprietaryDcBreakerCurrent{Info: info},
 		)
 	case 65285:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarBootStateAcknowledgment{Info: info},
-			&PgnLowranceTemperature{Info: info},
-			&PgnMaretronUniversalConfigurationSf{Info: info},
+			&AirmarBootStateAcknowledgment{Info: info},
+			&LowranceTemperature{Info: info},
+			&MaretronUniversalConfigurationSf{Info: info},
 		)
 	case 65286:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarBootStateRequest{Info: info},
-			&PgnChetcoDimmer{Info: info},
-			&PgnMaretronFluidFlowRate{Info: info},
+			&AirmarBootStateRequest{Info: info},
+			&ChetcoDimmer{Info: info},
+			&MaretronFluidFlowRate{Info: info},
 		)
 	case 65287:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarAccessLevel{Info: info},
-			&PgnMaretronTripVolume{Info: info},
-			&PgnSimnetConfigureTemperatureSensor{Info: info},
+			&AirmarAccessLevel{Info: info},
+			&MaretronTripVolume{Info: info},
+			&SimnetConfigureTemperatureSensor{Info: info},
 		)
 	case 65288:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretron420Ma{Info: info},
-			&PgnSeatalkAlarm{Info: info},
+			&Maretron420Ma{Info: info},
+			&SeatalkAlarm{Info: info},
 		)
 	case 65289:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretron010V{Info: info},
-			&PgnSimnetTrimTabSensorCalibration{Info: info},
+			&Maretron010V{Info: info},
+			&SimnetTrimTabSensorCalibration{Info: info},
 		)
 	case 65290:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneModuleAnnounce{Info: info},
-			&PgnMaretronRotationalRate{Info: info},
-			&PgnSimnetPaddleWheelSpeedConfiguration{Info: info},
+			&BepMarineCzoneModuleAnnounce{Info: info},
+			&MaretronRotationalRate{Info: info},
+			&SimnetPaddleWheelSpeedConfiguration{Info: info},
 		)
 	case 65291:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronResistance{Info: info},
+			&MaretronResistance{Info: info},
 		)
 	case 65292:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronAutomationFunctionMaster{Info: info},
-			&PgnSimnetClearFluidLevelWarnings{Info: info},
+			&MaretronAutomationFunctionMaster{Info: info},
+			&SimnetClearFluidLevelWarnings{Info: info},
 		)
 	case 65293:
 		return decodePGNCandidates(info, payload,
-			&PgnDiverseYachtServicesLoadCell{Info: info},
-			&PgnSimnetLgc2000Configuration{Info: info},
+			&DiverseYachtServicesLoadCell{Info: info},
+			&SimnetLgc2000Configuration{Info: info},
 		)
 	case 65294:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65294{Info: info},
+			&BepMarineProprietaryPgn65294{Info: info},
 		)
 	case 65295:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneAlarm{Info: info},
+			&BepMarineCzoneAlarm{Info: info},
 		)
 	case 65296:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65296{Info: info},
+			&BepMarineProprietaryPgn65296{Info: info},
 		)
 	case 65297:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65297{Info: info},
+			&BepMarineProprietaryPgn65297{Info: info},
 		)
 	case 65298:
 		return decodePGNCandidates(info, payload,
-			&PgnSuzukiEngineDataA{Info: info},
+			&SuzukiEngineDataA{Info: info},
 		)
 	case 65299:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneAlarmStringRequest{Info: info},
-			&PgnSuzukiEngineDataB{Info: info},
+			&BepMarineCzoneAlarmStringRequest{Info: info},
+			&SuzukiEngineDataB{Info: info},
 		)
 	case 65300:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65300{Info: info},
-			&PgnCarlingSwitchboardStatus{Info: info},
-			&PgnSuzukiEngineDataC{Info: info},
+			&BepMarineProprietaryPgn65300{Info: info},
+			&CarlingSwitchboardStatus{Info: info},
+			&SuzukiEngineDataC{Info: info},
 		)
 	case 65301:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzone65301{Info: info},
+			&BepMarineCzone65301{Info: info},
 		)
 	case 65302:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApUnknown1{Info: info},
+			&SimnetApUnknown1{Info: info},
 		)
 	case 65303:
 		return decodePGNCandidates(info, payload,
-			&PgnSuzukiEngineDataD{Info: info},
+			&SuzukiEngineDataD{Info: info},
 		)
 	case 65304:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65304{Info: info},
-			&PgnSuzukiEngineDataE{Info: info},
+			&BepMarineProprietaryPgn65304{Info: info},
+			&SuzukiEngineDataE{Info: info},
 		)
 	case 65305:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetDeviceModeRequest{Info: info},
-			&PgnSimnetDeviceStatus{Info: info},
-			&PgnSimnetDeviceStatusRequest{Info: info},
-			&PgnSimnetPilotMode{Info: info},
-			&PgnSimnetSailingProcessorStatus{Info: info},
+			&SimnetDeviceModeRequest{Info: info},
+			&SimnetDeviceStatus{Info: info},
+			&SimnetDeviceStatusRequest{Info: info},
+			&SimnetPilotMode{Info: info},
+			&SimnetSailingProcessorStatus{Info: info},
 		)
 	case 65306:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65306{Info: info},
+			&BepMarineProprietaryPgn65306{Info: info},
 		)
 	case 65308:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65308{Info: info},
+			&BepMarineProprietaryPgn65308{Info: info},
 		)
 	case 65309:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoWirelessBatteryStatus{Info: info},
+			&NavicoWirelessBatteryStatus{Info: info},
 		)
 	case 65310:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65310{Info: info},
+			&BepMarineProprietaryPgn65310{Info: info},
 		)
 	case 65311:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65311{Info: info},
+			&BepMarineProprietaryPgn65311{Info: info},
 		)
 	case 65312:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoWirelessSignalStatus{Info: info},
+			&NavicoWirelessSignalStatus{Info: info},
 		)
 	case 65313:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoDepthQuality{Info: info},
+			&NavicoDepthQuality{Info: info},
 		)
 	case 65314:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65314{Info: info},
-			&PgnYamahaGearStatus{Info: info},
+			&BepMarineProprietaryPgn65314{Info: info},
+			&YamahaGearStatus{Info: info},
 		)
 	case 65315:
 		return decodePGNCandidates(info, payload,
-			&PgnSuzukiTrollModeControl{Info: info},
+			&SuzukiTrollModeControl{Info: info},
 		)
 	case 65316:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65316{Info: info},
+			&BepMarineProprietaryPgn65316{Info: info},
 		)
 	case 65317:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoProprietary2{Info: info},
+			&NavicoProprietary2{Info: info},
 		)
 	case 65323:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApUnknown5{Info: info},
+			&SimnetApUnknown5{Info: info},
 		)
 	case 65324:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetAnalogTelemetry{Info: info},
+			&SimnetAnalogTelemetry{Info: info},
 		)
 	case 65325:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn65325{Info: info},
+			&BepMarineProprietaryPgn65325{Info: info},
 		)
 	case 65329:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineDataA{Info: info},
+			&YamahaEngineDataA{Info: info},
 		)
 	case 65330:
 		return decodePGNCandidates(info, payload,
-			&PgnBGProprietary{Info: info},
+			&BGProprietary{Info: info},
 		)
 	case 65332:
 		return decodePGNCandidates(info, payload,
-			&PgnYanmarEngineDataC{Info: info},
+			&YanmarEngineDataC{Info: info},
 		)
 	case 65340:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetAutopilotModeState{Info: info},
+			&SimnetAutopilotModeState{Info: info},
 		)
 	case 65341:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetAutopilotAngle{Info: info},
+			&SimnetAutopilotAngle{Info: info},
 		)
 	case 65344:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineDataB{Info: info},
+			&YamahaEngineDataB{Info: info},
 		)
 	case 65345:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkPilotWindDatum{Info: info},
+			&SeatalkPilotWindDatum{Info: info},
 		)
 	case 65346:
 		return decodePGNCandidates(info, payload,
-			&PgnYanmarEngineDataD{Info: info},
+			&YanmarEngineDataD{Info: info},
 		)
 	case 65348:
 		return decodePGNCandidates(info, payload,
-			&PgnYanmarEngineDataE{Info: info},
+			&YanmarEngineDataE{Info: info},
 		)
 	case 65349:
 		return decodePGNCandidates(info, payload,
-			&PgnYanmarEngineDataF{Info: info},
+			&YanmarEngineDataF{Info: info},
 		)
 	case 65350:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetMagneticField{Info: info},
+			&SimnetMagneticField{Info: info},
 		)
 	case 65359:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkPilotHeading{Info: info},
+			&SeatalkPilotHeading{Info: info},
 		)
 	case 65360:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkPilotLockedHeading{Info: info},
+			&SeatalkPilotLockedHeading{Info: info},
 		)
 	case 65361:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkSilenceAlarm{Info: info},
+			&SeatalkSilenceAlarm{Info: info},
 		)
 	case 65371:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkKeypadMessage{Info: info},
+			&SeatalkKeypadMessage{Info: info},
 		)
 	case 65374:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkKeypadHeartbeat{Info: info},
+			&SeatalkKeypadHeartbeat{Info: info},
 		)
 	case 65379:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkPilotMode{Info: info},
+			&SeatalkPilotMode{Info: info},
 		)
 	case 65403:
 		return decodePGNCandidates(info, payload,
-			&PgnLumishoreLightStatus{Info: info},
+			&LumishoreLightStatus{Info: info},
 		)
 	case 65408:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarDepthQualityFactor{Info: info},
+			&AirmarDepthQualityFactor{Info: info},
 		)
 	case 65409:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarSpeedPulseCount{Info: info},
+			&AirmarSpeedPulseCount{Info: info},
 		)
 	case 65410:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarDeviceInformation{Info: info},
+			&AirmarDeviceInformation{Info: info},
 		)
 	case 65420:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApUnknown3{Info: info},
+			&SimnetApUnknown3{Info: info},
 		)
 	case 65424:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineDataC{Info: info},
+			&YamahaEngineDataC{Info: info},
 		)
 	case 65440:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoNaviopSwitchStatus{Info: info},
+			&NavicoNaviopSwitchStatus{Info: info},
 		)
 	case 65441:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoNaviopSwitchControl{Info: info},
+			&NavicoNaviopSwitchControl{Info: info},
 		)
 	case 65472:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineDataD{Info: info},
+			&YamahaEngineDataD{Info: info},
 		)
 	case 65480:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetAutopilotMode{Info: info},
+			&SimnetAutopilotMode{Info: info},
 		)
 	case 126208:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0x1ed000x1ee00StandardizedFastPacketAddressed{Info: info},
-			&PgnNmeaAcknowledgeGroupFunction{Info: info},
-			&PgnNmeaCommandGroupFunction{Info: info},
-			&PgnNmeaReadFieldsGroupFunction{Info: info},
-			&PgnNmeaReadFieldsReplyGroupFunction{Info: info},
-			&PgnNmeaRequestGroupFunction{Info: info},
-			&PgnNmeaWriteFieldsGroupFunction{Info: info},
-			&PgnNmeaWriteFieldsReplyGroupFunction{Info: info},
+			&Message0x1ed000x1ee00StandardizedFastPacketAddressed{Info: info},
+			&NmeaAcknowledgeGroupFunction{Info: info},
+			&NmeaCommandGroupFunction{Info: info},
+			&NmeaReadFieldsGroupFunction{Info: info},
+			&NmeaReadFieldsReplyGroupFunction{Info: info},
+			&NmeaRequestGroupFunction{Info: info},
+			&NmeaWriteFieldsGroupFunction{Info: info},
+			&NmeaWriteFieldsReplyGroupFunction{Info: info},
 		)
 	case 126464:
 		return decodePGNCandidates(info, payload,
-			&PgnPgnListTransmitAndReceive{Info: info},
+			&ParameterGroupNumberListTransmitAndReceive{Info: info},
 		)
 	case 126720:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0x1ef00ManufacturerProprietaryFastPacketAddressed{Info: info},
-			&PgnAirmarAddressableMultiFrame{Info: info},
-			&PgnAirmarAttitudeOffset{Info: info},
-			&PgnAirmarCalibrateCompass{Info: info},
-			&PgnAirmarCalibrateDepth{Info: info},
-			&PgnAirmarCalibrateSpeed{Info: info},
-			&PgnAirmarCalibrateTemperature{Info: info},
-			&PgnAirmarNmea2000Options{Info: info},
-			&PgnAirmarSimulateMode{Info: info},
-			&PgnAirmarSpeedFilterIir{Info: info},
-			&PgnAirmarSpeedFilterNone{Info: info},
-			&PgnAirmarTemperatureFilterIir{Info: info},
-			&PgnAirmarTemperatureFilterNone{Info: info},
-			&PgnAirmarTrueWindOptions{Info: info},
-			&PgnCarlingDcConfigurationCommand{Info: info},
-			&PgnFusionMediaControl{Info: info},
-			&PgnFusionRequestStatus{Info: info},
-			&PgnFusionSetAllVolumes{Info: info},
-			&PgnFusionSetMute{Info: info},
-			&PgnFusionSetPower{Info: info},
-			&PgnFusionSetSource{Info: info},
-			&PgnFusionSetZoneVolume{Info: info},
-			&PgnFusionSiriusControl{Info: info},
-			&PgnGarminAhrsAttCogSourceValidFlag{Info: info},
-			&PgnGarminAhrsAttDeviceFlags{Info: info},
-			&PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent{Info: info},
-			&PgnGarminAhrsAttSetNorthState{Info: info},
-			&PgnGarminColorMode{Info: info},
-			&PgnGarminDayMode{Info: info},
-			&PgnGarminNightMode{Info: info},
-			&PgnLumishoreProprietary{Info: info},
-			&PgnMaretronDeviationCalibrationResponse{Info: info},
-			&PgnMaretronProprietaryConfiguration{Info: info},
-			&PgnMaretronSlaveResponse{Info: info},
-			&PgnSeatalk1DeviceIdentification{Info: info},
-			&PgnSeatalk1DisplayBrightness{Info: info},
-			&PgnSeatalk1DisplayColor{Info: info},
-			&PgnSeatalk1Keystroke{Info: info},
-			&PgnSeatalk1PilotHullType{Info: info},
-			&PgnSeatalk1PilotMode{Info: info},
-			&PgnSeatalkPilotAutoTurn{Info: info},
+			&Message0x1ef00ManufacturerProprietaryFastPacketAddressed{Info: info},
+			&AirmarAddressableMultiFrame{Info: info},
+			&AirmarAttitudeOffset{Info: info},
+			&AirmarCalibrateCompass{Info: info},
+			&AirmarCalibrateDepth{Info: info},
+			&AirmarCalibrateSpeed{Info: info},
+			&AirmarCalibrateTemperature{Info: info},
+			&AirmarNmea2000Options{Info: info},
+			&AirmarSimulateMode{Info: info},
+			&AirmarSpeedFilterIir{Info: info},
+			&AirmarSpeedFilterNone{Info: info},
+			&AirmarTemperatureFilterIir{Info: info},
+			&AirmarTemperatureFilterNone{Info: info},
+			&AirmarTrueWindOptions{Info: info},
+			&CarlingDcConfigurationCommand{Info: info},
+			&FusionMediaControl{Info: info},
+			&FusionRequestStatus{Info: info},
+			&FusionSetAllVolumes{Info: info},
+			&FusionSetMute{Info: info},
+			&FusionSetPower{Info: info},
+			&FusionSetSource{Info: info},
+			&FusionSetZoneVolume{Info: info},
+			&FusionSiriusControl{Info: info},
+			&GarminAhrsAttCogSourceValidFlag{Info: info},
+			&GarminAhrsAttDeviceFlags{Info: info},
+			&GarminAhrsAttNonDefaultCalibrationMatrixPresent{Info: info},
+			&GarminAhrsAttSetNorthState{Info: info},
+			&GarminColorMode{Info: info},
+			&GarminDayMode{Info: info},
+			&GarminNightMode{Info: info},
+			&LumishoreProprietary{Info: info},
+			&MaretronDeviationCalibrationResponse{Info: info},
+			&MaretronProprietaryConfiguration{Info: info},
+			&MaretronSlaveResponse{Info: info},
+			&Seatalk1DeviceIdentification{Info: info},
+			&Seatalk1DisplayBrightness{Info: info},
+			&Seatalk1DisplayColor{Info: info},
+			&Seatalk1Keystroke{Info: info},
+			&Seatalk1PilotHullType{Info: info},
+			&Seatalk1PilotMode{Info: info},
+			&SeatalkPilotAutoTurn{Info: info},
 		)
 	case 126976:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed{Info: info},
+			&Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed{Info: info},
 		)
 	case 126983:
 		return decodePGNCandidates(info, payload,
-			&PgnAlert{Info: info},
+			&Alert{Info: info},
 		)
 	case 126984:
 		return decodePGNCandidates(info, payload,
-			&PgnAlertResponse{Info: info},
+			&AlertResponse{Info: info},
 		)
 	case 126985:
 		return decodePGNCandidates(info, payload,
-			&PgnAlertText{Info: info},
+			&AlertText{Info: info},
 		)
 	case 126986:
 		return decodePGNCandidates(info, payload,
-			&PgnAlertConfiguration{Info: info},
+			&AlertConfiguration{Info: info},
 		)
 	case 126987:
 		return decodePGNCandidates(info, payload,
-			&PgnAlertThreshold{Info: info},
+			&AlertThreshold{Info: info},
 		)
 	case 126988:
 		return decodePGNCandidates(info, payload,
-			&PgnAlertValue{Info: info},
+			&AlertValue{Info: info},
 		)
 	case 126992:
 		return decodePGNCandidates(info, payload,
-			&PgnSystemTime{Info: info},
+			&SystemTime{Info: info},
 		)
 	case 126993:
 		return decodePGNCandidates(info, payload,
-			&PgnHeartbeat{Info: info},
+			&Heartbeat{Info: info},
 		)
 	case 126996:
 		return decodePGNCandidates(info, payload,
-			&PgnProductInformation{Info: info},
+			&ProductInformation{Info: info},
 		)
 	case 126998:
 		return decodePGNCandidates(info, payload,
-			&PgnConfigurationInformation{Info: info},
+			&ConfigurationInformation{Info: info},
 		)
 	case 127233:
 		return decodePGNCandidates(info, payload,
-			&PgnManOverboardNotification{Info: info},
+			&ManOverboardNotification{Info: info},
 		)
 	case 127237:
 		return decodePGNCandidates(info, payload,
-			&PgnHeadingTrackControl{Info: info},
+			&HeadingTrackControl{Info: info},
 		)
 	case 127245:
 		return decodePGNCandidates(info, payload,
-			&PgnRudder{Info: info},
+			&Rudder{Info: info},
 		)
 	case 127250:
 		return decodePGNCandidates(info, payload,
-			&PgnVesselHeading{Info: info},
+			&VesselHeading{Info: info},
 		)
 	case 127251:
 		return decodePGNCandidates(info, payload,
-			&PgnRateOfTurn{Info: info},
+			&RateOfTurn{Info: info},
 		)
 	case 127252:
 		return decodePGNCandidates(info, payload,
-			&PgnHeave{Info: info},
+			&Heave{Info: info},
 		)
 	case 127257:
 		return decodePGNCandidates(info, payload,
-			&PgnAttitude{Info: info},
+			&Attitude{Info: info},
 		)
 	case 127258:
 		return decodePGNCandidates(info, payload,
-			&PgnMagneticVariation{Info: info},
+			&MagneticVariation{Info: info},
 		)
 	case 127488:
 		return decodePGNCandidates(info, payload,
-			&PgnEngineParametersRapidUpdate{Info: info},
+			&EngineParametersRapidUpdate{Info: info},
 		)
 	case 127489:
 		return decodePGNCandidates(info, payload,
-			&PgnEngineParametersDynamic{Info: info},
+			&EngineParametersDynamic{Info: info},
 		)
 	case 127490:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricDriveStatusDynamic{Info: info},
+			&ElectricDriveStatusDynamic{Info: info},
 		)
 	case 127491:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricEnergyStorageStatusDynamic{Info: info},
+			&ElectricEnergyStorageStatusDynamic{Info: info},
 		)
 	case 127493:
 		return decodePGNCandidates(info, payload,
-			&PgnTransmissionParametersDynamic{Info: info},
+			&TransmissionParametersDynamic{Info: info},
 		)
 	case 127494:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricDriveInformation{Info: info},
+			&ElectricDriveInformation{Info: info},
 		)
 	case 127495:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricEnergyStorageInformation{Info: info},
+			&ElectricEnergyStorageInformation{Info: info},
 		)
 	case 127496:
 		return decodePGNCandidates(info, payload,
-			&PgnTripParametersVessel{Info: info},
+			&TripParametersVessel{Info: info},
 		)
 	case 127497:
 		return decodePGNCandidates(info, payload,
-			&PgnTripParametersEngine{Info: info},
+			&TripParametersEngine{Info: info},
 		)
 	case 127498:
 		return decodePGNCandidates(info, payload,
-			&PgnEngineParametersStatic{Info: info},
+			&EngineParametersStatic{Info: info},
 		)
 	case 127500:
 		return decodePGNCandidates(info, payload,
-			&PgnLoadControllerConnectionStateControl{Info: info},
+			&LoadControllerConnectionStateControl{Info: info},
 		)
 	case 127501:
 		return decodePGNCandidates(info, payload,
-			&PgnBinarySwitchBankStatus{Info: info},
+			&BinarySwitchBankStatus{Info: info},
 		)
 	case 127502:
 		return decodePGNCandidates(info, payload,
-			&PgnSwitchBankControl{Info: info},
+			&SwitchBankControl{Info: info},
 		)
 	case 127503:
 		return decodePGNCandidates(info, payload,
-			&PgnAcInputStatus{Info: info},
+			&AcInputStatus{Info: info},
 		)
 	case 127504:
 		return decodePGNCandidates(info, payload,
-			&PgnAcOutputStatus{Info: info},
+			&AcOutputStatus{Info: info},
 		)
 	case 127505:
 		return decodePGNCandidates(info, payload,
-			&PgnFluidLevel{Info: info},
+			&FluidLevel{Info: info},
 		)
 	case 127506:
 		return decodePGNCandidates(info, payload,
-			&PgnDcDetailedStatus{Info: info},
+			&DcDetailedStatus{Info: info},
 		)
 	case 127507:
 		return decodePGNCandidates(info, payload,
-			&PgnChargerStatus{Info: info},
+			&ChargerStatus{Info: info},
 		)
 	case 127508:
 		return decodePGNCandidates(info, payload,
-			&PgnBatteryStatus{Info: info},
+			&BatteryStatus{Info: info},
 		)
 	case 127509:
 		return decodePGNCandidates(info, payload,
-			&PgnInverterStatus{Info: info},
+			&InverterStatus{Info: info},
 		)
 	case 127510:
 		return decodePGNCandidates(info, payload,
-			&PgnChargerConfigurationStatus{Info: info},
+			&ChargerConfigurationStatus{Info: info},
 		)
 	case 127511:
 		return decodePGNCandidates(info, payload,
-			&PgnInverterConfigurationStatus{Info: info},
+			&InverterConfigurationStatus{Info: info},
 		)
 	case 127512:
 		return decodePGNCandidates(info, payload,
-			&PgnAgsConfigurationStatus{Info: info},
+			&AgsConfigurationStatus{Info: info},
 		)
 	case 127513:
 		return decodePGNCandidates(info, payload,
-			&PgnBatteryConfigurationStatus{Info: info},
+			&BatteryConfigurationStatus{Info: info},
 		)
 	case 127514:
 		return decodePGNCandidates(info, payload,
-			&PgnAgsStatus{Info: info},
+			&AgsStatus{Info: info},
 		)
 	case 127744:
 		return decodePGNCandidates(info, payload,
-			&PgnAcPowerCurrentPhaseA{Info: info},
+			&AcPowerCurrentPhaseA{Info: info},
 		)
 	case 127745:
 		return decodePGNCandidates(info, payload,
-			&PgnAcPowerCurrentPhaseB{Info: info},
+			&AcPowerCurrentPhaseB{Info: info},
 		)
 	case 127746:
 		return decodePGNCandidates(info, payload,
-			&PgnAcPowerCurrentPhaseC{Info: info},
+			&AcPowerCurrentPhaseC{Info: info},
 		)
 	case 127747:
 		return decodePGNCandidates(info, payload,
-			&PgnAcVoltageFrequencyPhaseA{Info: info},
+			&AcVoltageFrequencyPhaseA{Info: info},
 		)
 	case 127748:
 		return decodePGNCandidates(info, payload,
-			&PgnAcVoltageFrequencyPhaseB{Info: info},
+			&AcVoltageFrequencyPhaseB{Info: info},
 		)
 	case 127749:
 		return decodePGNCandidates(info, payload,
-			&PgnAcVoltageFrequencyPhaseC{Info: info},
+			&AcVoltageFrequencyPhaseC{Info: info},
 		)
 	case 127750:
 		return decodePGNCandidates(info, payload,
-			&PgnConverterStatus{Info: info},
+			&ConverterStatus{Info: info},
 		)
 	case 127751:
 		return decodePGNCandidates(info, payload,
-			&PgnDcVoltageCurrent{Info: info},
+			&DcVoltageCurrent{Info: info},
 		)
 	case 128000:
 		return decodePGNCandidates(info, payload,
-			&PgnLeewayAngle{Info: info},
+			&LeewayAngle{Info: info},
 		)
 	case 128001:
 		return decodePGNCandidates(info, payload,
-			&PgnVesselAcceleration{Info: info},
+			&VesselAcceleration{Info: info},
 		)
 	case 128002:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricDriveStatusRapidUpdate{Info: info},
+			&ElectricDriveStatusRapidUpdate{Info: info},
 		)
 	case 128003:
 		return decodePGNCandidates(info, payload,
-			&PgnElectricEnergyStorageStatusRapidUpdate{Info: info},
+			&ElectricEnergyStorageStatusRapidUpdate{Info: info},
 		)
 	case 128006:
 		return decodePGNCandidates(info, payload,
-			&PgnThrusterControlStatus{Info: info},
+			&ThrusterControlStatus{Info: info},
 		)
 	case 128007:
 		return decodePGNCandidates(info, payload,
-			&PgnThrusterInformation{Info: info},
+			&ThrusterInformation{Info: info},
 		)
 	case 128008:
 		return decodePGNCandidates(info, payload,
-			&PgnThrusterMotorStatus{Info: info},
+			&ThrusterMotorStatus{Info: info},
 		)
 	case 128259:
 		return decodePGNCandidates(info, payload,
-			&PgnSpeed{Info: info},
+			&Speed{Info: info},
 		)
 	case 128267:
 		return decodePGNCandidates(info, payload,
-			&PgnWaterDepth{Info: info},
+			&WaterDepth{Info: info},
 		)
 	case 128275:
 		return decodePGNCandidates(info, payload,
-			&PgnDistanceLog{Info: info},
+			&DistanceLog{Info: info},
 		)
 	case 128520:
 		return decodePGNCandidates(info, payload,
-			&PgnTrackedTargetData{Info: info},
+			&TrackedTargetData{Info: info},
 		)
 	case 128538:
 		return decodePGNCandidates(info, payload,
-			&PgnElevatorCarStatus{Info: info},
+			&ElevatorCarStatus{Info: info},
 		)
 	case 128768:
 		return decodePGNCandidates(info, payload,
-			&PgnElevatorMotorControl{Info: info},
+			&ElevatorMotorControl{Info: info},
 		)
 	case 128769:
 		return decodePGNCandidates(info, payload,
-			&PgnElevatorDeckPushButton{Info: info},
+			&ElevatorDeckPushButton{Info: info},
 		)
 	case 128776:
 		return decodePGNCandidates(info, payload,
-			&PgnWindlassControlStatus{Info: info},
+			&WindlassControlStatus{Info: info},
 		)
 	case 128777:
 		return decodePGNCandidates(info, payload,
-			&PgnAnchorWindlassOperatingStatus{Info: info},
+			&AnchorWindlassOperatingStatus{Info: info},
 		)
 	case 128778:
 		return decodePGNCandidates(info, payload,
-			&PgnAnchorWindlassMonitoringStatus{Info: info},
+			&AnchorWindlassMonitoringStatus{Info: info},
 		)
 	case 128780:
 		return decodePGNCandidates(info, payload,
-			&PgnLinearActuatorControlStatus{Info: info},
+			&LinearActuatorControlStatus{Info: info},
 		)
 	case 129025:
 		return decodePGNCandidates(info, payload,
-			&PgnPositionRapidUpdate{Info: info},
+			&PositionRapidUpdate{Info: info},
 		)
 	case 129026:
 		return decodePGNCandidates(info, payload,
-			&PgnCogSogRapidUpdate{Info: info},
+			&CogSogRapidUpdate{Info: info},
 		)
 	case 129027:
 		return decodePGNCandidates(info, payload,
-			&PgnPositionDeltaRapidUpdate{Info: info},
+			&PositionDeltaRapidUpdate{Info: info},
 		)
 	case 129028:
 		return decodePGNCandidates(info, payload,
-			&PgnAltitudeDeltaRapidUpdate{Info: info},
+			&AltitudeDeltaRapidUpdate{Info: info},
 		)
 	case 129029:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssPositionData{Info: info},
+			&GnssPositionData{Info: info},
 		)
 	case 129033:
 		return decodePGNCandidates(info, payload,
-			&PgnTimeDate{Info: info},
+			&TimeDate{Info: info},
 		)
 	case 129038:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassAPositionReport{Info: info},
+			&AisClassAPositionReport{Info: info},
 		)
 	case 129039:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassBPositionReport{Info: info},
+			&AisClassBPositionReport{Info: info},
 		)
 	case 129040:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassBExtendedPositionReport{Info: info},
+			&AisClassBExtendedPositionReport{Info: info},
 		)
 	case 129041:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAidsToNavigationAtonReport{Info: info},
+			&AisAidsToNavigationAtonReport{Info: info},
 		)
 	case 129044:
 		return decodePGNCandidates(info, payload,
-			&PgnDatum{Info: info},
+			&Datum{Info: info},
 		)
 	case 129045:
 		return decodePGNCandidates(info, payload,
-			&PgnUserDatum{Info: info},
+			&UserDatum{Info: info},
 		)
 	case 129283:
 		return decodePGNCandidates(info, payload,
-			&PgnCrossTrackError{Info: info},
+			&CrossTrackError{Info: info},
 		)
 	case 129284:
 		return decodePGNCandidates(info, payload,
-			&PgnNavigationData{Info: info},
+			&NavigationData{Info: info},
 		)
 	case 129285:
 		return decodePGNCandidates(info, payload,
-			&PgnNavigationRouteWpInformation{Info: info},
+			&NavigationRouteWpInformation{Info: info},
 		)
 	case 129291:
 		return decodePGNCandidates(info, payload,
-			&PgnSetDriftRapidUpdate{Info: info},
+			&SetDriftRapidUpdate{Info: info},
 		)
 	case 129301:
 		return decodePGNCandidates(info, payload,
-			&PgnNavigationRouteTimeToFromMark{Info: info},
+			&NavigationRouteTimeToFromMark{Info: info},
 		)
 	case 129302:
 		return decodePGNCandidates(info, payload,
-			&PgnBearingAndDistanceBetweenTwoMarks{Info: info},
+			&BearingAndDistanceBetweenTwoMarks{Info: info},
 		)
 	case 129538:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssControlStatus{Info: info},
+			&GnssControlStatus{Info: info},
 		)
 	case 129539:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssDops{Info: info},
+			&GnssDops{Info: info},
 		)
 	case 129540:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssSatsInView{Info: info},
+			&GnssSatsInView{Info: info},
 		)
 	case 129541:
 		return decodePGNCandidates(info, payload,
-			&PgnGpsAlmanacData{Info: info},
+			&GpsAlmanacData{Info: info},
 		)
 	case 129542:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssPseudorangeNoiseStatistics{Info: info},
+			&GnssPseudorangeNoiseStatistics{Info: info},
 		)
 	case 129545:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssRaimOutput{Info: info},
+			&GnssRaimOutput{Info: info},
 		)
 	case 129546:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssRaimSettings{Info: info},
+			&GnssRaimSettings{Info: info},
 		)
 	case 129547:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssPseudorangeErrorStatistics{Info: info},
+			&GnssPseudorangeErrorStatistics{Info: info},
 		)
 	case 129549:
 		return decodePGNCandidates(info, payload,
-			&PgnDgnssCorrections{Info: info},
+			&DgnssCorrections{Info: info},
 		)
 	case 129550:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssDifferentialCorrectionReceiverInterface{Info: info},
+			&GnssDifferentialCorrectionReceiverInterface{Info: info},
 		)
 	case 129551:
 		return decodePGNCandidates(info, payload,
-			&PgnGnssDifferentialCorrectionReceiverSignal{Info: info},
+			&GnssDifferentialCorrectionReceiverSignal{Info: info},
 		)
 	case 129556:
 		return decodePGNCandidates(info, payload,
-			&PgnGlonassAlmanacData{Info: info},
+			&GlonassAlmanacData{Info: info},
 		)
 	case 129792:
 		return decodePGNCandidates(info, payload,
-			&PgnAisDgnssBroadcastBinaryMessage{Info: info},
+			&AisDgnssBroadcastBinaryMessage{Info: info},
 		)
 	case 129793:
 		return decodePGNCandidates(info, payload,
-			&PgnAisUtcAndDateReport{Info: info},
+			&AisUtcAndDateReport{Info: info},
 		)
 	case 129794:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassAStaticAndVoyageRelatedData{Info: info},
+			&AisClassAStaticAndVoyageRelatedData{Info: info},
 		)
 	case 129795:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAddressedBinaryMessage{Info: info},
+			&AisAddressedBinaryMessage{Info: info},
 		)
 	case 129796:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAcknowledge{Info: info},
+			&AisAcknowledge{Info: info},
 		)
 	case 129797:
 		return decodePGNCandidates(info, payload,
-			&PgnAisBinaryBroadcastMessage{Info: info},
+			&AisBinaryBroadcastMessage{Info: info},
 		)
 	case 129798:
 		return decodePGNCandidates(info, payload,
-			&PgnAisSarAircraftPositionReport{Info: info},
+			&AisSarAircraftPositionReport{Info: info},
 		)
 	case 129799:
 		return decodePGNCandidates(info, payload,
-			&PgnRadioFrequencyModePower{Info: info},
+			&RadioFrequencyModePower{Info: info},
 		)
 	case 129800:
 		return decodePGNCandidates(info, payload,
-			&PgnAisUtcDateInquiry{Info: info},
+			&AisUtcDateInquiry{Info: info},
 		)
 	case 129801:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAddressedSafetyRelatedMessage{Info: info},
+			&AisAddressedSafetyRelatedMessage{Info: info},
 		)
 	case 129802:
 		return decodePGNCandidates(info, payload,
-			&PgnAisSafetyRelatedBroadcastMessage{Info: info},
+			&AisSafetyRelatedBroadcastMessage{Info: info},
 		)
 	case 129803:
 		return decodePGNCandidates(info, payload,
-			&PgnAisInterrogation{Info: info},
+			&AisInterrogation{Info: info},
 		)
 	case 129804:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAssignmentModeCommand{Info: info},
+			&AisAssignmentModeCommand{Info: info},
 		)
 	case 129805:
 		return decodePGNCandidates(info, payload,
-			&PgnAisDataLinkManagementMessage{Info: info},
+			&AisDataLinkManagementMessage{Info: info},
 		)
 	case 129806:
 		return decodePGNCandidates(info, payload,
-			&PgnAisChannelManagement{Info: info},
+			&AisChannelManagement{Info: info},
 		)
 	case 129807:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassBGroupAssignment{Info: info},
+			&AisClassBGroupAssignment{Info: info},
 		)
 	case 129808:
 		return decodePGNCandidates(info, payload,
-			&PgnDscCallInformation{Info: info},
-			&PgnDscDistressCallInformation{Info: info},
+			&DscCallInformation{Info: info},
+			&DscDistressCallInformation{Info: info},
 		)
 	case 129809:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassBStaticDataMsg24PartA{Info: info},
+			&AisClassBStaticDataMsg24PartA{Info: info},
 		)
 	case 129810:
 		return decodePGNCandidates(info, payload,
-			&PgnAisClassBStaticDataMsg24PartB{Info: info},
+			&AisClassBStaticDataMsg24PartB{Info: info},
 		)
 	case 129811:
 		return decodePGNCandidates(info, payload,
-			&PgnAisSingleSlotBinaryMessageDeprecated{Info: info},
+			&AisSingleSlotBinaryMessageDeprecated{Info: info},
 		)
 	case 129812:
 		return decodePGNCandidates(info, payload,
-			&PgnAisMultiSlotBinaryMessageDeprecated{Info: info},
+			&AisMultiSlotBinaryMessageDeprecated{Info: info},
 		)
 	case 129813:
 		return decodePGNCandidates(info, payload,
-			&PgnAisLongRangeBroadcastMessage{Info: info},
+			&AisLongRangeBroadcastMessage{Info: info},
 		)
 	case 129814:
 		return decodePGNCandidates(info, payload,
-			&PgnAisSingleSlotBinaryMessage{Info: info},
+			&AisSingleSlotBinaryMessage{Info: info},
 		)
 	case 129815:
 		return decodePGNCandidates(info, payload,
-			&PgnAisMultiSlotBinaryMessage{Info: info},
+			&AisMultiSlotBinaryMessage{Info: info},
 		)
 	case 129816:
 		return decodePGNCandidates(info, payload,
-			&PgnAisAcknowledgeBinary{Info: info},
+			&AisAcknowledgeBinary{Info: info},
 		)
 	case 130052:
 		return decodePGNCandidates(info, payload,
-			&PgnLoranCTdData{Info: info},
+			&LoranCTdData{Info: info},
 		)
 	case 130053:
 		return decodePGNCandidates(info, payload,
-			&PgnLoranCRangeData{Info: info},
+			&LoranCRangeData{Info: info},
 		)
 	case 130054:
 		return decodePGNCandidates(info, payload,
-			&PgnLoranCSignalData{Info: info},
+			&LoranCSignalData{Info: info},
 		)
 	case 130060:
 		return decodePGNCandidates(info, payload,
-			&PgnLabel{Info: info},
+			&Label{Info: info},
 		)
 	case 130061:
 		return decodePGNCandidates(info, payload,
-			&PgnChannelSourceConfiguration{Info: info},
+			&ChannelSourceConfiguration{Info: info},
 		)
 	case 130064:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceDatabaseList{Info: info},
+			&RouteAndWpServiceDatabaseList{Info: info},
 		)
 	case 130065:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRouteList{Info: info},
+			&RouteAndWpServiceRouteList{Info: info},
 		)
 	case 130066:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRouteWpListAttributes{Info: info},
+			&RouteAndWpServiceRouteWpListAttributes{Info: info},
 		)
 	case 130067:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRouteWpNamePosition{Info: info},
+			&RouteAndWpServiceRouteWpNamePosition{Info: info},
 		)
 	case 130068:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRouteWpName{Info: info},
+			&RouteAndWpServiceRouteWpName{Info: info},
 		)
 	case 130069:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceXteLimitNavigationMethod{Info: info},
+			&RouteAndWpServiceXteLimitNavigationMethod{Info: info},
 		)
 	case 130070:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceWpComment{Info: info},
+			&RouteAndWpServiceWpComment{Info: info},
 		)
 	case 130071:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRouteComment{Info: info},
+			&RouteAndWpServiceRouteComment{Info: info},
 		)
 	case 130072:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceDatabaseComment{Info: info},
+			&RouteAndWpServiceDatabaseComment{Info: info},
 		)
 	case 130073:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceRadiusOfTurn{Info: info},
+			&RouteAndWpServiceRadiusOfTurn{Info: info},
 		)
 	case 130074:
 		return decodePGNCandidates(info, payload,
-			&PgnRouteAndWpServiceWpListWpNamePosition{Info: info},
+			&RouteAndWpServiceWpListWpNamePosition{Info: info},
 		)
 	case 130306:
 		return decodePGNCandidates(info, payload,
-			&PgnWindData{Info: info},
+			&WindData{Info: info},
 		)
 	case 130310:
 		return decodePGNCandidates(info, payload,
-			&PgnEnvironmentalParametersObsolete{Info: info},
+			&EnvironmentalParametersObsolete{Info: info},
 		)
 	case 130311:
 		return decodePGNCandidates(info, payload,
-			&PgnEnvironmentalParameters{Info: info},
+			&EnvironmentalParameters{Info: info},
 		)
 	case 130312:
 		return decodePGNCandidates(info, payload,
-			&PgnTemperature{Info: info},
+			&Temperature{Info: info},
 		)
 	case 130313:
 		return decodePGNCandidates(info, payload,
-			&PgnHumidity{Info: info},
+			&Humidity{Info: info},
 		)
 	case 130314:
 		return decodePGNCandidates(info, payload,
-			&PgnActualPressure{Info: info},
+			&ActualPressure{Info: info},
 		)
 	case 130315:
 		return decodePGNCandidates(info, payload,
-			&PgnSetPressure{Info: info},
+			&SetPressure{Info: info},
 		)
 	case 130316:
 		return decodePGNCandidates(info, payload,
-			&PgnTemperatureExtendedRange{Info: info},
+			&TemperatureExtendedRange{Info: info},
 		)
 	case 130320:
 		return decodePGNCandidates(info, payload,
-			&PgnTideStationData{Info: info},
+			&TideStationData{Info: info},
 		)
 	case 130321:
 		return decodePGNCandidates(info, payload,
-			&PgnSalinityStationData{Info: info},
+			&SalinityStationData{Info: info},
 		)
 	case 130322:
 		return decodePGNCandidates(info, payload,
-			&PgnCurrentStationData{Info: info},
+			&CurrentStationData{Info: info},
 		)
 	case 130323:
 		return decodePGNCandidates(info, payload,
-			&PgnMeteorologicalStationData{Info: info},
+			&MeteorologicalStationData{Info: info},
 		)
 	case 130324:
 		return decodePGNCandidates(info, payload,
-			&PgnMooredBuoyStationData{Info: info},
+			&MooredBuoyStationData{Info: info},
 		)
 	case 130329:
 		return decodePGNCandidates(info, payload,
-			&PgnHvacStatus{Info: info},
+			&HvacStatus{Info: info},
 		)
 	case 130330:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingSystemSettings{Info: info},
+			&LightingSystemSettings{Info: info},
 		)
 	case 130560:
 		return decodePGNCandidates(info, payload,
-			&PgnPayloadMass{Info: info},
+			&PayloadMass{Info: info},
 		)
 	case 130561:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingZone{Info: info},
+			&LightingZone{Info: info},
 		)
 	case 130562:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingScene{Info: info},
+			&LightingScene{Info: info},
 		)
 	case 130563:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingDevice{Info: info},
+			&LightingDevice{Info: info},
 		)
 	case 130564:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingDeviceEnumeration{Info: info},
+			&LightingDeviceEnumeration{Info: info},
 		)
 	case 130565:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingColorSequence{Info: info},
+			&LightingColorSequence{Info: info},
 		)
 	case 130566:
 		return decodePGNCandidates(info, payload,
-			&PgnLightingProgram{Info: info},
+			&LightingProgram{Info: info},
 		)
 	case 130567:
 		return decodePGNCandidates(info, payload,
-			&PgnWatermakerInputSettingAndStatus{Info: info},
+			&WatermakerInputSettingAndStatus{Info: info},
 		)
 	case 130568:
 		return decodePGNCandidates(info, payload,
-			&PgnEntertainmentDiagnosticStatus{Info: info},
+			&EntertainmentDiagnosticStatus{Info: info},
 		)
 	case 130569:
 		return decodePGNCandidates(info, payload,
-			&PgnCurrentStatusAndFile{Info: info},
+			&CurrentStatusAndFile{Info: info},
 		)
 	case 130570:
 		return decodePGNCandidates(info, payload,
-			&PgnLibraryDataFile{Info: info},
+			&LibraryDataFile{Info: info},
 		)
 	case 130571:
 		return decodePGNCandidates(info, payload,
-			&PgnLibraryDataGroup{Info: info},
+			&LibraryDataGroup{Info: info},
 		)
 	case 130572:
 		return decodePGNCandidates(info, payload,
-			&PgnLibraryDataSearch{Info: info},
+			&LibraryDataSearch{Info: info},
 		)
 	case 130573:
 		return decodePGNCandidates(info, payload,
-			&PgnSupportedSourceData{Info: info},
+			&SupportedSourceData{Info: info},
 		)
 	case 130574:
 		return decodePGNCandidates(info, payload,
-			&PgnSupportedZoneData{Info: info},
+			&SupportedZoneData{Info: info},
 		)
 	case 130575:
 		return decodePGNCandidates(info, payload,
-			&PgnEntertainmentParentalControlStatus{Info: info},
+			&EntertainmentParentalControlStatus{Info: info},
 		)
 	case 130576:
 		return decodePGNCandidates(info, payload,
-			&PgnSmallCraftStatus{Info: info},
+			&SmallCraftStatus{Info: info},
 		)
 	case 130577:
 		return decodePGNCandidates(info, payload,
-			&PgnDirectionData{Info: info},
+			&DirectionData{Info: info},
 		)
 	case 130578:
 		return decodePGNCandidates(info, payload,
-			&PgnVesselSpeedComponents{Info: info},
+			&VesselSpeedComponents{Info: info},
 		)
 	case 130579:
 		return decodePGNCandidates(info, payload,
-			&PgnSystemConfiguration{Info: info},
+			&SystemConfiguration{Info: info},
 		)
 	case 130580:
 		return decodePGNCandidates(info, payload,
-			&PgnSystemConfigurationDeprecated{Info: info},
+			&SystemConfigurationDeprecated{Info: info},
 		)
 	case 130581:
 		return decodePGNCandidates(info, payload,
-			&PgnZoneConfigurationDeprecated{Info: info},
+			&ZoneConfigurationDeprecated{Info: info},
 		)
 	case 130582:
 		return decodePGNCandidates(info, payload,
-			&PgnZoneVolume{Info: info},
+			&ZoneVolume{Info: info},
 		)
 	case 130583:
 		return decodePGNCandidates(info, payload,
-			&PgnAvailableAudioEqPresets{Info: info},
+			&AvailableAudioEqPresets{Info: info},
 		)
 	case 130584:
 		return decodePGNCandidates(info, payload,
-			&PgnAvailableBluetoothAddresses{Info: info},
+			&AvailableBluetoothAddresses{Info: info},
 		)
 	case 130585:
 		return decodePGNCandidates(info, payload,
-			&PgnBluetoothSourceStatus{Info: info},
+			&BluetoothSourceStatus{Info: info},
 		)
 	case 130586:
 		return decodePGNCandidates(info, payload,
-			&PgnZoneConfiguration{Info: info},
+			&ZoneConfiguration{Info: info},
 		)
 	case 130816:
 		return decodePGNCandidates(info, payload,
-			&PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed{Info: info},
-			&PgnBepMarineCzoneZcfBusDistribution{Info: info},
-			&PgnFurunoStatusAndVersionReport{Info: info},
-			&PgnHondaEngineStatus{Info: info},
-			&PgnSeaRecoveryWatermakerStatus{Info: info},
-			&PgnSimradTextMessage{Info: info},
-			&PgnSonichubAmRadio{Info: info},
-			&PgnSonichubAlbum{Info: info},
-			&PgnSonichubArtist{Info: info},
-			&PgnSonichubControl{Info: info},
-			&PgnSonichubFmRadio{Info: info},
-			&PgnSonichubInit1{Info: info},
-			&PgnSonichubInit2{Info: info},
-			&PgnSonichubInit3{Info: info},
-			&PgnSonichubMaxVolume{Info: info},
-			&PgnSonichubMenuItem{Info: info},
-			&PgnSonichubPlaylist{Info: info},
-			&PgnSonichubPosition{Info: info},
-			&PgnSonichubSource{Info: info},
-			&PgnSonichubSourceList{Info: info},
-			&PgnSonichubTrack{Info: info},
-			&PgnSonichubVolume{Info: info},
-			&PgnSonichubZoneInfo{Info: info},
-			&PgnSonichubZones{Info: info},
+			&Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed{Info: info},
+			&BepMarineCzoneZcfBusDistribution{Info: info},
+			&FurunoStatusAndVersionReport{Info: info},
+			&HondaEngineStatus{Info: info},
+			&SeaRecoveryWatermakerStatus{Info: info},
+			&SimradTextMessage{Info: info},
+			&SonichubAmRadio{Info: info},
+			&SonichubAlbum{Info: info},
+			&SonichubArtist{Info: info},
+			&SonichubControl{Info: info},
+			&SonichubFmRadio{Info: info},
+			&SonichubInit1{Info: info},
+			&SonichubInit2{Info: info},
+			&SonichubInit3{Info: info},
+			&SonichubMaxVolume{Info: info},
+			&SonichubMenuItem{Info: info},
+			&SonichubPlaylist{Info: info},
+			&SonichubPosition{Info: info},
+			&SonichubSource{Info: info},
+			&SonichubSourceList{Info: info},
+			&SonichubTrack{Info: info},
+			&SonichubVolume{Info: info},
+			&SonichubZoneInfo{Info: info},
+			&SonichubZones{Info: info},
 		)
 	case 130817:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneStatusExtended{Info: info},
-			&PgnFurunoSvControl{Info: info},
-			&PgnLowranceProductInformation{Info: info},
-			&PgnMaretronAnnunciatorCapabilities{Info: info},
-			&PgnNavicoUnknown{Info: info},
+			&BepMarineCzoneStatusExtended{Info: info},
+			&FurunoSvControl{Info: info},
+			&LowranceProductInformation{Info: info},
+			&MaretronAnnunciatorCapabilities{Info: info},
+			&NavicoUnknown{Info: info},
 		)
 	case 130818:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn130818{Info: info},
-			&PgnFurunoSensorSetup{Info: info},
-			&PgnMaretronLabel{Info: info},
-			&PgnSimnetReprogramData{Info: info},
-			&PgnWebastoStatus2{Info: info},
+			&BepMarineProprietaryPgn130818{Info: info},
+			&FurunoSensorSetup{Info: info},
+			&MaretronLabel{Info: info},
+			&SimnetReprogramData{Info: info},
+			&WebastoStatus2{Info: info},
 		)
 	case 130819:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzone130819{Info: info},
-			&PgnFurunoDeadReckoningConfiguration{Info: info},
-			&PgnMaretronAlertTransmission{Info: info},
-			&PgnSimnetRequestReprogram{Info: info},
-			&PgnWebastoHvacCommand{Info: info},
+			&BepMarineCzone130819{Info: info},
+			&FurunoDeadReckoningConfiguration{Info: info},
+			&MaretronAlertTransmission{Info: info},
+			&SimnetRequestReprogram{Info: info},
+			&WebastoHvacCommand{Info: info},
 		)
 	case 130820:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineCzoneAlarmStringResponse{Info: info},
-			&PgnBepMarineProprietaryPgn130820{Info: info},
-			&PgnFurunoUnknown130820{Info: info},
-			&PgnFusionAlbumName{Info: info},
-			&PgnFusionArtistName{Info: info},
-			&PgnFusionAuxGain{Info: info},
-			&PgnFusionBalance{Info: info},
-			&PgnFusionCapabilities{Info: info},
-			&PgnFusionDeviceName{Info: info},
-			&PgnFusionEq{Info: info},
-			&PgnFusionIgnitionSwitchState{Info: info},
-			&PgnFusionLineLevelControl{Info: info},
-			&PgnFusionLowPassFilter{Info: info},
-			&PgnFusionMarineTuner{Info: info},
-			&PgnFusionMarineScanMode{Info: info},
-			&PgnFusionMarineSquelch{Info: info},
-			&PgnFusionMedia{Info: info},
-			&PgnFusionMenuItem{Info: info},
-			&PgnFusionMenuLockId{Info: info},
-			&PgnFusionMono{Info: info},
-			&PgnFusionMultiroom{Info: info},
-			&PgnFusionMultiroomStatus{Info: info},
-			&PgnFusionMute{Info: info},
-			&PgnFusionPowerState{Info: info},
-			&PgnFusionProcessingBypass{Info: info},
-			&PgnFusionRdsData{Info: info},
-			&PgnFusionSetting{Info: info},
-			&PgnFusionSettings{Info: info},
-			&PgnFusionSiriusxm{Info: info},
-			&PgnFusionSiriusxmArtist{Info: info},
-			&PgnFusionSiriusxmCategory{Info: info},
-			&PgnFusionSiriusxmChannel{Info: info},
-			&PgnFusionSiriusxmContentInfo{Info: info},
-			&PgnFusionSiriusxmPresets{Info: info},
-			&PgnFusionSiriusxmSignal{Info: info},
-			&PgnFusionSiriusxmTitle{Info: info},
-			&PgnFusionSource{Info: info},
-			&PgnFusionSourceCount{Info: info},
-			&PgnFusionSpeedVolumeCurrentSpeed{Info: info},
-			&PgnFusionSublevels{Info: info},
-			&PgnFusionTrackName{Info: info},
-			&PgnFusionTrackPosition{Info: info},
-			&PgnFusionTuner{Info: info},
-			&PgnFusionUsbRepeatStatus{Info: info},
-			&PgnFusionVersions{Info: info},
-			&PgnFusionVolumeLimits{Info: info},
-			&PgnFusionVolumes{Info: info},
-			&PgnFusionZoneName{Info: info},
-			&PgnMaretronAlertResponse{Info: info},
-			&PgnSimnetReprogramStatus{Info: info},
+			&BepMarineCzoneAlarmStringResponse{Info: info},
+			&BepMarineProprietaryPgn130820{Info: info},
+			&FurunoUnknown130820{Info: info},
+			&FusionAlbumName{Info: info},
+			&FusionArtistName{Info: info},
+			&FusionAuxGain{Info: info},
+			&FusionBalance{Info: info},
+			&FusionCapabilities{Info: info},
+			&FusionDeviceName{Info: info},
+			&FusionEq{Info: info},
+			&FusionIgnitionSwitchState{Info: info},
+			&FusionLineLevelControl{Info: info},
+			&FusionLowPassFilter{Info: info},
+			&FusionMarineTuner{Info: info},
+			&FusionMarineScanMode{Info: info},
+			&FusionMarineSquelch{Info: info},
+			&FusionMedia{Info: info},
+			&FusionMenuItem{Info: info},
+			&FusionMenuLockId{Info: info},
+			&FusionMono{Info: info},
+			&FusionMultiroom{Info: info},
+			&FusionMultiroomStatus{Info: info},
+			&FusionMute{Info: info},
+			&FusionPowerState{Info: info},
+			&FusionProcessingBypass{Info: info},
+			&FusionRdsData{Info: info},
+			&FusionSetting{Info: info},
+			&FusionSettings{Info: info},
+			&FusionSiriusxm{Info: info},
+			&FusionSiriusxmArtist{Info: info},
+			&FusionSiriusxmCategory{Info: info},
+			&FusionSiriusxmChannel{Info: info},
+			&FusionSiriusxmContentInfo{Info: info},
+			&FusionSiriusxmPresets{Info: info},
+			&FusionSiriusxmSignal{Info: info},
+			&FusionSiriusxmTitle{Info: info},
+			&FusionSource{Info: info},
+			&FusionSourceCount{Info: info},
+			&FusionSpeedVolumeCurrentSpeed{Info: info},
+			&FusionSublevels{Info: info},
+			&FusionTrackName{Info: info},
+			&FusionTrackPosition{Info: info},
+			&FusionTuner{Info: info},
+			&FusionUsbRepeatStatus{Info: info},
+			&FusionVersions{Info: info},
+			&FusionVolumeLimits{Info: info},
+			&FusionVolumes{Info: info},
+			&FusionZoneName{Info: info},
+			&MaretronAlertResponse{Info: info},
+			&SimnetReprogramStatus{Info: info},
 		)
 	case 130821:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn130821{Info: info},
-			&PgnFurunoUnknown130821{Info: info},
-			&PgnMaretronAlertText{Info: info},
-			&PgnNavicoAsciiData{Info: info},
+			&BepMarineProprietaryPgn130821{Info: info},
+			&FurunoUnknown130821{Info: info},
+			&MaretronAlertText{Info: info},
+			&NavicoAsciiData{Info: info},
 		)
 	case 130822:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn130822{Info: info},
-			&PgnMaretronAlertControl{Info: info},
-			&PgnMercuryEngineTelemetryLowSpeed{Info: info},
-			&PgnNavicoUdbDatabaseBulkReport2{Info: info},
-			&PgnNavicoUdbDatabaseBulkReport3{Info: info},
-			&PgnNavicoUdbDatabaseBulkReport4{Info: info},
-			&PgnNavicoUdbDatabaseObjectDump{Info: info},
-			&PgnNavicoUdbDatabaseObjectPing{Info: info},
-			&PgnNavicoUdbDatabaseShortReport5{Info: info},
-			&PgnNavicoUdbDatabaseShortReport7{Info: info},
-			&PgnNavicoUdbDatabaseSourceReport{Info: info},
+			&BepMarineProprietaryPgn130822{Info: info},
+			&MaretronAlertControl{Info: info},
+			&MercuryEngineTelemetryLowSpeed{Info: info},
+			&NavicoUdbDatabaseBulkReport2{Info: info},
+			&NavicoUdbDatabaseBulkReport3{Info: info},
+			&NavicoUdbDatabaseBulkReport4{Info: info},
+			&NavicoUdbDatabaseObjectDump{Info: info},
+			&NavicoUdbDatabaseObjectPing{Info: info},
+			&NavicoUdbDatabaseShortReport5{Info: info},
+			&NavicoUdbDatabaseShortReport7{Info: info},
+			&NavicoUdbDatabaseSourceReport{Info: info},
 		)
 	case 130823:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronProprietaryTemperatureHighRange{Info: info},
+			&MaretronProprietaryTemperatureHighRange{Info: info},
 		)
 	case 130824:
 		return decodePGNCandidates(info, payload,
-			&PgnBGKeyValueData{Info: info},
-			&PgnMaretronAnnunciator{Info: info},
-			&PgnMercuryEngineKeyValueData{Info: info},
+			&BGKeyValueData{Info: info},
+			&MaretronAnnunciator{Info: info},
+			&MercuryEngineKeyValueData{Info: info},
 		)
 	case 130825:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn130825{Info: info},
-			&PgnMaretronDataInstanceChannelCorrelation{Info: info},
-			&PgnMercuryCommandResponse{Info: info},
-			&PgnMercuryCruiseControlData{Info: info},
-			&PgnNavicoAlarm{Info: info},
+			&BepMarineProprietaryPgn130825{Info: info},
+			&MaretronDataInstanceChannelCorrelation{Info: info},
+			&MercuryCommandResponse{Info: info},
+			&MercuryCruiseControlData{Info: info},
+			&NavicoAlarm{Info: info},
 		)
 	case 130826:
 		return decodePGNCandidates(info, payload,
-			&PgnBepMarineProprietaryPgn130826{Info: info},
-			&PgnMaretronSwitchIndicatorStatus{Info: info},
-			&PgnMercuryBamDigitalDataProxy{Info: info},
+			&BepMarineProprietaryPgn130826{Info: info},
+			&MaretronSwitchIndicatorStatus{Info: info},
+			&MercuryBamDigitalDataProxy{Info: info},
 		)
 	case 130827:
 		return decodePGNCandidates(info, payload,
-			&PgnLowranceUnknown{Info: info},
+			&LowranceUnknown{Info: info},
 		)
 	case 130828:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronDometicHvacControlStatus{Info: info},
-			&PgnSimnetSetSerialNumber{Info: info},
+			&MaretronDometicHvacControlStatus{Info: info},
+			&SimnetSetSerialNumber{Info: info},
 		)
 	case 130829:
 		return decodePGNCandidates(info, payload,
-			&PgnMercuryEngineStatus{Info: info},
+			&MercuryEngineStatus{Info: info},
 		)
 	case 130830:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronDometicHvacStatus{Info: info},
-			&PgnSuzukiEngineData{Info: info},
+			&MaretronDometicHvacStatus{Info: info},
+			&SuzukiEngineData{Info: info},
 		)
 	case 130831:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronUniversalConfigurationFp{Info: info},
-			&PgnSuzukiEngineAndStorageDeviceConfig{Info: info},
+			&MaretronUniversalConfigurationFp{Info: info},
+			&SuzukiEngineAndStorageDeviceConfig{Info: info},
 		)
 	case 130832:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronVesselOperatingMode{Info: info},
-			&PgnSimnetFuelUsedHighResolution{Info: info},
+			&MaretronVesselOperatingMode{Info: info},
+			&SimnetFuelUsedHighResolution{Info: info},
 		)
 	case 130833:
 		return decodePGNCandidates(info, payload,
-			&PgnBGUserAndRemoteRename{Info: info},
-			&PgnFurunoShipParametersAndAntennaPosition{Info: info},
-			&PgnMaretronVesselDataRecorderStatus{Info: info},
+			&BGUserAndRemoteRename{Info: info},
+			&FurunoShipParametersAndAntennaPosition{Info: info},
+			&MaretronVesselDataRecorderStatus{Info: info},
 		)
 	case 130834:
 		return decodePGNCandidates(info, payload,
-			&PgnFurunoSpeedCalculationPosition{Info: info},
-			&PgnMaretronSmsStatus{Info: info},
-			&PgnSimnetEngineAndTankConfiguration{Info: info},
+			&FurunoSpeedCalculationPosition{Info: info},
+			&MaretronSmsStatus{Info: info},
+			&SimnetEngineAndTankConfiguration{Info: info},
 		)
 	case 130835:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronSmsTextMessage{Info: info},
-			&PgnSimnetSetEngineAndTankConfiguration{Info: info},
+			&MaretronSmsTextMessage{Info: info},
+			&SimnetSetEngineAndTankConfiguration{Info: info},
 		)
 	case 130836:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronSwitchStatusCounter{Info: info},
-			&PgnSimnetFluidLevelSensorConfiguration{Info: info},
+			&MaretronSwitchStatusCounter{Info: info},
+			&SimnetFluidLevelSensorConfiguration{Info: info},
 		)
 	case 130837:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronSwitchStatusTimer{Info: info},
-			&PgnSimnetFuelFlowTurbineConfiguration{Info: info},
-			&PgnSuzukiEngineSensorData{Info: info},
+			&MaretronSwitchStatusTimer{Info: info},
+			&SimnetFuelFlowTurbineConfiguration{Info: info},
+			&SuzukiEngineSensorData{Info: info},
 		)
 	case 130838:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronBnwas{Info: info},
-			&PgnSimnetFluidLevelWarning{Info: info},
-			&PgnSuzukiFuelManagement{Info: info},
+			&MaretronBnwas{Info: info},
+			&SimnetFluidLevelWarning{Info: info},
+			&SuzukiFuelManagement{Info: info},
 		)
 	case 130839:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetPressureSensorConfiguration{Info: info},
+			&SimnetPressureSensorConfiguration{Info: info},
 		)
 	case 130840:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronGenericSensor{Info: info},
-			&PgnSimnetDataSourceSelection{Info: info},
+			&MaretronGenericSensor{Info: info},
+			&SimnetDataSourceSelection{Info: info},
 		)
 	case 130841:
 		return decodePGNCandidates(info, payload,
-			&PgnMaretronCanFrameForwarding{Info: info},
+			&MaretronCanFrameForwarding{Info: info},
 		)
 	case 130842:
 		return decodePGNCandidates(info, payload,
-			&PgnFurunoSixDegreesOfFreedomMovement{Info: info},
-			&PgnMaretronWindlassOperatingStatus{Info: info},
-			&PgnSimnetAisClassBStaticDataMsg24PartA{Info: info},
-			&PgnSimnetAisClassBStaticDataMsg24PartB{Info: info},
+			&FurunoSixDegreesOfFreedomMovement{Info: info},
+			&MaretronWindlassOperatingStatus{Info: info},
+			&SimnetAisClassBStaticDataMsg24PartA{Info: info},
+			&SimnetAisClassBStaticDataMsg24PartB{Info: info},
 		)
 	case 130843:
 		return decodePGNCandidates(info, payload,
-			&PgnFurunoHeelAngleRollInformation{Info: info},
-			&PgnMaretronWindlassControlCommand{Info: info},
-			&PgnSimnetSonarStatusFrequencyAndDspVoltage{Info: info},
+			&FurunoHeelAngleRollInformation{Info: info},
+			&MaretronWindlassControlCommand{Info: info},
+			&SimnetSonarStatusFrequencyAndDspVoltage{Info: info},
 		)
 	case 130844:
 		return decodePGNCandidates(info, payload,
-			&PgnCarlingProprietary{Info: info},
+			&CarlingProprietary{Info: info},
 		)
 	case 130845:
 		return decodePGNCandidates(info, payload,
-			&PgnFurunoMultiSatsInViewExtended{Info: info},
-			&PgnMaretronDcEnergy{Info: info},
-			&PgnSimnetKeyValue{Info: info},
+			&FurunoMultiSatsInViewExtended{Info: info},
+			&MaretronDcEnergy{Info: info},
+			&SimnetKeyValue{Info: info},
 		)
 	case 130846:
 		return decodePGNCandidates(info, payload,
-			&PgnFurunoMotionSensorStatusExtended{Info: info},
-			&PgnMaretronBatteryAmpHourRecord{Info: info},
-			&PgnSimnetParameterSet{Info: info},
+			&FurunoMotionSensorStatusExtended{Info: info},
+			&MaretronBatteryAmpHourRecord{Info: info},
+			&SimnetParameterSet{Info: info},
 		)
 	case 130847:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoAsciiIdentifier{Info: info},
-			&PgnSeatalkNodeStatistics{Info: info},
+			&NavicoAsciiIdentifier{Info: info},
+			&SeatalkNodeStatistics{Info: info},
 		)
 	case 130848:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkWaypointInformation{Info: info},
+			&SeatalkWaypointInformation{Info: info},
 		)
 	case 130849:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoProprietaryFp{Info: info},
+			&NavicoProprietaryFp{Info: info},
 		)
 	case 130850:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApCommand{Info: info},
-			&PgnSimnetAlarm{Info: info},
-			&PgnSimnetCommandApChangeCourse{Info: info},
-			&PgnSimnetCommandApFollowUp{Info: info},
-			&PgnSimnetCommandApHeading{Info: info},
-			&PgnSimnetCommandApNav{Info: info},
-			&PgnSimnetCommandApNodrift{Info: info},
-			&PgnSimnetCommandApStandby{Info: info},
-			&PgnSimnetCommandApTack{Info: info},
-			&PgnSimnetCommandApWind{Info: info},
-			&PgnSimnetEvent{Info: info},
-			&PgnSimnetEventCommandTimer{Info: info},
+			&SimnetApCommand{Info: info},
+			&SimnetAlarm{Info: info},
+			&SimnetCommandApChangeCourse{Info: info},
+			&SimnetCommandApFollowUp{Info: info},
+			&SimnetCommandApHeading{Info: info},
+			&SimnetCommandApNav{Info: info},
+			&SimnetCommandApNodrift{Info: info},
+			&SimnetCommandApStandby{Info: info},
+			&SimnetCommandApTack{Info: info},
+			&SimnetCommandApWind{Info: info},
+			&SimnetEvent{Info: info},
+			&SimnetEventCommandTimer{Info: info},
 		)
 	case 130851:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApCommandReply{Info: info},
-			&PgnSimnetApCommandReplyChangeCourse{Info: info},
+			&SimnetApCommandReply{Info: info},
+			&SimnetApCommandReplyChangeCourse{Info: info},
 		)
 	case 130852:
 		return decodePGNCandidates(info, payload,
-			&PgnNavicoProprietary2Fp{Info: info},
+			&NavicoProprietary2Fp{Info: info},
 		)
 	case 130856:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetAlarmMessage{Info: info},
+			&SimnetAlarmMessage{Info: info},
 		)
 	case 130860:
 		return decodePGNCandidates(info, payload,
-			&PgnSimnetApUnknown4{Info: info},
+			&SimnetApUnknown4{Info: info},
 		)
 	case 130861:
 		return decodePGNCandidates(info, payload,
-			&PgnSimradEngineData{Info: info},
+			&SimradEngineData{Info: info},
 		)
 	case 130880:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarAdditionalWeatherData{Info: info},
+			&AirmarAdditionalWeatherData{Info: info},
 		)
 	case 130881:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarHeaterControl{Info: info},
+			&AirmarHeaterControl{Info: info},
 		)
 	case 130900:
 		return decodePGNCandidates(info, payload,
-			&PgnXantrexAcStatus{Info: info},
+			&XantrexAcStatus{Info: info},
 		)
 	case 130910:
 		return decodePGNCandidates(info, payload,
-			&PgnXantrexDcSourceConfigurationStatus{Info: info},
+			&XantrexDcSourceConfigurationStatus{Info: info},
 		)
 	case 130911:
 		return decodePGNCandidates(info, payload,
-			&PgnXantrexAcOutputConfigurationStatus{Info: info},
+			&XantrexAcOutputConfigurationStatus{Info: info},
 		)
 	case 130912:
 		return decodePGNCandidates(info, payload,
-			&PgnXantrexChargerConfigurationStatus{Info: info},
+			&XantrexChargerConfigurationStatus{Info: info},
 		)
 	case 130913:
 		return decodePGNCandidates(info, payload,
-			&PgnXantrexAcInputConfigurationStatus{Info: info},
+			&XantrexAcInputConfigurationStatus{Info: info},
 		)
 	case 130918:
 		return decodePGNCandidates(info, payload,
-			&PgnSeatalkRouteInformation{Info: info},
+			&SeatalkRouteInformation{Info: info},
 		)
 	case 130921:
 		return decodePGNCandidates(info, payload,
-			&PgnCarlingBreakerStatusAndConfiguration{Info: info},
+			&CarlingBreakerStatusAndConfiguration{Info: info},
 		)
 	case 130939:
 		return decodePGNCandidates(info, payload,
-			&PgnLumishoreLightControl{Info: info},
+			&LumishoreLightControl{Info: info},
 		)
 	case 130944:
 		return decodePGNCandidates(info, payload,
-			&PgnAirmarPost{Info: info},
+			&AirmarPost{Info: info},
 		)
 	case 130945:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData{Info: info},
+			&YamahaEngineData{Info: info},
 		)
 	case 130946:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData2{Info: info},
+			&YamahaEngineData2{Info: info},
 		)
 	case 130947:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData3{Info: info},
+			&YamahaEngineData3{Info: info},
 		)
 	case 130951:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData4{Info: info},
+			&YamahaEngineData4{Info: info},
 		)
 	case 131008:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData5{Info: info},
+			&YamahaEngineData5{Info: info},
 		)
 	case 131011:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData6{Info: info},
+			&YamahaEngineData6{Info: info},
 		)
 	case 131012:
 		return decodePGNCandidates(info, payload,
-			&PgnYamahaEngineData7{Info: info},
+			&YamahaEngineData7{Info: info},
 		)
 	default:
 		return nil, fmt.Errorf("no PGN struct for %d", info.PGN)

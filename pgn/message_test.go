@@ -7,7 +7,7 @@ import (
 )
 
 func TestEncodeMessage_SelectsVariantForDuplicatePGN(t *testing.T) {
-	msg := &PgnGarminColorMode{
+	msg := &GarminColorMode{
 		ManufacturerCode: ptrUint64(229),
 		IndustryCode:     ptrUint64(4),
 		UnknownId1:       ptrUint64(222),

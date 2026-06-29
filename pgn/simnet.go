@@ -5,16 +5,16 @@ package pgn
 
 import "fmt"
 
-type PgnSimnetConfigureTemperatureSensor struct {
+type SimnetConfigureTemperatureSensor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetConfigureTemperatureSensor) PGNNumber() uint32               { return 65287 }
-func (m *PgnSimnetConfigureTemperatureSensor) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetConfigureTemperatureSensor) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetConfigureTemperatureSensor) DecodePayload(payload []uint8) error {
+func (m *SimnetConfigureTemperatureSensor) PGNNumber() uint32               { return 65287 }
+func (m *SimnetConfigureTemperatureSensor) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetConfigureTemperatureSensor) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetConfigureTemperatureSensor) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -63,7 +63,7 @@ func (m *PgnSimnetConfigureTemperatureSensor) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnSimnetConfigureTemperatureSensor) EncodePayload() ([]uint8, error) {
+func (m *SimnetConfigureTemperatureSensor) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -80,16 +80,16 @@ func (m *PgnSimnetConfigureTemperatureSensor) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetTrimTabSensorCalibration struct {
+type SimnetTrimTabSensorCalibration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetTrimTabSensorCalibration) PGNNumber() uint32               { return 65289 }
-func (m *PgnSimnetTrimTabSensorCalibration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetTrimTabSensorCalibration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetTrimTabSensorCalibration) DecodePayload(payload []uint8) error {
+func (m *SimnetTrimTabSensorCalibration) PGNNumber() uint32               { return 65289 }
+func (m *SimnetTrimTabSensorCalibration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetTrimTabSensorCalibration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetTrimTabSensorCalibration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -138,7 +138,7 @@ func (m *PgnSimnetTrimTabSensorCalibration) DecodePayload(payload []uint8) error
 	}
 	return nil
 }
-func (m *PgnSimnetTrimTabSensorCalibration) EncodePayload() ([]uint8, error) {
+func (m *SimnetTrimTabSensorCalibration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -155,16 +155,16 @@ func (m *PgnSimnetTrimTabSensorCalibration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetPaddleWheelSpeedConfiguration struct {
+type SimnetPaddleWheelSpeedConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetPaddleWheelSpeedConfiguration) PGNNumber() uint32               { return 65290 }
-func (m *PgnSimnetPaddleWheelSpeedConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetPaddleWheelSpeedConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetPaddleWheelSpeedConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetPaddleWheelSpeedConfiguration) PGNNumber() uint32               { return 65290 }
+func (m *SimnetPaddleWheelSpeedConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetPaddleWheelSpeedConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetPaddleWheelSpeedConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -213,7 +213,7 @@ func (m *PgnSimnetPaddleWheelSpeedConfiguration) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnSimnetPaddleWheelSpeedConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetPaddleWheelSpeedConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -230,16 +230,16 @@ func (m *PgnSimnetPaddleWheelSpeedConfiguration) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetClearFluidLevelWarnings struct {
+type SimnetClearFluidLevelWarnings struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetClearFluidLevelWarnings) PGNNumber() uint32               { return 65292 }
-func (m *PgnSimnetClearFluidLevelWarnings) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetClearFluidLevelWarnings) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetClearFluidLevelWarnings) DecodePayload(payload []uint8) error {
+func (m *SimnetClearFluidLevelWarnings) PGNNumber() uint32               { return 65292 }
+func (m *SimnetClearFluidLevelWarnings) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetClearFluidLevelWarnings) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetClearFluidLevelWarnings) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -288,7 +288,7 @@ func (m *PgnSimnetClearFluidLevelWarnings) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnSimnetClearFluidLevelWarnings) EncodePayload() ([]uint8, error) {
+func (m *SimnetClearFluidLevelWarnings) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -305,16 +305,16 @@ func (m *PgnSimnetClearFluidLevelWarnings) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetLgc2000Configuration struct {
+type SimnetLgc2000Configuration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetLgc2000Configuration) PGNNumber() uint32               { return 65293 }
-func (m *PgnSimnetLgc2000Configuration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetLgc2000Configuration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetLgc2000Configuration) DecodePayload(payload []uint8) error {
+func (m *SimnetLgc2000Configuration) PGNNumber() uint32               { return 65293 }
+func (m *SimnetLgc2000Configuration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetLgc2000Configuration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetLgc2000Configuration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -363,7 +363,7 @@ func (m *PgnSimnetLgc2000Configuration) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetLgc2000Configuration) EncodePayload() ([]uint8, error) {
+func (m *SimnetLgc2000Configuration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -380,7 +380,7 @@ func (m *PgnSimnetLgc2000Configuration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApUnknown1 struct {
+type SimnetApUnknown1 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -388,10 +388,10 @@ type PgnSimnetApUnknown1 struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"5"`
 }
 
-func (m *PgnSimnetApUnknown1) PGNNumber() uint32               { return 65302 }
-func (m *PgnSimnetApUnknown1) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApUnknown1) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApUnknown1) DecodePayload(payload []uint8) error {
+func (m *SimnetApUnknown1) PGNNumber() uint32               { return 65302 }
+func (m *SimnetApUnknown1) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApUnknown1) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApUnknown1) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -460,7 +460,7 @@ func (m *PgnSimnetApUnknown1) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApUnknown1) EncodePayload() ([]uint8, error) {
+func (m *SimnetApUnknown1) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -487,7 +487,7 @@ func (m *PgnSimnetApUnknown1) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetDeviceModeRequest struct {
+type SimnetDeviceModeRequest struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -495,10 +495,10 @@ type PgnSimnetDeviceModeRequest struct {
 	Report           *uint64     `json:"report,omitempty" n2k:"5"`
 }
 
-func (m *PgnSimnetDeviceModeRequest) PGNNumber() uint32               { return 65305 }
-func (m *PgnSimnetDeviceModeRequest) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetDeviceModeRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetDeviceModeRequest) DecodePayload(payload []uint8) error {
+func (m *SimnetDeviceModeRequest) PGNNumber() uint32               { return 65305 }
+func (m *SimnetDeviceModeRequest) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetDeviceModeRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetDeviceModeRequest) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -576,7 +576,7 @@ func (m *PgnSimnetDeviceModeRequest) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetDeviceModeRequest) EncodePayload() ([]uint8, error) {
+func (m *SimnetDeviceModeRequest) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -603,7 +603,7 @@ func (m *PgnSimnetDeviceModeRequest) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetDeviceStatus struct {
+type SimnetDeviceStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -612,10 +612,10 @@ type PgnSimnetDeviceStatus struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetDeviceStatus) PGNNumber() uint32               { return 65305 }
-func (m *PgnSimnetDeviceStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetDeviceStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetDeviceStatus) DecodePayload(payload []uint8) error {
+func (m *SimnetDeviceStatus) PGNNumber() uint32               { return 65305 }
+func (m *SimnetDeviceStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetDeviceStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetDeviceStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -703,7 +703,7 @@ func (m *PgnSimnetDeviceStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetDeviceStatus) EncodePayload() ([]uint8, error) {
+func (m *SimnetDeviceStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -735,7 +735,7 @@ func (m *PgnSimnetDeviceStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetDeviceStatusRequest struct {
+type SimnetDeviceStatusRequest struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -743,10 +743,10 @@ type PgnSimnetDeviceStatusRequest struct {
 	Report           *uint64     `json:"report,omitempty" n2k:"5"`
 }
 
-func (m *PgnSimnetDeviceStatusRequest) PGNNumber() uint32               { return 65305 }
-func (m *PgnSimnetDeviceStatusRequest) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetDeviceStatusRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetDeviceStatusRequest) DecodePayload(payload []uint8) error {
+func (m *SimnetDeviceStatusRequest) PGNNumber() uint32               { return 65305 }
+func (m *SimnetDeviceStatusRequest) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetDeviceStatusRequest) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetDeviceStatusRequest) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -824,7 +824,7 @@ func (m *PgnSimnetDeviceStatusRequest) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetDeviceStatusRequest) EncodePayload() ([]uint8, error) {
+func (m *SimnetDeviceStatusRequest) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -851,7 +851,7 @@ func (m *PgnSimnetDeviceStatusRequest) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetPilotMode struct {
+type SimnetPilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -860,10 +860,10 @@ type PgnSimnetPilotMode struct {
 	Mode             *uint64     `json:"mode,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetPilotMode) PGNNumber() uint32               { return 65305 }
-func (m *PgnSimnetPilotMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetPilotMode) DecodePayload(payload []uint8) error {
+func (m *SimnetPilotMode) PGNNumber() uint32               { return 65305 }
+func (m *SimnetPilotMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetPilotMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -951,7 +951,7 @@ func (m *PgnSimnetPilotMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetPilotMode) EncodePayload() ([]uint8, error) {
+func (m *SimnetPilotMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -983,7 +983,7 @@ func (m *PgnSimnetPilotMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetSailingProcessorStatus struct {
+type SimnetSailingProcessorStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -992,10 +992,10 @@ type PgnSimnetSailingProcessorStatus struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetSailingProcessorStatus) PGNNumber() uint32               { return 65305 }
-func (m *PgnSimnetSailingProcessorStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetSailingProcessorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetSailingProcessorStatus) DecodePayload(payload []uint8) error {
+func (m *SimnetSailingProcessorStatus) PGNNumber() uint32               { return 65305 }
+func (m *SimnetSailingProcessorStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetSailingProcessorStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetSailingProcessorStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1079,7 +1079,7 @@ func (m *PgnSimnetSailingProcessorStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetSailingProcessorStatus) EncodePayload() ([]uint8, error) {
+func (m *SimnetSailingProcessorStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1106,7 +1106,7 @@ func (m *PgnSimnetSailingProcessorStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApUnknown5 struct {
+type SimnetApUnknown5 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1114,10 +1114,10 @@ type PgnSimnetApUnknown5 struct {
 	B                *uint64     `json:"b,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetApUnknown5) PGNNumber() uint32               { return 65323 }
-func (m *PgnSimnetApUnknown5) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApUnknown5) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApUnknown5) DecodePayload(payload []uint8) error {
+func (m *SimnetApUnknown5) PGNNumber() uint32               { return 65323 }
+func (m *SimnetApUnknown5) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApUnknown5) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApUnknown5) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1190,7 +1190,7 @@ func (m *PgnSimnetApUnknown5) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApUnknown5) EncodePayload() ([]uint8, error) {
+func (m *SimnetApUnknown5) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1218,7 +1218,7 @@ func (m *PgnSimnetApUnknown5) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAnalogTelemetry struct {
+type SimnetAnalogTelemetry struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1227,10 +1227,10 @@ type PgnSimnetAnalogTelemetry struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetAnalogTelemetry) PGNNumber() uint32               { return 65324 }
-func (m *PgnSimnetAnalogTelemetry) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAnalogTelemetry) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAnalogTelemetry) DecodePayload(payload []uint8) error {
+func (m *SimnetAnalogTelemetry) PGNNumber() uint32               { return 65324 }
+func (m *SimnetAnalogTelemetry) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAnalogTelemetry) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAnalogTelemetry) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1305,7 +1305,7 @@ func (m *PgnSimnetAnalogTelemetry) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAnalogTelemetry) EncodePayload() ([]uint8, error) {
+func (m *SimnetAnalogTelemetry) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1336,7 +1336,7 @@ func (m *PgnSimnetAnalogTelemetry) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAutopilotModeState struct {
+type SimnetAutopilotModeState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1347,10 +1347,10 @@ type PgnSimnetAutopilotModeState struct {
 	Flags            *uint64     `json:"flags,omitempty" n2k:"9"`
 }
 
-func (m *PgnSimnetAutopilotModeState) PGNNumber() uint32               { return 65340 }
-func (m *PgnSimnetAutopilotModeState) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAutopilotModeState) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAutopilotModeState) DecodePayload(payload []uint8) error {
+func (m *SimnetAutopilotModeState) PGNNumber() uint32               { return 65340 }
+func (m *SimnetAutopilotModeState) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAutopilotModeState) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAutopilotModeState) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1449,7 +1449,7 @@ func (m *PgnSimnetAutopilotModeState) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAutopilotModeState) EncodePayload() ([]uint8, error) {
+func (m *SimnetAutopilotModeState) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1491,7 +1491,7 @@ func (m *PgnSimnetAutopilotModeState) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAutopilotAngle struct {
+type SimnetAutopilotAngle struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1499,10 +1499,10 @@ type PgnSimnetAutopilotAngle struct {
 	Angle            *uint64     `json:"angle,omitempty" n2k:"7"`
 }
 
-func (m *PgnSimnetAutopilotAngle) PGNNumber() uint32               { return 65341 }
-func (m *PgnSimnetAutopilotAngle) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAutopilotAngle) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAutopilotAngle) DecodePayload(payload []uint8) error {
+func (m *SimnetAutopilotAngle) PGNNumber() uint32               { return 65341 }
+func (m *SimnetAutopilotAngle) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAutopilotAngle) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAutopilotAngle) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1575,7 +1575,7 @@ func (m *PgnSimnetAutopilotAngle) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAutopilotAngle) EncodePayload() ([]uint8, error) {
+func (m *SimnetAutopilotAngle) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1603,7 +1603,7 @@ func (m *PgnSimnetAutopilotAngle) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetMagneticField struct {
+type SimnetMagneticField struct {
 	Info MessageInfo `json:"info"`
 	A    *int64      `json:"a,omitempty" n2k:"1"`
 	B    *uint64     `json:"b,omitempty" n2k:"2"`
@@ -1611,10 +1611,10 @@ type PgnSimnetMagneticField struct {
 	D    *int64      `json:"d,omitempty" n2k:"4"`
 }
 
-func (m *PgnSimnetMagneticField) PGNNumber() uint32               { return 65350 }
-func (m *PgnSimnetMagneticField) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetMagneticField) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetMagneticField) DecodePayload(payload []uint8) error {
+func (m *SimnetMagneticField) PGNNumber() uint32               { return 65350 }
+func (m *SimnetMagneticField) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetMagneticField) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetMagneticField) DecodePayload(payload []uint8) error {
 	stream := NewPgnDataStream(payload)
 	{
 		raw, err := stream.getNumberRaw(16)
@@ -1665,7 +1665,7 @@ func (m *PgnSimnetMagneticField) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetMagneticField) EncodePayload() ([]uint8, error) {
+func (m *SimnetMagneticField) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.A != nil {
 		writer.writeInt64(m.A, 16)
@@ -1691,7 +1691,7 @@ func (m *PgnSimnetMagneticField) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApUnknown3 struct {
+type SimnetApUnknown3 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1701,10 +1701,10 @@ type PgnSimnetApUnknown3 struct {
 	SubIndex         *uint64     `json:"subIndex,omitempty" n2k:"7"`
 }
 
-func (m *PgnSimnetApUnknown3) PGNNumber() uint32               { return 65420 }
-func (m *PgnSimnetApUnknown3) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApUnknown3) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApUnknown3) DecodePayload(payload []uint8) error {
+func (m *SimnetApUnknown3) PGNNumber() uint32               { return 65420 }
+func (m *SimnetApUnknown3) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApUnknown3) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApUnknown3) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1797,7 +1797,7 @@ func (m *PgnSimnetApUnknown3) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApUnknown3) EncodePayload() ([]uint8, error) {
+func (m *SimnetApUnknown3) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1835,16 +1835,16 @@ func (m *PgnSimnetApUnknown3) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAutopilotMode struct {
+type SimnetAutopilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetAutopilotMode) PGNNumber() uint32               { return 65480 }
-func (m *PgnSimnetAutopilotMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAutopilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAutopilotMode) DecodePayload(payload []uint8) error {
+func (m *SimnetAutopilotMode) PGNNumber() uint32               { return 65480 }
+func (m *SimnetAutopilotMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAutopilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAutopilotMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1893,7 +1893,7 @@ func (m *PgnSimnetAutopilotMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAutopilotMode) EncodePayload() ([]uint8, error) {
+func (m *SimnetAutopilotMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1910,7 +1910,7 @@ func (m *PgnSimnetAutopilotMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetReprogramData struct {
+type SimnetReprogramData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1919,10 +1919,10 @@ type PgnSimnetReprogramData struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetReprogramData) PGNNumber() uint32               { return 130818 }
-func (m *PgnSimnetReprogramData) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetReprogramData) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetReprogramData) DecodePayload(payload []uint8) error {
+func (m *SimnetReprogramData) PGNNumber() uint32               { return 130818 }
+func (m *SimnetReprogramData) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetReprogramData) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetReprogramData) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1997,7 +1997,7 @@ func (m *PgnSimnetReprogramData) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetReprogramData) EncodePayload() ([]uint8, error) {
+func (m *SimnetReprogramData) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2024,16 +2024,16 @@ func (m *PgnSimnetReprogramData) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetRequestReprogram struct {
+type SimnetRequestReprogram struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetRequestReprogram) PGNNumber() uint32               { return 130819 }
-func (m *PgnSimnetRequestReprogram) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetRequestReprogram) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetRequestReprogram) DecodePayload(payload []uint8) error {
+func (m *SimnetRequestReprogram) PGNNumber() uint32               { return 130819 }
+func (m *SimnetRequestReprogram) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetRequestReprogram) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetRequestReprogram) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2078,7 +2078,7 @@ func (m *PgnSimnetRequestReprogram) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetRequestReprogram) EncodePayload() ([]uint8, error) {
+func (m *SimnetRequestReprogram) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2094,17 +2094,17 @@ func (m *PgnSimnetRequestReprogram) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetReprogramStatus struct {
+type SimnetReprogramStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Status           *uint64     `json:"status,omitempty" n2k:"5"`
 }
 
-func (m *PgnSimnetReprogramStatus) PGNNumber() uint32               { return 130820 }
-func (m *PgnSimnetReprogramStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetReprogramStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetReprogramStatus) DecodePayload(payload []uint8) error {
+func (m *SimnetReprogramStatus) PGNNumber() uint32               { return 130820 }
+func (m *SimnetReprogramStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetReprogramStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetReprogramStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2167,7 +2167,7 @@ func (m *PgnSimnetReprogramStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetReprogramStatus) EncodePayload() ([]uint8, error) {
+func (m *SimnetReprogramStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2190,16 +2190,16 @@ func (m *PgnSimnetReprogramStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetSetSerialNumber struct {
+type SimnetSetSerialNumber struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetSetSerialNumber) PGNNumber() uint32               { return 130828 }
-func (m *PgnSimnetSetSerialNumber) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetSetSerialNumber) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetSetSerialNumber) DecodePayload(payload []uint8) error {
+func (m *SimnetSetSerialNumber) PGNNumber() uint32               { return 130828 }
+func (m *SimnetSetSerialNumber) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetSetSerialNumber) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetSetSerialNumber) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2244,7 +2244,7 @@ func (m *PgnSimnetSetSerialNumber) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetSetSerialNumber) EncodePayload() ([]uint8, error) {
+func (m *SimnetSetSerialNumber) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2260,16 +2260,16 @@ func (m *PgnSimnetSetSerialNumber) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetFuelUsedHighResolution struct {
+type SimnetFuelUsedHighResolution struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetFuelUsedHighResolution) PGNNumber() uint32               { return 130832 }
-func (m *PgnSimnetFuelUsedHighResolution) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetFuelUsedHighResolution) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetFuelUsedHighResolution) DecodePayload(payload []uint8) error {
+func (m *SimnetFuelUsedHighResolution) PGNNumber() uint32               { return 130832 }
+func (m *SimnetFuelUsedHighResolution) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetFuelUsedHighResolution) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetFuelUsedHighResolution) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2314,7 +2314,7 @@ func (m *PgnSimnetFuelUsedHighResolution) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetFuelUsedHighResolution) EncodePayload() ([]uint8, error) {
+func (m *SimnetFuelUsedHighResolution) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2330,16 +2330,16 @@ func (m *PgnSimnetFuelUsedHighResolution) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetEngineAndTankConfiguration struct {
+type SimnetEngineAndTankConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetEngineAndTankConfiguration) PGNNumber() uint32               { return 130834 }
-func (m *PgnSimnetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetEngineAndTankConfiguration) PGNNumber() uint32               { return 130834 }
+func (m *SimnetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2384,7 +2384,7 @@ func (m *PgnSimnetEngineAndTankConfiguration) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnSimnetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2400,16 +2400,16 @@ func (m *PgnSimnetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetSetEngineAndTankConfiguration struct {
+type SimnetSetEngineAndTankConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetSetEngineAndTankConfiguration) PGNNumber() uint32               { return 130835 }
-func (m *PgnSimnetSetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetSetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetSetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetSetEngineAndTankConfiguration) PGNNumber() uint32               { return 130835 }
+func (m *SimnetSetEngineAndTankConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetSetEngineAndTankConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetSetEngineAndTankConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2454,7 +2454,7 @@ func (m *PgnSimnetSetEngineAndTankConfiguration) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnSimnetSetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetSetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2470,7 +2470,7 @@ func (m *PgnSimnetSetEngineAndTankConfiguration) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetFluidLevelSensorConfiguration struct {
+type SimnetFluidLevelSensorConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2485,10 +2485,10 @@ type PgnSimnetFluidLevelSensorConfiguration struct {
 	I                *int64      `json:"i,omitempty" n2k:"12"`
 }
 
-func (m *PgnSimnetFluidLevelSensorConfiguration) PGNNumber() uint32               { return 130836 }
-func (m *PgnSimnetFluidLevelSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetFluidLevelSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetFluidLevelSensorConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetFluidLevelSensorConfiguration) PGNNumber() uint32               { return 130836 }
+func (m *SimnetFluidLevelSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetFluidLevelSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetFluidLevelSensorConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2625,7 +2625,7 @@ func (m *PgnSimnetFluidLevelSensorConfiguration) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnSimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2686,16 +2686,16 @@ func (m *PgnSimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetFuelFlowTurbineConfiguration struct {
+type SimnetFuelFlowTurbineConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetFuelFlowTurbineConfiguration) PGNNumber() uint32               { return 130837 }
-func (m *PgnSimnetFuelFlowTurbineConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetFuelFlowTurbineConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetFuelFlowTurbineConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetFuelFlowTurbineConfiguration) PGNNumber() uint32               { return 130837 }
+func (m *SimnetFuelFlowTurbineConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetFuelFlowTurbineConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetFuelFlowTurbineConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2740,7 +2740,7 @@ func (m *PgnSimnetFuelFlowTurbineConfiguration) DecodePayload(payload []uint8) e
 	}
 	return nil
 }
-func (m *PgnSimnetFuelFlowTurbineConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetFuelFlowTurbineConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2756,16 +2756,16 @@ func (m *PgnSimnetFuelFlowTurbineConfiguration) EncodePayload() ([]uint8, error)
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetFluidLevelWarning struct {
+type SimnetFluidLevelWarning struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetFluidLevelWarning) PGNNumber() uint32               { return 130838 }
-func (m *PgnSimnetFluidLevelWarning) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetFluidLevelWarning) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetFluidLevelWarning) DecodePayload(payload []uint8) error {
+func (m *SimnetFluidLevelWarning) PGNNumber() uint32               { return 130838 }
+func (m *SimnetFluidLevelWarning) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetFluidLevelWarning) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetFluidLevelWarning) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2810,7 +2810,7 @@ func (m *PgnSimnetFluidLevelWarning) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetFluidLevelWarning) EncodePayload() ([]uint8, error) {
+func (m *SimnetFluidLevelWarning) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2826,16 +2826,16 @@ func (m *PgnSimnetFluidLevelWarning) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetPressureSensorConfiguration struct {
+type SimnetPressureSensorConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetPressureSensorConfiguration) PGNNumber() uint32               { return 130839 }
-func (m *PgnSimnetPressureSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetPressureSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetPressureSensorConfiguration) DecodePayload(payload []uint8) error {
+func (m *SimnetPressureSensorConfiguration) PGNNumber() uint32               { return 130839 }
+func (m *SimnetPressureSensorConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetPressureSensorConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetPressureSensorConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2880,7 +2880,7 @@ func (m *PgnSimnetPressureSensorConfiguration) DecodePayload(payload []uint8) er
 	}
 	return nil
 }
-func (m *PgnSimnetPressureSensorConfiguration) EncodePayload() ([]uint8, error) {
+func (m *SimnetPressureSensorConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2896,7 +2896,7 @@ func (m *PgnSimnetPressureSensorConfiguration) EncodePayload() ([]uint8, error) 
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetDataSourceSelection struct {
+type SimnetDataSourceSelection struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2907,10 +2907,10 @@ type PgnSimnetDataSourceSelection struct {
 	Source           *uint64     `json:"source,omitempty" n2k:"10"`
 }
 
-func (m *PgnSimnetDataSourceSelection) PGNNumber() uint32               { return 130840 }
-func (m *PgnSimnetDataSourceSelection) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetDataSourceSelection) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetDataSourceSelection) DecodePayload(payload []uint8) error {
+func (m *SimnetDataSourceSelection) PGNNumber() uint32               { return 130840 }
+func (m *SimnetDataSourceSelection) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetDataSourceSelection) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetDataSourceSelection) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3017,7 +3017,7 @@ func (m *PgnSimnetDataSourceSelection) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetDataSourceSelection) EncodePayload() ([]uint8, error) {
+func (m *SimnetDataSourceSelection) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3061,7 +3061,7 @@ func (m *PgnSimnetDataSourceSelection) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAisClassBStaticDataMsg24PartA struct {
+type SimnetAisClassBStaticDataMsg24PartA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3073,10 +3073,10 @@ type PgnSimnetAisClassBStaticDataMsg24PartA struct {
 	Name             string      `json:"name,omitempty" n2k:"9"`
 }
 
-func (m *PgnSimnetAisClassBStaticDataMsg24PartA) PGNNumber() uint32               { return 130842 }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartA) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartA) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) error {
+func (m *SimnetAisClassBStaticDataMsg24PartA) PGNNumber() uint32               { return 130842 }
+func (m *SimnetAisClassBStaticDataMsg24PartA) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAisClassBStaticDataMsg24PartA) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3190,7 +3190,7 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) {
+func (m *SimnetAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3232,7 +3232,7 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAisClassBStaticDataMsg24PartB struct {
+type SimnetAisClassBStaticDataMsg24PartB struct {
 	Info                           MessageInfo `json:"info"`
 	ManufacturerCode               *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                   *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3251,10 +3251,10 @@ type PgnSimnetAisClassBStaticDataMsg24PartB struct {
 	MothershipUserId               *uint64     `json:"mothershipUserId,omitempty" n2k:"16"`
 }
 
-func (m *PgnSimnetAisClassBStaticDataMsg24PartB) PGNNumber() uint32               { return 130842 }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartB) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartB) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
+func (m *SimnetAisClassBStaticDataMsg24PartB) PGNNumber() uint32               { return 130842 }
+func (m *SimnetAisClassBStaticDataMsg24PartB) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3446,7 +3446,7 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) 
 	}
 	return nil
 }
-func (m *PgnSimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
+func (m *SimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3521,16 +3521,16 @@ func (m *PgnSimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetSonarStatusFrequencyAndDspVoltage struct {
+type SimnetSonarStatusFrequencyAndDspVoltage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 }
 
-func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) PGNNumber() uint32               { return 130843 }
-func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) DecodePayload(payload []uint8) error {
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) PGNNumber() uint32               { return 130843 }
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3575,7 +3575,7 @@ func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) DecodePayload(payload []uin
 	}
 	return nil
 }
-func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) EncodePayload() ([]uint8, error) {
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3591,7 +3591,7 @@ func (m *PgnSimnetSonarStatusFrequencyAndDspVoltage) EncodePayload() ([]uint8, e
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetKeyValue struct {
+type SimnetKeyValue struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3604,10 +3604,10 @@ type PgnSimnetKeyValue struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"10"`
 }
 
-func (m *PgnSimnetKeyValue) PGNNumber() uint32               { return 130845 }
-func (m *PgnSimnetKeyValue) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetKeyValue) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetKeyValue) DecodePayload(payload []uint8) error {
+func (m *SimnetKeyValue) PGNNumber() uint32               { return 130845 }
+func (m *SimnetKeyValue) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetKeyValue) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetKeyValue) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3722,7 +3722,7 @@ func (m *PgnSimnetKeyValue) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetKeyValue) EncodePayload() ([]uint8, error) {
+func (m *SimnetKeyValue) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3772,7 +3772,7 @@ func (m *PgnSimnetKeyValue) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetParameterSet struct {
+type SimnetParameterSet struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3786,10 +3786,10 @@ type PgnSimnetParameterSet struct {
 	Value            []uint8     `json:"value,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimnetParameterSet) PGNNumber() uint32               { return 130846 }
-func (m *PgnSimnetParameterSet) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetParameterSet) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetParameterSet) DecodePayload(payload []uint8) error {
+func (m *SimnetParameterSet) PGNNumber() uint32               { return 130846 }
+func (m *SimnetParameterSet) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetParameterSet) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetParameterSet) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3914,7 +3914,7 @@ func (m *PgnSimnetParameterSet) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetParameterSet) EncodePayload() ([]uint8, error) {
+func (m *SimnetParameterSet) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -3969,7 +3969,7 @@ func (m *PgnSimnetParameterSet) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApCommand struct {
+type SimnetApCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -3979,10 +3979,10 @@ type PgnSimnetApCommand struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetApCommand) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetApCommand) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApCommand) DecodePayload(payload []uint8) error {
+func (m *SimnetApCommand) PGNNumber() uint32               { return 130850 }
+func (m *SimnetApCommand) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApCommand) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4108,7 +4108,7 @@ func (m *PgnSimnetApCommand) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApCommand) EncodePayload() ([]uint8, error) {
+func (m *SimnetApCommand) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4152,7 +4152,7 @@ func (m *PgnSimnetApCommand) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAlarm struct {
+type SimnetAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4165,10 +4165,10 @@ type PgnSimnetAlarm struct {
 	G                *uint64     `json:"g,omitempty" n2k:"12"`
 }
 
-func (m *PgnSimnetAlarm) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetAlarm) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAlarm) DecodePayload(payload []uint8) error {
+func (m *SimnetAlarm) PGNNumber() uint32               { return 130850 }
+func (m *SimnetAlarm) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAlarm) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4300,7 +4300,7 @@ func (m *PgnSimnetAlarm) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAlarm) EncodePayload() ([]uint8, error) {
+func (m *SimnetAlarm) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4353,7 +4353,7 @@ func (m *PgnSimnetAlarm) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApChangeCourse struct {
+type SimnetCommandApChangeCourse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4365,10 +4365,10 @@ type PgnSimnetCommandApChangeCourse struct {
 	Angle            *uint64     `json:"angle,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimnetCommandApChangeCourse) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApChangeCourse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApChangeCourse) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApChangeCourse) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4503,7 +4503,7 @@ func (m *PgnSimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4552,7 +4552,7 @@ func (m *PgnSimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApFollowUp struct {
+type SimnetCommandApFollowUp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4562,10 +4562,10 @@ type PgnSimnetCommandApFollowUp struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApFollowUp) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApFollowUp) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApFollowUp) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApFollowUp) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApFollowUp) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApFollowUp) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApFollowUp) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApFollowUp) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4680,7 +4680,7 @@ func (m *PgnSimnetCommandApFollowUp) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApFollowUp) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApFollowUp) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4719,7 +4719,7 @@ func (m *PgnSimnetCommandApFollowUp) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApHeading struct {
+type SimnetCommandApHeading struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4729,10 +4729,10 @@ type PgnSimnetCommandApHeading struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApHeading) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApHeading) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApHeading) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApHeading) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApHeading) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApHeading) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -4847,7 +4847,7 @@ func (m *PgnSimnetCommandApHeading) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApHeading) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApHeading) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -4886,7 +4886,7 @@ func (m *PgnSimnetCommandApHeading) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApNav struct {
+type SimnetCommandApNav struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -4896,10 +4896,10 @@ type PgnSimnetCommandApNav struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApNav) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApNav) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApNav) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApNav) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApNav) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApNav) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApNav) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApNav) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5014,7 +5014,7 @@ func (m *PgnSimnetCommandApNav) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApNav) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApNav) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5053,7 +5053,7 @@ func (m *PgnSimnetCommandApNav) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApNodrift struct {
+type SimnetCommandApNodrift struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5063,10 +5063,10 @@ type PgnSimnetCommandApNodrift struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApNodrift) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApNodrift) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApNodrift) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApNodrift) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApNodrift) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApNodrift) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApNodrift) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApNodrift) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5181,7 +5181,7 @@ func (m *PgnSimnetCommandApNodrift) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApNodrift) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApNodrift) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5220,7 +5220,7 @@ func (m *PgnSimnetCommandApNodrift) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApStandby struct {
+type SimnetCommandApStandby struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5230,10 +5230,10 @@ type PgnSimnetCommandApStandby struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApStandby) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApStandby) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApStandby) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApStandby) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApStandby) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApStandby) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApStandby) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApStandby) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5348,7 +5348,7 @@ func (m *PgnSimnetCommandApStandby) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApStandby) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApStandby) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5387,7 +5387,7 @@ func (m *PgnSimnetCommandApStandby) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApTack struct {
+type SimnetCommandApTack struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5399,10 +5399,10 @@ type PgnSimnetCommandApTack struct {
 	UnknownB         *uint64     `json:"unknownB,omitempty" n2k:"10"`
 }
 
-func (m *PgnSimnetCommandApTack) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApTack) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApTack) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApTack) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApTack) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApTack) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApTack) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApTack) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5533,7 +5533,7 @@ func (m *PgnSimnetCommandApTack) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApTack) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApTack) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5581,7 +5581,7 @@ func (m *PgnSimnetCommandApTack) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetCommandApWind struct {
+type SimnetCommandApWind struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5591,10 +5591,10 @@ type PgnSimnetCommandApWind struct {
 	Event            *uint64     `json:"event,omitempty" n2k:"8"`
 }
 
-func (m *PgnSimnetCommandApWind) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetCommandApWind) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetCommandApWind) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetCommandApWind) DecodePayload(payload []uint8) error {
+func (m *SimnetCommandApWind) PGNNumber() uint32               { return 130850 }
+func (m *SimnetCommandApWind) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetCommandApWind) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetCommandApWind) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5709,7 +5709,7 @@ func (m *PgnSimnetCommandApWind) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetCommandApWind) EncodePayload() ([]uint8, error) {
+func (m *SimnetCommandApWind) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5748,7 +5748,7 @@ func (m *PgnSimnetCommandApWind) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetEvent struct {
+type SimnetEvent struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5756,10 +5756,10 @@ type PgnSimnetEvent struct {
 	NetworkGroup     *uint64     `json:"networkGroup,omitempty" n2k:"6"`
 }
 
-func (m *PgnSimnetEvent) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetEvent) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetEvent) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetEvent) DecodePayload(payload []uint8) error {
+func (m *SimnetEvent) PGNNumber() uint32               { return 130850 }
+func (m *SimnetEvent) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetEvent) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetEvent) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -5856,7 +5856,7 @@ func (m *PgnSimnetEvent) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetEvent) EncodePayload() ([]uint8, error) {
+func (m *SimnetEvent) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -5890,7 +5890,7 @@ func (m *PgnSimnetEvent) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetEventCommandTimer struct {
+type SimnetEventCommandTimer struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -5903,10 +5903,10 @@ type PgnSimnetEventCommandTimer struct {
 	Parameter3       *uint64     `json:"parameter3,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimnetEventCommandTimer) PGNNumber() uint32               { return 130850 }
-func (m *PgnSimnetEventCommandTimer) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetEventCommandTimer) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetEventCommandTimer) DecodePayload(payload []uint8) error {
+func (m *SimnetEventCommandTimer) PGNNumber() uint32               { return 130850 }
+func (m *SimnetEventCommandTimer) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetEventCommandTimer) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetEventCommandTimer) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6034,7 +6034,7 @@ func (m *PgnSimnetEventCommandTimer) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetEventCommandTimer) EncodePayload() ([]uint8, error) {
+func (m *SimnetEventCommandTimer) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6086,7 +6086,7 @@ func (m *PgnSimnetEventCommandTimer) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApCommandReply struct {
+type SimnetApCommandReply struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6098,10 +6098,10 @@ type PgnSimnetApCommandReply struct {
 	Value            *uint64     `json:"value,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimnetApCommandReply) PGNNumber() uint32               { return 130851 }
-func (m *PgnSimnetApCommandReply) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApCommandReply) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApCommandReply) DecodePayload(payload []uint8) error {
+func (m *SimnetApCommandReply) PGNNumber() uint32               { return 130851 }
+func (m *SimnetApCommandReply) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApCommandReply) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApCommandReply) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6227,7 +6227,7 @@ func (m *PgnSimnetApCommandReply) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApCommandReply) EncodePayload() ([]uint8, error) {
+func (m *SimnetApCommandReply) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6276,7 +6276,7 @@ func (m *PgnSimnetApCommandReply) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApCommandReplyChangeCourse struct {
+type SimnetApCommandReplyChangeCourse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6288,10 +6288,10 @@ type PgnSimnetApCommandReplyChangeCourse struct {
 	Angle            *uint64     `json:"angle,omitempty" n2k:"11"`
 }
 
-func (m *PgnSimnetApCommandReplyChangeCourse) PGNNumber() uint32               { return 130851 }
-func (m *PgnSimnetApCommandReplyChangeCourse) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApCommandReplyChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) error {
+func (m *SimnetApCommandReplyChangeCourse) PGNNumber() uint32               { return 130851 }
+func (m *SimnetApCommandReplyChangeCourse) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApCommandReplyChangeCourse) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6426,7 +6426,7 @@ func (m *PgnSimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) err
 	}
 	return nil
 }
-func (m *PgnSimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) {
+func (m *SimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6475,7 +6475,7 @@ func (m *PgnSimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetAlarmMessage struct {
+type SimnetAlarmMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6485,10 +6485,10 @@ type PgnSimnetAlarmMessage struct {
 	Text             string      `json:"text,omitempty" n2k:"7"`
 }
 
-func (m *PgnSimnetAlarmMessage) PGNNumber() uint32               { return 130856 }
-func (m *PgnSimnetAlarmMessage) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetAlarmMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetAlarmMessage) DecodePayload(payload []uint8) error {
+func (m *SimnetAlarmMessage) PGNNumber() uint32               { return 130856 }
+func (m *SimnetAlarmMessage) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetAlarmMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetAlarmMessage) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6573,7 +6573,7 @@ func (m *PgnSimnetAlarmMessage) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetAlarmMessage) EncodePayload() ([]uint8, error) {
+func (m *SimnetAlarmMessage) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -6605,7 +6605,7 @@ func (m *PgnSimnetAlarmMessage) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSimnetApUnknown4 struct {
+type SimnetApUnknown4 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -6617,10 +6617,10 @@ type PgnSimnetApUnknown4 struct {
 	F                *uint64     `json:"f,omitempty" n2k:"9"`
 }
 
-func (m *PgnSimnetApUnknown4) PGNNumber() uint32               { return 130860 }
-func (m *PgnSimnetApUnknown4) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSimnetApUnknown4) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSimnetApUnknown4) DecodePayload(payload []uint8) error {
+func (m *SimnetApUnknown4) PGNNumber() uint32               { return 130860 }
+func (m *SimnetApUnknown4) MessageInfo() MessageInfo        { return m.Info }
+func (m *SimnetApUnknown4) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SimnetApUnknown4) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -6728,7 +6728,7 @@ func (m *PgnSimnetApUnknown4) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSimnetApUnknown4) EncodePayload() ([]uint8, error) {
+func (m *SimnetApUnknown4) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

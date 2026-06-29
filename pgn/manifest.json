@@ -1,10 +1,10 @@
 {
   "schemaVersion": 3,
   "package": "github.com/open-ships/n2k/pgn",
-  "source": "Pgn* structs and PgnInfoLookup metadata",
+  "source": "PGN structs and PgnInfoLookup metadata",
   "description": "NMEA 2000 PGN variants decoded and encoded by this package.",
   "notes": [
-    "Each entry corresponds to one Pgn* struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
+    "Each entry corresponds to one PGN struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
     "Categories are grouped by the pgn package source file that owns each PGN struct.",
     "Duplicate PGN numbers are preserved when manufacturer-specific or group-function variants share the same PGN.",
     "Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
@@ -24,7 +24,7 @@
       "name": "System",
       "pgns": [
         {
-          "id": "PgnPgn0xe8000xee00StandardizedSingleFrameAddressed",
+          "id": "Message0xe8000xee00StandardizedSingleFrameAddressed",
           "sourceId": "0xe8000xee00StandardizedSingleFrameAddressed",
           "pgn": 59392,
           "description": "0xE800-0xEE00: Standardized single-frame addressed",
@@ -68,7 +68,7 @@
           }
         },
         {
-          "id": "PgnIsoAcknowledgement",
+          "id": "IsoAcknowledgement",
           "sourceId": "isoAcknowledgement",
           "pgn": 59392,
           "description": "ISO Acknowledgement",
@@ -138,7 +138,7 @@
           }
         },
         {
-          "id": "PgnIsoRequest",
+          "id": "IsoRequest",
           "sourceId": "isoRequest",
           "pgn": 59904,
           "description": "ISO Request",
@@ -175,7 +175,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolDataTransfer",
+          "id": "IsoTransportProtocolDataTransfer",
           "sourceId": "isoTransportProtocolDataTransfer",
           "pgn": 60160,
           "description": "ISO Transport Protocol, Data Transfer",
@@ -223,7 +223,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolConnectionManagementAbort",
+          "id": "IsoTransportProtocolConnectionManagementAbort",
           "sourceId": "isoTransportProtocolConnectionManagementAbort",
           "pgn": 60416,
           "description": "ISO Transport Protocol, Connection Management - Abort",
@@ -294,7 +294,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolConnectionManagementBroadcastAnnounce",
+          "id": "IsoTransportProtocolConnectionManagementBroadcastAnnounce",
           "sourceId": "isoTransportProtocolConnectionManagementBroadcastAnnounce",
           "pgn": 60416,
           "description": "ISO Transport Protocol, Connection Management - Broadcast Announce",
@@ -376,7 +376,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolConnectionManagementClearToSend",
+          "id": "IsoTransportProtocolConnectionManagementClearToSend",
           "sourceId": "isoTransportProtocolConnectionManagementClearToSend",
           "pgn": 60416,
           "description": "ISO Transport Protocol, Connection Management - Clear To Send",
@@ -458,7 +458,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolConnectionManagementEndOfMessage",
+          "id": "IsoTransportProtocolConnectionManagementEndOfMessage",
           "sourceId": "isoTransportProtocolConnectionManagementEndOfMessage",
           "pgn": 60416,
           "description": "ISO Transport Protocol, Connection Management - End Of Message",
@@ -540,7 +540,7 @@
           }
         },
         {
-          "id": "PgnIsoTransportProtocolConnectionManagementRequestToSend",
+          "id": "IsoTransportProtocolConnectionManagementRequestToSend",
           "sourceId": "isoTransportProtocolConnectionManagementRequestToSend",
           "pgn": 60416,
           "description": "ISO Transport Protocol, Connection Management - Request To Send",
@@ -622,7 +622,7 @@
           }
         },
         {
-          "id": "PgnIsoAddressClaim",
+          "id": "IsoAddressClaim",
           "sourceId": "isoAddressClaim",
           "pgn": 60928,
           "description": "ISO Address Claim",
@@ -758,7 +758,7 @@
           }
         },
         {
-          "id": "PgnPgn0xef00ManufacturerProprietarySingleFrameAddressed",
+          "id": "Message0xef00ManufacturerProprietarySingleFrameAddressed",
           "sourceId": "0xef00ManufacturerProprietarySingleFrameAddressed",
           "pgn": 61184,
           "description": "0xEF00: Manufacturer Proprietary single-frame addressed",
@@ -835,7 +835,7 @@
           }
         },
         {
-          "id": "PgnPgn0xf0000xfeffStandardizedSingleFrameNonAddressed",
+          "id": "Message0xf0000xfeffStandardizedSingleFrameNonAddressed",
           "sourceId": "0xf0000xfeffStandardizedSingleFrameNonAddressed",
           "pgn": 61440,
           "description": "0xF000-0xFEFF: Standardized single-frame non-addressed",
@@ -912,7 +912,7 @@
           }
         },
         {
-          "id": "PgnIsoCommandedAddress",
+          "id": "IsoCommandedAddress",
           "sourceId": "isoCommandedAddress",
           "pgn": 65240,
           "description": "ISO Commanded Address",
@@ -1062,7 +1062,7 @@
           }
         },
         {
-          "id": "PgnPgn0xff000xffffManufacturerProprietarySingleFrameNonAddressed",
+          "id": "Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed",
           "sourceId": "0xff000xffffManufacturerProprietarySingleFrameNonAddressed",
           "pgn": 65280,
           "description": "0xFF00-0xFFFF: Manufacturer Proprietary single-frame non-addressed",
@@ -1139,7 +1139,7 @@
           }
         },
         {
-          "id": "PgnPgn0x1ed000x1ee00StandardizedFastPacketAddressed",
+          "id": "Message0x1ed000x1ee00StandardizedFastPacketAddressed",
           "sourceId": "0x1ed000x1ee00StandardizedFastPacketAddressed",
           "pgn": 126208,
           "description": "0x1ED00 - 0x1EE00: Standardized fast-packet addressed",
@@ -1184,7 +1184,7 @@
           }
         },
         {
-          "id": "PgnNmeaAcknowledgeGroupFunction",
+          "id": "NmeaAcknowledgeGroupFunction",
           "sourceId": "nmeaAcknowledgeGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Acknowledge group function",
@@ -1277,7 +1277,7 @@
           }
         },
         {
-          "id": "PgnNmeaCommandGroupFunction",
+          "id": "NmeaCommandGroupFunction",
           "sourceId": "nmeaCommandGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Command group function",
@@ -1381,7 +1381,7 @@
           }
         },
         {
-          "id": "PgnNmeaReadFieldsGroupFunction",
+          "id": "NmeaReadFieldsGroupFunction",
           "sourceId": "nmeaReadFieldsGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Read Fields group function",
@@ -1534,7 +1534,7 @@
           }
         },
         {
-          "id": "PgnNmeaReadFieldsReplyGroupFunction",
+          "id": "NmeaReadFieldsReplyGroupFunction",
           "sourceId": "nmeaReadFieldsReplyGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Read Fields reply group function",
@@ -1693,7 +1693,7 @@
           }
         },
         {
-          "id": "PgnNmeaRequestGroupFunction",
+          "id": "NmeaRequestGroupFunction",
           "sourceId": "nmeaRequestGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Request group function",
@@ -1799,7 +1799,7 @@
           }
         },
         {
-          "id": "PgnNmeaWriteFieldsGroupFunction",
+          "id": "NmeaWriteFieldsGroupFunction",
           "sourceId": "nmeaWriteFieldsGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Write Fields group function",
@@ -1958,7 +1958,7 @@
           }
         },
         {
-          "id": "PgnNmeaWriteFieldsReplyGroupFunction",
+          "id": "NmeaWriteFieldsReplyGroupFunction",
           "sourceId": "nmeaWriteFieldsReplyGroupFunction",
           "pgn": 126208,
           "description": "NMEA - Write Fields reply group function",
@@ -2117,7 +2117,7 @@
           }
         },
         {
-          "id": "PgnPgnListTransmitAndReceive",
+          "id": "ParameterGroupNumberListTransmitAndReceive",
           "sourceId": "pgnListTransmitAndReceive",
           "pgn": 126464,
           "description": "PGN List (Transmit and Receive)",
@@ -2165,7 +2165,7 @@
           }
         },
         {
-          "id": "PgnPgn0x1ef00ManufacturerProprietaryFastPacketAddressed",
+          "id": "Message0x1ef00ManufacturerProprietaryFastPacketAddressed",
           "sourceId": "0x1ef00ManufacturerProprietaryFastPacketAddressed",
           "pgn": 126720,
           "description": "0x1EF00: Manufacturer Proprietary fast-packet addressed",
@@ -2242,7 +2242,7 @@
           }
         },
         {
-          "id": "PgnPgn0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed",
+          "id": "Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed",
           "sourceId": "0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed",
           "pgn": 126976,
           "description": "0x1F000-0x1FEFF: Standardized mixed single/fast packet non-addressed",
@@ -2286,7 +2286,7 @@
           }
         },
         {
-          "id": "PgnAlert",
+          "id": "Alert",
           "sourceId": "alert",
           "pgn": 126983,
           "description": "Alert",
@@ -2546,7 +2546,7 @@
           }
         },
         {
-          "id": "PgnAlertResponse",
+          "id": "AlertResponse",
           "sourceId": "alertResponse",
           "pgn": 126984,
           "description": "Alert Response",
@@ -2707,7 +2707,7 @@
           }
         },
         {
-          "id": "PgnAlertText",
+          "id": "AlertText",
           "sourceId": "alertText",
           "pgn": 126985,
           "description": "Alert Text",
@@ -2868,7 +2868,7 @@
           }
         },
         {
-          "id": "PgnAlertConfiguration",
+          "id": "AlertConfiguration",
           "sourceId": "alertConfiguration",
           "pgn": 126986,
           "description": "Alert Configuration",
@@ -3065,7 +3065,7 @@
           }
         },
         {
-          "id": "PgnAlertThreshold",
+          "id": "AlertThreshold",
           "sourceId": "alertThreshold",
           "pgn": 126987,
           "description": "Alert Threshold",
@@ -3251,7 +3251,7 @@
           }
         },
         {
-          "id": "PgnAlertValue",
+          "id": "AlertValue",
           "sourceId": "alertValue",
           "pgn": 126988,
           "description": "Alert Value",
@@ -3426,7 +3426,7 @@
           }
         },
         {
-          "id": "PgnSystemTime",
+          "id": "SystemTime",
           "sourceId": "systemTime",
           "pgn": 126992,
           "description": "System Time",
@@ -3509,7 +3509,7 @@
           }
         },
         {
-          "id": "PgnHeartbeat",
+          "id": "Heartbeat",
           "sourceId": "heartbeat",
           "pgn": 126993,
           "description": "Heartbeat",
@@ -3602,7 +3602,7 @@
           }
         },
         {
-          "id": "PgnProductInformation",
+          "id": "ProductInformation",
           "sourceId": "productInformation",
           "pgn": 126996,
           "description": "Product Information",
@@ -3716,7 +3716,7 @@
           }
         },
         {
-          "id": "PgnConfigurationInformation",
+          "id": "ConfigurationInformation",
           "sourceId": "configurationInformation",
           "pgn": 126998,
           "description": "Configuration Information",
@@ -3775,7 +3775,7 @@
           }
         },
         {
-          "id": "PgnManOverboardNotification",
+          "id": "ManOverboardNotification",
           "sourceId": "manOverboardNotification",
           "pgn": 127233,
           "description": "Man Overboard Notification",
@@ -4009,7 +4009,7 @@
           }
         },
         {
-          "id": "PgnRateOfTurn",
+          "id": "RateOfTurn",
           "sourceId": "rateOfTurn",
           "pgn": 127251,
           "description": "Rate of Turn",
@@ -4069,7 +4069,7 @@
           }
         },
         {
-          "id": "PgnHeave",
+          "id": "Heave",
           "sourceId": "heave",
           "pgn": 127252,
           "description": "Heave",
@@ -4135,7 +4135,7 @@
           }
         },
         {
-          "id": "PgnAttitude",
+          "id": "Attitude",
           "sourceId": "attitude",
           "pgn": 127257,
           "description": "Attitude",
@@ -4219,7 +4219,7 @@
           }
         },
         {
-          "id": "PgnMagneticVariation",
+          "id": "MagneticVariation",
           "sourceId": "magneticVariation",
           "pgn": 127258,
           "description": "Magnetic Variation",
@@ -4313,7 +4313,7 @@
           }
         },
         {
-          "id": "PgnTripParametersVessel",
+          "id": "TripParametersVessel",
           "sourceId": "tripParametersVessel",
           "pgn": 127496,
           "description": "Trip Parameters, Vessel",
@@ -4387,7 +4387,7 @@
           }
         },
         {
-          "id": "PgnAgsConfigurationStatus",
+          "id": "AgsConfigurationStatus",
           "sourceId": "agsConfigurationStatus",
           "pgn": 127512,
           "description": "AGS Configuration Status",
@@ -4460,7 +4460,7 @@
           }
         },
         {
-          "id": "PgnAgsStatus",
+          "id": "AgsStatus",
           "sourceId": "agsStatus",
           "pgn": 127514,
           "description": "AGS Status",
@@ -4555,7 +4555,7 @@
           }
         },
         {
-          "id": "PgnConverterStatus",
+          "id": "ConverterStatus",
           "sourceId": "converterStatus",
           "pgn": 127750,
           "description": "Converter Status",
@@ -4672,7 +4672,7 @@
           }
         },
         {
-          "id": "PgnLeewayAngle",
+          "id": "LeewayAngle",
           "sourceId": "leewayAngle",
           "pgn": 128000,
           "description": "Leeway Angle",
@@ -4735,7 +4735,7 @@
           }
         },
         {
-          "id": "PgnSpeed",
+          "id": "Speed",
           "sourceId": "speed",
           "pgn": 128259,
           "description": "Speed",
@@ -4829,7 +4829,7 @@
           }
         },
         {
-          "id": "PgnTrackedTargetData",
+          "id": "TrackedTargetData",
           "sourceId": "trackedTargetData",
           "pgn": 128520,
           "description": "Tracked Target Data",
@@ -5058,7 +5058,7 @@
       "name": "Carling",
       "pgns": [
         {
-          "id": "PgnCarlingBreakerCommand",
+          "id": "CarlingBreakerCommand",
           "sourceId": "carlingBreakerCommand",
           "pgn": 61184,
           "description": "Carling: Breaker Command",
@@ -5200,7 +5200,7 @@
           }
         },
         {
-          "id": "PgnCarlingSwitchboardStatus",
+          "id": "CarlingSwitchboardStatus",
           "sourceId": "carlingSwitchboardStatus",
           "pgn": 65300,
           "description": "Carling: Switchboard Status",
@@ -5289,7 +5289,7 @@
           }
         },
         {
-          "id": "PgnCarlingDcConfigurationCommand",
+          "id": "CarlingDcConfigurationCommand",
           "sourceId": "carlingDcConfigurationCommand",
           "pgn": 126720,
           "description": "Carling: DC Configuration Command",
@@ -5521,7 +5521,7 @@
           }
         },
         {
-          "id": "PgnCarlingProprietary",
+          "id": "CarlingProprietary",
           "sourceId": "carlingProprietary",
           "pgn": 130844,
           "description": "Carling: Proprietary",
@@ -5599,7 +5599,7 @@
           }
         },
         {
-          "id": "PgnCarlingBreakerStatusAndConfiguration",
+          "id": "CarlingBreakerStatusAndConfiguration",
           "sourceId": "carlingBreakerStatusAndConfiguration",
           "pgn": 130921,
           "description": "Carling: Breaker Status and Configuration",
@@ -5694,7 +5694,7 @@
       "name": "SeaTalk",
       "pgns": [
         {
-          "id": "PgnSeatalkWirelessKeypadControl",
+          "id": "SeatalkWirelessKeypadControl",
           "sourceId": "seatalkWirelessKeypadControl",
           "pgn": 61184,
           "description": "Seatalk: Wireless Keypad Control",
@@ -5805,7 +5805,7 @@
           }
         },
         {
-          "id": "PgnSeatalkWirelessKeypadLightControl",
+          "id": "SeatalkWirelessKeypadLightControl",
           "sourceId": "seatalkWirelessKeypadLightControl",
           "pgn": 61184,
           "description": "Seatalk: Wireless Keypad Light Control",
@@ -5928,7 +5928,7 @@
           }
         },
         {
-          "id": "PgnSeatalkAlarm",
+          "id": "SeatalkAlarm",
           "sourceId": "seatalkAlarm",
           "pgn": 65288,
           "description": "Seatalk: Alarm",
@@ -6050,7 +6050,7 @@
           }
         },
         {
-          "id": "PgnSeatalkPilotWindDatum",
+          "id": "SeatalkPilotWindDatum",
           "sourceId": "seatalkPilotWindDatum",
           "pgn": 65345,
           "description": "Seatalk: Pilot Wind Datum",
@@ -6152,7 +6152,7 @@
           }
         },
         {
-          "id": "PgnSeatalkPilotHeading",
+          "id": "SeatalkPilotHeading",
           "sourceId": "seatalkPilotHeading",
           "pgn": 65359,
           "description": "Seatalk: Pilot Heading",
@@ -6265,7 +6265,7 @@
           }
         },
         {
-          "id": "PgnSeatalkPilotLockedHeading",
+          "id": "SeatalkPilotLockedHeading",
           "sourceId": "seatalkPilotLockedHeading",
           "pgn": 65360,
           "description": "Seatalk: Pilot Locked Heading",
@@ -6375,7 +6375,7 @@
           }
         },
         {
-          "id": "PgnSeatalkSilenceAlarm",
+          "id": "SeatalkSilenceAlarm",
           "sourceId": "seatalkSilenceAlarm",
           "pgn": 65361,
           "description": "Seatalk: Silence Alarm",
@@ -6472,7 +6472,7 @@
           }
         },
         {
-          "id": "PgnSeatalkKeypadMessage",
+          "id": "SeatalkKeypadMessage",
           "sourceId": "seatalkKeypadMessage",
           "pgn": 65371,
           "description": "Seatalk: Keypad Message",
@@ -6627,7 +6627,7 @@
           }
         },
         {
-          "id": "PgnSeatalkKeypadHeartbeat",
+          "id": "SeatalkKeypadHeartbeat",
           "sourceId": "seatalkKeypadHeartbeat",
           "pgn": 65374,
           "description": "SeaTalk: Keypad Heartbeat",
@@ -6738,7 +6738,7 @@
           }
         },
         {
-          "id": "PgnSeatalkPilotMode",
+          "id": "SeatalkPilotMode",
           "sourceId": "seatalkPilotMode",
           "pgn": 65379,
           "description": "Seatalk: Pilot Mode",
@@ -6849,7 +6849,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1DeviceIdentification",
+          "id": "Seatalk1DeviceIdentification",
           "sourceId": "seatalk1DeviceIdentification",
           "pgn": 126720,
           "description": "Seatalk1: Device Identification",
@@ -6974,7 +6974,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1DisplayBrightness",
+          "id": "Seatalk1DisplayBrightness",
           "sourceId": "seatalk1DisplayBrightness",
           "pgn": 126720,
           "description": "Seatalk1: Display Brightness",
@@ -7122,7 +7122,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1DisplayColor",
+          "id": "Seatalk1DisplayColor",
           "sourceId": "seatalk1DisplayColor",
           "pgn": 126720,
           "description": "Seatalk1: Display Color",
@@ -7269,7 +7269,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1Keystroke",
+          "id": "Seatalk1Keystroke",
           "sourceId": "seatalk1Keystroke",
           "pgn": 126720,
           "description": "Seatalk1: Keystroke",
@@ -7416,7 +7416,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1PilotHullType",
+          "id": "Seatalk1PilotHullType",
           "sourceId": "seatalk1PilotHullType",
           "pgn": 126720,
           "description": "Seatalk1: Pilot Hull Type",
@@ -7540,7 +7540,7 @@
           }
         },
         {
-          "id": "PgnSeatalk1PilotMode",
+          "id": "Seatalk1PilotMode",
           "sourceId": "seatalk1PilotMode",
           "pgn": 126720,
           "description": "Seatalk1: Pilot Mode",
@@ -7698,7 +7698,7 @@
           }
         },
         {
-          "id": "PgnSeatalkPilotAutoTurn",
+          "id": "SeatalkPilotAutoTurn",
           "sourceId": "seatalkPilotAutoTurn",
           "pgn": 126720,
           "description": "Seatalk: Pilot Auto Turn",
@@ -7833,7 +7833,7 @@
           }
         },
         {
-          "id": "PgnSeatalkNodeStatistics",
+          "id": "SeatalkNodeStatistics",
           "sourceId": "seatalkNodeStatistics",
           "pgn": 130847,
           "description": "SeaTalk: Node Statistics",
@@ -7957,7 +7957,7 @@
           }
         },
         {
-          "id": "PgnSeatalkWaypointInformation",
+          "id": "SeatalkWaypointInformation",
           "sourceId": "seatalkWaypointInformation",
           "pgn": 130848,
           "description": "SeaTalk: Waypoint Information",
@@ -8093,7 +8093,7 @@
           }
         },
         {
-          "id": "PgnSeatalkRouteInformation",
+          "id": "SeatalkRouteInformation",
           "sourceId": "seatalkRouteInformation",
           "pgn": 130918,
           "description": "SeaTalk: Route Information",
@@ -8257,7 +8257,7 @@
       "name": "Victron",
       "pgns": [
         {
-          "id": "PgnVictronVeCanRegister",
+          "id": "VictronVeCanRegister",
           "sourceId": "victronVeCanRegister",
           "pgn": 61184,
           "description": "Victron: VE.Can Register",
@@ -8352,7 +8352,7 @@
       "name": "Electrical",
       "pgns": [
         {
-          "id": "PgnBus1PhaseCBasicAcQuantities",
+          "id": "Bus1PhaseCBasicAcQuantities",
           "sourceId": "bus1PhaseCBasicAcQuantities",
           "pgn": 65001,
           "description": "Bus #1 Phase C Basic AC Quantities",
@@ -8428,7 +8428,7 @@
           }
         },
         {
-          "id": "PgnBus1PhaseBBasicAcQuantities",
+          "id": "Bus1PhaseBBasicAcQuantities",
           "sourceId": "bus1PhaseBBasicAcQuantities",
           "pgn": 65002,
           "description": "Bus #1 Phase B Basic AC Quantities",
@@ -8504,7 +8504,7 @@
           }
         },
         {
-          "id": "PgnBus1PhaseABasicAcQuantities",
+          "id": "Bus1PhaseABasicAcQuantities",
           "sourceId": "bus1PhaseABasicAcQuantities",
           "pgn": 65003,
           "description": "Bus #1 Phase A Basic AC Quantities",
@@ -8580,7 +8580,7 @@
           }
         },
         {
-          "id": "PgnBus1AverageBasicAcQuantities",
+          "id": "Bus1AverageBasicAcQuantities",
           "sourceId": "bus1AverageBasicAcQuantities",
           "pgn": 65004,
           "description": "Bus #1 Average Basic AC Quantities",
@@ -8659,7 +8659,7 @@
           }
         },
         {
-          "id": "PgnUtilityTotalAcEnergy",
+          "id": "UtilityTotalAcEnergy",
           "sourceId": "utilityTotalAcEnergy",
           "pgn": 65005,
           "description": "Utility Total AC Energy",
@@ -8715,7 +8715,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseCAcReactivePower",
+          "id": "UtilityPhaseCAcReactivePower",
           "sourceId": "utilityPhaseCAcReactivePower",
           "pgn": 65006,
           "description": "Utility Phase C AC Reactive Power",
@@ -8790,7 +8790,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseCAcPower",
+          "id": "UtilityPhaseCAcPower",
           "sourceId": "utilityPhaseCAcPower",
           "pgn": 65007,
           "description": "Utility Phase C AC Power",
@@ -8843,7 +8843,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseCBasicAcQuantities",
+          "id": "UtilityPhaseCBasicAcQuantities",
           "sourceId": "utilityPhaseCBasicAcQuantities",
           "pgn": 65008,
           "description": "Utility Phase C Basic AC Quantities",
@@ -8920,7 +8920,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseBAcReactivePower",
+          "id": "UtilityPhaseBAcReactivePower",
           "sourceId": "utilityPhaseBAcReactivePower",
           "pgn": 65009,
           "description": "Utility Phase B AC Reactive Power",
@@ -8995,7 +8995,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseBAcPower",
+          "id": "UtilityPhaseBAcPower",
           "sourceId": "utilityPhaseBAcPower",
           "pgn": 65010,
           "description": "Utility Phase B AC Power",
@@ -9048,7 +9048,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseBBasicAcQuantities",
+          "id": "UtilityPhaseBBasicAcQuantities",
           "sourceId": "utilityPhaseBBasicAcQuantities",
           "pgn": 65011,
           "description": "Utility Phase B Basic AC Quantities",
@@ -9125,7 +9125,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseAAcReactivePower",
+          "id": "UtilityPhaseAAcReactivePower",
           "sourceId": "utilityPhaseAAcReactivePower",
           "pgn": 65012,
           "description": "Utility Phase A AC Reactive Power",
@@ -9200,7 +9200,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseAAcPower",
+          "id": "UtilityPhaseAAcPower",
           "sourceId": "utilityPhaseAAcPower",
           "pgn": 65013,
           "description": "Utility Phase A AC Power",
@@ -9253,7 +9253,7 @@
           }
         },
         {
-          "id": "PgnUtilityPhaseABasicAcQuantities",
+          "id": "UtilityPhaseABasicAcQuantities",
           "sourceId": "utilityPhaseABasicAcQuantities",
           "pgn": 65014,
           "description": "Utility Phase A Basic AC Quantities",
@@ -9330,7 +9330,7 @@
           }
         },
         {
-          "id": "PgnUtilityTotalAcReactivePower",
+          "id": "UtilityTotalAcReactivePower",
           "sourceId": "utilityTotalAcReactivePower",
           "pgn": 65015,
           "description": "Utility Total AC Reactive Power",
@@ -9405,7 +9405,7 @@
           }
         },
         {
-          "id": "PgnUtilityTotalAcPower",
+          "id": "UtilityTotalAcPower",
           "sourceId": "utilityTotalAcPower",
           "pgn": 65016,
           "description": "Utility Total AC Power",
@@ -9458,7 +9458,7 @@
           }
         },
         {
-          "id": "PgnUtilityAverageBasicAcQuantities",
+          "id": "UtilityAverageBasicAcQuantities",
           "sourceId": "utilityAverageBasicAcQuantities",
           "pgn": 65017,
           "description": "Utility Average Basic AC Quantities",
@@ -9535,7 +9535,7 @@
           }
         },
         {
-          "id": "PgnGeneratorTotalAcEnergy",
+          "id": "GeneratorTotalAcEnergy",
           "sourceId": "generatorTotalAcEnergy",
           "pgn": 65018,
           "description": "Generator Total AC Energy",
@@ -9591,7 +9591,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseCAcReactivePower",
+          "id": "GeneratorPhaseCAcReactivePower",
           "sourceId": "generatorPhaseCAcReactivePower",
           "pgn": 65019,
           "description": "Generator Phase C AC Reactive Power",
@@ -9666,7 +9666,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseCAcPower",
+          "id": "GeneratorPhaseCAcPower",
           "sourceId": "generatorPhaseCAcPower",
           "pgn": 65020,
           "description": "Generator Phase C AC Power",
@@ -9719,7 +9719,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseCBasicAcQuantities",
+          "id": "GeneratorPhaseCBasicAcQuantities",
           "sourceId": "generatorPhaseCBasicAcQuantities",
           "pgn": 65021,
           "description": "Generator Phase C Basic AC Quantities",
@@ -9796,7 +9796,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseBAcReactivePower",
+          "id": "GeneratorPhaseBAcReactivePower",
           "sourceId": "generatorPhaseBAcReactivePower",
           "pgn": 65022,
           "description": "Generator Phase B AC Reactive Power",
@@ -9871,7 +9871,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseBAcPower",
+          "id": "GeneratorPhaseBAcPower",
           "sourceId": "generatorPhaseBAcPower",
           "pgn": 65023,
           "description": "Generator Phase B AC Power",
@@ -9924,7 +9924,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseBBasicAcQuantities",
+          "id": "GeneratorPhaseBBasicAcQuantities",
           "sourceId": "generatorPhaseBBasicAcQuantities",
           "pgn": 65024,
           "description": "Generator Phase B Basic AC Quantities",
@@ -10001,7 +10001,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseAAcReactivePower",
+          "id": "GeneratorPhaseAAcReactivePower",
           "sourceId": "generatorPhaseAAcReactivePower",
           "pgn": 65025,
           "description": "Generator Phase A AC Reactive Power",
@@ -10076,7 +10076,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseAAcPower",
+          "id": "GeneratorPhaseAAcPower",
           "sourceId": "generatorPhaseAAcPower",
           "pgn": 65026,
           "description": "Generator Phase A AC Power",
@@ -10129,7 +10129,7 @@
           }
         },
         {
-          "id": "PgnGeneratorPhaseABasicAcQuantities",
+          "id": "GeneratorPhaseABasicAcQuantities",
           "sourceId": "generatorPhaseABasicAcQuantities",
           "pgn": 65027,
           "description": "Generator Phase A Basic AC Quantities",
@@ -10206,7 +10206,7 @@
           }
         },
         {
-          "id": "PgnGeneratorTotalAcReactivePower",
+          "id": "GeneratorTotalAcReactivePower",
           "sourceId": "generatorTotalAcReactivePower",
           "pgn": 65028,
           "description": "Generator Total AC Reactive Power",
@@ -10281,7 +10281,7 @@
           }
         },
         {
-          "id": "PgnGeneratorTotalAcPower",
+          "id": "GeneratorTotalAcPower",
           "sourceId": "generatorTotalAcPower",
           "pgn": 65029,
           "description": "Generator Total AC Power",
@@ -10334,7 +10334,7 @@
           }
         },
         {
-          "id": "PgnGeneratorAverageBasicAcQuantities",
+          "id": "GeneratorAverageBasicAcQuantities",
           "sourceId": "generatorAverageBasicAcQuantities",
           "pgn": 65030,
           "description": "Generator Average Basic AC Quantities",
@@ -10411,7 +10411,7 @@
           }
         },
         {
-          "id": "PgnElectricEnergyStorageStatusDynamic",
+          "id": "ElectricEnergyStorageStatusDynamic",
           "sourceId": "electricEnergyStorageStatusDynamic",
           "pgn": 127491,
           "description": "Electric Energy Storage Status, Dynamic",
@@ -10560,7 +10560,7 @@
           }
         },
         {
-          "id": "PgnElectricEnergyStorageInformation",
+          "id": "ElectricEnergyStorageInformation",
           "sourceId": "electricEnergyStorageInformation",
           "pgn": 127495,
           "description": "Electric Energy Storage Information",
@@ -10773,7 +10773,7 @@
           }
         },
         {
-          "id": "PgnLoadControllerConnectionStateControl",
+          "id": "LoadControllerConnectionStateControl",
           "sourceId": "loadControllerConnectionStateControl",
           "pgn": 127500,
           "description": "Load Controller Connection State/Control",
@@ -10890,7 +10890,7 @@
           }
         },
         {
-          "id": "PgnBinarySwitchBankStatus",
+          "id": "BinarySwitchBankStatus",
           "sourceId": "binarySwitchBankStatus",
           "pgn": 127501,
           "description": "Binary Switch Bank Status",
@@ -11238,7 +11238,7 @@
           }
         },
         {
-          "id": "PgnSwitchBankControl",
+          "id": "SwitchBankControl",
           "sourceId": "switchBankControl",
           "pgn": 127502,
           "description": "Switch Bank Control",
@@ -11586,7 +11586,7 @@
           }
         },
         {
-          "id": "PgnAcInputStatus",
+          "id": "AcInputStatus",
           "sourceId": "acInputStatus",
           "pgn": 127503,
           "description": "AC Input Status",
@@ -11751,7 +11751,7 @@
           }
         },
         {
-          "id": "PgnAcOutputStatus",
+          "id": "AcOutputStatus",
           "sourceId": "acOutputStatus",
           "pgn": 127504,
           "description": "AC Output Status",
@@ -11916,7 +11916,7 @@
           }
         },
         {
-          "id": "PgnDcDetailedStatus",
+          "id": "DcDetailedStatus",
           "sourceId": "dcDetailedStatus",
           "pgn": 127506,
           "description": "DC Detailed Status",
@@ -12035,7 +12035,7 @@
           }
         },
         {
-          "id": "PgnChargerStatus",
+          "id": "ChargerStatus",
           "sourceId": "chargerStatus",
           "pgn": 127507,
           "description": "Charger Status",
@@ -12150,7 +12150,7 @@
           }
         },
         {
-          "id": "PgnBatteryStatus",
+          "id": "BatteryStatus",
           "sourceId": "batteryStatus",
           "pgn": 127508,
           "description": "Battery Status",
@@ -12234,7 +12234,7 @@
           }
         },
         {
-          "id": "PgnInverterStatus",
+          "id": "InverterStatus",
           "sourceId": "inverterStatus",
           "pgn": 127509,
           "description": "Inverter Status",
@@ -12326,7 +12326,7 @@
           }
         },
         {
-          "id": "PgnChargerConfigurationStatus",
+          "id": "ChargerConfigurationStatus",
           "sourceId": "chargerConfigurationStatus",
           "pgn": 127510,
           "description": "Charger Configuration Status",
@@ -12475,7 +12475,7 @@
           }
         },
         {
-          "id": "PgnInverterConfigurationStatus",
+          "id": "InverterConfigurationStatus",
           "sourceId": "inverterConfigurationStatus",
           "pgn": 127511,
           "description": "Inverter Configuration Status",
@@ -12591,7 +12591,7 @@
           }
         },
         {
-          "id": "PgnBatteryConfigurationStatus",
+          "id": "BatteryConfigurationStatus",
           "sourceId": "batteryConfigurationStatus",
           "pgn": 127513,
           "description": "Battery Configuration Status",
@@ -12730,7 +12730,7 @@
           }
         },
         {
-          "id": "PgnAcPowerCurrentPhaseA",
+          "id": "AcPowerCurrentPhaseA",
           "sourceId": "acPowerCurrentPhaseA",
           "pgn": 127744,
           "description": "AC Power / Current - Phase A",
@@ -12805,7 +12805,7 @@
           }
         },
         {
-          "id": "PgnAcPowerCurrentPhaseB",
+          "id": "AcPowerCurrentPhaseB",
           "sourceId": "acPowerCurrentPhaseB",
           "pgn": 127745,
           "description": "AC Power / Current - Phase B",
@@ -12880,7 +12880,7 @@
           }
         },
         {
-          "id": "PgnAcPowerCurrentPhaseC",
+          "id": "AcPowerCurrentPhaseC",
           "sourceId": "acPowerCurrentPhaseC",
           "pgn": 127746,
           "description": "AC Power / Current - Phase C",
@@ -12955,7 +12955,7 @@
           }
         },
         {
-          "id": "PgnAcVoltageFrequencyPhaseA",
+          "id": "AcVoltageFrequencyPhaseA",
           "sourceId": "acVoltageFrequencyPhaseA",
           "pgn": 127747,
           "description": "AC Voltage / Frequency - Phase A",
@@ -13042,7 +13042,7 @@
           }
         },
         {
-          "id": "PgnAcVoltageFrequencyPhaseB",
+          "id": "AcVoltageFrequencyPhaseB",
           "sourceId": "acVoltageFrequencyPhaseB",
           "pgn": 127748,
           "description": "AC Voltage / Frequency - Phase B",
@@ -13129,7 +13129,7 @@
           }
         },
         {
-          "id": "PgnAcVoltageFrequencyPhaseC",
+          "id": "AcVoltageFrequencyPhaseC",
           "sourceId": "acVoltageFrequencyPhaseC",
           "pgn": 127749,
           "description": "AC Voltage / Frequency - Phase C",
@@ -13216,7 +13216,7 @@
           }
         },
         {
-          "id": "PgnDcVoltageCurrent",
+          "id": "DcVoltageCurrent",
           "sourceId": "dcVoltageCurrent",
           "pgn": 127751,
           "description": "DC Voltage/Current",
@@ -13303,7 +13303,7 @@
           }
         },
         {
-          "id": "PgnElectricEnergyStorageStatusRapidUpdate",
+          "id": "ElectricEnergyStorageStatusRapidUpdate",
           "sourceId": "electricEnergyStorageStatusRapidUpdate",
           "pgn": 128003,
           "description": "Electric Energy Storage Status, Rapid Update",
@@ -13414,7 +13414,7 @@
           }
         },
         {
-          "id": "PgnHvacStatus",
+          "id": "HvacStatus",
           "sourceId": "hvacStatus",
           "pgn": 130329,
           "description": "HVAC Status",
@@ -13738,7 +13738,7 @@
           }
         },
         {
-          "id": "PgnLightingSystemSettings",
+          "id": "LightingSystemSettings",
           "sourceId": "lightingSystemSettings",
           "pgn": 130330,
           "description": "Lighting System Settings",
@@ -13902,7 +13902,7 @@
           }
         },
         {
-          "id": "PgnLightingZone",
+          "id": "LightingZone",
           "sourceId": "lightingZone",
           "pgn": 130561,
           "description": "Lighting Zone",
@@ -14087,7 +14087,7 @@
           }
         },
         {
-          "id": "PgnLightingScene",
+          "id": "LightingScene",
           "sourceId": "lightingScene",
           "pgn": 130562,
           "description": "Lighting Scene",
@@ -14251,7 +14251,7 @@
           }
         },
         {
-          "id": "PgnLightingDevice",
+          "id": "LightingDevice",
           "sourceId": "lightingDevice",
           "pgn": 130563,
           "description": "Lighting Device",
@@ -14481,7 +14481,7 @@
           }
         },
         {
-          "id": "PgnLightingDeviceEnumeration",
+          "id": "LightingDeviceEnumeration",
           "sourceId": "lightingDeviceEnumeration",
           "pgn": 130564,
           "description": "Lighting Device Enumeration",
@@ -14568,7 +14568,7 @@
           }
         },
         {
-          "id": "PgnLightingColorSequence",
+          "id": "LightingColorSequence",
           "sourceId": "lightingColorSequence",
           "pgn": 130565,
           "description": "Lighting Color Sequence",
@@ -14688,7 +14688,7 @@
           }
         },
         {
-          "id": "PgnLightingProgram",
+          "id": "LightingProgram",
           "sourceId": "lightingProgram",
           "pgn": 130566,
           "description": "Lighting Program",
@@ -14775,7 +14775,7 @@
           }
         },
         {
-          "id": "PgnCurrentStatusAndFile",
+          "id": "CurrentStatusAndFile",
           "sourceId": "currentStatusAndFile",
           "pgn": 130569,
           "description": "Current Status and File",
@@ -15005,7 +15005,7 @@
       "name": "BEP Marine",
       "pgns": [
         {
-          "id": "PgnBepMarineCzoneCircuitControl",
+          "id": "BepMarineCzoneCircuitControl",
           "sourceId": "bepMarineCzoneCircuitControl",
           "pgn": 65280,
           "description": "BEP Marine: CZone Circuit Control",
@@ -15193,7 +15193,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65281",
+          "id": "BepMarineProprietaryPgn65281",
           "sourceId": "bepMarineProprietaryPgn65281",
           "pgn": 65281,
           "description": "BEP Marine: Proprietary PGN 65281",
@@ -15271,7 +15271,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneAlarmEvent",
+          "id": "BepMarineCzoneAlarmEvent",
           "sourceId": "bepMarineCzoneAlarmEvent",
           "pgn": 65282,
           "description": "BEP Marine: CZone Alarm Event",
@@ -15371,7 +15371,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneChannelState",
+          "id": "BepMarineCzoneChannelState",
           "sourceId": "bepMarineCzoneChannelState",
           "pgn": 65283,
           "description": "BEP Marine: CZone Channel State",
@@ -15603,7 +15603,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneCircuitStatus",
+          "id": "BepMarineCzoneCircuitStatus",
           "sourceId": "bepMarineCzoneCircuitStatus",
           "pgn": 65284,
           "description": "BEP Marine: CZone Circuit Status",
@@ -15703,7 +15703,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneModuleAnnounce",
+          "id": "BepMarineCzoneModuleAnnounce",
           "sourceId": "bepMarineCzoneModuleAnnounce",
           "pgn": 65290,
           "description": "BEP Marine: CZone Module Announce",
@@ -15814,7 +15814,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65294",
+          "id": "BepMarineProprietaryPgn65294",
           "sourceId": "bepMarineProprietaryPgn65294",
           "pgn": 65294,
           "description": "BEP Marine: Proprietary PGN 65294",
@@ -15892,7 +15892,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneAlarm",
+          "id": "BepMarineCzoneAlarm",
           "sourceId": "bepMarineCzoneAlarm",
           "pgn": 65295,
           "description": "BEP Marine: CZone Alarm",
@@ -16047,7 +16047,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65296",
+          "id": "BepMarineProprietaryPgn65296",
           "sourceId": "bepMarineProprietaryPgn65296",
           "pgn": 65296,
           "description": "BEP Marine: Proprietary PGN 65296",
@@ -16125,7 +16125,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65297",
+          "id": "BepMarineProprietaryPgn65297",
           "sourceId": "bepMarineProprietaryPgn65297",
           "pgn": 65297,
           "description": "BEP Marine: Proprietary PGN 65297",
@@ -16203,7 +16203,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneAlarmStringRequest",
+          "id": "BepMarineCzoneAlarmStringRequest",
           "sourceId": "bepMarineCzoneAlarmStringRequest",
           "pgn": 65299,
           "description": "BEP Marine: CZone Alarm String Request",
@@ -16303,7 +16303,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65300",
+          "id": "BepMarineProprietaryPgn65300",
           "sourceId": "bepMarineProprietaryPgn65300",
           "pgn": 65300,
           "description": "BEP Marine: Proprietary PGN 65300",
@@ -16381,7 +16381,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzone65301",
+          "id": "BepMarineCzone65301",
           "sourceId": "bepMarineCzone65301",
           "pgn": 65301,
           "description": "BEP Marine: CZone 65301",
@@ -16492,7 +16492,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65304",
+          "id": "BepMarineProprietaryPgn65304",
           "sourceId": "bepMarineProprietaryPgn65304",
           "pgn": 65304,
           "description": "BEP Marine: Proprietary PGN 65304",
@@ -16570,7 +16570,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65306",
+          "id": "BepMarineProprietaryPgn65306",
           "sourceId": "bepMarineProprietaryPgn65306",
           "pgn": 65306,
           "description": "BEP Marine: Proprietary PGN 65306",
@@ -16648,7 +16648,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65308",
+          "id": "BepMarineProprietaryPgn65308",
           "sourceId": "bepMarineProprietaryPgn65308",
           "pgn": 65308,
           "description": "BEP Marine: Proprietary PGN 65308",
@@ -16726,7 +16726,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65310",
+          "id": "BepMarineProprietaryPgn65310",
           "sourceId": "bepMarineProprietaryPgn65310",
           "pgn": 65310,
           "description": "BEP Marine: Proprietary PGN 65310",
@@ -16804,7 +16804,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65311",
+          "id": "BepMarineProprietaryPgn65311",
           "sourceId": "bepMarineProprietaryPgn65311",
           "pgn": 65311,
           "description": "BEP Marine: Proprietary PGN 65311",
@@ -16882,7 +16882,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65314",
+          "id": "BepMarineProprietaryPgn65314",
           "sourceId": "bepMarineProprietaryPgn65314",
           "pgn": 65314,
           "description": "BEP Marine: Proprietary PGN 65314",
@@ -16960,7 +16960,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65316",
+          "id": "BepMarineProprietaryPgn65316",
           "sourceId": "bepMarineProprietaryPgn65316",
           "pgn": 65316,
           "description": "BEP Marine: Proprietary PGN 65316",
@@ -17038,7 +17038,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn65325",
+          "id": "BepMarineProprietaryPgn65325",
           "sourceId": "bepMarineProprietaryPgn65325",
           "pgn": 65325,
           "description": "BEP Marine: Proprietary PGN 65325",
@@ -17116,7 +17116,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneZcfBusDistribution",
+          "id": "BepMarineCzoneZcfBusDistribution",
           "sourceId": "bepMarineCzoneZcfBusDistribution",
           "pgn": 130816,
           "description": "BEP Marine: CZone .zcf Bus Distribution",
@@ -17224,7 +17224,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneStatusExtended",
+          "id": "BepMarineCzoneStatusExtended",
           "sourceId": "bepMarineCzoneStatusExtended",
           "pgn": 130817,
           "description": "BEP Marine: CZone Status Extended",
@@ -17324,7 +17324,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130818",
+          "id": "BepMarineProprietaryPgn130818",
           "sourceId": "bepMarineProprietaryPgn130818",
           "pgn": 130818,
           "description": "BEP Marine: Proprietary PGN 130818",
@@ -17402,7 +17402,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzone130819",
+          "id": "BepMarineCzone130819",
           "sourceId": "bepMarineCzone130819",
           "pgn": 130819,
           "description": "BEP Marine: CZone 130819",
@@ -17557,7 +17557,7 @@
           }
         },
         {
-          "id": "PgnBepMarineCzoneAlarmStringResponse",
+          "id": "BepMarineCzoneAlarmStringResponse",
           "sourceId": "bepMarineCzoneAlarmStringResponse",
           "pgn": 130820,
           "description": "BEP Marine: CZone Alarm String Response",
@@ -17657,7 +17657,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130820",
+          "id": "BepMarineProprietaryPgn130820",
           "sourceId": "bepMarineProprietaryPgn130820",
           "pgn": 130820,
           "description": "BEP Marine: Proprietary PGN 130820",
@@ -17735,7 +17735,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130821",
+          "id": "BepMarineProprietaryPgn130821",
           "sourceId": "bepMarineProprietaryPgn130821",
           "pgn": 130821,
           "description": "BEP Marine: Proprietary PGN 130821",
@@ -17813,7 +17813,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130822",
+          "id": "BepMarineProprietaryPgn130822",
           "sourceId": "bepMarineProprietaryPgn130822",
           "pgn": 130822,
           "description": "BEP Marine: Proprietary PGN 130822",
@@ -17891,7 +17891,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130825",
+          "id": "BepMarineProprietaryPgn130825",
           "sourceId": "bepMarineProprietaryPgn130825",
           "pgn": 130825,
           "description": "BEP Marine: Proprietary PGN 130825",
@@ -17969,7 +17969,7 @@
           }
         },
         {
-          "id": "PgnBepMarineProprietaryPgn130826",
+          "id": "BepMarineProprietaryPgn130826",
           "sourceId": "bepMarineProprietaryPgn130826",
           "pgn": 130826,
           "description": "BEP Marine: Proprietary PGN 130826",
@@ -18053,7 +18053,7 @@
       "name": "Furuno",
       "pgns": [
         {
-          "id": "PgnFurunoHeave",
+          "id": "FurunoHeave",
           "sourceId": "furunoHeave",
           "pgn": 65280,
           "description": "Furuno: Heave",
@@ -18143,7 +18143,7 @@
           }
         },
         {
-          "id": "PgnFurunoStatusAndVersionReport",
+          "id": "FurunoStatusAndVersionReport",
           "sourceId": "furunoStatusAndVersionReport",
           "pgn": 130816,
           "description": "Furuno: Status and Version Report",
@@ -18244,7 +18244,7 @@
           }
         },
         {
-          "id": "PgnFurunoSvControl",
+          "id": "FurunoSvControl",
           "sourceId": "furunoSvControl",
           "pgn": 130817,
           "description": "Furuno: SV control",
@@ -18410,7 +18410,7 @@
           }
         },
         {
-          "id": "PgnFurunoSensorSetup",
+          "id": "FurunoSensorSetup",
           "sourceId": "furunoSensorSetup",
           "pgn": 130818,
           "description": "Furuno: Sensor setup",
@@ -18618,7 +18618,7 @@
           }
         },
         {
-          "id": "PgnFurunoDeadReckoningConfiguration",
+          "id": "FurunoDeadReckoningConfiguration",
           "sourceId": "furunoDeadReckoningConfiguration",
           "pgn": 130819,
           "description": "Furuno: Dead Reckoning Configuration",
@@ -18773,7 +18773,7 @@
           }
         },
         {
-          "id": "PgnFurunoUnknown130820",
+          "id": "FurunoUnknown130820",
           "sourceId": "furunoUnknown130820",
           "pgn": 130820,
           "description": "Furuno: Unknown 130820",
@@ -18895,7 +18895,7 @@
           }
         },
         {
-          "id": "PgnFurunoUnknown130821",
+          "id": "FurunoUnknown130821",
           "sourceId": "furunoUnknown130821",
           "pgn": 130821,
           "description": "Furuno: Unknown 130821",
@@ -19072,7 +19072,7 @@
           }
         },
         {
-          "id": "PgnFurunoShipParametersAndAntennaPosition",
+          "id": "FurunoShipParametersAndAntennaPosition",
           "sourceId": "furunoShipParametersAndAntennaPosition",
           "pgn": 130833,
           "description": "Furuno: Ship Parameters and Antenna Position",
@@ -19222,7 +19222,7 @@
           }
         },
         {
-          "id": "PgnFurunoSpeedCalculationPosition",
+          "id": "FurunoSpeedCalculationPosition",
           "sourceId": "furunoSpeedCalculationPosition",
           "pgn": 130834,
           "description": "Furuno: Speed-calculation Position",
@@ -19335,7 +19335,7 @@
           }
         },
         {
-          "id": "PgnFurunoSixDegreesOfFreedomMovement",
+          "id": "FurunoSixDegreesOfFreedomMovement",
           "sourceId": "furunoSixDegreesOfFreedomMovement",
           "pgn": 130842,
           "description": "Furuno: Six Degrees Of Freedom Movement",
@@ -19501,7 +19501,7 @@
           }
         },
         {
-          "id": "PgnFurunoHeelAngleRollInformation",
+          "id": "FurunoHeelAngleRollInformation",
           "sourceId": "furunoHeelAngleRollInformation",
           "pgn": 130843,
           "description": "Furuno: Heel Angle, Roll Information",
@@ -19615,7 +19615,7 @@
           }
         },
         {
-          "id": "PgnFurunoMultiSatsInViewExtended",
+          "id": "FurunoMultiSatsInViewExtended",
           "sourceId": "furunoMultiSatsInViewExtended",
           "pgn": 130845,
           "description": "Furuno: Multi Sats In View Extended",
@@ -19818,7 +19818,7 @@
           }
         },
         {
-          "id": "PgnFurunoMotionSensorStatusExtended",
+          "id": "FurunoMotionSensorStatusExtended",
           "sourceId": "furunoMotionSensorStatusExtended",
           "pgn": 130846,
           "description": "Furuno: Motion Sensor Status Extended",
@@ -19913,7 +19913,7 @@
       "name": "Honda",
       "pgns": [
         {
-          "id": "PgnHondaEngineData",
+          "id": "HondaEngineData",
           "sourceId": "hondaEngineData",
           "pgn": 65280,
           "description": "Honda: Engine Data",
@@ -19992,7 +19992,7 @@
           }
         },
         {
-          "id": "PgnHondaEngineAlerts",
+          "id": "HondaEngineAlerts",
           "sourceId": "hondaEngineAlerts",
           "pgn": 65284,
           "description": "Honda: Engine Alerts",
@@ -20071,7 +20071,7 @@
           }
         },
         {
-          "id": "PgnHondaEngineStatus",
+          "id": "HondaEngineStatus",
           "sourceId": "hondaEngineStatus",
           "pgn": 130816,
           "description": "Honda: Engine Status",
@@ -20145,7 +20145,7 @@
       "name": "Maretron",
       "pgns": [
         {
-          "id": "PgnMaretronKeelPosition",
+          "id": "MaretronKeelPosition",
           "sourceId": "maretronKeelPosition",
           "pgn": 65280,
           "description": "Maretron: Keel Position",
@@ -20223,7 +20223,7 @@
           }
         },
         {
-          "id": "PgnMaretronNumberOfChannels",
+          "id": "MaretronNumberOfChannels",
           "sourceId": "maretronNumberOfChannels",
           "pgn": 65282,
           "description": "Maretron: Number of Channels",
@@ -20320,7 +20320,7 @@
           }
         },
         {
-          "id": "PgnMaretronProprietaryDcBreakerCurrent",
+          "id": "MaretronProprietaryDcBreakerCurrent",
           "sourceId": "maretronProprietaryDcBreakerCurrent",
           "pgn": 65284,
           "description": "Maretron: Proprietary DC Breaker Current",
@@ -20429,7 +20429,7 @@
           }
         },
         {
-          "id": "PgnMaretronUniversalConfigurationSf",
+          "id": "MaretronUniversalConfigurationSf",
           "sourceId": "maretronUniversalConfigurationSf",
           "pgn": 65285,
           "description": "Maretron: Universal Configuration SF",
@@ -20507,7 +20507,7 @@
           }
         },
         {
-          "id": "PgnMaretronFluidFlowRate",
+          "id": "MaretronFluidFlowRate",
           "sourceId": "maretronFluidFlowRate",
           "pgn": 65286,
           "description": "Maretron: Fluid Flow Rate",
@@ -20629,7 +20629,7 @@
           }
         },
         {
-          "id": "PgnMaretronTripVolume",
+          "id": "MaretronTripVolume",
           "sourceId": "maretronTripVolume",
           "pgn": 65287,
           "description": "Maretron: Trip Volume",
@@ -20751,7 +20751,7 @@
           }
         },
         {
-          "id": "PgnMaretron420Ma",
+          "id": "Maretron420Ma",
           "sourceId": "maretron420Ma",
           "pgn": 65288,
           "description": "Maretron: 4-20 mA",
@@ -20862,7 +20862,7 @@
           }
         },
         {
-          "id": "PgnMaretron010V",
+          "id": "Maretron010V",
           "sourceId": "maretron010V",
           "pgn": 65289,
           "description": "Maretron: 0-10 V",
@@ -20973,7 +20973,7 @@
           }
         },
         {
-          "id": "PgnMaretronRotationalRate",
+          "id": "MaretronRotationalRate",
           "sourceId": "maretronRotationalRate",
           "pgn": 65290,
           "description": "Maretron: Rotational Rate",
@@ -21084,7 +21084,7 @@
           }
         },
         {
-          "id": "PgnMaretronResistance",
+          "id": "MaretronResistance",
           "sourceId": "maretronResistance",
           "pgn": 65291,
           "description": "Maretron: Resistance",
@@ -21195,7 +21195,7 @@
           }
         },
         {
-          "id": "PgnMaretronAutomationFunctionMaster",
+          "id": "MaretronAutomationFunctionMaster",
           "sourceId": "maretronAutomationFunctionMaster",
           "pgn": 65292,
           "description": "Maretron: Automation Function Master",
@@ -21273,7 +21273,7 @@
           }
         },
         {
-          "id": "PgnMaretronDeviationCalibrationResponse",
+          "id": "MaretronDeviationCalibrationResponse",
           "sourceId": "maretronDeviationCalibrationResponse",
           "pgn": 126720,
           "description": "Maretron: Deviation Calibration Response",
@@ -21383,7 +21383,7 @@
           }
         },
         {
-          "id": "PgnMaretronProprietaryConfiguration",
+          "id": "MaretronProprietaryConfiguration",
           "sourceId": "maretronProprietaryConfiguration",
           "pgn": 126720,
           "description": "Maretron: Proprietary Configuration",
@@ -21494,7 +21494,7 @@
           }
         },
         {
-          "id": "PgnMaretronSlaveResponse",
+          "id": "MaretronSlaveResponse",
           "sourceId": "maretronSlaveResponse",
           "pgn": 126720,
           "description": "Maretron: Slave Response",
@@ -21603,7 +21603,7 @@
           }
         },
         {
-          "id": "PgnMaretronAnnunciatorCapabilities",
+          "id": "MaretronAnnunciatorCapabilities",
           "sourceId": "maretronAnnunciatorCapabilities",
           "pgn": 130817,
           "description": "Maretron: Annunciator Capabilities",
@@ -21703,7 +21703,7 @@
           }
         },
         {
-          "id": "PgnMaretronLabel",
+          "id": "MaretronLabel",
           "sourceId": "maretronLabel",
           "pgn": 130818,
           "description": "Maretron: Label",
@@ -21822,7 +21822,7 @@
           }
         },
         {
-          "id": "PgnMaretronAlertTransmission",
+          "id": "MaretronAlertTransmission",
           "sourceId": "maretronAlertTransmission",
           "pgn": 130819,
           "description": "Maretron: Alert Transmission",
@@ -21999,7 +21999,7 @@
           }
         },
         {
-          "id": "PgnMaretronAlertResponse",
+          "id": "MaretronAlertResponse",
           "sourceId": "maretronAlertResponse",
           "pgn": 130820,
           "description": "Maretron: Alert Response",
@@ -22198,7 +22198,7 @@
           }
         },
         {
-          "id": "PgnMaretronAlertText",
+          "id": "MaretronAlertText",
           "sourceId": "maretronAlertText",
           "pgn": 130821,
           "description": "Maretron: Alert Text",
@@ -22397,7 +22397,7 @@
           }
         },
         {
-          "id": "PgnMaretronAlertControl",
+          "id": "MaretronAlertControl",
           "sourceId": "maretronAlertControl",
           "pgn": 130822,
           "description": "Maretron: Alert Control",
@@ -22574,7 +22574,7 @@
           }
         },
         {
-          "id": "PgnMaretronProprietaryTemperatureHighRange",
+          "id": "MaretronProprietaryTemperatureHighRange",
           "sourceId": "maretronProprietaryTemperatureHighRange",
           "pgn": 130823,
           "description": "Maretron: Proprietary Temperature High Range",
@@ -22695,7 +22695,7 @@
           }
         },
         {
-          "id": "PgnMaretronAnnunciator",
+          "id": "MaretronAnnunciator",
           "sourceId": "maretronAnnunciator",
           "pgn": 130824,
           "description": "Maretron: Annunciator",
@@ -22817,7 +22817,7 @@
           }
         },
         {
-          "id": "PgnMaretronDataInstanceChannelCorrelation",
+          "id": "MaretronDataInstanceChannelCorrelation",
           "sourceId": "maretronDataInstanceChannelCorrelation",
           "pgn": 130825,
           "description": "Maretron: Data Instance Channel Correlation",
@@ -22936,7 +22936,7 @@
           }
         },
         {
-          "id": "PgnMaretronSwitchIndicatorStatus",
+          "id": "MaretronSwitchIndicatorStatus",
           "sourceId": "maretronSwitchIndicatorStatus",
           "pgn": 130826,
           "description": "Maretron: Switch Indicator Status",
@@ -23033,7 +23033,7 @@
           }
         },
         {
-          "id": "PgnMaretronDometicHvacControlStatus",
+          "id": "MaretronDometicHvacControlStatus",
           "sourceId": "maretronDometicHvacControlStatus",
           "pgn": 130828,
           "description": "Maretron: Dometic HVAC Control Status",
@@ -23199,7 +23199,7 @@
           }
         },
         {
-          "id": "PgnMaretronDometicHvacStatus",
+          "id": "MaretronDometicHvacStatus",
           "sourceId": "maretronDometicHvacStatus",
           "pgn": 130830,
           "description": "Maretron: Dometic HVAC Status",
@@ -23343,7 +23343,7 @@
           }
         },
         {
-          "id": "PgnMaretronUniversalConfigurationFp",
+          "id": "MaretronUniversalConfigurationFp",
           "sourceId": "maretronUniversalConfigurationFp",
           "pgn": 130831,
           "description": "Maretron: Universal Configuration FP",
@@ -23421,7 +23421,7 @@
           }
         },
         {
-          "id": "PgnMaretronVesselOperatingMode",
+          "id": "MaretronVesselOperatingMode",
           "sourceId": "maretronVesselOperatingMode",
           "pgn": 130832,
           "description": "Maretron: Vessel Operating Mode",
@@ -23576,7 +23576,7 @@
           }
         },
         {
-          "id": "PgnMaretronVesselDataRecorderStatus",
+          "id": "MaretronVesselDataRecorderStatus",
           "sourceId": "maretronVesselDataRecorderStatus",
           "pgn": 130833,
           "description": "Maretron: Vessel Data Recorder Status",
@@ -23676,7 +23676,7 @@
           }
         },
         {
-          "id": "PgnMaretronSmsStatus",
+          "id": "MaretronSmsStatus",
           "sourceId": "maretronSmsStatus",
           "pgn": 130834,
           "description": "Maretron: SMS Status",
@@ -23809,7 +23809,7 @@
           }
         },
         {
-          "id": "PgnMaretronSmsTextMessage",
+          "id": "MaretronSmsTextMessage",
           "sourceId": "maretronSmsTextMessage",
           "pgn": 130835,
           "description": "Maretron: SMS Text Message",
@@ -23909,7 +23909,7 @@
           }
         },
         {
-          "id": "PgnMaretronSwitchStatusCounter",
+          "id": "MaretronSwitchStatusCounter",
           "sourceId": "maretronSwitchStatusCounter",
           "pgn": 130836,
           "description": "Maretron: Switch Status Counter",
@@ -24071,7 +24071,7 @@
           }
         },
         {
-          "id": "PgnMaretronSwitchStatusTimer",
+          "id": "MaretronSwitchStatusTimer",
           "sourceId": "maretronSwitchStatusTimer",
           "pgn": 130837,
           "description": "Maretron: Switch Status Timer",
@@ -24236,7 +24236,7 @@
           }
         },
         {
-          "id": "PgnMaretronBnwas",
+          "id": "MaretronBnwas",
           "sourceId": "maretronBnwas",
           "pgn": 130838,
           "description": "Maretron: BNWAS",
@@ -24314,7 +24314,7 @@
           }
         },
         {
-          "id": "PgnMaretronGenericSensor",
+          "id": "MaretronGenericSensor",
           "sourceId": "maretronGenericSensor",
           "pgn": 130840,
           "description": "Maretron: Generic Sensor",
@@ -24414,7 +24414,7 @@
           }
         },
         {
-          "id": "PgnMaretronCanFrameForwarding",
+          "id": "MaretronCanFrameForwarding",
           "sourceId": "maretronCanFrameForwarding",
           "pgn": 130841,
           "description": "Maretron: CAN Frame Forwarding",
@@ -24492,7 +24492,7 @@
           }
         },
         {
-          "id": "PgnMaretronWindlassOperatingStatus",
+          "id": "MaretronWindlassOperatingStatus",
           "sourceId": "maretronWindlassOperatingStatus",
           "pgn": 130842,
           "description": "Maretron: Windlass Operating Status",
@@ -24702,7 +24702,7 @@
           }
         },
         {
-          "id": "PgnMaretronWindlassControlCommand",
+          "id": "MaretronWindlassControlCommand",
           "sourceId": "maretronWindlassControlCommand",
           "pgn": 130843,
           "description": "Maretron: Windlass Control Command",
@@ -24780,7 +24780,7 @@
           }
         },
         {
-          "id": "PgnMaretronDcEnergy",
+          "id": "MaretronDcEnergy",
           "sourceId": "maretronDcEnergy",
           "pgn": 130845,
           "description": "Maretron: DC Energy",
@@ -24858,7 +24858,7 @@
           }
         },
         {
-          "id": "PgnMaretronBatteryAmpHourRecord",
+          "id": "MaretronBatteryAmpHourRecord",
           "sourceId": "maretronBatteryAmpHourRecord",
           "pgn": 130846,
           "description": "Maretron: Battery Amp Hour Record",
@@ -24942,7 +24942,7 @@
       "name": "Mercury",
       "pgns": [
         {
-          "id": "PgnMercuryEngineData",
+          "id": "MercuryEngineData",
           "sourceId": "mercuryEngineData",
           "pgn": 65280,
           "description": "Mercury: Engine Data",
@@ -25021,7 +25021,7 @@
           }
         },
         {
-          "id": "PgnMercuryEngineTelemetryLowSpeed",
+          "id": "MercuryEngineTelemetryLowSpeed",
           "sourceId": "mercuryEngineTelemetryLowSpeed",
           "pgn": 130822,
           "description": "Mercury: Engine Telemetry, Low Speed",
@@ -25155,7 +25155,7 @@
           }
         },
         {
-          "id": "PgnMercuryEngineKeyValueData",
+          "id": "MercuryEngineKeyValueData",
           "sourceId": "mercuryEngineKeyValueData",
           "pgn": 130824,
           "description": "Mercury: Engine Key-Value Data",
@@ -25253,7 +25253,7 @@
           }
         },
         {
-          "id": "PgnMercuryCommandResponse",
+          "id": "MercuryCommandResponse",
           "sourceId": "mercuryCommandResponse",
           "pgn": 130825,
           "description": "Mercury: Command/Response",
@@ -25342,7 +25342,7 @@
           }
         },
         {
-          "id": "PgnMercuryCruiseControlData",
+          "id": "MercuryCruiseControlData",
           "sourceId": "mercuryCruiseControlData",
           "pgn": 130825,
           "description": "Mercury: Cruise Control Data",
@@ -25489,7 +25489,7 @@
           }
         },
         {
-          "id": "PgnMercuryBamDigitalDataProxy",
+          "id": "MercuryBamDigitalDataProxy",
           "sourceId": "mercuryBamDigitalDataProxy",
           "pgn": 130826,
           "description": "Mercury: BAM Digital-Data Proxy",
@@ -25622,7 +25622,7 @@
           }
         },
         {
-          "id": "PgnMercuryEngineStatus",
+          "id": "MercuryEngineStatus",
           "sourceId": "mercuryEngineStatus",
           "pgn": 130829,
           "description": "Mercury: Engine Status",
@@ -25750,7 +25750,7 @@
       "name": "Yanmar",
       "pgns": [
         {
-          "id": "PgnYanmarEngineDataA",
+          "id": "YanmarEngineDataA",
           "sourceId": "yanmarEngineDataA",
           "pgn": 65280,
           "description": "Yanmar: Engine Data A",
@@ -25829,7 +25829,7 @@
           }
         },
         {
-          "id": "PgnYanmarEngineDataB",
+          "id": "YanmarEngineDataB",
           "sourceId": "yanmarEngineDataB",
           "pgn": 65281,
           "description": "Yanmar: Engine Data B",
@@ -25908,7 +25908,7 @@
           }
         },
         {
-          "id": "PgnYanmarEngineDataC",
+          "id": "YanmarEngineDataC",
           "sourceId": "yanmarEngineDataC",
           "pgn": 65332,
           "description": "Yanmar: Engine Data C",
@@ -25987,7 +25987,7 @@
           }
         },
         {
-          "id": "PgnYanmarEngineDataD",
+          "id": "YanmarEngineDataD",
           "sourceId": "yanmarEngineDataD",
           "pgn": 65346,
           "description": "Yanmar: Engine Data D",
@@ -26066,7 +26066,7 @@
           }
         },
         {
-          "id": "PgnYanmarEngineDataE",
+          "id": "YanmarEngineDataE",
           "sourceId": "yanmarEngineDataE",
           "pgn": 65348,
           "description": "Yanmar: Engine Data E",
@@ -26145,7 +26145,7 @@
           }
         },
         {
-          "id": "PgnYanmarEngineDataF",
+          "id": "YanmarEngineDataF",
           "sourceId": "yanmarEngineDataF",
           "pgn": 65349,
           "description": "Yanmar: Engine Data F",
@@ -26230,7 +26230,7 @@
       "name": "Airmar",
       "pgns": [
         {
-          "id": "PgnAirmarBootStateAcknowledgment",
+          "id": "AirmarBootStateAcknowledgment",
           "sourceId": "airmarBootStateAcknowledgment",
           "pgn": 65285,
           "description": "Airmar: Boot State Acknowledgment",
@@ -26316,7 +26316,7 @@
           }
         },
         {
-          "id": "PgnAirmarBootStateRequest",
+          "id": "AirmarBootStateRequest",
           "sourceId": "airmarBootStateRequest",
           "pgn": 65286,
           "description": "Airmar: Boot State Request",
@@ -26391,7 +26391,7 @@
           }
         },
         {
-          "id": "PgnAirmarAccessLevel",
+          "id": "AirmarAccessLevel",
           "sourceId": "airmarAccessLevel",
           "pgn": 65287,
           "description": "Airmar: Access Level",
@@ -26499,7 +26499,7 @@
           }
         },
         {
-          "id": "PgnAirmarDepthQualityFactor",
+          "id": "AirmarDepthQualityFactor",
           "sourceId": "airmarDepthQualityFactor",
           "pgn": 65408,
           "description": "Airmar: Depth Quality Factor",
@@ -26599,7 +26599,7 @@
           }
         },
         {
-          "id": "PgnAirmarSpeedPulseCount",
+          "id": "AirmarSpeedPulseCount",
           "sourceId": "airmarSpeedPulseCount",
           "pgn": 65409,
           "description": "Airmar: Speed Pulse Count",
@@ -26708,7 +26708,7 @@
           }
         },
         {
-          "id": "PgnAirmarDeviceInformation",
+          "id": "AirmarDeviceInformation",
           "sourceId": "airmarDeviceInformation",
           "pgn": 65410,
           "description": "Airmar: Device Information",
@@ -26820,7 +26820,7 @@
           }
         },
         {
-          "id": "PgnAirmarAddressableMultiFrame",
+          "id": "AirmarAddressableMultiFrame",
           "sourceId": "airmarAddressableMultiFrame",
           "pgn": 126720,
           "description": "Airmar: Addressable Multi-Frame",
@@ -26898,7 +26898,7 @@
           }
         },
         {
-          "id": "PgnAirmarAttitudeOffset",
+          "id": "AirmarAttitudeOffset",
           "sourceId": "airmarAttitudeOffset",
           "pgn": 126720,
           "description": "Airmar: Attitude Offset",
@@ -27007,7 +27007,7 @@
           }
         },
         {
-          "id": "PgnAirmarCalibrateCompass",
+          "id": "AirmarCalibrateCompass",
           "sourceId": "airmarCalibrateCompass",
           "pgn": 126720,
           "description": "Airmar: Calibrate Compass",
@@ -27221,7 +27221,7 @@
           }
         },
         {
-          "id": "PgnAirmarCalibrateDepth",
+          "id": "AirmarCalibrateDepth",
           "sourceId": "airmarCalibrateDepth",
           "pgn": 126720,
           "description": "Airmar: Calibrate Depth",
@@ -27317,7 +27317,7 @@
           }
         },
         {
-          "id": "PgnAirmarCalibrateSpeed",
+          "id": "AirmarCalibrateSpeed",
           "sourceId": "airmarCalibrateSpeed",
           "pgn": 126720,
           "description": "Airmar: Calibrate Speed",
@@ -27425,7 +27425,7 @@
           }
         },
         {
-          "id": "PgnAirmarCalibrateTemperature",
+          "id": "AirmarCalibrateTemperature",
           "sourceId": "airmarCalibrateTemperature",
           "pgn": 126720,
           "description": "Airmar: Calibrate Temperature",
@@ -27532,7 +27532,7 @@
           }
         },
         {
-          "id": "PgnAirmarNmea2000Options",
+          "id": "AirmarNmea2000Options",
           "sourceId": "airmarNmea2000Options",
           "pgn": 126720,
           "description": "Airmar: NMEA 2000 options",
@@ -27627,7 +27627,7 @@
           }
         },
         {
-          "id": "PgnAirmarSimulateMode",
+          "id": "AirmarSimulateMode",
           "sourceId": "airmarSimulateMode",
           "pgn": 126720,
           "description": "Airmar: Simulate Mode",
@@ -27722,7 +27722,7 @@
           }
         },
         {
-          "id": "PgnAirmarSpeedFilterIir",
+          "id": "AirmarSpeedFilterIir",
           "sourceId": "airmarSpeedFilterIir",
           "pgn": 126720,
           "description": "Airmar: Speed Filter IIR",
@@ -27842,7 +27842,7 @@
           }
         },
         {
-          "id": "PgnAirmarSpeedFilterNone",
+          "id": "AirmarSpeedFilterNone",
           "sourceId": "airmarSpeedFilterNone",
           "pgn": 126720,
           "description": "Airmar: Speed Filter None",
@@ -27950,7 +27950,7 @@
           }
         },
         {
-          "id": "PgnAirmarTemperatureFilterIir",
+          "id": "AirmarTemperatureFilterIir",
           "sourceId": "airmarTemperatureFilterIir",
           "pgn": 126720,
           "description": "Airmar: Temperature Filter IIR",
@@ -28070,7 +28070,7 @@
           }
         },
         {
-          "id": "PgnAirmarTemperatureFilterNone",
+          "id": "AirmarTemperatureFilterNone",
           "sourceId": "airmarTemperatureFilterNone",
           "pgn": 126720,
           "description": "Airmar: Temperature Filter None",
@@ -28178,7 +28178,7 @@
           }
         },
         {
-          "id": "PgnAirmarTrueWindOptions",
+          "id": "AirmarTrueWindOptions",
           "sourceId": "airmarTrueWindOptions",
           "pgn": 126720,
           "description": "Airmar: True Wind Options",
@@ -28278,7 +28278,7 @@
           }
         },
         {
-          "id": "PgnAirmarAdditionalWeatherData",
+          "id": "AirmarAdditionalWeatherData",
           "sourceId": "airmarAdditionalWeatherData",
           "pgn": 130880,
           "description": "Airmar: Additional Weather Data",
@@ -28393,7 +28393,7 @@
           }
         },
         {
-          "id": "PgnAirmarHeaterControl",
+          "id": "AirmarHeaterControl",
           "sourceId": "airmarHeaterControl",
           "pgn": 130881,
           "description": "Airmar: Heater Control",
@@ -28508,7 +28508,7 @@
           }
         },
         {
-          "id": "PgnAirmarPost",
+          "id": "AirmarPost",
           "sourceId": "airmarPost",
           "pgn": 130944,
           "description": "Airmar: POST",
@@ -28637,7 +28637,7 @@
       "name": "Lowrance",
       "pgns": [
         {
-          "id": "PgnLowranceTemperature",
+          "id": "LowranceTemperature",
           "sourceId": "lowranceTemperature",
           "pgn": 65285,
           "description": "Lowrance: Temperature",
@@ -28735,7 +28735,7 @@
           }
         },
         {
-          "id": "PgnLowranceProductInformation",
+          "id": "LowranceProductInformation",
           "sourceId": "lowranceProductInformation",
           "pgn": 130817,
           "description": "Lowrance: Product Information",
@@ -28889,7 +28889,7 @@
           }
         },
         {
-          "id": "PgnLowranceUnknown",
+          "id": "LowranceUnknown",
           "sourceId": "lowranceUnknown",
           "pgn": 130827,
           "description": "Lowrance: unknown",
@@ -29029,7 +29029,7 @@
       "name": "Chetco",
       "pgns": [
         {
-          "id": "PgnChetcoDimmer",
+          "id": "ChetcoDimmer",
           "sourceId": "chetcoDimmer",
           "pgn": 65286,
           "description": "Chetco: Dimmer",
@@ -29169,7 +29169,7 @@
       "name": "SimNet",
       "pgns": [
         {
-          "id": "PgnSimnetConfigureTemperatureSensor",
+          "id": "SimnetConfigureTemperatureSensor",
           "sourceId": "simnetConfigureTemperatureSensor",
           "pgn": 65287,
           "description": "Simnet: Configure Temperature Sensor",
@@ -29247,7 +29247,7 @@
           }
         },
         {
-          "id": "PgnSimnetTrimTabSensorCalibration",
+          "id": "SimnetTrimTabSensorCalibration",
           "sourceId": "simnetTrimTabSensorCalibration",
           "pgn": 65289,
           "description": "Simnet: Trim Tab Sensor Calibration",
@@ -29325,7 +29325,7 @@
           }
         },
         {
-          "id": "PgnSimnetPaddleWheelSpeedConfiguration",
+          "id": "SimnetPaddleWheelSpeedConfiguration",
           "sourceId": "simnetPaddleWheelSpeedConfiguration",
           "pgn": 65290,
           "description": "Simnet: Paddle Wheel Speed Configuration",
@@ -29403,7 +29403,7 @@
           }
         },
         {
-          "id": "PgnSimnetClearFluidLevelWarnings",
+          "id": "SimnetClearFluidLevelWarnings",
           "sourceId": "simnetClearFluidLevelWarnings",
           "pgn": 65292,
           "description": "Simnet: Clear Fluid Level Warnings",
@@ -29481,7 +29481,7 @@
           }
         },
         {
-          "id": "PgnSimnetLgc2000Configuration",
+          "id": "SimnetLgc2000Configuration",
           "sourceId": "simnetLgc2000Configuration",
           "pgn": 65293,
           "description": "Simnet: LGC-2000 Configuration",
@@ -29559,7 +29559,7 @@
           }
         },
         {
-          "id": "PgnSimnetApUnknown1",
+          "id": "SimnetApUnknown1",
           "sourceId": "simnetApUnknown1",
           "pgn": 65302,
           "description": "Simnet: AP Unknown 1",
@@ -29658,7 +29658,7 @@
           }
         },
         {
-          "id": "PgnSimnetDeviceModeRequest",
+          "id": "SimnetDeviceModeRequest",
           "sourceId": "simnetDeviceModeRequest",
           "pgn": 65305,
           "description": "Simnet: Device Mode Request",
@@ -29753,7 +29753,7 @@
           }
         },
         {
-          "id": "PgnSimnetDeviceStatus",
+          "id": "SimnetDeviceStatus",
           "sourceId": "simnetDeviceStatus",
           "pgn": 65305,
           "description": "Simnet: Device Status",
@@ -29862,7 +29862,7 @@
           }
         },
         {
-          "id": "PgnSimnetDeviceStatusRequest",
+          "id": "SimnetDeviceStatusRequest",
           "sourceId": "simnetDeviceStatusRequest",
           "pgn": 65305,
           "description": "Simnet: Device Status Request",
@@ -29957,7 +29957,7 @@
           }
         },
         {
-          "id": "PgnSimnetPilotMode",
+          "id": "SimnetPilotMode",
           "sourceId": "simnetPilotMode",
           "pgn": 65305,
           "description": "Simnet: Pilot Mode",
@@ -30066,7 +30066,7 @@
           }
         },
         {
-          "id": "PgnSimnetSailingProcessorStatus",
+          "id": "SimnetSailingProcessorStatus",
           "sourceId": "simnetSailingProcessorStatus",
           "pgn": 65305,
           "description": "Simnet: Sailing Processor Status",
@@ -30166,7 +30166,7 @@
           }
         },
         {
-          "id": "PgnSimnetApUnknown5",
+          "id": "SimnetApUnknown5",
           "sourceId": "simnetApUnknown5",
           "pgn": 65323,
           "description": "Simnet: AP Unknown 5",
@@ -30276,7 +30276,7 @@
           }
         },
         {
-          "id": "PgnSimnetAnalogTelemetry",
+          "id": "SimnetAnalogTelemetry",
           "sourceId": "simnetAnalogTelemetry",
           "pgn": 65324,
           "description": "Simnet: Analog Telemetry",
@@ -30376,7 +30376,7 @@
           }
         },
         {
-          "id": "PgnSimnetAutopilotModeState",
+          "id": "SimnetAutopilotModeState",
           "sourceId": "simnetAutopilotModeState",
           "pgn": 65340,
           "description": "Simnet: Autopilot Mode State",
@@ -30508,7 +30508,7 @@
           }
         },
         {
-          "id": "PgnSimnetAutopilotAngle",
+          "id": "SimnetAutopilotAngle",
           "sourceId": "simnetAutopilotAngle",
           "pgn": 65341,
           "description": "Simnet: Autopilot Angle",
@@ -30620,7 +30620,7 @@
           }
         },
         {
-          "id": "PgnSimnetMagneticField",
+          "id": "SimnetMagneticField",
           "sourceId": "simnetMagneticField",
           "pgn": 65350,
           "description": "Simnet: Magnetic Field",
@@ -30712,7 +30712,7 @@
           }
         },
         {
-          "id": "PgnSimnetApUnknown3",
+          "id": "SimnetApUnknown3",
           "sourceId": "simnetApUnknown3",
           "pgn": 65420,
           "description": "Simnet: AP Unknown 3",
@@ -30844,7 +30844,7 @@
           }
         },
         {
-          "id": "PgnSimnetAutopilotMode",
+          "id": "SimnetAutopilotMode",
           "sourceId": "simnetAutopilotMode",
           "pgn": 65480,
           "description": "Simnet: Autopilot Mode",
@@ -30922,7 +30922,7 @@
           }
         },
         {
-          "id": "PgnSimnetReprogramData",
+          "id": "SimnetReprogramData",
           "sourceId": "simnetReprogramData",
           "pgn": 130818,
           "description": "Simnet: Reprogram Data",
@@ -31022,7 +31022,7 @@
           }
         },
         {
-          "id": "PgnSimnetRequestReprogram",
+          "id": "SimnetRequestReprogram",
           "sourceId": "simnetRequestReprogram",
           "pgn": 130819,
           "description": "Simnet: Request Reprogram",
@@ -31088,7 +31088,7 @@
           }
         },
         {
-          "id": "PgnSimnetReprogramStatus",
+          "id": "SimnetReprogramStatus",
           "sourceId": "simnetReprogramStatus",
           "pgn": 130820,
           "description": "Simnet: Reprogram Status",
@@ -31187,7 +31187,7 @@
           }
         },
         {
-          "id": "PgnSimnetSetSerialNumber",
+          "id": "SimnetSetSerialNumber",
           "sourceId": "simnetSetSerialNumber",
           "pgn": 130828,
           "description": "Simnet: Set Serial Number",
@@ -31255,7 +31255,7 @@
           }
         },
         {
-          "id": "PgnSimnetFuelUsedHighResolution",
+          "id": "SimnetFuelUsedHighResolution",
           "sourceId": "simnetFuelUsedHighResolution",
           "pgn": 130832,
           "description": "Simnet: Fuel Used - High Resolution",
@@ -31323,7 +31323,7 @@
           }
         },
         {
-          "id": "PgnSimnetEngineAndTankConfiguration",
+          "id": "SimnetEngineAndTankConfiguration",
           "sourceId": "simnetEngineAndTankConfiguration",
           "pgn": 130834,
           "description": "Simnet: Engine and Tank Configuration",
@@ -31391,7 +31391,7 @@
           }
         },
         {
-          "id": "PgnSimnetSetEngineAndTankConfiguration",
+          "id": "SimnetSetEngineAndTankConfiguration",
           "sourceId": "simnetSetEngineAndTankConfiguration",
           "pgn": 130835,
           "description": "Simnet: Set Engine and Tank Configuration",
@@ -31459,7 +31459,7 @@
           }
         },
         {
-          "id": "PgnSimnetFluidLevelSensorConfiguration",
+          "id": "SimnetFluidLevelSensorConfiguration",
           "sourceId": "simnetFluidLevelSensorConfiguration",
           "pgn": 130836,
           "description": "Simnet: Fluid Level Sensor Configuration",
@@ -31626,7 +31626,7 @@
           }
         },
         {
-          "id": "PgnSimnetFuelFlowTurbineConfiguration",
+          "id": "SimnetFuelFlowTurbineConfiguration",
           "sourceId": "simnetFuelFlowTurbineConfiguration",
           "pgn": 130837,
           "description": "Simnet: Fuel Flow Turbine Configuration",
@@ -31694,7 +31694,7 @@
           }
         },
         {
-          "id": "PgnSimnetFluidLevelWarning",
+          "id": "SimnetFluidLevelWarning",
           "sourceId": "simnetFluidLevelWarning",
           "pgn": 130838,
           "description": "Simnet: Fluid Level Warning",
@@ -31762,7 +31762,7 @@
           }
         },
         {
-          "id": "PgnSimnetPressureSensorConfiguration",
+          "id": "SimnetPressureSensorConfiguration",
           "sourceId": "simnetPressureSensorConfiguration",
           "pgn": 130839,
           "description": "Simnet: Pressure Sensor Configuration",
@@ -31830,7 +31830,7 @@
           }
         },
         {
-          "id": "PgnSimnetDataSourceSelection",
+          "id": "SimnetDataSourceSelection",
           "sourceId": "simnetDataSourceSelection",
           "pgn": 130840,
           "description": "Simnet: Data Source Selection",
@@ -31984,7 +31984,7 @@
           }
         },
         {
-          "id": "PgnSimnetAisClassBStaticDataMsg24PartA",
+          "id": "SimnetAisClassBStaticDataMsg24PartA",
           "sourceId": "simnetAisClassBStaticDataMsg24PartA",
           "pgn": 130842,
           "description": "Simnet: AIS Class B static data (msg 24 Part A)",
@@ -32119,7 +32119,7 @@
           }
         },
         {
-          "id": "PgnSimnetAisClassBStaticDataMsg24PartB",
+          "id": "SimnetAisClassBStaticDataMsg24PartB",
           "sourceId": "simnetAisClassBStaticDataMsg24PartB",
           "pgn": 130842,
           "description": "Simnet: AIS Class B static data (msg 24 Part B)",
@@ -32356,7 +32356,7 @@
           }
         },
         {
-          "id": "PgnSimnetSonarStatusFrequencyAndDspVoltage",
+          "id": "SimnetSonarStatusFrequencyAndDspVoltage",
           "sourceId": "simnetSonarStatusFrequencyAndDspVoltage",
           "pgn": 130843,
           "description": "Simnet: Sonar Status, Frequency and DSP Voltage",
@@ -32424,7 +32424,7 @@
           }
         },
         {
-          "id": "PgnSimnetKeyValue",
+          "id": "SimnetKeyValue",
           "sourceId": "simnetKeyValue",
           "pgn": 130845,
           "description": "Simnet: Key Value",
@@ -32567,7 +32567,7 @@
           }
         },
         {
-          "id": "PgnSimnetParameterSet",
+          "id": "SimnetParameterSet",
           "sourceId": "simnetParameterSet",
           "pgn": 130846,
           "description": "Simnet: Parameter Set",
@@ -32721,7 +32721,7 @@
           }
         },
         {
-          "id": "PgnSimnetApCommand",
+          "id": "SimnetApCommand",
           "sourceId": "simnetApCommand",
           "pgn": 130850,
           "description": "Simnet: AP command",
@@ -32920,7 +32920,7 @@
           }
         },
         {
-          "id": "PgnSimnetAlarm",
+          "id": "SimnetAlarm",
           "sourceId": "simnetAlarm",
           "pgn": 130850,
           "description": "Simnet: Alarm",
@@ -33086,7 +33086,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApChangeCourse",
+          "id": "SimnetCommandApChangeCourse",
           "sourceId": "simnetCommandApChangeCourse",
           "pgn": 130850,
           "description": "Simnet: Command AP Change Course",
@@ -33255,7 +33255,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApFollowUp",
+          "id": "SimnetCommandApFollowUp",
           "sourceId": "simnetCommandApFollowUp",
           "pgn": 130850,
           "description": "Simnet: Command AP Follow Up",
@@ -33401,7 +33401,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApHeading",
+          "id": "SimnetCommandApHeading",
           "sourceId": "simnetCommandApHeading",
           "pgn": 130850,
           "description": "Simnet: Command AP Heading",
@@ -33547,7 +33547,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApNav",
+          "id": "SimnetCommandApNav",
           "sourceId": "simnetCommandApNav",
           "pgn": 130850,
           "description": "Simnet: Command AP Nav",
@@ -33693,7 +33693,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApNodrift",
+          "id": "SimnetCommandApNodrift",
           "sourceId": "simnetCommandApNodrift",
           "pgn": 130850,
           "description": "Simnet: Command AP NoDrift",
@@ -33839,7 +33839,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApStandby",
+          "id": "SimnetCommandApStandby",
           "sourceId": "simnetCommandApStandby",
           "pgn": 130850,
           "description": "Simnet: Command AP Standby",
@@ -33985,7 +33985,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApTack",
+          "id": "SimnetCommandApTack",
           "sourceId": "simnetCommandApTack",
           "pgn": 130850,
           "description": "Simnet: Command AP Tack",
@@ -34142,7 +34142,7 @@
           }
         },
         {
-          "id": "PgnSimnetCommandApWind",
+          "id": "SimnetCommandApWind",
           "sourceId": "simnetCommandApWind",
           "pgn": 130850,
           "description": "Simnet: Command AP Wind",
@@ -34288,7 +34288,7 @@
           }
         },
         {
-          "id": "PgnSimnetEvent",
+          "id": "SimnetEvent",
           "sourceId": "simnetEvent",
           "pgn": 130850,
           "description": "Simnet: Event",
@@ -34464,7 +34464,7 @@
           }
         },
         {
-          "id": "PgnSimnetEventCommandTimer",
+          "id": "SimnetEventCommandTimer",
           "sourceId": "simnetEventCommandTimer",
           "pgn": 130850,
           "description": "Simnet: Event Command: Timer",
@@ -34620,7 +34620,7 @@
           }
         },
         {
-          "id": "PgnSimnetApCommandReply",
+          "id": "SimnetApCommandReply",
           "sourceId": "simnetApCommandReply",
           "pgn": 130851,
           "description": "Simnet: AP command Reply",
@@ -34787,7 +34787,7 @@
           }
         },
         {
-          "id": "PgnSimnetApCommandReplyChangeCourse",
+          "id": "SimnetApCommandReplyChangeCourse",
           "sourceId": "simnetApCommandReplyChangeCourse",
           "pgn": 130851,
           "description": "Simnet: AP command Reply: Change Course",
@@ -34956,7 +34956,7 @@
           }
         },
         {
-          "id": "PgnSimnetAlarmMessage",
+          "id": "SimnetAlarmMessage",
           "sourceId": "simnetAlarmMessage",
           "pgn": 130856,
           "description": "Simnet: Alarm Message",
@@ -35066,7 +35066,7 @@
           }
         },
         {
-          "id": "PgnSimnetApUnknown4",
+          "id": "SimnetApUnknown4",
           "sourceId": "simnetApUnknown4",
           "pgn": 130860,
           "description": "Simnet: AP Unknown 4",
@@ -35204,7 +35204,7 @@
       "name": "Diverse Yacht Services",
       "pgns": [
         {
-          "id": "PgnDiverseYachtServicesLoadCell",
+          "id": "DiverseYachtServicesLoadCell",
           "sourceId": "diverseYachtServicesLoadCell",
           "pgn": 65293,
           "description": "Diverse Yacht Services: Load Cell",
@@ -35308,7 +35308,7 @@
       "name": "Suzuki",
       "pgns": [
         {
-          "id": "PgnSuzukiEngineDataA",
+          "id": "SuzukiEngineDataA",
           "sourceId": "suzukiEngineDataA",
           "pgn": 65298,
           "description": "Suzuki: Engine Data A",
@@ -35387,7 +35387,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineDataB",
+          "id": "SuzukiEngineDataB",
           "sourceId": "suzukiEngineDataB",
           "pgn": 65299,
           "description": "Suzuki: Engine Data B",
@@ -35466,7 +35466,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineDataC",
+          "id": "SuzukiEngineDataC",
           "sourceId": "suzukiEngineDataC",
           "pgn": 65300,
           "description": "Suzuki: Engine Data C",
@@ -35545,7 +35545,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineDataD",
+          "id": "SuzukiEngineDataD",
           "sourceId": "suzukiEngineDataD",
           "pgn": 65303,
           "description": "Suzuki: Engine Data D",
@@ -35624,7 +35624,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineDataE",
+          "id": "SuzukiEngineDataE",
           "sourceId": "suzukiEngineDataE",
           "pgn": 65304,
           "description": "Suzuki: Engine Data E",
@@ -35703,7 +35703,7 @@
           }
         },
         {
-          "id": "PgnSuzukiTrollModeControl",
+          "id": "SuzukiTrollModeControl",
           "sourceId": "suzukiTrollModeControl",
           "pgn": 65315,
           "description": "Suzuki: Troll Mode Control",
@@ -35782,7 +35782,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineData",
+          "id": "SuzukiEngineData",
           "sourceId": "suzukiEngineData",
           "pgn": 130830,
           "description": "Suzuki: Engine Data",
@@ -35850,7 +35850,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineAndStorageDeviceConfig",
+          "id": "SuzukiEngineAndStorageDeviceConfig",
           "sourceId": "suzukiEngineAndStorageDeviceConfig",
           "pgn": 130831,
           "description": "Suzuki: Engine and Storage Device Config",
@@ -35918,7 +35918,7 @@
           }
         },
         {
-          "id": "PgnSuzukiEngineSensorData",
+          "id": "SuzukiEngineSensorData",
           "sourceId": "suzukiEngineSensorData",
           "pgn": 130837,
           "description": "Suzuki: Engine Sensor Data",
@@ -35986,7 +35986,7 @@
           }
         },
         {
-          "id": "PgnSuzukiFuelManagement",
+          "id": "SuzukiFuelManagement",
           "sourceId": "suzukiFuelManagement",
           "pgn": 130838,
           "description": "Suzuki: Fuel Management",
@@ -36060,7 +36060,7 @@
       "name": "Navico",
       "pgns": [
         {
-          "id": "PgnNavicoWirelessBatteryStatus",
+          "id": "NavicoWirelessBatteryStatus",
           "sourceId": "navicoWirelessBatteryStatus",
           "pgn": 65309,
           "description": "Navico: Wireless Battery Status",
@@ -36173,7 +36173,7 @@
           }
         },
         {
-          "id": "PgnNavicoWirelessSignalStatus",
+          "id": "NavicoWirelessSignalStatus",
           "sourceId": "navicoWirelessSignalStatus",
           "pgn": 65312,
           "description": "Navico: Wireless Signal Status",
@@ -36272,7 +36272,7 @@
           }
         },
         {
-          "id": "PgnNavicoDepthQuality",
+          "id": "NavicoDepthQuality",
           "sourceId": "navicoDepthQuality",
           "pgn": 65313,
           "description": "Navico: Depth Quality",
@@ -36369,7 +36369,7 @@
           }
         },
         {
-          "id": "PgnNavicoProprietary2",
+          "id": "NavicoProprietary2",
           "sourceId": "navicoProprietary2",
           "pgn": 65317,
           "description": "Navico: Proprietary 2",
@@ -36448,7 +36448,7 @@
           }
         },
         {
-          "id": "PgnNavicoNaviopSwitchStatus",
+          "id": "NavicoNaviopSwitchStatus",
           "sourceId": "navicoNaviopSwitchStatus",
           "pgn": 65440,
           "description": "Navico: Naviop Switch Status",
@@ -36527,7 +36527,7 @@
           }
         },
         {
-          "id": "PgnNavicoNaviopSwitchControl",
+          "id": "NavicoNaviopSwitchControl",
           "sourceId": "navicoNaviopSwitchControl",
           "pgn": 65441,
           "description": "Navico: Naviop Switch Control",
@@ -36606,7 +36606,7 @@
           }
         },
         {
-          "id": "PgnNavicoUnknown",
+          "id": "NavicoUnknown",
           "sourceId": "navicoUnknown",
           "pgn": 130817,
           "description": "Navico: Unknown",
@@ -36728,7 +36728,7 @@
           }
         },
         {
-          "id": "PgnNavicoAsciiData",
+          "id": "NavicoAsciiData",
           "sourceId": "navicoAsciiData",
           "pgn": 130821,
           "description": "Navico: ASCII Data",
@@ -36817,7 +36817,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseBulkReport2",
+          "id": "NavicoUdbDatabaseBulkReport2",
           "sourceId": "navicoUdbDatabaseBulkReport2",
           "pgn": 130822,
           "description": "Navico: UDB Database, Bulk Report 2",
@@ -36963,7 +36963,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseBulkReport3",
+          "id": "NavicoUdbDatabaseBulkReport3",
           "sourceId": "navicoUdbDatabaseBulkReport3",
           "pgn": 130822,
           "description": "Navico: UDB Database, Bulk Report 3",
@@ -37109,7 +37109,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseBulkReport4",
+          "id": "NavicoUdbDatabaseBulkReport4",
           "sourceId": "navicoUdbDatabaseBulkReport4",
           "pgn": 130822,
           "description": "Navico: UDB Database, Bulk Report 4",
@@ -37255,7 +37255,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseObjectDump",
+          "id": "NavicoUdbDatabaseObjectDump",
           "sourceId": "navicoUdbDatabaseObjectDump",
           "pgn": 130822,
           "description": "Navico: UDB Database, Object Dump",
@@ -37466,7 +37466,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseObjectPing",
+          "id": "NavicoUdbDatabaseObjectPing",
           "sourceId": "navicoUdbDatabaseObjectPing",
           "pgn": 130822,
           "description": "Navico: UDB Database, Object Ping",
@@ -37600,7 +37600,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseShortReport5",
+          "id": "NavicoUdbDatabaseShortReport5",
           "sourceId": "navicoUdbDatabaseShortReport5",
           "pgn": 130822,
           "description": "Navico: UDB Database, Short Report 5",
@@ -37746,7 +37746,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseShortReport7",
+          "id": "NavicoUdbDatabaseShortReport7",
           "sourceId": "navicoUdbDatabaseShortReport7",
           "pgn": 130822,
           "description": "Navico: UDB Database, Short Report 7",
@@ -37892,7 +37892,7 @@
           }
         },
         {
-          "id": "PgnNavicoUdbDatabaseSourceReport",
+          "id": "NavicoUdbDatabaseSourceReport",
           "sourceId": "navicoUdbDatabaseSourceReport",
           "pgn": 130822,
           "description": "Navico: UDB Database, Source Report",
@@ -38092,7 +38092,7 @@
           }
         },
         {
-          "id": "PgnNavicoAlarm",
+          "id": "NavicoAlarm",
           "sourceId": "navicoAlarm",
           "pgn": 130825,
           "description": "Navico: Alarm",
@@ -38247,7 +38247,7 @@
           }
         },
         {
-          "id": "PgnNavicoAsciiIdentifier",
+          "id": "NavicoAsciiIdentifier",
           "sourceId": "navicoAsciiIdentifier",
           "pgn": 130847,
           "description": "Navico: ASCII Identifier",
@@ -38325,7 +38325,7 @@
           }
         },
         {
-          "id": "PgnNavicoProprietaryFp",
+          "id": "NavicoProprietaryFp",
           "sourceId": "navicoProprietaryFp",
           "pgn": 130849,
           "description": "Navico: Proprietary FP",
@@ -38393,7 +38393,7 @@
           }
         },
         {
-          "id": "PgnNavicoProprietary2Fp",
+          "id": "NavicoProprietary2Fp",
           "sourceId": "navicoProprietary2Fp",
           "pgn": 130852,
           "description": "Navico: Proprietary 2 FP",
@@ -38467,7 +38467,7 @@
       "name": "Yamaha",
       "pgns": [
         {
-          "id": "PgnYamahaGearStatus",
+          "id": "YamahaGearStatus",
           "sourceId": "yamahaGearStatus",
           "pgn": 65314,
           "description": "Yamaha: Gear Status",
@@ -38590,7 +38590,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineDataA",
+          "id": "YamahaEngineDataA",
           "sourceId": "yamahaEngineDataA",
           "pgn": 65329,
           "description": "Yamaha: Engine Data A",
@@ -38669,7 +38669,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineDataB",
+          "id": "YamahaEngineDataB",
           "sourceId": "yamahaEngineDataB",
           "pgn": 65344,
           "description": "Yamaha: Engine Data B",
@@ -38748,7 +38748,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineDataC",
+          "id": "YamahaEngineDataC",
           "sourceId": "yamahaEngineDataC",
           "pgn": 65424,
           "description": "Yamaha: Engine Data C",
@@ -38827,7 +38827,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineDataD",
+          "id": "YamahaEngineDataD",
           "sourceId": "yamahaEngineDataD",
           "pgn": 65472,
           "description": "Yamaha: Engine Data D",
@@ -38906,7 +38906,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData",
+          "id": "YamahaEngineData",
           "sourceId": "yamahaEngineData",
           "pgn": 130945,
           "description": "Yamaha: Engine Data",
@@ -38974,7 +38974,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData2",
+          "id": "YamahaEngineData2",
           "sourceId": "yamahaEngineData2",
           "pgn": 130946,
           "description": "Yamaha: Engine Data 2",
@@ -39042,7 +39042,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData3",
+          "id": "YamahaEngineData3",
           "sourceId": "yamahaEngineData3",
           "pgn": 130947,
           "description": "Yamaha: Engine Data 3",
@@ -39110,7 +39110,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData4",
+          "id": "YamahaEngineData4",
           "sourceId": "yamahaEngineData4",
           "pgn": 130951,
           "description": "Yamaha: Engine Data 4",
@@ -39178,7 +39178,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData5",
+          "id": "YamahaEngineData5",
           "sourceId": "yamahaEngineData5",
           "pgn": 131008,
           "description": "Yamaha: Engine Data 5",
@@ -39246,7 +39246,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData6",
+          "id": "YamahaEngineData6",
           "sourceId": "yamahaEngineData6",
           "pgn": 131011,
           "description": "Yamaha: Engine Data 6",
@@ -39314,7 +39314,7 @@
           }
         },
         {
-          "id": "PgnYamahaEngineData7",
+          "id": "YamahaEngineData7",
           "sourceId": "yamahaEngineData7",
           "pgn": 131012,
           "description": "Yamaha: Engine Data 7",
@@ -39388,7 +39388,7 @@
       "name": "B\u0026G",
       "pgns": [
         {
-          "id": "PgnBGProprietary",
+          "id": "BGProprietary",
           "sourceId": "bGProprietary",
           "pgn": 65330,
           "description": "B\u0026G: Proprietary",
@@ -39467,7 +39467,7 @@
           }
         },
         {
-          "id": "PgnBGKeyValueData",
+          "id": "BGKeyValueData",
           "sourceId": "bGKeyValueData",
           "pgn": 130824,
           "description": "B\u0026G: key-value data",
@@ -39564,7 +39564,7 @@
           }
         },
         {
-          "id": "PgnBGUserAndRemoteRename",
+          "id": "BGUserAndRemoteRename",
           "sourceId": "bGUserAndRemoteRename",
           "pgn": 130833,
           "description": "B\u0026G: User and Remote rename",
@@ -39703,7 +39703,7 @@
       "name": "Lumishore",
       "pgns": [
         {
-          "id": "PgnLumishoreLightStatus",
+          "id": "LumishoreLightStatus",
           "sourceId": "lumishoreLightStatus",
           "pgn": 65403,
           "description": "Lumishore: Light Status",
@@ -39837,7 +39837,7 @@
           }
         },
         {
-          "id": "PgnLumishoreProprietary",
+          "id": "LumishoreProprietary",
           "sourceId": "lumishoreProprietary",
           "pgn": 126720,
           "description": "Lumishore: Proprietary",
@@ -39915,7 +39915,7 @@
           }
         },
         {
-          "id": "PgnLumishoreLightControl",
+          "id": "LumishoreLightControl",
           "sourceId": "lumishoreLightControl",
           "pgn": 130939,
           "description": "Lumishore: Light Control",
@@ -40088,7 +40088,7 @@
       "name": "Fusion",
       "pgns": [
         {
-          "id": "PgnFusionMediaControl",
+          "id": "FusionMediaControl",
           "sourceId": "fusionMediaControl",
           "pgn": 126720,
           "description": "Fusion: Media Control",
@@ -40186,7 +40186,7 @@
           }
         },
         {
-          "id": "PgnFusionRequestStatus",
+          "id": "FusionRequestStatus",
           "sourceId": "fusionRequestStatus",
           "pgn": 126720,
           "description": "Fusion: Request Status",
@@ -40262,7 +40262,7 @@
           }
         },
         {
-          "id": "PgnFusionSetAllVolumes",
+          "id": "FusionSetAllVolumes",
           "sourceId": "fusionSetAllVolumes",
           "pgn": 126720,
           "description": "Fusion: Set All Volumes",
@@ -40382,7 +40382,7 @@
           }
         },
         {
-          "id": "PgnFusionSetMute",
+          "id": "FusionSetMute",
           "sourceId": "fusionSetMute",
           "pgn": 126720,
           "description": "Fusion: Set Mute",
@@ -40469,7 +40469,7 @@
           }
         },
         {
-          "id": "PgnFusionSetPower",
+          "id": "FusionSetPower",
           "sourceId": "fusionSetPower",
           "pgn": 126720,
           "description": "Fusion: Set Power ",
@@ -40559,7 +40559,7 @@
           }
         },
         {
-          "id": "PgnFusionSetSource",
+          "id": "FusionSetSource",
           "sourceId": "fusionSetSource",
           "pgn": 126720,
           "description": "Fusion: Set Source",
@@ -40646,7 +40646,7 @@
           }
         },
         {
-          "id": "PgnFusionSetZoneVolume",
+          "id": "FusionSetZoneVolume",
           "sourceId": "fusionSetZoneVolume",
           "pgn": 126720,
           "description": "Fusion: Set Zone Volume",
@@ -40744,7 +40744,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusControl",
+          "id": "FusionSiriusControl",
           "sourceId": "fusionSiriusControl",
           "pgn": 126720,
           "description": "Fusion: Sirius Control",
@@ -40853,7 +40853,7 @@
           }
         },
         {
-          "id": "PgnFusionAlbumName",
+          "id": "FusionAlbumName",
           "sourceId": "fusionAlbumName",
           "pgn": 130820,
           "description": "Fusion: Album Name",
@@ -40962,7 +40962,7 @@
           }
         },
         {
-          "id": "PgnFusionArtistName",
+          "id": "FusionArtistName",
           "sourceId": "fusionArtistName",
           "pgn": 130820,
           "description": "Fusion: Artist Name",
@@ -41071,7 +41071,7 @@
           }
         },
         {
-          "id": "PgnFusionAuxGain",
+          "id": "FusionAuxGain",
           "sourceId": "fusionAuxGain",
           "pgn": 130820,
           "description": "Fusion: Aux Gain",
@@ -41169,7 +41169,7 @@
           }
         },
         {
-          "id": "PgnFusionBalance",
+          "id": "FusionBalance",
           "sourceId": "fusionBalance",
           "pgn": 130820,
           "description": "Fusion: Balance",
@@ -41267,7 +41267,7 @@
           }
         },
         {
-          "id": "PgnFusionCapabilities",
+          "id": "FusionCapabilities",
           "sourceId": "fusionCapabilities",
           "pgn": 130820,
           "description": "Fusion: Capabilities",
@@ -41398,7 +41398,7 @@
           }
         },
         {
-          "id": "PgnFusionDeviceName",
+          "id": "FusionDeviceName",
           "sourceId": "fusionDeviceName",
           "pgn": 130820,
           "description": "Fusion: Device Name",
@@ -41485,7 +41485,7 @@
           }
         },
         {
-          "id": "PgnFusionEq",
+          "id": "FusionEq",
           "sourceId": "fusionEq",
           "pgn": 130820,
           "description": "Fusion: EQ",
@@ -41605,7 +41605,7 @@
           }
         },
         {
-          "id": "PgnFusionIgnitionSwitchState",
+          "id": "FusionIgnitionSwitchState",
           "sourceId": "fusionIgnitionSwitchState",
           "pgn": 130820,
           "description": "Fusion: Ignition Switch State",
@@ -41692,7 +41692,7 @@
           }
         },
         {
-          "id": "PgnFusionLineLevelControl",
+          "id": "FusionLineLevelControl",
           "sourceId": "fusionLineLevelControl",
           "pgn": 130820,
           "description": "Fusion: Line Level Control",
@@ -41790,7 +41790,7 @@
           }
         },
         {
-          "id": "PgnFusionLowPassFilter",
+          "id": "FusionLowPassFilter",
           "sourceId": "fusionLowPassFilter",
           "pgn": 130820,
           "description": "Fusion: Low Pass Filter",
@@ -41888,7 +41888,7 @@
           }
         },
         {
-          "id": "PgnFusionMarineTuner",
+          "id": "FusionMarineTuner",
           "sourceId": "fusionMarineTuner",
           "pgn": 130820,
           "description": "Fusion: MARINE_TUNER",
@@ -42008,7 +42008,7 @@
           }
         },
         {
-          "id": "PgnFusionMarineScanMode",
+          "id": "FusionMarineScanMode",
           "sourceId": "fusionMarineScanMode",
           "pgn": 130820,
           "description": "Fusion: Marine Scan Mode",
@@ -42106,7 +42106,7 @@
           }
         },
         {
-          "id": "PgnFusionMarineSquelch",
+          "id": "FusionMarineSquelch",
           "sourceId": "fusionMarineSquelch",
           "pgn": 130820,
           "description": "Fusion: Marine Squelch",
@@ -42204,7 +42204,7 @@
           }
         },
         {
-          "id": "PgnFusionMedia",
+          "id": "FusionMedia",
           "sourceId": "fusionMedia",
           "pgn": 130820,
           "description": "Fusion: Media",
@@ -42348,7 +42348,7 @@
           }
         },
         {
-          "id": "PgnFusionMenuItem",
+          "id": "FusionMenuItem",
           "sourceId": "fusionMenuItem",
           "pgn": 130820,
           "description": "Fusion: Menu Item",
@@ -42479,7 +42479,7 @@
           }
         },
         {
-          "id": "PgnFusionMenuLockId",
+          "id": "FusionMenuLockId",
           "sourceId": "fusionMenuLockId",
           "pgn": 130820,
           "description": "Fusion: Menu Lock Id",
@@ -42577,7 +42577,7 @@
           }
         },
         {
-          "id": "PgnFusionMono",
+          "id": "FusionMono",
           "sourceId": "fusionMono",
           "pgn": 130820,
           "description": "Fusion: Mono",
@@ -42675,7 +42675,7 @@
           }
         },
         {
-          "id": "PgnFusionMultiroom",
+          "id": "FusionMultiroom",
           "sourceId": "fusionMultiroom",
           "pgn": 130820,
           "description": "Fusion: Multiroom",
@@ -42806,7 +42806,7 @@
           }
         },
         {
-          "id": "PgnFusionMultiroomStatus",
+          "id": "FusionMultiroomStatus",
           "sourceId": "fusionMultiroomStatus",
           "pgn": 130820,
           "description": "Fusion: Multiroom Status",
@@ -42893,7 +42893,7 @@
           }
         },
         {
-          "id": "PgnFusionMute",
+          "id": "FusionMute",
           "sourceId": "fusionMute",
           "pgn": 130820,
           "description": "Fusion: Mute",
@@ -42980,7 +42980,7 @@
           }
         },
         {
-          "id": "PgnFusionPowerState",
+          "id": "FusionPowerState",
           "sourceId": "fusionPowerState",
           "pgn": 130820,
           "description": "Fusion: Power State",
@@ -43067,7 +43067,7 @@
           }
         },
         {
-          "id": "PgnFusionProcessingBypass",
+          "id": "FusionProcessingBypass",
           "sourceId": "fusionProcessingBypass",
           "pgn": 130820,
           "description": "Fusion: Processing Bypass",
@@ -43154,7 +43154,7 @@
           }
         },
         {
-          "id": "PgnFusionRdsData",
+          "id": "FusionRdsData",
           "sourceId": "fusionRdsData",
           "pgn": 130820,
           "description": "Fusion: RDS Data",
@@ -43274,7 +43274,7 @@
           }
         },
         {
-          "id": "PgnFusionSetting",
+          "id": "FusionSetting",
           "sourceId": "fusionSetting",
           "pgn": 130820,
           "description": "Fusion: Setting",
@@ -43372,7 +43372,7 @@
           }
         },
         {
-          "id": "PgnFusionSettings",
+          "id": "FusionSettings",
           "sourceId": "fusionSettings",
           "pgn": 130820,
           "description": "Fusion: Settings",
@@ -43481,7 +43481,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxm",
+          "id": "FusionSiriusxm",
           "sourceId": "fusionSiriusxm",
           "pgn": 130820,
           "description": "Fusion: SiriusXM",
@@ -43612,7 +43612,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmArtist",
+          "id": "FusionSiriusxmArtist",
           "sourceId": "fusionSiriusxmArtist",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Artist",
@@ -43721,7 +43721,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmCategory",
+          "id": "FusionSiriusxmCategory",
           "sourceId": "fusionSiriusxmCategory",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Category",
@@ -43830,7 +43830,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmChannel",
+          "id": "FusionSiriusxmChannel",
           "sourceId": "fusionSiriusxmChannel",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Channel",
@@ -43939,7 +43939,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmContentInfo",
+          "id": "FusionSiriusxmContentInfo",
           "sourceId": "fusionSiriusxmContentInfo",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Content Info",
@@ -44048,7 +44048,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmPresets",
+          "id": "FusionSiriusxmPresets",
           "sourceId": "fusionSiriusxmPresets",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Presets",
@@ -44157,7 +44157,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmSignal",
+          "id": "FusionSiriusxmSignal",
           "sourceId": "fusionSiriusxmSignal",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Signal",
@@ -44255,7 +44255,7 @@
           }
         },
         {
-          "id": "PgnFusionSiriusxmTitle",
+          "id": "FusionSiriusxmTitle",
           "sourceId": "fusionSiriusxmTitle",
           "pgn": 130820,
           "description": "Fusion: SiriusXM Title",
@@ -44364,7 +44364,7 @@
           }
         },
         {
-          "id": "PgnFusionSource",
+          "id": "FusionSource",
           "sourceId": "fusionSource",
           "pgn": 130820,
           "description": "Fusion: Source",
@@ -44495,7 +44495,7 @@
           }
         },
         {
-          "id": "PgnFusionSourceCount",
+          "id": "FusionSourceCount",
           "sourceId": "fusionSourceCount",
           "pgn": 130820,
           "description": "Fusion: Source Count",
@@ -44582,7 +44582,7 @@
           }
         },
         {
-          "id": "PgnFusionSpeedVolumeCurrentSpeed",
+          "id": "FusionSpeedVolumeCurrentSpeed",
           "sourceId": "fusionSpeedVolumeCurrentSpeed",
           "pgn": 130820,
           "description": "Fusion: Speed Volume Current Speed",
@@ -44691,7 +44691,7 @@
           }
         },
         {
-          "id": "PgnFusionSublevels",
+          "id": "FusionSublevels",
           "sourceId": "fusionSublevels",
           "pgn": 130820,
           "description": "Fusion: Sublevels",
@@ -44811,7 +44811,7 @@
           }
         },
         {
-          "id": "PgnFusionTrackName",
+          "id": "FusionTrackName",
           "sourceId": "fusionTrackName",
           "pgn": 130820,
           "description": "Fusion: Track Name",
@@ -44920,7 +44920,7 @@
           }
         },
         {
-          "id": "PgnFusionTrackPosition",
+          "id": "FusionTrackPosition",
           "sourceId": "fusionTrackPosition",
           "pgn": 130820,
           "description": "Fusion: Track Position",
@@ -45019,7 +45019,7 @@
           }
         },
         {
-          "id": "PgnFusionTuner",
+          "id": "FusionTuner",
           "sourceId": "fusionTuner",
           "pgn": 130820,
           "description": "Fusion: Tuner",
@@ -45151,7 +45151,7 @@
           }
         },
         {
-          "id": "PgnFusionUsbRepeatStatus",
+          "id": "FusionUsbRepeatStatus",
           "sourceId": "fusionUsbRepeatStatus",
           "pgn": 130820,
           "description": "Fusion: USB Repeat Status",
@@ -45250,7 +45250,7 @@
           }
         },
         {
-          "id": "PgnFusionVersions",
+          "id": "FusionVersions",
           "sourceId": "fusionVersions",
           "pgn": 130820,
           "description": "Fusion: Versions",
@@ -45381,7 +45381,7 @@
           }
         },
         {
-          "id": "PgnFusionVolumeLimits",
+          "id": "FusionVolumeLimits",
           "sourceId": "fusionVolumeLimits",
           "pgn": 130820,
           "description": "Fusion: Volume Limits",
@@ -45501,7 +45501,7 @@
           }
         },
         {
-          "id": "PgnFusionVolumes",
+          "id": "FusionVolumes",
           "sourceId": "fusionVolumes",
           "pgn": 130820,
           "description": "Fusion: Volumes",
@@ -45621,7 +45621,7 @@
           }
         },
         {
-          "id": "PgnFusionZoneName",
+          "id": "FusionZoneName",
           "sourceId": "fusionZoneName",
           "pgn": 130820,
           "description": "Fusion: Zone Name",
@@ -45725,7 +45725,7 @@
       "name": "Garmin",
       "pgns": [
         {
-          "id": "PgnGarminAhrsAttCogSourceValidFlag",
+          "id": "GarminAhrsAttCogSourceValidFlag",
           "sourceId": "garminAhrsAttCogSourceValidFlag",
           "pgn": 126720,
           "description": "Garmin AHRS ATT: COG Source Valid Flag",
@@ -45851,7 +45851,7 @@
           }
         },
         {
-          "id": "PgnGarminAhrsAttDeviceFlags",
+          "id": "GarminAhrsAttDeviceFlags",
           "sourceId": "garminAhrsAttDeviceFlags",
           "pgn": 126720,
           "description": "Garmin AHRS ATT: Device Flags",
@@ -45977,7 +45977,7 @@
           }
         },
         {
-          "id": "PgnGarminAhrsAttNonDefaultCalibrationMatrixPresent",
+          "id": "GarminAhrsAttNonDefaultCalibrationMatrixPresent",
           "sourceId": "garminAhrsAttNonDefaultCalibrationMatrixPresent",
           "pgn": 126720,
           "description": "Garmin AHRS ATT: Non-default Calibration Matrix Present",
@@ -46103,7 +46103,7 @@
           }
         },
         {
-          "id": "PgnGarminAhrsAttSetNorthState",
+          "id": "GarminAhrsAttSetNorthState",
           "sourceId": "garminAhrsAttSetNorthState",
           "pgn": 126720,
           "description": "Garmin AHRS ATT: Set North State",
@@ -46229,7 +46229,7 @@
           }
         },
         {
-          "id": "PgnGarminColorMode",
+          "id": "GarminColorMode",
           "sourceId": "garminColorMode",
           "pgn": 126720,
           "description": "Garmin: Color mode",
@@ -46389,7 +46389,7 @@
           }
         },
         {
-          "id": "PgnGarminDayMode",
+          "id": "GarminDayMode",
           "sourceId": "garminDayMode",
           "pgn": 126720,
           "description": "Garmin: Day Mode",
@@ -46549,7 +46549,7 @@
           }
         },
         {
-          "id": "PgnGarminNightMode",
+          "id": "GarminNightMode",
           "sourceId": "garminNightMode",
           "pgn": 126720,
           "description": "Garmin: Night Mode",
@@ -46715,7 +46715,7 @@
       "name": "Navigation",
       "pgns": [
         {
-          "id": "PgnHeadingTrackControl",
+          "id": "HeadingTrackControl",
           "sourceId": "headingTrackControl",
           "pgn": 127237,
           "description": "Heading/Track control",
@@ -46948,7 +46948,7 @@
           }
         },
         {
-          "id": "PgnVesselHeading",
+          "id": "VesselHeading",
           "sourceId": "vesselHeading",
           "pgn": 127250,
           "description": "Vessel Heading",
@@ -47043,7 +47043,7 @@
           }
         },
         {
-          "id": "PgnVesselAcceleration",
+          "id": "VesselAcceleration",
           "sourceId": "vesselAcceleration",
           "pgn": 128001,
           "description": "Vessel Acceleration",
@@ -47131,7 +47131,7 @@
           }
         },
         {
-          "id": "PgnDistanceLog",
+          "id": "DistanceLog",
           "sourceId": "distanceLog",
           "pgn": 128275,
           "description": "Distance Log",
@@ -47205,7 +47205,7 @@
           }
         },
         {
-          "id": "PgnPositionRapidUpdate",
+          "id": "PositionRapidUpdate",
           "sourceId": "positionRapidUpdate",
           "pgn": 129025,
           "description": "Position, Rapid Update",
@@ -47255,7 +47255,7 @@
           }
         },
         {
-          "id": "PgnCogSogRapidUpdate",
+          "id": "CogSogRapidUpdate",
           "sourceId": "cogSogRapidUpdate",
           "pgn": 129026,
           "description": "COG \u0026 SOG, Rapid Update",
@@ -47349,7 +47349,7 @@
           }
         },
         {
-          "id": "PgnPositionDeltaRapidUpdate",
+          "id": "PositionDeltaRapidUpdate",
           "sourceId": "positionDeltaRapidUpdate",
           "pgn": 129027,
           "description": "Position Delta, Rapid Update",
@@ -47425,7 +47425,7 @@
           }
         },
         {
-          "id": "PgnAltitudeDeltaRapidUpdate",
+          "id": "AltitudeDeltaRapidUpdate",
           "sourceId": "altitudeDeltaRapidUpdate",
           "pgn": 129028,
           "description": "Altitude Delta, Rapid Update",
@@ -47534,7 +47534,7 @@
           }
         },
         {
-          "id": "PgnGnssPositionData",
+          "id": "GnssPositionData",
           "sourceId": "gnssPositionData",
           "pgn": 129029,
           "description": "GNSS Position Data",
@@ -47765,7 +47765,7 @@
           }
         },
         {
-          "id": "PgnTimeDate",
+          "id": "TimeDate",
           "sourceId": "timeDate",
           "pgn": 129033,
           "description": "Time \u0026 Date",
@@ -47827,7 +47827,7 @@
           }
         },
         {
-          "id": "PgnDatum",
+          "id": "Datum",
           "sourceId": "datum",
           "pgn": 129044,
           "description": "Datum",
@@ -47911,7 +47911,7 @@
           }
         },
         {
-          "id": "PgnUserDatum",
+          "id": "UserDatum",
           "sourceId": "userDatum",
           "pgn": 129045,
           "description": "User Datum",
@@ -48055,7 +48055,7 @@
           }
         },
         {
-          "id": "PgnCrossTrackError",
+          "id": "CrossTrackError",
           "sourceId": "crossTrackError",
           "pgn": 129283,
           "description": "Cross Track Error",
@@ -48148,7 +48148,7 @@
           }
         },
         {
-          "id": "PgnNavigationData",
+          "id": "NavigationData",
           "sourceId": "navigationData",
           "pgn": 129284,
           "description": "Navigation Data",
@@ -48347,7 +48347,7 @@
           }
         },
         {
-          "id": "PgnNavigationRouteWpInformation",
+          "id": "NavigationRouteWpInformation",
           "sourceId": "navigationRouteWpInformation",
           "pgn": 129285,
           "description": "Navigation - Route/WP Information",
@@ -48518,7 +48518,7 @@
           }
         },
         {
-          "id": "PgnNavigationRouteTimeToFromMark",
+          "id": "NavigationRouteTimeToFromMark",
           "sourceId": "navigationRouteTimeToFromMark",
           "pgn": 129301,
           "description": "Navigation - Route / Time to+from Mark",
@@ -48600,7 +48600,7 @@
           }
         },
         {
-          "id": "PgnBearingAndDistanceBetweenTwoMarks",
+          "id": "BearingAndDistanceBetweenTwoMarks",
           "sourceId": "bearingAndDistanceBetweenTwoMarks",
           "pgn": 129302,
           "description": "Bearing and Distance between two Marks",
@@ -48742,7 +48742,7 @@
           }
         },
         {
-          "id": "PgnGnssControlStatus",
+          "id": "GnssControlStatus",
           "sourceId": "gnssControlStatus",
           "pgn": 129538,
           "description": "GNSS Control Status",
@@ -48893,7 +48893,7 @@
           }
         },
         {
-          "id": "PgnGnssDops",
+          "id": "GnssDops",
           "sourceId": "gnssDops",
           "pgn": 129539,
           "description": "GNSS DOPs",
@@ -48996,7 +48996,7 @@
           }
         },
         {
-          "id": "PgnGnssSatsInView",
+          "id": "GnssSatsInView",
           "sourceId": "gnssSatsInView",
           "pgn": 129540,
           "description": "GNSS Sats in View",
@@ -49147,7 +49147,7 @@
           }
         },
         {
-          "id": "PgnGpsAlmanacData",
+          "id": "GpsAlmanacData",
           "sourceId": "gpsAlmanacData",
           "pgn": 129541,
           "description": "GPS Almanac Data",
@@ -49340,7 +49340,7 @@
           }
         },
         {
-          "id": "PgnGnssPseudorangeNoiseStatistics",
+          "id": "GnssPseudorangeNoiseStatistics",
           "sourceId": "gnssPseudorangeNoiseStatistics",
           "pgn": 129542,
           "description": "GNSS Pseudorange Noise Statistics",
@@ -49464,7 +49464,7 @@
           }
         },
         {
-          "id": "PgnGnssRaimOutput",
+          "id": "GnssRaimOutput",
           "sourceId": "gnssRaimOutput",
           "pgn": 129545,
           "description": "GNSS RAIM Output",
@@ -49609,7 +49609,7 @@
           }
         },
         {
-          "id": "PgnGnssRaimSettings",
+          "id": "GnssRaimSettings",
           "sourceId": "gnssRaimSettings",
           "pgn": 129546,
           "description": "GNSS RAIM Settings",
@@ -49694,7 +49694,7 @@
           }
         },
         {
-          "id": "PgnGnssPseudorangeErrorStatistics",
+          "id": "GnssPseudorangeErrorStatistics",
           "sourceId": "gnssPseudorangeErrorStatistics",
           "pgn": 129547,
           "description": "GNSS Pseudorange Error Statistics",
@@ -49815,7 +49815,7 @@
           }
         },
         {
-          "id": "PgnDgnssCorrections",
+          "id": "DgnssCorrections",
           "sourceId": "dgnssCorrections",
           "pgn": 129549,
           "description": "DGNSS Corrections",
@@ -49966,7 +49966,7 @@
           }
         },
         {
-          "id": "PgnGnssDifferentialCorrectionReceiverInterface",
+          "id": "GnssDifferentialCorrectionReceiverInterface",
           "sourceId": "gnssDifferentialCorrectionReceiverInterface",
           "pgn": 129550,
           "description": "GNSS Differential Correction Receiver Interface",
@@ -50070,7 +50070,7 @@
           }
         },
         {
-          "id": "PgnGnssDifferentialCorrectionReceiverSignal",
+          "id": "GnssDifferentialCorrectionReceiverSignal",
           "sourceId": "gnssDifferentialCorrectionReceiverSignal",
           "pgn": 129551,
           "description": "GNSS Differential Correction Receiver Signal",
@@ -50254,7 +50254,7 @@
           }
         },
         {
-          "id": "PgnGlonassAlmanacData",
+          "id": "GlonassAlmanacData",
           "sourceId": "glonassAlmanacData",
           "pgn": 129556,
           "description": "GLONASS Almanac Data",
@@ -50434,7 +50434,7 @@
           }
         },
         {
-          "id": "PgnLoranCTdData",
+          "id": "LoranCTdData",
           "sourceId": "loranCTdData",
           "pgn": 130052,
           "description": "Loran-C TD Data",
@@ -50635,7 +50635,7 @@
           }
         },
         {
-          "id": "PgnLoranCRangeData",
+          "id": "LoranCRangeData",
           "sourceId": "loranCRangeData",
           "pgn": 130053,
           "description": "Loran-C Range Data",
@@ -50836,7 +50836,7 @@
           }
         },
         {
-          "id": "PgnLoranCSignalData",
+          "id": "LoranCSignalData",
           "sourceId": "loranCSignalData",
           "pgn": 130054,
           "description": "Loran-C Signal Data",
@@ -50924,7 +50924,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceDatabaseList",
+          "id": "RouteAndWpServiceDatabaseList",
           "sourceId": "routeAndWpServiceDatabaseList",
           "pgn": 130064,
           "description": "Route and WP Service - Database List",
@@ -51084,7 +51084,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRouteList",
+          "id": "RouteAndWpServiceRouteList",
           "sourceId": "routeAndWpServiceRouteList",
           "pgn": 130065,
           "description": "Route and WP Service - Route List",
@@ -51209,7 +51209,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRouteWpListAttributes",
+          "id": "RouteAndWpServiceRouteWpListAttributes",
           "sourceId": "routeAndWpServiceRouteWpListAttributes",
           "pgn": 130066,
           "description": "Route and WP Service - Route/WP-List Attributes",
@@ -51370,7 +51370,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRouteWpNamePosition",
+          "id": "RouteAndWpServiceRouteWpNamePosition",
           "sourceId": "routeAndWpServiceRouteWpNamePosition",
           "pgn": 130067,
           "description": "Route and WP Service - Route - WP Name \u0026 Position",
@@ -51497,7 +51497,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRouteWpName",
+          "id": "RouteAndWpServiceRouteWpName",
           "sourceId": "routeAndWpServiceRouteWpName",
           "pgn": 130068,
           "description": "Route and WP Service - Route - WP Name",
@@ -51600,7 +51600,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceXteLimitNavigationMethod",
+          "id": "RouteAndWpServiceXteLimitNavigationMethod",
           "sourceId": "routeAndWpServiceXteLimitNavigationMethod",
           "pgn": 130069,
           "description": "Route and WP Service - XTE Limit \u0026 Navigation Method",
@@ -51726,7 +51726,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceWpComment",
+          "id": "RouteAndWpServiceWpComment",
           "sourceId": "routeAndWpServiceWpComment",
           "pgn": 130070,
           "description": "Route and WP Service - WP Comment",
@@ -51829,7 +51829,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRouteComment",
+          "id": "RouteAndWpServiceRouteComment",
           "sourceId": "routeAndWpServiceRouteComment",
           "pgn": 130071,
           "description": "Route and WP Service - Route Comment",
@@ -51921,7 +51921,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceDatabaseComment",
+          "id": "RouteAndWpServiceDatabaseComment",
           "sourceId": "routeAndWpServiceDatabaseComment",
           "pgn": 130072,
           "description": "Route and WP Service - Database Comment",
@@ -52002,7 +52002,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceRadiusOfTurn",
+          "id": "RouteAndWpServiceRadiusOfTurn",
           "sourceId": "routeAndWpServiceRadiusOfTurn",
           "pgn": 130073,
           "description": "Route and WP Service - Radius of Turn",
@@ -52106,7 +52106,7 @@
           }
         },
         {
-          "id": "PgnRouteAndWpServiceWpListWpNamePosition",
+          "id": "RouteAndWpServiceWpListWpNamePosition",
           "sourceId": "routeAndWpServiceWpListWpNamePosition",
           "pgn": 130074,
           "description": "Route and WP Service - WP List - WP Name \u0026 Position",
@@ -52233,7 +52233,7 @@
           }
         },
         {
-          "id": "PgnDirectionData",
+          "id": "DirectionData",
           "sourceId": "directionData",
           "pgn": 130577,
           "description": "Direction Data",
@@ -52381,7 +52381,7 @@
       "name": "Propulsion",
       "pgns": [
         {
-          "id": "PgnRudder",
+          "id": "Rudder",
           "sourceId": "rudder",
           "pgn": 127245,
           "description": "Rudder",
@@ -52475,7 +52475,7 @@
           }
         },
         {
-          "id": "PgnElectricDriveStatusDynamic",
+          "id": "ElectricDriveStatusDynamic",
           "sourceId": "electricDriveStatusDynamic",
           "pgn": 127490,
           "description": "Electric Drive Status, Dynamic",
@@ -52599,7 +52599,7 @@
           }
         },
         {
-          "id": "PgnElectricDriveInformation",
+          "id": "ElectricDriveInformation",
           "sourceId": "electricDriveInformation",
           "pgn": 127494,
           "description": "Electric Drive Information",
@@ -52783,7 +52783,7 @@
           }
         },
         {
-          "id": "PgnElectricDriveStatusRapidUpdate",
+          "id": "ElectricDriveStatusRapidUpdate",
           "sourceId": "electricDriveStatusRapidUpdate",
           "pgn": 128002,
           "description": "Electric Drive Status, Rapid Update",
@@ -52895,7 +52895,7 @@
           }
         },
         {
-          "id": "PgnThrusterControlStatus",
+          "id": "ThrusterControlStatus",
           "sourceId": "thrusterControlStatus",
           "pgn": 128006,
           "description": "Thruster Control Status",
@@ -53026,7 +53026,7 @@
           }
         },
         {
-          "id": "PgnThrusterInformation",
+          "id": "ThrusterInformation",
           "sourceId": "thrusterInformation",
           "pgn": 128007,
           "description": "Thruster Information",
@@ -53124,7 +53124,7 @@
           }
         },
         {
-          "id": "PgnThrusterMotorStatus",
+          "id": "ThrusterMotorStatus",
           "sourceId": "thrusterMotorStatus",
           "pgn": 128008,
           "description": "Thruster Motor Status",
@@ -53228,7 +53228,7 @@
       "name": "Engine",
       "pgns": [
         {
-          "id": "PgnEngineParametersRapidUpdate",
+          "id": "EngineParametersRapidUpdate",
           "sourceId": "engineParametersRapidUpdate",
           "pgn": 127488,
           "description": "Engine Parameters, Rapid Update",
@@ -53312,7 +53312,7 @@
           }
         },
         {
-          "id": "PgnEngineParametersDynamic",
+          "id": "EngineParametersDynamic",
           "sourceId": "engineParametersDynamic",
           "pgn": 127489,
           "description": "Engine Parameters, Dynamic",
@@ -53502,7 +53502,7 @@
           }
         },
         {
-          "id": "PgnTransmissionParametersDynamic",
+          "id": "TransmissionParametersDynamic",
           "sourceId": "transmissionParametersDynamic",
           "pgn": 127493,
           "description": "Transmission Parameters, Dynamic",
@@ -53607,7 +53607,7 @@
           }
         },
         {
-          "id": "PgnTripParametersEngine",
+          "id": "TripParametersEngine",
           "sourceId": "tripParametersEngine",
           "pgn": 127497,
           "description": "Trip Parameters, Engine",
@@ -53692,7 +53692,7 @@
           }
         },
         {
-          "id": "PgnEngineParametersStatic",
+          "id": "EngineParametersStatic",
           "sourceId": "engineParametersStatic",
           "pgn": 127498,
           "description": "Engine Parameters, Static",
@@ -53769,7 +53769,7 @@
       "name": "Equipment",
       "pgns": [
         {
-          "id": "PgnFluidLevel",
+          "id": "FluidLevel",
           "sourceId": "fluidLevel",
           "pgn": 127505,
           "description": "Fluid Level",
@@ -53852,7 +53852,7 @@
           }
         },
         {
-          "id": "PgnElevatorCarStatus",
+          "id": "ElevatorCarStatus",
           "sourceId": "elevatorCarStatus",
           "pgn": 128538,
           "description": "Elevator Car Status",
@@ -54238,7 +54238,7 @@
           }
         },
         {
-          "id": "PgnElevatorMotorControl",
+          "id": "ElevatorMotorControl",
           "sourceId": "elevatorMotorControl",
           "pgn": 128768,
           "description": "Elevator Motor Control",
@@ -54337,7 +54337,7 @@
           }
         },
         {
-          "id": "PgnElevatorDeckPushButton",
+          "id": "ElevatorDeckPushButton",
           "sourceId": "elevatorDeckPushButton",
           "pgn": 128769,
           "description": "Elevator Deck Push Button",
@@ -54436,7 +54436,7 @@
           }
         },
         {
-          "id": "PgnLinearActuatorControlStatus",
+          "id": "LinearActuatorControlStatus",
           "sourceId": "linearActuatorControlStatus",
           "pgn": 128780,
           "description": "Linear Actuator Control/Status",
@@ -54534,7 +54534,7 @@
           }
         },
         {
-          "id": "PgnPayloadMass",
+          "id": "PayloadMass",
           "sourceId": "payloadMass",
           "pgn": 130560,
           "description": "Payload Mass",
@@ -54631,7 +54631,7 @@
           }
         },
         {
-          "id": "PgnWatermakerInputSettingAndStatus",
+          "id": "WatermakerInputSettingAndStatus",
           "sourceId": "watermakerInputSettingAndStatus",
           "pgn": 130567,
           "description": "Watermaker Input Setting and Status",
@@ -54928,7 +54928,7 @@
       "name": "Environmental",
       "pgns": [
         {
-          "id": "PgnWaterDepth",
+          "id": "WaterDepth",
           "sourceId": "waterDepth",
           "pgn": 128267,
           "description": "Water Depth",
@@ -55001,7 +55001,7 @@
           }
         },
         {
-          "id": "PgnWindlassControlStatus",
+          "id": "WindlassControlStatus",
           "sourceId": "windlassControlStatus",
           "pgn": 128776,
           "description": "Windlass Control Status",
@@ -55185,7 +55185,7 @@
           }
         },
         {
-          "id": "PgnAnchorWindlassOperatingStatus",
+          "id": "AnchorWindlassOperatingStatus",
           "sourceId": "anchorWindlassOperatingStatus",
           "pgn": 128777,
           "description": "Anchor Windlass Operating Status",
@@ -55326,7 +55326,7 @@
           }
         },
         {
-          "id": "PgnAnchorWindlassMonitoringStatus",
+          "id": "AnchorWindlassMonitoringStatus",
           "sourceId": "anchorWindlassMonitoringStatus",
           "pgn": 128778,
           "description": "Anchor Windlass Monitoring Status",
@@ -55435,7 +55435,7 @@
           }
         },
         {
-          "id": "PgnSetDriftRapidUpdate",
+          "id": "SetDriftRapidUpdate",
           "sourceId": "setDriftRapidUpdate",
           "pgn": 129291,
           "description": "Set \u0026 Drift, Rapid Update",
@@ -55529,7 +55529,7 @@
           }
         },
         {
-          "id": "PgnLabel",
+          "id": "Label",
           "sourceId": "label",
           "pgn": 130060,
           "description": "Label",
@@ -55649,7 +55649,7 @@
           }
         },
         {
-          "id": "PgnChannelSourceConfiguration",
+          "id": "ChannelSourceConfiguration",
           "sourceId": "channelSourceConfiguration",
           "pgn": 130061,
           "description": "Channel Source Configuration",
@@ -55801,7 +55801,7 @@
           }
         },
         {
-          "id": "PgnWindData",
+          "id": "WindData",
           "sourceId": "windData",
           "pgn": 130306,
           "description": "Wind Data",
@@ -55884,7 +55884,7 @@
           }
         },
         {
-          "id": "PgnEnvironmentalParametersObsolete",
+          "id": "EnvironmentalParametersObsolete",
           "sourceId": "environmentalParametersObsolete",
           "pgn": 130310,
           "description": "Environmental Parameters (obsolete)",
@@ -55968,7 +55968,7 @@
           }
         },
         {
-          "id": "PgnEnvironmentalParameters",
+          "id": "EnvironmentalParameters",
           "sourceId": "environmentalParameters",
           "pgn": 130311,
           "description": "Environmental Parameters",
@@ -56063,7 +56063,7 @@
           }
         },
         {
-          "id": "PgnTemperature",
+          "id": "Temperature",
           "sourceId": "temperature",
           "pgn": 130312,
           "description": "Temperature",
@@ -56157,7 +56157,7 @@
           }
         },
         {
-          "id": "PgnHumidity",
+          "id": "Humidity",
           "sourceId": "humidity",
           "pgn": 130313,
           "description": "Humidity",
@@ -56251,7 +56251,7 @@
           }
         },
         {
-          "id": "PgnActualPressure",
+          "id": "ActualPressure",
           "sourceId": "actualPressure",
           "pgn": 130314,
           "description": "Actual Pressure",
@@ -56333,7 +56333,7 @@
           }
         },
         {
-          "id": "PgnSetPressure",
+          "id": "SetPressure",
           "sourceId": "setPressure",
           "pgn": 130315,
           "description": "Set Pressure",
@@ -56415,7 +56415,7 @@
           }
         },
         {
-          "id": "PgnTemperatureExtendedRange",
+          "id": "TemperatureExtendedRange",
           "sourceId": "temperatureExtendedRange",
           "pgn": 130316,
           "description": "Temperature Extended Range",
@@ -56498,7 +56498,7 @@
           }
         },
         {
-          "id": "PgnTideStationData",
+          "id": "TideStationData",
           "sourceId": "tideStationData",
           "pgn": 130320,
           "description": "Tide Station Data",
@@ -56651,7 +56651,7 @@
           }
         },
         {
-          "id": "PgnSalinityStationData",
+          "id": "SalinityStationData",
           "sourceId": "salinityStationData",
           "pgn": 130321,
           "description": "Salinity Station Data",
@@ -56796,7 +56796,7 @@
           }
         },
         {
-          "id": "PgnCurrentStationData",
+          "id": "CurrentStationData",
           "sourceId": "currentStationData",
           "pgn": 130322,
           "description": "Current Station Data",
@@ -56976,7 +56976,7 @@
           }
         },
         {
-          "id": "PgnMeteorologicalStationData",
+          "id": "MeteorologicalStationData",
           "sourceId": "meteorologicalStationData",
           "pgn": 130323,
           "description": "Meteorological Station Data",
@@ -57179,7 +57179,7 @@
           }
         },
         {
-          "id": "PgnMooredBuoyStationData",
+          "id": "MooredBuoyStationData",
           "sourceId": "mooredBuoyStationData",
           "pgn": 130324,
           "description": "Moored Buoy Station Data",
@@ -57419,7 +57419,7 @@
           }
         },
         {
-          "id": "PgnEntertainmentDiagnosticStatus",
+          "id": "EntertainmentDiagnosticStatus",
           "sourceId": "entertainmentDiagnosticStatus",
           "pgn": 130568,
           "description": "Entertainment - Diagnostic Status",
@@ -57507,7 +57507,7 @@
           }
         },
         {
-          "id": "PgnLibraryDataFile",
+          "id": "LibraryDataFile",
           "sourceId": "libraryDataFile",
           "pgn": 130570,
           "description": "Library Data File",
@@ -57728,7 +57728,7 @@
           }
         },
         {
-          "id": "PgnLibraryDataGroup",
+          "id": "LibraryDataGroup",
           "sourceId": "libraryDataGroup",
           "pgn": 130571,
           "description": "Library Data Group",
@@ -57893,7 +57893,7 @@
           }
         },
         {
-          "id": "PgnLibraryDataSearch",
+          "id": "LibraryDataSearch",
           "sourceId": "libraryDataSearch",
           "pgn": 130572,
           "description": "Library Data Search",
@@ -58025,7 +58025,7 @@
           }
         },
         {
-          "id": "PgnSupportedSourceData",
+          "id": "SupportedSourceData",
           "sourceId": "supportedSourceData",
           "pgn": 130573,
           "description": "Supported Source Data",
@@ -58201,7 +58201,7 @@
           }
         },
         {
-          "id": "PgnSupportedZoneData",
+          "id": "SupportedZoneData",
           "sourceId": "supportedZoneData",
           "pgn": 130574,
           "description": "Supported Zone Data",
@@ -58288,7 +58288,7 @@
           }
         },
         {
-          "id": "PgnEntertainmentParentalControlStatus",
+          "id": "EntertainmentParentalControlStatus",
           "sourceId": "entertainmentParentalControlStatus",
           "pgn": 130575,
           "description": "Entertainment - Parental Control Status",
@@ -58409,7 +58409,7 @@
           }
         },
         {
-          "id": "PgnSmallCraftStatus",
+          "id": "SmallCraftStatus",
           "sourceId": "smallCraftStatus",
           "pgn": 130576,
           "description": "Small Craft Status",
@@ -58470,7 +58470,7 @@
           }
         },
         {
-          "id": "PgnVesselSpeedComponents",
+          "id": "VesselSpeedComponents",
           "sourceId": "vesselSpeedComponents",
           "pgn": 130578,
           "description": "Vessel Speed Components",
@@ -58568,7 +58568,7 @@
           }
         },
         {
-          "id": "PgnSystemConfiguration",
+          "id": "SystemConfiguration",
           "sourceId": "systemConfiguration",
           "pgn": 130579,
           "description": "System Configuration",
@@ -58665,7 +58665,7 @@
           }
         },
         {
-          "id": "PgnSystemConfigurationDeprecated",
+          "id": "SystemConfigurationDeprecated",
           "sourceId": "systemConfigurationDeprecated",
           "pgn": 130580,
           "description": "System Configuration (deprecated)",
@@ -58740,7 +58740,7 @@
           }
         },
         {
-          "id": "PgnZoneConfigurationDeprecated",
+          "id": "ZoneConfigurationDeprecated",
           "sourceId": "zoneConfigurationDeprecated",
           "pgn": 130581,
           "description": "Zone Configuration (deprecated)",
@@ -58826,7 +58826,7 @@
           }
         },
         {
-          "id": "PgnZoneVolume",
+          "id": "ZoneVolume",
           "sourceId": "zoneVolume",
           "pgn": 130582,
           "description": "Zone Volume",
@@ -58935,7 +58935,7 @@
           }
         },
         {
-          "id": "PgnAvailableAudioEqPresets",
+          "id": "AvailableAudioEqPresets",
           "sourceId": "availableAudioEqPresets",
           "pgn": 130583,
           "description": "Available Audio EQ presets",
@@ -59021,7 +59021,7 @@
           }
         },
         {
-          "id": "PgnAvailableBluetoothAddresses",
+          "id": "AvailableBluetoothAddresses",
           "sourceId": "availableBluetoothAddresses",
           "pgn": 130584,
           "description": "Available Bluetooth addresses",
@@ -59129,7 +59129,7 @@
           }
         },
         {
-          "id": "PgnBluetoothSourceStatus",
+          "id": "BluetoothSourceStatus",
           "sourceId": "bluetoothSourceStatus",
           "pgn": 130585,
           "description": "Bluetooth source status",
@@ -59215,7 +59215,7 @@
           }
         },
         {
-          "id": "PgnZoneConfiguration",
+          "id": "ZoneConfiguration",
           "sourceId": "zoneConfiguration",
           "pgn": 130586,
           "description": "Zone Configuration",
@@ -59398,7 +59398,7 @@
           }
         },
         {
-          "id": "PgnPgn0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed",
+          "id": "Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed",
           "sourceId": "0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed",
           "pgn": 130816,
           "description": "0x1FF00-0x1FFFF: Manufacturer Specific fast-packet non-addressed",
@@ -59481,7 +59481,7 @@
       "name": "AIS",
       "pgns": [
         {
-          "id": "PgnAisClassAPositionReport",
+          "id": "AisClassAPositionReport",
           "sourceId": "aisClassAPositionReport",
           "pgn": 129038,
           "description": "AIS Class A Position Report",
@@ -59733,7 +59733,7 @@
           }
         },
         {
-          "id": "PgnAisClassBPositionReport",
+          "id": "AisClassBPositionReport",
           "sourceId": "aisClassBPositionReport",
           "pgn": 129039,
           "description": "AIS Class B Position Report",
@@ -60017,7 +60017,7 @@
           }
         },
         {
-          "id": "PgnAisClassBExtendedPositionReport",
+          "id": "AisClassBExtendedPositionReport",
           "sourceId": "aisClassBExtendedPositionReport",
           "pgn": 129040,
           "description": "AIS Class B Extended Position Report",
@@ -60352,7 +60352,7 @@
           }
         },
         {
-          "id": "PgnAisAidsToNavigationAtonReport",
+          "id": "AisAidsToNavigationAtonReport",
           "sourceId": "aisAidsToNavigationAtonReport",
           "pgn": 129041,
           "description": "AIS Aids to Navigation (AtoN) Report",
@@ -60637,7 +60637,7 @@
           }
         },
         {
-          "id": "PgnAisDgnssBroadcastBinaryMessage",
+          "id": "AisDgnssBroadcastBinaryMessage",
           "sourceId": "aisDgnssBroadcastBinaryMessage",
           "pgn": 129792,
           "description": "AIS DGNSS Broadcast Binary Message",
@@ -60800,7 +60800,7 @@
           }
         },
         {
-          "id": "PgnAisUtcAndDateReport",
+          "id": "AisUtcAndDateReport",
           "sourceId": "aisUtcAndDateReport",
           "pgn": 129793,
           "description": "AIS UTC and Date Report",
@@ -60984,7 +60984,7 @@
           }
         },
         {
-          "id": "PgnAisClassAStaticAndVoyageRelatedData",
+          "id": "AisClassAStaticAndVoyageRelatedData",
           "sourceId": "aisClassAStaticAndVoyageRelatedData",
           "pgn": 129794,
           "description": "AIS Class A Static and Voyage Related Data",
@@ -61248,7 +61248,7 @@
           }
         },
         {
-          "id": "PgnAisAddressedBinaryMessage",
+          "id": "AisAddressedBinaryMessage",
           "sourceId": "aisAddressedBinaryMessage",
           "pgn": 129795,
           "description": "AIS Addressed Binary Message",
@@ -61406,7 +61406,7 @@
           }
         },
         {
-          "id": "PgnAisAcknowledge",
+          "id": "AisAcknowledge",
           "sourceId": "aisAcknowledge",
           "pgn": 129796,
           "description": "AIS Acknowledge",
@@ -61531,7 +61531,7 @@
           }
         },
         {
-          "id": "PgnAisBinaryBroadcastMessage",
+          "id": "AisBinaryBroadcastMessage",
           "sourceId": "aisBinaryBroadcastMessage",
           "pgn": 129797,
           "description": "AIS Binary Broadcast Message",
@@ -61645,7 +61645,7 @@
           }
         },
         {
-          "id": "PgnAisSarAircraftPositionReport",
+          "id": "AisSarAircraftPositionReport",
           "sourceId": "aisSarAircraftPositionReport",
           "pgn": 129798,
           "description": "AIS SAR Aircraft Position Report",
@@ -61866,7 +61866,7 @@
           }
         },
         {
-          "id": "PgnAisUtcDateInquiry",
+          "id": "AisUtcDateInquiry",
           "sourceId": "aisUtcDateInquiry",
           "pgn": 129800,
           "description": "AIS UTC/Date Inquiry",
@@ -61972,7 +61972,7 @@
           }
         },
         {
-          "id": "PgnAisAddressedSafetyRelatedMessage",
+          "id": "AisAddressedSafetyRelatedMessage",
           "sourceId": "aisAddressedSafetyRelatedMessage",
           "pgn": 129801,
           "description": "AIS Addressed Safety Related Message",
@@ -62122,7 +62122,7 @@
           }
         },
         {
-          "id": "PgnAisSafetyRelatedBroadcastMessage",
+          "id": "AisSafetyRelatedBroadcastMessage",
           "sourceId": "aisSafetyRelatedBroadcastMessage",
           "pgn": 129802,
           "description": "AIS Safety Related Broadcast Message",
@@ -62228,7 +62228,7 @@
           }
         },
         {
-          "id": "PgnAisInterrogation",
+          "id": "AisInterrogation",
           "sourceId": "aisInterrogation",
           "pgn": 129803,
           "description": "AIS Interrogation",
@@ -62502,7 +62502,7 @@
           }
         },
         {
-          "id": "PgnAisAssignmentModeCommand",
+          "id": "AisAssignmentModeCommand",
           "sourceId": "aisAssignmentModeCommand",
           "pgn": 129804,
           "description": "AIS Assignment Mode Command",
@@ -62685,7 +62685,7 @@
           }
         },
         {
-          "id": "PgnAisDataLinkManagementMessage",
+          "id": "AisDataLinkManagementMessage",
           "sourceId": "aisDataLinkManagementMessage",
           "pgn": 129805,
           "description": "AIS Data Link Management Message",
@@ -62825,7 +62825,7 @@
           }
         },
         {
-          "id": "PgnAisChannelManagement",
+          "id": "AisChannelManagement",
           "sourceId": "aisChannelManagement",
           "pgn": 129806,
           "description": "AIS Channel Management",
@@ -63111,7 +63111,7 @@
           }
         },
         {
-          "id": "PgnAisClassBGroupAssignment",
+          "id": "AisClassBGroupAssignment",
           "sourceId": "aisClassBGroupAssignment",
           "pgn": 129807,
           "description": "AIS Class B Group Assignment",
@@ -63354,7 +63354,7 @@
           }
         },
         {
-          "id": "PgnAisClassBStaticDataMsg24PartA",
+          "id": "AisClassBStaticDataMsg24PartA",
           "sourceId": "aisClassBStaticDataMsg24PartA",
           "pgn": 129809,
           "description": "AIS Class B static data (msg 24 Part A)",
@@ -63457,7 +63457,7 @@
           }
         },
         {
-          "id": "PgnAisClassBStaticDataMsg24PartB",
+          "id": "AisClassBStaticDataMsg24PartB",
           "sourceId": "aisClassBStaticDataMsg24PartB",
           "pgn": 129810,
           "description": "AIS Class B static data (msg 24 Part B)",
@@ -63674,7 +63674,7 @@
           }
         },
         {
-          "id": "PgnAisSingleSlotBinaryMessageDeprecated",
+          "id": "AisSingleSlotBinaryMessageDeprecated",
           "sourceId": "aisSingleSlotBinaryMessageDeprecated",
           "pgn": 129811,
           "description": "AIS Single Slot Binary Message (Deprecated)",
@@ -63828,7 +63828,7 @@
           }
         },
         {
-          "id": "PgnAisMultiSlotBinaryMessageDeprecated",
+          "id": "AisMultiSlotBinaryMessageDeprecated",
           "sourceId": "aisMultiSlotBinaryMessageDeprecated",
           "pgn": 129812,
           "description": "AIS Multi Slot Binary Message (Deprecated)",
@@ -64037,7 +64037,7 @@
           }
         },
         {
-          "id": "PgnAisLongRangeBroadcastMessage",
+          "id": "AisLongRangeBroadcastMessage",
           "sourceId": "aisLongRangeBroadcastMessage",
           "pgn": 129813,
           "description": "AIS Long-Range Broadcast Message",
@@ -64239,7 +64239,7 @@
           }
         },
         {
-          "id": "PgnAisSingleSlotBinaryMessage",
+          "id": "AisSingleSlotBinaryMessage",
           "sourceId": "aisSingleSlotBinaryMessage",
           "pgn": 129814,
           "description": "AIS Single Slot Binary Message",
@@ -64404,7 +64404,7 @@
           }
         },
         {
-          "id": "PgnAisMultiSlotBinaryMessage",
+          "id": "AisMultiSlotBinaryMessage",
           "sourceId": "aisMultiSlotBinaryMessage",
           "pgn": 129815,
           "description": "AIS Multi Slot Binary Message",
@@ -64613,7 +64613,7 @@
           }
         },
         {
-          "id": "PgnAisAcknowledgeBinary",
+          "id": "AisAcknowledgeBinary",
           "sourceId": "aisAcknowledgeBinary",
           "pgn": 129816,
           "description": "AIS Acknowledge (Binary)",
@@ -64773,7 +64773,7 @@
       "name": "Communication",
       "pgns": [
         {
-          "id": "PgnRadioFrequencyModePower",
+          "id": "RadioFrequencyModePower",
           "sourceId": "radioFrequencyModePower",
           "pgn": 129799,
           "description": "Radio Frequency/Mode/Power",
@@ -64869,7 +64869,7 @@
           }
         },
         {
-          "id": "PgnDscCallInformation",
+          "id": "DscCallInformation",
           "sourceId": "dscCallInformation",
           "pgn": 129808,
           "description": "DSC Call Information",
@@ -65148,7 +65148,7 @@
           }
         },
         {
-          "id": "PgnDscDistressCallInformation",
+          "id": "DscDistressCallInformation",
           "sourceId": "dscDistressCallInformation",
           "pgn": 129808,
           "description": "DSC Distress Call Information",
@@ -65434,7 +65434,7 @@
       "name": "Sea Recovery",
       "pgns": [
         {
-          "id": "PgnSeaRecoveryWatermakerStatus",
+          "id": "SeaRecoveryWatermakerStatus",
           "sourceId": "seaRecoveryWatermakerStatus",
           "pgn": 130816,
           "description": "Sea Recovery: Watermaker Status",
@@ -65662,7 +65662,7 @@
       "name": "Simrad",
       "pgns": [
         {
-          "id": "PgnSimradTextMessage",
+          "id": "SimradTextMessage",
           "sourceId": "simradTextMessage",
           "pgn": 130816,
           "description": "Simrad: Text Message",
@@ -65818,7 +65818,7 @@
           }
         },
         {
-          "id": "PgnSimradEngineData",
+          "id": "SimradEngineData",
           "sourceId": "simradEngineData",
           "pgn": 130861,
           "description": "Simrad: Engine Data",
@@ -65892,7 +65892,7 @@
       "name": "SonicHub",
       "pgns": [
         {
-          "id": "PgnSonichubAmRadio",
+          "id": "SonichubAmRadio",
           "sourceId": "sonichubAmRadio",
           "pgn": 130816,
           "description": "SonicHub: AM Radio",
@@ -66061,7 +66061,7 @@
           }
         },
         {
-          "id": "PgnSonichubAlbum",
+          "id": "SonichubAlbum",
           "sourceId": "sonichubAlbum",
           "pgn": 130816,
           "description": "SonicHub: Album",
@@ -66184,7 +66184,7 @@
           }
         },
         {
-          "id": "PgnSonichubArtist",
+          "id": "SonichubArtist",
           "sourceId": "sonichubArtist",
           "pgn": 130816,
           "description": "SonicHub: Artist",
@@ -66307,7 +66307,7 @@
           }
         },
         {
-          "id": "PgnSonichubControl",
+          "id": "SonichubControl",
           "sourceId": "sonichubControl",
           "pgn": 130816,
           "description": "SonicHub: Control",
@@ -66419,7 +66419,7 @@
           }
         },
         {
-          "id": "PgnSonichubFmRadio",
+          "id": "SonichubFmRadio",
           "sourceId": "sonichubFmRadio",
           "pgn": 130816,
           "description": "SonicHub: FM Radio",
@@ -66587,7 +66587,7 @@
           }
         },
         {
-          "id": "PgnSonichubInit1",
+          "id": "SonichubInit1",
           "sourceId": "sonichubInit1",
           "pgn": 130816,
           "description": "SonicHub: Init #1",
@@ -66688,7 +66688,7 @@
           }
         },
         {
-          "id": "PgnSonichubInit2",
+          "id": "SonichubInit2",
           "sourceId": "sonichubInit2",
           "pgn": 130816,
           "description": "SonicHub: Init #2",
@@ -66812,7 +66812,7 @@
           }
         },
         {
-          "id": "PgnSonichubInit3",
+          "id": "SonichubInit3",
           "sourceId": "sonichubInit3",
           "pgn": 130816,
           "description": "SonicHub: Init #3",
@@ -66936,7 +66936,7 @@
           }
         },
         {
-          "id": "PgnSonichubMaxVolume",
+          "id": "SonichubMaxVolume",
           "sourceId": "sonichubMaxVolume",
           "pgn": 130816,
           "description": "SonicHub: Max Volume",
@@ -67059,7 +67059,7 @@
           }
         },
         {
-          "id": "PgnSonichubMenuItem",
+          "id": "SonichubMenuItem",
           "sourceId": "sonichubMenuItem",
           "pgn": 130816,
           "description": "SonicHub: Menu Item",
@@ -67215,7 +67215,7 @@
           }
         },
         {
-          "id": "PgnSonichubPlaylist",
+          "id": "SonichubPlaylist",
           "sourceId": "sonichubPlaylist",
           "pgn": 130816,
           "description": "SonicHub: Playlist",
@@ -67384,7 +67384,7 @@
           }
         },
         {
-          "id": "PgnSonichubPosition",
+          "id": "SonichubPosition",
           "sourceId": "sonichubPosition",
           "pgn": 130816,
           "description": "SonicHub: Position",
@@ -67497,7 +67497,7 @@
           }
         },
         {
-          "id": "PgnSonichubSource",
+          "id": "SonichubSource",
           "sourceId": "sonichubSource",
           "pgn": 130816,
           "description": "SonicHub: Source",
@@ -67609,7 +67609,7 @@
           }
         },
         {
-          "id": "PgnSonichubSourceList",
+          "id": "SonichubSourceList",
           "sourceId": "sonichubSourceList",
           "pgn": 130816,
           "description": "SonicHub: Source List",
@@ -67743,7 +67743,7 @@
           }
         },
         {
-          "id": "PgnSonichubTrack",
+          "id": "SonichubTrack",
           "sourceId": "sonichubTrack",
           "pgn": 130816,
           "description": "SonicHub: Track",
@@ -67866,7 +67866,7 @@
           }
         },
         {
-          "id": "PgnSonichubVolume",
+          "id": "SonichubVolume",
           "sourceId": "sonichubVolume",
           "pgn": 130816,
           "description": "SonicHub: Volume",
@@ -67986,7 +67986,7 @@
           }
         },
         {
-          "id": "PgnSonichubZoneInfo",
+          "id": "SonichubZoneInfo",
           "sourceId": "sonichubZoneInfo",
           "pgn": 130816,
           "description": "SonicHub: Zone info",
@@ -68098,7 +68098,7 @@
           }
         },
         {
-          "id": "PgnSonichubZones",
+          "id": "SonichubZones",
           "sourceId": "sonichubZones",
           "pgn": 130816,
           "description": "SonicHub: Zones",
@@ -68216,7 +68216,7 @@
       "name": "Webasto",
       "pgns": [
         {
-          "id": "PgnWebastoStatus2",
+          "id": "WebastoStatus2",
           "sourceId": "webastoStatus2",
           "pgn": 130818,
           "description": "Webasto: Status 2",
@@ -68350,7 +68350,7 @@
           }
         },
         {
-          "id": "PgnWebastoHvacCommand",
+          "id": "WebastoHvacCommand",
           "sourceId": "webastoHvacCommand",
           "pgn": 130819,
           "description": "Webasto: HVAC Command",
@@ -68534,7 +68534,7 @@
       "name": "Xantrex",
       "pgns": [
         {
-          "id": "PgnXantrexAcStatus",
+          "id": "XantrexAcStatus",
           "sourceId": "xantrexAcStatus",
           "pgn": 130900,
           "description": "Xantrex: AC Status",
@@ -68737,7 +68737,7 @@
           }
         },
         {
-          "id": "PgnXantrexDcSourceConfigurationStatus",
+          "id": "XantrexDcSourceConfigurationStatus",
           "sourceId": "xantrexDcSourceConfigurationStatus",
           "pgn": 130910,
           "description": "Xantrex: DC Source Configuration Status",
@@ -68912,7 +68912,7 @@
           }
         },
         {
-          "id": "PgnXantrexAcOutputConfigurationStatus",
+          "id": "XantrexAcOutputConfigurationStatus",
           "sourceId": "xantrexAcOutputConfigurationStatus",
           "pgn": 130911,
           "description": "Xantrex: AC Output Configuration Status",
@@ -69082,7 +69082,7 @@
           }
         },
         {
-          "id": "PgnXantrexChargerConfigurationStatus",
+          "id": "XantrexChargerConfigurationStatus",
           "sourceId": "xantrexChargerConfigurationStatus",
           "pgn": 130912,
           "description": "Xantrex: Charger Configuration Status",
@@ -69276,7 +69276,7 @@
           }
         },
         {
-          "id": "PgnXantrexAcInputConfigurationStatus",
+          "id": "XantrexAcInputConfigurationStatus",
           "sourceId": "xantrexAcInputConfigurationStatus",
           "pgn": 130913,
           "description": "Xantrex: AC Input Configuration Status",

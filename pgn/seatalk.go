@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnSeatalkWirelessKeypadControl struct {
+type SeatalkWirelessKeypadControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -14,10 +14,10 @@ type PgnSeatalkWirelessKeypadControl struct {
 	BeepControl      *uint64     `json:"beepControl,omitempty" n2k:"6"`
 }
 
-func (m *PgnSeatalkWirelessKeypadControl) PGNNumber() uint32               { return 61184 }
-func (m *PgnSeatalkWirelessKeypadControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkWirelessKeypadControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkWirelessKeypadControl) DecodePayload(payload []uint8) error {
+func (m *SeatalkWirelessKeypadControl) PGNNumber() uint32               { return 61184 }
+func (m *SeatalkWirelessKeypadControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkWirelessKeypadControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkWirelessKeypadControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -96,7 +96,7 @@ func (m *PgnSeatalkWirelessKeypadControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkWirelessKeypadControl) EncodePayload() ([]uint8, error) {
+func (m *SeatalkWirelessKeypadControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -128,7 +128,7 @@ func (m *PgnSeatalkWirelessKeypadControl) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkWirelessKeypadLightControl struct {
+type SeatalkWirelessKeypadLightControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -138,10 +138,10 @@ type PgnSeatalkWirelessKeypadLightControl struct {
 	WiredSetting     *uint64     `json:"wiredSetting,omitempty" n2k:"7"`
 }
 
-func (m *PgnSeatalkWirelessKeypadLightControl) PGNNumber() uint32               { return 61184 }
-func (m *PgnSeatalkWirelessKeypadLightControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkWirelessKeypadLightControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkWirelessKeypadLightControl) DecodePayload(payload []uint8) error {
+func (m *SeatalkWirelessKeypadLightControl) PGNNumber() uint32               { return 61184 }
+func (m *SeatalkWirelessKeypadLightControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkWirelessKeypadLightControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkWirelessKeypadLightControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -239,7 +239,7 @@ func (m *PgnSeatalkWirelessKeypadLightControl) DecodePayload(payload []uint8) er
 	}
 	return nil
 }
-func (m *PgnSeatalkWirelessKeypadLightControl) EncodePayload() ([]uint8, error) {
+func (m *SeatalkWirelessKeypadLightControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -276,7 +276,7 @@ func (m *PgnSeatalkWirelessKeypadLightControl) EncodePayload() ([]uint8, error) 
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkAlarm struct {
+type SeatalkAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -287,10 +287,10 @@ type PgnSeatalkAlarm struct {
 	AlarmPriority    []uint8     `json:"alarmPriority,omitempty" n2k:"8"`
 }
 
-func (m *PgnSeatalkAlarm) PGNNumber() uint32               { return 65288 }
-func (m *PgnSeatalkAlarm) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkAlarm) DecodePayload(payload []uint8) error {
+func (m *SeatalkAlarm) PGNNumber() uint32               { return 65288 }
+func (m *SeatalkAlarm) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkAlarm) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -385,7 +385,7 @@ func (m *PgnSeatalkAlarm) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkAlarm) EncodePayload() ([]uint8, error) {
+func (m *SeatalkAlarm) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -422,7 +422,7 @@ func (m *PgnSeatalkAlarm) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkPilotWindDatum struct {
+type SeatalkPilotWindDatum struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode            *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -430,10 +430,10 @@ type PgnSeatalkPilotWindDatum struct {
 	RollingAverageWindAngle *uint64     `json:"rollingAverageWindAngle,omitempty" n2k:"5"`
 }
 
-func (m *PgnSeatalkPilotWindDatum) PGNNumber() uint32               { return 65345 }
-func (m *PgnSeatalkPilotWindDatum) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkPilotWindDatum) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkPilotWindDatum) DecodePayload(payload []uint8) error {
+func (m *SeatalkPilotWindDatum) PGNNumber() uint32               { return 65345 }
+func (m *SeatalkPilotWindDatum) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkPilotWindDatum) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkPilotWindDatum) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -502,7 +502,7 @@ func (m *PgnSeatalkPilotWindDatum) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkPilotWindDatum) EncodePayload() ([]uint8, error) {
+func (m *SeatalkPilotWindDatum) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -529,7 +529,7 @@ func (m *PgnSeatalkPilotWindDatum) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkPilotHeading struct {
+type SeatalkPilotHeading struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -538,10 +538,10 @@ type PgnSeatalkPilotHeading struct {
 	HeadingMagnetic  *uint64     `json:"headingMagnetic,omitempty" n2k:"6"`
 }
 
-func (m *PgnSeatalkPilotHeading) PGNNumber() uint32               { return 65359 }
-func (m *PgnSeatalkPilotHeading) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkPilotHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkPilotHeading) DecodePayload(payload []uint8) error {
+func (m *SeatalkPilotHeading) PGNNumber() uint32               { return 65359 }
+func (m *SeatalkPilotHeading) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkPilotHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkPilotHeading) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -620,7 +620,7 @@ func (m *PgnSeatalkPilotHeading) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkPilotHeading) EncodePayload() ([]uint8, error) {
+func (m *SeatalkPilotHeading) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -652,7 +652,7 @@ func (m *PgnSeatalkPilotHeading) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkPilotLockedHeading struct {
+type SeatalkPilotLockedHeading struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode          *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -661,10 +661,10 @@ type PgnSeatalkPilotLockedHeading struct {
 	TargetHeadingMagnetic *uint64     `json:"targetHeadingMagnetic,omitempty" n2k:"6"`
 }
 
-func (m *PgnSeatalkPilotLockedHeading) PGNNumber() uint32               { return 65360 }
-func (m *PgnSeatalkPilotLockedHeading) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkPilotLockedHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
+func (m *SeatalkPilotLockedHeading) PGNNumber() uint32               { return 65360 }
+func (m *SeatalkPilotLockedHeading) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkPilotLockedHeading) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -743,7 +743,7 @@ func (m *PgnSeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) {
+func (m *SeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -775,7 +775,7 @@ func (m *PgnSeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkSilenceAlarm struct {
+type SeatalkSilenceAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -783,10 +783,10 @@ type PgnSeatalkSilenceAlarm struct {
 	AlarmGroup       *uint64     `json:"alarmGroup,omitempty" n2k:"5"`
 }
 
-func (m *PgnSeatalkSilenceAlarm) PGNNumber() uint32               { return 65361 }
-func (m *PgnSeatalkSilenceAlarm) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkSilenceAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkSilenceAlarm) DecodePayload(payload []uint8) error {
+func (m *SeatalkSilenceAlarm) PGNNumber() uint32               { return 65361 }
+func (m *SeatalkSilenceAlarm) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkSilenceAlarm) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkSilenceAlarm) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -855,7 +855,7 @@ func (m *PgnSeatalkSilenceAlarm) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkSilenceAlarm) EncodePayload() ([]uint8, error) {
+func (m *SeatalkSilenceAlarm) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -882,7 +882,7 @@ func (m *PgnSeatalkSilenceAlarm) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkKeypadMessage struct {
+type SeatalkKeypadMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -894,10 +894,10 @@ type PgnSeatalkKeypadMessage struct {
 	EncoderPosition  *uint64     `json:"encoderPosition,omitempty" n2k:"10"`
 }
 
-func (m *PgnSeatalkKeypadMessage) PGNNumber() uint32               { return 65371 }
-func (m *PgnSeatalkKeypadMessage) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkKeypadMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkKeypadMessage) DecodePayload(payload []uint8) error {
+func (m *SeatalkKeypadMessage) PGNNumber() uint32               { return 65371 }
+func (m *SeatalkKeypadMessage) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkKeypadMessage) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkKeypadMessage) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1010,7 +1010,7 @@ func (m *PgnSeatalkKeypadMessage) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkKeypadMessage) EncodePayload() ([]uint8, error) {
+func (m *SeatalkKeypadMessage) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1058,7 +1058,7 @@ func (m *PgnSeatalkKeypadMessage) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkKeypadHeartbeat struct {
+type SeatalkKeypadHeartbeat struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1067,10 +1067,10 @@ type PgnSeatalkKeypadHeartbeat struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"6"`
 }
 
-func (m *PgnSeatalkKeypadHeartbeat) PGNNumber() uint32               { return 65374 }
-func (m *PgnSeatalkKeypadHeartbeat) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkKeypadHeartbeat) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkKeypadHeartbeat) DecodePayload(payload []uint8) error {
+func (m *SeatalkKeypadHeartbeat) PGNNumber() uint32               { return 65374 }
+func (m *SeatalkKeypadHeartbeat) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkKeypadHeartbeat) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkKeypadHeartbeat) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1149,7 +1149,7 @@ func (m *PgnSeatalkKeypadHeartbeat) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkKeypadHeartbeat) EncodePayload() ([]uint8, error) {
+func (m *SeatalkKeypadHeartbeat) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1181,7 +1181,7 @@ func (m *PgnSeatalkKeypadHeartbeat) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkPilotMode struct {
+type SeatalkPilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1190,10 +1190,10 @@ type PgnSeatalkPilotMode struct {
 	PilotModeData    []uint8     `json:"pilotModeData,omitempty" n2k:"6"`
 }
 
-func (m *PgnSeatalkPilotMode) PGNNumber() uint32               { return 65379 }
-func (m *PgnSeatalkPilotMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkPilotMode) DecodePayload(payload []uint8) error {
+func (m *SeatalkPilotMode) PGNNumber() uint32               { return 65379 }
+func (m *SeatalkPilotMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkPilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkPilotMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1272,7 +1272,7 @@ func (m *PgnSeatalkPilotMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkPilotMode) EncodePayload() ([]uint8, error) {
+func (m *SeatalkPilotMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1296,7 +1296,7 @@ func (m *PgnSeatalkPilotMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1DeviceIdentification struct {
+type Seatalk1DeviceIdentification struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1306,10 +1306,10 @@ type PgnSeatalk1DeviceIdentification struct {
 	Device           *uint64     `json:"device,omitempty" n2k:"8"`
 }
 
-func (m *PgnSeatalk1DeviceIdentification) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1DeviceIdentification) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1DeviceIdentification) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1DeviceIdentification) DecodePayload(payload []uint8) error {
+func (m *Seatalk1DeviceIdentification) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1DeviceIdentification) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1DeviceIdentification) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1DeviceIdentification) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1425,7 +1425,7 @@ func (m *PgnSeatalk1DeviceIdentification) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1DeviceIdentification) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1DeviceIdentification) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1462,7 +1462,7 @@ func (m *PgnSeatalk1DeviceIdentification) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1DisplayBrightness struct {
+type Seatalk1DisplayBrightness struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1475,10 +1475,10 @@ type PgnSeatalk1DisplayBrightness struct {
 	Unknown2         []uint8     `json:"unknown2,omitempty" n2k:"10"`
 }
 
-func (m *PgnSeatalk1DisplayBrightness) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1DisplayBrightness) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1DisplayBrightness) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
+func (m *Seatalk1DisplayBrightness) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1DisplayBrightness) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1DisplayBrightness) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1620,7 +1620,7 @@ func (m *PgnSeatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1DisplayBrightness) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1DisplayBrightness) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1667,7 +1667,7 @@ func (m *PgnSeatalk1DisplayBrightness) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1DisplayColor struct {
+type Seatalk1DisplayColor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1680,10 +1680,10 @@ type PgnSeatalk1DisplayColor struct {
 	Unknown2         []uint8     `json:"unknown2,omitempty" n2k:"10"`
 }
 
-func (m *PgnSeatalk1DisplayColor) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1DisplayColor) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1DisplayColor) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1DisplayColor) DecodePayload(payload []uint8) error {
+func (m *Seatalk1DisplayColor) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1DisplayColor) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1DisplayColor) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1DisplayColor) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -1825,7 +1825,7 @@ func (m *PgnSeatalk1DisplayColor) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1DisplayColor) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1DisplayColor) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -1868,7 +1868,7 @@ func (m *PgnSeatalk1DisplayColor) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1Keystroke struct {
+type Seatalk1Keystroke struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -1881,10 +1881,10 @@ type PgnSeatalk1Keystroke struct {
 	UnknownData      []uint8     `json:"unknownData,omitempty" n2k:"10"`
 }
 
-func (m *PgnSeatalk1Keystroke) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1Keystroke) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1Keystroke) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1Keystroke) DecodePayload(payload []uint8) error {
+func (m *Seatalk1Keystroke) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1Keystroke) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1Keystroke) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1Keystroke) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2026,7 +2026,7 @@ func (m *PgnSeatalk1Keystroke) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1Keystroke) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1Keystroke) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2073,7 +2073,7 @@ func (m *PgnSeatalk1Keystroke) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1PilotHullType struct {
+type Seatalk1PilotHullType struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2084,10 +2084,10 @@ type PgnSeatalk1PilotHullType struct {
 	Unknown2         []uint8     `json:"unknown2,omitempty" n2k:"8"`
 }
 
-func (m *PgnSeatalk1PilotHullType) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1PilotHullType) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1PilotHullType) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1PilotHullType) DecodePayload(payload []uint8) error {
+func (m *Seatalk1PilotHullType) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1PilotHullType) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1PilotHullType) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1PilotHullType) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2200,7 +2200,7 @@ func (m *PgnSeatalk1PilotHullType) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1PilotHullType) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1PilotHullType) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2233,7 +2233,7 @@ func (m *PgnSeatalk1PilotHullType) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalk1PilotMode struct {
+type Seatalk1PilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2247,10 +2247,10 @@ type PgnSeatalk1PilotMode struct {
 	Unknown2         []uint8     `json:"unknown2,omitempty" n2k:"11"`
 }
 
-func (m *PgnSeatalk1PilotMode) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalk1PilotMode) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalk1PilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalk1PilotMode) DecodePayload(payload []uint8) error {
+func (m *Seatalk1PilotMode) PGNNumber() uint32               { return 126720 }
+func (m *Seatalk1PilotMode) MessageInfo() MessageInfo        { return m.Info }
+func (m *Seatalk1PilotMode) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *Seatalk1PilotMode) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2402,7 +2402,7 @@ func (m *PgnSeatalk1PilotMode) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalk1PilotMode) EncodePayload() ([]uint8, error) {
+func (m *Seatalk1PilotMode) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2446,7 +2446,7 @@ func (m *PgnSeatalk1PilotMode) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkPilotAutoTurn struct {
+type SeatalkPilotAutoTurn struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2458,10 +2458,10 @@ type PgnSeatalkPilotAutoTurn struct {
 	Unknown3         []uint8     `json:"unknown3,omitempty" n2k:"9"`
 }
 
-func (m *PgnSeatalkPilotAutoTurn) PGNNumber() uint32               { return 126720 }
-func (m *PgnSeatalkPilotAutoTurn) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkPilotAutoTurn) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkPilotAutoTurn) DecodePayload(payload []uint8) error {
+func (m *SeatalkPilotAutoTurn) PGNNumber() uint32               { return 126720 }
+func (m *SeatalkPilotAutoTurn) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkPilotAutoTurn) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkPilotAutoTurn) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2584,7 +2584,7 @@ func (m *PgnSeatalkPilotAutoTurn) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkPilotAutoTurn) EncodePayload() ([]uint8, error) {
+func (m *SeatalkPilotAutoTurn) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2622,7 +2622,7 @@ func (m *PgnSeatalkPilotAutoTurn) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkNodeStatistics struct {
+type SeatalkNodeStatistics struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2633,10 +2633,10 @@ type PgnSeatalkNodeStatistics struct {
 	NodeVoltage      *uint64     `json:"nodeVoltage,omitempty" n2k:"8"`
 }
 
-func (m *PgnSeatalkNodeStatistics) PGNNumber() uint32               { return 130847 }
-func (m *PgnSeatalkNodeStatistics) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkNodeStatistics) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkNodeStatistics) DecodePayload(payload []uint8) error {
+func (m *SeatalkNodeStatistics) PGNNumber() uint32               { return 130847 }
+func (m *SeatalkNodeStatistics) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkNodeStatistics) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkNodeStatistics) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2731,7 +2731,7 @@ func (m *PgnSeatalkNodeStatistics) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkNodeStatistics) EncodePayload() ([]uint8, error) {
+func (m *SeatalkNodeStatistics) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2772,7 +2772,7 @@ func (m *PgnSeatalkNodeStatistics) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkWaypointInformation struct {
+type SeatalkWaypointInformation struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode              *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2784,10 +2784,10 @@ type PgnSeatalkWaypointInformation struct {
 	DistanceToWaypoint        *uint64     `json:"distanceToWaypoint,omitempty" n2k:"9"`
 }
 
-func (m *PgnSeatalkWaypointInformation) PGNNumber() uint32               { return 130848 }
-func (m *PgnSeatalkWaypointInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkWaypointInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkWaypointInformation) DecodePayload(payload []uint8) error {
+func (m *SeatalkWaypointInformation) PGNNumber() uint32               { return 130848 }
+func (m *SeatalkWaypointInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkWaypointInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkWaypointInformation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -2892,7 +2892,7 @@ func (m *PgnSeatalkWaypointInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkWaypointInformation) EncodePayload() ([]uint8, error) {
+func (m *SeatalkWaypointInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -2930,7 +2930,7 @@ func (m *PgnSeatalkWaypointInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnSeatalkRouteInformation struct {
+type SeatalkRouteInformation struct {
 	Info                                     MessageInfo `json:"info"`
 	ManufacturerCode                         *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode                             *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -2944,10 +2944,10 @@ type PgnSeatalkRouteInformation struct {
 	BearingCurrentWaypointToNextWaypointTrue *uint64     `json:"bearingCurrentWaypointToNextWaypointTrue,omitempty" n2k:"11"`
 }
 
-func (m *PgnSeatalkRouteInformation) PGNNumber() uint32               { return 130918 }
-func (m *PgnSeatalkRouteInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnSeatalkRouteInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnSeatalkRouteInformation) DecodePayload(payload []uint8) error {
+func (m *SeatalkRouteInformation) PGNNumber() uint32               { return 130918 }
+func (m *SeatalkRouteInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *SeatalkRouteInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *SeatalkRouteInformation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -3072,7 +3072,7 @@ func (m *PgnSeatalkRouteInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnSeatalkRouteInformation) EncodePayload() ([]uint8, error) {
+func (m *SeatalkRouteInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

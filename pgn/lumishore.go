@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnLumishoreLightStatus struct {
+type LumishoreLightStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -17,10 +17,10 @@ type PgnLumishoreLightStatus struct {
 	WarmWhite        *uint64     `json:"warmWhite,omitempty" n2k:"9"`
 }
 
-func (m *PgnLumishoreLightStatus) PGNNumber() uint32               { return 65403 }
-func (m *PgnLumishoreLightStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLumishoreLightStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLumishoreLightStatus) DecodePayload(payload []uint8) error {
+func (m *LumishoreLightStatus) PGNNumber() uint32               { return 65403 }
+func (m *LumishoreLightStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *LumishoreLightStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LumishoreLightStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -125,7 +125,7 @@ func (m *PgnLumishoreLightStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLumishoreLightStatus) EncodePayload() ([]uint8, error) {
+func (m *LumishoreLightStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -171,17 +171,17 @@ func (m *PgnLumishoreLightStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLumishoreProprietary struct {
+type LumishoreProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnLumishoreProprietary) PGNNumber() uint32               { return 126720 }
-func (m *PgnLumishoreProprietary) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLumishoreProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLumishoreProprietary) DecodePayload(payload []uint8) error {
+func (m *LumishoreProprietary) PGNNumber() uint32               { return 126720 }
+func (m *LumishoreProprietary) MessageInfo() MessageInfo        { return m.Info }
+func (m *LumishoreProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LumishoreProprietary) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -236,7 +236,7 @@ func (m *PgnLumishoreProprietary) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLumishoreProprietary) EncodePayload() ([]uint8, error) {
+func (m *LumishoreProprietary) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -253,7 +253,7 @@ func (m *PgnLumishoreProprietary) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLumishoreLightControl struct {
+type LumishoreLightControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -268,10 +268,10 @@ type PgnLumishoreLightControl struct {
 	Status           *uint64     `json:"status,omitempty" n2k:"12"`
 }
 
-func (m *PgnLumishoreLightControl) PGNNumber() uint32               { return 130939 }
-func (m *PgnLumishoreLightControl) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLumishoreLightControl) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLumishoreLightControl) DecodePayload(payload []uint8) error {
+func (m *LumishoreLightControl) PGNNumber() uint32               { return 130939 }
+func (m *LumishoreLightControl) MessageInfo() MessageInfo        { return m.Info }
+func (m *LumishoreLightControl) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LumishoreLightControl) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -406,7 +406,7 @@ func (m *PgnLumishoreLightControl) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLumishoreLightControl) EncodePayload() ([]uint8, error) {
+func (m *LumishoreLightControl) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

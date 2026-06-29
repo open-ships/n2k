@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnCarlingBreakerCommand struct {
+type CarlingBreakerCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -17,10 +17,10 @@ type PgnCarlingBreakerCommand struct {
 	DimValue         *uint64     `json:"dimValue,omitempty" n2k:"10"`
 }
 
-func (m *PgnCarlingBreakerCommand) PGNNumber() uint32               { return 61184 }
-func (m *PgnCarlingBreakerCommand) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCarlingBreakerCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCarlingBreakerCommand) DecodePayload(payload []uint8) error {
+func (m *CarlingBreakerCommand) PGNNumber() uint32               { return 61184 }
+func (m *CarlingBreakerCommand) MessageInfo() MessageInfo        { return m.Info }
+func (m *CarlingBreakerCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CarlingBreakerCommand) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -138,7 +138,7 @@ func (m *PgnCarlingBreakerCommand) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnCarlingBreakerCommand) EncodePayload() ([]uint8, error) {
+func (m *CarlingBreakerCommand) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -185,7 +185,7 @@ func (m *PgnCarlingBreakerCommand) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCarlingSwitchboardStatus struct {
+type CarlingSwitchboardStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -193,10 +193,10 @@ type PgnCarlingSwitchboardStatus struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"5"`
 }
 
-func (m *PgnCarlingSwitchboardStatus) PGNNumber() uint32               { return 65300 }
-func (m *PgnCarlingSwitchboardStatus) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCarlingSwitchboardStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCarlingSwitchboardStatus) DecodePayload(payload []uint8) error {
+func (m *CarlingSwitchboardStatus) PGNNumber() uint32               { return 65300 }
+func (m *CarlingSwitchboardStatus) MessageInfo() MessageInfo        { return m.Info }
+func (m *CarlingSwitchboardStatus) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CarlingSwitchboardStatus) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -261,7 +261,7 @@ func (m *PgnCarlingSwitchboardStatus) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnCarlingSwitchboardStatus) EncodePayload() ([]uint8, error) {
+func (m *CarlingSwitchboardStatus) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -283,7 +283,7 @@ func (m *PgnCarlingSwitchboardStatus) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCarlingDcConfigurationCommand struct {
+type CarlingDcConfigurationCommand struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode              *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -303,10 +303,10 @@ type PgnCarlingDcConfigurationCommand struct {
 	FlashMapIndex             *uint64     `json:"flashMapIndex,omitempty" n2k:"18"`
 }
 
-func (m *PgnCarlingDcConfigurationCommand) PGNNumber() uint32               { return 126720 }
-func (m *PgnCarlingDcConfigurationCommand) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCarlingDcConfigurationCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCarlingDcConfigurationCommand) DecodePayload(payload []uint8) error {
+func (m *CarlingDcConfigurationCommand) PGNNumber() uint32               { return 126720 }
+func (m *CarlingDcConfigurationCommand) MessageInfo() MessageInfo        { return m.Info }
+func (m *CarlingDcConfigurationCommand) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CarlingDcConfigurationCommand) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -495,7 +495,7 @@ func (m *PgnCarlingDcConfigurationCommand) DecodePayload(payload []uint8) error 
 	}
 	return nil
 }
-func (m *PgnCarlingDcConfigurationCommand) EncodePayload() ([]uint8, error) {
+func (m *CarlingDcConfigurationCommand) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -582,17 +582,17 @@ func (m *PgnCarlingDcConfigurationCommand) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCarlingProprietary struct {
+type CarlingProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
 	Data             []uint8     `json:"data,omitempty" n2k:"4"`
 }
 
-func (m *PgnCarlingProprietary) PGNNumber() uint32               { return 130844 }
-func (m *PgnCarlingProprietary) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCarlingProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCarlingProprietary) DecodePayload(payload []uint8) error {
+func (m *CarlingProprietary) PGNNumber() uint32               { return 130844 }
+func (m *CarlingProprietary) MessageInfo() MessageInfo        { return m.Info }
+func (m *CarlingProprietary) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CarlingProprietary) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -647,7 +647,7 @@ func (m *PgnCarlingProprietary) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnCarlingProprietary) EncodePayload() ([]uint8, error) {
+func (m *CarlingProprietary) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -664,7 +664,7 @@ func (m *PgnCarlingProprietary) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnCarlingBreakerStatusAndConfiguration struct {
+type CarlingBreakerStatusAndConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -672,10 +672,10 @@ type PgnCarlingBreakerStatusAndConfiguration struct {
 	Data             []uint8     `json:"data,omitempty" n2k:"5"`
 }
 
-func (m *PgnCarlingBreakerStatusAndConfiguration) PGNNumber() uint32               { return 130921 }
-func (m *PgnCarlingBreakerStatusAndConfiguration) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnCarlingBreakerStatusAndConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnCarlingBreakerStatusAndConfiguration) DecodePayload(payload []uint8) error {
+func (m *CarlingBreakerStatusAndConfiguration) PGNNumber() uint32               { return 130921 }
+func (m *CarlingBreakerStatusAndConfiguration) MessageInfo() MessageInfo        { return m.Info }
+func (m *CarlingBreakerStatusAndConfiguration) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *CarlingBreakerStatusAndConfiguration) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -740,7 +740,7 @@ func (m *PgnCarlingBreakerStatusAndConfiguration) DecodePayload(payload []uint8)
 	}
 	return nil
 }
-func (m *PgnCarlingBreakerStatusAndConfiguration) EncodePayload() ([]uint8, error) {
+func (m *CarlingBreakerStatusAndConfiguration) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)

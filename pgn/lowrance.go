@@ -5,7 +5,7 @@ package pgn
 
 import "fmt"
 
-type PgnLowranceTemperature struct {
+type LowranceTemperature struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode      *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -13,10 +13,10 @@ type PgnLowranceTemperature struct {
 	ActualTemperature *uint64     `json:"actualTemperature,omitempty" n2k:"5"`
 }
 
-func (m *PgnLowranceTemperature) PGNNumber() uint32               { return 65285 }
-func (m *PgnLowranceTemperature) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLowranceTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLowranceTemperature) DecodePayload(payload []uint8) error {
+func (m *LowranceTemperature) PGNNumber() uint32               { return 65285 }
+func (m *LowranceTemperature) MessageInfo() MessageInfo        { return m.Info }
+func (m *LowranceTemperature) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LowranceTemperature) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -85,7 +85,7 @@ func (m *PgnLowranceTemperature) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLowranceTemperature) EncodePayload() ([]uint8, error) {
+func (m *LowranceTemperature) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -112,7 +112,7 @@ func (m *PgnLowranceTemperature) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLowranceProductInformation struct {
+type LowranceProductInformation struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -126,10 +126,10 @@ type PgnLowranceProductInformation struct {
 	FirmwareTime     string      `json:"firmwareTime,omitempty" n2k:"11"`
 }
 
-func (m *PgnLowranceProductInformation) PGNNumber() uint32               { return 130817 }
-func (m *PgnLowranceProductInformation) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLowranceProductInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLowranceProductInformation) DecodePayload(payload []uint8) error {
+func (m *LowranceProductInformation) PGNNumber() uint32               { return 130817 }
+func (m *LowranceProductInformation) MessageInfo() MessageInfo        { return m.Info }
+func (m *LowranceProductInformation) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LowranceProductInformation) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -254,7 +254,7 @@ func (m *PgnLowranceProductInformation) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLowranceProductInformation) EncodePayload() ([]uint8, error) {
+func (m *LowranceProductInformation) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
@@ -294,7 +294,7 @@ func (m *PgnLowranceProductInformation) EncodePayload() ([]uint8, error) {
 	return writer.Bytes(), writer.Err()
 }
 
-type PgnLowranceUnknown struct {
+type LowranceUnknown struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
 	IndustryCode     *uint64     `json:"industryCode,omitempty" n2k:"3"`
@@ -306,10 +306,10 @@ type PgnLowranceUnknown struct {
 	F                *uint64     `json:"f,omitempty" n2k:"9"`
 }
 
-func (m *PgnLowranceUnknown) PGNNumber() uint32               { return 130827 }
-func (m *PgnLowranceUnknown) MessageInfo() MessageInfo        { return m.Info }
-func (m *PgnLowranceUnknown) SetMessageInfo(info MessageInfo) { m.Info = info }
-func (m *PgnLowranceUnknown) DecodePayload(payload []uint8) error {
+func (m *LowranceUnknown) PGNNumber() uint32               { return 130827 }
+func (m *LowranceUnknown) MessageInfo() MessageInfo        { return m.Info }
+func (m *LowranceUnknown) SetMessageInfo(info MessageInfo) { m.Info = info }
+func (m *LowranceUnknown) DecodePayload(payload []uint8) error {
 	matchStream0 := NewPgnDataStream(payload)
 	match0, err := matchStream0.getNumberRaw(11)
 	if err != nil {
@@ -414,7 +414,7 @@ func (m *PgnLowranceUnknown) DecodePayload(payload []uint8) error {
 	}
 	return nil
 }
-func (m *PgnLowranceUnknown) EncodePayload() ([]uint8, error) {
+func (m *LowranceUnknown) EncodePayload() ([]uint8, error) {
 	writer := NewPGNDataStreamWriter()
 	if m.ManufacturerCode != nil {
 		writer.writeUInt64(m.ManufacturerCode, 11)
