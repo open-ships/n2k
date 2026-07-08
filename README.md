@@ -162,10 +162,12 @@ for msg, err := range n2k.Receive(ctx,
     n2k.Filter("pgn == 127250"),
 ) { ... }
 
-// Filter on decoded fields
+// Filter on decoded fields -- decoded numeric fields hold raw wire ticks, not
+// physical units (see "Physical Values" below); Heading is in 0.0001-radian
+// ticks, so 31416 here is > pi rad.
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
-    n2k.Filter("pgn == 127250 && msg.Heading > 3.14"),
+    n2k.Filter("pgn == 127250 && msg.Heading > 31416"),
 ) { ... }
 
 // Filter by source address
@@ -185,6 +187,7 @@ for msg, err := range n2k.Receive(ctx,
 | `destination` | `int` | Destination address (255 = broadcast) |
 | `msg.<field>` | varies | Decoded struct field (case-insensitive) |
 
+Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in filter expressions.
 
 ### Options
 
@@ -198,6 +201,7 @@ for msg, err := range n2k.Receive(ctx,
 | `n2k.WithLogger(l)` | Override default `slog.Logger` |
 | `n2k.WithSourceAddress(addr)` | Explicit source address for writes (contention is fatal) |
 | `n2k.WithName(name)` | ISO 11783 device NAME for address claiming |
+| `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
 
 ### Testing with Replay
 

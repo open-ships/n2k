@@ -23,15 +23,16 @@ type socketCANChannelOptions struct {
 // socketCANChannel represents a single SocketCAN-based canbus channel for sending/receiving CAN frames.
 // It uses the brutella/can library for CAN socket I/O on an already-configured Linux CAN interface.
 type socketCANChannel struct {
-	// options holds the user-provided configuration (interface name, handler, etc.)
+	// options holds the user-provided configuration (interface name).
 	options socketCANChannelOptions
 
 	// bus is the underlying brutella/can bus object that manages the CAN socket connection.
 	// It handles subscribing to incoming frames and publishing outgoing frames.
 	bus *can.Bus
 
-	// busHandler wraps the user's MessageHandler callback into a can.Handler interface
-	// so it can be registered with the brutella/can bus subscription system.
+	// busHandler wraps the handler function passed to Run into a can.Handler
+	// interface so it can be registered with the brutella/can bus subscription
+	// system.
 	busHandler can.Handler
 
 	// log is the structured logger for diagnostic output about interface state changes and errors.
@@ -45,7 +46,8 @@ type socketCANChannel struct {
 //
 // Parameters:
 //   - log: structured logger for diagnostic output
-//   - options: required configuration including interface name and message handler
+//   - options: required configuration including the interface name (the message
+//     handler is passed separately to Run)
 //
 // Returns a *socketCANChannel (catalog type, not Interface) because SocketCAN-specific
 // callers may need access to SocketCAN-specific functionality.

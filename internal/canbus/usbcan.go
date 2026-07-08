@@ -51,7 +51,8 @@ type usbCANChannelOptions struct {
 // It manages the serial port connection, sends the initial configuration frame, and continuously
 // reads and parses the proprietary USB-CAN binary protocol from the serial stream.
 type usbCANChannel struct {
-	// options holds the user-provided configuration (serial port, bitrate, handler, etc.)
+	// options holds the user-provided configuration (serial port, bitrate, etc.);
+	// the message handler is passed separately to Run.
 	options usbCANChannelOptions
 
 	// port is the open serial port connection to the USB-CAN dongle.
