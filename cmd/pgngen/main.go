@@ -482,18 +482,17 @@ func partitionPGNStructFields(p sourcePGN) ([]pgnStructField, [2][]pgnStructFiel
 		if _, ok := pgnFieldType(field); !ok {
 			continue
 		}
-		set := -1
+		assigned := false
 		for i, r := range ranges {
 			if r[1] > r[0] && field.Order >= r[0] && field.Order < r[1] {
-				set = i
+				groupSources[i] = append(groupSources[i], field)
+				assigned = true
 				break
 			}
 		}
-		if set < 0 {
+		if !assigned {
 			fixedSources = append(fixedSources, field)
-			continue
 		}
-		groupSources[set] = append(groupSources[set], field)
 	}
 
 	fixedNames := make(map[string]int)
