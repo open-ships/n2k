@@ -1,5 +1,5 @@
 golangci_lint_version := "v2.12.0"
-secure_go_toolchain := "go1.25.11"
+secure_go_toolchain := "go1.25.12"
 
 # list available recipes
 default:
