@@ -288,6 +288,44 @@ func TestClient_Write_FastPacket(t *testing.T) {
 	}
 }
 
+func TestClient_Write_SmallFastPacketPayload_UsesFastPacketFraming(t *testing.T) {
+	ctx := context.Background()
+
+	// GnssSatsInView (PGN 129540) is a fast-packet PGN. An empty value (no
+	// satellites in the repeating group) encodes to a 3-byte payload -- well
+	// under the 8-byte single-frame threshold. Fast PGNs must still carry the
+	// fast-packet sequence/length header even when the payload is this small,
+	// or the reader will misparse Data[0]/Data[1] as raw payload bytes.
+	writer, err := NewClient(ctx, Replay(nil))
+	require.NoError(t, err)
+	defer func() { _ = writer.Close() }()
+
+	wr := writer.Write(&pgn.GnssSatsInView{})
+	require.NoError(t, wr.Wait())
+
+	frames := writer.WrittenFrames()
+	require.Len(t, frames, 1, "a 3-byte payload fits in a single fast-packet frame")
+
+	f0 := frames[0]
+	seqID, frameNum := framer.FastPacketSeqFrame(f0.Data[0])
+	_ = seqID
+	assert.Equal(t, uint8(0), frameNum, "Data[0] must be a fast-packet header with frame number 0")
+	assert.Equal(t, uint8(3), f0.Data[1], "Data[1] must be the total payload length (3)")
+
+	// Round-trip: feed the captured frame back through Replay + Receive and
+	// confirm it decodes cleanly on the other end.
+	var decoded []pgn.Message
+	for msg, err := range Receive(ctx, Replay(frames)) {
+		require.NoError(t, err)
+		decoded = append(decoded, msg)
+	}
+	require.Len(t, decoded, 1, "should decode exactly 1 GnssSatsInView from the captured frame")
+
+	sats, ok := decoded[0].(*pgn.GnssSatsInView)
+	require.True(t, ok, "expected *pgn.GnssSatsInView, got %T", decoded[0])
+	assert.Empty(t, sats.Repeating1, "empty repeating group should round-trip as empty")
+}
+
 func TestClient_CANSource_NoLongerStubbed(t *testing.T) {
 	// CAN("can0") should attempt to construct a bus client, not error with
 	// "not yet implemented". On a machine without can0, it will fail with a

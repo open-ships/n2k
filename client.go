@@ -417,14 +417,14 @@ func (c *Client) doWrite(msg pgn.Message) error {
 
 	canID := framer.BuildCANID(pgnNum, priority, srcAddr, destination)
 
-	if len(payload) <= 8 {
-		frame := framer.FrameSingle(canID, payload)
-		return c.writeFrame(frame)
-	}
-
 	isFast := false
 	if infos, ok := pgn.PgnInfoLookup[pgnNum]; ok && len(infos) > 0 {
 		isFast = infos[0].Fast
+	}
+
+	if !isFast && len(payload) <= 8 {
+		frame := framer.FrameSingle(canID, payload)
+		return c.writeFrame(frame)
 	}
 
 	if isFast && len(payload) <= 223 {
