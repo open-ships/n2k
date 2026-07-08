@@ -726,7 +726,7 @@ func TestClient_Write_NonPGNMessageErrors(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewClient: %v", err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	res := c.Write(nonPGNMessage{})
 	if err := res.Wait(); err == nil {
