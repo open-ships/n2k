@@ -38,9 +38,9 @@ func TestPGNDecodeUsesVariantMatches(t *testing.T) {
 		Info:             MessageInfo{PGN: 130824},
 		ManufacturerCode: ptrUint64(381),
 		IndustryCode:     ptrUint64(4),
-		Key:              ptrUint64(1),
-		Length:           ptrUint64(2),
-		Value:            []uint8{0x10, 0x20},
+		Repeating1: []BGKeyValueDataRepeating1{
+			{Key: ptrUint64(1), Length: ptrUint64(2), Value: []uint8{0x10, 0x20}},
+		},
 	}
 
 	payload, err := msg.EncodePayload()
