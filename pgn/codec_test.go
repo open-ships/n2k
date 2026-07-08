@@ -268,6 +268,63 @@ func TestDecodeFieldsNonByteAlignedBinaryField(t *testing.T) {
 	require.Equal(t, channelSourceConfigurationPayload, encoded)
 }
 
+// aisDgnssBroadcastBinaryMessagePayload is a hand-built PGN 129792 (AIS DGNSS
+// Broadcast Binary Message) payload, derived bit-by-bit from the field
+// descriptors in upstream_definitions.go:
+//
+//	Order 1  MessageId (LOOKUP)                6 bits  @0    = 17
+//	Order 2  RepeatIndicator (NUMBER)           2 bits  @6    = 1
+//	Order 3  SourceId (MMSI, unsigned number)  32 bits  @8    = 123456789
+//	Order 4  Reserved                           1 bit   @40   = 1 (all-ones)
+//	Order 5  AisTransceiverInformation (LOOKUP) 5 bits  @41   = 0
+//	Order 6  Spare                              2 bits  @46   = 0
+//	Order 7  Longitude (signed number)         32 bits  @48   = 1000000
+//	Order 8  Latitude (signed number)          32 bits  @80   = -2000000
+//	Order 9  Reserved                           3 bits  @112  = 0b111 (all-ones)
+//	Order 10 Spare                              5 bits  @115  = 0
+//	Order 11 NumberOfBitsInBinaryDataField      16 bits  @120  = 16 -- this is
+//	         the BitLengthField referenced by Order 12: its decoded raw value
+//	         is used directly as the bit width of the binary field that
+//	         follows (not multiplied by 8 -- the field is literally named
+//	         "Number of Bits").
+//	Order 12 BinaryData (BINARY, BitLengthField=11) @136 = 16 bits (2 bytes)
+//	         = {0xDE, 0xAD}
+//
+// Packing every fixed field's value into a 136-bit little-endian bit stream
+// (value << bitOffset, OR'd together, split into 17 little-endian bytes),
+// then appending the 2-byte binary data field (byte-aligned, so it needs no
+// further bit packing), yields the 19-byte payload below.
+var aisDgnssBroadcastBinaryMessagePayload = []uint8{
+	0x51, 0x15, 0xCD, 0x5B, 0x07, 0x01, 0x40, 0x42, 0x0F, 0x00,
+	0x80, 0x7B, 0xE1, 0xFF, 0x07, 0x10, 0x00, 0xDE, 0xAD,
+}
+
+// TestDecodeFieldsBitLengthFieldDrivenBinary pins the BitLengthField contract:
+// a variable-length binary field whose width is the raw decoded value (in
+// BITS) of an earlier field, as opposed to the DYNAMIC_FIELD_LENGTH contract
+// (pgn/codec_test.go's KeyValueLengthDrivenBinary tests) whose referenced
+// field counts BYTES. PGN 129792's "Number of Bits in Binary Data Field" is
+// the canonical example: its name says exactly what it holds.
+func TestDecodeFieldsBitLengthFieldDrivenBinary(t *testing.T) {
+	var msg AisDgnssBroadcastBinaryMessage
+	require.NoError(t, decodeFields(&msg, aisDgnssBroadcastBinaryMessagePayload))
+
+	require.Equal(t, uint64(17), *msg.MessageId)
+	require.Equal(t, uint64(1), *msg.RepeatIndicator)
+	require.Equal(t, uint64(123456789), *msg.SourceId)
+	require.Equal(t, uint64(0), *msg.AisTransceiverInformation)
+	require.Equal(t, int64(1000000), *msg.Longitude)
+	require.Equal(t, int64(-2000000), *msg.Latitude)
+	require.Equal(t, uint64(16), *msg.NumberOfBitsInBinaryDataField)
+	require.Equal(t, []uint8{0xDE, 0xAD}, msg.BinaryData)
+
+	// Byte-identical re-encode: the BitLengthField reference must round-trip
+	// both the referenced field's value and the binary data's exact width.
+	encoded, err := encodeFields(&msg)
+	require.NoError(t, err)
+	require.Equal(t, aisDgnssBroadcastBinaryMessagePayload, encoded)
+}
+
 // codecTestOrphan implements PGN but has no registered field metadata.
 type codecTestOrphan struct{ Info MessageInfo }
 
