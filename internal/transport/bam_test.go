@@ -155,9 +155,11 @@ func TestBAMReceive_HappyPath(t *testing.T) {
 
 func TestBAMReceive_Timeout(t *testing.T) {
 	h := newTestHelper()
+	clock := &fakeClock{}
 	mgr := NewManager(ManagerConfig{
 		WriteFrame: h.writeFrame,
 		OnComplete: h.onComplete,
+		AfterFunc:  clock.AfterFunc,
 	})
 	defer mgr.Close()
 
@@ -175,8 +177,8 @@ func TestBAMReceive_Timeout(t *testing.T) {
 	}
 	mgr.HandleFrame(buildTestDTFrame(1, dt1Data, source, BroadcastAddr))
 
-	// Wait for the DT timeout to fire.
-	time.Sleep(DTTimeout + 100*time.Millisecond)
+	// Fire the DT timeout deterministically instead of sleeping.
+	clock.fireAll()
 
 	// Verify no message was delivered.
 	completed := h.getCompleted()

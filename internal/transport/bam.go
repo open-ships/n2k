@@ -1,8 +1,6 @@
 package transport
 
 import (
-	"time"
-
 	"github.com/brutella/can"
 )
 
@@ -40,7 +38,7 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
 	}
 
 	// Set a DT timeout for the first frame.
-	sess.timer = time.AfterFunc(DTTimeout, func() {
+	sess.timer = m.afterFunc(DTTimeout, func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
 		m.logger.Warn("BAM DT timeout", "source", source, "pgn", pgn,

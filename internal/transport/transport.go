@@ -22,7 +22,17 @@ type ManagerConfig struct {
 
 	// Logger for transport protocol events. If nil, a no-op logger is used.
 	Logger *slog.Logger
+
+	// AfterFunc schedules a callback after d; nil means time.AfterFunc.
+	// Tests inject a fake to drive timeouts deterministically.
+	AfterFunc func(d time.Duration, f func()) Timer
+
+	// Sleep pauses between BAM DT frames; nil means time.Sleep.
+	Sleep func(d time.Duration)
 }
+
+// Timer is the subset of *time.Timer the manager uses.
+type Timer interface{ Stop() bool }
 
 // sessionKey uniquely identifies an active transport protocol session.
 type sessionKey struct {
@@ -53,7 +63,7 @@ type session struct {
 	maxPerCTS uint8 // max DT frames per CTS cycle (from RTS byte 4)
 
 	// Timeout management
-	timer *time.Timer
+	timer Timer
 
 	// Transmit-side fields for RTS/CTS
 	txPayload []byte        // full payload to transmit
@@ -66,11 +76,13 @@ type session struct {
 // Manager orchestrates ISO 11783 transport protocol sessions, handling both
 // BAM and RTS/CTS modes for receive and transmit.
 type Manager struct {
-	config   ManagerConfig
-	sessions map[sessionKey]*session
-	mu       sync.Mutex
-	closed   bool
-	logger   *slog.Logger
+	config    ManagerConfig
+	sessions  map[sessionKey]*session
+	mu        sync.Mutex
+	closed    bool
+	logger    *slog.Logger
+	afterFunc func(time.Duration, func()) Timer
+	sleep     func(time.Duration)
 }
 
 // NewManager creates a new transport protocol Manager.
@@ -79,10 +91,20 @@ func NewManager(cfg ManagerConfig) *Manager {
 	if logger == nil {
 		logger = slog.Default()
 	}
+	afterFunc := cfg.AfterFunc
+	if afterFunc == nil {
+		afterFunc = func(d time.Duration, f func()) Timer { return time.AfterFunc(d, f) }
+	}
+	sleep := cfg.Sleep
+	if sleep == nil {
+		sleep = time.Sleep
+	}
 	return &Manager{
-		config:   cfg,
-		sessions: make(map[sessionKey]*session),
-		logger:   logger,
+		config:    cfg,
+		sessions:  make(map[sessionKey]*session),
+		logger:    logger,
+		afterFunc: afterFunc,
+		sleep:     sleep,
 	}
 }
 
@@ -128,11 +150,11 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	}
 
 	m.mu.Lock()
-	defer m.mu.Unlock()
 
 	// Find the session. For BAM, destination is 255. For RTS/CTS, it's the actual target.
 	sess := m.findSession(source, destination)
 	if sess == nil {
+		m.mu.Unlock()
 		return
 	}
 
@@ -143,6 +165,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 			"expected", expectedSeq, "got", seqNum,
 			"source", source, "pgn", sess.key.pgn)
 		m.removeSession(sess.key)
+		m.mu.Unlock()
 		return
 	}
 
@@ -161,33 +184,44 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 		sess.timer.Stop()
 	}
 
-	if sess.received >= int(sess.numFrames) {
-		// All frames received.
-		key := sess.key
-		data := make([]byte, sess.totalSize)
-		copy(data, sess.data[:sess.totalSize])
-		dst := sess.key.destination
-
-		// For RTS/CTS receive: send EndOfMsgAck.
-		if dst != BroadcastAddr {
-			m.sendEndOfMsgAck(sess)
-		}
-
-		m.removeSession(key)
-		// Deliver outside the lock would be nice, but we need to ensure ordering.
-		// The callback should be fast.
-		if m.config.OnComplete != nil {
-			m.config.OnComplete(key.pgn, key.source, dst, data)
-		}
-	} else {
+	if sess.received < int(sess.numFrames) {
 		// More frames expected; set a DT timeout.
-		sess.timer = time.AfterFunc(DTTimeout, func() {
+		sess.timer = m.afterFunc(DTTimeout, func() {
 			m.mu.Lock()
 			defer m.mu.Unlock()
 			m.logger.Warn("DT timeout", "source", source, "pgn", sess.key.pgn,
 				"received", sess.received, "expected", sess.numFrames)
 			m.removeSession(sess.key)
 		})
+		m.mu.Unlock()
+		return
+	}
+
+	// All frames received. Collect everything needed for delivery under the
+	// lock, then release it so a slow OnComplete consumer cannot stall other
+	// Manager calls.
+	key := sess.key
+	data := make([]byte, sess.totalSize)
+	copy(data, sess.data[:sess.totalSize])
+	dst := sess.key.destination
+
+	// For RTS/CTS receive: build the EndOfMsgAck to send after unlocking.
+	var ackFrame *can.Frame
+	if dst != BroadcastAddr {
+		f := buildEndOfMsgAckFrame(sess)
+		ackFrame = &f
+	}
+
+	m.removeSession(key)
+	m.mu.Unlock()
+
+	if ackFrame != nil {
+		if err := m.config.WriteFrame(*ackFrame); err != nil {
+			m.logger.Warn("failed to send EndOfMsgAck", "error", err)
+		}
+	}
+	if m.config.OnComplete != nil {
+		m.config.OnComplete(key.pgn, key.source, dst, data)
 	}
 }
 
@@ -235,10 +269,10 @@ func (m *Manager) SendBAM(pgn uint32, source uint8, payload []byte) error {
 	}
 
 	// Send DT frames with inter-frame delay.
-	dtFrames := buildDTFrames(payload, source, BroadcastAddr)
+	dtFrames := buildDTFrameRange(payload, 1, int(numFrames), source, BroadcastAddr)
 	for i, f := range dtFrames {
 		if i > 0 {
-			time.Sleep(BAMInterFrameDelay)
+			m.sleep(BAMInterFrameDelay)
 		}
 		if err := m.config.WriteFrame(f); err != nil {
 			return fmt.Errorf("send DT frame %d: %w", i+1, err)
@@ -275,7 +309,7 @@ func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payloa
 	m.sessions[key] = sess
 
 	// Set CTS timeout.
-	sess.timer = time.AfterFunc(CTSTimeout, func() {
+	sess.timer = m.afterFunc(CTSTimeout, func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
 		if _, ok := m.sessions[key]; ok {
@@ -289,10 +323,18 @@ func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payloa
 	// Send RTS.
 	rtsFrame := buildRTSFrame(totalSize, numFrames, pgn, source, destination)
 	if err := m.config.WriteFrame(rtsFrame); err != nil {
+		// The CTS timeout may have fired (removing the session and closing
+		// txDone) while WriteFrame blocked; only close txDone if we removed
+		// the session ourselves.
 		m.mu.Lock()
-		m.removeSession(key)
+		_, active := m.sessions[key]
+		if active {
+			m.removeSession(key)
+		}
 		m.mu.Unlock()
-		close(sess.txDone)
+		if active {
+			close(sess.txDone)
+		}
 		return fmt.Errorf("send RTS: %w", err)
 	}
 
@@ -325,43 +367,35 @@ func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination ui
 
 	sess.state = stateSendingDT
 	sess.txSeqNum = nextSeqNum
+	payload := sess.txPayload // immutable after session creation; safe to read unlocked
 	m.mu.Unlock()
 
-	// Send the requested DT frames.
-	for i := uint8(0); i < numFrames; i++ {
-		seqNum := nextSeqNum + i
-		offset := int(seqNum-1) * MaxDTDataBytes
-		if offset >= len(sess.txPayload) {
-			break
-		}
-
-		end := offset + MaxDTDataBytes
-		if end > len(sess.txPayload) {
-			end = len(sess.txPayload)
-		}
-
-		var data [7]byte
-		for j := range data {
-			data[j] = 0xFF
-		}
-		copy(data[:], sess.txPayload[offset:end])
-
-		dtFrame := makeDTFrame(seqNum, data, destination, source)
+	// Send the requested DT frames without holding the manager lock.
+	for _, dtFrame := range buildDTFrameRange(payload, nextSeqNum, int(numFrames), destination, source) {
 		if err := m.config.WriteFrame(dtFrame); err != nil {
+			// The session may have been removed (abort/close) while writing;
+			// only mutate and signal completion if we still own it.
 			m.mu.Lock()
-			sess.txErr = fmt.Errorf("send DT frame %d: %w", seqNum, err)
-			m.removeSession(key)
+			_, active := m.sessions[key]
+			if active {
+				sess.txErr = fmt.Errorf("send DT frame %d: %w", dtFrame.Data[0], err)
+				m.removeSession(key)
+			}
 			m.mu.Unlock()
-			close(sess.txDone)
+			if active {
+				close(sess.txDone)
+			}
 			return
 		}
 	}
 
 	// After sending DT frames, set a CTS timeout for the next CTS or EndOfMsgAck.
+	// The session may have been removed (abort/close) while frames were being
+	// written; only re-arm if it still exists.
 	m.mu.Lock()
 	if _, ok := m.sessions[key]; ok {
 		sess.state = stateWaitingForCTS
-		sess.timer = time.AfterFunc(CTSTimeout, func() {
+		sess.timer = m.afterFunc(CTSTimeout, func() {
 			m.mu.Lock()
 			defer m.mu.Unlock()
 			if _, ok := m.sessions[key]; ok {
@@ -432,8 +466,9 @@ func (m *Manager) handleAbortReceive(frame can.Frame, source uint8, destination 
 	}
 }
 
-// sendEndOfMsgAck sends an EndOfMsgAck frame for a completed receive session.
-func (m *Manager) sendEndOfMsgAck(sess *session) {
+// buildEndOfMsgAckFrame constructs an EndOfMsgAck frame for a completed
+// receive session. The caller writes it to the bus outside the manager lock.
+func buildEndOfMsgAckFrame(sess *session) can.Frame {
 	var data [8]uint8
 	data[0] = ControlEndOfMsgAck
 	data[1] = uint8(sess.totalSize)
@@ -443,13 +478,10 @@ func (m *Manager) sendEndOfMsgAck(sess *session) {
 	encodePGN(data[5:8], sess.key.pgn)
 
 	canID := framer.BuildCANID(PGNCM, TPPriority, sess.key.destination, sess.key.source)
-	f := can.Frame{
+	return can.Frame{
 		ID:     canID,
 		Length: 8,
 		Data:   data,
-	}
-	if err := m.config.WriteFrame(f); err != nil {
-		m.logger.Warn("failed to send EndOfMsgAck", "error", err)
 	}
 }
 
@@ -523,14 +555,18 @@ func buildRTSFrame(totalSize uint16, numFrames uint8, pgn uint32, source uint8, 
 	}
 }
 
-// buildDTFrames creates all DT frames for a payload.
-func buildDTFrames(payload []byte, source uint8, destination uint8) []can.Frame {
-	numFrames := (len(payload) + MaxDTDataBytes - 1) / MaxDTDataBytes
-	frames := make([]can.Frame, 0, numFrames)
+// buildDTFrameRange builds DT frames [startSeq, startSeq+count) for payload.
+// Frames past the end of payload are omitted.
+func buildDTFrameRange(payload []byte, startSeq uint8, count int, source uint8, destination uint8) []can.Frame {
+	frames := make([]can.Frame, 0, count)
 
-	for i := 0; i < numFrames; i++ {
-		seqNum := uint8(i + 1)
-		offset := i * MaxDTDataBytes
+	for i := 0; i < count; i++ {
+		seqNum := startSeq + uint8(i)
+		offset := int(seqNum-1) * MaxDTDataBytes
+		if offset >= len(payload) {
+			break
+		}
+
 		end := offset + MaxDTDataBytes
 		if end > len(payload) {
 			end = len(payload)
