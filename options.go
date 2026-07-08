@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/brutella/can"
-	"github.com/open-ships/n2k/internal/canbus"
 )
 
 type config struct {
@@ -14,10 +13,10 @@ type config struct {
 	filterExpr     string
 	includeUnknown bool
 	logger         *slog.Logger
-	sourceAddress  *uint8           // nil = auto mode
-	deviceName     *DeviceName      // nil = use default
-	claimTimeout   *time.Duration   // nil = use default (1500ms)
-	bus            canbus.Interface // pre-constructed bus (internal/testing use)
+	sourceAddress  *uint8         // nil = auto mode
+	deviceName     *DeviceName    // nil = use default
+	claimTimeout   *time.Duration // nil = use default (1500ms)
+	bus            Bus            // pre-constructed bus
 }
 
 func (c *config) validate() error {
@@ -109,10 +108,11 @@ func WithName(name DeviceName) Option {
 	})
 }
 
-// WithBus provides a pre-constructed canbus.Interface for the client to use.
-// This is primarily for testing with mock buses. When set, the client uses this
-// bus directly instead of constructing one from CAN/USB sources.
-func WithBus(bus canbus.Interface) Option {
+// WithBus provides a pre-constructed Bus for the client to use — either a
+// custom transport not shipped by this library, or a fake for testing. When
+// set, the client uses this bus directly instead of constructing one from
+// CAN/USB sources.
+func WithBus(bus Bus) Option {
 	return optionFunc(func(c *config) {
 		c.bus = bus
 	})

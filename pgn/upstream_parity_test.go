@@ -3,6 +3,9 @@ package pgn
 import (
 	"encoding/json"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"io"
 	"math"
 	"net/http"
@@ -179,6 +182,109 @@ func TestUpstreamParity(t *testing.T) {
 		t.Errorf("generated PGNs with field/layout mismatches (%d):\n%s",
 			len(fieldMismatches), sampleLines(fieldMismatches, 25))
 	}
+}
+
+// TestEnumConstantsCoverLookupEnumerations checks that every LookupEnumeration
+// name referenced by a PgnInfoLookup field descriptor has a corresponding
+// <CamelCase>Const type declared in enums.go.
+//
+// This runs under the same opt-in UPSTREAM_PARITY=1 gate as TestUpstreamParity
+// even though it needs no network access: enums.go was generated long ago by
+// an out-of-tree tool and is not refreshed by ongoing metadata sync (see its
+// provenance comment), so real drift already exists between it and the
+// current metadata -- gating keeps `go test ./...` green while still
+// surfacing that drift on demand. This test reports drift; it does not fix
+// enums.go.
+//
+// Mapping rule (derived by checking enums.go's actual type names against the
+// LookupEnumeration names in upstream_definitions.go): split the
+// LookupEnumeration name on '_', title-case each segment (uppercase the
+// first rune, lowercase the rest -- including segments that are pure digits,
+// e.g. "16" stays "16"), concatenate the segments, and append "Const". For
+// example "DIRECTION_REFERENCE" -> "DirectionReferenceConst" and
+// "SEATALK_PILOT_MODE_16" -> "SeatalkPilotMode16Const". Verified against
+// every LookupEnumeration name currently in the generated metadata: every
+// name that has a matching enums.go type resolves correctly under this rule
+// with zero exceptions, so no alias map is needed today; add one here if a
+// future case needs it.
+//
+// LookupBitEnumeration, LookupIndirectEnumeration, and
+// LookupFieldTypeEnumeration names follow a similar textual convention (e.g.
+// LookupBitEnumeration "ENGINE_STATUS_1" backs EngineStatus1Const) but are
+// out of scope for this check -- only LookupEnumeration is compared, per the
+// task that introduced this test.
+func TestEnumConstantsCoverLookupEnumerations(t *testing.T) {
+	if os.Getenv("UPSTREAM_PARITY") == "" {
+		t.Skip("set UPSTREAM_PARITY=1 to run enum-drift checks")
+	}
+
+	constTypes := enumConstTypeNames(t)
+
+	names := make(map[string]struct{})
+	for _, infos := range PgnInfoLookup {
+		for _, info := range infos {
+			for _, field := range info.Fields {
+				if field.LookupEnumeration != "" {
+					names[field.LookupEnumeration] = struct{}{}
+				}
+			}
+		}
+	}
+
+	missing := make([]string, 0, len(names))
+	for name := range names {
+		want := lookupEnumerationConstName(name)
+		if _, ok := constTypes[want]; !ok {
+			missing = append(missing, fmt.Sprintf("%s -> %s", name, want))
+		}
+	}
+	if len(missing) > 0 {
+		t.Errorf("LookupEnumeration names with no matching enums.go Const type (%d):\n%s",
+			len(missing), sampleLines(missing, 50))
+	}
+}
+
+// lookupEnumerationConstName converts a LookupEnumeration name to the Go
+// Const type name enums.go would declare for it under the naming rule
+// documented on TestEnumConstantsCoverLookupEnumerations.
+func lookupEnumerationConstName(name string) string {
+	var b strings.Builder
+	for _, part := range strings.Split(name, "_") {
+		if part == "" {
+			continue
+		}
+		b.WriteString(strings.ToUpper(part[:1]))
+		b.WriteString(strings.ToLower(part[1:]))
+	}
+	b.WriteString("Const")
+	return b.String()
+}
+
+// enumConstTypeNames AST-parses enums.go and returns the set of declared
+// type names, following the same parse-package-source pattern
+// metadata_consistency_test.go uses for the PGN struct files.
+func enumConstTypeNames(t *testing.T) map[string]struct{} {
+	t.Helper()
+	fset := token.NewFileSet()
+	parsed, err := parser.ParseFile(fset, "enums.go", nil, 0)
+	if err != nil {
+		t.Fatalf("parse enums.go: %v", err)
+	}
+	types := make(map[string]struct{})
+	for _, decl := range parsed.Decls {
+		genDecl, ok := decl.(*ast.GenDecl)
+		if !ok {
+			continue
+		}
+		for _, spec := range genDecl.Specs {
+			typeSpec, ok := spec.(*ast.TypeSpec)
+			if !ok {
+				continue
+			}
+			types[typeSpec.Name.Name] = struct{}{}
+		}
+	}
+	return types
 }
 
 func fetchUpstreamSchema() ([]byte, error) {

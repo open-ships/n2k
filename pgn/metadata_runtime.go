@@ -60,6 +60,11 @@ type SourceFieldDefinition struct {
 	BitLengthVariable                   bool
 }
 
+// structInfoLookup maps generated struct type names (PgnInfo.Id) to their
+// metadata. The metadata-driven codec (pgn/codec.go) uses it to compile a
+// decode/encode plan for each PGN struct type.
+var structInfoLookup map[string]*PgnInfo
+
 func init() {
 	initPgnInfoLookup()
 }
@@ -71,11 +76,13 @@ func initPgnInfoLookup() {
 
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
 	UnseenLookup = make(map[uint32][]*PgnInfo)
+	structInfoLookup = make(map[string]*PgnInfo, len(sourceDefinitions))
 
 	infos := make([]*PgnInfo, 0, len(sourceDefinitions))
 	for _, def := range sourceDefinitions {
 		info := pgnInfoFromSource(def)
 		infos = append(infos, info)
+		structInfoLookup[info.Id] = info
 	}
 
 	sort.SliceStable(infos, func(i, j int) bool {

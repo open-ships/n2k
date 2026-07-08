@@ -15,7 +15,7 @@ import (
 )
 
 // pgnAddressClaim is the PGN number for ISO Address Claim (60928 = 0xEE00).
-const pgnAddressClaim = 60928
+const pgnAddressClaim = framer.PGNISOAddressClaim
 
 // addressClaimPriority is the CAN priority used for address claim messages.
 const addressClaimPriority = 6

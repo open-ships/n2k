@@ -1,12 +1,108 @@
 package transport
 
 import (
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
 )
+
+// fakeTimer is a no-op Timer used by fakeClock.
+type fakeTimer struct{ stopped bool }
+
+func (f *fakeTimer) Stop() bool { f.stopped = true; return true }
+
+// fakeClock captures scheduled callbacks so tests fire them synchronously
+// instead of sleeping real wall-clock time.
+type fakeClock struct {
+	mu        sync.Mutex
+	callbacks []func()
+}
+
+func (c *fakeClock) AfterFunc(d time.Duration, f func()) Timer {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.callbacks = append(c.callbacks, f)
+	return &fakeTimer{}
+}
+
+func (c *fakeClock) fireAll() {
+	c.mu.Lock()
+	cbs := c.callbacks
+	c.callbacks = nil
+	c.mu.Unlock()
+	for _, f := range cbs {
+		f()
+	}
+}
+
+func TestBAMReceiveTimeoutDeterministic(t *testing.T) {
+	clock := &fakeClock{}
+	var written []can.Frame
+	mgr := NewManager(ManagerConfig{
+		WriteFrame: func(f can.Frame) error { written = append(written, f); return nil },
+		AfterFunc:  clock.AfterFunc,
+		Sleep:      func(time.Duration) {},
+	})
+	defer mgr.Close()
+
+	// Start a BAM receive session (CM frame), then fire the DT timeout without sleeping.
+	cm := buildCMBAMFrame(14, 2, 130816, 10)
+	mgr.HandleFrame(cm)
+	if got := activeSessionCount(mgr); got != 1 {
+		t.Fatalf("sessions = %d, want 1", got)
+	}
+	clock.fireAll()
+	if got := activeSessionCount(mgr); got != 0 {
+		t.Fatalf("sessions after timeout = %d, want 0", got)
+	}
+}
+
+func activeSessionCount(m *Manager) int {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return len(m.sessions)
+}
+
+func TestOnCompleteRunsOutsideLock(t *testing.T) {
+	release := make(chan struct{})
+	entered := make(chan struct{})
+	mgr := NewManager(ManagerConfig{
+		WriteFrame: func(can.Frame) error { return nil },
+		OnComplete: func(uint32, uint8, uint8, []byte) {
+			close(entered)
+			<-release // simulate a slow consumer
+		},
+	})
+	defer mgr.Close()
+
+	// Complete a 1-frame BAM: CM announcing 7 bytes / 1 frame, then DT 1.
+	mgr.HandleFrame(buildCMBAMFrame(7, 1, 130816, 10))
+	done := make(chan struct{})
+	go func() {
+		var dt [7]byte
+		mgr.HandleFrame(makeDTFrame(1, dt, 10, BroadcastAddr))
+		close(done)
+	}()
+	<-entered
+	// While OnComplete is blocked, another goroutine must still be able to
+	// take the manager lock (e.g. a new CM frame).
+	locked := make(chan struct{})
+	go func() {
+		mgr.HandleFrame(buildCMBAMFrame(7, 1, 130817, 11))
+		close(locked)
+	}()
+	select {
+	case <-locked:
+	case <-time.After(time.Second):
+		t.Fatal("Manager lock held across OnComplete")
+	}
+	close(release)
+	<-done
+}
 
 func TestManager_RoutesCMToCorrectHandler(t *testing.T) {
 	h := newTestHelper()
@@ -90,11 +186,11 @@ func TestParseCANID_RoundTrip(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			canID := framer.BuildCANID(tt.pgn, TPPriority, tt.source, tt.destination)
-			pgn, src, dst := parseCANID(canID)
+			c := framer.ParseCANID(canID)
 
-			assert.Equal(t, tt.pgn, pgn, "PGN should round-trip")
-			assert.Equal(t, tt.source, src, "source should round-trip")
-			assert.Equal(t, tt.destination, dst, "destination should round-trip")
+			assert.Equal(t, tt.pgn, c.PGN, "PGN should round-trip")
+			assert.Equal(t, tt.source, c.Source, "source should round-trip")
+			assert.Equal(t, tt.destination, c.Destination, "destination should round-trip")
 		})
 	}
 }

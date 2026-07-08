@@ -68,8 +68,6 @@ func FrameFastPacket(canID uint32, payload []byte, sequenceId uint8) []can.Frame
 		payload = payload[:totalLen]
 	}
 
-	seqBits := (sequenceId & 0x07) << 5
-
 	var frames []can.Frame
 	offset := 0
 	frameNum := 0
@@ -84,7 +82,7 @@ func FrameFastPacket(canID uint32, payload []byte, sequenceId uint8) []can.Frame
 			f.Data[i] = 0xFF
 		}
 
-		f.Data[0] = seqBits | uint8(frameNum)
+		f.Data[0] = FastPacketHeader(sequenceId, uint8(frameNum))
 		f.Data[1] = uint8(totalLen)
 
 		n := totalLen
@@ -108,7 +106,7 @@ func FrameFastPacket(canID uint32, payload []byte, sequenceId uint8) []can.Frame
 			f.Data[i] = 0xFF
 		}
 
-		f.Data[0] = seqBits | uint8(frameNum)
+		f.Data[0] = FastPacketHeader(sequenceId, uint8(frameNum))
 
 		n := totalLen - offset
 		if n > 7 {

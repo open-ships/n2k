@@ -23,6 +23,15 @@
 // represents, enabling generic handling in frontends like boatweb.
 //
 // These units also have to interact cleanly with units transferred from boatweb.
+//
+// Standalone status: this package is not currently consumed by the pgn decode path. Decoded PGN
+// struct fields hold raw wire ticks (*uint64/*int64); pgn.PhysicalValue applies a field's Resolution
+// and Offset to produce a plain float64 physical value plus a unit string, but it does not construct
+// units types, and no PGN struct field uses a units type. Integrating units into decoding would mean
+// switching PGN struct fields from raw-tick integers to float-based quantities (each Unit[T] wraps a
+// float32), which is a larger, cross-cutting change to the generated struct shapes and is
+// deliberately deferred; for now, callers that want a units value construct one themselves from
+// pgn.PhysicalValue's (float64, unit string) result.
 package units
 
 // UnitType is an enum that identifies the category of physical quantity (distance, flow, etc.).

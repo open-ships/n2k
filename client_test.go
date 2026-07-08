@@ -50,6 +50,13 @@ func TestClient_NewClient_Validation(t *testing.T) {
 	})
 }
 
+func TestNewClient_Replay_BadFilterFailsEagerly(t *testing.T) {
+	_, err := NewClient(context.Background(), Replay(nil), Filter("((("))
+	if err == nil {
+		t.Fatal("expected eager filter compile error for replay client")
+	}
+}
+
 func TestClient_Write_EncodesAndFrames(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)
@@ -281,6 +288,44 @@ func TestClient_Write_FastPacket(t *testing.T) {
 	}
 }
 
+func TestClient_Write_SmallFastPacketPayload_UsesFastPacketFraming(t *testing.T) {
+	ctx := context.Background()
+
+	// GnssSatsInView (PGN 129540) is a fast-packet PGN. An empty value (no
+	// satellites in the repeating group) encodes to a 3-byte payload -- well
+	// under the 8-byte single-frame threshold. Fast PGNs must still carry the
+	// fast-packet sequence/length header even when the payload is this small,
+	// or the reader will misparse Data[0]/Data[1] as raw payload bytes.
+	writer, err := NewClient(ctx, Replay(nil))
+	require.NoError(t, err)
+	defer func() { _ = writer.Close() }()
+
+	wr := writer.Write(&pgn.GnssSatsInView{})
+	require.NoError(t, wr.Wait())
+
+	frames := writer.WrittenFrames()
+	require.Len(t, frames, 1, "a 3-byte payload fits in a single fast-packet frame")
+
+	f0 := frames[0]
+	seqID, frameNum := framer.FastPacketSeqFrame(f0.Data[0])
+	_ = seqID
+	assert.Equal(t, uint8(0), frameNum, "Data[0] must be a fast-packet header with frame number 0")
+	assert.Equal(t, uint8(3), f0.Data[1], "Data[1] must be the total payload length (3)")
+
+	// Round-trip: feed the captured frame back through Replay + Receive and
+	// confirm it decodes cleanly on the other end.
+	var decoded []pgn.Message
+	for msg, err := range Receive(ctx, Replay(frames)) {
+		require.NoError(t, err)
+		decoded = append(decoded, msg)
+	}
+	require.Len(t, decoded, 1, "should decode exactly 1 GnssSatsInView from the captured frame")
+
+	sats, ok := decoded[0].(*pgn.GnssSatsInView)
+	require.True(t, ok, "expected *pgn.GnssSatsInView, got %T", decoded[0])
+	assert.Empty(t, sats.Repeating1, "empty repeating group should round-trip as empty")
+}
+
 func TestClient_CANSource_NoLongerStubbed(t *testing.T) {
 	// CAN("can0") should attempt to construct a bus client, not error with
 	// "not yet implemented". On a machine without can0, it will fail with a
@@ -459,45 +504,35 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 
 // --- Mock bus for bus path tests ---
 
+// mockBus implements n2k.Bus.
 type mockBus struct {
+	mu      sync.Mutex
 	inbound chan can.Frame
 	written []can.Frame
-	mu      sync.Mutex
-	handler func(can.Frame)
+	closed  bool
 }
 
-func newMockBus() *mockBus {
-	return &mockBus{inbound: make(chan can.Frame, 64)}
-}
+func newMockBus() *mockBus { return &mockBus{inbound: make(chan can.Frame, 64)} }
 
-func (m *mockBus) Run(ctx context.Context) error {
+func (m *mockBus) Run(ctx context.Context, handler func(can.Frame)) error {
 	for {
 		select {
+		case f := <-m.inbound:
+			handler(f)
 		case <-ctx.Done():
 			return ctx.Err()
-		case f, ok := <-m.inbound:
-			if !ok {
-				return nil
-			}
-			if m.handler != nil {
-				m.handler(f)
-			}
 		}
 	}
 }
 
-func (m *mockBus) Close() error { return nil }
-
-func (m *mockBus) WriteFrame(frame can.Frame) error {
+func (m *mockBus) WriteFrame(f can.Frame) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.written = append(m.written, frame)
+	m.written = append(m.written, f)
 	return nil
 }
 
-func (m *mockBus) SetHandler(h func(can.Frame)) {
-	m.handler = h
-}
+func (m *mockBus) Close() error { m.mu.Lock(); defer m.mu.Unlock(); m.closed = true; return nil }
 
 func (m *mockBus) getWritten() []can.Frame {
 	m.mu.Lock()
@@ -506,6 +541,9 @@ func (m *mockBus) getWritten() []can.Frame {
 	copy(out, m.written)
 	return out
 }
+
+// Compile-time proof that Bus is implementable with only public types.
+var _ Bus = (*mockBus)(nil)
 
 func TestClient_AddressClaim(t *testing.T) {
 	mb := newMockBus()
@@ -673,4 +711,25 @@ func TestClient_FilterPGN(t *testing.T) {
 	assert.True(t, ok, "expected VesselHeading, got %T", received)
 
 	_ = c.Close()
+}
+
+// nonPGNMessage implements pgn.Message but not pgn.PGN, to prove the write
+// path rejects it without panicking (the old reflection panicked on missing
+// Info fields).
+type nonPGNMessage struct{}
+
+func (nonPGNMessage) PGNNumber() uint32 { return 127250 }
+
+func TestClient_Write_NonPGNMessageErrors(t *testing.T) {
+	ctx := context.Background()
+	c, err := NewClient(ctx, Replay(nil))
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+	defer func() { _ = c.Close() }()
+
+	res := c.Write(nonPGNMessage{})
+	if err := res.Wait(); err == nil {
+		t.Fatal("expected error writing a non-PGN message, got nil")
+	}
 }

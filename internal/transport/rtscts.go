@@ -1,8 +1,6 @@
 package transport
 
 import (
-	"time"
-
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
 )
@@ -43,7 +41,7 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 	}
 
 	// Set a DT timeout.
-	sess.timer = time.AfterFunc(DTTimeout, func() {
+	sess.timer = m.afterFunc(DTTimeout, func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
 		m.logger.Warn("RTS/CTS DT timeout", "source", source, "pgn", pgn,

@@ -39,10 +39,10 @@ func TestRTSCTSReceive_HappyPath(t *testing.T) {
 	require.Len(t, sentFrames, 1, "should have sent a CTS")
 
 	ctsFrame := sentFrames[0]
-	ctsPGN, ctsSrc, ctsDst := parseCANID(ctsFrame.ID)
-	assert.Equal(t, PGNCM, ctsPGN)
-	assert.Equal(t, destination, ctsSrc, "CTS source should be us")
-	assert.Equal(t, source, ctsDst, "CTS destination should be the remote sender")
+	cts := framer.ParseCANID(ctsFrame.ID)
+	assert.Equal(t, PGNCM, cts.PGN)
+	assert.Equal(t, destination, cts.Source, "CTS source should be us")
+	assert.Equal(t, source, cts.Destination, "CTS destination should be the remote sender")
 	assert.Equal(t, ControlCTS, ctsFrame.Data[0])
 	assert.Equal(t, uint8(3), ctsFrame.Data[1], "request all 3 frames")
 	assert.Equal(t, uint8(1), ctsFrame.Data[2], "start from frame 1")
@@ -68,10 +68,10 @@ func TestRTSCTSReceive_HappyPath(t *testing.T) {
 	require.Len(t, sentFrames, 2, "should have sent CTS + EndOfMsgAck")
 
 	eomFrame := sentFrames[1]
-	eomPGN, eomSrc, eomDst := parseCANID(eomFrame.ID)
-	assert.Equal(t, PGNCM, eomPGN)
-	assert.Equal(t, destination, eomSrc, "EOM source should be us")
-	assert.Equal(t, source, eomDst, "EOM destination should be the remote sender")
+	eom := framer.ParseCANID(eomFrame.ID)
+	assert.Equal(t, PGNCM, eom.PGN)
+	assert.Equal(t, destination, eom.Source, "EOM source should be us")
+	assert.Equal(t, source, eom.Destination, "EOM destination should be the remote sender")
 	assert.Equal(t, ControlEndOfMsgAck, eomFrame.Data[0])
 	assert.Equal(t, uint16(16), uint16(eomFrame.Data[1])|uint16(eomFrame.Data[2])<<8)
 	assert.Equal(t, uint8(3), eomFrame.Data[3])
@@ -116,10 +116,10 @@ func TestRTSCTSTransmit_HappyPath(t *testing.T) {
 	require.NotEmpty(t, sentFrames, "should have sent an RTS")
 
 	rtsFrame := sentFrames[0]
-	rtsPGN, rtsSrc, rtsDst := parseCANID(rtsFrame.ID)
-	assert.Equal(t, PGNCM, rtsPGN)
-	assert.Equal(t, source, rtsSrc)
-	assert.Equal(t, destination, rtsDst)
+	rts := framer.ParseCANID(rtsFrame.ID)
+	assert.Equal(t, PGNCM, rts.PGN)
+	assert.Equal(t, source, rts.Source)
+	assert.Equal(t, destination, rts.Destination)
 	assert.Equal(t, ControlRTS, rtsFrame.Data[0])
 	assert.Equal(t, uint16(16), uint16(rtsFrame.Data[1])|uint16(rtsFrame.Data[2])<<8)
 	assert.Equal(t, uint8(3), rtsFrame.Data[3])
@@ -139,10 +139,10 @@ func TestRTSCTSTransmit_HappyPath(t *testing.T) {
 	var assembled []byte
 	for i := 1; i <= 3; i++ {
 		dtFrame := sentFrames[i]
-		dtPGN, dtSrc, dtDst := parseCANID(dtFrame.ID)
-		assert.Equal(t, PGNDT, dtPGN)
-		assert.Equal(t, source, dtSrc)
-		assert.Equal(t, destination, dtDst)
+		dt := framer.ParseCANID(dtFrame.ID)
+		assert.Equal(t, PGNDT, dt.PGN)
+		assert.Equal(t, source, dt.Source)
+		assert.Equal(t, destination, dt.Destination)
 		assert.Equal(t, uint8(i), dtFrame.Data[0], "DT frame %d sequence number", i)
 		assembled = append(assembled, dtFrame.Data[1:]...)
 	}

@@ -18,24 +18,21 @@ type socketCANChannelOptions struct {
 	// This corresponds to the interface shown by `ip link show` and is typically assigned
 	// by the kernel when a CAN controller driver (such as MCP2515 over SPI) is loaded.
 	InterfaceName string `json:"interfaceName"`
-
-	// MessageHandler is the callback function invoked for each CAN frame received on the bus.
-	// The handler receives a can.Frame containing the CAN ID and up to 8 bytes of payload.
-	MessageHandler can.HandlerFunc `json:"messageHandler"`
 }
 
 // socketCANChannel represents a single SocketCAN-based canbus channel for sending/receiving CAN frames.
 // It uses the brutella/can library for CAN socket I/O on an already-configured Linux CAN interface.
 type socketCANChannel struct {
-	// options holds the user-provided configuration (interface name, handler, etc.)
+	// options holds the user-provided configuration (interface name).
 	options socketCANChannelOptions
 
 	// bus is the underlying brutella/can bus object that manages the CAN socket connection.
 	// It handles subscribing to incoming frames and publishing outgoing frames.
 	bus *can.Bus
 
-	// busHandler wraps the user's MessageHandler callback into a can.Handler interface
-	// so it can be registered with the brutella/can bus subscription system.
+	// busHandler wraps the handler function passed to Run into a can.Handler
+	// interface so it can be registered with the brutella/can bus subscription
+	// system.
 	busHandler can.Handler
 
 	// log is the structured logger for diagnostic output about interface state changes and errors.
@@ -49,7 +46,8 @@ type socketCANChannel struct {
 //
 // Parameters:
 //   - log: structured logger for diagnostic output
-//   - options: required configuration including interface name and message handler
+//   - options: required configuration including the interface name (the message
+//     handler is passed separately to Run)
 //
 // Returns a *socketCANChannel (catalog type, not Interface) because SocketCAN-specific
 // callers may need access to SocketCAN-specific functionality.
@@ -62,11 +60,12 @@ func newSocketCANChannel(log *slog.Logger, options socketCANChannelOptions) *soc
 	return &c
 }
 
-// Run opens the SocketCAN interface and starts listening for CAN frames.
-// The CAN interface must already be configured and up (e.g., via `ip link set can0 up type can bitrate 250000`).
+// Run opens the SocketCAN interface and starts listening for CAN frames,
+// delivering each one to handler. The CAN interface must already be
+// configured and up (e.g., via `ip link set can0 up type can bitrate 250000`).
 //
 // This method blocks until an error occurs or the connection is closed.
-func (c *socketCANChannel) Run(ctx context.Context) error {
+func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) error {
 	// Open a CAN socket using the brutella/can library. This creates a raw CAN socket
 	// bound to the specified network interface and provides a higher-level pub/sub API.
 	bus, err := can.NewBusForInterfaceWithName(c.options.InterfaceName)
@@ -76,8 +75,14 @@ func (c *socketCANChannel) Run(ctx context.Context) error {
 
 	c.bus = bus
 
-	// Wrap the user's handler callback and subscribe it to receive all incoming CAN frames.
-	c.busHandler = can.NewHandler(c.options.MessageHandler)
+	// Wrap the caller's handler so a nil handler becomes a no-op, then
+	// subscribe it to receive all incoming CAN frames.
+	var frameHandler can.HandlerFunc = func(frame can.Frame) {
+		if handler != nil {
+			handler(frame)
+		}
+	}
+	c.busHandler = can.NewHandler(frameHandler)
 	c.bus.Subscribe(c.busHandler)
 
 	c.log.Info("Opened SocketCAN and listening", "interfaceName", c.options.InterfaceName)
@@ -114,18 +119,11 @@ func (c *socketCANChannel) WriteFrame(frame can.Frame) error {
 	return c.bus.Publish(frame)
 }
 
-// NewSocketCAN creates a SocketCAN Interface for the given Linux CAN interface name.
-// The handler callback receives each incoming CAN frame. The interface is not opened
-// until Run() is called.
-func NewSocketCAN(log *slog.Logger, iface string, handler func(can.Frame)) Interface {
-	var frameHandler can.HandlerFunc = func(frame can.Frame) {
-		if handler != nil {
-			handler(frame)
-		}
-	}
+// NewSocketCAN creates a SocketCAN channel for the given Linux CAN interface name.
+// The channel is not opened, and no handler is registered, until Run() is called.
+func NewSocketCAN(log *slog.Logger, iface string) *socketCANChannel {
 	return newSocketCANChannel(log, socketCANChannelOptions{
-		InterfaceName:  iface,
-		MessageHandler: frameHandler,
+		InterfaceName: iface,
 	})
 }
 
@@ -133,14 +131,9 @@ func NewSocketCAN(log *slog.Logger, iface string, handler func(can.Frame)) Inter
 // calling handler for each received CAN frame. The interface must already be configured and up.
 // Blocks until error or context done.
 func RunSocketCAN(ctx context.Context, log *slog.Logger, iface string, handler func(can.Frame)) error {
-	var frameHandler can.HandlerFunc = func(frame can.Frame) {
-		handler(frame)
-	}
-
 	ch := newSocketCANChannel(log, socketCANChannelOptions{
-		InterfaceName:  iface,
-		MessageHandler: frameHandler,
+		InterfaceName: iface,
 	})
 
-	return ch.Run(ctx)
+	return ch.Run(ctx, handler)
 }

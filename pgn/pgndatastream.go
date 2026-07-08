@@ -349,13 +349,15 @@ func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
 
 // readStringWithLengthAndControl reads a source "STRING_LAU" encoded string.
 // Wire format:
-//   - Byte 0: total length in bytes (includes this byte, the control byte, the string chars, and a terminating zero)
+//   - Byte 0: total length in bytes (includes this byte and the control byte)
 //   - Byte 1: control/encoding byte (0 = UNICODE/UTF-16, 1 = ASCII) -- currently ignored
-//   - Bytes 2..N: the string character data plus a trailing NUL
+//   - Bytes 2..N: the string character data, optionally padded/terminated with
+//     trailing 0x00 and/or 0xFF filler bytes that are not part of the string
 //
 // The NMEA 2000 spec is ambiguous about encoding: one source says "0 = UNICODE, 1 = ASCII",
 // another says "0 = ASCII, nonzero = UTF-8". In practice only ASCII has been observed on
-// real networks. The control byte is read but not acted upon -- all bytes are returned as-is.
+// real networks. The control byte is read but not acted upon. Trailing 0x00/0xFF bytes
+// are stripped so the decoded string is the exact inverse of writeStringWithLengthAndControl.
 func (s *PGNDataStream) readStringWithLengthAndControl() (string, error) {
 	// Read the 2-byte header: length byte and control byte.
 	lc, err := s.readBinaryData(16)
@@ -363,15 +365,19 @@ func (s *PGNDataStream) readStringWithLengthAndControl() (string, error) {
 		return "", err
 	}
 	// Subtract 2 from the length to exclude the length and control bytes themselves,
-	// then convert to bits for readBinaryData. The remaining bytes include the string
-	// characters and a terminating NUL.
-	len := (uint16(lc[0]) - 2) * 8
+	// then convert to bits for readBinaryData.
+	dataLen := (uint16(lc[0]) - 2) * 8
 	// control := lc[1]  // reserved for future encoding support
-	arr, err := s.readBinaryData(len)
+	arr, err := s.readBinaryData(dataLen)
 	if err != nil {
 		return "", err
 	}
-	return string(arr), nil
+	// Strip trailing NUL (0x00) and null-sentinel (0xFF) filler bytes.
+	end := len(arr)
+	for end > 0 && (arr[end-1] == 0x00 || arr[end-1] == 0xFF) {
+		end--
+	}
+	return string(arr[:end]), nil
 }
 
 // readStringWithLength reads a source "STRING_LZ" encoded string.

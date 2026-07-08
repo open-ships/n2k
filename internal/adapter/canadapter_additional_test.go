@@ -5,6 +5,7 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -111,7 +112,7 @@ func TestHandleFastPacketMessage(t *testing.T) {
 	a.SetOutput(h)
 
 	// PGN 130820 is a fast packet PGN. Build a multi-frame sequence.
-	pInfo := NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8})
+	pInfo := NewPacketInfo(&can.Frame{ID: framer.BuildCANID(130820, 1, 10, 0), Length: 8})
 	_ = pInfo
 
 	// Use full multi-frame sequence from the existing test.
@@ -127,7 +128,7 @@ func TestHandleFastPacketMessage(t *testing.T) {
 
 	for _, fd := range frames {
 		f := can.Frame{
-			ID:     CanIdFromData(130820, 10, 1, 0),
+			ID:     framer.BuildCANID(130820, 1, 10, 0),
 			Length: 8,
 			Data:   fd.data,
 		}
@@ -155,7 +156,7 @@ func TestHandleFastPacketSingleFrame(t *testing.T) {
 
 	// A fast packet that fits in a single frame.
 	f := can.Frame{
-		ID:     CanIdFromData(130820, 10, 1, 0),
+		ID:     framer.BuildCANID(130820, 1, 10, 0),
 		Length: 8,
 		Data:   [8]byte{0xa0, 5, 163, 153, 32, 128, 1, 255},
 	}

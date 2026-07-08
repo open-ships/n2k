@@ -1,6 +1,7 @@
 package n2k
 
 import (
+	"context"
 	"log/slog"
 	"testing"
 	"time"
@@ -48,4 +49,14 @@ func TestWithClaimTimeout(t *testing.T) {
 	WithClaimTimeout(2 * time.Second).apply(&cfg)
 	require.NotNil(t, cfg.claimTimeout)
 	assert.Equal(t, 2*time.Second, *cfg.claimTimeout)
+}
+
+func TestNewClient_InvalidDeviceNameRejected(t *testing.T) {
+	_, err := NewClient(context.Background(),
+		Replay(nil),
+		WithName(DeviceName{ManufacturerCode: 5000}), // > 11 bits, must fail Validate
+	)
+	if err == nil {
+		t.Fatal("expected invalid DeviceName error")
+	}
 }

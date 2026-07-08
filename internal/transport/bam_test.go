@@ -155,9 +155,11 @@ func TestBAMReceive_HappyPath(t *testing.T) {
 
 func TestBAMReceive_Timeout(t *testing.T) {
 	h := newTestHelper()
+	clock := &fakeClock{}
 	mgr := NewManager(ManagerConfig{
 		WriteFrame: h.writeFrame,
 		OnComplete: h.onComplete,
+		AfterFunc:  clock.AfterFunc,
 	})
 	defer mgr.Close()
 
@@ -175,8 +177,8 @@ func TestBAMReceive_Timeout(t *testing.T) {
 	}
 	mgr.HandleFrame(buildTestDTFrame(1, dt1Data, source, BroadcastAddr))
 
-	// Wait for the DT timeout to fire.
-	time.Sleep(DTTimeout + 100*time.Millisecond)
+	// Fire the DT timeout deterministically instead of sleeping.
+	clock.fireAll()
 
 	// Verify no message was delivered.
 	completed := h.getCompleted()
@@ -214,9 +216,9 @@ func TestBAMTransmit_HappyPath(t *testing.T) {
 
 	// Verify CM_BAM frame.
 	cmFrame := frames[0]
-	_, cmSrc, cmDst := parseCANID(cmFrame.ID)
-	assert.Equal(t, source, cmSrc)
-	assert.Equal(t, BroadcastAddr, cmDst)
+	cm := framer.ParseCANID(cmFrame.ID)
+	assert.Equal(t, source, cm.Source)
+	assert.Equal(t, BroadcastAddr, cm.Destination)
 	assert.Equal(t, ControlBAM, cmFrame.Data[0])
 	assert.Equal(t, uint16(16), uint16(cmFrame.Data[1])|uint16(cmFrame.Data[2])<<8)
 	assert.Equal(t, uint8(3), cmFrame.Data[3])

@@ -6,13 +6,6 @@ import (
 	"github.com/brutella/can"
 )
 
-// HandlerSettable is optionally implemented by Interface implementations that
-// support setting the frame handler after construction (e.g., for testing with
-// mock buses where the handler isn't known at construction time).
-type HandlerSettable interface {
-	SetHandler(func(can.Frame))
-}
-
 // Interface is a basic interface for a CANbus implementation.
 // Any CAN bus transport (USB-CAN dongle, SocketCAN, etc.) must implement these three methods
 // to be usable as a CAN channel in the system.
@@ -23,10 +16,11 @@ type HandlerSettable interface {
 //   - Providing the ability to send outgoing CAN frames
 //   - Cleanly shutting down when requested
 type Interface interface {
-	// Run opens the CAN bus channel and starts listening for incoming frames.
-	// This method blocks until the context is cancelled or an unrecoverable error occurs.
-	// It is the caller's responsibility to invoke Close() after Run() returns.
-	Run(ctx context.Context) error
+	// Run opens the CAN bus channel and starts listening for incoming frames,
+	// delivering each one to handler. This method blocks until the context is
+	// cancelled or an unrecoverable error occurs. It is the caller's
+	// responsibility to invoke Close() after Run() returns.
+	Run(ctx context.Context, handler func(can.Frame)) error
 
 	// Close shuts down the CAN bus channel, releasing any underlying resources
 	// (serial ports, sockets, etc.). It is safe to call Close() even if Run() was never called.

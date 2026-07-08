@@ -13,6 +13,12 @@ type source interface {
 	run(ctx context.Context, log *slog.Logger, handler func(can.Frame)) error
 }
 
+// busBacked is implemented by sources that are backed by real hardware and
+// can be opened as a read/write Bus (not just a frame replay).
+type busBacked interface {
+	newBus(log *slog.Logger) Bus
+}
+
 type socketCANSource struct {
 	iface string
 }
@@ -21,6 +27,8 @@ func (s *socketCANSource) run(ctx context.Context, log *slog.Logger, handler fun
 	return canbus.RunSocketCAN(ctx, log, s.iface, handler)
 }
 
+func (s *socketCANSource) newBus(log *slog.Logger) Bus { return canbus.NewSocketCAN(log, s.iface) }
+
 type usbCANSource struct {
 	port string
 }
@@ -28,6 +36,8 @@ type usbCANSource struct {
 func (s *usbCANSource) run(ctx context.Context, log *slog.Logger, handler func(can.Frame)) error {
 	return canbus.RunUSBCAN(ctx, log, s.port, handler)
 }
+
+func (s *usbCANSource) newBus(log *slog.Logger) Bus { return canbus.NewUSBCAN(log, s.port) }
 
 type replaySource struct {
 	frames []can.Frame

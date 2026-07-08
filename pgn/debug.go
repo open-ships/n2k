@@ -69,7 +69,7 @@ func dumpFields(p any) []string {
 			// Same treatment as PGN: show the typed constant and the underlying integer.
 			fieldStrs = append(fieldStrs, fmt.Sprintf("%s=%#v(%d)", tf.Name, vf.Interface(), vf.Uint()))
 		default:
-			if strings.Contains(tf.Name, "Repeating") {
+			if strings.Contains(tf.Name, "Repeating") && tf.Type.Kind() == reflect.Slice {
 				// Repeating field groups are slices of sub-structs. Recursively dump
 				// each element, wrapping in braces and joining with commas.
 				strI := make([]string, 0)

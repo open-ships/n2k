@@ -96,3 +96,47 @@ func TestBuildCANID_PriorityClampedTo3Bits(t *testing.T) {
 
 	assert.Equal(t, uint8(7), *info.Priority, "Priority 0xFF should be masked to 7")
 }
+
+func TestParseCANIDInverseOfBuild(t *testing.T) {
+	cases := []struct {
+		name               string
+		pgn                uint32
+		priority, src, dst uint8
+		wantAddressed      bool
+	}{
+		{"pdu2 broadcast", 127250, 2, 42, 255, false},
+		{"pdu1 addressed", 59904, 6, 10, 42, true},
+		{"pdu1 broadcast dest", 60928, 6, 253, 255, true},
+		{"high pgn", 130824, 7, 1, 255, false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			id := framer.BuildCANID(tc.pgn, tc.priority, tc.src, tc.dst)
+			got := framer.ParseCANID(id)
+			if got.PGN != tc.pgn || got.Priority != tc.priority || got.Source != tc.src {
+				t.Fatalf("ParseCANID(BuildCANID) = %+v, want pgn=%d pri=%d src=%d", got, tc.pgn, tc.priority, tc.src)
+			}
+			if got.Addressed != tc.wantAddressed {
+				t.Fatalf("Addressed = %v, want %v", got.Addressed, tc.wantAddressed)
+			}
+			if tc.wantAddressed && got.Destination != tc.dst {
+				t.Fatalf("Destination = %d, want %d", got.Destination, tc.dst)
+			}
+			if !tc.wantAddressed && got.Destination != framer.BroadcastAddr {
+				t.Fatalf("Destination = %d, want broadcast", got.Destination)
+			}
+		})
+	}
+}
+
+func TestFastPacketHeaderInverse(t *testing.T) {
+	for seq := uint8(0); seq < 8; seq++ {
+		for frame := uint8(0); frame < 32; frame++ {
+			b := framer.FastPacketHeader(seq, frame)
+			gotSeq, gotFrame := framer.FastPacketSeqFrame(b)
+			if gotSeq != seq || gotFrame != frame {
+				t.Fatalf("round trip (%d,%d) -> %d -> (%d,%d)", seq, frame, b, gotSeq, gotFrame)
+			}
+		}
+	}
+}

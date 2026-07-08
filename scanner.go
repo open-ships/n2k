@@ -3,12 +3,8 @@ package n2k
 import (
 	"context"
 	"log/slog"
-	"reflect"
 	"sync"
 
-	"github.com/brutella/can"
-	"github.com/open-ships/n2k/internal/adapter"
-	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/open-ships/n2k/pgn"
 )
 
@@ -33,19 +29,22 @@ func NewScanner(ctx context.Context, opts ...Option) *Scanner {
 		cfg.logger = slog.Default()
 	}
 
-	return &Scanner{
+	s := &Scanner{
 		ctx: ctx,
 		cfg: cfg,
 		ch:  make(chan pgn.Message, 64),
 	}
+	// Validate eagerly so a misconfigured Scanner (e.g. no sources) fails on
+	// the very first Next() call rather than only after the goroutine starts.
+	s.err = cfg.validate()
+	return s
 }
 
 // Next advances the scanner to the next message. Returns false when no more messages
 // are available (source exhausted or error occurred). Check Err() after Next returns false.
 func (s *Scanner) Next() bool {
 	s.once.Do(func() {
-		if err := s.cfg.validate(); err != nil {
-			s.err = err
+		if s.err != nil {
 			close(s.ch)
 			return
 		}
@@ -72,75 +71,12 @@ func (s *Scanner) Err() error {
 
 func (s *Scanner) run() {
 	defer close(s.ch)
-
-	// Compile filter if configured.
-	var f *filter
-	if s.cfg.filterExpr != "" {
-		var err error
-		f, err = compileFilter(s.cfg.filterExpr)
-		if err != nil {
-			s.err = err
-			return
-		}
-	}
-
-	a := adapter.NewCANAdapter()
-	dec := decoder.New()
-
-	dec.SetOutput(&scannerHandler{scanner: s, filter: f})
-	a.SetOutput(dec)
-
-	err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, func(frame can.Frame) {
-		// Pre-filter: skip decoding if metadata doesn't match.
-		if f != nil {
-			info := adapter.NewPacketInfo(&frame)
-			if !f.evalPre(info) {
-				return
-			}
-		}
-		a.HandleMessage(&frame)
-	})
+	p, err := newReadPipeline(s.ctx, s.cfg, s.ch)
 	if err != nil {
 		s.err = err
-	}
-}
-
-type scannerHandler struct {
-	scanner *Scanner
-	filter  *filter
-}
-
-func (h *scannerHandler) HandleStruct(msg pgn.Message) {
-	if msg == nil {
 		return
 	}
-
-	// Drop unknown PGNs unless IncludeUnknown is set.
-	if u, ok := msg.(*pgn.UnknownPGN); ok {
-		if !h.scanner.cfg.includeUnknown {
-			h.scanner.cfg.logger.Debug("dropping unknown PGN",
-				"pgn", u.Info.PGN,
-				"reason", u.Reason,
-			)
-			return
-		}
-	}
-
-	// Post-filter: check decoded struct fields.
-	if h.filter != nil && h.filter.hasPost {
-		fields := structToFilterMap(msg)
-		rv := reflect.ValueOf(msg)
-		if rv.Kind() == reflect.Pointer {
-			rv = rv.Elem()
-		}
-		info := rv.FieldByName("Info").Interface().(pgn.MessageInfo)
-		if !h.filter.evalPostWithInfo(info, fields) {
-			return
-		}
-	}
-
-	select {
-	case h.scanner.ch <- msg:
-	case <-h.scanner.ctx.Done():
+	if err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, p.HandleFrame); err != nil {
+		s.err = err
 	}
 }

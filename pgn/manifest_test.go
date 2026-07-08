@@ -2,11 +2,15 @@ package pgn
 
 import (
 	"encoding/json"
+	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 	"path/filepath"
 	"reflect"
-	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -100,8 +104,8 @@ func TestPGNManifestMatchesMetadata(t *testing.T) {
 	if err := json.Unmarshal(raw, &manifest); err != nil {
 		t.Fatalf("parse manifest: %v", err)
 	}
-	if manifest.SchemaVersion != 3 {
-		t.Fatalf("schemaVersion = %d, want 3", manifest.SchemaVersion)
+	if manifest.SchemaVersion != 4 {
+		t.Fatalf("schemaVersion = %d, want 4", manifest.SchemaVersion)
 	}
 
 	actual := make(map[string]pgnManifestEntry)
@@ -185,7 +189,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	}
 
 	return pgnManifest{
-		SchemaVersion: 3,
+		SchemaVersion: 4,
 		Package:       "github.com/open-ships/n2k/pgn",
 		Source:        "PGN structs and PgnInfoLookup metadata",
 		Description:   "NMEA 2000 PGN variants decoded and encoded by this package.",
@@ -196,6 +200,7 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 			"Payload shapes are derived from each PgnInfo.Fields map and sorted by field index.",
 			"Examples are deterministic sample JSON objects; they illustrate shape and are not captured bus values.",
 			"Incomplete upstream definitions are included when a PGN struct exists for them.",
+			"Examples are built from a go/ast walk of each struct's fields (schemaVersion 4), so repeating field sets (n2k:\"rep1\"/\"rep2\") appear as nested example arrays alongside scalar payload fields.",
 		},
 		Counts: pgnManifestCounts{
 			Categories:          len(manifestCategories),
@@ -447,7 +452,7 @@ func manifestStructFieldCache(t *testing.T) map[string][]pgnManifestStructField 
 		if err != nil {
 			t.Fatalf("read %s: %v", file, err)
 		}
-		for name, fields := range parseManifestStructFields(string(raw)) {
+		for name, fields := range parseManifestStructFields(t, string(raw)) {
 			manifestStructFieldsCache[name] = fields
 		}
 	}
@@ -475,7 +480,7 @@ func manifestStructSourceFiles(t *testing.T) map[string]string {
 		if err != nil {
 			t.Fatalf("read %s: %v", file, err)
 		}
-		for name := range parseManifestStructFields(string(raw)) {
+		for name := range parseManifestStructFields(t, string(raw)) {
 			manifestStructSourceFilesCache[name] = filepath.Base(file)
 		}
 	}
@@ -483,40 +488,105 @@ func manifestStructSourceFiles(t *testing.T) map[string]string {
 	return manifestStructSourceFilesCache
 }
 
-func parseManifestStructFields(source string) map[string][]pgnManifestStructField {
+// parseManifestStructFields walks the Go AST of source (one pgn/*.go file's
+// contents) and returns every top-level struct type's exported, JSON-tagged
+// fields, keyed by struct name. It replaces an earlier regexp-based walker
+// that required the json struct tag to be the field's only struct tag --
+// generated PGN fields also carry an n2k struct tag giving the field's
+// metadata order (or "rep1"/"rep2" for a repeating-group slice field), so
+// that regexp silently matched nothing for any payload field and every
+// manifest example degenerated to just {"info": ...}. Parsing the real
+// struct-field AST and reading the "json" key out of the full tag (however
+// many other tags share it) fixes that, and picks up slice-of-struct
+// repeating-group fields the same way it picks up scalar fields --
+// manifestExampleValue already recurses into the element struct's own
+// fields via this same function, so no separate slice-handling code is
+// needed here.
+func parseManifestStructFields(t *testing.T, source string) map[string][]pgnManifestStructField {
+	t.Helper()
 	structs := make(map[string][]pgnManifestStructField)
-	structRE := regexp.MustCompile(`type\s+([A-Za-z_][A-Za-z0-9_]*)\s+struct\s+\{`)
-	fieldRE := regexp.MustCompile("^\\s*[A-Za-z_][A-Za-z0-9_]*\\s+(.+?)\\s+`json:\"([^\"]+)\"`")
 
-	matches := structRE.FindAllStringSubmatchIndex(source, -1)
-	for _, match := range matches {
-		name := source[match[2]:match[3]]
-		bodyStart := match[1]
-		bodyEnd := strings.Index(source[bodyStart:], "\n}")
-		if bodyEnd < 0 {
+	fset := token.NewFileSet()
+	parsed, err := parser.ParseFile(fset, "", source, 0)
+	if err != nil {
+		t.Fatalf("parse manifest source: %v", err)
+	}
+
+	for _, decl := range parsed.Decls {
+		genDecl, ok := decl.(*ast.GenDecl)
+		if !ok {
 			continue
 		}
-		body := source[bodyStart : bodyStart+bodyEnd]
-
-		var fields []pgnManifestStructField
-		for _, line := range strings.Split(body, "\n") {
-			fieldMatch := fieldRE.FindStringSubmatch(line)
-			if fieldMatch == nil {
+		for _, spec := range genDecl.Specs {
+			typeSpec, ok := spec.(*ast.TypeSpec)
+			if !ok {
 				continue
 			}
-			jsonName := strings.Split(fieldMatch[2], ",")[0]
-			if jsonName == "-" {
+			structType, ok := typeSpec.Type.(*ast.StructType)
+			if !ok {
 				continue
 			}
-			fields = append(fields, pgnManifestStructField{
-				Type:     strings.TrimSpace(fieldMatch[1]),
-				JSONName: jsonName,
-			})
+			structs[typeSpec.Name.Name] = manifestStructFieldsFromAST(structType)
 		}
-		structs[name] = fields
 	}
 
 	return structs
+}
+
+// manifestStructFieldsFromAST extracts the (Go type, JSON name) pair for
+// every named, tagged field of a struct type. Embedded fields (no Name) and
+// fields with no tag or a "-" JSON name are skipped, matching how
+// encoding/json treats them.
+func manifestStructFieldsFromAST(structType *ast.StructType) []pgnManifestStructField {
+	var fields []pgnManifestStructField
+	if structType.Fields == nil {
+		return fields
+	}
+	for _, field := range structType.Fields.List {
+		if field.Tag == nil || len(field.Names) == 0 {
+			continue
+		}
+		tagValue, err := strconv.Unquote(field.Tag.Value)
+		if err != nil {
+			continue
+		}
+		jsonTag := reflect.StructTag(tagValue).Get("json")
+		jsonName := strings.Split(jsonTag, ",")[0]
+		if jsonName == "" || jsonName == "-" {
+			continue
+		}
+		typeName := manifestTypeExprString(field.Type)
+		for range field.Names {
+			fields = append(fields, pgnManifestStructField{
+				Type:     typeName,
+				JSONName: jsonName,
+			})
+		}
+	}
+	return fields
+}
+
+// manifestTypeExprString reconstructs the Go source spelling of a field type
+// expression (e.g. "*uint64", "[]GnssSatsInViewRepeating1", "units.Distance"),
+// covering every type shape used by generated PGN structs and the manifest's
+// own helper types.
+func manifestTypeExprString(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.StarExpr:
+		return "*" + manifestTypeExprString(t.X)
+	case *ast.ArrayType:
+		return "[]" + manifestTypeExprString(t.Elt)
+	case *ast.SelectorExpr:
+		return manifestTypeExprString(t.X) + "." + t.Sel.Name
+	case *ast.MapType:
+		return "map[" + manifestTypeExprString(t.Key) + "]" + manifestTypeExprString(t.Value)
+	case *ast.InterfaceType:
+		return "any"
+	default:
+		return fmt.Sprintf("%T", expr)
+	}
 }
 
 var manifestStructFieldsCache map[string][]pgnManifestStructField

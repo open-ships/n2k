@@ -8,17 +8,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// newTestChannel creates a usbCANChannel for testing with a no-op logger and a FrameHandler
+// newTestChannel creates a usbCANChannel for testing with a no-op logger and a handler
 // that appends received frames to a slice. Returns the channel and a pointer to the received
 // frames slice so tests can inspect what the parser dispatched.
 func newTestChannel() (*usbCANChannel, *[]can.Frame) {
 	received := &[]can.Frame{}
-	ch := newUSBCANChannel(slog.Default(), usbCANChannelOptions{
-		FrameHandler: func(f can.Frame) {
-			*received = append(*received, f)
-		},
-	})
-	return ch.(*usbCANChannel), received
+	ch := newUSBCANChannel(slog.Default(), usbCANChannelOptions{})
+	ch.handler = func(f can.Frame) {
+		*received = append(*received, f)
+	}
+	return ch, received
 }
 
 // TestParseFrames_EmptyBuffer verifies that an empty buffer produces no frames and no errors.

@@ -162,10 +162,12 @@ for msg, err := range n2k.Receive(ctx,
     n2k.Filter("pgn == 127250"),
 ) { ... }
 
-// Filter on decoded fields
+// Filter on decoded fields -- decoded numeric fields hold raw wire ticks, not
+// physical units (see "Physical Values" below); Heading is in 0.0001-radian
+// ticks, so 31416 here is > pi rad.
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
-    n2k.Filter("pgn == 127250 && msg.Heading > 3.14"),
+    n2k.Filter("pgn == 127250 && msg.Heading > 31416"),
 ) { ... }
 
 // Filter by source address
@@ -185,6 +187,7 @@ for msg, err := range n2k.Receive(ctx,
 | `destination` | `int` | Destination address (255 = broadcast) |
 | `msg.<field>` | varies | Decoded struct field (case-insensitive) |
 
+Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in filter expressions.
 
 ### Options
 
@@ -198,6 +201,7 @@ for msg, err := range n2k.Receive(ctx,
 | `n2k.WithLogger(l)` | Override default `slog.Logger` |
 | `n2k.WithSourceAddress(addr)` | Explicit source address for writes (contention is fatal) |
 | `n2k.WithName(name)` | ISO 11783 device NAME for address claiming |
+| `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
 
 ### Testing with Replay
 
@@ -244,9 +248,45 @@ info := pgn.MessageInfo{
 }
 ```
 
+## Physical Values
+
+Decoded numeric fields on PGN structs (`*uint64`/`*int64`) hold **raw wire ticks**, not physical
+quantities. A field's metadata `Resolution` (and, for some fields, an additive `Offset`) is what
+converts a tick count into a physical value in the field's `Unit` -- for example, `VesselHeading`'s
+`Heading` field is transmitted in units of 0.0001 radian, so a decoded value of `15708` means
+`1.5708` rad, not `15708` rad:
+
+```go
+h := uint64(15708)
+heading := &pgn.VesselHeading{Heading: &h}
+
+// field order 2 is Heading -- see the struct's n2k tag or its PgnInfo metadata
+v, unit, ok, err := pgn.PhysicalValue(heading, 2)
+if err != nil {
+    panic(err)
+}
+if ok {
+    fmt.Printf("heading: %.4f %s\n", v, unit) // heading: 1.5708 rad
+}
+```
+
+`PhysicalValue` looks up the field by its metadata source order (not by struct field name), applies
+`raw*Resolution + Offset`, and returns the field's unit label. `ok` is `false` (with a `nil` error)
+when the field's decoded value is `nil` -- the wire sent the field's null/out-of-range sentinel, or
+the payload ended before reaching it. It returns an error for an unknown struct or field order, a
+non-numeric field (strings, binary data, `FLOAT` fields, Match-selector fields), or a field that
+only exists inside a repeating group (those aren't addressable by a bare source order -- decode the
+group slice and inspect its elements instead).
+
 ## Unit Types
 
-Physical quantities use type-safe wrappers from the `units` package with built-in conversion methods.
+The `units` package provides type-safe quantity wrappers (`Distance`, `Velocity`, `Pressure`, ...)
+with built-in unit conversion, but it is a **standalone library**: nothing in the decode path
+constructs or returns `units` values today. `pgn.PhysicalValue` (above) returns a plain `float64` in
+the field's native metadata unit. Wrapping that into a `units` type is left to the caller; wiring
+`units` directly into decoding would require switching PGN struct fields from raw-tick
+`*uint64`/`*int64` to float-based quantities, which is a larger, deliberately deferred change (see
+the `units` package doc comment).
 
 ## Sniffer CLI
 
