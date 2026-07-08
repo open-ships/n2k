@@ -12,3 +12,11 @@ type UnknownPGN struct {
 func (u *UnknownPGN) PGNNumber() uint32 {
 	return u.Info.PGN
 }
+
+func (u *UnknownPGN) MessageInfo() MessageInfo {
+	return u.Info
+}
+
+func (u *UnknownPGN) SetMessageInfo(info MessageInfo) {
+	u.Info = info
+}

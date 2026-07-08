@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
-	"reflect"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -25,6 +24,13 @@ import (
 // defaultClaimTimeout is the maximum time NewClient blocks waiting for address
 // claiming to complete.
 const defaultClaimTimeout = 1500 * time.Millisecond
+
+// infoCarrier is a local interface for types that expose MessageInfo through
+// a typed method (eliminating the need for reflection). Both pgn.PGN and
+// pgn.UnknownPGN satisfy this interface.
+type infoCarrier interface {
+	MessageInfo() pgn.MessageInfo
+}
 
 // Client is the central integration point for NMEA 2000 communication. It
 // composes address claiming, transport protocol, encoding, and framing into a
@@ -398,11 +404,11 @@ func (h *clientDecoderHandler) HandleStruct(msg pgn.Message) {
 
 	if h.client.readFilter != nil && h.client.readFilter.hasPost {
 		fields := structToFilterMap(msg)
-		rv := reflect.ValueOf(msg)
-		if rv.Kind() == reflect.Pointer {
-			rv = rv.Elem()
+		p, ok := msg.(infoCarrier)
+		if !ok {
+			return // only pgn.PGN structs and *pgn.UnknownPGN reach here; UnknownPGN handled above
 		}
-		info := rv.FieldByName("Info").Interface().(pgn.MessageInfo)
+		info := p.MessageInfo()
 		if !h.client.readFilter.evalPostWithInfo(info, fields) {
 			return
 		}
@@ -451,13 +457,18 @@ func (c *Client) doWrite(msg pgn.Message) error {
 
 	pgnNum := msg.PGNNumber()
 
+	// Check that msg implements pgn.PGN and extract its MessageInfo.
+	pgnMsg, ok := msg.(pgn.PGN)
+	if !ok {
+		return fmt.Errorf("n2k: %T does not implement pgn.PGN", msg)
+	}
+
 	payload, err := pgn.EncodeMessage(msg)
 	if err != nil {
 		return fmt.Errorf("n2k: encode PGN %d: %w", pgnNum, err)
 	}
 
-	// Extract MessageInfo from the struct's exported Info field.
-	info := reflect.ValueOf(msg).Elem().FieldByName("Info").Interface().(pgn.MessageInfo)
+	info := pgnMsg.MessageInfo()
 
 	var priority uint8 = 6
 	if info.Priority != nil {

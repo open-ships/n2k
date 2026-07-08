@@ -3,7 +3,6 @@ package n2k
 import (
 	"context"
 	"log/slog"
-	"reflect"
 	"sync"
 
 	"github.com/brutella/can"
@@ -129,11 +128,11 @@ func (h *scannerHandler) HandleStruct(msg pgn.Message) {
 	// Post-filter: check decoded struct fields.
 	if h.filter != nil && h.filter.hasPost {
 		fields := structToFilterMap(msg)
-		rv := reflect.ValueOf(msg)
-		if rv.Kind() == reflect.Pointer {
-			rv = rv.Elem()
+		p, ok := msg.(infoCarrier)
+		if !ok {
+			return // only pgn.PGN structs and *pgn.UnknownPGN reach here; UnknownPGN handled above
 		}
-		info := rv.FieldByName("Info").Interface().(pgn.MessageInfo)
+		info := p.MessageInfo()
 		if !h.filter.evalPostWithInfo(info, fields) {
 			return
 		}

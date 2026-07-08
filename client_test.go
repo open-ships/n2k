@@ -674,3 +674,24 @@ func TestClient_FilterPGN(t *testing.T) {
 
 	_ = c.Close()
 }
+
+// nonPGNMessage implements pgn.Message but not pgn.PGN, to prove the write
+// path rejects it without panicking (the old reflection panicked on missing
+// Info fields).
+type nonPGNMessage struct{}
+
+func (nonPGNMessage) PGNNumber() uint32 { return 127250 }
+
+func TestClient_Write_NonPGNMessageErrors(t *testing.T) {
+	ctx := context.Background()
+	c, err := NewClient(ctx, Replay(nil))
+	if err != nil {
+		t.Fatalf("NewClient: %v", err)
+	}
+	defer c.Close()
+
+	res := c.Write(nonPGNMessage{})
+	if err := res.Wait(); err == nil {
+		t.Fatal("expected error writing a non-PGN message, got nil")
+	}
+}
