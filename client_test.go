@@ -50,6 +50,13 @@ func TestClient_NewClient_Validation(t *testing.T) {
 	})
 }
 
+func TestNewClient_Replay_BadFilterFailsEagerly(t *testing.T) {
+	_, err := NewClient(context.Background(), Replay(nil), Filter("((("))
+	if err == nil {
+		t.Fatal("expected eager filter compile error for replay client")
+	}
+}
+
 func TestClient_Write_EncodesAndFrames(t *testing.T) {
 	c, err := NewClient(context.Background(), Replay(nil))
 	require.NoError(t, err)

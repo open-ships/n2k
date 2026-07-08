@@ -15,7 +15,6 @@ import (
 	"github.com/open-ships/n2k/internal/adapter"
 	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/internal/claiming"
-	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/internal/transport"
 	"github.com/open-ships/n2k/pgn"
@@ -24,13 +23,6 @@ import (
 // defaultClaimTimeout is the maximum time NewClient blocks waiting for address
 // claiming to complete.
 const defaultClaimTimeout = 1500 * time.Millisecond
-
-// infoCarrier is a local interface for types that expose MessageInfo through
-// a typed method (eliminating the need for reflection). Both pgn.PGN and
-// pgn.UnknownPGN satisfy this interface.
-type infoCarrier interface {
-	MessageInfo() pgn.MessageInfo
-}
 
 // Client is the central integration point for NMEA 2000 communication. It
 // composes address claiming, transport protocol, encoding, and framing into a
@@ -63,10 +55,6 @@ type Client struct {
 	writeCh chan writeJob
 	writeWg sync.WaitGroup
 
-	// opts preserves the original Option slice so Receive and Scanner can
-	// reconstruct the same configuration.
-	opts []Option
-
 	// mu guards writtenFrames, closed state, and sourceAddr.
 	mu            sync.Mutex
 	writtenFrames []can.Frame // captured frames (replay/testing)
@@ -83,13 +71,10 @@ type Client struct {
 	// nil for replay clients.
 	msgCh chan pgn.Message
 
-	// readAdapter and readDecoder are the persistent decode pipeline for the
-	// internal read loop. Only used for bus clients.
-	readAdapter *adapter.CANAdapter
-	readDecoder *decoder.Decoder
-
-	// readFilter holds the compiled CEL filter for the read API (nil if no filter).
-	readFilter *filter
+	// pipeline is the persistent read pipeline (pre-filter -> assembly ->
+	// decode -> unknown-PGN policy -> post-filter -> msgCh) for the internal
+	// read loop. Only used for bus clients.
+	pipeline *readPipeline
 }
 
 type writeJob struct {
@@ -109,6 +94,24 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	}
 	if cfg.logger == nil {
 		cfg.logger = slog.Default()
+	}
+
+	// Validate the device NAME eagerly so a malformed NAME fails fast.
+	if cfg.deviceName != nil {
+		if err := cfg.deviceName.Validate(); err != nil {
+			return nil, fmt.Errorf("n2k: invalid device name: %w", err)
+		}
+	}
+
+	// Compile the CEL filter eagerly (and discard the result) so a bad
+	// expression fails fast regardless of bus/replay mode. The read
+	// pipeline (built in initBus for bus clients, or per-Scanner call for
+	// replay clients) compiles its own copy; this preserves NewClient's
+	// eager-error contract without threading the compiled filter through.
+	if cfg.filterExpr != "" {
+		if _, err := compileFilter(cfg.filterExpr); err != nil {
+			return nil, fmt.Errorf("n2k: compiling filter: %w", err)
+		}
 	}
 
 	ctx, cancel := context.WithCancel(ctx)
@@ -141,17 +144,6 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	}
 	// else: replay default is 0
 
-	// Compile CEL filter early if configured.
-	var readFilter *filter
-	if cfg.filterExpr != "" {
-		var err error
-		readFilter, err = compileFilter(cfg.filterExpr)
-		if err != nil {
-			cancel()
-			return nil, fmt.Errorf("n2k: compiling filter: %w", err)
-		}
-	}
-
 	c := &Client{
 		cfg:        cfg,
 		ctx:        ctx,
@@ -159,9 +151,7 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		log:        cfg.logger,
 		sourceAddr: sourceAddr,
 		deviceName: deviceName,
-		opts:       opts,
 		addrReady:  make(chan struct{}),
-		readFilter: readFilter,
 	}
 
 	if hasBus {
@@ -244,31 +234,23 @@ func (c *Client) initBus(cfg config) error {
 		WriteFrame: c.writeFrame,
 		OnComplete: func(tpPGN uint32, source uint8, destination uint8, data []byte) {
 			priority := uint8(6)
-			info := pgn.MessageInfo{
-				Timestamp: time.Now(),
-				PGN:       tpPGN,
-				SourceId:  source,
-				Priority:  &priority,
-			}
-			if destination != 0xFF {
+			info := pgn.MessageInfo{Timestamp: time.Now(), PGN: tpPGN, SourceId: source, Priority: &priority}
+			if destination != framer.BroadcastAddr {
 				info.TargetId = &destination
 			}
-			packet := decoder.NewPacket(info, data)
-			packet.Complete = true
-			packet.FilterCandidates()
-			c.readDecoder.Decode(*packet)
+			c.pipeline.InjectAssembled(info, data)
 		},
 		Logger: c.log,
 	})
 
-	// Set up the persistent decode pipeline.
-	c.readAdapter = adapter.NewCANAdapter()
-	c.readDecoder = decoder.New()
-	c.readDecoder.SetOutput(&clientDecoderHandler{client: c})
-	c.readAdapter.SetOutput(c.readDecoder)
-
-	// Create the message channel for the read API.
+	// Set up the persistent read pipeline (pre-filter -> assembly -> decode
+	// -> unknown-PGN policy -> post-filter -> msgCh).
 	c.msgCh = make(chan pgn.Message, 64)
+	p, err := newReadPipeline(c.ctx, cfg, c.msgCh)
+	if err != nil {
+		return err
+	}
+	c.pipeline = p
 
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
@@ -366,13 +348,9 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 		c.tp.HandleFrame(frame)
 	}
 
-	// Pre-filter: skip decoding if metadata doesn't match.
-	if c.readFilter != nil && !c.readFilter.evalPre(info) {
-		return
-	}
-
-	// Decode for the read API using the persistent pipeline.
-	c.readAdapter.HandleMessage(&frame)
+	// Decode for the read API using the persistent pipeline (pre-filter moved
+	// inside HandleFrame).
+	c.pipeline.HandleFrame(frame)
 }
 
 // busReadLoop runs the bus and closes the message channel when done.
@@ -380,43 +358,6 @@ func (c *Client) busReadLoop() {
 	defer close(c.msgCh)
 	if err := c.bus.Run(c.ctx); err != nil && c.ctx.Err() == nil {
 		c.log.Error("bus read loop error", "error", err)
-	}
-}
-
-// clientDecoderHandler receives decoded messages from the decoder pipeline and
-// delivers them to the client's msgCh.
-type clientDecoderHandler struct {
-	client *Client
-}
-
-func (h *clientDecoderHandler) HandleStruct(msg pgn.Message) {
-	if msg == nil {
-		return
-	}
-
-	if u, ok := msg.(*pgn.UnknownPGN); ok {
-		if !h.client.cfg.includeUnknown {
-			h.client.cfg.logger.Debug("dropping unknown PGN",
-				"pgn", u.Info.PGN, "reason", u.Reason)
-			return
-		}
-	}
-
-	if h.client.readFilter != nil && h.client.readFilter.hasPost {
-		fields := structToFilterMap(msg)
-		p, ok := msg.(infoCarrier)
-		if !ok {
-			return // only pgn.PGN structs and *pgn.UnknownPGN reach here; UnknownPGN handled above
-		}
-		info := p.MessageInfo()
-		if !h.client.readFilter.evalPostWithInfo(info, fields) {
-			return
-		}
-	}
-
-	select {
-	case h.client.msgCh <- msg:
-	case <-h.client.ctx.Done():
 	}
 }
 
@@ -512,8 +453,8 @@ func (c *Client) doWrite(msg pgn.Message) error {
 }
 
 // Receive returns an iterator of decoded NMEA 2000 messages. For bus clients
-// it reads from the internal message channel; for replay clients it delegates
-// to the top-level Receive function.
+// it reads from the internal message channel; for replay clients it builds a
+// fresh Scanner over the client's config so each call gets a full replay.
 func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
 	if c.msgCh != nil {
 		return func(yield func(pgn.Message, error) bool) {
@@ -524,12 +465,22 @@ func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
 			}
 		}
 	}
-	return Receive(c.ctx, c.opts...)
+	return func(yield func(pgn.Message, error) bool) {
+		s := c.newReplayScanner()
+		for s.Next() {
+			if !yield(s.Message(), nil) {
+				return
+			}
+		}
+		if s.Err() != nil {
+			yield(nil, s.Err())
+		}
+	}
 }
 
 // Scanner creates a new Scanner that reads from this client. For bus clients
-// it reads from the internal message channel; for replay clients it delegates
-// to NewScanner.
+// it reads from the internal message channel; for replay clients it builds a
+// fresh Scanner over the client's config.
 func (c *Client) Scanner() *Scanner {
 	if c.msgCh != nil {
 		s := &Scanner{
@@ -537,10 +488,19 @@ func (c *Client) Scanner() *Scanner {
 			cfg: c.cfg,
 			ch:  c.msgCh,
 		}
-		s.once.Do(func() {}) // prevent lazy start since ch is already live
+		// ch is already live (fed by the client's own read pipeline), so
+		// suppress Next()'s lazy-start goroutine: firing once.Do here means
+		// the real closure passed to Next()'s once.Do never runs.
+		s.once.Do(func() {})
 		return s
 	}
-	return NewScanner(c.ctx, c.opts...)
+	return c.newReplayScanner()
+}
+
+// newReplayScanner builds a Scanner over the client's already-parsed config,
+// so replay clients share the exact pipeline code without re-parsing options.
+func (c *Client) newReplayScanner() *Scanner {
+	return &Scanner{ctx: c.ctx, cfg: c.cfg, ch: make(chan pgn.Message, 64)}
 }
 
 // WrittenFrames returns a copy of all CAN frames written through this client.

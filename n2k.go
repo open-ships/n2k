@@ -14,15 +14,6 @@ import (
 // or *pgn.UnknownPGN if IncludeUnknown() is set.
 func Receive(ctx context.Context, opts ...Option) iter.Seq2[pgn.Message, error] {
 	return func(yield func(pgn.Message, error) bool) {
-		cfg := config{}
-		for _, o := range opts {
-			o.apply(&cfg)
-		}
-		if err := cfg.validate(); err != nil {
-			yield(nil, err)
-			return
-		}
-
 		s := NewScanner(ctx, opts...)
 		for s.Next() {
 			if !yield(s.Message(), nil) {
