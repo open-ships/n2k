@@ -13,7 +13,6 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/adapter"
-	"github.com/open-ships/n2k/internal/canbus"
 	"github.com/open-ships/n2k/internal/claiming"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/internal/transport"
@@ -60,7 +59,7 @@ type Client struct {
 	writtenFrames []can.Frame // captured frames (replay/testing)
 	closed        bool
 
-	bus     canbus.Interface
+	bus     Bus
 	claimer *claiming.Claimer
 	addrErr error // set by OnFatalError during address claiming
 
@@ -191,30 +190,20 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 // initBus sets up the CAN bus integration: bus interface, address claiming,
 // transport protocol, and the internal read/decode pipeline.
 func (c *Client) initBus(cfg config) error {
-	// Get or construct the bus interface.
+	// Get or construct the bus.
 	if cfg.bus != nil {
 		c.bus = cfg.bus
 	} else {
-		// Construct from first non-replay source.
+		// Construct from first source backed by real hardware.
 		for _, src := range cfg.sources {
-			switch s := src.(type) {
-			case *socketCANSource:
-				c.bus = canbus.NewSocketCAN(c.log, s.iface, c.handleBusFrame)
-			case *usbCANSource:
-				c.bus = canbus.NewUSBCAN(c.log, s.port, c.handleBusFrame)
-			}
-			if c.bus != nil {
+			if bb, ok := src.(busBacked); ok {
+				c.bus = bb.newBus(c.log)
 				break
 			}
 		}
 	}
 	if c.bus == nil {
 		return errors.New("n2k: could not construct bus from sources")
-	}
-
-	// If the bus supports setting the handler after construction, set it now.
-	if hs, ok := c.bus.(canbus.HandlerSettable); ok {
-		hs.SetHandler(c.handleBusFrame)
 	}
 
 	// Set writeFrame to delegate to the bus.
@@ -356,7 +345,7 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 // busReadLoop runs the bus and closes the message channel when done.
 func (c *Client) busReadLoop() {
 	defer close(c.msgCh)
-	if err := c.bus.Run(c.ctx); err != nil && c.ctx.Err() == nil {
+	if err := c.bus.Run(c.ctx, c.handleBusFrame); err != nil && c.ctx.Err() == nil {
 		c.log.Error("bus read loop error", "error", err)
 	}
 }

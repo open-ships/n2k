@@ -466,45 +466,35 @@ func TestClient_Write_FIFO_Ordering(t *testing.T) {
 
 // --- Mock bus for bus path tests ---
 
+// mockBus implements n2k.Bus.
 type mockBus struct {
+	mu      sync.Mutex
 	inbound chan can.Frame
 	written []can.Frame
-	mu      sync.Mutex
-	handler func(can.Frame)
+	closed  bool
 }
 
-func newMockBus() *mockBus {
-	return &mockBus{inbound: make(chan can.Frame, 64)}
-}
+func newMockBus() *mockBus { return &mockBus{inbound: make(chan can.Frame, 64)} }
 
-func (m *mockBus) Run(ctx context.Context) error {
+func (m *mockBus) Run(ctx context.Context, handler func(can.Frame)) error {
 	for {
 		select {
+		case f := <-m.inbound:
+			handler(f)
 		case <-ctx.Done():
 			return ctx.Err()
-		case f, ok := <-m.inbound:
-			if !ok {
-				return nil
-			}
-			if m.handler != nil {
-				m.handler(f)
-			}
 		}
 	}
 }
 
-func (m *mockBus) Close() error { return nil }
-
-func (m *mockBus) WriteFrame(frame can.Frame) error {
+func (m *mockBus) WriteFrame(f can.Frame) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.written = append(m.written, frame)
+	m.written = append(m.written, f)
 	return nil
 }
 
-func (m *mockBus) SetHandler(h func(can.Frame)) {
-	m.handler = h
-}
+func (m *mockBus) Close() error { m.mu.Lock(); defer m.mu.Unlock(); m.closed = true; return nil }
 
 func (m *mockBus) getWritten() []can.Frame {
 	m.mu.Lock()
@@ -513,6 +503,9 @@ func (m *mockBus) getWritten() []can.Frame {
 	copy(out, m.written)
 	return out
 }
+
+// Compile-time proof that Bus is implementable with only public types.
+var _ Bus = (*mockBus)(nil)
 
 func TestClient_AddressClaim(t *testing.T) {
 	mb := newMockBus()

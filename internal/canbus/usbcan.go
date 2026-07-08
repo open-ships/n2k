@@ -45,10 +45,6 @@ type usbCANChannelOptions struct {
 	// the USB-CAN dongle. This is NOT the CAN bus bitrate -- it controls only the USB serial link.
 	// The USB-CAN Analyzer typically uses 2000000 (2 Mbaud).
 	SerialBaudRate int `json:"serialBaudRate"`
-
-	// FrameHandler is the callback function invoked for each successfully parsed CAN frame.
-	// The handler receives a can.Frame with the CAN ID and up to 8 bytes of payload data.
-	FrameHandler can.HandlerFunc `json:"frameHandler"`
 }
 
 // usbCANChannel represents a single USB-CAN-based canbus channel for sending/receiving CAN frames.
@@ -67,6 +63,10 @@ type usbCANChannel struct {
 
 	// log is the structured logger for debug/info messages about frame parsing and errors.
 	log *slog.Logger
+
+	// handler is the callback invoked for each successfully parsed CAN frame.
+	// It is set by Run() for the duration of the read loop.
+	handler func(can.Frame)
 }
 
 // newUSBCANChannel creates and returns a new usbCANChannel configured with the given options.
@@ -74,10 +74,11 @@ type usbCANChannel struct {
 //
 // Parameters:
 //   - log: structured logger for diagnostic output
-//   - options: required configuration including serial port path, baud rate, CAN bitrate, and frame handler
+//   - options: required configuration including serial port path, baud rate, and CAN bitrate
 //
-// Returns an Interface so callers can use it polymorphically with SocketCANChannel.
-func newUSBCANChannel(log *slog.Logger, options usbCANChannelOptions) Interface {
+// Returns a *usbCANChannel (catalog type, not Interface) because USB-CAN-specific
+// callers may need access to USB-CAN-specific functionality.
+func newUSBCANChannel(log *slog.Logger, options usbCANChannelOptions) *usbCANChannel {
 	c := usbCANChannel{
 		options: options,
 		log:     log,
@@ -95,7 +96,7 @@ func newUSBCANChannel(log *slog.Logger, options usbCANChannelOptions) Interface 
 // partial data across iterations.
 //
 // This method blocks indefinitely and only returns on a read error or serial port failure.
-func (c *usbCANChannel) Run(ctx context.Context) error {
+func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error {
 	// Configure and open the serial port at the specified baud rate.
 	// The USB-CAN Analyzer typically runs at 2 Mbaud on the serial link.
 	mode := &serial.Mode{
@@ -107,6 +108,13 @@ func (c *usbCANChannel) Run(ctx context.Context) error {
 	}
 
 	c.port = port
+
+	// Wrap the caller's handler so a nil handler becomes a no-op.
+	c.handler = func(frame can.Frame) {
+		if handler != nil {
+			handler(frame)
+		}
+	}
 
 	c.log.Info("Opened USBCAN and listening", "portName", c.options.SerialPortName)
 
@@ -274,7 +282,7 @@ func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 			}
 
 			// Dispatch the parsed frame to the user-provided handler callback.
-			c.options.FrameHandler(fd)
+			c.handler(fd)
 
 			// Consume this frame from the buffer and continue parsing.
 			*bufAddr = buf[frameLen:]
@@ -348,34 +356,22 @@ func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 	return nil
 }
 
-// NewUSBCAN creates a USB-CAN Interface for the given serial port.
-// The handler callback receives each incoming CAN frame. The interface is not opened
-// until Run() is called.
-func NewUSBCAN(log *slog.Logger, port string, handler func(can.Frame)) Interface {
-	var frameHandler can.HandlerFunc = func(frame can.Frame) {
-		if handler != nil {
-			handler(frame)
-		}
-	}
+// NewUSBCAN creates a USB-CAN channel for the given serial port.
+// The channel is not opened, and no handler is registered, until Run() is called.
+func NewUSBCAN(log *slog.Logger, port string) *usbCANChannel {
 	return newUSBCANChannel(log, usbCANChannelOptions{
 		SerialPortName: port,
 		SerialBaudRate: 2000000,
-		FrameHandler:   frameHandler,
 	})
 }
 
 // RunUSBCAN creates a USB-CAN channel for the given serial port and runs it,
 // calling handler for each received CAN frame. Blocks until error or context done.
 func RunUSBCAN(ctx context.Context, log *slog.Logger, port string, handler func(can.Frame)) error {
-	var frameHandler can.HandlerFunc = func(frame can.Frame) {
-		handler(frame)
-	}
-
 	ch := newUSBCANChannel(log, usbCANChannelOptions{
 		SerialPortName: port,
 		SerialBaudRate: 2000000,
-		FrameHandler:   frameHandler,
 	})
 
-	return ch.Run(ctx)
+	return ch.Run(ctx, handler)
 }
