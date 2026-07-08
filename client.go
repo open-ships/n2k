@@ -348,21 +348,21 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 	info := adapter.NewPacketInfo(&frame)
 
 	// Route address claim frames (PGN 60928) to the claimer.
-	if info.PGN == 60928 && frame.Length == 8 {
+	if info.PGN == framer.PGNISOAddressClaim && frame.Length == 8 {
 		name := binary.LittleEndian.Uint64(frame.Data[:])
 		c.claimer.HandleAddressClaim(info.SourceId, name)
 	}
 
 	// Route ISO requests (PGN 59904) for address claim to the claimer.
-	if info.PGN == 59904 && frame.Length >= 3 {
+	if info.PGN == framer.PGNISORequest && frame.Length >= 3 {
 		requestedPGN := uint32(frame.Data[0]) | uint32(frame.Data[1])<<8 | uint32(frame.Data[2])<<16
-		if requestedPGN == 60928 {
+		if requestedPGN == framer.PGNISOAddressClaim {
 			c.claimer.HandleISORequest()
 		}
 	}
 
 	// Route transport protocol frames to the TP manager.
-	if info.PGN == 60416 || info.PGN == 60160 {
+	if info.PGN == transport.PGNCM || info.PGN == transport.PGNDT {
 		c.tp.HandleFrame(frame)
 	}
 

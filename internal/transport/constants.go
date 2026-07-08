@@ -8,7 +8,11 @@
 // TP.DT (PGN 60160) for data transfer frames.
 package transport
 
-import "time"
+import (
+	"time"
+
+	"github.com/open-ships/n2k/internal/framer"
+)
 
 // TP PGN constants.
 const (
@@ -31,8 +35,8 @@ const (
 // Standard priority for transport protocol frames.
 const TPPriority uint8 = 6
 
-// Broadcast destination address.
-const BroadcastAddr uint8 = 255
+// BroadcastAddr is the broadcast destination address.
+const BroadcastAddr = framer.BroadcastAddr
 
 // Timeout durations per ISO 11783-3.
 const (

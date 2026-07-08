@@ -90,11 +90,11 @@ func TestParseCANID_RoundTrip(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			canID := framer.BuildCANID(tt.pgn, TPPriority, tt.source, tt.destination)
-			pgn, src, dst := parseCANID(canID)
+			c := framer.ParseCANID(canID)
 
-			assert.Equal(t, tt.pgn, pgn, "PGN should round-trip")
-			assert.Equal(t, tt.source, src, "source should round-trip")
-			assert.Equal(t, tt.destination, dst, "destination should round-trip")
+			assert.Equal(t, tt.pgn, c.PGN, "PGN should round-trip")
+			assert.Equal(t, tt.source, c.Source, "source should round-trip")
+			assert.Equal(t, tt.destination, c.Destination, "destination should round-trip")
 		})
 	}
 }

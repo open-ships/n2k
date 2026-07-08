@@ -9,6 +9,7 @@ package decoder
 import (
 	"fmt"
 
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
 )
 
@@ -150,11 +151,7 @@ func (p *Packet) Valid() bool {
 // extracted values are not always meaningful. They are only valid when the PGN is known to
 // be a fast-packet type.
 func (p *Packet) GetSeqFrame() {
-	// Extract 3-bit sequence ID from bits 7-5 of the first data byte.
-	p.SeqId = (p.Data[0] & 0xE0) >> 5
-	// Extract 5-bit frame number from bits 4-0 of the first data byte.
-	p.FrameNum = p.Data[0] & 0x1F
-
+	p.SeqId, p.FrameNum = framer.FastPacketSeqFrame(p.Data[0])
 }
 
 // UnknownPGN creates a new instance of UnknownPGN from this packet. This is used as a

@@ -89,13 +89,12 @@ func NewManager(cfg ManagerConfig) *Manager {
 // HandleFrame routes an incoming CAN frame to the appropriate transport protocol
 // handler based on PGN. Non-TP frames are silently ignored.
 func (m *Manager) HandleFrame(frame can.Frame) {
-	pgn, source, destination := parseCANID(frame.ID)
-
-	switch pgn {
+	c := framer.ParseCANID(frame.ID)
+	switch c.PGN {
 	case PGNCM:
-		m.handleCM(frame, source, destination)
+		m.handleCM(frame, c.Source, c.Destination)
 	case PGNDT:
-		m.handleDT(frame, source, destination)
+		m.handleDT(frame, c.Source, c.Destination)
 	}
 }
 
@@ -474,21 +473,6 @@ func (m *Manager) Close() {
 		}
 		delete(m.sessions, key)
 	}
-}
-
-// parseCANID extracts the PGN, source, and destination from a 29-bit CAN ID.
-func parseCANID(id uint32) (pgn uint32, source uint8, destination uint8) {
-	source = uint8(id & 0xFF)
-	pgn = (id & 0x3FFFF00) >> 8
-
-	pduFormat := uint8((pgn >> 8) & 0xFF)
-	if pduFormat < 240 {
-		destination = uint8(pgn & 0xFF)
-		pgn &= 0xFFF00
-	} else {
-		destination = BroadcastAddr
-	}
-	return
 }
 
 // extractPGN reads a 3-byte little-endian PGN from CM frame bytes 5-7.

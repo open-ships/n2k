@@ -6,6 +6,7 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -111,7 +112,7 @@ func TestFastPacket(t *testing.T) {
 	// --- Scenario 1: Single-frame fast packet ---
 	// PGN 130820 with payload length 5 fits entirely in frame 0.
 	// Byte 0 = 0xa0: seqId=5, frameNum=0. Byte 1 = 5: expected length.
-	pInfo := NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8})
+	pInfo := NewPacketInfo(&can.Frame{ID: framer.BuildCANID(130820, 1, 10, 0), Length: 8})
 	data := []uint8{160, 5, 163, 153, 32, 128, 1, 255}
 	p := decoder.NewPacket(pInfo, data)
 	m.Add(p)
@@ -123,7 +124,7 @@ func TestFastPacket(t *testing.T) {
 	// accept it but the sequence won't be complete. Verify the sequence exists in the map
 	// under source=10, pgn=130820, seqId=5.
 	m = NewMultiBuilder()
-	p = decoder.NewPacket(NewPacketInfo(&can.Frame{ID: CanIdFromData(130820, 10, 1, 0), Length: 8}), []uint8{161, 5, 163, 153, 32, 128, 1, 255})
+	p = decoder.NewPacket(NewPacketInfo(&can.Frame{ID: framer.BuildCANID(130820, 1, 10, 0), Length: 8}), []uint8{161, 5, 163, 153, 32, 128, 1, 255})
 	m.Add(p)
 	assert.False(t, p.Complete)
 	assert.NotNil(t, m.sequences[10])

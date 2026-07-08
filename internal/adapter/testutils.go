@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/framer"
 )
 
 // CanFrameFromRaw parses a CSV-formatted raw CAN bus log line into a can.Frame suitable
@@ -17,7 +18,7 @@ import (
 //	"2023-01-21T00:04:17Z,3,127501,224,0,8,00,03,c0,ff,ff,ff,ff,ff"
 //
 // The function reconstructs the 29-bit CAN extended ID from the parsed fields using
-// CanIdFromData, and always sets the frame Length to 8 (standard CAN data frame size).
+// framer.BuildCANID, and always sets the frame Length to 8 (standard CAN data frame size).
 // Data bytes beyond the declared length are left at their zero default value.
 //
 // Note: This function ignores parse errors on individual fields for simplicity in test
@@ -46,7 +47,7 @@ func CanFrameFromRaw(in string) can.Frame {
 
 	// Reconstruct the 29-bit CAN extended ID by encoding PGN, source, priority, and
 	// destination into the appropriate bit positions.
-	id := CanIdFromData(uint32(pgn), uint8(source), uint8(priority), uint8(destination))
+	id := framer.BuildCANID(uint32(pgn), uint8(priority), uint8(source), uint8(destination))
 	retval := can.Frame{
 		ID:     id,
 		Length: 8, // CAN data frames always carry 8 bytes on NMEA 2000
@@ -59,35 +60,4 @@ func CanFrameFromRaw(in string) can.Frame {
 	}
 
 	return retval
-}
-
-// CanIdFromData constructs a 29-bit CAN extended identifier from its component NMEA 2000
-// fields. The resulting ID follows the NMEA 2000 / ISO 11783 bit layout:
-//
-//	Bits 28-26: Priority (3 bits)
-//	Bits 25-8:  PGN (18 bits, includes Data Page, PDU Format, and PDU Specific)
-//	Bits 7-0:   Source Address (8 bits)
-//
-// Note: The destination parameter is OR'd into the low byte alongside the source address.
-// This works correctly for broadcast PGNs (destination=0), but for addressed PGNs the
-// destination should be encoded in the PS (PDU Specific) field within the PGN instead.
-// The OR-based approach can cause bit collisions when both source and destination are
-// non-zero -- see TestCanFrameFromRaw_DestinationBitCollision for documentation of this
-// behavior. This is acceptable for test utilities since replay data typically uses the
-// correct encoding.
-//
-// Parameters:
-//   - pgn: The 18-bit Parameter Group Number
-//   - sourceId: The 8-bit source address of the sender
-//   - priority: The 3-bit message priority (0 = highest, 7 = lowest)
-//   - destination: The 8-bit destination address (0 for broadcast PGNs, OR'd into low byte)
-//
-// Returns the assembled 29-bit CAN ID as a uint32.
-func CanIdFromData(pgn uint32, sourceId uint8, priority uint8, destination uint8) uint32 {
-	// Assemble the CAN ID by placing each field in its bit position:
-	// - Source address in bits 0-7
-	// - PGN shifted left by 8 into bits 8-25
-	// - Priority shifted left by 26 into bits 26-28
-	// - Destination OR'd into the low byte (overlaps with source -- see note above)
-	return uint32(sourceId) | (pgn << 8) | (uint32(priority) << 26) | uint32(destination)
 }

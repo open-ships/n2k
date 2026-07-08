@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
 )
 
@@ -60,31 +61,16 @@ SOFTWARE.
 // Returns a pgn.MessageInfo populated with the extracted PGN, source, priority, target,
 // and current timestamp.
 func NewPacketInfo(message *can.Frame) pgn.MessageInfo {
-	// Extract priority from bits 26-28 (3 bits). The mask 0x1C000000 selects bits 28-26,
-	// then right-shift by 26 to get the 0-7 priority value.
-	priority := uint8((message.ID & 0x1C000000) >> 26)
+	c := framer.ParseCANID(message.ID)
 	p := pgn.MessageInfo{
 		Timestamp: time.Now(),
-		// Extract source address from bits 0-7 of the CAN ID.
-		SourceId: uint8(message.ID & 0xFF),
-		// Extract PGN from bits 8-25 (18 bits). The mask 0x3FFFF00 selects bits 25-8,
-		// then right-shift by 8 to get the actual PGN value.
-		PGN:      (message.ID & 0x3FFFF00) >> 8,
-		Priority: &priority,
+		SourceId:  c.Source,
+		PGN:       c.PGN,
+		Priority:  &c.Priority,
 	}
-
-	// Determine if this is an addressed (point-to-point) or broadcast message by
-	// examining the PDU Format (PF) field in bits 15-8 of the PGN.
-	// PDU Format < 240: Addressed message (PDU1) -- PS field is destination address.
-	// PDU Format >= 240: Broadcast message (PDU2) -- PS field is group extension (part of PGN).
-	pduFormat := uint8((p.PGN & 0xFF00) >> 8)
-	if pduFormat < 240 {
-		// This is an addressed (point-to-point) message. The lower byte of the PGN field
-		// actually contains the destination address, not part of the PGN itself.
-		// Extract it as TargetId and mask it off the PGN.
-		targetId := uint8(p.PGN & 0xFF)
+	if c.Addressed {
+		targetId := c.Destination
 		p.TargetId = &targetId
-		p.PGN &= 0xFFF00 // Zero out the destination byte to get the true PGN.
 	}
 	return p
 }
