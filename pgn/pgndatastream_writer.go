@@ -340,12 +340,11 @@ func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 
 func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) {
 	sBytes := []uint8(s)
-	totalLength := uint8(len(sBytes) + 3)
+	// totalLength counts itself, the control byte, and the string bytes -- there is no
+	// trailing NUL, matching readStringWithLengthAndControl's inverse expectations.
+	totalLength := uint8(len(sBytes) + 2)
 	controlByte := uint8(1)
 	header := []uint8{totalLength, controlByte}
 	w.writeBinaryData(header, 16)
-	payload := make([]uint8, len(sBytes)+1)
-	copy(payload, sBytes)
-	payload[len(sBytes)] = 0
-	w.writeBinaryData(payload, uint16(len(payload))*8)
+	w.writeBinaryData(sBytes, uint16(len(sBytes))*8)
 }

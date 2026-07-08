@@ -328,22 +328,27 @@ func TestRoundTrip_StringWithLength(t *testing.T) {
 	assert.Equal(t, "Hello", v)
 }
 
-// TestRoundTrip_StringWithLengthAndControl writes a STRING_LAU string then reads it back.
+// TestWriteStringWithLengthAndControl_ExactBytes pins the STRING_LAU wire layout: the
+// length byte counts itself, the control byte, and the string bytes (len(s)+2) -- there
+// is no trailing NUL -- followed by the ASCII control byte (1), followed by the string.
+func TestWriteStringWithLengthAndControl_ExactBytes(t *testing.T) {
+	w := NewPGNDataStreamWriter()
+	w.writeStringWithLengthAndControl("AB")
+	assert.NoError(t, w.Err())
+	assert.Equal(t, []uint8{0x04, 0x01, 'A', 'B'}, w.Bytes())
+}
+
+// TestRoundTrip_StringWithLengthAndControl writes a STRING_LAU string then reads it back,
+// verifying the writer and reader are exact inverses (no trailing NUL to strip).
 func TestRoundTrip_StringWithLengthAndControl(t *testing.T) {
 	w := NewPGNDataStreamWriter()
-	w.writeStringWithLengthAndControl("Hello")
+	w.writeStringWithLengthAndControl("AB")
 	assert.NoError(t, w.Err())
 
 	r := NewPgnDataStream(w.Bytes())
 	v, err := r.readStringWithLengthAndControl()
 	assert.NoError(t, err)
-	// STRING_LAU includes a trailing NUL; the reader returns it as-is.
-	// Trim trailing NUL for comparison.
-	trimmed := v
-	if len(trimmed) > 0 && trimmed[len(trimmed)-1] == 0 {
-		trimmed = trimmed[:len(trimmed)-1]
-	}
-	assert.Equal(t, "Hello", trimmed)
+	assert.Equal(t, "AB", v)
 }
 
 // TestRoundTrip_UInt32 verifies uint32 write and read round-trip.
