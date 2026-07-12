@@ -20,8 +20,10 @@
 //	            identical struct (usually reserved-bit or padding conventions)
 //	MISMATCH    re-encoded payload decodes to different field values
 //
-// Exit status is 1 if any MISMATCH, decode failure, or encode failure was
-// seen, so the tool can gate CI runs against recorded bus captures.
+// The whole log is always processed and the exit status is always 0 (2 for
+// usage or I/O errors). Pass -report <file> to additionally collect every
+// imperfect message (anything not exact/padded) plus the closing summary into
+// a file for later review.
 package main
 
 import (
@@ -82,6 +84,11 @@ type checker struct {
 	maxExamples int
 	messages    int
 	quiet       bool
+
+	// report, when non-nil, receives every message that isn't a clean byte
+	// match (streamed as encountered, so memory stays flat on large logs).
+	report io.Writer
+	issues int
 }
 
 func (c *checker) Decode(p decoder.Packet) {
@@ -138,8 +145,13 @@ func (c *checker) record(key statKey, o outcome, original, reencoded []byte, rea
 	}
 	counters[o]++
 
+	if c.report != nil && reason != "" {
+		c.issues++
+		writeMessage(c.report, c.messages, key, o, original, reencoded, reason)
+	}
+
 	if !c.quiet {
-		printMessage(c.messages, key, o, original, reencoded, reason)
+		writeMessage(os.Stdout, c.messages, key, o, original, reencoded, reason)
 		return
 	}
 
@@ -156,26 +168,34 @@ func (c *checker) record(key statKey, o outcome, original, reencoded []byte, rea
 	})
 }
 
-// printMessage writes one message's before/after byte view, e.g.
+// printer emits formatted output and deliberately drops write errors:
+// console writes are best-effort, and the report file's errors surface at
+// Flush/Close in main.
+type printer struct{ w io.Writer }
+
+func (p printer) f(format string, args ...any) { _, _ = fmt.Fprintf(p.w, format, args...) }
+
+// writeMessage writes one message's before/after byte view, e.g.
 //
 //	#3 pgn 127250 VesselHeading [value-equal] bytes differ but field values survive
 //	    wire       ff 5c 3d ff 7f ff 7f 03
 //	    re-encode  ff 5c 3d ff 7f ff 7f ff
 //	    diff                            ^^
-func printMessage(idx int, key statKey, o outcome, wire, reencoded []byte, reason string) {
-	fmt.Printf("#%d pgn %d %s [%s]", idx, key.pgn, key.structName, outcomeNames[o])
+func writeMessage(w io.Writer, idx int, key statKey, o outcome, wire, reencoded []byte, reason string) {
+	p := printer{w}
+	p.f("#%d pgn %d %s [%s]", idx, key.pgn, key.structName, outcomeNames[o])
 	if reason != "" {
-		fmt.Printf(" %s", reason)
+		p.f(" %s", reason)
 	}
-	fmt.Println()
-	fmt.Printf("    %-11s% x\n", "wire", wire)
+	p.f("\n")
+	p.f("    %-11s% x\n", "wire", wire)
 	if reencoded != nil {
-		fmt.Printf("    %-11s% x\n", "re-encode", reencoded)
+		p.f("    %-11s% x\n", "re-encode", reencoded)
 		if !bytes.Equal(wire, reencoded) {
-			fmt.Printf("    %-11s%s\n", "diff", diffMarkers(wire, reencoded))
+			p.f("    %-11s%s\n", "diff", diffMarkers(wire, reencoded))
 		}
 	}
-	fmt.Println()
+	p.f("\n")
 }
 
 // diffMarkers returns a "^^" marker aligned under every byte column where a
@@ -272,6 +292,7 @@ func parseLine(line string) (can.Frame, bool) {
 func main() {
 	quiet := flag.Bool("quiet", false, "suppress per-message before/after output; print only the summary")
 	maxExamples := flag.Int("examples", 10, "max number of problem examples to print in the summary (-quiet mode)")
+	reportPath := flag.String("report", "", "write every issue (anything not exact/padded) plus the summary to this file")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage: roundtrip [flags] <candump.log | ->\n")
 		flag.PrintDefaults()
@@ -294,6 +315,20 @@ func main() {
 	}
 
 	chk := &checker{stats: map[statKey]*[numOutcomes]int{}, maxExamples: *maxExamples, quiet: *quiet}
+
+	var reportFile *os.File
+	var reportBuf *bufio.Writer
+	if *reportPath != "" {
+		f, err := os.Create(*reportPath) // #nosec G304 -- the report destination is chosen by the user.
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(2)
+		}
+		reportFile = f
+		reportBuf = bufio.NewWriter(f)
+		chk.report = reportBuf
+	}
+
 	canAdapter := adapter.NewCANAdapter()
 	canAdapter.SetOutput(chk)
 
@@ -317,18 +352,24 @@ func main() {
 		os.Exit(2)
 	}
 
-	report(chk, frames, skipped)
+	writeSummary(os.Stdout, chk, frames, skipped)
+	printExamples(chk)
 
-	var failures int
-	for _, counters := range chk.stats {
-		failures += counters[outcomeMismatch] + counters[outcomeDecodeFail] + counters[outcomeEncodeFail]
-	}
-	if failures > 0 {
-		os.Exit(1)
+	if reportFile != nil {
+		writeSummary(reportBuf, chk, frames, skipped)
+		if err := reportBuf.Flush(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(2)
+		}
+		if err := reportFile.Close(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(2)
+		}
+		fmt.Printf("\nwrote %d issues to %s\n", chk.issues, reportFile.Name())
 	}
 }
 
-func report(chk *checker, frames, skipped int) {
+func writeSummary(w io.Writer, chk *checker, frames, skipped int) {
 	totals := [numOutcomes]int{}
 	keys := make([]statKey, 0, len(chk.stats))
 	for key, counters := range chk.stats {
@@ -344,14 +385,15 @@ func report(chk *checker, frames, skipped int) {
 		return keys[i].structName < keys[j].structName
 	})
 
-	fmt.Println("== summary ==")
-	fmt.Printf("frames read: %d (skipped %d unparseable lines)\n", frames, skipped)
-	fmt.Printf("messages assembled: %d\n", chk.messages)
+	p := printer{w}
+	p.f("== summary ==\n")
+	p.f("frames read: %d (skipped %d unparseable lines)\n", frames, skipped)
+	p.f("messages assembled: %d\n", chk.messages)
 	for o, name := range outcomeNames {
-		fmt.Printf("  %-12s %d\n", name, totals[o])
+		p.f("  %-12s %d\n", name, totals[o])
 	}
 
-	fmt.Printf("\n%8s  %-50s %7s %7s %7s %7s %9s %6s %6s %8s\n",
+	p.f("\n%8s  %-50s %7s %7s %7s %7s %9s %6s %6s %8s\n",
 		"PGN", "struct", "total", "exact", "padded", "valeq", "MISMATCH", "dec!", "enc!", "unknown")
 	for _, key := range keys {
 		counters := chk.stats[key]
@@ -359,23 +401,27 @@ func report(chk *checker, frames, skipped int) {
 		for _, n := range counters {
 			total += n
 		}
-		fmt.Printf("%8d  %-50s %7d %7d %7d %7d %9d %6d %6d %8d\n",
+		p.f("%8d  %-50s %7d %7d %7d %7d %9d %6d %6d %8d\n",
 			key.pgn, key.structName, total,
 			counters[outcomeExact], counters[outcomePadded], counters[outcomeValueEqual],
 			counters[outcomeMismatch], counters[outcomeDecodeFail], counters[outcomeEncodeFail],
 			counters[outcomeUnknownPGN])
 	}
+}
 
-	if len(chk.examples) > 0 {
-		fmt.Printf("\nexamples (first %d):\n", len(chk.examples))
-		for _, ex := range chk.examples {
-			fmt.Printf("- pgn %d (%s) %s\n", ex.key.pgn, ex.key.structName, ex.reason)
-			if len(ex.original) > 0 {
-				fmt.Printf("    wire:      % x\n", ex.original)
-			}
-			if len(ex.reencoded) > 0 {
-				fmt.Printf("    re-encode: % x\n", ex.reencoded)
-			}
+// printExamples prints the capped problem examples collected in -quiet mode.
+func printExamples(chk *checker) {
+	if len(chk.examples) == 0 {
+		return
+	}
+	fmt.Printf("\nexamples (first %d):\n", len(chk.examples))
+	for _, ex := range chk.examples {
+		fmt.Printf("- pgn %d (%s) %s\n", ex.key.pgn, ex.key.structName, ex.reason)
+		if len(ex.original) > 0 {
+			fmt.Printf("    wire:      % x\n", ex.original)
+		}
+		if len(ex.reencoded) > 0 {
+			fmt.Printf("    re-encode: % x\n", ex.reencoded)
 		}
 	}
 }
