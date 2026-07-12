@@ -1,5 +1,9 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — candump round-trip tool
+
+- `cmd/roundtrip` — replays a candump `-L` log through fast-packet assembly, decodes each message, re-encodes it, and compares against the wire bytes. Prints a before/after hex view per message (with markers under differing bytes) and a per-PGN summary; exits 1 on any mismatch or codec failure. Reads a log file or stdin (`candump -L vcan0 | roundtrip -`).
+
 ### Unreleased — Architecture deepening
 
 Seven refactors from an architecture review: one read pipeline, one CAN-ID codec, a public bus seam, a testable transport state machine, and a metadata-driven PGN codec with round-trip coverage for every PGN.
