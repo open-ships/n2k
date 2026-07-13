@@ -284,6 +284,7 @@ func (c *Client) initBus(cfg config) error {
 	c.system = sys
 	c.correlator = newCorrelator()
 	sys.addHandler(c.correlator.observe)
+	sys.addHandler(c.handleGroupFunction)
 	go sys.run()
 
 	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
