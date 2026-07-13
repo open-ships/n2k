@@ -412,7 +412,7 @@ go run ./cmd/sniffer.go -i can0 | jq .
 
 ## Known Limitations
 
-- Cross-field validation is not yet implemented (stubs exist for future work).
+- Cross-field validation is not yet implemented.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
 
