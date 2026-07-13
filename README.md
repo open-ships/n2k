@@ -288,8 +288,12 @@ broadcasts an address-claim request so the whole bus announces itself.
 
 ```go
 for _, d := range client.Devices() {
+    model := "(no product info yet)"
+    if d.ProductInfo != nil {
+        model = d.ProductInfo.ModelId
+    }
     fmt.Printf("addr %d: %s (manufacturer %d, last seen %s)\n",
-        d.Address, d.ProductInfo.ModelId, d.Name.ManufacturerCode, d.LastSeen)
+        d.Address, model, d.Name.ManufacturerCode, d.LastSeen)
 }
 
 // Correlate a message with the device that sent it.
