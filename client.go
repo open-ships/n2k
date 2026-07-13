@@ -91,6 +91,10 @@ type Client struct {
 	// correlator matches system messages to in-flight Request calls. Only
 	// set for bus clients.
 	correlator *correlator
+
+	// bMu guards broadcasters, the active periodic transmissions by PGN.
+	bMu          sync.Mutex
+	broadcasters map[uint32]*broadcaster
 }
 
 type writeJob struct {
@@ -569,6 +573,7 @@ func (c *Client) Close() error {
 	if c.heartbeat != nil {
 		c.heartbeat.stop()
 	}
+	c.stopBroadcasters()
 
 	close(c.writeCh)
 	c.writeWg.Wait()
