@@ -74,6 +74,31 @@ type Client struct {
 	// decode -> unknown-PGN policy -> post-filter -> msgCh) for the internal
 	// read loop. Only used for bus clients.
 	pipeline *readPipeline
+
+	// system decodes protocol PGNs (product info, group functions, request
+	// responses) independently of the user filter. Only used for bus clients.
+	system *systemRouter
+
+	// heartbeat transmits PGN 126993 periodically. Only set for bus clients
+	// (nil for replay clients).
+	heartbeat *heartbeater
+
+	// productInfo and configInfo identify this device to the network
+	// (PGNs 126996 and 126998).
+	productInfo ProductInfo
+	configInfo  ConfigInfo
+
+	// correlator matches system messages to in-flight Request calls. Only
+	// set for bus clients.
+	correlator *correlator
+
+	// bMu guards broadcasters, the active periodic transmissions by PGN.
+	bMu          sync.Mutex
+	broadcasters map[uint32]*broadcaster
+
+	// registry tracks devices observed on the bus, keyed by NAME. Only set
+	// for bus clients.
+	registry *registry
 }
 
 type writeJob struct {
@@ -153,9 +178,27 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		addrReady:  make(chan struct{}),
 	}
 
+	c.productInfo = defaultProductInfo(UnpackDeviceName(deviceName).IdentityNumber)
+	if cfg.productInfo != nil {
+		c.productInfo = *cfg.productInfo
+	}
+	c.configInfo = defaultConfigInfo()
+	if cfg.configInfo != nil {
+		c.configInfo = *cfg.configInfo
+	}
+
+	// Start the single writer goroutine for FIFO ordering. It must exist
+	// before initBus so the client's own protocol goroutines (heartbeat,
+	// info responses) can write as soon as the address claim completes.
+	c.writeCh = make(chan writeJob, 64)
+	c.writeWg.Add(1)
+	go c.writeLoop()
+
 	if hasBus {
 		if err := c.initBus(cfg); err != nil {
 			cancel()
+			close(c.writeCh)
+			c.writeWg.Wait()
 			return nil, err
 		}
 	} else {
@@ -179,11 +222,6 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		})
 	}
 
-	// Start the single writer goroutine for FIFO ordering.
-	c.writeCh = make(chan writeJob, 64)
-	c.writeWg.Add(1)
-	go c.writeLoop()
-
 	return c, nil
 }
 
@@ -203,7 +241,7 @@ func (c *Client) initBus(cfg config) error {
 		}
 	}
 	if c.bus == nil {
-		return errors.New("n2k: could not construct bus from sources")
+		return errors.New("n2k: no writable bus available — File, TCP, and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN/USB source or WithBus")
 	}
 
 	// Set writeFrame to delegate to the bus.
@@ -228,6 +266,7 @@ func (c *Client) initBus(cfg config) error {
 				info.TargetId = &destination
 			}
 			c.pipeline.InjectAssembled(info, data)
+			c.system.handleAssembled(info, data)
 		},
 		Logger: c.log,
 	})
@@ -240,6 +279,28 @@ func (c *Client) initBus(cfg config) error {
 		return err
 	}
 	c.pipeline = p
+
+	// Set up the protocol-message router and start its dispatch loop.
+	sys, err := newSystemRouter(c.ctx, cfg)
+	if err != nil {
+		return err
+	}
+	c.system = sys
+	c.correlator = newCorrelator()
+	c.registry = newRegistry()
+	sys.addHandler(c.correlator.observe)
+	sys.addHandler(c.handleGroupFunction)
+	sys.addHandler(c.registry.observe)
+	go sys.run()
+
+	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
+	// first transmission.
+	hbInterval := defaultHeartbeatInterval
+	if cfg.heartbeatInterval != nil {
+		hbInterval = *cfg.heartbeatInterval
+	}
+	c.heartbeat = newHeartbeater(hbInterval, c.Write)
+	go c.heartbeat.run(c.ctx, c.addrReady)
 
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
@@ -311,25 +372,53 @@ func (c *Client) initBus(cfg config) error {
 	c.mu.Unlock()
 
 	close(c.addrReady)
+
+	// Enumerate the bus: ask every device to (re-)announce its address claim
+	// so the registry fills without waiting for spontaneous traffic.
+	enumerate := uint64(framer.PGNISOAddressClaim)
+	c.Write(&pgn.IsoRequest{Pgn: &enumerate})
+
 	return nil
+}
+
+// requestDeviceInfo asks a newly seen device for its product and
+// configuration info once the client itself is ready to transmit.
+func (c *Client) requestDeviceInfo(addr uint8) {
+	go func() {
+		select {
+		case <-c.addrReady:
+		case <-c.ctx.Done():
+			return
+		}
+		for _, requested := range []uint32{126996, 126998} {
+			pgnNum := uint64(requested)
+			c.Write(&pgn.IsoRequest{
+				Info: pgn.MessageInfo{TargetId: pgn.Target(addr)},
+				Pgn:  &pgnNum,
+			})
+		}
+	}()
 }
 
 // handleBusFrame is the central frame router called for every incoming CAN frame.
 func (c *Client) handleBusFrame(frame can.Frame) {
 	info := adapter.NewPacketInfo(&frame)
 
-	// Route address claim frames (PGN 60928) to the claimer.
+	// Route address claim frames (PGN 60928) to the claimer and the device
+	// registry.
 	if info.PGN == framer.PGNISOAddressClaim && frame.Length == 8 {
 		name := binary.LittleEndian.Uint64(frame.Data[:])
 		c.claimer.HandleAddressClaim(info.SourceId, name)
+		if c.registry.handleClaim(info.SourceId, name, info.Timestamp) {
+			c.requestDeviceInfo(info.SourceId)
+		}
+	} else {
+		c.registry.touch(info.SourceId, info.Timestamp)
 	}
 
-	// Route ISO requests (PGN 59904) for address claim to the claimer.
-	if info.PGN == framer.PGNISORequest && frame.Length >= 3 {
-		requestedPGN := uint32(frame.Data[0]) | uint32(frame.Data[1])<<8 | uint32(frame.Data[2])<<16
-		if requestedPGN == framer.PGNISOAddressClaim {
-			c.claimer.HandleISORequest()
-		}
+	// Route ISO requests (PGN 59904) to the request responder.
+	if info.PGN == framer.PGNISORequest {
+		c.handleISORequest(info, frame)
 	}
 
 	// Route transport protocol frames to the TP manager.
@@ -340,6 +429,10 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 	// Decode for the read API using the persistent pipeline (pre-filter moved
 	// inside HandleFrame).
 	c.pipeline.HandleFrame(frame)
+
+	// Decode protocol PGNs for the client's own use, independent of the user
+	// filter.
+	c.system.handleFrame(frame, info.PGN)
 }
 
 // busReadLoop runs the bus and closes the message channel when done.
@@ -512,6 +605,13 @@ func (c *Client) Close() error {
 	}
 	c.closed = true
 	c.mu.Unlock()
+
+	// Stop protocol writers before closing the write channel so their final
+	// writes cannot race the shutdown.
+	if c.heartbeat != nil {
+		c.heartbeat.stop()
+	}
+	c.stopBroadcasters()
 
 	close(c.writeCh)
 	c.writeWg.Wait()

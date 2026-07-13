@@ -9,14 +9,17 @@ import (
 )
 
 type config struct {
-	sources        []source
-	filterExpr     string
-	includeUnknown bool
-	logger         *slog.Logger
-	sourceAddress  *uint8         // nil = auto mode
-	deviceName     *DeviceName    // nil = use default
-	claimTimeout   *time.Duration // nil = use default (1500ms)
-	bus            Bus            // pre-constructed bus
+	sources           []source
+	filterExpr        string
+	includeUnknown    bool
+	logger            *slog.Logger
+	sourceAddress     *uint8         // nil = auto mode
+	deviceName        *DeviceName    // nil = use default
+	claimTimeout      *time.Duration // nil = use default (1500ms)
+	heartbeatInterval *time.Duration // nil = default (60s), 0 = disabled
+	productInfo       *ProductInfo   // nil = defaults
+	configInfo        *ConfigInfo    // nil = defaults
+	bus               Bus            // pre-constructed bus
 }
 
 func (c *config) validate() error {
@@ -46,6 +49,39 @@ func CAN(iface string) Option {
 func USB(port string) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &usbCANSource{port: port})
+	})
+}
+
+// File adds a source that replays CAN frames from a candump -L / -l log file.
+// By default frames are delivered as fast as they can be read; pass
+// OriginalTiming() to pace them by the log's timestamps. File sources are
+// read-only: they work with Receive and NewScanner but not NewClient.
+func File(path string, opts ...FileOption) Option {
+	return optionFunc(func(c *config) {
+		src := &fileSource{path: path}
+		for _, o := range opts {
+			o.applyFile(src)
+		}
+		c.sources = append(c.sources, src)
+	})
+}
+
+// TCP adds a source that dials a network gateway (e.g. a Yacht Devices
+// YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port")
+// and reads its stream. TCP sources are read-only: they work with Receive and
+// NewScanner but not NewClient.
+func TCP(addr string, format StreamFormat) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})
+	})
+}
+
+// UDP adds a source that listens on listenAddr (e.g. ":1457" or
+// "0.0.0.0:1457") for datagrams broadcast by a network gateway. UDP sources
+// are read-only: they work with Receive and NewScanner but not NewClient.
+func UDP(listenAddr string, format StreamFormat) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &udpSource{addr: listenAddr, format: format})
 	})
 }
 
@@ -95,6 +131,34 @@ func WithSourceAddress(addr uint8) Option {
 func WithClaimTimeout(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.claimTimeout = &d
+	})
+}
+
+// WithProductInfo sets the product identity (PGN 126996) this client reports
+// when another device requests it. Without it, a generic software-gateway
+// identity is reported. String fields longer than 32 bytes are truncated on
+// the wire.
+func WithProductInfo(p ProductInfo) Option {
+	return optionFunc(func(c *config) {
+		c.productInfo = &p
+	})
+}
+
+// WithConfigInfo sets the installation description (PGN 126998) this client
+// reports when another device requests it.
+func WithConfigInfo(ci ConfigInfo) Option {
+	return optionFunc(func(c *config) {
+		c.configInfo = &ci
+	})
+}
+
+// WithHeartbeatInterval sets the cadence of the client's automatic heartbeat
+// (PGN 126993). The NMEA 2000 standard requires every device to heartbeat at
+// least every 60 seconds, which is the default. Pass 0 to disable automatic
+// heartbeats. Only bus clients heartbeat; replay clients never do.
+func WithHeartbeatInterval(d time.Duration) Option {
+	return optionFunc(func(c *config) {
+		c.heartbeatInterval = &d
 	})
 }
 

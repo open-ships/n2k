@@ -31,18 +31,16 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"reflect"
 	"sort"
-	"strconv"
 	"strings"
 
-	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/adapter"
+	"github.com/open-ships/n2k/internal/candump"
 	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/open-ships/n2k/pgn"
 )
@@ -270,44 +268,6 @@ func paddingOnlyDiff(a, b []byte) bool {
 	return true
 }
 
-// parseLine parses one candump -L / -l log line, e.g.
-//
-//	(1720000000.000000) can0 09F50E7F#00FFFFFFFFFFFFFF
-//
-// It finds the ID#DATA field so extra or missing columns are tolerated.
-// Returns ok=false for lines that carry no classic CAN data frame (RTR
-// frames, CAN FD "##" frames, comments, malformed lines).
-func parseLine(line string) (can.Frame, bool) {
-	var idData string
-	for _, field := range strings.Fields(line) {
-		if strings.Contains(field, "#") {
-			idData = field
-			break
-		}
-	}
-	parts := strings.SplitN(idData, "#", 2)
-	if len(parts) != 2 || parts[0] == "" {
-		return can.Frame{}, false
-	}
-	payload := parts[1]
-	if strings.HasPrefix(payload, "#") || strings.HasPrefix(payload, "R") {
-		return can.Frame{}, false
-	}
-
-	id, err := strconv.ParseUint(parts[0], 16, 32)
-	if err != nil {
-		return can.Frame{}, false
-	}
-	data, err := hex.DecodeString(payload)
-	if err != nil || len(data) > 8 {
-		return can.Frame{}, false
-	}
-
-	f := can.Frame{ID: uint32(id), Length: uint8(len(data))}
-	copy(f.Data[:], data)
-	return f, true
-}
-
 func main() {
 	quiet := flag.Bool("quiet", false, "suppress per-message before/after output; print only the summary")
 	maxExamples := flag.Int("examples", 10, "max number of problem examples to print in the summary (-quiet mode)")
@@ -358,7 +318,7 @@ func main() {
 		if line == "" {
 			continue
 		}
-		frame, ok := parseLine(line)
+		frame, _, ok := candump.Parse(line)
 		if !ok {
 			skipped++
 			continue

@@ -16,12 +16,13 @@ func main() {
 	iface := flag.String("i", "can0", "CAN interface name")
 	usb := flag.String("u", "", "USB-CAN serial port (e.g., /dev/ttyUSB0)")
 	expr := flag.String("f", "", "CEL filter expression")
+	unknown := flag.Bool("unknown", false, "include undecodable messages as unknown PGNs")
 	flag.Parse()
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	opts := []n2k.Option{n2k.IncludeUnknown()}
+	var opts []n2k.Option
 	if *usb != "" {
 		opts = append(opts, n2k.USB(*usb))
 	} else {
@@ -29,6 +30,9 @@ func main() {
 	}
 	if *expr != "" {
 		opts = append(opts, n2k.Filter(*expr))
+	}
+	if *unknown {
+		opts = append(opts, n2k.IncludeUnknown())
 	}
 
 	enc := json.NewEncoder(os.Stdout)
