@@ -74,6 +74,10 @@ type Client struct {
 	// decode -> unknown-PGN policy -> post-filter -> msgCh) for the internal
 	// read loop. Only used for bus clients.
 	pipeline *readPipeline
+
+	// system decodes protocol PGNs (product info, group functions, request
+	// responses) independently of the user filter. Only used for bus clients.
+	system *systemRouter
 }
 
 type writeJob struct {
@@ -228,6 +232,7 @@ func (c *Client) initBus(cfg config) error {
 				info.TargetId = &destination
 			}
 			c.pipeline.InjectAssembled(info, data)
+			c.system.handleAssembled(info, data)
 		},
 		Logger: c.log,
 	})
@@ -240,6 +245,14 @@ func (c *Client) initBus(cfg config) error {
 		return err
 	}
 	c.pipeline = p
+
+	// Set up the protocol-message router and start its dispatch loop.
+	sys, err := newSystemRouter(c.ctx, cfg)
+	if err != nil {
+		return err
+	}
+	c.system = sys
+	go sys.run()
 
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
@@ -340,6 +353,10 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 	// Decode for the read API using the persistent pipeline (pre-filter moved
 	// inside HandleFrame).
 	c.pipeline.HandleFrame(frame)
+
+	// Decode protocol PGNs for the client's own use, independent of the user
+	// filter.
+	c.system.handleFrame(frame, info.PGN)
 }
 
 // busReadLoop runs the bus and closes the message channel when done.
