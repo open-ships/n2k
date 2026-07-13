@@ -95,6 +95,10 @@ type Client struct {
 	// bMu guards broadcasters, the active periodic transmissions by PGN.
 	bMu          sync.Mutex
 	broadcasters map[uint32]*broadcaster
+
+	// registry tracks devices observed on the bus, keyed by NAME. Only set
+	// for bus clients.
+	registry *registry
 }
 
 type writeJob struct {
@@ -283,8 +287,10 @@ func (c *Client) initBus(cfg config) error {
 	}
 	c.system = sys
 	c.correlator = newCorrelator()
+	c.registry = newRegistry()
 	sys.addHandler(c.correlator.observe)
 	sys.addHandler(c.handleGroupFunction)
+	sys.addHandler(c.registry.observe)
 	go sys.run()
 
 	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
@@ -366,17 +372,48 @@ func (c *Client) initBus(cfg config) error {
 	c.mu.Unlock()
 
 	close(c.addrReady)
+
+	// Enumerate the bus: ask every device to (re-)announce its address claim
+	// so the registry fills without waiting for spontaneous traffic.
+	enumerate := uint64(framer.PGNISOAddressClaim)
+	c.Write(&pgn.IsoRequest{Pgn: &enumerate})
+
 	return nil
+}
+
+// requestDeviceInfo asks a newly seen device for its product and
+// configuration info once the client itself is ready to transmit.
+func (c *Client) requestDeviceInfo(addr uint8) {
+	go func() {
+		select {
+		case <-c.addrReady:
+		case <-c.ctx.Done():
+			return
+		}
+		for _, requested := range []uint32{126996, 126998} {
+			pgnNum := uint64(requested)
+			c.Write(&pgn.IsoRequest{
+				Info: pgn.MessageInfo{TargetId: pgn.Target(addr)},
+				Pgn:  &pgnNum,
+			})
+		}
+	}()
 }
 
 // handleBusFrame is the central frame router called for every incoming CAN frame.
 func (c *Client) handleBusFrame(frame can.Frame) {
 	info := adapter.NewPacketInfo(&frame)
 
-	// Route address claim frames (PGN 60928) to the claimer.
+	// Route address claim frames (PGN 60928) to the claimer and the device
+	// registry.
 	if info.PGN == framer.PGNISOAddressClaim && frame.Length == 8 {
 		name := binary.LittleEndian.Uint64(frame.Data[:])
 		c.claimer.HandleAddressClaim(info.SourceId, name)
+		if c.registry.handleClaim(info.SourceId, name, info.Timestamp) {
+			c.requestDeviceInfo(info.SourceId)
+		}
+	} else {
+		c.registry.touch(info.SourceId, info.Timestamp)
 	}
 
 	// Route ISO requests (PGN 59904) to the request responder.
