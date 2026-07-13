@@ -82,6 +82,11 @@ type Client struct {
 	// heartbeat transmits PGN 126993 periodically. Only set for bus clients
 	// (nil for replay clients).
 	heartbeat *heartbeater
+
+	// productInfo and configInfo identify this device to the network
+	// (PGNs 126996 and 126998).
+	productInfo ProductInfo
+	configInfo  ConfigInfo
 }
 
 type writeJob struct {
@@ -159,6 +164,15 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		sourceAddr: sourceAddr,
 		deviceName: deviceName,
 		addrReady:  make(chan struct{}),
+	}
+
+	c.productInfo = defaultProductInfo(UnpackDeviceName(deviceName).IdentityNumber)
+	if cfg.productInfo != nil {
+		c.productInfo = *cfg.productInfo
+	}
+	c.configInfo = defaultConfigInfo()
+	if cfg.configInfo != nil {
+		c.configInfo = *cfg.configInfo
 	}
 
 	// Start the single writer goroutine for FIFO ordering. It must exist
@@ -354,12 +368,9 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 		c.claimer.HandleAddressClaim(info.SourceId, name)
 	}
 
-	// Route ISO requests (PGN 59904) for address claim to the claimer.
-	if info.PGN == framer.PGNISORequest && frame.Length >= 3 {
-		requestedPGN := uint32(frame.Data[0]) | uint32(frame.Data[1])<<8 | uint32(frame.Data[2])<<16
-		if requestedPGN == framer.PGNISOAddressClaim {
-			c.claimer.HandleISORequest()
-		}
+	// Route ISO requests (PGN 59904) to the request responder.
+	if info.PGN == framer.PGNISORequest {
+		c.handleISORequest(info, frame)
 	}
 
 	// Route transport protocol frames to the TP manager.

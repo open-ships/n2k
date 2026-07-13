@@ -17,6 +17,8 @@ type config struct {
 	deviceName        *DeviceName    // nil = use default
 	claimTimeout      *time.Duration // nil = use default (1500ms)
 	heartbeatInterval *time.Duration // nil = default (60s), 0 = disabled
+	productInfo       *ProductInfo   // nil = defaults
+	configInfo        *ConfigInfo    // nil = defaults
 	bus               Bus            // pre-constructed bus
 }
 
@@ -129,6 +131,24 @@ func WithSourceAddress(addr uint8) Option {
 func WithClaimTimeout(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.claimTimeout = &d
+	})
+}
+
+// WithProductInfo sets the product identity (PGN 126996) this client reports
+// when another device requests it. Without it, a generic software-gateway
+// identity is reported. String fields longer than 32 bytes are truncated on
+// the wire.
+func WithProductInfo(p ProductInfo) Option {
+	return optionFunc(func(c *config) {
+		c.productInfo = &p
+	})
+}
+
+// WithConfigInfo sets the installation description (PGN 126998) this client
+// reports when another device requests it.
+func WithConfigInfo(ci ConfigInfo) Option {
+	return optionFunc(func(c *config) {
+		c.configInfo = &ci
 	})
 }
 
