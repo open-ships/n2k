@@ -9,7 +9,9 @@
 //
 // Each CAN frame is fed through the same adapter the live pipeline uses
 // (including fast-packet assembly), then every assembled payload is decoded
-// with pgn.DecodeMessage and re-encoded with pgn.EncodeMessage. By default
+// with pgn.DecodeMessage and re-encoded with pgn.EncodeMessage, which
+// returns a decoded message's original wire payload verbatim rather than
+// reconstructing it field by field. By default
 // every message is printed as a wire / re-encode byte pair (with a marker
 // line under any differing bytes) followed by a summary; -quiet suppresses
 // the per-message output. The result is classified per message:
@@ -130,11 +132,28 @@ func (c *checker) Decode(p decoder.Packet) {
 	case structName(redecoded) != key.structName:
 		c.record(key, outcomeMismatch, p.Data, reencoded,
 			"re-encoded payload decoded as different variant "+structName(redecoded))
-	case reflect.DeepEqual(msg, redecoded):
+	case valuesEqual(msg, redecoded, p.Info):
 		c.record(key, outcomeValueEqual, p.Data, reencoded, "bytes differ but field values survive")
 	default:
 		c.record(key, outcomeMismatch, p.Data, reencoded, "field values changed after re-encode")
 	}
+}
+
+// valuesEqual reports whether a and b carry the same decoded field values.
+// It compares the full struct via reflect.DeepEqual after resetting both
+// sides' MessageInfo to the shared header both were decoded with (info):
+// MessageInfo also carries each message's own internal decode bookkeeping
+// (the wire payload it was decoded from, returned verbatim on re-encode --
+// see pgn.EncodeMessage), which necessarily differs between a and b whenever
+// we reach this comparison (a decoded from the original wire bytes, b from
+// the re-encoded ones, which are why we're here). That bookkeeping isn't
+// part of a message's value, so it must be normalized away before
+// comparing, or every call here would report MISMATCH regardless of whether
+// the decoded fields actually match.
+func valuesEqual(a, b pgn.PGN, info pgn.MessageInfo) bool {
+	a.SetMessageInfo(info)
+	b.SetMessageInfo(info)
+	return reflect.DeepEqual(a, b)
 }
 
 func (c *checker) record(key statKey, o outcome, original, reencoded []byte, reason string) {

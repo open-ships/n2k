@@ -14,6 +14,18 @@ type MessageInfo struct {
 	PGN       uint32    `json:"pgn"`
 	SourceId  uint8     `json:"sourceId"`
 	TargetId  *uint8    `json:"targetId"`
+
+	// rawPayload is the exact wire payload the owning message was decoded
+	// from, stashed by decodeFields and returned verbatim by encodeFields --
+	// a decoded message always re-encodes to the bytes it came from,
+	// regardless of any field changes made in between. Unexported: this is
+	// codec bookkeeping, not part of MessageInfo's public contract, and is
+	// cleared whenever a caller replaces Info wholesale (e.g. via
+	// SetMessageInfo with a fresh value), which conveniently also
+	// invalidates it whenever a caller is about to repurpose the message
+	// for something else (the only supported way back to the normal,
+	// build-from-scratch encode path for a message that was once decoded).
+	rawPayload []uint8
 }
 
 // Priority returns a pointer to v, for use in MessageInfo literal construction:

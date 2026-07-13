@@ -133,6 +133,16 @@ var codecPlanCache sync.Map // reflect.Type -> *codecPlan
 // detection, expands repeating field sets into slice fields, and resolves
 // variable-length binary fields via their length-field references.
 func decodeFields(m PGN, payload []uint8) error {
+	// Stash the wire payload so a later encodeFields call on this same
+	// struct can reproduce it byte-for-bit in RESERVED/STRING_FIX
+	// positions instead of always applying the default fill. This must
+	// happen before any error return below: SetMessageInfo also carries
+	// this decode's info fields (PGN, source, etc.), which dispatch's
+	// decodePGNCandidates already set on the candidate before calling in.
+	info := m.MessageInfo()
+	info.rawPayload = payload
+	m.SetMessageInfo(info)
+
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
 		return err
@@ -182,7 +192,20 @@ func decodeFields(m PGN, payload []uint8) error {
 // for nil match fields, deriving repeating-set count fields from slice
 // lengths, and deriving variable-length binary length fields from the data
 // slice length.
+//
+// When m was produced by decodeFields, its stashed wire payload is returned
+// verbatim, unconditionally -- this is the only supported way to encode a
+// decoded message, and it reproduces bytes the schema has no field for at
+// all (e.g. trailing filler some devices pad single-frame messages with)
+// that no amount of per-field reconstruction could cover. Any field changes
+// made after decode have no effect on the encoded output. A message built
+// from scratch (never decoded) has no stashed payload and always goes
+// through the normal per-field encode below.
 func encodeFields(m PGN) ([]uint8, error) {
+	if raw := m.MessageInfo().rawPayload; len(raw) > 0 {
+		return append([]uint8(nil), raw...), nil
+	}
+
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
 		return nil, err
