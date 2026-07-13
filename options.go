@@ -63,6 +63,25 @@ func File(path string, opts ...FileOption) Option {
 	})
 }
 
+// TCP adds a source that dials a network gateway (e.g. a Yacht Devices
+// YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port")
+// and reads its stream. TCP sources are read-only: they work with Receive and
+// NewScanner but not NewClient.
+func TCP(addr string, format StreamFormat) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})
+	})
+}
+
+// UDP adds a source that listens on listenAddr (e.g. ":1457" or
+// "0.0.0.0:1457") for datagrams broadcast by a network gateway. UDP sources
+// are read-only: they work with Receive and NewScanner but not NewClient.
+func UDP(listenAddr string, format StreamFormat) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &udpSource{addr: listenAddr, format: format})
+	})
+}
+
 // Replay adds a source that replays the given CAN frames. Useful for testing.
 func Replay(frames []can.Frame) Option {
 	return optionFunc(func(c *config) {
