@@ -1,5 +1,27 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — bus citizenship, device registry, and new sources
+
+**Bus citizenship** — bus clients now meet the protocol obligations of a real NMEA 2000 device:
+
+- Heartbeat (PGN 126993) transmitted every 60s once the address claim completes; `WithHeartbeatInterval(d)` retunes it, `0` disables it.
+- Product information (126996) and configuration information (126998) are answered when requested; set them with `WithProductInfo` / `WithConfigInfo` (sane software-gateway defaults otherwise).
+- ISO requests (59904) now honor the destination address (previously claim requests addressed to other nodes were answered too). Addressed requests for unsupported PGNs are NAKed with an ISO acknowledgement (59392); broadcast requests for unsupported PGNs are ignored per ISO 11783-3.
+- Group functions (126208): request group functions can transmit, retime, pause (interval 0), or restore-default (0xFFFFFFFE) the heartbeat and any scheduled broadcast; heartbeat cadence clamps to [1s, 60s]. Commands, read-fields, write-fields, and parameterized requests are refused with acknowledge group functions carrying the proper PGN error codes.
+- `Request[T pgn.Message](ctx, client, target)` — typed ISO request/response: sends a request for T's PGN and awaits the matching reply (from `target`, or any device when target is 255) with a 1250ms default timeout.
+- `client.Broadcast(interval, provide)` — periodic transmission scheduler; the provider is called per tick and may return nil to skip. Returns a stop function; group functions can retime it.
+- All protocol reactions run on a dedicated system decode path, independent of user `Filter` expressions.
+
+**Device registry**
+
+- `client.Devices()` / `client.DeviceAt(source)` — a live, NAME-keyed map of the bus built from address claims, product info, and configuration info. Tracks address moves, last-seen times, and requests product/config info from newly seen devices once per NAME. At startup the client broadcasts an address-claim request to enumerate the bus.
+
+**New sources** (read-only: `Receive`/`NewScanner`)
+
+- `File(path, ...)` — candump `-L`/`-l` log files; `OriginalTiming()` paces replay by the log's timestamps.
+- `TCP(addr, format)` / `UDP(listenAddr, format)` — network gateway streams: `FormatYDRaw` (Yacht Devices RAW ASCII) and `FormatActisense` (Actisense binary framing; assembled messages are re-framed through the normal decode pipeline).
+- candump parsing moved from the roundtrip tool into `internal/candump` (now with timestamp extraction).
+
 ### Unreleased — candump round-trip tool
 
 - `cmd/roundtrip` — replays a candump `-L` log through fast-packet assembly, decodes each message, re-encodes it, and compares against the wire bytes. Prints a before/after hex view per message (with markers under differing bytes) and a per-PGN summary; `-report <file>` collects every issue plus the summary into a file. Always processes the whole log and exits 0. Reads a log file or stdin (`candump -L vcan0 | roundtrip -`).

@@ -149,6 +149,28 @@ for msg, err := range n2k.Receive(ctx,
 }
 ```
 
+### Log Files and Network Gateways
+
+Frames don't have to come from local CAN hardware. These sources are
+read-only — use them with `Receive`/`NewScanner`, not `NewClient`:
+
+```go
+// Replay a candump -L / -l capture, as fast as possible...
+for msg, err := range n2k.Receive(ctx, n2k.File("capture.log")) { ... }
+
+// ...or paced by the log's own timestamps.
+for msg, err := range n2k.Receive(ctx, n2k.File("capture.log", n2k.OriginalTiming())) { ... }
+
+// Yacht Devices YDWG-02 (RAW server mode) over TCP or UDP.
+for msg, err := range n2k.Receive(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)) { ... }
+for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... }
+
+// Actisense-format streams (NGT-1 behind a TCP bridge, and compatible
+// gateways). Messages arrive pre-assembled and are re-framed internally so
+// they flow through the same decode pipeline.
+for msg, err := range n2k.Receive(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense)) { ... }
+```
+
 ### Filter Messages using Common Expression Language
 
 Filter messages using [CEL](https://github.com/google/cel-go) expressions.
@@ -195,13 +217,86 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 |--------|-------------|
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
+| `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
+| `n2k.TCP(addr, format)` | Network gateway over TCP (read-only); format is `n2k.FormatYDRaw` or `n2k.FormatActisense` |
+| `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats |
 | `n2k.Replay(frames)` | Replay source for testing |
 | `n2k.Filter(expr)` | CEL filter expression |
 | `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
 | `n2k.WithLogger(l)` | Override default `slog.Logger` |
 | `n2k.WithSourceAddress(addr)` | Explicit source address for writes (contention is fatal) |
 | `n2k.WithName(name)` | ISO 11783 device NAME for address claiming |
+| `n2k.WithProductInfo(p)` | Product identity reported via PGN 126996 |
+| `n2k.WithConfigInfo(ci)` | Installation description reported via PGN 126998 |
+| `n2k.WithHeartbeatInterval(d)` | Heartbeat (PGN 126993) cadence; default 60s, 0 disables |
 | `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
+
+### A Complete Bus Device
+
+Beyond claiming an address, a bus client behaves like a certified NMEA 2000
+device out of the box:
+
+- **Heartbeat (PGN 126993)** — sent every 60 seconds automatically (tune or
+  disable with `WithHeartbeatInterval`).
+- **Product & configuration info (PGNs 126996/126998)** — requests from other
+  devices (chartplotters, analyzers) are answered automatically. Set your
+  identity with `WithProductInfo` / `WithConfigInfo`; without them a generic
+  software-gateway identity is reported so the device never shows up blank.
+- **ISO requests (PGN 59904)** — requests for supported PGNs are answered;
+  requests addressed to us for anything else are refused with an ISO
+  acknowledgement NAK, per ISO 11783-3.
+- **Group functions (PGN 126208)** — request group functions can transmit,
+  retime, pause (interval 0), or restore (interval `0xFFFFFFFE`) any PGN the
+  client transmits, including scheduled broadcasts. Unsupported group
+  functions (commands, read/write fields) are acknowledged with the proper
+  error codes.
+
+All of this runs on a dedicated decode path, so a `Filter(...)` expression
+never breaks protocol behavior.
+
+**Request/response** — ask another device for a PGN and await its typed reply
+(default timeout 1250ms, the ISO 11783 response time):
+
+```go
+pi, err := n2k.Request[*pgn.ProductInformation](ctx, client, 0x23)
+if err == nil {
+    fmt.Println(pi.ModelId, pi.SoftwareVersionCode)
+}
+```
+
+**Periodic broadcasts** — transmit a PGN on a schedule; the provider runs on
+every tick (return nil to skip a tick):
+
+```go
+stop := client.Broadcast(time.Second, func() pgn.Message {
+    h := uint64(currentHeadingTicks())
+    return &pgn.VesselHeading{Heading: &h}
+})
+defer stop()
+```
+
+Other devices can retime or pause the broadcast with a request group function
+naming its PGN.
+
+### Device Registry
+
+Bus clients passively map the network: every address claim, product info, and
+configuration info message updates a registry keyed by 64-bit NAME (addresses
+are dynamic — the NAME is the stable identity). On first sight of a device
+the client requests its product and configuration info, and at startup it
+broadcasts an address-claim request so the whole bus announces itself.
+
+```go
+for _, d := range client.Devices() {
+    fmt.Printf("addr %d: %s (manufacturer %d, last seen %s)\n",
+        d.Address, d.ProductInfo.ModelId, d.Name.ManufacturerCode, d.LastSeen)
+}
+
+// Correlate a message with the device that sent it.
+if dev, ok := client.DeviceAt(msg.MessageInfo().SourceId); ok {
+    fmt.Printf("from %016X\n", dev.RawName)
+}
+```
 
 ### Testing with Replay
 
