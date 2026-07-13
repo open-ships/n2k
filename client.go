@@ -78,6 +78,10 @@ type Client struct {
 	// system decodes protocol PGNs (product info, group functions, request
 	// responses) independently of the user filter. Only used for bus clients.
 	system *systemRouter
+
+	// heartbeat transmits PGN 126993 periodically. Only set for bus clients
+	// (nil for replay clients).
+	heartbeat *heartbeater
 }
 
 type writeJob struct {
@@ -157,9 +161,18 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		addrReady:  make(chan struct{}),
 	}
 
+	// Start the single writer goroutine for FIFO ordering. It must exist
+	// before initBus so the client's own protocol goroutines (heartbeat,
+	// info responses) can write as soon as the address claim completes.
+	c.writeCh = make(chan writeJob, 64)
+	c.writeWg.Add(1)
+	go c.writeLoop()
+
 	if hasBus {
 		if err := c.initBus(cfg); err != nil {
 			cancel()
+			close(c.writeCh)
+			c.writeWg.Wait()
 			return nil, err
 		}
 	} else {
@@ -182,11 +195,6 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 			Logger:     c.log,
 		})
 	}
-
-	// Start the single writer goroutine for FIFO ordering.
-	c.writeCh = make(chan writeJob, 64)
-	c.writeWg.Add(1)
-	go c.writeLoop()
 
 	return c, nil
 }
@@ -253,6 +261,15 @@ func (c *Client) initBus(cfg config) error {
 	}
 	c.system = sys
 	go sys.run()
+
+	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
+	// first transmission.
+	hbInterval := defaultHeartbeatInterval
+	if cfg.heartbeatInterval != nil {
+		hbInterval = *cfg.heartbeatInterval
+	}
+	c.heartbeat = newHeartbeater(hbInterval, c.Write)
+	go c.heartbeat.run(c.ctx, c.addrReady)
 
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
@@ -529,6 +546,12 @@ func (c *Client) Close() error {
 	}
 	c.closed = true
 	c.mu.Unlock()
+
+	// Stop protocol writers before closing the write channel so their final
+	// writes cannot race the shutdown.
+	if c.heartbeat != nil {
+		c.heartbeat.stop()
+	}
 
 	close(c.writeCh)
 	c.writeWg.Wait()

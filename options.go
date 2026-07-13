@@ -9,14 +9,15 @@ import (
 )
 
 type config struct {
-	sources        []source
-	filterExpr     string
-	includeUnknown bool
-	logger         *slog.Logger
-	sourceAddress  *uint8         // nil = auto mode
-	deviceName     *DeviceName    // nil = use default
-	claimTimeout   *time.Duration // nil = use default (1500ms)
-	bus            Bus            // pre-constructed bus
+	sources           []source
+	filterExpr        string
+	includeUnknown    bool
+	logger            *slog.Logger
+	sourceAddress     *uint8         // nil = auto mode
+	deviceName        *DeviceName    // nil = use default
+	claimTimeout      *time.Duration // nil = use default (1500ms)
+	heartbeatInterval *time.Duration // nil = default (60s), 0 = disabled
+	bus               Bus            // pre-constructed bus
 }
 
 func (c *config) validate() error {
@@ -128,6 +129,16 @@ func WithSourceAddress(addr uint8) Option {
 func WithClaimTimeout(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.claimTimeout = &d
+	})
+}
+
+// WithHeartbeatInterval sets the cadence of the client's automatic heartbeat
+// (PGN 126993). The NMEA 2000 standard requires every device to heartbeat at
+// least every 60 seconds, which is the default. Pass 0 to disable automatic
+// heartbeats. Only bus clients heartbeat; replay clients never do.
+func WithHeartbeatInterval(d time.Duration) Option {
+	return optionFunc(func(c *config) {
+		c.heartbeatInterval = &d
 	})
 }
 
