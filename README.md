@@ -128,7 +128,7 @@ for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
 ```go
 s := n2k.NewScanner(ctx, n2k.CAN("can0"))
 for s.Next() {
-    fmt.Printf("Msg: %v\n", msg)
+    fmt.Printf("Msg: %v\n", s.Message())
 }
 if err := s.Err(); err != nil {
     ...
@@ -296,9 +296,11 @@ for _, d := range client.Devices() {
         d.Address, model, d.Name.ManufacturerCode, d.LastSeen)
 }
 
-// Correlate a message with the device that sent it.
-if dev, ok := client.DeviceAt(msg.MessageInfo().SourceId); ok {
-    fmt.Printf("from %016X\n", dev.RawName)
+// Correlate a decoded message with the device that sent it.
+if vh, ok := msg.(*pgn.VesselHeading); ok {
+    if dev, found := client.DeviceAt(vh.Info.SourceId); found {
+        fmt.Printf("heading from %016X\n", dev.RawName)
+    }
 }
 ```
 
