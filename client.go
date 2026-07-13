@@ -87,6 +87,10 @@ type Client struct {
 	// (PGNs 126996 and 126998).
 	productInfo ProductInfo
 	configInfo  ConfigInfo
+
+	// correlator matches system messages to in-flight Request calls. Only
+	// set for bus clients.
+	correlator *correlator
 }
 
 type writeJob struct {
@@ -274,6 +278,8 @@ func (c *Client) initBus(cfg config) error {
 		return err
 	}
 	c.system = sys
+	c.correlator = newCorrelator()
+	sys.addHandler(c.correlator.observe)
 	go sys.run()
 
 	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
