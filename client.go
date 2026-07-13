@@ -203,7 +203,7 @@ func (c *Client) initBus(cfg config) error {
 		}
 	}
 	if c.bus == nil {
-		return errors.New("n2k: could not construct bus from sources")
+		return errors.New("n2k: no writable bus available — File, TCP, and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN/USB source or WithBus")
 	}
 
 	// Set writeFrame to delegate to the bus.

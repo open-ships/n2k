@@ -49,6 +49,20 @@ func USB(port string) Option {
 	})
 }
 
+// File adds a source that replays CAN frames from a candump -L / -l log file.
+// By default frames are delivered as fast as they can be read; pass
+// OriginalTiming() to pace them by the log's timestamps. File sources are
+// read-only: they work with Receive and NewScanner but not NewClient.
+func File(path string, opts ...FileOption) Option {
+	return optionFunc(func(c *config) {
+		src := &fileSource{path: path}
+		for _, o := range opts {
+			o.applyFile(src)
+		}
+		c.sources = append(c.sources, src)
+	})
+}
+
 // Replay adds a source that replays the given CAN frames. Useful for testing.
 func Replay(frames []can.Frame) Option {
 	return optionFunc(func(c *config) {
