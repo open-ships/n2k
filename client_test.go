@@ -733,3 +733,83 @@ func TestClient_Write_NonPGNMessageErrors(t *testing.T) {
 		t.Fatal("expected error writing a non-PGN message, got nil")
 	}
 }
+
+// --- MessageWriter bus path ---
+
+// mockMessageBus is a mockBus that also implements MessageWriter, like the
+// Actisense gateway bus: whole-message writes bypass CAN framing.
+type mockMessageBus struct {
+	mockBus
+	messages []writtenMessage
+}
+
+type writtenMessage struct {
+	pgn      uint32
+	priority uint8
+	source   uint8
+	dest     uint8
+	payload  []byte
+}
+
+func (m *mockMessageBus) WriteMessage(pgnNum uint32, priority, source, destination uint8, payload []byte) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	p := make([]byte, len(payload))
+	copy(p, payload)
+	m.messages = append(m.messages, writtenMessage{pgnNum, priority, source, destination, p})
+	return nil
+}
+
+func (m *mockMessageBus) getMessages() []writtenMessage {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	out := make([]writtenMessage, len(m.messages))
+	copy(out, m.messages)
+	return out
+}
+
+var _ MessageWriter = (*mockMessageBus)(nil)
+
+func TestClient_MessageWriterBusBypassesFraming(t *testing.T) {
+	mb := &mockMessageBus{mockBus: mockBus{inbound: make(chan can.Frame, 64)}}
+
+	c, err := NewClient(context.Background(),
+		WithBus(mb),
+		WithClaimTimeout(250*time.Millisecond),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	// Protocol frames (the address claim) still go frame-by-frame.
+	require.NotEmpty(t, mb.getWritten(), "address claim should use WriteFrame")
+
+	// A single-frame PGN write becomes one whole message.
+	heading := &pgn.VesselHeading{}
+	heading.SetHeadingValue(1.5708)
+	require.NoError(t, c.Write(heading).Wait())
+
+	// A fast-packet PGN write also becomes one whole message instead of
+	// fast-packet fragments.
+	require.NoError(t, c.Write(&pgn.ProductInformation{}).Wait())
+
+	var headingMsgs, productMsgs int
+	for _, m := range mb.getMessages() {
+		switch m.pgn {
+		case 127250:
+			headingMsgs++
+			assert.Equal(t, 8, len(m.payload))
+			assert.Equal(t, uint8(255), m.dest)
+		case 126996:
+			productMsgs++
+			assert.Greater(t, len(m.payload), 8, "fast-packet payload should be whole")
+		}
+	}
+	assert.Equal(t, 1, headingMsgs, "one whole heading message")
+	assert.Equal(t, 1, productMsgs, "one whole product-info message")
+
+	// No fast-packet fragments for 126996 went through WriteFrame.
+	for _, f := range mb.getWritten() {
+		rawPGN := (f.ID & 0x3FFFF00) >> 8
+		assert.NotEqual(t, uint32(126996), rawPGN, "fast PGN must not be fragmented into frames")
+	}
+}

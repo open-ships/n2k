@@ -1,6 +1,8 @@
 package gateway
 
 import (
+	"github.com/brutella/can"
+
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -36,19 +38,38 @@ func TestParseYDRaw_CarriageReturnAndSpaces(t *testing.T) {
 
 func TestParseYDRaw_Rejects(t *testing.T) {
 	cases := []string{
-		"",                              // empty
-		"\r\n",                          // blank
-		"YDWG-02 firmware 1.60",         // service banner
-		"17:33:21.107 R",                // no ID
-		"17:33:21.107 R 09F11201",       // no data bytes
-		"17:33:21.107 X 09F11201 01",    // bad direction
-		"17:33:21.107 R ZZZZZZZZ 01",    // bad ID hex
-		"17:33:21.107 R 209F11201 01",   // ID > 29 bits
-		"17:33:21.107 R 09F11201 GG",    // bad data hex
+		"",                            // empty
+		"\r\n",                        // blank
+		"YDWG-02 firmware 1.60",       // service banner
+		"17:33:21.107 R",              // no ID
+		"17:33:21.107 R 09F11201",     // no data bytes
+		"17:33:21.107 X 09F11201 01",  // bad direction
+		"17:33:21.107 R ZZZZZZZZ 01",  // bad ID hex
+		"17:33:21.107 R 209F11201 01", // ID > 29 bits
+		"17:33:21.107 R 09F11201 GG",  // bad data hex
 		"17:33:21.107 R 09F11201 01 02 03 04 05 06 07 08 09", // > 8 bytes
 	}
 	for _, line := range cases {
 		_, ok := ParseYDRaw(line)
 		assert.False(t, ok, "line should be rejected: %q", line)
 	}
+}
+
+func TestFormatYDRawTX_FullFrame(t *testing.T) {
+	frame := can.Frame{ID: 0x19F51323, Length: 8, Data: [8]uint8{0x01, 0x2F, 0x30, 0x70, 0x00, 0x2F, 0x30, 0x70}}
+	assert.Equal(t, "19F51323 01 2F 30 70 00 2F 30 70\r\n", string(FormatYDRawTX(frame)))
+}
+
+func TestFormatYDRawTX_ShortFrame(t *testing.T) {
+	frame := can.Frame{ID: 0x19F51323, Length: 2, Data: [8]uint8{0x01, 0x02}}
+	assert.Equal(t, "19F51323 01 02\r\n", string(FormatYDRawTX(frame)))
+}
+
+func TestFormatYDRawTX_EchoRoundTrip(t *testing.T) {
+	frame := can.Frame{ID: 0x09F80115, Length: 8, Data: [8]uint8{0xA0, 0x7D, 0xE6, 0x18, 0xC0, 0x05, 0xFB, 0xD5}}
+	line := string(FormatYDRawTX(frame))
+	// The gateway echoes accepted frames back with a timestamp and direction T.
+	echoed, ok := ParseYDRaw("17:33:21.108 T " + line[:len(line)-2])
+	require.True(t, ok)
+	assert.Equal(t, frame, echoed)
 }

@@ -1,5 +1,27 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — writable TCP gateway buses
+
+`n2k.TCP(addr, format)` now works with `NewClient`, not just `Receive`/`NewScanner` — the full bus
+stack over the boat's WiFi gateway:
+
+- **Yacht Devices RAW** (`FormatYDRaw`) is frame-level in both directions: transmitted frames go
+  out as `msgid b0..b7<CR><LF>` lines and the gateway echoes them back with direction T, so
+  address claiming, heartbeats, and group functions behave exactly as on CAN hardware.
+- **Actisense format** (`FormatActisense`) is message-level: sends use the binary transmit command
+  (priority, PGN, destination, length, data in DLE/STX framing) after a gateway initialization
+  command at connect. The gateway performs fast-packet fragmentation and stamps its own claimed
+  source address (the protocol carries none on sends).
+- New exported `MessageWriter` interface: a `Bus` that also implements it receives whole
+  assembled payloads (≤223 bytes) from the client's write path instead of CAN frames; ISO-TP
+  transfers and protocol frames still use `WriteFrame`. Custom `WithBus` transports can opt in.
+- Writers issued before the connection is up (the address claimer fires immediately) block until
+  the dial completes rather than failing.
+- Generator: `sourceDefinitions` is now assembled from per-chunk functions instead of one ~6k-line
+  composite literal, fixing `go build -race ./pgn` ("NewBulk too big" internal compiler error) —
+  `just test-race` works again.
+- `UDP` and `File` sources remain read-only.
+
 ### Unreleased — semver releases, installable CLI, typed physical accessors
 
 **Typed physical-value accessors** — every numeric PGN struct field with a physical

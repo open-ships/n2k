@@ -67,6 +67,23 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(can.
 	return err
 }
 
+// newBus opens the gateway connection as a read/write Bus for NewClient.
+// YD RAW is frame-level in both directions, so the client behaves exactly
+// as on CAN hardware (the gateway echoes transmitted frames back with
+// direction T). Actisense is message-level: the bus implements
+// MessageWriter, and the gateway fragments fast-packet payloads and stamps
+// its own claimed source address on transmissions.
+func (s *tcpSource) newBus(log *slog.Logger) Bus {
+	switch s.format {
+	case FormatYDRaw:
+		return gateway.NewYDRawTCPBus(log, s.addr)
+	case FormatActisense:
+		return gateway.NewActisenseTCPBus(log, s.addr)
+	default:
+		return nil
+	}
+}
+
 // readStream consumes a gateway byte stream until EOF or a read error.
 func readStream(r io.Reader, format StreamFormat, handler func(can.Frame)) error {
 	switch format {
@@ -81,7 +98,7 @@ func readStream(r io.Reader, format StreamFormat, handler func(can.Frame)) error
 
 	case FormatActisense:
 		reader := gateway.NewActisenseReader()
-		emit := actisenseEmitter(handler)
+		emit := gateway.ReframeEmitter(handler)
 		buf := make([]byte, 4096)
 		for {
 			n, err := r.Read(buf)
@@ -97,22 +114,6 @@ func readStream(r io.Reader, format StreamFormat, handler func(can.Frame)) error
 		}
 	}
 	return fmt.Errorf("n2k: unknown stream format %d", format)
-}
-
-// actisenseEmitter re-frames assembled Actisense messages into CAN frames,
-// rotating the fast-packet sequence ID per message.
-func actisenseEmitter(handler func(can.Frame)) func(gateway.N2KMessage) {
-	var seq uint8
-	return func(m gateway.N2KMessage) {
-		frames, err := gateway.Reframe(m, seq)
-		if err != nil {
-			return
-		}
-		seq = (seq + 1) % 8
-		for _, f := range frames {
-			handler(f)
-		}
-	}
 }
 
 // udpSource reads gateway datagrams from a local UDP listen address.
@@ -144,7 +145,7 @@ func (s *udpSource) run(ctx context.Context, log *slog.Logger, handler func(can.
 	}()
 
 	reader := gateway.NewActisenseReader()
-	emit := actisenseEmitter(handler)
+	emit := gateway.ReframeEmitter(handler)
 	buf := make([]byte, 65536)
 	for {
 		n, _, err := conn.ReadFrom(buf)

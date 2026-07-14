@@ -64,7 +64,9 @@ n2k.TCP("10.0.0.5:2000", n2k.FormatActisense) // Actisense-format streams
 
 The TCP/UDP sources mean you can develop on your laptop against your boat's
 WiFi gateway — no CAN interface, no Linux, no cross-compiling until you
-deploy.
+deploy. TCP works for the write path too: `NewClient` over a Yacht Devices
+gateway in RAW mode is a full bus citizen (address claiming included) from
+the couch.
 
 ## The `n2k` CLI
 
@@ -135,7 +137,9 @@ what `n2k` is for.
 |--------|:-----:|:-----:|:-------:|:------------:|
 | `CAN` (SocketCAN) | ✅ | — | — | ✅ |
 | `USB` (serial CAN adapter) | ✅ | ✅ | ✅ | ✅ |
-| `TCP` / `UDP` (Yacht Devices RAW, Actisense) | ✅ | ✅ | ✅ | read-only |
+| `TCP` (Yacht Devices RAW) | ✅ | ✅ | ✅ | ✅ full frame-level control |
+| `TCP` (Actisense format) | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
+| `UDP` (both formats) | ✅ | ✅ | ✅ | read-only |
 | `File` (candump `-L`/`-l`) / `Replay` | ✅ | ✅ | ✅ | read-only |
 
 ## Installation
@@ -284,8 +288,7 @@ for msg, err := range n2k.Receive(ctx,
 
 ### Log Files and Network Gateways
 
-Frames don't have to come from local CAN hardware. These sources are
-read-only — use them with `Receive`/`NewScanner`, not `NewClient`:
+Frames don't have to come from local CAN hardware:
 
 ```go
 // Replay a candump -L / -l capture, as fast as possible...
@@ -298,10 +301,27 @@ for msg, err := range n2k.Receive(ctx, n2k.File("capture.log", n2k.OriginalTimin
 for msg, err := range n2k.Receive(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)) { ... }
 for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... }
 
-// Actisense-format streams (NGT-1 behind a TCP bridge, and compatible
-// gateways). Messages arrive pre-assembled and are re-framed internally so
+// Actisense-format streams (W2K-1 gateways, or an NGT-1 behind a TCP
+// bridge). Messages arrive pre-assembled and are re-framed internally so
 // they flow through the same decode pipeline.
 for msg, err := range n2k.Receive(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense)) { ... }
+```
+
+`File` and `UDP` are read-only (use them with `Receive`/`NewScanner`). `TCP`
+also works with `NewClient` for full read/write bus access:
+
+```go
+// A complete bus device over the boat's WiFi gateway. RAW mode is
+// frame-level in both directions, so address claiming, heartbeats, and
+// group functions behave exactly as on CAN hardware. The gateway echoes
+// transmitted frames back, so the client also observes its own traffic.
+client, err := n2k.NewClient(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw))
+
+// Writing over Actisense-format connections also works, with one caveat:
+// the protocol is message-oriented and carries no source address on sends,
+// so the gateway transmits under its own claimed address and does its own
+// fast-packet fragmentation.
+client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
 ```
 
 ### Filter Messages using Common Expression Language
@@ -351,7 +371,7 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
 | `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
-| `n2k.TCP(addr, format)` | Network gateway over TCP (read-only); format is `n2k.FormatYDRaw` or `n2k.FormatActisense` |
+| `n2k.TCP(addr, format)` | Network gateway over TCP (read/write); format is `n2k.FormatYDRaw` or `n2k.FormatActisense` |
 | `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats |
 | `n2k.Replay(frames)` | Replay source for testing |
 | `n2k.Filter(expr)` | CEL filter expression |
@@ -535,7 +555,12 @@ the `units` package doc comment).
 - Cross-field validation is not yet implemented.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
-- Writing requires a bidirectional source (`CAN` or `USB`); `File`, `TCP`, and `UDP` sources are read-only.
+- `File` and `UDP` sources are read-only; writing requires `CAN`, `USB`, or `TCP`.
+- Over Actisense-format TCP connections the gateway stamps its own source
+  address on transmissions (the protocol carries none), so the client's
+  claimed address is not authoritative on the wire.
+- Gateway TCP connections do not auto-reconnect; a dropped connection ends
+  the client's read loop.
 
 ## License
 

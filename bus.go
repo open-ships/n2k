@@ -18,3 +18,19 @@ type Bus interface {
 	// Close releases resources. Safe to call even if Run was never called.
 	Close() error
 }
+
+// MessageWriter is optionally implemented by Bus implementations that
+// transmit whole assembled PGN messages rather than raw CAN frames —
+// message-oriented gateways such as Actisense-format streams, where the
+// gateway performs fast-packet fragmentation itself. When a client's bus
+// implements MessageWriter, writes that fit in one message (payloads up to
+// 223 bytes) bypass CAN framing and use WriteMessage; larger ISO-TP
+// transfers and protocol frames (address claims, ISO requests) still go
+// frame-by-frame through WriteFrame.
+//
+// Implementations may not be able to honor the source address (an Actisense
+// gateway stamps its own claimed address); it is provided so implementations
+// that can control it (custom transports) have it.
+type MessageWriter interface {
+	WriteMessage(pgnNum uint32, priority, source, destination uint8, payload []byte) error
+}
