@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type XantrexAcStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -25,6 +27,57 @@ func (m *XantrexAcStatus) MessageInfo() MessageInfo            { return m.Info }
 func (m *XantrexAcStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *XantrexAcStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *XantrexAcStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
+// The bool is false when Voltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcStatus) VoltageValue() (float64, bool) {
+	if m.Voltage == nil {
+		return 0, false
+	}
+	return float64(*m.Voltage) * 0.01, true
+}
+
+// SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcStatus) SetVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Voltage = &raw
+}
+
+// CurrentValue returns Current as a physical value in A (value = raw * 0.1).
+// The bool is false when Current is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcStatus) CurrentValue() (float64, bool) {
+	if m.Current == nil {
+		return 0, false
+	}
+	return float64(*m.Current) * 0.1, true
+}
+
+// SetCurrentValue sets Current from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *XantrexAcStatus) SetCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Current = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in % (value = raw).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcStatus) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor), true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *XantrexAcStatus) SetPowerFactorValue(v float64) {
+	raw := int64(math.Round(v))
+	m.PowerFactor = &raw
+}
 
 type XantrexDcSourceConfigurationStatus struct {
 	Info              MessageInfo `json:"info"`
@@ -49,6 +102,142 @@ func (m *XantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) erro
 }
 func (m *XantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// DcUvShutdownLevelValue returns DcUvShutdownLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcUvShutdownLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownLevelValue() (float64, bool) {
+	if m.DcUvShutdownLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcUvShutdownLevel) * 0.01, true
+}
+
+// SetDcUvShutdownLevelValue sets DcUvShutdownLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcUvShutdownLevel = &raw
+}
+
+// DcUvWarningLevelValue returns DcUvWarningLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcUvWarningLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcUvWarningLevelValue() (float64, bool) {
+	if m.DcUvWarningLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcUvWarningLevel) * 0.01, true
+}
+
+// SetDcUvWarningLevelValue sets DcUvWarningLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvWarningLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcUvWarningLevel = &raw
+}
+
+// DcUvShutdownDelayValue returns DcUvShutdownDelay as a physical value in V (value = raw * 0.01).
+// The bool is false when DcUvShutdownDelay is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownDelayValue() (float64, bool) {
+	if m.DcUvShutdownDelay == nil {
+		return 0, false
+	}
+	return float64(*m.DcUvShutdownDelay) * 0.01, true
+}
+
+// SetDcUvShutdownDelayValue sets DcUvShutdownDelay from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownDelayValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcUvShutdownDelay = &raw
+}
+
+// DcUvRecoverLevelValue returns DcUvRecoverLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcUvRecoverLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcUvRecoverLevelValue() (float64, bool) {
+	if m.DcUvRecoverLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcUvRecoverLevel) * 0.01, true
+}
+
+// SetDcUvRecoverLevelValue sets DcUvRecoverLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvRecoverLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcUvRecoverLevel = &raw
+}
+
+// DcOvShutdownLevelValue returns DcOvShutdownLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcOvShutdownLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownLevelValue() (float64, bool) {
+	if m.DcOvShutdownLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcOvShutdownLevel) * 0.01, true
+}
+
+// SetDcOvShutdownLevelValue sets DcOvShutdownLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcOvShutdownLevel = &raw
+}
+
+// DcOvWarningLevelValue returns DcOvWarningLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcOvWarningLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcOvWarningLevelValue() (float64, bool) {
+	if m.DcOvWarningLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcOvWarningLevel) * 0.01, true
+}
+
+// SetDcOvWarningLevelValue sets DcOvWarningLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvWarningLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcOvWarningLevel = &raw
+}
+
+// DcOvShutdownDelayValue returns DcOvShutdownDelay as a physical value in V (value = raw * 0.01).
+// The bool is false when DcOvShutdownDelay is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownDelayValue() (float64, bool) {
+	if m.DcOvShutdownDelay == nil {
+		return 0, false
+	}
+	return float64(*m.DcOvShutdownDelay) * 0.01, true
+}
+
+// SetDcOvShutdownDelayValue sets DcOvShutdownDelay from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownDelayValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcOvShutdownDelay = &raw
+}
+
+// DcOvRecoverLevelValue returns DcOvRecoverLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when DcOvRecoverLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexDcSourceConfigurationStatus) DcOvRecoverLevelValue() (float64, bool) {
+	if m.DcOvRecoverLevel == nil {
+		return 0, false
+	}
+	return float64(*m.DcOvRecoverLevel) * 0.01, true
+}
+
+// SetDcOvRecoverLevelValue sets DcOvRecoverLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvRecoverLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DcOvRecoverLevel = &raw
+}
+
 type XantrexAcOutputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -70,6 +259,57 @@ func (m *XantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) erro
 	return decodeFields(m, payload)
 }
 func (m *XantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
+// The bool is false when Voltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcOutputConfigurationStatus) VoltageValue() (float64, bool) {
+	if m.Voltage == nil {
+		return 0, false
+	}
+	return float64(*m.Voltage) * 0.01, true
+}
+
+// SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcOutputConfigurationStatus) SetVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Voltage = &raw
+}
+
+// OvFaultLevelValue returns OvFaultLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when OvFaultLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcOutputConfigurationStatus) OvFaultLevelValue() (float64, bool) {
+	if m.OvFaultLevel == nil {
+		return 0, false
+	}
+	return float64(*m.OvFaultLevel) * 0.01, true
+}
+
+// SetOvFaultLevelValue sets OvFaultLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcOutputConfigurationStatus) SetOvFaultLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.OvFaultLevel = &raw
+}
+
+// UvFaultLevelValue returns UvFaultLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when UvFaultLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcOutputConfigurationStatus) UvFaultLevelValue() (float64, bool) {
+	if m.UvFaultLevel == nil {
+		return 0, false
+	}
+	return float64(*m.UvFaultLevel) * 0.01, true
+}
+
+// SetUvFaultLevelValue sets UvFaultLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcOutputConfigurationStatus) SetUvFaultLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.UvFaultLevel = &raw
+}
 
 type XantrexChargerConfigurationStatus struct {
 	Info                 MessageInfo `json:"info"`
@@ -95,6 +335,91 @@ func (m *XantrexChargerConfigurationStatus) DecodePayload(payload []uint8) error
 	return decodeFields(m, payload)
 }
 func (m *XantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// BulkVoltageValue returns BulkVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when BulkVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexChargerConfigurationStatus) BulkVoltageValue() (float64, bool) {
+	if m.BulkVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.BulkVoltage) * 0.01, true
+}
+
+// SetBulkVoltageValue sets BulkVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexChargerConfigurationStatus) SetBulkVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.BulkVoltage = &raw
+}
+
+// AbsorptionVoltageValue returns AbsorptionVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when AbsorptionVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexChargerConfigurationStatus) AbsorptionVoltageValue() (float64, bool) {
+	if m.AbsorptionVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.AbsorptionVoltage) * 0.01, true
+}
+
+// SetAbsorptionVoltageValue sets AbsorptionVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexChargerConfigurationStatus) SetAbsorptionVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.AbsorptionVoltage = &raw
+}
+
+// FloatVoltageValue returns FloatVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when FloatVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexChargerConfigurationStatus) FloatVoltageValue() (float64, bool) {
+	if m.FloatVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.FloatVoltage) * 0.01, true
+}
+
+// SetFloatVoltageValue sets FloatVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexChargerConfigurationStatus) SetFloatVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.FloatVoltage = &raw
+}
+
+// EqualizationVoltageValue returns EqualizationVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when EqualizationVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexChargerConfigurationStatus) EqualizationVoltageValue() (float64, bool) {
+	if m.EqualizationVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.EqualizationVoltage) * 0.01, true
+}
+
+// SetEqualizationVoltageValue sets EqualizationVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexChargerConfigurationStatus) SetEqualizationVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.EqualizationVoltage = &raw
+}
+
+// GenericChargeVoltageValue returns GenericChargeVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when GenericChargeVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexChargerConfigurationStatus) GenericChargeVoltageValue() (float64, bool) {
+	if m.GenericChargeVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.GenericChargeVoltage) * 0.01, true
+}
+
+// SetGenericChargeVoltageValue sets GenericChargeVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexChargerConfigurationStatus) SetGenericChargeVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.GenericChargeVoltage = &raw
+}
 
 type XantrexAcInputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
@@ -122,3 +447,37 @@ func (m *XantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) error
 	return decodeFields(m, payload)
 }
 func (m *XantrexAcInputConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// AcUvLevelValue returns AcUvLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when AcUvLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcInputConfigurationStatus) AcUvLevelValue() (float64, bool) {
+	if m.AcUvLevel == nil {
+		return 0, false
+	}
+	return float64(*m.AcUvLevel) * 0.01, true
+}
+
+// SetAcUvLevelValue sets AcUvLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcInputConfigurationStatus) SetAcUvLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.AcUvLevel = &raw
+}
+
+// AcOvLevelValue returns AcOvLevel as a physical value in V (value = raw * 0.01).
+// The bool is false when AcOvLevel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *XantrexAcInputConfigurationStatus) AcOvLevelValue() (float64, bool) {
+	if m.AcOvLevel == nil {
+		return 0, false
+	}
+	return float64(*m.AcOvLevel) * 0.01, true
+}
+
+// SetAcOvLevelValue sets AcOvLevel from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *XantrexAcInputConfigurationStatus) SetAcOvLevelValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.AcOvLevel = &raw
+}

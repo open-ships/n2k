@@ -179,3 +179,30 @@ func TestReframe_TooLarge(t *testing.T) {
 	_, err := Reframe(N2KMessage{PGN: 129029, Data: make([]byte, 224)}, 0)
 	require.Error(t, err)
 }
+
+func TestEncodeSend_Layout(t *testing.T) {
+	msg := N2KMessage{Priority: 2, PGN: 127250, Destination: 255, Data: []byte{0xFF, 0x88, 0x4C, 0xFF, 0x7F, 0xFF, 0x7F, 0xFD}}
+	buf, err := EncodeSend(msg)
+	require.NoError(t, err)
+	// Send payload: prio, PGN little-endian, dst, len, data -- no source or
+	// timestamp bytes.
+	want := wrapActisense(cmdN2KSend, append([]byte{2, 0x12, 0xF1, 0x01, 255, 8}, msg.Data...))
+	assert.Equal(t, want, buf)
+}
+
+func TestEncodeSend_EscapesDLE(t *testing.T) {
+	msg := N2KMessage{Priority: 6, PGN: 60928, Destination: 255, Data: []byte{0x10, 0x10, 0x03}}
+	buf, err := EncodeSend(msg)
+	require.NoError(t, err)
+	want := wrapActisense(cmdN2KSend, append([]byte{6, 0x00, 0xEE, 0x00, 255, 3}, msg.Data...))
+	assert.Equal(t, want, buf)
+}
+
+func TestEncodeSend_TooLarge(t *testing.T) {
+	_, err := EncodeSend(N2KMessage{PGN: 126996, Data: make([]byte, 224)})
+	require.Error(t, err)
+}
+
+func TestEncodeStartup(t *testing.T) {
+	assert.Equal(t, []byte{0x10, 0x02, 0xA1, 0x03, 0x11, 0x02, 0x00, 0x49, 0x10, 0x03}, EncodeStartup())
+}

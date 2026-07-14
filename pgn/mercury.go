@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type MercuryEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -91,6 +93,40 @@ func (m *MercuryCruiseControlData) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MercuryCruiseControlData) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// CruiseRpmSetpointValue returns CruiseRpmSetpoint as a physical value in rpm (value = raw).
+// The bool is false when CruiseRpmSetpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MercuryCruiseControlData) CruiseRpmSetpointValue() (float64, bool) {
+	if m.CruiseRpmSetpoint == nil {
+		return 0, false
+	}
+	return float64(*m.CruiseRpmSetpoint), true
+}
+
+// SetCruiseRpmSetpointValue sets CruiseRpmSetpoint from a physical value in rpm, rounded to the nearest
+// wire tick of 1.
+func (m *MercuryCruiseControlData) SetCruiseRpmSetpointValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.CruiseRpmSetpoint = &raw
+}
+
+// CruiseSpeedSetpointValue returns CruiseSpeedSetpoint as a physical value in km/h (value = raw * 0.01).
+// The bool is false when CruiseSpeedSetpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MercuryCruiseControlData) CruiseSpeedSetpointValue() (float64, bool) {
+	if m.CruiseSpeedSetpoint == nil {
+		return 0, false
+	}
+	return float64(*m.CruiseSpeedSetpoint) * 0.01, true
+}
+
+// SetCruiseSpeedSetpointValue sets CruiseSpeedSetpoint from a physical value in km/h, rounded to the nearest
+// wire tick of 0.01.
+func (m *MercuryCruiseControlData) SetCruiseSpeedSetpointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.CruiseSpeedSetpoint = &raw
+}
 
 type MercuryBamDigitalDataProxy struct {
 	Info             MessageInfo `json:"info"`

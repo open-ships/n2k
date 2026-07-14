@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type GarminAutopilotEngineRpmA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -22,6 +24,23 @@ func (m *GarminAutopilotEngineRpmA) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotEngineRpmA) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// EngineSpeedValue returns EngineSpeed as a physical value in rpm (value = raw).
+// The bool is false when EngineSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GarminAutopilotEngineRpmA) EngineSpeedValue() (float64, bool) {
+	if m.EngineSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.EngineSpeed), true
+}
+
+// SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 1.
+func (m *GarminAutopilotEngineRpmA) SetEngineSpeedValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.EngineSpeed = &raw
+}
 
 type GarminAutopilotEngineRpmB struct {
 	Info             MessageInfo `json:"info"`
@@ -43,6 +62,23 @@ func (m *GarminAutopilotEngineRpmB) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotEngineRpmB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// EngineSpeedValue returns EngineSpeed as a physical value in rpm (value = raw).
+// The bool is false when EngineSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GarminAutopilotEngineRpmB) EngineSpeedValue() (float64, bool) {
+	if m.EngineSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.EngineSpeed), true
+}
+
+// SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 1.
+func (m *GarminAutopilotEngineRpmB) SetEngineSpeedValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.EngineSpeed = &raw
+}
+
 type EngineParametersRapidUpdate struct {
 	Info          MessageInfo `json:"info"`
 	Instance      *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -58,6 +94,57 @@ func (m *EngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *EngineParametersRapidUpdate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// SpeedValue returns Speed as a physical value in rpm (value = raw * 0.25).
+// The bool is false when Speed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersRapidUpdate) SpeedValue() (float64, bool) {
+	if m.Speed == nil {
+		return 0, false
+	}
+	return float64(*m.Speed) * 0.25, true
+}
+
+// SetSpeedValue sets Speed from a physical value in rpm, rounded to the nearest
+// wire tick of 0.25.
+func (m *EngineParametersRapidUpdate) SetSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.25))
+	m.Speed = &raw
+}
+
+// BoostPressureValue returns BoostPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when BoostPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersRapidUpdate) BoostPressureValue() (float64, bool) {
+	if m.BoostPressure == nil {
+		return 0, false
+	}
+	return float64(*m.BoostPressure) * 100, true
+}
+
+// SetBoostPressureValue sets BoostPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *EngineParametersRapidUpdate) SetBoostPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.BoostPressure = &raw
+}
+
+// TiltTrimValue returns TiltTrim as a physical value in % (value = raw).
+// The bool is false when TiltTrim is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersRapidUpdate) TiltTrimValue() (float64, bool) {
+	if m.TiltTrim == nil {
+		return 0, false
+	}
+	return float64(*m.TiltTrim), true
+}
+
+// SetTiltTrimValue sets TiltTrim from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *EngineParametersRapidUpdate) SetTiltTrimValue(v float64) {
+	raw := int64(math.Round(v))
+	m.TiltTrim = &raw
+}
 
 type EngineParametersDynamic struct {
 	Info                MessageInfo `json:"info"`
@@ -84,6 +171,176 @@ func (m *EngineParametersDynamic) DecodePayload(payload []uint8) error {
 }
 func (m *EngineParametersDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// OilPressureValue returns OilPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when OilPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) OilPressureValue() (float64, bool) {
+	if m.OilPressure == nil {
+		return 0, false
+	}
+	return float64(*m.OilPressure) * 100, true
+}
+
+// SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *EngineParametersDynamic) SetOilPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.OilPressure = &raw
+}
+
+// OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
+// The bool is false when OilTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) OilTemperatureValue() (float64, bool) {
+	if m.OilTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.OilTemperature) * 0.1, true
+}
+
+// SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.1.
+func (m *EngineParametersDynamic) SetOilTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.OilTemperature = &raw
+}
+
+// TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
+// The bool is false when Temperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) TemperatureValue() (float64, bool) {
+	if m.Temperature == nil {
+		return 0, false
+	}
+	return float64(*m.Temperature) * 0.01, true
+}
+
+// SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *EngineParametersDynamic) SetTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Temperature = &raw
+}
+
+// AlternatorPotentialValue returns AlternatorPotential as a physical value in V (value = raw * 0.01).
+// The bool is false when AlternatorPotential is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) AlternatorPotentialValue() (float64, bool) {
+	if m.AlternatorPotential == nil {
+		return 0, false
+	}
+	return float64(*m.AlternatorPotential) * 0.01, true
+}
+
+// SetAlternatorPotentialValue sets AlternatorPotential from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *EngineParametersDynamic) SetAlternatorPotentialValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.AlternatorPotential = &raw
+}
+
+// FuelRateValue returns FuelRate as a physical value in L/h (value = raw * 0.1).
+// The bool is false when FuelRate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) FuelRateValue() (float64, bool) {
+	if m.FuelRate == nil {
+		return 0, false
+	}
+	return float64(*m.FuelRate) * 0.1, true
+}
+
+// SetFuelRateValue sets FuelRate from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *EngineParametersDynamic) SetFuelRateValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.FuelRate = &raw
+}
+
+// TotalEngineHoursValue returns TotalEngineHours as a physical value in s (value = raw).
+// The bool is false when TotalEngineHours is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) TotalEngineHoursValue() (float64, bool) {
+	if m.TotalEngineHours == nil {
+		return 0, false
+	}
+	return float64(*m.TotalEngineHours), true
+}
+
+// SetTotalEngineHoursValue sets TotalEngineHours from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *EngineParametersDynamic) SetTotalEngineHoursValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TotalEngineHours = &raw
+}
+
+// CoolantPressureValue returns CoolantPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when CoolantPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) CoolantPressureValue() (float64, bool) {
+	if m.CoolantPressure == nil {
+		return 0, false
+	}
+	return float64(*m.CoolantPressure) * 100, true
+}
+
+// SetCoolantPressureValue sets CoolantPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *EngineParametersDynamic) SetCoolantPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.CoolantPressure = &raw
+}
+
+// FuelPressureValue returns FuelPressure as a physical value in Pa (value = raw * 1000).
+// The bool is false when FuelPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) FuelPressureValue() (float64, bool) {
+	if m.FuelPressure == nil {
+		return 0, false
+	}
+	return float64(*m.FuelPressure) * 1000, true
+}
+
+// SetFuelPressureValue sets FuelPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 1000.
+func (m *EngineParametersDynamic) SetFuelPressureValue(v float64) {
+	raw := uint64(math.Round(v / 1000))
+	m.FuelPressure = &raw
+}
+
+// EngineLoadValue returns EngineLoad as a physical value in % (value = raw).
+// The bool is false when EngineLoad is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) EngineLoadValue() (float64, bool) {
+	if m.EngineLoad == nil {
+		return 0, false
+	}
+	return float64(*m.EngineLoad), true
+}
+
+// SetEngineLoadValue sets EngineLoad from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *EngineParametersDynamic) SetEngineLoadValue(v float64) {
+	raw := int64(math.Round(v))
+	m.EngineLoad = &raw
+}
+
+// EngineTorqueValue returns EngineTorque as a physical value in % (value = raw).
+// The bool is false when EngineTorque is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersDynamic) EngineTorqueValue() (float64, bool) {
+	if m.EngineTorque == nil {
+		return 0, false
+	}
+	return float64(*m.EngineTorque), true
+}
+
+// SetEngineTorqueValue sets EngineTorque from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *EngineParametersDynamic) SetEngineTorqueValue(v float64) {
+	raw := int64(math.Round(v))
+	m.EngineTorque = &raw
+}
+
 type TransmissionParametersDynamic struct {
 	Info             MessageInfo `json:"info"`
 	Instance         *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -101,6 +358,40 @@ func (m *TransmissionParametersDynamic) DecodePayload(payload []uint8) error {
 }
 func (m *TransmissionParametersDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// OilPressureValue returns OilPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when OilPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TransmissionParametersDynamic) OilPressureValue() (float64, bool) {
+	if m.OilPressure == nil {
+		return 0, false
+	}
+	return float64(*m.OilPressure) * 100, true
+}
+
+// SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *TransmissionParametersDynamic) SetOilPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.OilPressure = &raw
+}
+
+// OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
+// The bool is false when OilTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TransmissionParametersDynamic) OilTemperatureValue() (float64, bool) {
+	if m.OilTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.OilTemperature) * 0.1, true
+}
+
+// SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.1.
+func (m *TransmissionParametersDynamic) SetOilTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.OilTemperature = &raw
+}
+
 type TripParametersEngine struct {
 	Info                     MessageInfo `json:"info"`
 	Instance                 *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -115,6 +406,74 @@ func (m *TripParametersEngine) MessageInfo() MessageInfo            { return m.I
 func (m *TripParametersEngine) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *TripParametersEngine) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TripParametersEngine) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// TripFuelUsedValue returns TripFuelUsed as a physical value in L (value = raw).
+// The bool is false when TripFuelUsed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersEngine) TripFuelUsedValue() (float64, bool) {
+	if m.TripFuelUsed == nil {
+		return 0, false
+	}
+	return float64(*m.TripFuelUsed), true
+}
+
+// SetTripFuelUsedValue sets TripFuelUsed from a physical value in L, rounded to the nearest
+// wire tick of 1.
+func (m *TripParametersEngine) SetTripFuelUsedValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TripFuelUsed = &raw
+}
+
+// FuelRateAverageValue returns FuelRateAverage as a physical value in L/h (value = raw * 0.1).
+// The bool is false when FuelRateAverage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersEngine) FuelRateAverageValue() (float64, bool) {
+	if m.FuelRateAverage == nil {
+		return 0, false
+	}
+	return float64(*m.FuelRateAverage) * 0.1, true
+}
+
+// SetFuelRateAverageValue sets FuelRateAverage from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *TripParametersEngine) SetFuelRateAverageValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.FuelRateAverage = &raw
+}
+
+// FuelRateEconomyValue returns FuelRateEconomy as a physical value in L/h (value = raw * 0.1).
+// The bool is false when FuelRateEconomy is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersEngine) FuelRateEconomyValue() (float64, bool) {
+	if m.FuelRateEconomy == nil {
+		return 0, false
+	}
+	return float64(*m.FuelRateEconomy) * 0.1, true
+}
+
+// SetFuelRateEconomyValue sets FuelRateEconomy from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *TripParametersEngine) SetFuelRateEconomyValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.FuelRateEconomy = &raw
+}
+
+// InstantaneousFuelEconomyValue returns InstantaneousFuelEconomy as a physical value in L/h (value = raw * 0.1).
+// The bool is false when InstantaneousFuelEconomy is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersEngine) InstantaneousFuelEconomyValue() (float64, bool) {
+	if m.InstantaneousFuelEconomy == nil {
+		return 0, false
+	}
+	return float64(*m.InstantaneousFuelEconomy) * 0.1, true
+}
+
+// SetInstantaneousFuelEconomyValue sets InstantaneousFuelEconomy from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *TripParametersEngine) SetInstantaneousFuelEconomyValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.InstantaneousFuelEconomy = &raw
+}
 
 type EngineParametersStatic struct {
 	Info             MessageInfo `json:"info"`
@@ -131,3 +490,20 @@ func (m *EngineParametersStatic) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *EngineParametersStatic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RatedEngineSpeedValue returns RatedEngineSpeed as a physical value in rpm (value = raw * 0.25).
+// The bool is false when RatedEngineSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *EngineParametersStatic) RatedEngineSpeedValue() (float64, bool) {
+	if m.RatedEngineSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.RatedEngineSpeed) * 0.25, true
+}
+
+// SetRatedEngineSpeedValue sets RatedEngineSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 0.25.
+func (m *EngineParametersStatic) SetRatedEngineSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.25))
+	m.RatedEngineSpeed = &raw
+}

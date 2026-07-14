@@ -241,7 +241,7 @@ func (c *Client) initBus(cfg config) error {
 		}
 	}
 	if c.bus == nil {
-		return errors.New("n2k: no writable bus available — File, TCP, and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN/USB source or WithBus")
+		return errors.New("n2k: no writable bus available — File and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN, USB, or TCP source or WithBus")
 	}
 
 	// Set writeFrame to delegate to the bus.
@@ -507,6 +507,13 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	c.mu.Lock()
 	srcAddr := c.sourceAddr
 	c.mu.Unlock()
+
+	// Message-oriented buses (see MessageWriter) take whole payloads and do
+	// their own wire framing; anything larger than one message still goes
+	// frame-by-frame below via ISO-TP.
+	if mw, ok := c.bus.(MessageWriter); ok && len(payload) <= 223 {
+		return mw.WriteMessage(pgnNum, priority, srcAddr, destination, payload)
+	}
 
 	canID := framer.BuildCANID(pgnNum, priority, srcAddr, destination)
 

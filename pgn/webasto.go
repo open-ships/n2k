@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type WebastoStatus2 struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -40,3 +42,20 @@ func (m *WebastoHvacCommand) MessageInfo() MessageInfo            { return m.Inf
 func (m *WebastoHvacCommand) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *WebastoHvacCommand) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *WebastoHvacCommand) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// SetTemperatureValue returns SetTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when SetTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WebastoHvacCommand) SetTemperatureValue() (float64, bool) {
+	if m.SetTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.SetTemperature) * 0.01, true
+}
+
+// SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *WebastoHvacCommand) SetSetTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SetTemperature = &raw
+}

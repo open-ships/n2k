@@ -1,5 +1,54 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — writable TCP gateway buses
+
+`n2k.TCP(addr, format)` now works with `NewClient`, not just `Receive`/`NewScanner` — the full bus
+stack over the boat's WiFi gateway:
+
+- **Yacht Devices RAW** (`FormatYDRaw`) is frame-level in both directions: transmitted frames go
+  out as `msgid b0..b7<CR><LF>` lines and the gateway echoes them back with direction T, so
+  address claiming, heartbeats, and group functions behave exactly as on CAN hardware.
+- **Actisense format** (`FormatActisense`) is message-level: sends use the binary transmit command
+  (priority, PGN, destination, length, data in DLE/STX framing) after a gateway initialization
+  command at connect. The gateway performs fast-packet fragmentation and stamps its own claimed
+  source address (the protocol carries none on sends).
+- New exported `MessageWriter` interface: a `Bus` that also implements it receives whole
+  assembled payloads (≤223 bytes) from the client's write path instead of CAN frames; ISO-TP
+  transfers and protocol frames still use `WriteFrame`. Custom `WithBus` transports can opt in.
+- Writers issued before the connection is up (the address claimer fires immediately) block until
+  the dial completes rather than failing.
+- Generator: `sourceDefinitions` is now assembled from per-chunk functions instead of one ~6k-line
+  composite literal, fixing `go build -race ./pgn` ("NewBulk too big" internal compiler error) —
+  `just test-race` works again.
+- `UDP` and `File` sources remain read-only.
+
+### Unreleased — semver releases, installable CLI, typed physical accessors
+
+**Typed physical-value accessors** — every numeric PGN struct field with a physical
+interpretation (a unit, non-unity resolution, or offset) now has generated accessors, on
+repeating-group element structs too: `<Field>Value() (float64, bool)` returns the physical value
+in the field's schema unit, `Set<Field>Value(float64)` writes one (rounded to the nearest wire
+tick). Raw-tick fields are unchanged underneath, so round-trip fidelity is preserved.
+`pgn.PhysicalValue` remains for dynamic, metadata-driven access.
+
+**Named CLI** — `cmd/sniffer.go` is replaced by `cmd/n2k`, a subcommand CLI
+(`go install github.com/open-ships/n2k/cmd/n2k@latest`):
+
+- `n2k sniff` decodes to JSON lines from `-i` (SocketCAN), `-u` (USB serial), `-file`
+  (candump replay, `-timing` for real-speed), `-tcp`/`-udp` gateways (`-format raw|actisense`),
+  with `-f` CEL filters and `-unknown`.
+- `n2k version` reports the release version (set by goreleaser).
+
+**Semver releases with prebuilt binaries** — releases are now tagged `v0.x.y`: every green Test
+run on `main` auto-tags the next patch and goreleaser publishes archives for Linux/macOS/Windows
+(amd64/arm64); pushing a `v0.X.0` tag manually cuts a minor. Release names carry the CalVer date.
+A commented Homebrew-tap config is in `.goreleaser.yaml`, pending an `open-ships/homebrew-tap`
+repo and token.
+
+**No-hardware quickstart** — `testdata/sample.log` is a real six-second capture (position, AIS,
+and identity PGNs removed; see `testdata/README.md`), used by new runnable `Example*` tests and
+the README quickstart, with an animated sniffer demo at `.github/demo.svg`.
+
 ### Unreleased — bus citizenship, device registry, and new sources
 
 **Bus citizenship** — bus clients now meet the protocol obligations of a real NMEA 2000 device:

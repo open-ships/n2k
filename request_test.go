@@ -106,10 +106,16 @@ func TestRequest_ConcurrentSamePGN(t *testing.T) {
 		pi  *pgn.ProductInformation
 		err error
 	}
+	// A generous explicit deadline: under the race detector on a loaded
+	// machine the default 1.25s ISO deadline can flake, and this test is
+	// about concurrent request coalescing, not deadline behavior.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	results := make(chan result, 2)
 	for range 2 {
 		go func() {
-			pi, err := Request[*pgn.ProductInformation](context.Background(), c, 0x23)
+			pi, err := Request[*pgn.ProductInformation](ctx, c, 0x23)
 			results <- result{pi, err}
 		}()
 	}

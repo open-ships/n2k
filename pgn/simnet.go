@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type SimnetKeepAlive struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -247,6 +249,23 @@ func (m *SimnetAutopilotAngle) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *SimnetAutopilotAngle) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAutopilotAngle) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Angle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetAutopilotAngle) AngleValue() (float64, bool) {
+	if m.Angle == nil {
+		return 0, false
+	}
+	return float64(*m.Angle) * 0.0001, true
+}
+
+// SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetAutopilotAngle) SetAngleValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Angle = &raw
+}
+
 type SimnetMagneticField struct {
 	Info   MessageInfo `json:"info"`
 	FieldX *int64      `json:"fieldX,omitempty" n2k:"1"`
@@ -260,6 +279,57 @@ func (m *SimnetMagneticField) MessageInfo() MessageInfo            { return m.In
 func (m *SimnetMagneticField) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetMagneticField) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetMagneticField) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// FieldXValue returns FieldX as a physical value (value = raw * 0.0001).
+// The bool is false when FieldX is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetMagneticField) FieldXValue() (float64, bool) {
+	if m.FieldX == nil {
+		return 0, false
+	}
+	return float64(*m.FieldX) * 0.0001, true
+}
+
+// SetFieldXValue sets FieldX from a physical value, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetMagneticField) SetFieldXValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.FieldX = &raw
+}
+
+// FieldYValue returns FieldY as a physical value (value = raw * 0.0001).
+// The bool is false when FieldY is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetMagneticField) FieldYValue() (float64, bool) {
+	if m.FieldY == nil {
+		return 0, false
+	}
+	return float64(*m.FieldY) * 0.0001, true
+}
+
+// SetFieldYValue sets FieldY from a physical value, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetMagneticField) SetFieldYValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.FieldY = &raw
+}
+
+// FieldZValue returns FieldZ as a physical value (value = raw * 0.0001).
+// The bool is false when FieldZ is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetMagneticField) FieldZValue() (float64, bool) {
+	if m.FieldZ == nil {
+		return 0, false
+	}
+	return float64(*m.FieldZ) * 0.0001, true
+}
+
+// SetFieldZValue sets FieldZ from a physical value, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetMagneticField) SetFieldZValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.FieldZ = &raw
+}
 
 type SimnetApUnknown3 struct {
 	Info             MessageInfo `json:"info"`
@@ -412,6 +482,23 @@ func (m *SimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// CapacityValue returns Capacity as a physical value in L (value = raw * 0.1).
+// The bool is false when Capacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetFluidLevelSensorConfiguration) CapacityValue() (float64, bool) {
+	if m.Capacity == nil {
+		return 0, false
+	}
+	return float64(*m.Capacity) * 0.1, true
+}
+
+// SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
+// wire tick of 0.1.
+func (m *SimnetFluidLevelSensorConfiguration) SetCapacityValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Capacity = &raw
+}
+
 type SimnetFuelFlowTurbineConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -522,6 +609,74 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) err
 }
 func (m *SimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// LengthValue returns Length as a physical value in m (value = raw * 0.1).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetAisClassBStaticDataMsg24PartB) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.1, true
+}
+
+// SetLengthValue sets Length from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Length = &raw
+}
+
+// BeamValue returns Beam as a physical value in m (value = raw * 0.1).
+// The bool is false when Beam is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetAisClassBStaticDataMsg24PartB) BeamValue() (float64, bool) {
+	if m.Beam == nil {
+		return 0, false
+	}
+	return float64(*m.Beam) * 0.1, true
+}
+
+// SetBeamValue sets Beam from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetBeamValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Beam = &raw
+}
+
+// PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromStarboardValue() (float64, bool) {
+	if m.PositionReferenceFromStarboard == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+}
+
+// SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromStarboard = &raw
+}
+
+// PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromBowValue() (float64, bool) {
+	if m.PositionReferenceFromBow == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromBow) * 0.1, true
+}
+
+// SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromBow = &raw
 }
 
 type SimnetAisSilentMode struct {
@@ -649,6 +804,23 @@ func (m *SimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Angle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetCommandApChangeCourse) AngleValue() (float64, bool) {
+	if m.Angle == nil {
+		return 0, false
+	}
+	return float64(*m.Angle) * 0.0001, true
+}
+
+// SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetCommandApChangeCourse) SetAngleValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Angle = &raw
+}
 
 type SimnetCommandApFollowUp struct {
 	Info             MessageInfo `json:"info"`
@@ -844,6 +1016,23 @@ func (m *SimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *SimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Angle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SimnetApCommandReplyChangeCourse) AngleValue() (float64, bool) {
+	if m.Angle == nil {
+		return 0, false
+	}
+	return float64(*m.Angle) * 0.0001, true
+}
+
+// SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SimnetApCommandReplyChangeCourse) SetAngleValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Angle = &raw
+}
 
 type SimnetAlarmMessage struct {
 	Info             MessageInfo `json:"info"`

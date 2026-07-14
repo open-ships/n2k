@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type AisClassAPositionReport struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -31,6 +33,108 @@ func (m *AisClassAPositionReport) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisClassAPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassAPositionReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassAPositionReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassAPositionReport) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.01, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisClassAPositionReport) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Sog = &raw
+}
+
+// HeadingValue returns Heading as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Heading is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) HeadingValue() (float64, bool) {
+	if m.Heading == nil {
+		return 0, false
+	}
+	return float64(*m.Heading) * 0.0001, true
+}
+
+// SetHeadingValue sets Heading from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassAPositionReport) SetHeadingValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Heading = &raw
+}
+
+// RateOfTurnValue returns RateOfTurn as a physical value in rad/s (value = raw * 3.125e-05).
+// The bool is false when RateOfTurn is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAPositionReport) RateOfTurnValue() (float64, bool) {
+	if m.RateOfTurn == nil {
+		return 0, false
+	}
+	return float64(*m.RateOfTurn) * 3.125e-05, true
+}
+
+// SetRateOfTurnValue sets RateOfTurn from a physical value in rad/s, rounded to the nearest
+// wire tick of 3.125e-05.
+func (m *AisClassAPositionReport) SetRateOfTurnValue(v float64) {
+	raw := int64(math.Round(v / 3.125e-05))
+	m.RateOfTurn = &raw
+}
 
 type AisClassBPositionReport struct {
 	Info                      MessageInfo `json:"info"`
@@ -63,6 +167,91 @@ func (m *AisClassBPositionReport) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisClassBPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBPositionReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBPositionReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBPositionReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBPositionReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBPositionReport) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassBPositionReport) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBPositionReport) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.01, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisClassBPositionReport) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Sog = &raw
+}
+
+// HeadingValue returns Heading as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Heading is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBPositionReport) HeadingValue() (float64, bool) {
+	if m.Heading == nil {
+		return 0, false
+	}
+	return float64(*m.Heading) * 0.0001, true
+}
+
+// SetHeadingValue sets Heading from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassBPositionReport) SetHeadingValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Heading = &raw
+}
 
 type AisClassBExtendedPositionReport struct {
 	Info                           MessageInfo `json:"info"`
@@ -97,6 +286,159 @@ func (m *AisClassBExtendedPositionReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBExtendedPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBExtendedPositionReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBExtendedPositionReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassBExtendedPositionReport) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.01, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisClassBExtendedPositionReport) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Sog = &raw
+}
+
+// TrueHeadingValue returns TrueHeading as a physical value in rad (value = raw * 0.0001).
+// The bool is false when TrueHeading is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) TrueHeadingValue() (float64, bool) {
+	if m.TrueHeading == nil {
+		return 0, false
+	}
+	return float64(*m.TrueHeading) * 0.0001, true
+}
+
+// SetTrueHeadingValue sets TrueHeading from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassBExtendedPositionReport) SetTrueHeadingValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TrueHeading = &raw
+}
+
+// LengthValue returns Length as a physical value in m (value = raw * 0.1).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.1, true
+}
+
+// SetLengthValue sets Length from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBExtendedPositionReport) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Length = &raw
+}
+
+// BeamValue returns Beam as a physical value in m (value = raw * 0.1).
+// The bool is false when Beam is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) BeamValue() (float64, bool) {
+	if m.Beam == nil {
+		return 0, false
+	}
+	return float64(*m.Beam) * 0.1, true
+}
+
+// SetBeamValue sets Beam from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBExtendedPositionReport) SetBeamValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Beam = &raw
+}
+
+// PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) PositionReferenceFromStarboardValue() (float64, bool) {
+	if m.PositionReferenceFromStarboard == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+}
+
+// SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBExtendedPositionReport) SetPositionReferenceFromStarboardValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromStarboard = &raw
+}
+
+// PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBExtendedPositionReport) PositionReferenceFromBowValue() (float64, bool) {
+	if m.PositionReferenceFromBow == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromBow) * 0.1, true
+}
+
+// SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBExtendedPositionReport) SetPositionReferenceFromBowValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromBow = &raw
+}
+
 type AisAidsToNavigationAtonReport struct {
 	Info                                     MessageInfo `json:"info"`
 	MessageId                                *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -129,6 +471,108 @@ func (m *AisAidsToNavigationAtonReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisAidsToNavigationAtonReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisAidsToNavigationAtonReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisAidsToNavigationAtonReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// LengthDiameterValue returns LengthDiameter as a physical value in m (value = raw * 0.1).
+// The bool is false when LengthDiameter is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) LengthDiameterValue() (float64, bool) {
+	if m.LengthDiameter == nil {
+		return 0, false
+	}
+	return float64(*m.LengthDiameter) * 0.1, true
+}
+
+// SetLengthDiameterValue sets LengthDiameter from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisAidsToNavigationAtonReport) SetLengthDiameterValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.LengthDiameter = &raw
+}
+
+// BeamDiameterValue returns BeamDiameter as a physical value in m (value = raw * 0.1).
+// The bool is false when BeamDiameter is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) BeamDiameterValue() (float64, bool) {
+	if m.BeamDiameter == nil {
+		return 0, false
+	}
+	return float64(*m.BeamDiameter) * 0.1, true
+}
+
+// SetBeamDiameterValue sets BeamDiameter from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisAidsToNavigationAtonReport) SetBeamDiameterValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.BeamDiameter = &raw
+}
+
+// PositionReferenceFromStarboardEdgeValue returns PositionReferenceFromStarboardEdge as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromStarboardEdge is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) PositionReferenceFromStarboardEdgeValue() (float64, bool) {
+	if m.PositionReferenceFromStarboardEdge == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromStarboardEdge) * 0.1, true
+}
+
+// SetPositionReferenceFromStarboardEdgeValue sets PositionReferenceFromStarboardEdge from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisAidsToNavigationAtonReport) SetPositionReferenceFromStarboardEdgeValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromStarboardEdge = &raw
+}
+
+// PositionReferenceFromTrueNorthFacingEdgeValue returns PositionReferenceFromTrueNorthFacingEdge as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromTrueNorthFacingEdge is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisAidsToNavigationAtonReport) PositionReferenceFromTrueNorthFacingEdgeValue() (float64, bool) {
+	if m.PositionReferenceFromTrueNorthFacingEdge == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromTrueNorthFacingEdge) * 0.1, true
+}
+
+// SetPositionReferenceFromTrueNorthFacingEdgeValue sets PositionReferenceFromTrueNorthFacingEdge from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisAidsToNavigationAtonReport) SetPositionReferenceFromTrueNorthFacingEdgeValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromTrueNorthFacingEdge = &raw
+}
+
 type AisDgnssBroadcastBinaryMessage struct {
 	Info                          MessageInfo `json:"info"`
 	MessageId                     *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -148,6 +592,40 @@ func (m *AisDgnssBroadcastBinaryMessage) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisDgnssBroadcastBinaryMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisDgnssBroadcastBinaryMessage) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisDgnssBroadcastBinaryMessage) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisDgnssBroadcastBinaryMessage) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisDgnssBroadcastBinaryMessage) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
 
 type AisUtcAndDateReport struct {
 	Info                      MessageInfo `json:"info"`
@@ -170,6 +648,74 @@ func (m *AisUtcAndDateReport) MessageInfo() MessageInfo            { return m.In
 func (m *AisUtcAndDateReport) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AisUtcAndDateReport) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisUtcAndDateReport) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisUtcAndDateReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisUtcAndDateReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisUtcAndDateReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisUtcAndDateReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// PositionTimeValue returns PositionTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when PositionTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisUtcAndDateReport) PositionTimeValue() (float64, bool) {
+	if m.PositionTime == nil {
+		return 0, false
+	}
+	return float64(*m.PositionTime) * 0.0001, true
+}
+
+// SetPositionTimeValue sets PositionTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisUtcAndDateReport) SetPositionTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.PositionTime = &raw
+}
+
+// PositionDateValue returns PositionDate as a physical value in d (value = raw).
+// The bool is false when PositionDate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisUtcAndDateReport) PositionDateValue() (float64, bool) {
+	if m.PositionDate == nil {
+		return 0, false
+	}
+	return float64(*m.PositionDate), true
+}
+
+// SetPositionDateValue sets PositionDate from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *AisUtcAndDateReport) SetPositionDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.PositionDate = &raw
+}
 
 type AisClassAStaticAndVoyageRelatedData struct {
 	Info                           MessageInfo `json:"info"`
@@ -202,6 +748,125 @@ func (m *AisClassAStaticAndVoyageRelatedData) DecodePayload(payload []uint8) err
 }
 func (m *AisClassAStaticAndVoyageRelatedData) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// LengthValue returns Length as a physical value in m (value = raw * 0.1).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.1, true
+}
+
+// SetLengthValue sets Length from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassAStaticAndVoyageRelatedData) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Length = &raw
+}
+
+// BeamValue returns Beam as a physical value in m (value = raw * 0.1).
+// The bool is false when Beam is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) BeamValue() (float64, bool) {
+	if m.Beam == nil {
+		return 0, false
+	}
+	return float64(*m.Beam) * 0.1, true
+}
+
+// SetBeamValue sets Beam from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassAStaticAndVoyageRelatedData) SetBeamValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Beam = &raw
+}
+
+// PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) PositionReferenceFromStarboardValue() (float64, bool) {
+	if m.PositionReferenceFromStarboard == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+}
+
+// SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassAStaticAndVoyageRelatedData) SetPositionReferenceFromStarboardValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromStarboard = &raw
+}
+
+// PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) PositionReferenceFromBowValue() (float64, bool) {
+	if m.PositionReferenceFromBow == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromBow) * 0.1, true
+}
+
+// SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassAStaticAndVoyageRelatedData) SetPositionReferenceFromBowValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromBow = &raw
+}
+
+// EtaDateValue returns EtaDate as a physical value in d (value = raw).
+// The bool is false when EtaDate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) EtaDateValue() (float64, bool) {
+	if m.EtaDate == nil {
+		return 0, false
+	}
+	return float64(*m.EtaDate), true
+}
+
+// SetEtaDateValue sets EtaDate from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *AisClassAStaticAndVoyageRelatedData) SetEtaDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.EtaDate = &raw
+}
+
+// EtaTimeValue returns EtaTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when EtaTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) EtaTimeValue() (float64, bool) {
+	if m.EtaTime == nil {
+		return 0, false
+	}
+	return float64(*m.EtaTime) * 0.0001, true
+}
+
+// SetEtaTimeValue sets EtaTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisClassAStaticAndVoyageRelatedData) SetEtaTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.EtaTime = &raw
+}
+
+// DraftValue returns Draft as a physical value in m (value = raw * 0.01).
+// The bool is false when Draft is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassAStaticAndVoyageRelatedData) DraftValue() (float64, bool) {
+	if m.Draft == nil {
+		return 0, false
+	}
+	return float64(*m.Draft) * 0.01, true
+}
+
+// SetDraftValue sets Draft from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisClassAStaticAndVoyageRelatedData) SetDraftValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Draft = &raw
 }
 
 type AisAddressedBinaryMessage struct {
@@ -289,6 +954,91 @@ func (m *AisSarAircraftPositionReport) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisSarAircraftPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisSarAircraftPositionReport) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisSarAircraftPositionReport) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisSarAircraftPositionReport) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisSarAircraftPositionReport) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisSarAircraftPositionReport) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisSarAircraftPositionReport) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.1).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisSarAircraftPositionReport) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.1, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisSarAircraftPositionReport) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Sog = &raw
+}
+
+// AltitudeValue returns Altitude as a physical value in m (value = raw * 0.01).
+// The bool is false when Altitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisSarAircraftPositionReport) AltitudeValue() (float64, bool) {
+	if m.Altitude == nil {
+		return 0, false
+	}
+	return float64(*m.Altitude) * 0.01, true
+}
+
+// SetAltitudeValue sets Altitude from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisSarAircraftPositionReport) SetAltitudeValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Altitude = &raw
+}
 
 type AisUtcDateInquiry struct {
 	Info                      MessageInfo `json:"info"`
@@ -411,6 +1161,23 @@ func (m *AisDataLinkManagementMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisDataLinkManagementMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// TimeoutValue returns Timeout as a physical value in s (value = raw * 60).
+// The bool is false when Timeout is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisDataLinkManagementMessageRepeating1) TimeoutValue() (float64, bool) {
+	if m.Timeout == nil {
+		return 0, false
+	}
+	return float64(*m.Timeout) * 60, true
+}
+
+// SetTimeoutValue sets Timeout from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *AisDataLinkManagementMessageRepeating1) SetTimeoutValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.Timeout = &raw
+}
+
 type AisChannelManagement struct {
 	Info                                 MessageInfo `json:"info"`
 	MessageId                            *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -437,6 +1204,74 @@ func (m *AisChannelManagement) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AisChannelManagement) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisChannelManagement) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// NorthEastLongitudeCorner1Value returns NorthEastLongitudeCorner1 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when NorthEastLongitudeCorner1 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisChannelManagement) NorthEastLongitudeCorner1Value() (float64, bool) {
+	if m.NorthEastLongitudeCorner1 == nil {
+		return 0, false
+	}
+	return float64(*m.NorthEastLongitudeCorner1) * 1e-07, true
+}
+
+// SetNorthEastLongitudeCorner1Value sets NorthEastLongitudeCorner1 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisChannelManagement) SetNorthEastLongitudeCorner1Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.NorthEastLongitudeCorner1 = &raw
+}
+
+// NorthEastLatitudeCorner1Value returns NorthEastLatitudeCorner1 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when NorthEastLatitudeCorner1 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisChannelManagement) NorthEastLatitudeCorner1Value() (float64, bool) {
+	if m.NorthEastLatitudeCorner1 == nil {
+		return 0, false
+	}
+	return float64(*m.NorthEastLatitudeCorner1) * 1e-07, true
+}
+
+// SetNorthEastLatitudeCorner1Value sets NorthEastLatitudeCorner1 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisChannelManagement) SetNorthEastLatitudeCorner1Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.NorthEastLatitudeCorner1 = &raw
+}
+
+// SouthWestLongitudeCorner2Value returns SouthWestLongitudeCorner2 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when SouthWestLongitudeCorner2 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisChannelManagement) SouthWestLongitudeCorner2Value() (float64, bool) {
+	if m.SouthWestLongitudeCorner2 == nil {
+		return 0, false
+	}
+	return float64(*m.SouthWestLongitudeCorner2) * 1e-07, true
+}
+
+// SetSouthWestLongitudeCorner2Value sets SouthWestLongitudeCorner2 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisChannelManagement) SetSouthWestLongitudeCorner2Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.SouthWestLongitudeCorner2 = &raw
+}
+
+// SouthWestLatitudeCorner2Value returns SouthWestLatitudeCorner2 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when SouthWestLatitudeCorner2 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisChannelManagement) SouthWestLatitudeCorner2Value() (float64, bool) {
+	if m.SouthWestLatitudeCorner2 == nil {
+		return 0, false
+	}
+	return float64(*m.SouthWestLatitudeCorner2) * 1e-07, true
+}
+
+// SetSouthWestLatitudeCorner2Value sets SouthWestLatitudeCorner2 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisChannelManagement) SetSouthWestLatitudeCorner2Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.SouthWestLatitudeCorner2 = &raw
+}
+
 type AisClassBGroupAssignment struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -460,6 +1295,91 @@ func (m *AisClassBGroupAssignment) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisClassBGroupAssignment) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// NorthEastLongitudeCorner1Value returns NorthEastLongitudeCorner1 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when NorthEastLongitudeCorner1 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBGroupAssignment) NorthEastLongitudeCorner1Value() (float64, bool) {
+	if m.NorthEastLongitudeCorner1 == nil {
+		return 0, false
+	}
+	return float64(*m.NorthEastLongitudeCorner1) * 1e-07, true
+}
+
+// SetNorthEastLongitudeCorner1Value sets NorthEastLongitudeCorner1 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBGroupAssignment) SetNorthEastLongitudeCorner1Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.NorthEastLongitudeCorner1 = &raw
+}
+
+// NorthEastLatitudeCorner1Value returns NorthEastLatitudeCorner1 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when NorthEastLatitudeCorner1 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBGroupAssignment) NorthEastLatitudeCorner1Value() (float64, bool) {
+	if m.NorthEastLatitudeCorner1 == nil {
+		return 0, false
+	}
+	return float64(*m.NorthEastLatitudeCorner1) * 1e-07, true
+}
+
+// SetNorthEastLatitudeCorner1Value sets NorthEastLatitudeCorner1 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBGroupAssignment) SetNorthEastLatitudeCorner1Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.NorthEastLatitudeCorner1 = &raw
+}
+
+// SouthWestLongitudeCorner2Value returns SouthWestLongitudeCorner2 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when SouthWestLongitudeCorner2 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBGroupAssignment) SouthWestLongitudeCorner2Value() (float64, bool) {
+	if m.SouthWestLongitudeCorner2 == nil {
+		return 0, false
+	}
+	return float64(*m.SouthWestLongitudeCorner2) * 1e-07, true
+}
+
+// SetSouthWestLongitudeCorner2Value sets SouthWestLongitudeCorner2 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBGroupAssignment) SetSouthWestLongitudeCorner2Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.SouthWestLongitudeCorner2 = &raw
+}
+
+// SouthWestLatitudeCorner2Value returns SouthWestLatitudeCorner2 as a physical value in deg (value = raw * 1e-07).
+// The bool is false when SouthWestLatitudeCorner2 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBGroupAssignment) SouthWestLatitudeCorner2Value() (float64, bool) {
+	if m.SouthWestLatitudeCorner2 == nil {
+		return 0, false
+	}
+	return float64(*m.SouthWestLatitudeCorner2) * 1e-07, true
+}
+
+// SetSouthWestLatitudeCorner2Value sets SouthWestLatitudeCorner2 from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisClassBGroupAssignment) SetSouthWestLatitudeCorner2Value(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.SouthWestLatitudeCorner2 = &raw
+}
+
+// QuietTimeValue returns QuietTime as a physical value in s (value = raw * 60).
+// The bool is false when QuietTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBGroupAssignment) QuietTimeValue() (float64, bool) {
+	if m.QuietTime == nil {
+		return 0, false
+	}
+	return float64(*m.QuietTime) * 60, true
+}
+
+// SetQuietTimeValue sets QuietTime from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *AisClassBGroupAssignment) SetQuietTimeValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.QuietTime = &raw
+}
 
 type AisClassBStaticDataMsg24PartA struct {
 	Info                      MessageInfo `json:"info"`
@@ -504,6 +1424,74 @@ func (m *AisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LengthValue returns Length as a physical value in m (value = raw * 0.1).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBStaticDataMsg24PartB) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.1, true
+}
+
+// SetLengthValue sets Length from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBStaticDataMsg24PartB) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Length = &raw
+}
+
+// BeamValue returns Beam as a physical value in m (value = raw * 0.1).
+// The bool is false when Beam is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBStaticDataMsg24PartB) BeamValue() (float64, bool) {
+	if m.Beam == nil {
+		return 0, false
+	}
+	return float64(*m.Beam) * 0.1, true
+}
+
+// SetBeamValue sets Beam from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBStaticDataMsg24PartB) SetBeamValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Beam = &raw
+}
+
+// PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBStaticDataMsg24PartB) PositionReferenceFromStarboardValue() (float64, bool) {
+	if m.PositionReferenceFromStarboard == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+}
+
+// SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromStarboard = &raw
+}
+
+// PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisClassBStaticDataMsg24PartB) PositionReferenceFromBowValue() (float64, bool) {
+	if m.PositionReferenceFromBow == nil {
+		return 0, false
+	}
+	return float64(*m.PositionReferenceFromBow) * 0.1, true
+}
+
+// SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *AisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionReferenceFromBow = &raw
+}
 
 type AisSingleSlotBinaryMessageDeprecated struct {
 	Info                          MessageInfo `json:"info"`
@@ -583,6 +1571,74 @@ func (m *AisLongRangeBroadcastMessage) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisLongRangeBroadcastMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisLongRangeBroadcastMessage) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisLongRangeBroadcastMessage) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisLongRangeBroadcastMessage) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *AisLongRangeBroadcastMessage) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisLongRangeBroadcastMessage) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.01, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AisLongRangeBroadcastMessage) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Sog = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AisLongRangeBroadcastMessage) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AisLongRangeBroadcastMessage) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
 
 type AisSingleSlotBinaryMessage struct {
 	Info                          MessageInfo `json:"info"`

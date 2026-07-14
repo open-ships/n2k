@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type SeatalkWirelessKeypadControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -69,6 +71,40 @@ func (m *SeatalkPilotWindDatum) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *SeatalkPilotWindDatum) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotWindDatum) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// WindDatumValue returns WindDatum as a physical value in rad (value = raw * 0.0001).
+// The bool is false when WindDatum is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotWindDatum) WindDatumValue() (float64, bool) {
+	if m.WindDatum == nil {
+		return 0, false
+	}
+	return float64(*m.WindDatum) * 0.0001, true
+}
+
+// SetWindDatumValue sets WindDatum from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotWindDatum) SetWindDatumValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.WindDatum = &raw
+}
+
+// RollingAverageWindAngleValue returns RollingAverageWindAngle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when RollingAverageWindAngle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotWindDatum) RollingAverageWindAngleValue() (float64, bool) {
+	if m.RollingAverageWindAngle == nil {
+		return 0, false
+	}
+	return float64(*m.RollingAverageWindAngle) * 0.0001, true
+}
+
+// SetRollingAverageWindAngleValue sets RollingAverageWindAngle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotWindDatum) SetRollingAverageWindAngleValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.RollingAverageWindAngle = &raw
+}
+
 type SeatalkPilotHeading struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -83,6 +119,40 @@ func (m *SeatalkPilotHeading) MessageInfo() MessageInfo            { return m.In
 func (m *SeatalkPilotHeading) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SeatalkPilotHeading) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotHeading) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// HeadingTrueValue returns HeadingTrue as a physical value in rad (value = raw * 0.0001).
+// The bool is false when HeadingTrue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotHeading) HeadingTrueValue() (float64, bool) {
+	if m.HeadingTrue == nil {
+		return 0, false
+	}
+	return float64(*m.HeadingTrue) * 0.0001, true
+}
+
+// SetHeadingTrueValue sets HeadingTrue from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotHeading) SetHeadingTrueValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.HeadingTrue = &raw
+}
+
+// HeadingMagneticValue returns HeadingMagnetic as a physical value in rad (value = raw * 0.0001).
+// The bool is false when HeadingMagnetic is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotHeading) HeadingMagneticValue() (float64, bool) {
+	if m.HeadingMagnetic == nil {
+		return 0, false
+	}
+	return float64(*m.HeadingMagnetic) * 0.0001, true
+}
+
+// SetHeadingMagneticValue sets HeadingMagnetic from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotHeading) SetHeadingMagneticValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.HeadingMagnetic = &raw
+}
 
 type SeatalkPilotLockedHeading struct {
 	Info                  MessageInfo `json:"info"`
@@ -100,6 +170,40 @@ func (m *SeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// TargetHeadingTrueValue returns TargetHeadingTrue as a physical value in rad (value = raw * 0.0001).
+// The bool is false when TargetHeadingTrue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotLockedHeading) TargetHeadingTrueValue() (float64, bool) {
+	if m.TargetHeadingTrue == nil {
+		return 0, false
+	}
+	return float64(*m.TargetHeadingTrue) * 0.0001, true
+}
+
+// SetTargetHeadingTrueValue sets TargetHeadingTrue from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotLockedHeading) SetTargetHeadingTrueValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TargetHeadingTrue = &raw
+}
+
+// TargetHeadingMagneticValue returns TargetHeadingMagnetic as a physical value in rad (value = raw * 0.0001).
+// The bool is false when TargetHeadingMagnetic is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkPilotLockedHeading) TargetHeadingMagneticValue() (float64, bool) {
+	if m.TargetHeadingMagnetic == nil {
+		return 0, false
+	}
+	return float64(*m.TargetHeadingMagnetic) * 0.0001, true
+}
+
+// SetTargetHeadingMagneticValue sets TargetHeadingMagnetic from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkPilotLockedHeading) SetTargetHeadingMagneticValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TargetHeadingMagnetic = &raw
+}
 
 type SeatalkSilenceAlarm struct {
 	Info             MessageInfo `json:"info"`
@@ -203,6 +307,23 @@ func (m *Seatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *Seatalk1DisplayBrightness) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// BrightnessValue returns Brightness as a physical value in % (value = raw).
+// The bool is false when Brightness is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Seatalk1DisplayBrightness) BrightnessValue() (float64, bool) {
+	if m.Brightness == nil {
+		return 0, false
+	}
+	return float64(*m.Brightness), true
+}
+
+// SetBrightnessValue sets Brightness from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *Seatalk1DisplayBrightness) SetBrightnessValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Brightness = &raw
+}
 
 type Seatalk1DisplayColor struct {
 	Info             MessageInfo `json:"info"`
@@ -314,6 +435,23 @@ func (m *SeatalkNodeStatistics) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *SeatalkNodeStatistics) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkNodeStatistics) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// NodeVoltageValue returns NodeVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when NodeVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkNodeStatistics) NodeVoltageValue() (float64, bool) {
+	if m.NodeVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.NodeVoltage) * 0.01, true
+}
+
+// SetNodeVoltageValue sets NodeVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *SeatalkNodeStatistics) SetNodeVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.NodeVoltage = &raw
+}
+
 type SeatalkWaypointInformation struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -333,6 +471,57 @@ func (m *SeatalkWaypointInformation) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SeatalkWaypointInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// BearingToWaypointTrueValue returns BearingToWaypointTrue as a physical value in rad (value = raw * 0.0001).
+// The bool is false when BearingToWaypointTrue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkWaypointInformation) BearingToWaypointTrueValue() (float64, bool) {
+	if m.BearingToWaypointTrue == nil {
+		return 0, false
+	}
+	return float64(*m.BearingToWaypointTrue) * 0.0001, true
+}
+
+// SetBearingToWaypointTrueValue sets BearingToWaypointTrue from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkWaypointInformation) SetBearingToWaypointTrueValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.BearingToWaypointTrue = &raw
+}
+
+// BearingToWaypointMagneticValue returns BearingToWaypointMagnetic as a physical value in rad (value = raw * 0.0001).
+// The bool is false when BearingToWaypointMagnetic is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkWaypointInformation) BearingToWaypointMagneticValue() (float64, bool) {
+	if m.BearingToWaypointMagnetic == nil {
+		return 0, false
+	}
+	return float64(*m.BearingToWaypointMagnetic) * 0.0001, true
+}
+
+// SetBearingToWaypointMagneticValue sets BearingToWaypointMagnetic from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkWaypointInformation) SetBearingToWaypointMagneticValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.BearingToWaypointMagnetic = &raw
+}
+
+// DistanceToWaypointValue returns DistanceToWaypoint as a physical value in m (value = raw * 0.01).
+// The bool is false when DistanceToWaypoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkWaypointInformation) DistanceToWaypointValue() (float64, bool) {
+	if m.DistanceToWaypoint == nil {
+		return 0, false
+	}
+	return float64(*m.DistanceToWaypoint) * 0.01, true
+}
+
+// SetDistanceToWaypointValue sets DistanceToWaypoint from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *SeatalkWaypointInformation) SetDistanceToWaypointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DistanceToWaypoint = &raw
+}
 
 type SeatalkRouteInformation struct {
 	Info                                     MessageInfo `json:"info"`
@@ -355,3 +544,54 @@ func (m *SeatalkRouteInformation) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SeatalkRouteInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// DistancePositionToNextWaypointValue returns DistancePositionToNextWaypoint as a physical value in m (value = raw).
+// The bool is false when DistancePositionToNextWaypoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkRouteInformation) DistancePositionToNextWaypointValue() (float64, bool) {
+	if m.DistancePositionToNextWaypoint == nil {
+		return 0, false
+	}
+	return float64(*m.DistancePositionToNextWaypoint), true
+}
+
+// SetDistancePositionToNextWaypointValue sets DistancePositionToNextWaypoint from a physical value in m, rounded to the nearest
+// wire tick of 1.
+func (m *SeatalkRouteInformation) SetDistancePositionToNextWaypointValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.DistancePositionToNextWaypoint = &raw
+}
+
+// BearingPositionToNextWaypointTrueValue returns BearingPositionToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
+// The bool is false when BearingPositionToNextWaypointTrue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkRouteInformation) BearingPositionToNextWaypointTrueValue() (float64, bool) {
+	if m.BearingPositionToNextWaypointTrue == nil {
+		return 0, false
+	}
+	return float64(*m.BearingPositionToNextWaypointTrue) * 0.0001, true
+}
+
+// SetBearingPositionToNextWaypointTrueValue sets BearingPositionToNextWaypointTrue from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkRouteInformation) SetBearingPositionToNextWaypointTrueValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.BearingPositionToNextWaypointTrue = &raw
+}
+
+// BearingCurrentWaypointToNextWaypointTrueValue returns BearingCurrentWaypointToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
+// The bool is false when BearingCurrentWaypointToNextWaypointTrue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SeatalkRouteInformation) BearingCurrentWaypointToNextWaypointTrueValue() (float64, bool) {
+	if m.BearingCurrentWaypointToNextWaypointTrue == nil {
+		return 0, false
+	}
+	return float64(*m.BearingCurrentWaypointToNextWaypointTrue) * 0.0001, true
+}
+
+// SetBearingCurrentWaypointToNextWaypointTrueValue sets BearingCurrentWaypointToNextWaypointTrue from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SeatalkRouteInformation) SetBearingCurrentWaypointToNextWaypointTrueValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.BearingCurrentWaypointToNextWaypointTrue = &raw
+}

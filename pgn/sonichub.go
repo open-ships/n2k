@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type SonichubAmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -21,6 +23,23 @@ func (m *SonichubAmRadio) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubAmRadio) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubAmRadio) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubAmRadio) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SonichubAmRadio) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency), true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 1.
+func (m *SonichubAmRadio) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Frequency = &raw
+}
 
 type SonichubAlbum struct {
 	Info             MessageInfo `json:"info"`
@@ -87,6 +106,23 @@ func (m *SonichubFmRadio) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubFmRadio) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubFmRadio) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubFmRadio) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SonichubFmRadio) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency), true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 1.
+func (m *SonichubFmRadio) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Frequency = &raw
+}
 
 type SonichubInit1 struct {
 	Info             MessageInfo `json:"info"`
@@ -189,6 +225,40 @@ func (m *SonichubPlaylist) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *SonichubPlaylist) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubPlaylist) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// LengthValue returns Length as a physical value in s (value = raw * 0.001).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SonichubPlaylist) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.001, true
+}
+
+// SetLengthValue sets Length from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *SonichubPlaylist) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.Length = &raw
+}
+
+// PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
+// The bool is false when PositionInTrack is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SonichubPlaylist) PositionInTrackValue() (float64, bool) {
+	if m.PositionInTrack == nil {
+		return 0, false
+	}
+	return float64(*m.PositionInTrack) * 0.001, true
+}
+
+// SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *SonichubPlaylist) SetPositionInTrackValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.PositionInTrack = &raw
+}
+
 type SonichubPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -203,6 +273,23 @@ func (m *SonichubPosition) MessageInfo() MessageInfo            { return m.Info 
 func (m *SonichubPosition) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubPosition) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubPosition) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// PositionValue returns Position as a physical value in s (value = raw * 0.001).
+// The bool is false when Position is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SonichubPosition) PositionValue() (float64, bool) {
+	if m.Position == nil {
+		return 0, false
+	}
+	return float64(*m.Position) * 0.001, true
+}
+
+// SetPositionValue sets Position from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *SonichubPosition) SetPositionValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.Position = &raw
+}
 
 type SonichubSource struct {
 	Info             MessageInfo `json:"info"`

@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type MaretronKeelPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -51,6 +53,23 @@ func (m *MaretronProprietaryDcBreakerCurrent) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// BreakerCurrentValue returns BreakerCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when BreakerCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronProprietaryDcBreakerCurrent) BreakerCurrentValue() (float64, bool) {
+	if m.BreakerCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.BreakerCurrent) * 0.1, true
+}
+
+// SetBreakerCurrentValue sets BreakerCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *MaretronProprietaryDcBreakerCurrent) SetBreakerCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.BreakerCurrent = &raw
+}
+
 type MaretronUniversalConfigurationSf struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -82,6 +101,23 @@ func (m *MaretronFluidFlowRate) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *MaretronFluidFlowRate) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronFluidFlowRate) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// FluidFlowRateValue returns FluidFlowRate as a physical value (value = raw * 0.0001).
+// The bool is false when FluidFlowRate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronFluidFlowRate) FluidFlowRateValue() (float64, bool) {
+	if m.FluidFlowRate == nil {
+		return 0, false
+	}
+	return float64(*m.FluidFlowRate) * 0.0001, true
+}
+
+// SetFluidFlowRateValue sets FluidFlowRate from a physical value, rounded to the nearest
+// wire tick of 0.0001.
+func (m *MaretronFluidFlowRate) SetFluidFlowRateValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.FluidFlowRate = &raw
+}
+
 type MaretronTripVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -97,6 +133,23 @@ func (m *MaretronTripVolume) MessageInfo() MessageInfo            { return m.Inf
 func (m *MaretronTripVolume) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronTripVolume) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronTripVolume) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// TripVolumeValue returns TripVolume as a physical value (value = raw * 0.001).
+// The bool is false when TripVolume is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronTripVolume) TripVolumeValue() (float64, bool) {
+	if m.TripVolume == nil {
+		return 0, false
+	}
+	return float64(*m.TripVolume) * 0.001, true
+}
+
+// SetTripVolumeValue sets TripVolume from a physical value, rounded to the nearest
+// wire tick of 0.001.
+func (m *MaretronTripVolume) SetTripVolumeValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.TripVolume = &raw
+}
 
 type Maretron420Ma struct {
 	Info             MessageInfo `json:"info"`
@@ -128,6 +181,23 @@ func (m *Maretron010V) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Maretron010V) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Maretron010V) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Pgn010VDataValue returns Pgn010VData as a physical value (value = raw * 0.000244141).
+// The bool is false when Pgn010VData is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Maretron010V) Pgn010VDataValue() (float64, bool) {
+	if m.Pgn010VData == nil {
+		return 0, false
+	}
+	return float64(*m.Pgn010VData) * 0.000244141, true
+}
+
+// SetPgn010VDataValue sets Pgn010VData from a physical value, rounded to the nearest
+// wire tick of 0.000244141.
+func (m *Maretron010V) SetPgn010VDataValue(v float64) {
+	raw := uint64(math.Round(v / 0.000244141))
+	m.Pgn010VData = &raw
+}
+
 type MaretronRotationalRate struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -145,6 +215,23 @@ func (m *MaretronRotationalRate) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronRotationalRate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// RotationalRateValue returns RotationalRate as a physical value (value = raw * 0.25).
+// The bool is false when RotationalRate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronRotationalRate) RotationalRateValue() (float64, bool) {
+	if m.RotationalRate == nil {
+		return 0, false
+	}
+	return float64(*m.RotationalRate) * 0.25, true
+}
+
+// SetRotationalRateValue sets RotationalRate from a physical value, rounded to the nearest
+// wire tick of 0.25.
+func (m *MaretronRotationalRate) SetRotationalRateValue(v float64) {
+	raw := int64(math.Round(v / 0.25))
+	m.RotationalRate = &raw
+}
+
 type MaretronResistance struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -159,6 +246,23 @@ func (m *MaretronResistance) MessageInfo() MessageInfo            { return m.Inf
 func (m *MaretronResistance) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronResistance) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronResistance) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// ResistanceValue returns Resistance as a physical value (value = raw * 0.01).
+// The bool is false when Resistance is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronResistance) ResistanceValue() (float64, bool) {
+	if m.Resistance == nil {
+		return 0, false
+	}
+	return float64(*m.Resistance) * 0.01, true
+}
+
+// SetResistanceValue sets Resistance from a physical value, rounded to the nearest
+// wire tick of 0.01.
+func (m *MaretronResistance) SetResistanceValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Resistance = &raw
+}
 
 type MaretronAutomationFunctionMaster struct {
 	Info             MessageInfo `json:"info"`
@@ -363,6 +467,40 @@ func (m *MaretronProprietaryTemperatureHighRange) DecodePayload(payload []uint8)
 }
 func (m *MaretronProprietaryTemperatureHighRange) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// ActualTemperatureValue returns ActualTemperature as a physical value in K (value = raw * 0.1).
+// The bool is false when ActualTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronProprietaryTemperatureHighRange) ActualTemperatureValue() (float64, bool) {
+	if m.ActualTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.ActualTemperature) * 0.1, true
+}
+
+// SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.1.
+func (m *MaretronProprietaryTemperatureHighRange) SetActualTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.ActualTemperature = &raw
+}
+
+// SetTemperatureValue returns SetTemperature as a physical value in K (value = raw * 0.1).
+// The bool is false when SetTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronProprietaryTemperatureHighRange) SetTemperatureValue() (float64, bool) {
+	if m.SetTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.SetTemperature) * 0.1, true
+}
+
+// SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.1.
+func (m *MaretronProprietaryTemperatureHighRange) SetSetTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.SetTemperature = &raw
 }
 
 type MaretronAnnunciator struct {
@@ -578,6 +716,40 @@ func (m *MaretronSwitchStatusCounter) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronSwitchStatusCounter) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// StartDateValue returns StartDate as a physical value in d (value = raw).
+// The bool is false when StartDate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusCounter) StartDateValue() (float64, bool) {
+	if m.StartDate == nil {
+		return 0, false
+	}
+	return float64(*m.StartDate), true
+}
+
+// SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *MaretronSwitchStatusCounter) SetStartDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.StartDate = &raw
+}
+
+// StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when StartTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusCounter) StartTimeValue() (float64, bool) {
+	if m.StartTime == nil {
+		return 0, false
+	}
+	return float64(*m.StartTime) * 0.0001, true
+}
+
+// SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *MaretronSwitchStatusCounter) SetStartTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.StartTime = &raw
+}
+
 type MaretronSwitchStatusTimer struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -599,6 +771,91 @@ func (m *MaretronSwitchStatusTimer) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronSwitchStatusTimer) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// StartDateValue returns StartDate as a physical value in d (value = raw).
+// The bool is false when StartDate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusTimer) StartDateValue() (float64, bool) {
+	if m.StartDate == nil {
+		return 0, false
+	}
+	return float64(*m.StartDate), true
+}
+
+// SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *MaretronSwitchStatusTimer) SetStartDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.StartDate = &raw
+}
+
+// StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when StartTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusTimer) StartTimeValue() (float64, bool) {
+	if m.StartTime == nil {
+		return 0, false
+	}
+	return float64(*m.StartTime) * 0.0001, true
+}
+
+// SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *MaretronSwitchStatusTimer) SetStartTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.StartTime = &raw
+}
+
+// AccumulatedOffPeriodValue returns AccumulatedOffPeriod as a physical value in s (value = raw).
+// The bool is false when AccumulatedOffPeriod is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusTimer) AccumulatedOffPeriodValue() (float64, bool) {
+	if m.AccumulatedOffPeriod == nil {
+		return 0, false
+	}
+	return float64(*m.AccumulatedOffPeriod), true
+}
+
+// SetAccumulatedOffPeriodValue sets AccumulatedOffPeriod from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedOffPeriodValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AccumulatedOffPeriod = &raw
+}
+
+// AccumulatedOnPeriodValue returns AccumulatedOnPeriod as a physical value in s (value = raw).
+// The bool is false when AccumulatedOnPeriod is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusTimer) AccumulatedOnPeriodValue() (float64, bool) {
+	if m.AccumulatedOnPeriod == nil {
+		return 0, false
+	}
+	return float64(*m.AccumulatedOnPeriod), true
+}
+
+// SetAccumulatedOnPeriodValue sets AccumulatedOnPeriod from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedOnPeriodValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AccumulatedOnPeriod = &raw
+}
+
+// AccumulatedErrorPeriodValue returns AccumulatedErrorPeriod as a physical value in s (value = raw).
+// The bool is false when AccumulatedErrorPeriod is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MaretronSwitchStatusTimer) AccumulatedErrorPeriodValue() (float64, bool) {
+	if m.AccumulatedErrorPeriod == nil {
+		return 0, false
+	}
+	return float64(*m.AccumulatedErrorPeriod), true
+}
+
+// SetAccumulatedErrorPeriodValue sets AccumulatedErrorPeriod from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedErrorPeriodValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AccumulatedErrorPeriod = &raw
+}
 
 type MaretronBnwas struct {
 	Info             MessageInfo `json:"info"`

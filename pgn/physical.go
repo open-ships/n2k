@@ -8,6 +8,12 @@ import (
 // PhysicalValue returns the physical (unit-scaled) value of the numeric field
 // with the given source order on a decoded PGN struct, applying the field's
 // Resolution and Offset from its metadata: value = raw*Resolution + Offset.
+//
+// Most callers should prefer the generated typed accessors instead: every
+// numeric field with a physical interpretation has <Field>Value() (float64,
+// bool) and Set<Field>Value(float64) methods on its struct (for example,
+// VesselHeading.HeadingValue returns radians). PhysicalValue remains for
+// dynamic, metadata-driven access when the field is only known at runtime.
 // The unit string is the metadata Unit label ("rad", "m/s", "K", ...), empty
 // for unitless fields.
 //

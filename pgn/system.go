@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type Message0xe8000xee00StandardizedSingleFrameAddressed struct {
 	Info MessageInfo `json:"info"`
 	Data []uint8     `json:"data,omitempty" n2k:"1"`
@@ -418,6 +420,40 @@ func (m *NmeaRequestGroupFunction) DecodePayload(payload []uint8) error {
 }
 func (m *NmeaRequestGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// TransmissionIntervalValue returns TransmissionInterval as a physical value in s (value = raw * 0.001).
+// The bool is false when TransmissionInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NmeaRequestGroupFunction) TransmissionIntervalValue() (float64, bool) {
+	if m.TransmissionInterval == nil {
+		return 0, false
+	}
+	return float64(*m.TransmissionInterval) * 0.001, true
+}
+
+// SetTransmissionIntervalValue sets TransmissionInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *NmeaRequestGroupFunction) SetTransmissionIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.TransmissionInterval = &raw
+}
+
+// TransmissionIntervalOffsetValue returns TransmissionIntervalOffset as a physical value in s (value = raw * 0.01).
+// The bool is false when TransmissionIntervalOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NmeaRequestGroupFunction) TransmissionIntervalOffsetValue() (float64, bool) {
+	if m.TransmissionIntervalOffset == nil {
+		return 0, false
+	}
+	return float64(*m.TransmissionIntervalOffset) * 0.01, true
+}
+
+// SetTransmissionIntervalOffsetValue sets TransmissionIntervalOffset from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *NmeaRequestGroupFunction) SetTransmissionIntervalOffsetValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.TransmissionIntervalOffset = &raw
+}
+
 type NmeaWriteFieldsGroupFunction struct {
 	Info                   MessageInfo                              `json:"info"`
 	FunctionCode           *uint64                                  `json:"functionCode,omitempty" n2k:"1"`
@@ -679,6 +715,23 @@ func (m *GarminAutopilotTurnAngleMeasured) DecodePayload(payload []uint8) error 
 }
 func (m *GarminAutopilotTurnAngleMeasured) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// TurnAngleMeasuredValue returns TurnAngleMeasured as a physical value in rad (value = raw * 9.58738e-05).
+// The bool is false when TurnAngleMeasured is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GarminAutopilotTurnAngleMeasured) TurnAngleMeasuredValue() (float64, bool) {
+	if m.TurnAngleMeasured == nil {
+		return 0, false
+	}
+	return float64(*m.TurnAngleMeasured) * 9.58738e-05, true
+}
+
+// SetTurnAngleMeasuredValue sets TurnAngleMeasured from a physical value in rad, rounded to the nearest
+// wire tick of 9.58738e-05.
+func (m *GarminAutopilotTurnAngleMeasured) SetTurnAngleMeasuredValue(v float64) {
+	raw := uint64(math.Round(v / 9.58738e-05))
+	m.TurnAngleMeasured = &raw
+}
+
 type GarminAutopilotTurnAngleOrder struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -698,6 +751,23 @@ func (m *GarminAutopilotTurnAngleOrder) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotTurnAngleOrder) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// TurnAngleOrderValue returns TurnAngleOrder as a physical value in rad (value = raw * 9.58738e-05).
+// The bool is false when TurnAngleOrder is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GarminAutopilotTurnAngleOrder) TurnAngleOrderValue() (float64, bool) {
+	if m.TurnAngleOrder == nil {
+		return 0, false
+	}
+	return float64(*m.TurnAngleOrder) * 9.58738e-05, true
+}
+
+// SetTurnAngleOrderValue sets TurnAngleOrder from a physical value in rad, rounded to the nearest
+// wire tick of 9.58738e-05.
+func (m *GarminAutopilotTurnAngleOrder) SetTurnAngleOrderValue(v float64) {
+	raw := uint64(math.Round(v / 9.58738e-05))
+	m.TurnAngleOrder = &raw
+}
 
 type Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed struct {
 	Info MessageInfo `json:"info"`
@@ -886,6 +956,40 @@ func (m *SystemTime) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SystemTime) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SystemTime) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// DateValue returns Date as a physical value in d (value = raw).
+// The bool is false when Date is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SystemTime) DateValue() (float64, bool) {
+	if m.Date == nil {
+		return 0, false
+	}
+	return float64(*m.Date), true
+}
+
+// SetDateValue sets Date from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *SystemTime) SetDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Date = &raw
+}
+
+// TimeValue returns Time as a physical value in s (value = raw * 0.0001).
+// The bool is false when Time is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *SystemTime) TimeValue() (float64, bool) {
+	if m.Time == nil {
+		return 0, false
+	}
+	return float64(*m.Time) * 0.0001, true
+}
+
+// SetTimeValue sets Time from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *SystemTime) SetTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Time = &raw
+}
+
 type Heartbeat struct {
 	Info               MessageInfo `json:"info"`
 	DataTransmitOffset *uint64     `json:"dataTransmitOffset,omitempty" n2k:"1"`
@@ -900,6 +1004,23 @@ func (m *Heartbeat) MessageInfo() MessageInfo            { return m.Info }
 func (m *Heartbeat) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Heartbeat) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Heartbeat) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// DataTransmitOffsetValue returns DataTransmitOffset as a physical value in s (value = raw * 0.001).
+// The bool is false when DataTransmitOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Heartbeat) DataTransmitOffsetValue() (float64, bool) {
+	if m.DataTransmitOffset == nil {
+		return 0, false
+	}
+	return float64(*m.DataTransmitOffset) * 0.001, true
+}
+
+// SetDataTransmitOffsetValue sets DataTransmitOffset from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *Heartbeat) SetDataTransmitOffsetValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.DataTransmitOffset = &raw
+}
 
 type ProductInformation struct {
 	Info                MessageInfo `json:"info"`
@@ -918,6 +1039,23 @@ func (m *ProductInformation) MessageInfo() MessageInfo            { return m.Inf
 func (m *ProductInformation) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ProductInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ProductInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Nmea2000VersionValue returns Nmea2000Version as a physical value (value = raw * 0.001).
+// The bool is false when Nmea2000Version is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ProductInformation) Nmea2000VersionValue() (float64, bool) {
+	if m.Nmea2000Version == nil {
+		return 0, false
+	}
+	return float64(*m.Nmea2000Version) * 0.001, true
+}
+
+// SetNmea2000VersionValue sets Nmea2000Version from a physical value, rounded to the nearest
+// wire tick of 0.001.
+func (m *ProductInformation) SetNmea2000VersionValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.Nmea2000Version = &raw
+}
 
 type ConfigurationInformation struct {
 	Info                     MessageInfo `json:"info"`
@@ -960,6 +1098,125 @@ func (m *ManOverboardNotification) DecodePayload(payload []uint8) error {
 }
 func (m *ManOverboardNotification) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ActivationTimeValue returns ActivationTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when ActivationTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) ActivationTimeValue() (float64, bool) {
+	if m.ActivationTime == nil {
+		return 0, false
+	}
+	return float64(*m.ActivationTime) * 0.0001, true
+}
+
+// SetActivationTimeValue sets ActivationTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *ManOverboardNotification) SetActivationTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.ActivationTime = &raw
+}
+
+// PositionDateValue returns PositionDate as a physical value in d (value = raw).
+// The bool is false when PositionDate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) PositionDateValue() (float64, bool) {
+	if m.PositionDate == nil {
+		return 0, false
+	}
+	return float64(*m.PositionDate), true
+}
+
+// SetPositionDateValue sets PositionDate from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *ManOverboardNotification) SetPositionDateValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.PositionDate = &raw
+}
+
+// PositionTimeValue returns PositionTime as a physical value in s (value = raw * 0.0001).
+// The bool is false when PositionTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) PositionTimeValue() (float64, bool) {
+	if m.PositionTime == nil {
+		return 0, false
+	}
+	return float64(*m.PositionTime) * 0.0001, true
+}
+
+// SetPositionTimeValue sets PositionTime from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *ManOverboardNotification) SetPositionTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.PositionTime = &raw
+}
+
+// LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Latitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) LatitudeValue() (float64, bool) {
+	if m.Latitude == nil {
+		return 0, false
+	}
+	return float64(*m.Latitude) * 1e-07, true
+}
+
+// SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *ManOverboardNotification) SetLatitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Latitude = &raw
+}
+
+// LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
+// The bool is false when Longitude is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) LongitudeValue() (float64, bool) {
+	if m.Longitude == nil {
+		return 0, false
+	}
+	return float64(*m.Longitude) * 1e-07, true
+}
+
+// SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *ManOverboardNotification) SetLongitudeValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.Longitude = &raw
+}
+
+// CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Cog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) CogValue() (float64, bool) {
+	if m.Cog == nil {
+		return 0, false
+	}
+	return float64(*m.Cog) * 0.0001, true
+}
+
+// SetCogValue sets Cog from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *ManOverboardNotification) SetCogValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Cog = &raw
+}
+
+// SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Sog is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ManOverboardNotification) SogValue() (float64, bool) {
+	if m.Sog == nil {
+		return 0, false
+	}
+	return float64(*m.Sog) * 0.01, true
+}
+
+// SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *ManOverboardNotification) SetSogValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Sog = &raw
+}
+
 type RateOfTurn struct {
 	Info MessageInfo `json:"info"`
 	Sid  *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -972,6 +1229,23 @@ func (m *RateOfTurn) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *RateOfTurn) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *RateOfTurn) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// RateValue returns Rate as a physical value in rad/s (value = raw * 3.125e-08).
+// The bool is false when Rate is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *RateOfTurn) RateValue() (float64, bool) {
+	if m.Rate == nil {
+		return 0, false
+	}
+	return float64(*m.Rate) * 3.125e-08, true
+}
+
+// SetRateValue sets Rate from a physical value in rad/s, rounded to the nearest
+// wire tick of 3.125e-08.
+func (m *RateOfTurn) SetRateValue(v float64) {
+	raw := int64(math.Round(v / 3.125e-08))
+	m.Rate = &raw
+}
+
 type Heave struct {
 	Info  MessageInfo `json:"info"`
 	Sid   *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -983,6 +1257,23 @@ func (m *Heave) MessageInfo() MessageInfo            { return m.Info }
 func (m *Heave) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Heave) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Heave) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// HeaveValue returns Heave as a physical value in m (value = raw * 0.01).
+// The bool is false when Heave is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Heave) HeaveValue() (float64, bool) {
+	if m.Heave == nil {
+		return 0, false
+	}
+	return float64(*m.Heave) * 0.01, true
+}
+
+// SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *Heave) SetHeaveValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Heave = &raw
+}
 
 type Attitude struct {
 	Info  MessageInfo `json:"info"`
@@ -998,6 +1289,57 @@ func (m *Attitude) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Attitude) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Attitude) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// YawValue returns Yaw as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Yaw is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Attitude) YawValue() (float64, bool) {
+	if m.Yaw == nil {
+		return 0, false
+	}
+	return float64(*m.Yaw) * 0.0001, true
+}
+
+// SetYawValue sets Yaw from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *Attitude) SetYawValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Yaw = &raw
+}
+
+// PitchValue returns Pitch as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Pitch is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Attitude) PitchValue() (float64, bool) {
+	if m.Pitch == nil {
+		return 0, false
+	}
+	return float64(*m.Pitch) * 0.0001, true
+}
+
+// SetPitchValue sets Pitch from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *Attitude) SetPitchValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Pitch = &raw
+}
+
+// RollValue returns Roll as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Roll is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Attitude) RollValue() (float64, bool) {
+	if m.Roll == nil {
+		return 0, false
+	}
+	return float64(*m.Roll) * 0.0001, true
+}
+
+// SetRollValue sets Roll from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *Attitude) SetRollValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Roll = &raw
+}
+
 type MagneticVariation struct {
 	Info         MessageInfo `json:"info"`
 	Sid          *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1012,6 +1354,40 @@ func (m *MagneticVariation) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *MagneticVariation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MagneticVariation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// AgeOfServiceValue returns AgeOfService as a physical value in d (value = raw).
+// The bool is false when AgeOfService is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MagneticVariation) AgeOfServiceValue() (float64, bool) {
+	if m.AgeOfService == nil {
+		return 0, false
+	}
+	return float64(*m.AgeOfService), true
+}
+
+// SetAgeOfServiceValue sets AgeOfService from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *MagneticVariation) SetAgeOfServiceValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AgeOfService = &raw
+}
+
+// VariationValue returns Variation as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Variation is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *MagneticVariation) VariationValue() (float64, bool) {
+	if m.Variation == nil {
+		return 0, false
+	}
+	return float64(*m.Variation) * 0.0001, true
+}
+
+// SetVariationValue sets Variation from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *MagneticVariation) SetVariationValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Variation = &raw
+}
+
 type TripParametersVessel struct {
 	Info                   MessageInfo `json:"info"`
 	TimeToEmpty            *uint64     `json:"timeToEmpty,omitempty" n2k:"1"`
@@ -1025,6 +1401,74 @@ func (m *TripParametersVessel) MessageInfo() MessageInfo            { return m.I
 func (m *TripParametersVessel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *TripParametersVessel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TripParametersVessel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// TimeToEmptyValue returns TimeToEmpty as a physical value in s (value = raw * 0.001).
+// The bool is false when TimeToEmpty is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersVessel) TimeToEmptyValue() (float64, bool) {
+	if m.TimeToEmpty == nil {
+		return 0, false
+	}
+	return float64(*m.TimeToEmpty) * 0.001, true
+}
+
+// SetTimeToEmptyValue sets TimeToEmpty from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *TripParametersVessel) SetTimeToEmptyValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.TimeToEmpty = &raw
+}
+
+// DistanceToEmptyValue returns DistanceToEmpty as a physical value in m (value = raw * 0.01).
+// The bool is false when DistanceToEmpty is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersVessel) DistanceToEmptyValue() (float64, bool) {
+	if m.DistanceToEmpty == nil {
+		return 0, false
+	}
+	return float64(*m.DistanceToEmpty) * 0.01, true
+}
+
+// SetDistanceToEmptyValue sets DistanceToEmpty from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *TripParametersVessel) SetDistanceToEmptyValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.DistanceToEmpty = &raw
+}
+
+// EstimatedFuelRemainingValue returns EstimatedFuelRemaining as a physical value in L (value = raw).
+// The bool is false when EstimatedFuelRemaining is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersVessel) EstimatedFuelRemainingValue() (float64, bool) {
+	if m.EstimatedFuelRemaining == nil {
+		return 0, false
+	}
+	return float64(*m.EstimatedFuelRemaining), true
+}
+
+// SetEstimatedFuelRemainingValue sets EstimatedFuelRemaining from a physical value in L, rounded to the nearest
+// wire tick of 1.
+func (m *TripParametersVessel) SetEstimatedFuelRemainingValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.EstimatedFuelRemaining = &raw
+}
+
+// TripRunTimeValue returns TripRunTime as a physical value in s (value = raw * 0.001).
+// The bool is false when TripRunTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TripParametersVessel) TripRunTimeValue() (float64, bool) {
+	if m.TripRunTime == nil {
+		return 0, false
+	}
+	return float64(*m.TripRunTime) * 0.001, true
+}
+
+// SetTripRunTimeValue sets TripRunTime from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *TripParametersVessel) SetTripRunTimeValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.TripRunTime = &raw
+}
 
 type AgsConfigurationStatus struct {
 	Info              MessageInfo `json:"info"`
@@ -1086,6 +1530,23 @@ func (m *LeewayAngle) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LeewayAngle) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LeewayAngle) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// LeewayAngleValue returns LeewayAngle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when LeewayAngle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *LeewayAngle) LeewayAngleValue() (float64, bool) {
+	if m.LeewayAngle == nil {
+		return 0, false
+	}
+	return float64(*m.LeewayAngle) * 0.0001, true
+}
+
+// SetLeewayAngleValue sets LeewayAngle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *LeewayAngle) SetLeewayAngleValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.LeewayAngle = &raw
+}
+
 type Speed struct {
 	Info                     MessageInfo `json:"info"`
 	Sid                      *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1100,6 +1561,40 @@ func (m *Speed) MessageInfo() MessageInfo            { return m.Info }
 func (m *Speed) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Speed) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Speed) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// SpeedWaterReferencedValue returns SpeedWaterReferenced as a physical value in m/s (value = raw * 0.01).
+// The bool is false when SpeedWaterReferenced is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Speed) SpeedWaterReferencedValue() (float64, bool) {
+	if m.SpeedWaterReferenced == nil {
+		return 0, false
+	}
+	return float64(*m.SpeedWaterReferenced) * 0.01, true
+}
+
+// SetSpeedWaterReferencedValue sets SpeedWaterReferenced from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *Speed) SetSpeedWaterReferencedValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SpeedWaterReferenced = &raw
+}
+
+// SpeedGroundReferencedValue returns SpeedGroundReferenced as a physical value in m/s (value = raw * 0.01).
+// The bool is false when SpeedGroundReferenced is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Speed) SpeedGroundReferencedValue() (float64, bool) {
+	if m.SpeedGroundReferenced == nil {
+		return 0, false
+	}
+	return float64(*m.SpeedGroundReferenced) * 0.01, true
+}
+
+// SetSpeedGroundReferencedValue sets SpeedGroundReferenced from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *Speed) SetSpeedGroundReferencedValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SpeedGroundReferenced = &raw
+}
 
 type TrackedTargetData struct {
 	Info              MessageInfo `json:"info"`
@@ -1125,3 +1620,122 @@ func (m *TrackedTargetData) MessageInfo() MessageInfo            { return m.Info
 func (m *TrackedTargetData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *TrackedTargetData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TrackedTargetData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// BearingValue returns Bearing as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Bearing is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) BearingValue() (float64, bool) {
+	if m.Bearing == nil {
+		return 0, false
+	}
+	return float64(*m.Bearing) * 0.0001, true
+}
+
+// SetBearingValue sets Bearing from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *TrackedTargetData) SetBearingValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Bearing = &raw
+}
+
+// DistanceValue returns Distance as a physical value in m (value = raw * 0.01).
+// The bool is false when Distance is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) DistanceValue() (float64, bool) {
+	if m.Distance == nil {
+		return 0, false
+	}
+	return float64(*m.Distance) * 0.01, true
+}
+
+// SetDistanceValue sets Distance from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *TrackedTargetData) SetDistanceValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Distance = &raw
+}
+
+// CourseValue returns Course as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Course is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) CourseValue() (float64, bool) {
+	if m.Course == nil {
+		return 0, false
+	}
+	return float64(*m.Course) * 0.0001, true
+}
+
+// SetCourseValue sets Course from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *TrackedTargetData) SetCourseValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.Course = &raw
+}
+
+// SpeedValue returns Speed as a physical value in m/s (value = raw * 0.01).
+// The bool is false when Speed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) SpeedValue() (float64, bool) {
+	if m.Speed == nil {
+		return 0, false
+	}
+	return float64(*m.Speed) * 0.01, true
+}
+
+// SetSpeedValue sets Speed from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *TrackedTargetData) SetSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Speed = &raw
+}
+
+// CpaValue returns Cpa as a physical value in m (value = raw * 0.01).
+// The bool is false when Cpa is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) CpaValue() (float64, bool) {
+	if m.Cpa == nil {
+		return 0, false
+	}
+	return float64(*m.Cpa) * 0.01, true
+}
+
+// SetCpaValue sets Cpa from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *TrackedTargetData) SetCpaValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Cpa = &raw
+}
+
+// TcpaValue returns Tcpa as a physical value in s (value = raw * 0.001).
+// The bool is false when Tcpa is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) TcpaValue() (float64, bool) {
+	if m.Tcpa == nil {
+		return 0, false
+	}
+	return float64(*m.Tcpa) * 0.001, true
+}
+
+// SetTcpaValue sets Tcpa from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *TrackedTargetData) SetTcpaValue(v float64) {
+	raw := int64(math.Round(v / 0.001))
+	m.Tcpa = &raw
+}
+
+// UtcOfFixValue returns UtcOfFix as a physical value in s (value = raw * 0.0001).
+// The bool is false when UtcOfFix is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *TrackedTargetData) UtcOfFixValue() (float64, bool) {
+	if m.UtcOfFix == nil {
+		return 0, false
+	}
+	return float64(*m.UtcOfFix) * 0.0001, true
+}
+
+// SetUtcOfFixValue sets UtcOfFix from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *TrackedTargetData) SetUtcOfFixValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.UtcOfFix = &raw
+}

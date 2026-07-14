@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type AirmarBootStateAcknowledgment struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -78,6 +80,23 @@ func (m *AirmarSpeedPulseCount) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *AirmarSpeedPulseCount) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedPulseCount) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// DurationOfIntervalValue returns DurationOfInterval as a physical value in s (value = raw * 0.001).
+// The bool is false when DurationOfInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarSpeedPulseCount) DurationOfIntervalValue() (float64, bool) {
+	if m.DurationOfInterval == nil {
+		return 0, false
+	}
+	return float64(*m.DurationOfInterval) * 0.001, true
+}
+
+// SetDurationOfIntervalValue sets DurationOfInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *AirmarSpeedPulseCount) SetDurationOfIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.DurationOfInterval = &raw
+}
+
 type AirmarDeviceInformation struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -94,6 +113,40 @@ func (m *AirmarDeviceInformation) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AirmarDeviceInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// InternalDeviceTemperatureValue returns InternalDeviceTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when InternalDeviceTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarDeviceInformation) InternalDeviceTemperatureValue() (float64, bool) {
+	if m.InternalDeviceTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.InternalDeviceTemperature) * 0.01, true
+}
+
+// SetInternalDeviceTemperatureValue sets InternalDeviceTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarDeviceInformation) SetInternalDeviceTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.InternalDeviceTemperature = &raw
+}
+
+// SupplyVoltageValue returns SupplyVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when SupplyVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarDeviceInformation) SupplyVoltageValue() (float64, bool) {
+	if m.SupplyVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.SupplyVoltage) * 0.01, true
+}
+
+// SetSupplyVoltageValue sets SupplyVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarDeviceInformation) SetSupplyVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SupplyVoltage = &raw
+}
 
 type AirmarAddressableMultiFrame struct {
 	Info             MessageInfo `json:"info"`
@@ -126,6 +179,57 @@ func (m *AirmarAttitudeOffset) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarAttitudeOffset) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarAttitudeOffset) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// AzimuthOffsetValue returns AzimuthOffset as a physical value in rad (value = raw * 0.0001).
+// The bool is false when AzimuthOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAttitudeOffset) AzimuthOffsetValue() (float64, bool) {
+	if m.AzimuthOffset == nil {
+		return 0, false
+	}
+	return float64(*m.AzimuthOffset) * 0.0001, true
+}
+
+// SetAzimuthOffsetValue sets AzimuthOffset from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AirmarAttitudeOffset) SetAzimuthOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.AzimuthOffset = &raw
+}
+
+// PitchOffsetValue returns PitchOffset as a physical value in rad (value = raw * 0.0001).
+// The bool is false when PitchOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAttitudeOffset) PitchOffsetValue() (float64, bool) {
+	if m.PitchOffset == nil {
+		return 0, false
+	}
+	return float64(*m.PitchOffset) * 0.0001, true
+}
+
+// SetPitchOffsetValue sets PitchOffset from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AirmarAttitudeOffset) SetPitchOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.PitchOffset = &raw
+}
+
+// RollOffsetValue returns RollOffset as a physical value in rad (value = raw * 0.0001).
+// The bool is false when RollOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAttitudeOffset) RollOffsetValue() (float64, bool) {
+	if m.RollOffset == nil {
+		return 0, false
+	}
+	return float64(*m.RollOffset) * 0.0001, true
+}
+
+// SetRollOffsetValue sets RollOffset from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *AirmarAttitudeOffset) SetRollOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.RollOffset = &raw
+}
+
 type AirmarCalibrateCompass struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -153,6 +257,159 @@ func (m *AirmarCalibrateCompass) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarCalibrateCompass) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// XAxisGainValueValue returns XAxisGainValue as a physical value (value = raw * 0.01).
+// The bool is false when XAxisGainValue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) XAxisGainValueValue() (float64, bool) {
+	if m.XAxisGainValue == nil {
+		return 0, false
+	}
+	return float64(*m.XAxisGainValue) * 0.01, true
+}
+
+// SetXAxisGainValueValue sets XAxisGainValue from a physical value, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetXAxisGainValueValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.XAxisGainValue = &raw
+}
+
+// YAxisGainValueValue returns YAxisGainValue as a physical value (value = raw * 0.01).
+// The bool is false when YAxisGainValue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) YAxisGainValueValue() (float64, bool) {
+	if m.YAxisGainValue == nil {
+		return 0, false
+	}
+	return float64(*m.YAxisGainValue) * 0.01, true
+}
+
+// SetYAxisGainValueValue sets YAxisGainValue from a physical value, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetYAxisGainValueValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.YAxisGainValue = &raw
+}
+
+// ZAxisGainValueValue returns ZAxisGainValue as a physical value (value = raw * 0.01).
+// The bool is false when ZAxisGainValue is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) ZAxisGainValueValue() (float64, bool) {
+	if m.ZAxisGainValue == nil {
+		return 0, false
+	}
+	return float64(*m.ZAxisGainValue) * 0.01, true
+}
+
+// SetZAxisGainValueValue sets ZAxisGainValue from a physical value, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetZAxisGainValueValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.ZAxisGainValue = &raw
+}
+
+// XAxisLinearOffsetValue returns XAxisLinearOffset as a physical value in T (value = raw * 0.01).
+// The bool is false when XAxisLinearOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) XAxisLinearOffsetValue() (float64, bool) {
+	if m.XAxisLinearOffset == nil {
+		return 0, false
+	}
+	return float64(*m.XAxisLinearOffset) * 0.01, true
+}
+
+// SetXAxisLinearOffsetValue sets XAxisLinearOffset from a physical value in T, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetXAxisLinearOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.XAxisLinearOffset = &raw
+}
+
+// YAxisLinearOffsetValue returns YAxisLinearOffset as a physical value in T (value = raw * 0.01).
+// The bool is false when YAxisLinearOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) YAxisLinearOffsetValue() (float64, bool) {
+	if m.YAxisLinearOffset == nil {
+		return 0, false
+	}
+	return float64(*m.YAxisLinearOffset) * 0.01, true
+}
+
+// SetYAxisLinearOffsetValue sets YAxisLinearOffset from a physical value in T, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetYAxisLinearOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.YAxisLinearOffset = &raw
+}
+
+// ZAxisLinearOffsetValue returns ZAxisLinearOffset as a physical value in T (value = raw * 0.01).
+// The bool is false when ZAxisLinearOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) ZAxisLinearOffsetValue() (float64, bool) {
+	if m.ZAxisLinearOffset == nil {
+		return 0, false
+	}
+	return float64(*m.ZAxisLinearOffset) * 0.01, true
+}
+
+// SetZAxisLinearOffsetValue sets ZAxisLinearOffset from a physical value in T, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateCompass) SetZAxisLinearOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.ZAxisLinearOffset = &raw
+}
+
+// XAxisAngularOffsetValue returns XAxisAngularOffset as a physical value in deg (value = raw * 0.1).
+// The bool is false when XAxisAngularOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) XAxisAngularOffsetValue() (float64, bool) {
+	if m.XAxisAngularOffset == nil {
+		return 0, false
+	}
+	return float64(*m.XAxisAngularOffset) * 0.1, true
+}
+
+// SetXAxisAngularOffsetValue sets XAxisAngularOffset from a physical value in deg, rounded to the nearest
+// wire tick of 0.1.
+func (m *AirmarCalibrateCompass) SetXAxisAngularOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.XAxisAngularOffset = &raw
+}
+
+// PitchAndRollDampingValue returns PitchAndRollDamping as a physical value in s (value = raw * 0.05).
+// The bool is false when PitchAndRollDamping is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) PitchAndRollDampingValue() (float64, bool) {
+	if m.PitchAndRollDamping == nil {
+		return 0, false
+	}
+	return float64(*m.PitchAndRollDamping) * 0.05, true
+}
+
+// SetPitchAndRollDampingValue sets PitchAndRollDamping from a physical value in s, rounded to the nearest
+// wire tick of 0.05.
+func (m *AirmarCalibrateCompass) SetPitchAndRollDampingValue(v float64) {
+	raw := int64(math.Round(v / 0.05))
+	m.PitchAndRollDamping = &raw
+}
+
+// CompassRateGyroDampingValue returns CompassRateGyroDamping as a physical value in s (value = raw * 0.05).
+// The bool is false when CompassRateGyroDamping is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateCompass) CompassRateGyroDampingValue() (float64, bool) {
+	if m.CompassRateGyroDamping == nil {
+		return 0, false
+	}
+	return float64(*m.CompassRateGyroDamping) * 0.05, true
+}
+
+// SetCompassRateGyroDampingValue sets CompassRateGyroDamping from a physical value in s, rounded to the nearest
+// wire tick of 0.05.
+func (m *AirmarCalibrateCompass) SetCompassRateGyroDampingValue(v float64) {
+	raw := int64(math.Round(v / 0.05))
+	m.CompassRateGyroDamping = &raw
+}
+
 type AirmarCalibrateDepth struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -166,6 +423,23 @@ func (m *AirmarCalibrateDepth) MessageInfo() MessageInfo            { return m.I
 func (m *AirmarCalibrateDepth) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarCalibrateDepth) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarCalibrateDepth) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// SpeedOfSoundModeValue returns SpeedOfSoundMode as a physical value in m/s (value = raw * 0.1).
+// The bool is false when SpeedOfSoundMode is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateDepth) SpeedOfSoundModeValue() (float64, bool) {
+	if m.SpeedOfSoundMode == nil {
+		return 0, false
+	}
+	return float64(*m.SpeedOfSoundMode) * 0.1, true
+}
+
+// SetSpeedOfSoundModeValue sets SpeedOfSoundMode from a physical value in m/s, rounded to the nearest
+// wire tick of 0.1.
+func (m *AirmarCalibrateDepth) SetSpeedOfSoundModeValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.SpeedOfSoundMode = &raw
+}
 
 type AirmarCalibrateSpeed struct {
 	Info                      MessageInfo                      `json:"info"`
@@ -187,6 +461,40 @@ func (m *AirmarCalibrateSpeed) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarCalibrateSpeed) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarCalibrateSpeed) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// InputFrequencyValue returns InputFrequency as a physical value in Hz (value = raw * 0.1).
+// The bool is false when InputFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateSpeedRepeating1) InputFrequencyValue() (float64, bool) {
+	if m.InputFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.InputFrequency) * 0.1, true
+}
+
+// SetInputFrequencyValue sets InputFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.1.
+func (m *AirmarCalibrateSpeedRepeating1) SetInputFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.InputFrequency = &raw
+}
+
+// OutputSpeedValue returns OutputSpeed as a physical value in m/s (value = raw * 0.01).
+// The bool is false when OutputSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateSpeedRepeating1) OutputSpeedValue() (float64, bool) {
+	if m.OutputSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.OutputSpeed) * 0.01, true
+}
+
+// SetOutputSpeedValue sets OutputSpeed from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarCalibrateSpeedRepeating1) SetOutputSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.OutputSpeed = &raw
+}
+
 type AirmarCalibrateTemperature struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -203,6 +511,23 @@ func (m *AirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AirmarCalibrateTemperature) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// TemperatureOffsetValue returns TemperatureOffset as a physical value in K (value = raw * 0.001).
+// The bool is false when TemperatureOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarCalibrateTemperature) TemperatureOffsetValue() (float64, bool) {
+	if m.TemperatureOffset == nil {
+		return 0, false
+	}
+	return float64(*m.TemperatureOffset) * 0.001, true
+}
+
+// SetTemperatureOffsetValue sets TemperatureOffset from a physical value in K, rounded to the nearest
+// wire tick of 0.001.
+func (m *AirmarCalibrateTemperature) SetTemperatureOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.001))
+	m.TemperatureOffset = &raw
+}
 
 type AirmarNmea2000Options struct {
 	Info                 MessageInfo `json:"info"`
@@ -248,6 +573,40 @@ func (m *AirmarSpeedFilterIir) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarSpeedFilterIir) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedFilterIir) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
+// The bool is false when SampleInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarSpeedFilterIir) SampleIntervalValue() (float64, bool) {
+	if m.SampleInterval == nil {
+		return 0, false
+	}
+	return float64(*m.SampleInterval) * 0.01, true
+}
+
+// SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarSpeedFilterIir) SetSampleIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SampleInterval = &raw
+}
+
+// FilterDurationValue returns FilterDuration as a physical value in s (value = raw * 0.01).
+// The bool is false when FilterDuration is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarSpeedFilterIir) FilterDurationValue() (float64, bool) {
+	if m.FilterDuration == nil {
+		return 0, false
+	}
+	return float64(*m.FilterDuration) * 0.01, true
+}
+
+// SetFilterDurationValue sets FilterDuration from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarSpeedFilterIir) SetFilterDurationValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.FilterDuration = &raw
+}
+
 type AirmarSpeedFilterNone struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -262,6 +621,23 @@ func (m *AirmarSpeedFilterNone) MessageInfo() MessageInfo            { return m.
 func (m *AirmarSpeedFilterNone) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarSpeedFilterNone) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedFilterNone) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
+// The bool is false when SampleInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarSpeedFilterNone) SampleIntervalValue() (float64, bool) {
+	if m.SampleInterval == nil {
+		return 0, false
+	}
+	return float64(*m.SampleInterval) * 0.01, true
+}
+
+// SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarSpeedFilterNone) SetSampleIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SampleInterval = &raw
+}
 
 type AirmarTemperatureFilterIir struct {
 	Info             MessageInfo `json:"info"`
@@ -281,6 +657,40 @@ func (m *AirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
+// The bool is false when SampleInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarTemperatureFilterIir) SampleIntervalValue() (float64, bool) {
+	if m.SampleInterval == nil {
+		return 0, false
+	}
+	return float64(*m.SampleInterval) * 0.01, true
+}
+
+// SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarTemperatureFilterIir) SetSampleIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SampleInterval = &raw
+}
+
+// FilterDurationValue returns FilterDuration as a physical value in s (value = raw * 0.01).
+// The bool is false when FilterDuration is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarTemperatureFilterIir) FilterDurationValue() (float64, bool) {
+	if m.FilterDuration == nil {
+		return 0, false
+	}
+	return float64(*m.FilterDuration) * 0.01, true
+}
+
+// SetFilterDurationValue sets FilterDuration from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarTemperatureFilterIir) SetFilterDurationValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.FilterDuration = &raw
+}
+
 type AirmarTemperatureFilterNone struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -297,6 +707,23 @@ func (m *AirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
+// The bool is false when SampleInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarTemperatureFilterNone) SampleIntervalValue() (float64, bool) {
+	if m.SampleInterval == nil {
+		return 0, false
+	}
+	return float64(*m.SampleInterval) * 0.01, true
+}
+
+// SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarTemperatureFilterNone) SetSampleIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SampleInterval = &raw
+}
 
 type AirmarTrueWindOptions struct {
 	Info                  MessageInfo `json:"info"`
@@ -330,6 +757,57 @@ func (m *AirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ApparentWindchillTemperatureValue returns ApparentWindchillTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when ApparentWindchillTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAdditionalWeatherData) ApparentWindchillTemperatureValue() (float64, bool) {
+	if m.ApparentWindchillTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentWindchillTemperature) * 0.01, true
+}
+
+// SetApparentWindchillTemperatureValue sets ApparentWindchillTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarAdditionalWeatherData) SetApparentWindchillTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.ApparentWindchillTemperature = &raw
+}
+
+// TrueWindchillTemperatureValue returns TrueWindchillTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when TrueWindchillTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAdditionalWeatherData) TrueWindchillTemperatureValue() (float64, bool) {
+	if m.TrueWindchillTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.TrueWindchillTemperature) * 0.01, true
+}
+
+// SetTrueWindchillTemperatureValue sets TrueWindchillTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarAdditionalWeatherData) SetTrueWindchillTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.TrueWindchillTemperature = &raw
+}
+
+// DewpointValue returns Dewpoint as a physical value in K (value = raw * 0.01).
+// The bool is false when Dewpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarAdditionalWeatherData) DewpointValue() (float64, bool) {
+	if m.Dewpoint == nil {
+		return 0, false
+	}
+	return float64(*m.Dewpoint) * 0.01, true
+}
+
+// SetDewpointValue sets Dewpoint from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarAdditionalWeatherData) SetDewpointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Dewpoint = &raw
+}
+
 type AirmarHeaterControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -345,6 +823,57 @@ func (m *AirmarHeaterControl) MessageInfo() MessageInfo            { return m.In
 func (m *AirmarHeaterControl) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarHeaterControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarHeaterControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// PlateTemperatureValue returns PlateTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when PlateTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarHeaterControl) PlateTemperatureValue() (float64, bool) {
+	if m.PlateTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.PlateTemperature) * 0.01, true
+}
+
+// SetPlateTemperatureValue sets PlateTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarHeaterControl) SetPlateTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.PlateTemperature = &raw
+}
+
+// AirTemperatureValue returns AirTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when AirTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarHeaterControl) AirTemperatureValue() (float64, bool) {
+	if m.AirTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.AirTemperature) * 0.01, true
+}
+
+// SetAirTemperatureValue sets AirTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarHeaterControl) SetAirTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.AirTemperature = &raw
+}
+
+// DewpointValue returns Dewpoint as a physical value in K (value = raw * 0.01).
+// The bool is false when Dewpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AirmarHeaterControl) DewpointValue() (float64, bool) {
+	if m.Dewpoint == nil {
+		return 0, false
+	}
+	return float64(*m.Dewpoint) * 0.01, true
+}
+
+// SetDewpointValue sets Dewpoint from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *AirmarHeaterControl) SetDewpointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Dewpoint = &raw
+}
 
 type AirmarPost struct {
 	Info                              MessageInfo `json:"info"`

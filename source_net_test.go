@@ -1,8 +1,11 @@
 package n2k
 
 import (
+	"bufio"
 	"context"
 	"net"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -201,3 +204,190 @@ func TestUDPSource_YDRaw(t *testing.T) {
 }
 
 func u64(v uint64) *uint64 { return &v }
+
+// --- End-to-end write path: a real NewClient over a fake TCP gateway ---
+
+// fakeYDGateway accepts one connection, forwards received RAW lines to the
+// lines channel, and echoes each accepted transmit line back with a T
+// direction (as a YDWG-02 does), which lets the client observe its own
+// address claim.
+func fakeYDGateway(t *testing.T, lines chan<- string) string {
+	t.Helper()
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = ln.Close() })
+	go func() {
+		conn, err := ln.Accept()
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		scanner := bufio.NewScanner(conn)
+		for scanner.Scan() {
+			line := scanner.Text()
+			select {
+			case lines <- line:
+			default:
+			}
+			// Echo back with a timestamp and T direction.
+			_, _ = conn.Write([]byte("00:00:00.000 T " + line + "\r\n"))
+		}
+	}()
+	return ln.Addr().String()
+}
+
+func TestNewClient_TCPYDRaw_ClaimsAndWrites(t *testing.T) {
+	lines := make(chan string, 64)
+	addr := fakeYDGateway(t, lines)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	c, err := NewClient(ctx,
+		TCP(addr, FormatYDRaw),
+		WithClaimTimeout(500*time.Millisecond),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	// The client must have transmitted an address claim (PGN 60928) as a
+	// RAW line during NewClient.
+	sawClaim := false
+	deadline := time.After(2 * time.Second)
+drainClaim:
+	for {
+		select {
+		case line := <-lines:
+			if frame, ok := gatewayParseForTest(line); ok {
+				rawPGN := (frame & 0x3FFFF00) >> 8
+				if uint8((rawPGN>>8)&0xFF) < 240 {
+					rawPGN &= 0xFFF00
+				}
+				if rawPGN == 60928 {
+					sawClaim = true
+					break drainClaim
+				}
+			}
+		case <-deadline:
+			break drainClaim
+		}
+	}
+	require.True(t, sawClaim, "client should have transmitted an address claim over the gateway")
+
+	// A user write reaches the gateway as a RAW line for its PGN.
+	heading := &pgn.VesselHeading{}
+	heading.SetHeadingValue(1.5708)
+	require.NoError(t, c.Write(heading).Wait())
+
+	sawHeading := false
+	deadline = time.After(2 * time.Second)
+drainHeading:
+	for {
+		select {
+		case line := <-lines:
+			if frame, ok := gatewayParseForTest(line); ok {
+				if (frame&0x3FFFF00)>>8 == 127250 {
+					sawHeading = true
+					break drainHeading
+				}
+			}
+		case <-deadline:
+			break drainHeading
+		}
+	}
+	require.True(t, sawHeading, "user write should reach the gateway as a RAW line")
+}
+
+// gatewayParseForTest extracts the CAN ID from an application-to-gateway RAW
+// line (no time/direction prefix).
+func gatewayParseForTest(line string) (uint32, bool) {
+	fields := strings.Fields(line)
+	if len(fields) < 2 {
+		return 0, false
+	}
+	id, err := strconv.ParseUint(fields[0], 16, 32)
+	if err != nil {
+		return 0, false
+	}
+	return uint32(id), true
+}
+
+func TestNewClient_TCPActisense_Writes(t *testing.T) {
+	sends := make(chan []byte, 16)
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = ln.Close() })
+	go func() {
+		conn, err := ln.Accept()
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		buf := make([]byte, 4096)
+		for {
+			n, err := conn.Read(buf)
+			if n > 0 {
+				chunk := make([]byte, n)
+				copy(chunk, buf[:n])
+				select {
+				case sends <- chunk:
+				default:
+				}
+			}
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Actisense sends carry no source address, so address claiming cannot
+	// arbitrate; use an explicit address so NewClient returns promptly.
+	c, err := NewClient(ctx,
+		TCP(ln.Addr().String(), FormatActisense),
+		WithSourceAddress(42),
+		WithClaimTimeout(500*time.Millisecond),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	heading := &pgn.VesselHeading{}
+	heading.SetHeadingValue(1.5708)
+	require.NoError(t, c.Write(heading).Wait())
+
+	// Collect stream bytes until a 0x94 send command for PGN 127250 appears.
+	var wire []byte
+	deadline := time.After(2 * time.Second)
+	found := false
+	for !found {
+		select {
+		case chunk := <-sends:
+			wire = append(wire, chunk...)
+			found = containsActisenseSend(wire, 127250)
+		case <-deadline:
+			t.Fatalf("no Actisense send command for PGN 127250 seen; got %d bytes", len(wire))
+		}
+	}
+}
+
+// containsActisenseSend reports whether buf contains a framed 0x94 send
+// command whose payload targets pgnNum. It is a lenient scan sufficient for
+// the test: it looks for the DLE STX 0x94 header and decodes the PGN.
+func containsActisenseSend(buf []byte, pgnNum uint32) bool {
+	for i := 0; i+6 < len(buf); i++ {
+		if buf[i] == 0x10 && buf[i+1] == 0x02 && buf[i+2] == 0x94 {
+			// payload begins after cmd(1)+len(1): prio(1) then PGN(3 LE).
+			p := i + 5
+			if p+3 >= len(buf) {
+				return false
+			}
+			got := uint32(buf[p]) | uint32(buf[p+1])<<8 | uint32(buf[p+2])<<16
+			if got == pgnNum {
+				return true
+			}
+		}
+	}
+	return false
+}

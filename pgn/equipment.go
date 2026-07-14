@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type FluidLevel struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -16,6 +18,40 @@ func (m *FluidLevel) MessageInfo() MessageInfo            { return m.Info }
 func (m *FluidLevel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FluidLevel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FluidLevel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// LevelValue returns Level as a physical value in % (value = raw * 0.004).
+// The bool is false when Level is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FluidLevel) LevelValue() (float64, bool) {
+	if m.Level == nil {
+		return 0, false
+	}
+	return float64(*m.Level) * 0.004, true
+}
+
+// SetLevelValue sets Level from a physical value in %, rounded to the nearest
+// wire tick of 0.004.
+func (m *FluidLevel) SetLevelValue(v float64) {
+	raw := int64(math.Round(v / 0.004))
+	m.Level = &raw
+}
+
+// CapacityValue returns Capacity as a physical value in L (value = raw * 0.1).
+// The bool is false when Capacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FluidLevel) CapacityValue() (float64, bool) {
+	if m.Capacity == nil {
+		return 0, false
+	}
+	return float64(*m.Capacity) * 0.1, true
+}
+
+// SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
+// wire tick of 0.1.
+func (m *FluidLevel) SetCapacityValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Capacity = &raw
+}
 
 type ElevatorCarStatus struct {
 	Info                                   MessageInfo `json:"info"`
@@ -55,6 +91,23 @@ func (m *ElevatorCarStatus) MessageInfo() MessageInfo            { return m.Info
 func (m *ElevatorCarStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ElevatorCarStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ElevatorCarStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// SpeedOfElevatorCarValue returns SpeedOfElevatorCar as a physical value in m/s (value = raw * 0.01).
+// The bool is false when SpeedOfElevatorCar is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElevatorCarStatus) SpeedOfElevatorCarValue() (float64, bool) {
+	if m.SpeedOfElevatorCar == nil {
+		return 0, false
+	}
+	return float64(*m.SpeedOfElevatorCar) * 0.01, true
+}
+
+// SetSpeedOfElevatorCarValue sets SpeedOfElevatorCar from a physical value in m/s, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElevatorCarStatus) SetSpeedOfElevatorCarValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.SpeedOfElevatorCar = &raw
+}
 
 type ElevatorMotorControl struct {
 	Info                                          MessageInfo `json:"info"`
@@ -152,3 +205,156 @@ func (m *WatermakerInputSettingAndStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *WatermakerInputSettingAndStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// SalinityValue returns Salinity as a physical value in ppm (value = raw).
+// The bool is false when Salinity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) SalinityValue() (float64, bool) {
+	if m.Salinity == nil {
+		return 0, false
+	}
+	return float64(*m.Salinity), true
+}
+
+// SetSalinityValue sets Salinity from a physical value in ppm, rounded to the nearest
+// wire tick of 1.
+func (m *WatermakerInputSettingAndStatus) SetSalinityValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Salinity = &raw
+}
+
+// ProductWaterTemperatureValue returns ProductWaterTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when ProductWaterTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) ProductWaterTemperatureValue() (float64, bool) {
+	if m.ProductWaterTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.ProductWaterTemperature) * 0.01, true
+}
+
+// SetProductWaterTemperatureValue sets ProductWaterTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *WatermakerInputSettingAndStatus) SetProductWaterTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.ProductWaterTemperature = &raw
+}
+
+// PreFilterPressureValue returns PreFilterPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when PreFilterPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) PreFilterPressureValue() (float64, bool) {
+	if m.PreFilterPressure == nil {
+		return 0, false
+	}
+	return float64(*m.PreFilterPressure) * 100, true
+}
+
+// SetPreFilterPressureValue sets PreFilterPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *WatermakerInputSettingAndStatus) SetPreFilterPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.PreFilterPressure = &raw
+}
+
+// PostFilterPressureValue returns PostFilterPressure as a physical value in Pa (value = raw * 100).
+// The bool is false when PostFilterPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) PostFilterPressureValue() (float64, bool) {
+	if m.PostFilterPressure == nil {
+		return 0, false
+	}
+	return float64(*m.PostFilterPressure) * 100, true
+}
+
+// SetPostFilterPressureValue sets PostFilterPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 100.
+func (m *WatermakerInputSettingAndStatus) SetPostFilterPressureValue(v float64) {
+	raw := uint64(math.Round(v / 100))
+	m.PostFilterPressure = &raw
+}
+
+// FeedPressureValue returns FeedPressure as a physical value in Pa (value = raw * 1000).
+// The bool is false when FeedPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) FeedPressureValue() (float64, bool) {
+	if m.FeedPressure == nil {
+		return 0, false
+	}
+	return float64(*m.FeedPressure) * 1000, true
+}
+
+// SetFeedPressureValue sets FeedPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 1000.
+func (m *WatermakerInputSettingAndStatus) SetFeedPressureValue(v float64) {
+	raw := int64(math.Round(v / 1000))
+	m.FeedPressure = &raw
+}
+
+// SystemHighPressureValue returns SystemHighPressure as a physical value in Pa (value = raw * 1000).
+// The bool is false when SystemHighPressure is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) SystemHighPressureValue() (float64, bool) {
+	if m.SystemHighPressure == nil {
+		return 0, false
+	}
+	return float64(*m.SystemHighPressure) * 1000, true
+}
+
+// SetSystemHighPressureValue sets SystemHighPressure from a physical value in Pa, rounded to the nearest
+// wire tick of 1000.
+func (m *WatermakerInputSettingAndStatus) SetSystemHighPressureValue(v float64) {
+	raw := uint64(math.Round(v / 1000))
+	m.SystemHighPressure = &raw
+}
+
+// ProductWaterFlowValue returns ProductWaterFlow as a physical value in L/h (value = raw * 0.1).
+// The bool is false when ProductWaterFlow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) ProductWaterFlowValue() (float64, bool) {
+	if m.ProductWaterFlow == nil {
+		return 0, false
+	}
+	return float64(*m.ProductWaterFlow) * 0.1, true
+}
+
+// SetProductWaterFlowValue sets ProductWaterFlow from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *WatermakerInputSettingAndStatus) SetProductWaterFlowValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.ProductWaterFlow = &raw
+}
+
+// BrineWaterFlowValue returns BrineWaterFlow as a physical value in L/h (value = raw * 0.1).
+// The bool is false when BrineWaterFlow is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) BrineWaterFlowValue() (float64, bool) {
+	if m.BrineWaterFlow == nil {
+		return 0, false
+	}
+	return float64(*m.BrineWaterFlow) * 0.1, true
+}
+
+// SetBrineWaterFlowValue sets BrineWaterFlow from a physical value in L/h, rounded to the nearest
+// wire tick of 0.1.
+func (m *WatermakerInputSettingAndStatus) SetBrineWaterFlowValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.BrineWaterFlow = &raw
+}
+
+// RunTimeValue returns RunTime as a physical value in s (value = raw).
+// The bool is false when RunTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *WatermakerInputSettingAndStatus) RunTimeValue() (float64, bool) {
+	if m.RunTime == nil {
+		return 0, false
+	}
+	return float64(*m.RunTime), true
+}
+
+// SetRunTimeValue sets RunTime from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *WatermakerInputSettingAndStatus) SetRunTimeValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.RunTime = &raw
+}
