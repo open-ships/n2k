@@ -1,0 +1,59 @@
+version: 2
+project_name: n2k
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: n2k
+    main: ./cmd/n2k
+    binary: n2k
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w
+      - -X main.version={{ .Version }}
+      - -X main.commit={{ .ShortCommit }}
+      - -X main.date={{ .Date }}
+
+archives:
+  - id: n2k
+    name_template: "n2k_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs"
+      - "^test"
+      - "^chore"
+
+release:
+  # Semver tags, CalVer release names.
+  name_template: '{{ .Tag }} ({{ .Now.Format "2006.01.02" }})'
+
+# Homebrew tap -- uncomment once the open-ships/homebrew-tap repository
+# exists and this repository has a HOMEBREW_TAP_TOKEN actions secret with
+# contents:write access to the tap.
+#
+# brews:
+#   - name: n2k
+#     repository:
+#       owner: open-ships
+#       name: homebrew-tap
+#       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+#     homepage: https://github.com/open-ships/n2k
+#     description: "Decode NMEA 2000 traffic to JSON from CAN, serial, WiFi gateways, or capture files"
+#     license: MIT
+#     test: |
+#       system "#{bin}/n2k", "version"

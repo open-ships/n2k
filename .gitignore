@@ -16,6 +16,9 @@ bin
 .vscode**
 sniffer
 
+# goreleaser output
+dist/
+
 # Scratch
 scratch/*
 

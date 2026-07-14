@@ -1,0 +1,70 @@
+name: Release
+
+# Two ways in:
+#   - Every green Test run on main auto-tags the next v0.x.y patch release.
+#   - Manually pushing a v*.*.* tag (e.g. a minor bump: git tag v0.2.0 &&
+#     git push origin v0.2.0) releases that tag directly.
+on:
+  workflow_run:
+    workflows: [Test]
+    branches: [main]
+    types: [completed]
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+      - name: Compute next patch version
+        id: version
+        if: ${{ github.event_name == 'workflow_run' }}
+        run: |
+          if git describe --tags --exact-match --match 'v*.*.*' HEAD >/dev/null 2>&1; then
+            echo "HEAD is already tagged; nothing to release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          LATEST=$(git tag --list 'v*.*.*' | sort -V | tail -n 1)
+          if [ -z "$LATEST" ]; then
+            TAG="v0.1.0"
+          else
+            TAG=$(echo "$LATEST" | awk -F '[v.]' '{printf "v%d.%d.%d", $2, $3, $4 + 1}')
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        if: ${{ github.event_name == 'workflow_run' && steps.version.outputs.skip != 'true' }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Set up Go
+        if: ${{ github.event_name == 'push' || steps.version.outputs.skip != 'true' }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.x
+          check-latest: true
+
+      - name: Run goreleaser
+        if: ${{ github.event_name == 'push' || steps.version.outputs.skip != 'true' }}
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
