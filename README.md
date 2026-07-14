@@ -3,8 +3,140 @@
 [![Test](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
 [![Lint](https://github.com/open-ships/n2k/actions/workflows/lint.yml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/lint.yml)
 [![Secure](https://github.com/open-ships/n2k/actions/workflows/security.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/security.yaml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/open-ships/n2k.svg)](https://pkg.go.dev/github.com/open-ships/n2k)
+[![Release](https://img.shields.io/github/v/release/open-ships/n2k)](https://github.com/open-ships/n2k/releases)
 
-`n2k` is a Go library for reading and writing NMEA 2000 marine network messages from CAN bus hardware into strongly-typed Go structs.
+`n2k` is a Go library and CLI for reading and writing NMEA 2000 marine
+network messages — from CAN hardware, USB and WiFi gateways, or capture
+files — decoded into strongly-typed Go structs with physical units.
+
+![n2k sniff decoding NMEA 2000 traffic to JSON](.github/demo.svg)
+
+## Quick Start — No Boat Required
+
+The repo bundles a real six-second capture from a sailing vessel
+(`testdata/sample.log`), so your first run works at a desk:
+
+```bash
+git clone https://github.com/open-ships/n2k && cd n2k
+go run ./cmd/n2k sniff -file testdata/sample.log | jq .
+```
+
+Or in code — copy, paste, it works:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"github.com/open-ships/n2k"
+	"github.com/open-ships/n2k/pgn"
+)
+
+func main() {
+	ctx := context.Background()
+
+	for msg, err := range n2k.Receive(ctx, n2k.File("testdata/sample.log")) {
+		if err != nil {
+			log.Fatal(err)
+		}
+		if heading, ok := msg.(*pgn.VesselHeading); ok {
+			if rad, present := heading.HeadingValue(); present {
+				fmt.Printf("heading: %.4f rad\n", rad)
+			}
+		}
+	}
+}
+```
+
+On a boat, only the source option changes:
+
+```go
+n2k.CAN("can0")                            // SocketCAN (Linux)
+n2k.USB("/dev/ttyUSB0")                    // USB-CAN serial adapter
+n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)  // Yacht Devices WiFi gateway
+n2k.UDP(":1457", n2k.FormatYDRaw)          // same gateway, UDP broadcast
+n2k.TCP("10.0.0.5:2000", n2k.FormatActisense) // Actisense-format streams
+```
+
+The TCP/UDP sources mean you can develop on your laptop against your boat's
+WiFi gateway — no CAN interface, no Linux, no cross-compiling until you
+deploy.
+
+## The `n2k` CLI
+
+Prebuilt binaries for Linux, macOS, and Windows are on the
+[releases page](https://github.com/open-ships/n2k/releases), or:
+
+```bash
+go install github.com/open-ships/n2k/cmd/n2k@latest
+```
+
+```bash
+# Yacht Devices WiFi gateway (RAW server mode) -- decoded JSON in one command
+n2k sniff -tcp 192.168.4.1:1457
+
+# SocketCAN (Linux), USB-CAN serial, UDP, or capture replay
+n2k sniff -i can0
+n2k sniff -u /dev/ttyUSB0
+n2k sniff -udp :1457
+n2k sniff -file capture.log            # add -timing to replay at real speed
+
+# CEL filtering, unknown PGNs, jq-friendly output
+n2k sniff -i can0 -f 'pgn == 127250' -unknown | jq .
+```
+
+`sniff` is the first subcommand; `devices`, `replay`, and `request` are on
+the roadmap.
+
+## Why n2k
+
+- **~600 PGN message types decoded** into typed Go structs (348 PGN numbers,
+  including manufacturer-proprietary variants), generated from the
+  community-maintained schema of the [canboat](https://github.com/canboat/canboat)
+  project — the reference database for open NMEA 2000 decoding.
+- **Physical units on top, raw ticks underneath.** Every numeric field with a
+  physical interpretation gets generated accessors
+  (`heading.HeadingValue()` → radians, `battery.VoltageValue()` → volts)
+  while the struct keeps raw wire ticks for fidelity.
+- **Byte-perfect re-encode.** Decode → re-encode round trips preserve the
+  original payload bytes, verified against real captures.
+- **A real bus citizen.** `NewClient` claims an address per ISO 11783,
+  heartbeats, answers product/configuration info and ISO requests, and
+  handles NMEA group functions (transmit/retime/pause) — the protocol
+  behavior expected of a certified device, out of the box. No other Go
+  library does this.
+- **CEL message filtering** with an optimizer: metadata-only expressions
+  skip decoding entirely.
+- **Pure Go, CGO-free**, cross-compiles to Linux, macOS, and Windows.
+
+### How it compares
+
+| | [n2k](https://github.com/open-ships/n2k) | [canboat](https://github.com/canboat/canboat) | [ttlappalainen/NMEA2000](https://github.com/ttlappalainen/NMEA2000) | [boatkit-io/n2k](https://github.com/boatkit-io/n2k) |
+|---|---|---|---|---|
+| What it is | Go library + CLI | C analyzer suite + the open PGN schema | C++ device library | Go decode library |
+| Decode coverage | ~600 message types (schema-generated) | Reference schema (broadest) | Core PGNs, extendable in code | Schema-generated subset |
+| Write / re-encode | Byte-preserving encode of every decoded PGN | Message formatting tools | Yes | Read-focused |
+| Bus citizenship (claim, heartbeat, group functions) | Yes | No (analysis tooling) | Yes | No |
+| Filtering | CEL expressions | CLI pipelines | In code | In code |
+| Runs on | Linux / macOS / Windows | POSIX CLI | Microcontrollers (Arduino, ESP32, Teensy) | Go platforms |
+
+If you're building an embedded device, use ttlappalainen/NMEA2000. If you
+want shell pipelines, canboat's analyzer is excellent. If you're writing a Go
+application — telemetry, logging, gateways, autopilot supervision — that's
+what `n2k` is for.
+
+### Sources and platforms
+
+| Source | Linux | macOS | Windows | Write access |
+|--------|:-----:|:-----:|:-------:|:------------:|
+| `CAN` (SocketCAN) | ✅ | — | — | ✅ |
+| `USB` (serial CAN adapter) | ✅ | ✅ | ✅ | ✅ |
+| `TCP` / `UDP` (Yacht Devices RAW, Actisense) | ✅ | ✅ | ✅ | read-only |
+| `File` (candump `-L`/`-l`) / `Replay` | ✅ | ✅ | ✅ | read-only |
 
 ## Installation
 
@@ -12,6 +144,10 @@
 go get github.com/open-ships/n2k
 ```
 
+Releases follow semver with a `v0` major: `v0.x.y`. Every green build on
+`main` automatically cuts a patch release (with prebuilt CLI binaries);
+minor bumps are tagged manually when the API moves. While the major version
+is 0, minor releases may contain breaking API changes — pin accordingly.
 
 ## Using `n2k`
 
@@ -34,10 +170,8 @@ defer client.Close()
 
 // Write a message. The struct knows its own PGN number.
 // Priority defaults to 6, destination defaults to broadcast (255).
-h := uint64(15708)
-heading := &pgn.VesselHeading{
-    Heading: &h,
-}
+heading := &pgn.VesselHeading{}
+heading.SetHeadingValue(1.5708) // radians; stored as raw wire ticks
 result := client.Write(heading)
 if err := result.Wait(); err != nil {
     log.Printf("write failed: %v", err)
@@ -45,9 +179,9 @@ if err := result.Wait(); err != nil {
 
 // Explicitly set priority and destination
 heading2 := &pgn.VesselHeading{
-    Info:    pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
-    Heading: &h,
+    Info: pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
 }
+heading2.SetHeadingValue(1.5708)
 client.Write(heading2)
 
 // Read messages (same as top-level API)
@@ -111,7 +245,6 @@ client, err := n2k.NewClient(ctx,
 #### Iterator API:
 
 ```go
-
 ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 defer stop()
 
@@ -156,7 +289,7 @@ read-only — use them with `Receive`/`NewScanner`, not `NewClient`:
 
 ```go
 // Replay a candump -L / -l capture, as fast as possible...
-for msg, err := range n2k.Receive(ctx, n2k.File("capture.log")) { ... }
+for msg, err := range n2k.Receive(ctx, n2k.File("testdata/sample.log")) { ... }
 
 // ...or paced by the log's own timestamps.
 for msg, err := range n2k.Receive(ctx, n2k.File("capture.log", n2k.OriginalTiming())) { ... }
@@ -184,9 +317,9 @@ for msg, err := range n2k.Receive(ctx,
     n2k.Filter("pgn == 127250"),
 ) { ... }
 
-// Filter on decoded fields -- decoded numeric fields hold raw wire ticks, not
-// physical units (see "Physical Values" below); Heading is in 0.0001-radian
-// ticks, so 31416 here is > pi rad.
+// Filter on decoded fields -- decoded numeric fields hold raw wire ticks,
+// not physical units (see "Physical Values" below); Heading is in
+// 0.0001-radian ticks, so 31416 here is > pi rad.
 for msg, err := range n2k.Receive(ctx,
     n2k.CAN("can0"),
     n2k.Filter("pgn == 127250 && msg.Heading > 31416"),
@@ -207,7 +340,7 @@ for msg, err := range n2k.Receive(ctx,
 | `source` | `int` | Source address (0-252) |
 | `priority` | `int` | Message priority (0-7) |
 | `destination` | `int` | Destination address (255 = broadcast) |
-| `msg.<field>` | varies | Decoded struct field (case-insensitive) |
+| `msg.<field>` | varies | Decoded struct field (case-insensitive), in raw wire ticks |
 
 Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in filter expressions.
 
@@ -269,8 +402,9 @@ every tick (return nil to skip a tick):
 
 ```go
 stop := client.Broadcast(time.Second, func() pgn.Message {
-    h := uint64(currentHeadingTicks())
-    return &pgn.VesselHeading{Heading: &h}
+    heading := &pgn.VesselHeading{}
+    heading.SetHeadingValue(currentHeadingRadians())
+    return heading
 })
 defer stop()
 ```
@@ -351,70 +485,57 @@ info := pgn.MessageInfo{
 
 ## Physical Values
 
-Decoded numeric fields on PGN structs (`*uint64`/`*int64`) hold **raw wire ticks**, not physical
-quantities. A field's metadata `Resolution` (and, for some fields, an additive `Offset`) is what
-converts a tick count into a physical value in the field's `Unit` -- for example, `VesselHeading`'s
-`Heading` field is transmitted in units of 0.0001 radian, so a decoded value of `15708` means
-`1.5708` rad, not `15708` rad:
+Numeric struct fields hold **raw wire ticks** (`*uint64`/`*int64`), which is
+what makes byte-perfect re-encoding possible. Every numeric field with a
+physical interpretation also gets **generated typed accessors** that do the
+unit math — SI units in, SI units out, raw ticks underneath:
 
 ```go
-h := uint64(15708)
-heading := &pgn.VesselHeading{Heading: &h}
+heading := &pgn.VesselHeading{}
+heading.SetHeadingValue(1.5708)      // radians -> stored as 15708 raw ticks
 
-// field order 2 is Heading -- see the struct's n2k tag or its PgnInfo metadata
-v, unit, ok, err := pgn.PhysicalValue(heading, 2)
-if err != nil {
-    panic(err)
-}
-if ok {
-    fmt.Printf("heading: %.4f %s\n", v, unit) // heading: 1.5708 rad
-}
+rad, ok := heading.HeadingValue()    // 1.5708, true
+_ = heading.Heading                  // *uint64 raw ticks, still there
+
+depth := decoded.(*pgn.WaterDepth)
+meters, ok := depth.DepthValue()     // e.g. 2.70 m from raw 270
 ```
 
-`PhysicalValue` looks up the field by its metadata source order (not by struct field name), applies
-`raw*Resolution + Offset`, and returns the field's unit label. `ok` is `false` (with a `nil` error)
-when the field's decoded value is `nil` -- the wire sent the field's null/out-of-range sentinel, or
-the payload ended before reaching it. It returns an error for an unknown struct or field order, a
-non-numeric field (strings, binary data, `FLOAT` fields, Match-selector fields), or a field that
-only exists inside a repeating group (those aren't addressable by a bare source order -- decode the
-group slice and inspect its elements instead).
+The accessor's `bool` is `false` when the field is nil — the wire sent the
+field's null/out-of-range sentinel, or the payload ended before reaching it.
+Each accessor documents its unit and conversion (`value = raw * resolution +
+offset`); the units are the schema's SI units (`rad`, `m/s`, `K`, `V`, ...).
+
+For dynamic, metadata-driven access — when the field is only known at
+runtime — `pgn.PhysicalValue(msg, fieldOrder)` performs the same conversion
+by field source order and also returns the unit label:
+
+```go
+v, unit, ok, err := pgn.PhysicalValue(heading, 2) // field order 2 = Heading
+// v = 1.5708, unit = "rad"
+```
+
+`PhysicalValue` returns an error for unknown fields, non-numeric fields
+(strings, binary, `FLOAT`, match selectors), and fields inside repeating
+groups — for those, decode the group slice and use the element structs'
+accessors instead (they're generated too).
 
 ## Unit Types
 
 The `units` package provides type-safe quantity wrappers (`Distance`, `Velocity`, `Pressure`, ...)
 with built-in unit conversion, but it is a **standalone library**: nothing in the decode path
-constructs or returns `units` values today. `pgn.PhysicalValue` (above) returns a plain `float64` in
-the field's native metadata unit. Wrapping that into a `units` type is left to the caller; wiring
-`units` directly into decoding would require switching PGN struct fields from raw-tick
+constructs or returns `units` values today. The generated accessors (above) return plain `float64`
+values in each field's native schema unit. Wrapping those into `units` types is left to the caller;
+wiring `units` directly into decoding would require switching PGN struct fields from raw-tick
 `*uint64`/`*int64` to float-based quantities, which is a larger, deliberately deferred change (see
 the `units` package doc comment).
-
-## Sniffer CLI
-
-Print decoded NMEA 2000 messages as JSON:
-
-```bash
-# Read from SocketCAN
-go run ./cmd/sniffer.go -i can0
-
-# Read from USB-CAN
-go run ./cmd/sniffer.go -u /dev/ttyUSB0
-
-# With CEL filter
-go run ./cmd/sniffer.go -i can0 -f 'pgn == 127250'
-
-# Include unknown PGNs
-go run ./cmd/sniffer.go -i can0 -unknown
-
-# Pipe to jq
-go run ./cmd/sniffer.go -i can0 | jq .
-```
 
 ## Known Limitations
 
 - Cross-field validation is not yet implemented.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
+- Writing requires a bidirectional source (`CAN` or `USB`); `File`, `TCP`, and `UDP` sources are read-only.
 
 ## License
 
@@ -422,6 +543,8 @@ MIT -- see LICENSE.
 
 ## Acknowledgments
 
-### [boatkit-io/n2k](https://github.com/boatkit-io/n2k/)
-
-This project is inspired by [boatkit-io/n2k](https://github.com/boatkit-io/n2k/).
+- [canboat](https://github.com/canboat/canboat) — maintains the open PGN
+  schema this library's decoders are generated from. The decoded-message
+  breadth here is theirs.
+- [boatkit-io/n2k](https://github.com/boatkit-io/n2k/) — the Go project that
+  inspired this one.
