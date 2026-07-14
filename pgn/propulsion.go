@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type Rudder struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -16,6 +18,40 @@ func (m *Rudder) MessageInfo() MessageInfo            { return m.Info }
 func (m *Rudder) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Rudder) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Rudder) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// AngleOrderValue returns AngleOrder as a physical value in rad (value = raw * 0.0001).
+// The bool is false when AngleOrder is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Rudder) AngleOrderValue() (float64, bool) {
+	if m.AngleOrder == nil {
+		return 0, false
+	}
+	return float64(*m.AngleOrder) * 0.0001, true
+}
+
+// SetAngleOrderValue sets AngleOrder from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *Rudder) SetAngleOrderValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.AngleOrder = &raw
+}
+
+// PositionValue returns Position as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Position is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Rudder) PositionValue() (float64, bool) {
+	if m.Position == nil {
+		return 0, false
+	}
+	return float64(*m.Position) * 0.0001, true
+}
+
+// SetPositionValue sets Position from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *Rudder) SetPositionValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Position = &raw
+}
 
 type ElectricDriveStatusDynamic struct {
 	Info                    MessageInfo `json:"info"`
@@ -35,6 +71,74 @@ func (m *ElectricDriveStatusDynamic) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *ElectricDriveStatusDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// MotorTemperatureValue returns MotorTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when MotorTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusDynamic) MotorTemperatureValue() (float64, bool) {
+	if m.MotorTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.MotorTemperature) * 0.01, true
+}
+
+// SetMotorTemperatureValue sets MotorTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveStatusDynamic) SetMotorTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MotorTemperature = &raw
+}
+
+// InverterTemperatureValue returns InverterTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when InverterTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusDynamic) InverterTemperatureValue() (float64, bool) {
+	if m.InverterTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.InverterTemperature) * 0.01, true
+}
+
+// SetInverterTemperatureValue sets InverterTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveStatusDynamic) SetInverterTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.InverterTemperature = &raw
+}
+
+// CoolantTemperatureValue returns CoolantTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when CoolantTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusDynamic) CoolantTemperatureValue() (float64, bool) {
+	if m.CoolantTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.CoolantTemperature) * 0.01, true
+}
+
+// SetCoolantTemperatureValue sets CoolantTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveStatusDynamic) SetCoolantTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.CoolantTemperature = &raw
+}
+
+// GearTemperatureValue returns GearTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when GearTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusDynamic) GearTemperatureValue() (float64, bool) {
+	if m.GearTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.GearTemperature) * 0.01, true
+}
+
+// SetGearTemperatureValue sets GearTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveStatusDynamic) SetGearTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.GearTemperature = &raw
+}
 
 type ElectricDriveInformation struct {
 	Info                               MessageInfo `json:"info"`
@@ -60,6 +164,159 @@ func (m *ElectricDriveInformation) DecodePayload(payload []uint8) error {
 }
 func (m *ElectricDriveInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// MotorVoltageRatingValue returns MotorVoltageRating as a physical value in V (value = raw * 0.1).
+// The bool is false when MotorVoltageRating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MotorVoltageRatingValue() (float64, bool) {
+	if m.MotorVoltageRating == nil {
+		return 0, false
+	}
+	return float64(*m.MotorVoltageRating) * 0.1, true
+}
+
+// SetMotorVoltageRatingValue sets MotorVoltageRating from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricDriveInformation) SetMotorVoltageRatingValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.MotorVoltageRating = &raw
+}
+
+// MaximumContinuousMotorPowerValue returns MaximumContinuousMotorPower as a physical value in W (value = raw).
+// The bool is false when MaximumContinuousMotorPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MaximumContinuousMotorPowerValue() (float64, bool) {
+	if m.MaximumContinuousMotorPower == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumContinuousMotorPower), true
+}
+
+// SetMaximumContinuousMotorPowerValue sets MaximumContinuousMotorPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *ElectricDriveInformation) SetMaximumContinuousMotorPowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.MaximumContinuousMotorPower = &raw
+}
+
+// MaximumBoostMotorPowerValue returns MaximumBoostMotorPower as a physical value in W (value = raw).
+// The bool is false when MaximumBoostMotorPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MaximumBoostMotorPowerValue() (float64, bool) {
+	if m.MaximumBoostMotorPower == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumBoostMotorPower), true
+}
+
+// SetMaximumBoostMotorPowerValue sets MaximumBoostMotorPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *ElectricDriveInformation) SetMaximumBoostMotorPowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.MaximumBoostMotorPower = &raw
+}
+
+// MaximumMotorTemperatureRatingValue returns MaximumMotorTemperatureRating as a physical value in K (value = raw * 0.01).
+// The bool is false when MaximumMotorTemperatureRating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MaximumMotorTemperatureRatingValue() (float64, bool) {
+	if m.MaximumMotorTemperatureRating == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumMotorTemperatureRating) * 0.01, true
+}
+
+// SetMaximumMotorTemperatureRatingValue sets MaximumMotorTemperatureRating from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveInformation) SetMaximumMotorTemperatureRatingValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MaximumMotorTemperatureRating = &raw
+}
+
+// RatedMotorSpeedValue returns RatedMotorSpeed as a physical value in rpm (value = raw * 0.25).
+// The bool is false when RatedMotorSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) RatedMotorSpeedValue() (float64, bool) {
+	if m.RatedMotorSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.RatedMotorSpeed) * 0.25, true
+}
+
+// SetRatedMotorSpeedValue sets RatedMotorSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 0.25.
+func (m *ElectricDriveInformation) SetRatedMotorSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.25))
+	m.RatedMotorSpeed = &raw
+}
+
+// MaximumControllerTemperatureRatingValue returns MaximumControllerTemperatureRating as a physical value in K (value = raw * 0.01).
+// The bool is false when MaximumControllerTemperatureRating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MaximumControllerTemperatureRatingValue() (float64, bool) {
+	if m.MaximumControllerTemperatureRating == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumControllerTemperatureRating) * 0.01, true
+}
+
+// SetMaximumControllerTemperatureRatingValue sets MaximumControllerTemperatureRating from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricDriveInformation) SetMaximumControllerTemperatureRatingValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MaximumControllerTemperatureRating = &raw
+}
+
+// MotorDcVoltageDeratingThresholdValue returns MotorDcVoltageDeratingThreshold as a physical value in V (value = raw * 0.1).
+// The bool is false when MotorDcVoltageDeratingThreshold is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MotorDcVoltageDeratingThresholdValue() (float64, bool) {
+	if m.MotorDcVoltageDeratingThreshold == nil {
+		return 0, false
+	}
+	return float64(*m.MotorDcVoltageDeratingThreshold) * 0.1, true
+}
+
+// SetMotorDcVoltageDeratingThresholdValue sets MotorDcVoltageDeratingThreshold from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricDriveInformation) SetMotorDcVoltageDeratingThresholdValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.MotorDcVoltageDeratingThreshold = &raw
+}
+
+// MotorDcVoltageCutOffThresholdValue returns MotorDcVoltageCutOffThreshold as a physical value in V (value = raw * 0.1).
+// The bool is false when MotorDcVoltageCutOffThreshold is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) MotorDcVoltageCutOffThresholdValue() (float64, bool) {
+	if m.MotorDcVoltageCutOffThreshold == nil {
+		return 0, false
+	}
+	return float64(*m.MotorDcVoltageCutOffThreshold) * 0.1, true
+}
+
+// SetMotorDcVoltageCutOffThresholdValue sets MotorDcVoltageCutOffThreshold from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricDriveInformation) SetMotorDcVoltageCutOffThresholdValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.MotorDcVoltageCutOffThreshold = &raw
+}
+
+// DriveMotorHoursValue returns DriveMotorHours as a physical value in s (value = raw).
+// The bool is false when DriveMotorHours is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveInformation) DriveMotorHoursValue() (float64, bool) {
+	if m.DriveMotorHours == nil {
+		return 0, false
+	}
+	return float64(*m.DriveMotorHours), true
+}
+
+// SetDriveMotorHoursValue sets DriveMotorHours from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *ElectricDriveInformation) SetDriveMotorHoursValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.DriveMotorHours = &raw
+}
+
 type ElectricDriveStatusRapidUpdate struct {
 	Info                    MessageInfo `json:"info"`
 	InverterMotorController *uint64     `json:"inverterMotorController,omitempty" n2k:"1"`
@@ -77,6 +334,57 @@ func (m *ElectricDriveStatusRapidUpdate) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *ElectricDriveStatusRapidUpdate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RotationalShaftSpeedValue returns RotationalShaftSpeed as a physical value in rpm (value = raw * 0.25).
+// The bool is false when RotationalShaftSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusRapidUpdate) RotationalShaftSpeedValue() (float64, bool) {
+	if m.RotationalShaftSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.RotationalShaftSpeed) * 0.25, true
+}
+
+// SetRotationalShaftSpeedValue sets RotationalShaftSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 0.25.
+func (m *ElectricDriveStatusRapidUpdate) SetRotationalShaftSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.25))
+	m.RotationalShaftSpeed = &raw
+}
+
+// MotorDcVoltageValue returns MotorDcVoltage as a physical value in V (value = raw * 0.1).
+// The bool is false when MotorDcVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusRapidUpdate) MotorDcVoltageValue() (float64, bool) {
+	if m.MotorDcVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.MotorDcVoltage) * 0.1, true
+}
+
+// SetMotorDcVoltageValue sets MotorDcVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricDriveStatusRapidUpdate) SetMotorDcVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.MotorDcVoltage = &raw
+}
+
+// MotorDcCurrentValue returns MotorDcCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when MotorDcCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricDriveStatusRapidUpdate) MotorDcCurrentValue() (float64, bool) {
+	if m.MotorDcCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.MotorDcCurrent) * 0.1, true
+}
+
+// SetMotorDcCurrentValue sets MotorDcCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricDriveStatusRapidUpdate) SetMotorDcCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.MotorDcCurrent = &raw
+}
 
 type ThrusterControlStatus struct {
 	Info             MessageInfo `json:"info"`
@@ -97,6 +405,57 @@ func (m *ThrusterControlStatus) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *ThrusterControlStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterControlStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// SpeedControlValue returns SpeedControl as a physical value in % (value = raw).
+// The bool is false when SpeedControl is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterControlStatus) SpeedControlValue() (float64, bool) {
+	if m.SpeedControl == nil {
+		return 0, false
+	}
+	return float64(*m.SpeedControl), true
+}
+
+// SetSpeedControlValue sets SpeedControl from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *ThrusterControlStatus) SetSpeedControlValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.SpeedControl = &raw
+}
+
+// CommandTimeoutValue returns CommandTimeout as a physical value in s (value = raw * 0.005).
+// The bool is false when CommandTimeout is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterControlStatus) CommandTimeoutValue() (float64, bool) {
+	if m.CommandTimeout == nil {
+		return 0, false
+	}
+	return float64(*m.CommandTimeout) * 0.005, true
+}
+
+// SetCommandTimeoutValue sets CommandTimeout from a physical value in s, rounded to the nearest
+// wire tick of 0.005.
+func (m *ThrusterControlStatus) SetCommandTimeoutValue(v float64) {
+	raw := uint64(math.Round(v / 0.005))
+	m.CommandTimeout = &raw
+}
+
+// AzimuthControlValue returns AzimuthControl as a physical value in rad (value = raw * 0.0001).
+// The bool is false when AzimuthControl is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterControlStatus) AzimuthControlValue() (float64, bool) {
+	if m.AzimuthControl == nil {
+		return 0, false
+	}
+	return float64(*m.AzimuthControl) * 0.0001, true
+}
+
+// SetAzimuthControlValue sets AzimuthControl from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *ThrusterControlStatus) SetAzimuthControlValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.AzimuthControl = &raw
+}
+
 type ThrusterInformation struct {
 	Info                     MessageInfo `json:"info"`
 	Identifier               *uint64     `json:"identifier,omitempty" n2k:"1"`
@@ -111,6 +470,57 @@ func (m *ThrusterInformation) MessageInfo() MessageInfo            { return m.In
 func (m *ThrusterInformation) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ThrusterInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// PowerRatingValue returns PowerRating as a physical value in W (value = raw).
+// The bool is false when PowerRating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterInformation) PowerRatingValue() (float64, bool) {
+	if m.PowerRating == nil {
+		return 0, false
+	}
+	return float64(*m.PowerRating), true
+}
+
+// SetPowerRatingValue sets PowerRating from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *ThrusterInformation) SetPowerRatingValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.PowerRating = &raw
+}
+
+// MaximumTemperatureRatingValue returns MaximumTemperatureRating as a physical value in K (value = raw * 0.01).
+// The bool is false when MaximumTemperatureRating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterInformation) MaximumTemperatureRatingValue() (float64, bool) {
+	if m.MaximumTemperatureRating == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumTemperatureRating) * 0.01, true
+}
+
+// SetMaximumTemperatureRatingValue sets MaximumTemperatureRating from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ThrusterInformation) SetMaximumTemperatureRatingValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MaximumTemperatureRating = &raw
+}
+
+// MaximumRotationalSpeedValue returns MaximumRotationalSpeed as a physical value in rpm (value = raw * 0.25).
+// The bool is false when MaximumRotationalSpeed is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterInformation) MaximumRotationalSpeedValue() (float64, bool) {
+	if m.MaximumRotationalSpeed == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumRotationalSpeed) * 0.25, true
+}
+
+// SetMaximumRotationalSpeedValue sets MaximumRotationalSpeed from a physical value in rpm, rounded to the nearest
+// wire tick of 0.25.
+func (m *ThrusterInformation) SetMaximumRotationalSpeedValue(v float64) {
+	raw := uint64(math.Round(v / 0.25))
+	m.MaximumRotationalSpeed = &raw
+}
 
 type ThrusterMotorStatus struct {
 	Info          MessageInfo `json:"info"`
@@ -127,3 +537,54 @@ func (m *ThrusterMotorStatus) MessageInfo() MessageInfo            { return m.In
 func (m *ThrusterMotorStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ThrusterMotorStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterMotorStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// CurrentValue returns Current as a physical value in A (value = raw).
+// The bool is false when Current is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterMotorStatus) CurrentValue() (float64, bool) {
+	if m.Current == nil {
+		return 0, false
+	}
+	return float64(*m.Current), true
+}
+
+// SetCurrentValue sets Current from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *ThrusterMotorStatus) SetCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Current = &raw
+}
+
+// TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
+// The bool is false when Temperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterMotorStatus) TemperatureValue() (float64, bool) {
+	if m.Temperature == nil {
+		return 0, false
+	}
+	return float64(*m.Temperature) * 0.01, true
+}
+
+// SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ThrusterMotorStatus) SetTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Temperature = &raw
+}
+
+// OperatingTimeValue returns OperatingTime as a physical value in s (value = raw * 60).
+// The bool is false when OperatingTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ThrusterMotorStatus) OperatingTimeValue() (float64, bool) {
+	if m.OperatingTime == nil {
+		return 0, false
+	}
+	return float64(*m.OperatingTime) * 60, true
+}
+
+// SetOperatingTimeValue sets OperatingTime from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *ThrusterMotorStatus) SetOperatingTimeValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.OperatingTime = &raw
+}

@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type NavicoDeviceStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -35,6 +37,40 @@ func (m *NavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// BatteryStatusValue returns BatteryStatus as a physical value in % (value = raw).
+// The bool is false when BatteryStatus is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NavicoWirelessBatteryStatus) BatteryStatusValue() (float64, bool) {
+	if m.BatteryStatus == nil {
+		return 0, false
+	}
+	return float64(*m.BatteryStatus), true
+}
+
+// SetBatteryStatusValue sets BatteryStatus from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *NavicoWirelessBatteryStatus) SetBatteryStatusValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.BatteryStatus = &raw
+}
+
+// BatteryChargeStatusValue returns BatteryChargeStatus as a physical value in % (value = raw).
+// The bool is false when BatteryChargeStatus is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NavicoWirelessBatteryStatus) BatteryChargeStatusValue() (float64, bool) {
+	if m.BatteryChargeStatus == nil {
+		return 0, false
+	}
+	return float64(*m.BatteryChargeStatus), true
+}
+
+// SetBatteryChargeStatusValue sets BatteryChargeStatus from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *NavicoWirelessBatteryStatus) SetBatteryChargeStatusValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.BatteryChargeStatus = &raw
+}
+
 type NavicoWirelessSignalStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -52,6 +88,23 @@ func (m *NavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// SignalStrengthValue returns SignalStrength as a physical value in % (value = raw).
+// The bool is false when SignalStrength is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NavicoWirelessSignalStatus) SignalStrengthValue() (float64, bool) {
+	if m.SignalStrength == nil {
+		return 0, false
+	}
+	return float64(*m.SignalStrength), true
+}
+
+// SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *NavicoWirelessSignalStatus) SetSignalStrengthValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.SignalStrength = &raw
+}
+
 type NavicoDepthQuality struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -65,6 +118,23 @@ func (m *NavicoDepthQuality) MessageInfo() MessageInfo            { return m.Inf
 func (m *NavicoDepthQuality) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *NavicoDepthQuality) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoDepthQuality) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// DepthQualityValue returns DepthQuality as a physical value (value = raw * 0.01).
+// The bool is false when DepthQuality is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *NavicoDepthQuality) DepthQualityValue() (float64, bool) {
+	if m.DepthQuality == nil {
+		return 0, false
+	}
+	return float64(*m.DepthQuality) * 0.01, true
+}
+
+// SetDepthQualityValue sets DepthQuality from a physical value, rounded to the nearest
+// wire tick of 0.01.
+func (m *NavicoDepthQuality) SetDepthQualityValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.DepthQuality = &raw
+}
 
 type NavicoProprietary2 struct {
 	Info             MessageInfo `json:"info"`

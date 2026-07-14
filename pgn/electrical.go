@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type Bus1PhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
@@ -17,6 +19,57 @@ func (m *Bus1PhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *Bus1PhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *Bus1PhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
 
 type Bus1PhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -33,6 +86,57 @@ func (m *Bus1PhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1PhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *Bus1PhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
 type Bus1PhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
@@ -47,6 +151,57 @@ func (m *Bus1PhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *Bus1PhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1PhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1PhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *Bus1PhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
 
 type Bus1AverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -63,6 +218,57 @@ func (m *Bus1AverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1AverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1AverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1AverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1AverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *Bus1AverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *Bus1AverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *Bus1AverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
 type UtilityTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
@@ -74,6 +280,40 @@ func (m *UtilityTotalAcEnergy) MessageInfo() MessageInfo            { return m.I
 func (m *UtilityTotalAcEnergy) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *UtilityTotalAcEnergy) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityTotalAcEnergy) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// TotalEnergyExportValue returns TotalEnergyExport as a physical value in kWh (value = raw).
+// The bool is false when TotalEnergyExport is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
+	if m.TotalEnergyExport == nil {
+		return 0, false
+	}
+	return float64(*m.TotalEnergyExport), true
+}
+
+// SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TotalEnergyExport = &raw
+}
+
+// TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
+// The bool is false when TotalEnergyImport is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
+	if m.TotalEnergyImport == nil {
+		return 0, false
+	}
+	return float64(*m.TotalEnergyImport), true
+}
+
+// SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityTotalAcEnergy) SetTotalEnergyImportValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TotalEnergyImport = &raw
+}
 
 type UtilityPhaseCAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
@@ -90,6 +330,40 @@ func (m *UtilityPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseCAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower), true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *UtilityPhaseCAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type UtilityPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -101,6 +375,40 @@ func (m *UtilityPhaseCAcPower) MessageInfo() MessageInfo            { return m.I
 func (m *UtilityPhaseCAcPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *UtilityPhaseCAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseCAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type UtilityPhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -118,6 +426,74 @@ func (m *UtilityPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *UtilityPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type UtilityPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *uint64     `json:"reactivePower,omitempty" n2k:"1"`
@@ -133,6 +509,40 @@ func (m *UtilityPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseBAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower), true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *UtilityPhaseBAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type UtilityPhaseBAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -144,6 +554,40 @@ func (m *UtilityPhaseBAcPower) MessageInfo() MessageInfo            { return m.I
 func (m *UtilityPhaseBAcPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *UtilityPhaseBAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseBAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type UtilityPhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -161,6 +605,74 @@ func (m *UtilityPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *UtilityPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type UtilityPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -176,6 +688,40 @@ func (m *UtilityPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseAAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *UtilityPhaseAAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type UtilityPhaseAAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -187,6 +733,40 @@ func (m *UtilityPhaseAAcPower) MessageInfo() MessageInfo            { return m.I
 func (m *UtilityPhaseAAcPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *UtilityPhaseAAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseAAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseAAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseAAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseAAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseAAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type UtilityPhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -204,6 +784,74 @@ func (m *UtilityPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *UtilityPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type UtilityTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -219,6 +867,40 @@ func (m *UtilityTotalAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityTotalAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityTotalAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *UtilityTotalAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type UtilityTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -230,6 +912,40 @@ func (m *UtilityTotalAcPower) MessageInfo() MessageInfo            { return m.In
 func (m *UtilityTotalAcPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *UtilityTotalAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityTotalAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityTotalAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityTotalAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityTotalAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type UtilityAverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -247,6 +963,74 @@ func (m *UtilityAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityAverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *UtilityAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *UtilityAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *UtilityAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type GeneratorTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
@@ -260,6 +1044,40 @@ func (m *GeneratorTotalAcEnergy) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GeneratorTotalAcEnergy) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// TotalEnergyExportValue returns TotalEnergyExport as a physical value in kWh (value = raw).
+// The bool is false when TotalEnergyExport is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
+	if m.TotalEnergyExport == nil {
+		return 0, false
+	}
+	return float64(*m.TotalEnergyExport), true
+}
+
+// SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TotalEnergyExport = &raw
+}
+
+// TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
+// The bool is false when TotalEnergyImport is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
+	if m.TotalEnergyImport == nil {
+		return 0, false
+	}
+	return float64(*m.TotalEnergyImport), true
+}
+
+// SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorTotalAcEnergy) SetTotalEnergyImportValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TotalEnergyImport = &raw
+}
 
 type GeneratorPhaseCAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
@@ -276,6 +1094,40 @@ func (m *GeneratorPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseCAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *GeneratorPhaseCAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type GeneratorPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -289,6 +1141,40 @@ func (m *GeneratorPhaseCAcPower) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GeneratorPhaseCAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type GeneratorPhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -306,6 +1192,74 @@ func (m *GeneratorPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *GeneratorPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type GeneratorPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -321,6 +1275,40 @@ func (m *GeneratorPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseBAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *GeneratorPhaseBAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type GeneratorPhaseBAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -334,6 +1322,40 @@ func (m *GeneratorPhaseBAcPower) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GeneratorPhaseBAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type GeneratorPhaseBBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -351,6 +1373,74 @@ func (m *GeneratorPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *GeneratorPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type GeneratorPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -366,6 +1456,40 @@ func (m *GeneratorPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseAAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *GeneratorPhaseAAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type GeneratorPhaseAAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -379,6 +1503,40 @@ func (m *GeneratorPhaseAAcPower) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GeneratorPhaseAAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseAAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseAAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseAAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseAAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type GeneratorPhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -396,6 +1554,74 @@ func (m *GeneratorPhaseABasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *GeneratorPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
+
 type GeneratorTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -411,6 +1637,40 @@ func (m *GeneratorTotalAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorTotalAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower) - 2e+09, true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorTotalAcReactivePower) SetReactivePowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcReactivePower) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 6.10352e-05, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 6.10352e-05.
+func (m *GeneratorTotalAcReactivePower) SetPowerFactorValue(v float64) {
+	raw := uint64(math.Round(v / 6.10352e-05))
+	m.PowerFactor = &raw
+}
+
 type GeneratorTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -422,6 +1682,40 @@ func (m *GeneratorTotalAcPower) MessageInfo() MessageInfo            { return m.
 func (m *GeneratorTotalAcPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *GeneratorTotalAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GeneratorTotalAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcPower) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower) - 2e+09, true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorTotalAcPower) SetRealPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.RealPower = &raw
+}
+
+// ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
+// The bool is false when ApparentPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorTotalAcPower) ApparentPowerValue() (float64, bool) {
+	if m.ApparentPower == nil {
+		return 0, false
+	}
+	return float64(*m.ApparentPower) - 2e+09, true
+}
+
+// SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorTotalAcPower) SetApparentPowerValue(v float64) {
+	raw := int64(math.Round((v + 2e+09)))
+	m.ApparentPower = &raw
+}
 
 type GeneratorAverageBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
@@ -438,6 +1732,74 @@ func (m *GeneratorAverageBasicAcQuantities) DecodePayload(payload []uint8) error
 	return decodeFields(m, payload)
 }
 func (m *GeneratorAverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
+	if m.LineLineAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineLineAcRmsVoltage), true
+}
+
+// SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineLineAcRmsVoltage = &raw
+}
+
+// LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
+// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
+	if m.LineNeutralAcRmsVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.LineNeutralAcRmsVoltage), true
+}
+
+// SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LineNeutralAcRmsVoltage = &raw
+}
+
+// AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
+// The bool is false when AcFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
+	if m.AcFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.AcFrequency) * 0.0078125, true
+}
+
+// SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.0078125.
+func (m *GeneratorAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.0078125))
+	m.AcFrequency = &raw
+}
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GeneratorAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent), true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 1.
+func (m *GeneratorAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.AcRmsCurrent = &raw
+}
 
 type GarminAutopilotSystemVoltage struct {
 	Info             MessageInfo `json:"info"`
@@ -458,6 +1820,23 @@ func (m *GarminAutopilotSystemVoltage) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotSystemVoltage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// SystemVoltageValue returns SystemVoltage as a physical value in V (value = raw * 0.01).
+// The bool is false when SystemVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *GarminAutopilotSystemVoltage) SystemVoltageValue() (float64, bool) {
+	if m.SystemVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.SystemVoltage) * 0.01, true
+}
+
+// SetSystemVoltageValue sets SystemVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *GarminAutopilotSystemVoltage) SetSystemVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SystemVoltage = &raw
+}
 
 type ElectricEnergyStorageStatusDynamic struct {
 	Info                    MessageInfo `json:"info"`
@@ -480,6 +1859,125 @@ func (m *ElectricEnergyStorageStatusDynamic) DecodePayload(payload []uint8) erro
 	return decodeFields(m, payload)
 }
 func (m *ElectricEnergyStorageStatusDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// StateOfChargeValue returns StateOfCharge as a physical value in % (value = raw).
+// The bool is false when StateOfCharge is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) StateOfChargeValue() (float64, bool) {
+	if m.StateOfCharge == nil {
+		return 0, false
+	}
+	return float64(*m.StateOfCharge), true
+}
+
+// SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *ElectricEnergyStorageStatusDynamic) SetStateOfChargeValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.StateOfCharge = &raw
+}
+
+// TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
+// The bool is false when TimeRemaining is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) TimeRemainingValue() (float64, bool) {
+	if m.TimeRemaining == nil {
+		return 0, false
+	}
+	return float64(*m.TimeRemaining) * 60, true
+}
+
+// SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *ElectricEnergyStorageStatusDynamic) SetTimeRemainingValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.TimeRemaining = &raw
+}
+
+// HighestCellTemperatureValue returns HighestCellTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when HighestCellTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) HighestCellTemperatureValue() (float64, bool) {
+	if m.HighestCellTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.HighestCellTemperature) * 0.01, true
+}
+
+// SetHighestCellTemperatureValue sets HighestCellTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageStatusDynamic) SetHighestCellTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.HighestCellTemperature = &raw
+}
+
+// LowestCellTemperatureValue returns LowestCellTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when LowestCellTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) LowestCellTemperatureValue() (float64, bool) {
+	if m.LowestCellTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.LowestCellTemperature) * 0.01, true
+}
+
+// SetLowestCellTemperatureValue sets LowestCellTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageStatusDynamic) SetLowestCellTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.LowestCellTemperature = &raw
+}
+
+// AverageCellTemperatureValue returns AverageCellTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when AverageCellTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) AverageCellTemperatureValue() (float64, bool) {
+	if m.AverageCellTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.AverageCellTemperature) * 0.01, true
+}
+
+// SetAverageCellTemperatureValue sets AverageCellTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageStatusDynamic) SetAverageCellTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.AverageCellTemperature = &raw
+}
+
+// MaxDischargeCurrentValue returns MaxDischargeCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when MaxDischargeCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) MaxDischargeCurrentValue() (float64, bool) {
+	if m.MaxDischargeCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.MaxDischargeCurrent) * 0.1, true
+}
+
+// SetMaxDischargeCurrentValue sets MaxDischargeCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricEnergyStorageStatusDynamic) SetMaxDischargeCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.MaxDischargeCurrent = &raw
+}
+
+// MaxChargeCurrentValue returns MaxChargeCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when MaxChargeCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusDynamic) MaxChargeCurrentValue() (float64, bool) {
+	if m.MaxChargeCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.MaxChargeCurrent) * 0.1, true
+}
+
+// SetMaxChargeCurrentValue sets MaxChargeCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricEnergyStorageStatusDynamic) SetMaxChargeCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.MaxChargeCurrent = &raw
+}
 
 type ElectricEnergyStorageInformation struct {
 	Info                       MessageInfo `json:"info"`
@@ -506,6 +2004,91 @@ func (m *ElectricEnergyStorageInformation) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *ElectricEnergyStorageInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// MaximumTemperatureDeratingValue returns MaximumTemperatureDerating as a physical value in K (value = raw * 0.01).
+// The bool is false when MaximumTemperatureDerating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageInformation) MaximumTemperatureDeratingValue() (float64, bool) {
+	if m.MaximumTemperatureDerating == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumTemperatureDerating) * 0.01, true
+}
+
+// SetMaximumTemperatureDeratingValue sets MaximumTemperatureDerating from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureDeratingValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MaximumTemperatureDerating = &raw
+}
+
+// MaximumTemperatureShutOffValue returns MaximumTemperatureShutOff as a physical value in K (value = raw * 0.01).
+// The bool is false when MaximumTemperatureShutOff is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageInformation) MaximumTemperatureShutOffValue() (float64, bool) {
+	if m.MaximumTemperatureShutOff == nil {
+		return 0, false
+	}
+	return float64(*m.MaximumTemperatureShutOff) * 0.01, true
+}
+
+// SetMaximumTemperatureShutOffValue sets MaximumTemperatureShutOff from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureShutOffValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MaximumTemperatureShutOff = &raw
+}
+
+// MinimumTemperatureDeratingValue returns MinimumTemperatureDerating as a physical value in K (value = raw * 0.01).
+// The bool is false when MinimumTemperatureDerating is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageInformation) MinimumTemperatureDeratingValue() (float64, bool) {
+	if m.MinimumTemperatureDerating == nil {
+		return 0, false
+	}
+	return float64(*m.MinimumTemperatureDerating) * 0.01, true
+}
+
+// SetMinimumTemperatureDeratingValue sets MinimumTemperatureDerating from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureDeratingValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MinimumTemperatureDerating = &raw
+}
+
+// MinimumTemperatureShutOffValue returns MinimumTemperatureShutOff as a physical value in K (value = raw * 0.01).
+// The bool is false when MinimumTemperatureShutOff is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageInformation) MinimumTemperatureShutOffValue() (float64, bool) {
+	if m.MinimumTemperatureShutOff == nil {
+		return 0, false
+	}
+	return float64(*m.MinimumTemperatureShutOff) * 0.01, true
+}
+
+// SetMinimumTemperatureShutOffValue sets MinimumTemperatureShutOff from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureShutOffValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.MinimumTemperatureShutOff = &raw
+}
+
+// UsableBatteryEnergyValue returns UsableBatteryEnergy as a physical value in kWh (value = raw).
+// The bool is false when UsableBatteryEnergy is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageInformation) UsableBatteryEnergyValue() (float64, bool) {
+	if m.UsableBatteryEnergy == nil {
+		return 0, false
+	}
+	return float64(*m.UsableBatteryEnergy), true
+}
+
+// SetUsableBatteryEnergyValue sets UsableBatteryEnergy from a physical value in kWh, rounded to the nearest
+// wire tick of 1.
+func (m *ElectricEnergyStorageInformation) SetUsableBatteryEnergyValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.UsableBatteryEnergy = &raw
+}
 
 type LoadControllerConnectionStateControl struct {
 	Info                     MessageInfo `json:"info"`
@@ -634,6 +2217,125 @@ func (m *AcInputStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcInputStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcInputStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
+// The bool is false when Voltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) VoltageValue() (float64, bool) {
+	if m.Voltage == nil {
+		return 0, false
+	}
+	return float64(*m.Voltage) * 0.01, true
+}
+
+// SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcInputStatusRepeating1) SetVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Voltage = &raw
+}
+
+// CurrentValue returns Current as a physical value in A (value = raw * 0.1).
+// The bool is false when Current is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) CurrentValue() (float64, bool) {
+	if m.Current == nil {
+		return 0, false
+	}
+	return float64(*m.Current) * 0.1, true
+}
+
+// SetCurrentValue sets Current from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcInputStatusRepeating1) SetCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Current = &raw
+}
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency) * 0.01, true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcInputStatusRepeating1) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Frequency = &raw
+}
+
+// BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
+// The bool is false when BreakerSize is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) BreakerSizeValue() (float64, bool) {
+	if m.BreakerSize == nil {
+		return 0, false
+	}
+	return float64(*m.BreakerSize) * 0.1, true
+}
+
+// SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcInputStatusRepeating1) SetBreakerSizeValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.BreakerSize = &raw
+}
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower), true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *AcInputStatusRepeating1) SetRealPowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.RealPower = &raw
+}
+
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower), true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *AcInputStatusRepeating1) SetReactivePowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcInputStatusRepeating1) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 0.01, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcInputStatusRepeating1) SetPowerFactorValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.PowerFactor = &raw
+}
+
 type AcOutputStatus struct {
 	Info          MessageInfo                `json:"info"`
 	Instance      *uint64                    `json:"instance,omitempty" n2k:"1"`
@@ -659,6 +2361,125 @@ func (m *AcOutputStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcOutputStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcOutputStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
+// The bool is false when Voltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) VoltageValue() (float64, bool) {
+	if m.Voltage == nil {
+		return 0, false
+	}
+	return float64(*m.Voltage) * 0.01, true
+}
+
+// SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcOutputStatusRepeating1) SetVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Voltage = &raw
+}
+
+// CurrentValue returns Current as a physical value in A (value = raw * 0.1).
+// The bool is false when Current is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) CurrentValue() (float64, bool) {
+	if m.Current == nil {
+		return 0, false
+	}
+	return float64(*m.Current) * 0.1, true
+}
+
+// SetCurrentValue sets Current from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcOutputStatusRepeating1) SetCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Current = &raw
+}
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency) * 0.01, true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcOutputStatusRepeating1) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Frequency = &raw
+}
+
+// BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
+// The bool is false when BreakerSize is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) BreakerSizeValue() (float64, bool) {
+	if m.BreakerSize == nil {
+		return 0, false
+	}
+	return float64(*m.BreakerSize) * 0.1, true
+}
+
+// SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcOutputStatusRepeating1) SetBreakerSizeValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.BreakerSize = &raw
+}
+
+// RealPowerValue returns RealPower as a physical value in W (value = raw).
+// The bool is false when RealPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) RealPowerValue() (float64, bool) {
+	if m.RealPower == nil {
+		return 0, false
+	}
+	return float64(*m.RealPower), true
+}
+
+// SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *AcOutputStatusRepeating1) SetRealPowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.RealPower = &raw
+}
+
+// ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
+// The bool is false when ReactivePower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) ReactivePowerValue() (float64, bool) {
+	if m.ReactivePower == nil {
+		return 0, false
+	}
+	return float64(*m.ReactivePower), true
+}
+
+// SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
+// wire tick of 1.
+func (m *AcOutputStatusRepeating1) SetReactivePowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ReactivePower = &raw
+}
+
+// PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
+// The bool is false when PowerFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcOutputStatusRepeating1) PowerFactorValue() (float64, bool) {
+	if m.PowerFactor == nil {
+		return 0, false
+	}
+	return float64(*m.PowerFactor) * 0.01, true
+}
+
+// SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
+// wire tick of 0.01.
+func (m *AcOutputStatusRepeating1) SetPowerFactorValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.PowerFactor = &raw
+}
+
 type DcDetailedStatus struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -677,6 +2498,91 @@ func (m *DcDetailedStatus) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *DcDetailedStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DcDetailedStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// StateOfChargeValue returns StateOfCharge as a physical value in % (value = raw).
+// The bool is false when StateOfCharge is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcDetailedStatus) StateOfChargeValue() (float64, bool) {
+	if m.StateOfCharge == nil {
+		return 0, false
+	}
+	return float64(*m.StateOfCharge), true
+}
+
+// SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *DcDetailedStatus) SetStateOfChargeValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.StateOfCharge = &raw
+}
+
+// StateOfHealthValue returns StateOfHealth as a physical value in % (value = raw).
+// The bool is false when StateOfHealth is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcDetailedStatus) StateOfHealthValue() (float64, bool) {
+	if m.StateOfHealth == nil {
+		return 0, false
+	}
+	return float64(*m.StateOfHealth), true
+}
+
+// SetStateOfHealthValue sets StateOfHealth from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *DcDetailedStatus) SetStateOfHealthValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.StateOfHealth = &raw
+}
+
+// TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
+// The bool is false when TimeRemaining is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcDetailedStatus) TimeRemainingValue() (float64, bool) {
+	if m.TimeRemaining == nil {
+		return 0, false
+	}
+	return float64(*m.TimeRemaining) * 60, true
+}
+
+// SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *DcDetailedStatus) SetTimeRemainingValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.TimeRemaining = &raw
+}
+
+// RippleVoltageValue returns RippleVoltage as a physical value in V (value = raw * 0.001).
+// The bool is false when RippleVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcDetailedStatus) RippleVoltageValue() (float64, bool) {
+	if m.RippleVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.RippleVoltage) * 0.001, true
+}
+
+// SetRippleVoltageValue sets RippleVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.001.
+func (m *DcDetailedStatus) SetRippleVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.RippleVoltage = &raw
+}
+
+// RemainingCapacityValue returns RemainingCapacity as a physical value in Ah (value = raw).
+// The bool is false when RemainingCapacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcDetailedStatus) RemainingCapacityValue() (float64, bool) {
+	if m.RemainingCapacity == nil {
+		return 0, false
+	}
+	return float64(*m.RemainingCapacity), true
+}
+
+// SetRemainingCapacityValue sets RemainingCapacity from a physical value in Ah, rounded to the nearest
+// wire tick of 1.
+func (m *DcDetailedStatus) SetRemainingCapacityValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.RemainingCapacity = &raw
+}
+
 type ChargerStatus struct {
 	Info                      MessageInfo `json:"info"`
 	Instance                  *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -694,6 +2600,23 @@ func (m *ChargerStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ChargerStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ChargerStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// EqualizationTimeRemainingValue returns EqualizationTimeRemaining as a physical value in s (value = raw * 60).
+// The bool is false when EqualizationTimeRemaining is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ChargerStatus) EqualizationTimeRemainingValue() (float64, bool) {
+	if m.EqualizationTimeRemaining == nil {
+		return 0, false
+	}
+	return float64(*m.EqualizationTimeRemaining) * 60, true
+}
+
+// SetEqualizationTimeRemainingValue sets EqualizationTimeRemaining from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *ChargerStatus) SetEqualizationTimeRemainingValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.EqualizationTimeRemaining = &raw
+}
+
 type BatteryStatus struct {
 	Info        MessageInfo `json:"info"`
 	Instance    *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -708,6 +2631,57 @@ func (m *BatteryStatus) MessageInfo() MessageInfo            { return m.Info }
 func (m *BatteryStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *BatteryStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BatteryStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
+// The bool is false when Voltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryStatus) VoltageValue() (float64, bool) {
+	if m.Voltage == nil {
+		return 0, false
+	}
+	return float64(*m.Voltage) * 0.01, true
+}
+
+// SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
+// wire tick of 0.01.
+func (m *BatteryStatus) SetVoltageValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Voltage = &raw
+}
+
+// CurrentValue returns Current as a physical value in A (value = raw * 0.1).
+// The bool is false when Current is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryStatus) CurrentValue() (float64, bool) {
+	if m.Current == nil {
+		return 0, false
+	}
+	return float64(*m.Current) * 0.1, true
+}
+
+// SetCurrentValue sets Current from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *BatteryStatus) SetCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.Current = &raw
+}
+
+// TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
+// The bool is false when Temperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryStatus) TemperatureValue() (float64, bool) {
+	if m.Temperature == nil {
+		return 0, false
+	}
+	return float64(*m.Temperature) * 0.01, true
+}
+
+// SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *BatteryStatus) SetTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.Temperature = &raw
+}
 
 type InverterStatus struct {
 	Info           MessageInfo `json:"info"`
@@ -746,6 +2720,40 @@ func (m *ChargerConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *ChargerConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// ChargeCurrentLimitValue returns ChargeCurrentLimit as a physical value in % (value = raw).
+// The bool is false when ChargeCurrentLimit is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ChargerConfigurationStatus) ChargeCurrentLimitValue() (float64, bool) {
+	if m.ChargeCurrentLimit == nil {
+		return 0, false
+	}
+	return float64(*m.ChargeCurrentLimit), true
+}
+
+// SetChargeCurrentLimitValue sets ChargeCurrentLimit from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *ChargerConfigurationStatus) SetChargeCurrentLimitValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ChargeCurrentLimit = &raw
+}
+
+// EqualizeTimeValue returns EqualizeTime as a physical value in s (value = raw * 60).
+// The bool is false when EqualizeTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ChargerConfigurationStatus) EqualizeTimeValue() (float64, bool) {
+	if m.EqualizeTime == nil {
+		return 0, false
+	}
+	return float64(*m.EqualizeTime) * 60, true
+}
+
+// SetEqualizeTimeValue sets EqualizeTime from a physical value in s, rounded to the nearest
+// wire tick of 60.
+func (m *ChargerConfigurationStatus) SetEqualizeTimeValue(v float64) {
+	raw := uint64(math.Round(v / 60))
+	m.EqualizeTime = &raw
+}
+
 type InverterConfigurationStatus struct {
 	Info                    MessageInfo `json:"info"`
 	Instance                *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -765,6 +2773,40 @@ func (m *InverterConfigurationStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *InverterConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LoadSensePowerThresholdValue returns LoadSensePowerThreshold as a physical value in W (value = raw).
+// The bool is false when LoadSensePowerThreshold is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *InverterConfigurationStatus) LoadSensePowerThresholdValue() (float64, bool) {
+	if m.LoadSensePowerThreshold == nil {
+		return 0, false
+	}
+	return float64(*m.LoadSensePowerThreshold), true
+}
+
+// SetLoadSensePowerThresholdValue sets LoadSensePowerThreshold from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *InverterConfigurationStatus) SetLoadSensePowerThresholdValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.LoadSensePowerThreshold = &raw
+}
+
+// LoadSenseIntervalValue returns LoadSenseInterval as a physical value in s (value = raw * 0.01).
+// The bool is false when LoadSenseInterval is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *InverterConfigurationStatus) LoadSenseIntervalValue() (float64, bool) {
+	if m.LoadSenseInterval == nil {
+		return 0, false
+	}
+	return float64(*m.LoadSenseInterval) * 0.01, true
+}
+
+// SetLoadSenseIntervalValue sets LoadSenseInterval from a physical value in s, rounded to the nearest
+// wire tick of 0.01.
+func (m *InverterConfigurationStatus) SetLoadSenseIntervalValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.LoadSenseInterval = &raw
+}
 
 type BatteryConfigurationStatus struct {
 	Info                   MessageInfo `json:"info"`
@@ -787,6 +2829,74 @@ func (m *BatteryConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *BatteryConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// CapacityValue returns Capacity as a physical value in Ah (value = raw).
+// The bool is false when Capacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryConfigurationStatus) CapacityValue() (float64, bool) {
+	if m.Capacity == nil {
+		return 0, false
+	}
+	return float64(*m.Capacity), true
+}
+
+// SetCapacityValue sets Capacity from a physical value in Ah, rounded to the nearest
+// wire tick of 1.
+func (m *BatteryConfigurationStatus) SetCapacityValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Capacity = &raw
+}
+
+// TemperatureCoefficientValue returns TemperatureCoefficient as a physical value in % (value = raw).
+// The bool is false when TemperatureCoefficient is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryConfigurationStatus) TemperatureCoefficientValue() (float64, bool) {
+	if m.TemperatureCoefficient == nil {
+		return 0, false
+	}
+	return float64(*m.TemperatureCoefficient), true
+}
+
+// SetTemperatureCoefficientValue sets TemperatureCoefficient from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *BatteryConfigurationStatus) SetTemperatureCoefficientValue(v float64) {
+	raw := int64(math.Round(v))
+	m.TemperatureCoefficient = &raw
+}
+
+// PeukertExponentValue returns PeukertExponent as a physical value (value = raw * 0.002 + 1).
+// The bool is false when PeukertExponent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryConfigurationStatus) PeukertExponentValue() (float64, bool) {
+	if m.PeukertExponent == nil {
+		return 0, false
+	}
+	return float64(*m.PeukertExponent)*0.002 + 1, true
+}
+
+// SetPeukertExponentValue sets PeukertExponent from a physical value, rounded to the nearest
+// wire tick of 0.002.
+func (m *BatteryConfigurationStatus) SetPeukertExponentValue(v float64) {
+	raw := uint64(math.Round((v - 1) / 0.002))
+	m.PeukertExponent = &raw
+}
+
+// ChargeEfficiencyFactorValue returns ChargeEfficiencyFactor as a physical value in % (value = raw).
+// The bool is false when ChargeEfficiencyFactor is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *BatteryConfigurationStatus) ChargeEfficiencyFactorValue() (float64, bool) {
+	if m.ChargeEfficiencyFactor == nil {
+		return 0, false
+	}
+	return float64(*m.ChargeEfficiencyFactor), true
+}
+
+// SetChargeEfficiencyFactorValue sets ChargeEfficiencyFactor from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *BatteryConfigurationStatus) SetChargeEfficiencyFactorValue(v float64) {
+	raw := int64(math.Round(v))
+	m.ChargeEfficiencyFactor = &raw
+}
+
 type AcPowerCurrentPhaseA struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -800,6 +2910,40 @@ func (m *AcPowerCurrentPhaseA) MessageInfo() MessageInfo            { return m.I
 func (m *AcPowerCurrentPhaseA) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcPowerCurrentPhaseA) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseA) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseA) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent) * 0.1, true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcPowerCurrentPhaseA) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcRmsCurrent = &raw
+}
+
+// PowerValue returns Power as a physical value in W (value = raw).
+// The bool is false when Power is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseA) PowerValue() (float64, bool) {
+	if m.Power == nil {
+		return 0, false
+	}
+	return float64(*m.Power), true
+}
+
+// SetPowerValue sets Power from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *AcPowerCurrentPhaseA) SetPowerValue(v float64) {
+	raw := int64(math.Round(v))
+	m.Power = &raw
+}
 
 type AcPowerCurrentPhaseB struct {
 	Info             MessageInfo `json:"info"`
@@ -815,6 +2959,40 @@ func (m *AcPowerCurrentPhaseB) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AcPowerCurrentPhaseB) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseB) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseB) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent) * 0.1, true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcPowerCurrentPhaseB) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcRmsCurrent = &raw
+}
+
+// PowerValue returns Power as a physical value in W (value = raw).
+// The bool is false when Power is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseB) PowerValue() (float64, bool) {
+	if m.Power == nil {
+		return 0, false
+	}
+	return float64(*m.Power), true
+}
+
+// SetPowerValue sets Power from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *AcPowerCurrentPhaseB) SetPowerValue(v float64) {
+	raw := int64(math.Round(v))
+	m.Power = &raw
+}
+
 type AcPowerCurrentPhaseC struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -828,6 +3006,40 @@ func (m *AcPowerCurrentPhaseC) MessageInfo() MessageInfo            { return m.I
 func (m *AcPowerCurrentPhaseC) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcPowerCurrentPhaseC) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseC) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseC) AcRmsCurrentValue() (float64, bool) {
+	if m.AcRmsCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.AcRmsCurrent) * 0.1, true
+}
+
+// SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcPowerCurrentPhaseC) SetAcRmsCurrentValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcRmsCurrent = &raw
+}
+
+// PowerValue returns Power as a physical value in W (value = raw).
+// The bool is false when Power is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcPowerCurrentPhaseC) PowerValue() (float64, bool) {
+	if m.Power == nil {
+		return 0, false
+	}
+	return float64(*m.Power), true
+}
+
+// SetPowerValue sets Power from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *AcPowerCurrentPhaseC) SetPowerValue(v float64) {
+	raw := int64(math.Round(v))
+	m.Power = &raw
+}
 
 type AcVoltageFrequencyPhaseA struct {
 	Info                   MessageInfo `json:"info"`
@@ -846,6 +3058,57 @@ func (m *AcVoltageFrequencyPhaseA) DecodePayload(payload []uint8) error {
 }
 func (m *AcVoltageFrequencyPhaseA) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToNeutralValue() (float64, bool) {
+	if m.AcVoltageLineToNeutral == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+}
+
+// SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToNeutralValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToNeutral = &raw
+}
+
+// AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToLineValue() (float64, bool) {
+	if m.AcVoltageLineToLine == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToLine) * 0.1, true
+}
+
+// SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToLineValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToLine = &raw
+}
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseA) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency) * 0.1, true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseA) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Frequency = &raw
+}
+
 type AcVoltageFrequencyPhaseB struct {
 	Info                   MessageInfo `json:"info"`
 	Sid                    *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -862,6 +3125,57 @@ func (m *AcVoltageFrequencyPhaseB) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AcVoltageFrequencyPhaseB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToNeutralValue() (float64, bool) {
+	if m.AcVoltageLineToNeutral == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+}
+
+// SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToNeutralValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToNeutral = &raw
+}
+
+// AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToLineValue() (float64, bool) {
+	if m.AcVoltageLineToLine == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToLine) * 0.1, true
+}
+
+// SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToLineValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToLine = &raw
+}
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseB) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency) * 0.1, true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseB) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Frequency = &raw
+}
 
 type AcVoltageFrequencyPhaseC struct {
 	Info                   MessageInfo `json:"info"`
@@ -880,6 +3194,57 @@ func (m *AcVoltageFrequencyPhaseC) DecodePayload(payload []uint8) error {
 }
 func (m *AcVoltageFrequencyPhaseC) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToNeutralValue() (float64, bool) {
+	if m.AcVoltageLineToNeutral == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+}
+
+// SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToNeutralValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToNeutral = &raw
+}
+
+// AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
+// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToLineValue() (float64, bool) {
+	if m.AcVoltageLineToLine == nil {
+		return 0, false
+	}
+	return float64(*m.AcVoltageLineToLine) * 0.1, true
+}
+
+// SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToLineValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AcVoltageLineToLine = &raw
+}
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *AcVoltageFrequencyPhaseC) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency) * 0.1, true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 0.1.
+func (m *AcVoltageFrequencyPhaseC) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.Frequency = &raw
+}
+
 type DcVoltageCurrent struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -893,6 +3258,40 @@ func (m *DcVoltageCurrent) MessageInfo() MessageInfo            { return m.Info 
 func (m *DcVoltageCurrent) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *DcVoltageCurrent) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DcVoltageCurrent) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// DcVoltageValue returns DcVoltage as a physical value in V (value = raw * 0.1).
+// The bool is false when DcVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcVoltageCurrent) DcVoltageValue() (float64, bool) {
+	if m.DcVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.DcVoltage) * 0.1, true
+}
+
+// SetDcVoltageValue sets DcVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *DcVoltageCurrent) SetDcVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.DcVoltage = &raw
+}
+
+// DcCurrentValue returns DcCurrent as a physical value in A (value = raw * 0.01).
+// The bool is false when DcCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DcVoltageCurrent) DcCurrentValue() (float64, bool) {
+	if m.DcCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.DcCurrent) * 0.01, true
+}
+
+// SetDcCurrentValue sets DcCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.01.
+func (m *DcVoltageCurrent) SetDcCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.DcCurrent = &raw
+}
 
 type ElectricEnergyStorageStatusRapidUpdate struct {
 	Info                    MessageInfo `json:"info"`
@@ -912,6 +3311,40 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) DecodePayload(payload []uint8) 
 }
 func (m *ElectricEnergyStorageStatusRapidUpdate) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// BatteryVoltageValue returns BatteryVoltage as a physical value in V (value = raw * 0.1).
+// The bool is false when BatteryVoltage is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryVoltageValue() (float64, bool) {
+	if m.BatteryVoltage == nil {
+		return 0, false
+	}
+	return float64(*m.BatteryVoltage) * 0.1, true
+}
+
+// SetBatteryVoltageValue sets BatteryVoltage from a physical value in V, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryVoltageValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.BatteryVoltage = &raw
+}
+
+// BatteryCurrentValue returns BatteryCurrent as a physical value in A (value = raw * 0.1).
+// The bool is false when BatteryCurrent is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryCurrentValue() (float64, bool) {
+	if m.BatteryCurrent == nil {
+		return 0, false
+	}
+	return float64(*m.BatteryCurrent) * 0.1, true
+}
+
+// SetBatteryCurrentValue sets BatteryCurrent from a physical value in A, rounded to the nearest
+// wire tick of 0.1.
+func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryCurrentValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.BatteryCurrent = &raw
 }
 
 type HvacStatus struct {
@@ -949,6 +3382,125 @@ func (m *HvacStatus) MessageInfo() MessageInfo            { return m.Info }
 func (m *HvacStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *HvacStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *HvacStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// LowerTemperatureSetpointValue returns LowerTemperatureSetpoint as a physical value in K (value = raw * 0.01).
+// The bool is false when LowerTemperatureSetpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) LowerTemperatureSetpointValue() (float64, bool) {
+	if m.LowerTemperatureSetpoint == nil {
+		return 0, false
+	}
+	return float64(*m.LowerTemperatureSetpoint) * 0.01, true
+}
+
+// SetLowerTemperatureSetpointValue sets LowerTemperatureSetpoint from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetLowerTemperatureSetpointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.LowerTemperatureSetpoint = &raw
+}
+
+// UpperTemperatureSetpointValue returns UpperTemperatureSetpoint as a physical value in K (value = raw * 0.01).
+// The bool is false when UpperTemperatureSetpoint is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) UpperTemperatureSetpointValue() (float64, bool) {
+	if m.UpperTemperatureSetpoint == nil {
+		return 0, false
+	}
+	return float64(*m.UpperTemperatureSetpoint) * 0.01, true
+}
+
+// SetUpperTemperatureSetpointValue sets UpperTemperatureSetpoint from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetUpperTemperatureSetpointValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.UpperTemperatureSetpoint = &raw
+}
+
+// CurrentTemperatureValue returns CurrentTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when CurrentTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) CurrentTemperatureValue() (float64, bool) {
+	if m.CurrentTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.CurrentTemperature) * 0.01, true
+}
+
+// SetCurrentTemperatureValue sets CurrentTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetCurrentTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.CurrentTemperature = &raw
+}
+
+// SeaWaterTemperatureValue returns SeaWaterTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when SeaWaterTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) SeaWaterTemperatureValue() (float64, bool) {
+	if m.SeaWaterTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.SeaWaterTemperature) * 0.01, true
+}
+
+// SetSeaWaterTemperatureValue sets SeaWaterTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetSeaWaterTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.SeaWaterTemperature = &raw
+}
+
+// LoopTemperatureValue returns LoopTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when LoopTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) LoopTemperatureValue() (float64, bool) {
+	if m.LoopTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.LoopTemperature) * 0.01, true
+}
+
+// SetLoopTemperatureValue sets LoopTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetLoopTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.LoopTemperature = &raw
+}
+
+// EvaporatorTemperatureValue returns EvaporatorTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when EvaporatorTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) EvaporatorTemperatureValue() (float64, bool) {
+	if m.EvaporatorTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.EvaporatorTemperature) * 0.01, true
+}
+
+// SetEvaporatorTemperatureValue sets EvaporatorTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetEvaporatorTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.EvaporatorTemperature = &raw
+}
+
+// InletTemperatureValue returns InletTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when InletTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *HvacStatus) InletTemperatureValue() (float64, bool) {
+	if m.InletTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.InletTemperature) * 0.01, true
+}
+
+// SetInletTemperatureValue sets InletTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *HvacStatus) SetInletTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.InletTemperature = &raw
+}
 
 type LightingSystemSettings struct {
 	Info                        MessageInfo `json:"info"`
@@ -1132,3 +3684,71 @@ func (m *CurrentStatusAndFile) MessageInfo() MessageInfo            { return m.I
 func (m *CurrentStatusAndFile) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *CurrentStatusAndFile) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *CurrentStatusAndFile) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// ElapsedTrackTimeValue returns ElapsedTrackTime as a physical value in s (value = raw).
+// The bool is false when ElapsedTrackTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *CurrentStatusAndFile) ElapsedTrackTimeValue() (float64, bool) {
+	if m.ElapsedTrackTime == nil {
+		return 0, false
+	}
+	return float64(*m.ElapsedTrackTime), true
+}
+
+// SetElapsedTrackTimeValue sets ElapsedTrackTime from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *CurrentStatusAndFile) SetElapsedTrackTimeValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ElapsedTrackTime = &raw
+}
+
+// TrackTimeValue returns TrackTime as a physical value in s (value = raw).
+// The bool is false when TrackTime is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *CurrentStatusAndFile) TrackTimeValue() (float64, bool) {
+	if m.TrackTime == nil {
+		return 0, false
+	}
+	return float64(*m.TrackTime), true
+}
+
+// SetTrackTimeValue sets TrackTime from a physical value in s, rounded to the nearest
+// wire tick of 1.
+func (m *CurrentStatusAndFile) SetTrackTimeValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TrackTime = &raw
+}
+
+// SignalStrengthValue returns SignalStrength as a physical value in % (value = raw).
+// The bool is false when SignalStrength is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *CurrentStatusAndFile) SignalStrengthValue() (float64, bool) {
+	if m.SignalStrength == nil {
+		return 0, false
+	}
+	return float64(*m.SignalStrength), true
+}
+
+// SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
+// wire tick of 1.
+func (m *CurrentStatusAndFile) SetSignalStrengthValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.SignalStrength = &raw
+}
+
+// RadioFrequencyValue returns RadioFrequency as a physical value in Hz (value = raw * 10).
+// The bool is false when RadioFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *CurrentStatusAndFile) RadioFrequencyValue() (float64, bool) {
+	if m.RadioFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.RadioFrequency) * 10, true
+}
+
+// SetRadioFrequencyValue sets RadioFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 10.
+func (m *CurrentStatusAndFile) SetRadioFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 10))
+	m.RadioFrequency = &raw
+}

@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type FurunoHeave struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -15,6 +17,23 @@ func (m *FurunoHeave) MessageInfo() MessageInfo            { return m.Info }
 func (m *FurunoHeave) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FurunoHeave) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoHeave) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// HeaveValue returns Heave as a physical value in m (value = raw * 0.001).
+// The bool is false when Heave is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoHeave) HeaveValue() (float64, bool) {
+	if m.Heave == nil {
+		return 0, false
+	}
+	return float64(*m.Heave) * 0.001, true
+}
+
+// SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
+// wire tick of 0.001.
+func (m *FurunoHeave) SetHeaveValue(v float64) {
+	raw := int64(math.Round(v / 0.001))
+	m.Heave = &raw
+}
 
 type FurunoStatusAndVersionReport struct {
 	Info             MessageInfo `json:"info"`
@@ -77,6 +96,159 @@ func (m *FurunoSensorSetup) MessageInfo() MessageInfo            { return m.Info
 func (m *FurunoSensorSetup) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FurunoSensorSetup) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoSensorSetup) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// RotationSmoothingValue returns RotationSmoothing as a physical value in s (value = raw * 0.1).
+// The bool is false when RotationSmoothing is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) RotationSmoothingValue() (float64, bool) {
+	if m.RotationSmoothing == nil {
+		return 0, false
+	}
+	return float64(*m.RotationSmoothing) * 0.1, true
+}
+
+// SetRotationSmoothingValue sets RotationSmoothing from a physical value in s, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSensorSetup) SetRotationSmoothingValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.RotationSmoothing = &raw
+}
+
+// HeadingOffsetValue returns HeadingOffset as a physical value in deg (value = raw * 0.1).
+// The bool is false when HeadingOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) HeadingOffsetValue() (float64, bool) {
+	if m.HeadingOffset == nil {
+		return 0, false
+	}
+	return float64(*m.HeadingOffset) * 0.1, true
+}
+
+// SetHeadingOffsetValue sets HeadingOffset from a physical value in deg, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSensorSetup) SetHeadingOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.HeadingOffset = &raw
+}
+
+// PitchOffsetValue returns PitchOffset as a physical value in deg (value = raw * 0.1).
+// The bool is false when PitchOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) PitchOffsetValue() (float64, bool) {
+	if m.PitchOffset == nil {
+		return 0, false
+	}
+	return float64(*m.PitchOffset) * 0.1, true
+}
+
+// SetPitchOffsetValue sets PitchOffset from a physical value in deg, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSensorSetup) SetPitchOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.PitchOffset = &raw
+}
+
+// RollOffsetValue returns RollOffset as a physical value in deg (value = raw * 0.1).
+// The bool is false when RollOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) RollOffsetValue() (float64, bool) {
+	if m.RollOffset == nil {
+		return 0, false
+	}
+	return float64(*m.RollOffset) * 0.1, true
+}
+
+// SetRollOffsetValue sets RollOffset from a physical value in deg, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSensorSetup) SetRollOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.RollOffset = &raw
+}
+
+// SogAndCogSmoothingValue returns SogAndCogSmoothing as a physical value in s (value = raw * 0.001).
+// The bool is false when SogAndCogSmoothing is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) SogAndCogSmoothingValue() (float64, bool) {
+	if m.SogAndCogSmoothing == nil {
+		return 0, false
+	}
+	return float64(*m.SogAndCogSmoothing) * 0.001, true
+}
+
+// SetSogAndCogSmoothingValue sets SogAndCogSmoothing from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *FurunoSensorSetup) SetSogAndCogSmoothingValue(v float64) {
+	raw := int64(math.Round(v / 0.001))
+	m.SogAndCogSmoothing = &raw
+}
+
+// Pgn3AxisSpeedSmoothingValue returns Pgn3AxisSpeedSmoothing as a physical value in s (value = raw * 0.001).
+// The bool is false when Pgn3AxisSpeedSmoothing is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) Pgn3AxisSpeedSmoothingValue() (float64, bool) {
+	if m.Pgn3AxisSpeedSmoothing == nil {
+		return 0, false
+	}
+	return float64(*m.Pgn3AxisSpeedSmoothing) * 0.001, true
+}
+
+// SetPgn3AxisSpeedSmoothingValue sets Pgn3AxisSpeedSmoothing from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *FurunoSensorSetup) SetPgn3AxisSpeedSmoothingValue(v float64) {
+	raw := int64(math.Round(v / 0.001))
+	m.Pgn3AxisSpeedSmoothing = &raw
+}
+
+// Pgn3AxisOffsetValue returns Pgn3AxisOffset as a physical value in % (value = raw * 0.00032).
+// The bool is false when Pgn3AxisOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) Pgn3AxisOffsetValue() (float64, bool) {
+	if m.Pgn3AxisOffset == nil {
+		return 0, false
+	}
+	return float64(*m.Pgn3AxisOffset) * 0.00032, true
+}
+
+// SetPgn3AxisOffsetValue sets Pgn3AxisOffset from a physical value in %, rounded to the nearest
+// wire tick of 0.00032.
+func (m *FurunoSensorSetup) SetPgn3AxisOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.00032))
+	m.Pgn3AxisOffset = &raw
+}
+
+// AirPressureOffsetValue returns AirPressureOffset as a physical value in Pa (value = raw * 10).
+// The bool is false when AirPressureOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) AirPressureOffsetValue() (float64, bool) {
+	if m.AirPressureOffset == nil {
+		return 0, false
+	}
+	return float64(*m.AirPressureOffset) * 10, true
+}
+
+// SetAirPressureOffsetValue sets AirPressureOffset from a physical value in Pa, rounded to the nearest
+// wire tick of 10.
+func (m *FurunoSensorSetup) SetAirPressureOffsetValue(v float64) {
+	raw := int64(math.Round(v / 10))
+	m.AirPressureOffset = &raw
+}
+
+// AirTemperatureOffsetValue returns AirTemperatureOffset as a physical value in K (value = raw * 0.1).
+// The bool is false when AirTemperatureOffset is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSensorSetup) AirTemperatureOffsetValue() (float64, bool) {
+	if m.AirTemperatureOffset == nil {
+		return 0, false
+	}
+	return float64(*m.AirTemperatureOffset) * 0.1, true
+}
+
+// SetAirTemperatureOffsetValue sets AirTemperatureOffset from a physical value in K, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSensorSetup) SetAirTemperatureOffsetValue(v float64) {
+	raw := int64(math.Round(v / 0.1))
+	m.AirTemperatureOffset = &raw
+}
 
 type FurunoDeadReckoningConfiguration struct {
 	Info              MessageInfo `json:"info"`
@@ -158,6 +330,40 @@ func (m *FurunoNavpilotStatus) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *FurunoNavpilotStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoNavpilotStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// RudderAngleValue returns RudderAngle as a physical value in rad (value = raw * 0.0001).
+// The bool is false when RudderAngle is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoNavpilotStatus) RudderAngleValue() (float64, bool) {
+	if m.RudderAngle == nil {
+		return 0, false
+	}
+	return float64(*m.RudderAngle) * 0.0001, true
+}
+
+// SetRudderAngleValue sets RudderAngle from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoNavpilotStatus) SetRudderAngleValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.RudderAngle = &raw
+}
+
+// CommandedCourseValue returns CommandedCourse as a physical value in rad (value = raw * 0.0001).
+// The bool is false when CommandedCourse is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoNavpilotStatus) CommandedCourseValue() (float64, bool) {
+	if m.CommandedCourse == nil {
+		return 0, false
+	}
+	return float64(*m.CommandedCourse) * 0.0001, true
+}
+
+// SetCommandedCourseValue sets CommandedCourse from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoNavpilotStatus) SetCommandedCourseValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.CommandedCourse = &raw
+}
+
 type FurunoShipParametersAndAntennaPosition struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -181,6 +387,108 @@ func (m *FurunoShipParametersAndAntennaPosition) EncodePayload() ([]uint8, error
 	return encodeFields(m)
 }
 
+// AntennaPositionXValue returns AntennaPositionX as a physical value in m (value = raw * 0.01).
+// The bool is false when AntennaPositionX is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionXValue() (float64, bool) {
+	if m.AntennaPositionX == nil {
+		return 0, false
+	}
+	return float64(*m.AntennaPositionX) * 0.01, true
+}
+
+// SetAntennaPositionXValue sets AntennaPositionX from a physical value in m, rounded to the nearest
+// wire tick of 0.01.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionXValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.AntennaPositionX = &raw
+}
+
+// AntennaPositionYValue returns AntennaPositionY as a physical value in m (value = raw * 0.1).
+// The bool is false when AntennaPositionY is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionYValue() (float64, bool) {
+	if m.AntennaPositionY == nil {
+		return 0, false
+	}
+	return float64(*m.AntennaPositionY) * 0.1, true
+}
+
+// SetAntennaPositionYValue sets AntennaPositionY from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionYValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AntennaPositionY = &raw
+}
+
+// AntennaPositionZValue returns AntennaPositionZ as a physical value in m (value = raw * 0.1).
+// The bool is false when AntennaPositionZ is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionZValue() (float64, bool) {
+	if m.AntennaPositionZ == nil {
+		return 0, false
+	}
+	return float64(*m.AntennaPositionZ) * 0.1, true
+}
+
+// SetAntennaPositionZValue sets AntennaPositionZ from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionZValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.AntennaPositionZ = &raw
+}
+
+// ShipSWidthValue returns ShipSWidth as a physical value in m (value = raw * 0.1).
+// The bool is false when ShipSWidth is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) ShipSWidthValue() (float64, bool) {
+	if m.ShipSWidth == nil {
+		return 0, false
+	}
+	return float64(*m.ShipSWidth) * 0.1, true
+}
+
+// SetShipSWidthValue sets ShipSWidth from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSWidthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.ShipSWidth = &raw
+}
+
+// ShipSLengthValue returns ShipSLength as a physical value in m (value = raw * 0.1).
+// The bool is false when ShipSLength is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) ShipSLengthValue() (float64, bool) {
+	if m.ShipSLength == nil {
+		return 0, false
+	}
+	return float64(*m.ShipSLength) * 0.1, true
+}
+
+// SetShipSLengthValue sets ShipSLength from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.ShipSLength = &raw
+}
+
+// ShipSHeightValue returns ShipSHeight as a physical value in m (value = raw * 0.1).
+// The bool is false when ShipSHeight is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoShipParametersAndAntennaPosition) ShipSHeightValue() (float64, bool) {
+	if m.ShipSHeight == nil {
+		return 0, false
+	}
+	return float64(*m.ShipSHeight) * 0.1, true
+}
+
+// SetShipSHeightValue sets ShipSHeight from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSHeightValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.ShipSHeight = &raw
+}
+
 type FurunoSpeedCalculationPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -197,6 +505,40 @@ func (m *FurunoSpeedCalculationPosition) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *FurunoSpeedCalculationPosition) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// PositionYValue returns PositionY as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionY is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSpeedCalculationPosition) PositionYValue() (float64, bool) {
+	if m.PositionY == nil {
+		return 0, false
+	}
+	return float64(*m.PositionY) * 0.1, true
+}
+
+// SetPositionYValue sets PositionY from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSpeedCalculationPosition) SetPositionYValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionY = &raw
+}
+
+// PositionZValue returns PositionZ as a physical value in m (value = raw * 0.1).
+// The bool is false when PositionZ is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoSpeedCalculationPosition) PositionZValue() (float64, bool) {
+	if m.PositionZ == nil {
+		return 0, false
+	}
+	return float64(*m.PositionZ) * 0.1, true
+}
+
+// SetPositionZValue sets PositionZ from a physical value in m, rounded to the nearest
+// wire tick of 0.1.
+func (m *FurunoSpeedCalculationPosition) SetPositionZValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.PositionZ = &raw
+}
 
 type FurunoSixDegreesOfFreedomMovement struct {
 	Info             MessageInfo `json:"info"`
@@ -239,6 +581,74 @@ func (m *FurunoHeelAngleRollInformation) DecodePayload(payload []uint8) error {
 }
 func (m *FurunoHeelAngleRollInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// HeelValue returns Heel as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Heel is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoHeelAngleRollInformation) HeelValue() (float64, bool) {
+	if m.Heel == nil {
+		return 0, false
+	}
+	return float64(*m.Heel) * 0.0001, true
+}
+
+// SetHeelValue sets Heel from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoHeelAngleRollInformation) SetHeelValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Heel = &raw
+}
+
+// Field4Value returns Field4 as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Field4 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoHeelAngleRollInformation) Field4Value() (float64, bool) {
+	if m.Field4 == nil {
+		return 0, false
+	}
+	return float64(*m.Field4) * 0.0001, true
+}
+
+// SetField4Value sets Field4 from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoHeelAngleRollInformation) SetField4Value(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Field4 = &raw
+}
+
+// Field6Value returns Field6 as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Field6 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoHeelAngleRollInformation) Field6Value() (float64, bool) {
+	if m.Field6 == nil {
+		return 0, false
+	}
+	return float64(*m.Field6) * 0.0001, true
+}
+
+// SetField6Value sets Field6 from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoHeelAngleRollInformation) SetField6Value(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Field6 = &raw
+}
+
+// Field8Value returns Field8 as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Field8 is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoHeelAngleRollInformation) Field8Value() (float64, bool) {
+	if m.Field8 == nil {
+		return 0, false
+	}
+	return float64(*m.Field8) * 0.0001, true
+}
+
+// SetField8Value sets Field8 from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoHeelAngleRollInformation) SetField8Value(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Field8 = &raw
+}
+
 type FurunoMultiSatsInViewExtended struct {
 	Info             MessageInfo                               `json:"info"`
 	ManufacturerCode *uint64                                   `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -268,6 +678,74 @@ func (m *FurunoMultiSatsInViewExtended) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *FurunoMultiSatsInViewExtended) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// ElevationValue returns Elevation as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Elevation is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) ElevationValue() (float64, bool) {
+	if m.Elevation == nil {
+		return 0, false
+	}
+	return float64(*m.Elevation) * 0.0001, true
+}
+
+// SetElevationValue sets Elevation from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetElevationValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Elevation = &raw
+}
+
+// AzimuthValue returns Azimuth as a physical value in rad (value = raw * 0.0001).
+// The bool is false when Azimuth is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) AzimuthValue() (float64, bool) {
+	if m.Azimuth == nil {
+		return 0, false
+	}
+	return float64(*m.Azimuth) * 0.0001, true
+}
+
+// SetAzimuthValue sets Azimuth from a physical value in rad, rounded to the nearest
+// wire tick of 0.0001.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetAzimuthValue(v float64) {
+	raw := int64(math.Round(v / 0.0001))
+	m.Azimuth = &raw
+}
+
+// SnrValue returns Snr as a physical value in dB (value = raw * 0.01).
+// The bool is false when Snr is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SnrValue() (float64, bool) {
+	if m.Snr == nil {
+		return 0, false
+	}
+	return float64(*m.Snr) * 0.01, true
+}
+
+// SetSnrValue sets Snr from a physical value in dB, rounded to the nearest
+// wire tick of 0.01.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetSnrValue(v float64) {
+	raw := int64(math.Round(v / 0.01))
+	m.Snr = &raw
+}
+
+// RangeResidualValue returns RangeResidual as a physical value in m (value = raw * 1e-05).
+// The bool is false when RangeResidual is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) RangeResidualValue() (float64, bool) {
+	if m.RangeResidual == nil {
+		return 0, false
+	}
+	return float64(*m.RangeResidual) * 1e-05, true
+}
+
+// SetRangeResidualValue sets RangeResidual from a physical value in m, rounded to the nearest
+// wire tick of 1e-05.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetRangeResidualValue(v float64) {
+	raw := int64(math.Round(v / 1e-05))
+	m.RangeResidual = &raw
+}
 
 type FurunoMotionSensorStatusExtended struct {
 	Info             MessageInfo `json:"info"`

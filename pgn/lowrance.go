@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type LowranceTemperature struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -16,6 +18,23 @@ func (m *LowranceTemperature) MessageInfo() MessageInfo            { return m.In
 func (m *LowranceTemperature) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LowranceTemperature) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LowranceTemperature) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// ActualTemperatureValue returns ActualTemperature as a physical value in K (value = raw * 0.01).
+// The bool is false when ActualTemperature is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *LowranceTemperature) ActualTemperatureValue() (float64, bool) {
+	if m.ActualTemperature == nil {
+		return 0, false
+	}
+	return float64(*m.ActualTemperature) * 0.01, true
+}
+
+// SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
+// wire tick of 0.01.
+func (m *LowranceTemperature) SetActualTemperatureValue(v float64) {
+	raw := uint64(math.Round(v / 0.01))
+	m.ActualTemperature = &raw
+}
 
 type LowranceGpsConfiguration struct {
 	Info             MessageInfo `json:"info"`
@@ -61,6 +80,23 @@ func (m *LowranceVesselSetupEngineAndTankConfiguration) EncodePayload() ([]uint8
 	return encodeFields(m)
 }
 
+// TotalFuelCapacityValue returns TotalFuelCapacity as a physical value in L (value = raw * 0.1).
+// The bool is false when TotalFuelCapacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *LowranceVesselSetupEngineAndTankConfiguration) TotalFuelCapacityValue() (float64, bool) {
+	if m.TotalFuelCapacity == nil {
+		return 0, false
+	}
+	return float64(*m.TotalFuelCapacity) * 0.1, true
+}
+
+// SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
+// wire tick of 0.1.
+func (m *LowranceVesselSetupEngineAndTankConfiguration) SetTotalFuelCapacityValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.TotalFuelCapacity = &raw
+}
+
 type LowranceVesselSetupEngineAndTankConfigurationBroadcast struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -82,6 +118,23 @@ func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) DecodePayload(p
 }
 func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// TotalFuelCapacityValue returns TotalFuelCapacity as a physical value in L (value = raw * 0.1).
+// The bool is false when TotalFuelCapacity is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) TotalFuelCapacityValue() (float64, bool) {
+	if m.TotalFuelCapacity == nil {
+		return 0, false
+	}
+	return float64(*m.TotalFuelCapacity) * 0.1, true
+}
+
+// SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
+// wire tick of 0.1.
+func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) SetTotalFuelCapacityValue(v float64) {
+	raw := uint64(math.Round(v / 0.1))
+	m.TotalFuelCapacity = &raw
 }
 
 type LowranceProductInformation struct {

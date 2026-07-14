@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type RadioFrequencyModePower struct {
 	Info             MessageInfo `json:"info"`
 	RxFrequency      *uint64     `json:"rxFrequency,omitempty" n2k:"1"`
@@ -20,6 +22,74 @@ func (m *RadioFrequencyModePower) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *RadioFrequencyModePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// RxFrequencyValue returns RxFrequency as a physical value in Hz (value = raw * 10).
+// The bool is false when RxFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *RadioFrequencyModePower) RxFrequencyValue() (float64, bool) {
+	if m.RxFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.RxFrequency) * 10, true
+}
+
+// SetRxFrequencyValue sets RxFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 10.
+func (m *RadioFrequencyModePower) SetRxFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 10))
+	m.RxFrequency = &raw
+}
+
+// TxFrequencyValue returns TxFrequency as a physical value in Hz (value = raw * 10).
+// The bool is false when TxFrequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *RadioFrequencyModePower) TxFrequencyValue() (float64, bool) {
+	if m.TxFrequency == nil {
+		return 0, false
+	}
+	return float64(*m.TxFrequency) * 10, true
+}
+
+// SetTxFrequencyValue sets TxFrequency from a physical value in Hz, rounded to the nearest
+// wire tick of 10.
+func (m *RadioFrequencyModePower) SetTxFrequencyValue(v float64) {
+	raw := uint64(math.Round(v / 10))
+	m.TxFrequency = &raw
+}
+
+// TxPowerValue returns TxPower as a physical value in W (value = raw).
+// The bool is false when TxPower is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *RadioFrequencyModePower) TxPowerValue() (float64, bool) {
+	if m.TxPower == nil {
+		return 0, false
+	}
+	return float64(*m.TxPower), true
+}
+
+// SetTxPowerValue sets TxPower from a physical value in W, rounded to the nearest
+// wire tick of 1.
+func (m *RadioFrequencyModePower) SetTxPowerValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.TxPower = &raw
+}
+
+// ChannelBandwidthValue returns ChannelBandwidth as a physical value in Hz (value = raw).
+// The bool is false when ChannelBandwidth is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *RadioFrequencyModePower) ChannelBandwidthValue() (float64, bool) {
+	if m.ChannelBandwidth == nil {
+		return 0, false
+	}
+	return float64(*m.ChannelBandwidth), true
+}
+
+// SetChannelBandwidthValue sets ChannelBandwidth from a physical value in Hz, rounded to the nearest
+// wire tick of 1.
+func (m *RadioFrequencyModePower) SetChannelBandwidthValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.ChannelBandwidth = &raw
+}
 
 type DscCallInformation struct {
 	Info                                        MessageInfo                    `json:"info"`
@@ -55,6 +125,91 @@ func (m *DscCallInformation) MessageInfo() MessageInfo            { return m.Inf
 func (m *DscCallInformation) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *DscCallInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DscCallInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// LatitudeOfVesselReportedValue returns LatitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
+// The bool is false when LatitudeOfVesselReported is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscCallInformation) LatitudeOfVesselReportedValue() (float64, bool) {
+	if m.LatitudeOfVesselReported == nil {
+		return 0, false
+	}
+	return float64(*m.LatitudeOfVesselReported) * 1e-07, true
+}
+
+// SetLatitudeOfVesselReportedValue sets LatitudeOfVesselReported from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *DscCallInformation) SetLatitudeOfVesselReportedValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.LatitudeOfVesselReported = &raw
+}
+
+// LongitudeOfVesselReportedValue returns LongitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
+// The bool is false when LongitudeOfVesselReported is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscCallInformation) LongitudeOfVesselReportedValue() (float64, bool) {
+	if m.LongitudeOfVesselReported == nil {
+		return 0, false
+	}
+	return float64(*m.LongitudeOfVesselReported) * 1e-07, true
+}
+
+// SetLongitudeOfVesselReportedValue sets LongitudeOfVesselReported from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *DscCallInformation) SetLongitudeOfVesselReportedValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.LongitudeOfVesselReported = &raw
+}
+
+// TimeOfPositionValue returns TimeOfPosition as a physical value in s (value = raw * 0.0001).
+// The bool is false when TimeOfPosition is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscCallInformation) TimeOfPositionValue() (float64, bool) {
+	if m.TimeOfPosition == nil {
+		return 0, false
+	}
+	return float64(*m.TimeOfPosition) * 0.0001, true
+}
+
+// SetTimeOfPositionValue sets TimeOfPosition from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *DscCallInformation) SetTimeOfPositionValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TimeOfPosition = &raw
+}
+
+// TimeOfReceiptValue returns TimeOfReceipt as a physical value in s (value = raw * 0.0001).
+// The bool is false when TimeOfReceipt is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscCallInformation) TimeOfReceiptValue() (float64, bool) {
+	if m.TimeOfReceipt == nil {
+		return 0, false
+	}
+	return float64(*m.TimeOfReceipt) * 0.0001, true
+}
+
+// SetTimeOfReceiptValue sets TimeOfReceipt from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *DscCallInformation) SetTimeOfReceiptValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TimeOfReceipt = &raw
+}
+
+// DateOfReceiptValue returns DateOfReceipt as a physical value in d (value = raw).
+// The bool is false when DateOfReceipt is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscCallInformation) DateOfReceiptValue() (float64, bool) {
+	if m.DateOfReceipt == nil {
+		return 0, false
+	}
+	return float64(*m.DateOfReceipt), true
+}
+
+// SetDateOfReceiptValue sets DateOfReceipt from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *DscCallInformation) SetDateOfReceiptValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.DateOfReceipt = &raw
+}
 
 type DscDistressCallInformation struct {
 	Info                                        MessageInfo                            `json:"info"`
@@ -92,3 +247,88 @@ func (m *DscDistressCallInformation) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *DscDistressCallInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// LatitudeOfVesselReportedValue returns LatitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
+// The bool is false when LatitudeOfVesselReported is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscDistressCallInformation) LatitudeOfVesselReportedValue() (float64, bool) {
+	if m.LatitudeOfVesselReported == nil {
+		return 0, false
+	}
+	return float64(*m.LatitudeOfVesselReported) * 1e-07, true
+}
+
+// SetLatitudeOfVesselReportedValue sets LatitudeOfVesselReported from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *DscDistressCallInformation) SetLatitudeOfVesselReportedValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.LatitudeOfVesselReported = &raw
+}
+
+// LongitudeOfVesselReportedValue returns LongitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
+// The bool is false when LongitudeOfVesselReported is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscDistressCallInformation) LongitudeOfVesselReportedValue() (float64, bool) {
+	if m.LongitudeOfVesselReported == nil {
+		return 0, false
+	}
+	return float64(*m.LongitudeOfVesselReported) * 1e-07, true
+}
+
+// SetLongitudeOfVesselReportedValue sets LongitudeOfVesselReported from a physical value in deg, rounded to the nearest
+// wire tick of 1e-07.
+func (m *DscDistressCallInformation) SetLongitudeOfVesselReportedValue(v float64) {
+	raw := int64(math.Round(v / 1e-07))
+	m.LongitudeOfVesselReported = &raw
+}
+
+// TimeOfPositionValue returns TimeOfPosition as a physical value in s (value = raw * 0.0001).
+// The bool is false when TimeOfPosition is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscDistressCallInformation) TimeOfPositionValue() (float64, bool) {
+	if m.TimeOfPosition == nil {
+		return 0, false
+	}
+	return float64(*m.TimeOfPosition) * 0.0001, true
+}
+
+// SetTimeOfPositionValue sets TimeOfPosition from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *DscDistressCallInformation) SetTimeOfPositionValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TimeOfPosition = &raw
+}
+
+// TimeOfReceiptValue returns TimeOfReceipt as a physical value in s (value = raw * 0.0001).
+// The bool is false when TimeOfReceipt is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscDistressCallInformation) TimeOfReceiptValue() (float64, bool) {
+	if m.TimeOfReceipt == nil {
+		return 0, false
+	}
+	return float64(*m.TimeOfReceipt) * 0.0001, true
+}
+
+// SetTimeOfReceiptValue sets TimeOfReceipt from a physical value in s, rounded to the nearest
+// wire tick of 0.0001.
+func (m *DscDistressCallInformation) SetTimeOfReceiptValue(v float64) {
+	raw := uint64(math.Round(v / 0.0001))
+	m.TimeOfReceipt = &raw
+}
+
+// DateOfReceiptValue returns DateOfReceipt as a physical value in d (value = raw).
+// The bool is false when DateOfReceipt is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *DscDistressCallInformation) DateOfReceiptValue() (float64, bool) {
+	if m.DateOfReceipt == nil {
+		return 0, false
+	}
+	return float64(*m.DateOfReceipt), true
+}
+
+// SetDateOfReceiptValue sets DateOfReceipt from a physical value in d, rounded to the nearest
+// wire tick of 1.
+func (m *DscDistressCallInformation) SetDateOfReceiptValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.DateOfReceipt = &raw
+}

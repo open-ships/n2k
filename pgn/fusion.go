@@ -3,6 +3,8 @@
 
 package pgn
 
+import "math"
+
 type FusionMediaControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -345,6 +347,40 @@ func (m *FusionMedia) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionMedia) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMedia) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMedia) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// LengthValue returns Length as a physical value in s (value = raw * 0.001).
+// The bool is false when Length is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FusionMedia) LengthValue() (float64, bool) {
+	if m.Length == nil {
+		return 0, false
+	}
+	return float64(*m.Length) * 0.001, true
+}
+
+// SetLengthValue sets Length from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *FusionMedia) SetLengthValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.Length = &raw
+}
+
+// PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
+// The bool is false when PositionInTrack is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FusionMedia) PositionInTrackValue() (float64, bool) {
+	if m.PositionInTrack == nil {
+		return 0, false
+	}
+	return float64(*m.PositionInTrack) * 0.001, true
+}
+
+// SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *FusionMedia) SetPositionInTrackValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.PositionInTrack = &raw
+}
 
 type FusionMenuItem struct {
 	Info             MessageInfo `json:"info"`
@@ -753,6 +789,23 @@ func (m *FusionTrackPosition) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *FusionTrackPosition) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionTrackPosition) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// ProgressValue returns Progress as a physical value in s (value = raw * 0.001).
+// The bool is false when Progress is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FusionTrackPosition) ProgressValue() (float64, bool) {
+	if m.Progress == nil {
+		return 0, false
+	}
+	return float64(*m.Progress) * 0.001, true
+}
+
+// SetProgressValue sets Progress from a physical value in s, rounded to the nearest
+// wire tick of 0.001.
+func (m *FusionTrackPosition) SetProgressValue(v float64) {
+	raw := uint64(math.Round(v / 0.001))
+	m.Progress = &raw
+}
+
 type FusionTuner struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -770,6 +823,23 @@ func (m *FusionTuner) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionTuner) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionTuner) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionTuner) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// FrequencyValue returns Frequency as a physical value in Hz (value = raw).
+// The bool is false when Frequency is nil: the wire carried the field's null
+// sentinel or the payload ended before the field.
+func (m *FusionTuner) FrequencyValue() (float64, bool) {
+	if m.Frequency == nil {
+		return 0, false
+	}
+	return float64(*m.Frequency), true
+}
+
+// SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
+// wire tick of 1.
+func (m *FusionTuner) SetFrequencyValue(v float64) {
+	raw := uint64(math.Round(v))
+	m.Frequency = &raw
+}
 
 type FusionUsbRepeatStatus struct {
 	Info             MessageInfo `json:"info"`
