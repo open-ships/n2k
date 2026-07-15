@@ -12,14 +12,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// respondWhenRequested watches the mock bus for an ISO request for pgnNum
-// addressed to responder, then injects the given message from that address.
+// respondWhenRequested watches the mock bus for ISO requests for pgnNum and
+// injects the given message from responder in reply to each one. It answers
+// every matching request, not just the first: concurrent callers each send
+// their own ISO request (Request registers its waiter before transmitting),
+// so replying per-request guarantees each waiter gets a response regardless of
+// the order in which the goroutines are scheduled. A scan cursor makes sure a
+// given request frame is answered exactly once, since getWritten returns the
+// whole append-only log on every poll.
 func respondWhenRequested(t *testing.T, mb *mockBus, pgnNum uint32, responder uint8, msg pgn.Message) {
 	t.Helper()
 	go func() {
+		scanned := 0
 		deadline := time.Now().Add(5 * time.Second)
 		for time.Now().Before(deadline) {
-			for _, f := range mb.getWritten() {
+			written := mb.getWritten()
+			for ; scanned < len(written); scanned++ {
+				f := written[scanned]
 				id := framer.ParseCANID(f.ID)
 				if id.PGN != 59904 || f.Length < 3 {
 					continue
@@ -40,7 +49,6 @@ func respondWhenRequested(t *testing.T, mb *mockBus, pgnNum uint32, responder ui
 						mb.inbound <- rf
 					}
 				}
-				return
 			}
 			time.Sleep(5 * time.Millisecond)
 		}
@@ -106,9 +114,9 @@ func TestRequest_ConcurrentSamePGN(t *testing.T) {
 		pi  *pgn.ProductInformation
 		err error
 	}
-	// A generous explicit deadline: under the race detector on a loaded
-	// machine the default 1.25s ISO deadline can flake, and this test is
-	// about concurrent request coalescing, not deadline behavior.
+	// A generous explicit deadline so a loaded machine under the race
+	// detector has room; this test is about two concurrent requests for the
+	// same PGN both completing, not deadline behavior.
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
