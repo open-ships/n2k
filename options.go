@@ -24,7 +24,7 @@ type config struct {
 
 func (c *config) validate() error {
 	if len(c.sources) == 0 && c.bus == nil {
-		return errors.New("n2k: at least one source (CAN, USB, or Replay) is required")
+		return errors.New("n2k: at least one source or WithBus is required")
 	}
 	return nil
 }
@@ -67,9 +67,10 @@ func File(path string, opts ...FileOption) Option {
 }
 
 // TCP adds a source that dials a network gateway (e.g. a Yacht Devices
-// YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port")
-// and reads its stream. TCP sources are read-only: they work with Receive and
-// NewScanner but not NewClient.
+// YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port").
+// TCP works with Receive/NewScanner and can also back NewClient for writes.
+// RAW gateways provide frame-level read/write access; Actisense-format
+// gateways send assembled messages and stamp their own source address.
 func TCP(addr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})

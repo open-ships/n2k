@@ -23,9 +23,9 @@ import (
 // claiming to complete.
 const defaultClaimTimeout = 1500 * time.Millisecond
 
-// Client is the central integration point for NMEA 2000 communication. It
-// composes address claiming, transport protocol, encoding, and framing into a
-// single type that can both read and write PGN messages.
+// Client is a read/write NMEA 2000 bus node. It composes address claiming,
+// transport protocol, encoding, and framing into a single type that can both
+// receive and transmit PGN messages.
 type Client struct {
 	cfg    config
 	ctx    context.Context
@@ -107,7 +107,8 @@ type writeJob struct {
 }
 
 // NewClient creates a Client that can read and write NMEA 2000 messages.
-// At least one source option (CAN, USB, Replay, or Bus) must be provided.
+// Provide CAN, USB, TCP, Replay, or WithBus for writable clients; File and UDP
+// are read-only sources for Receive/NewScanner.
 func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	cfg := config{}
 	for _, o := range opts {
@@ -225,8 +226,8 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	return c, nil
 }
 
-// initBus sets up the CAN bus integration: bus interface, address claiming,
-// transport protocol, and the internal read/decode pipeline.
+// initBus sets up the bus runtime: bus interface, address claiming, transport
+// protocol, and the internal read/decode pipeline.
 func (c *Client) initBus(cfg config) error {
 	// Get or construct the bus.
 	if cfg.bus != nil {

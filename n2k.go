@@ -1,5 +1,7 @@
-// Package n2k decodes NMEA 2000 marine network messages from CAN bus hardware
-// into strongly-typed Go structs.
+// Package n2k is a standalone Go toolkit for NMEA 2000 marine networks. It
+// reads and writes messages from CAN hardware, USB-CAN adapters, network
+// gateways, and capture/replay sources, decoding PGNs into strongly typed Go
+// structs from package pgn.
 package n2k
 
 import (
