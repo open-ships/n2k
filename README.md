@@ -156,23 +156,32 @@ read/write client, replay, request/response, registry, and broadcast features.
   skip decoding entirely.
 - **Pure Go, CGO-free**, cross-compiles to Linux, macOS, and Windows.
 
-### Library Comparison
+### Support Matrix
 
 As of July 2026, these are relevant projects that document NMEA 2000 or N2K
 support. Go projects come first because `n2k` is for Go applications; non-Go
-projects follow to clarify where this library sits in the broader ecosystem.
-NMEA 0183-only parsers are intentionally excluded.
+projects follow to show the broader ecosystem. NMEA 0183-only parsers are
+intentionally excluded.
 
-| Project | Language | Primary role | Decode model | Write / bus behavior | Source and gateway support | Best fit |
-|---------|----------|--------------|--------------|----------------------|----------------------------|----------|
-| [open-ships/n2k](https://github.com/open-ships/n2k) | Go | Standalone Go library + CLI for NMEA 2000 applications and bus-facing services. | ~600 generated typed PGN structs, runtime metadata, raw ticks, physical accessors, byte-preserving round trips. | `Client` claims an address, heartbeats, answers product/configuration and ISO requests, handles group-function transmit/retime/pause, writes PGN structs, and tracks devices. | SocketCAN, USB-CAN serial, TCP/UDP gateways, candump logs, in-memory replay; Yacht Devices RAW and Actisense formats. | Production Go apps that need the direct NMEA 2000 library and bus node in one package. |
-| [boatkit-io/n2k](https://github.com/boatkit-io/n2k) | Go | Go library split across endpoint, service, generated PGN, and node packages. | Generated public PGN types in `pkg/pgn`. | `N2kService.Write` and node write flows after address claim; node package documents heartbeats and observed-device tracking. | SocketCAN, USB CAN, raw replay, N2K file endpoints. | Go apps that want its endpoint/service/node architecture. |
-| [aldas/go-nmea-client](https://github.com/aldas/go-nmea-client) | Go | Work-in-progress Go reader plus `n2k-reader` CLI for raw capture/format workflows. | Field-oriented decode from a PGN database; no generated typed-PGN application API documented. | CLI can send STDIN to a CAN interface/device; Actisense devices expose raw-message writes. | Files, TCP connections, serial devices, SocketCAN, and multiple Actisense/raw formats. | Raw ingestion, format conversion, and exploratory tooling around Actisense/SocketCAN inputs. |
-| [canboat/canboat](https://github.com/canboat/canboat) | C | Command-line analyzer and reference utility suite for exploring NMEA 2000 and NMEA 0183 networks. | Broad PGN database and analyzer output rather than a Go typed-struct API. | Can read and write N2K messages, but is analysis tooling, not a Go application library. | POSIX command-line workflows and CAN adapters supported by its tools. | Shell pipelines, reverse engineering, schema reference, and protocol research. |
-| [ttlappalainen/NMEA2000](https://github.com/ttlappalainen/NMEA2000) | C++ | Object-oriented library for building NMEA 2000 devices, originally for Arduino-class boards. | Hand-authored C++ message helpers for common PGNs. | Handles mandatory NMEA 2000 device behavior and has been used in commercial certified devices. | Arduino, Teensy, ESP, MBED, Raspberry Pi-class targets via hardware-specific CAN drivers. | Embedded C++ devices and microcontroller firmware. |
-| [canboat/canboatjs](https://github.com/canboat/canboatjs) | TypeScript | TypeScript library and CLI tools for parsing, encoding, and interfacing with NMEA 2000 networks. | PGN database-backed parsing with TypeScript type definitions and PGN output. | Bidirectional decode/encode/transmit support is documented. | Multiple formats and devices including Actisense, iKonvert, and YDWG-style gateways. | Node.js, Signal K, TypeScript tooling, and web-adjacent NMEA 2000 integrations. |
-| [tomer-w/nmea2000](https://github.com/tomer-w/nmea2000) | Python | Python encoder/decoder and gateway clients, also used as a Home Assistant integration backend. | Generated Python decode/encode based on the PGN database; JSON-friendly field output. | Supports encoding/decoding frames and reading/writing through TCP and USB gateway clients. | EByte TCP, ASCII TCP, Actisense BST, Waveshare USB-CAN, and python-can devices. | Python automation, Home Assistant, and scripting around NMEA 2000 data. |
-| [fard-draf/korri-n2k](https://github.com/fard-draf/korri-n2k) | Rust | `no_std`, no-allocation NMEA 2000 / ISO 11783 protocol stack for embedded Rust targets. | Build-time generated typed Rust structs for a selected PGN manifest or `full-pgns`. | Bidirectional send/receive with address claiming and fast-packet handling; group functions are still a documented roadmap gap. | Hardware-agnostic traits, bare-metal async runtimes, and Linux/tokio mode; hardware examples live separately. | Embedded Rust devices that need a small selectable PGN set. |
+Legend: ✅ first-class documented support; ◐ partial, lower-level, or
+workflow-specific support; — not documented or not applicable.
+
+| Project | Lang | Go app API | Typed PGNs | Broad PGN coverage | Byte-preserving encode | Writes | Bus node behavior | Group functions | Sources / gateways | Filtering | Physical accessors | Device registry | CLI / releases | Best fit |
+|---------|------|------------|------------|--------------------|------------------------|--------|-------------------|-----------------|--------------------|-----------|--------------------|-----------------|----------------|----------|
+| [open-ships/n2k](https://github.com/open-ships/n2k) | Go | ✅ direct top-level API | ✅ generated structs | ✅ ~600 message types | ✅ tested round trips | ✅ structs to bus | ✅ claim, heartbeat, info, requests | ✅ transmit / retime / pause | ✅ CAN, USB, TCP, UDP, files, replay | ✅ CEL + optimizer | ✅ generated SI accessors | ✅ NAME-keyed registry | ✅ installable CLI + semver | Go production apps, gateways, loggers, automation |
+| [boatkit-io/n2k](https://github.com/boatkit-io/n2k) | Go | ✅ endpoint/service/node packages | ✅ generated structs | ◐ generated subset | ◐ documented encode/write | ✅ service/node writes | ✅ node claim + heartbeat | — not documented | ◐ CAN, USB, raw replay, N2K files | ◐ subscriptions/tools | — not documented | ✅ known devices | ◐ dev commands + v0 tags | Go apps built around its service/node architecture |
+| [aldas/go-nmea-client](https://github.com/aldas/go-nmea-client) | Go | ◐ lower-level reader APIs | — field output | ◐ PGN database-backed | ◐ raw/message oriented | ◐ CLI/device writes | ◐ basic node mapping | — not documented | ✅ files, TCP, serial, SocketCAN, Actisense/raw | ◐ output shaping | — not documented | ◐ basic node map | ◐ `n2k-reader`, WIP | Raw ingestion and format conversion |
+| [canboat/canboat](https://github.com/canboat/canboat) | C | — | — analyzer output | ✅ reference PGN catalog | ◐ tooling-oriented | ✅ tools can write | — analysis suite | — not a bus-node library | ◐ POSIX CLI + CAN adapters | ◐ shell pipelines | ◐ unit-scaled output | — | ✅ mature CLI releases | Shell analysis, reverse engineering, schema reference |
+| [ttlappalainen/NMEA2000](https://github.com/ttlappalainen/NMEA2000) | C++ | — | ◐ hand-authored helpers | ◐ common PGNs | ◐ message helpers | ✅ embedded sends | ✅ mandatory device behavior | ◐ device-oriented support | ◐ hardware-specific CAN drivers | — not documented | ◐ helper conversions | — | ◐ Arduino/library ecosystem | Embedded C++ NMEA 2000 devices |
+| [canboat/canboatjs](https://github.com/canboat/canboatjs) | TypeScript | — | ◐ TypeScript definitions | ✅ database-backed | ✅ documented encode/transmit | ✅ documented transmit | ◐ device integration | ◐ plugin/provider-specific | ✅ Actisense, iKonvert, YDWG, etc. | ◐ tooling/plugins | ◐ parsed values | ◐ integration-specific | ✅ CLI + npm package | Node.js, Signal K, TypeScript integrations |
+| [tomer-w/nmea2000](https://github.com/tomer-w/nmea2000) | Python | — | ◐ generated Python fields | ✅ database-backed | ✅ generated encode/decode | ✅ TCP/USB gateway clients | — not documented | — not documented | ✅ EByte, ASCII TCP, Actisense BST, Waveshare, python-can | ◐ JSON/CLI output | ◐ decoded field units | — | ✅ CLI + PyPI | Python automation and Home Assistant |
+| [fard-draf/korri-n2k](https://github.com/fard-draf/korri-n2k) | Rust | — | ✅ generated structs | ◐ 313 / 348 PGNs documented | ◐ generated serialization | ✅ bidirectional send | ✅ address claiming + fast packet | — roadmap gap | ◐ hardware-agnostic traits, examples separate | — not documented | ◐ typed values | — | ◐ crate tags/examples | Embedded Rust with selectable PGN sets |
+
+For a Go application, `open-ships/n2k` is the only option in this matrix with
+first-class support across the whole application surface: typed decoding,
+byte-preserving writes, real bus-node behavior, group functions, gateway/file
+sources, filtering, physical accessors, device discovery, CLI workflows, and
+release discipline.
 
 If you're building a Go application for an NMEA 2000 system — telemetry,
 logging, gateways, test rigs, monitoring, automation, or bus-facing services —
