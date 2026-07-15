@@ -20,11 +20,10 @@
 //   - MarshalJSON() for serialization with unit type metadata
 //
 // The UnitType enum is used in JSON serialization to identify which physical quantity a value
-// represents, enabling generic handling in frontends like boatweb.
+// represents, enabling generic handling by user interfaces, telemetry services, and stored
+// data formats.
 //
-// These units also have to interact cleanly with units transferred from boatweb.
-//
-// Standalone status: this package is not currently consumed by the pgn decode path. Decoded PGN
+// Relationship to PGN decoding: this package is not currently consumed by the pgn decode path. Decoded PGN
 // struct fields hold raw wire ticks (*uint64/*int64); pgn.PhysicalValue applies a field's Resolution
 // and Offset to produce a plain float64 physical value plus a unit string, but it does not construct
 // units types, and no PGN struct field uses a units type. Integrating units into decoding would mean
