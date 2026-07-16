@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"runtime/debug"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -320,7 +321,10 @@ func (c *Client) initBus(cfg config) error {
 		hbInterval = *cfg.heartbeatInterval
 	}
 	c.heartbeat = newHeartbeater(hbInterval, c.Write)
-	go c.heartbeat.run(c.ctx, c.addrReady)
+	go func() {
+		defer c.recoverGoroutine("heartbeat")
+		c.heartbeat.run(c.ctx, c.addrReady)
+	}()
 
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
@@ -364,7 +368,21 @@ func (c *Client) initBus(cfg config) error {
 	// is established, so a gateway that is unreachable at startup must fail
 	// NewClient rather than hang it forever.
 	startErr := make(chan error, 1)
-	go func() { startErr <- c.claimer.Start() }()
+	go func() {
+		// This goroutine is owned by n2k, so a panic from a misbehaving Bus
+		// (e.g. WriteFrame panicking instead of returning an error) would
+		// otherwise be unrecoverable by the caller and crash the whole
+		// process. Convert it into the same error return the caller already
+		// handles for a claim that fails to start.
+		defer func() {
+			if r := recover(); r != nil {
+				c.log.Error("panic during initial address claim",
+					"panic", r, "stack", string(debug.Stack()))
+				startErr <- fmt.Errorf("n2k: panic during address claim: %v", r)
+			}
+		}()
+		startErr <- c.claimer.Start()
+	}()
 	select {
 	case err := <-startErr:
 		if err != nil {
@@ -468,9 +486,32 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 }
 
 // busReadLoop runs the bus and closes the message channel when done.
+// recoverGoroutine converts a panic on an n2k-owned goroutine into a logged
+// error with a stack trace, so a fault in user-supplied code (a Bus method or
+// message handler) degrades the client instead of crashing the host process.
+// Use as `defer c.recoverGoroutine(name)` at the top of a goroutine, or around
+// a single unit of work that should not abort the surrounding loop.
+func (c *Client) recoverGoroutine(name string) {
+	if r := recover(); r != nil {
+		c.log.Error("recovered panic in "+name,
+			"panic", r, "stack", string(debug.Stack()))
+	}
+}
+
 func (c *Client) busReadLoop() {
 	defer close(c.msgCh)
-	if err := c.bus.Run(c.ctx, c.handleBusFrame); err != nil && c.ctx.Err() == nil {
+	defer c.recoverGoroutine("bus read loop")
+
+	// Handling an inbound frame can write synchronously on this goroutine — the
+	// claimer defends its address by re-broadcasting a claim in response to a
+	// contender or ISO request — so a panicking Bus surfaces here, not only on
+	// the write loop. Recover per frame so one bad frame is logged and skipped
+	// rather than tearing down the read loop (and with it the whole process).
+	handle := func(f can.Frame) {
+		defer c.recoverGoroutine("bus frame handler")
+		c.handleBusFrame(f)
+	}
+	if err := c.bus.Run(c.ctx, handle); err != nil && c.ctx.Err() == nil {
 		c.log.Error("bus read loop error", "error", err)
 	}
 }
@@ -502,8 +543,23 @@ func (c *Client) Write(msg pgn.Message) *WriteResult {
 func (c *Client) writeLoop() {
 	defer c.writeWg.Done()
 	for job := range c.writeCh {
-		job.result.complete(c.doWrite(job.msg))
+		c.runWriteJob(job)
 	}
+}
+
+// runWriteJob executes one queued write, recovering a panicking Bus.WriteFrame
+// so the write completes with an error and the loop keeps serving. Letting the
+// panic escape would crash the process and, short of that, wedge every future
+// Write blocked on the send to writeCh.
+func (c *Client) runWriteJob(job writeJob) {
+	defer func() {
+		if r := recover(); r != nil {
+			c.log.Error("recovered panic in write loop",
+				"panic", r, "stack", string(debug.Stack()))
+			job.result.complete(fmt.Errorf("n2k: panic writing message: %v", r))
+		}
+	}()
+	job.result.complete(c.doWrite(job.msg))
 }
 
 // doWrite performs the synchronous work of encoding and framing a PGN message.

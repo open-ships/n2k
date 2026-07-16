@@ -649,6 +649,185 @@ func TestClient_NewClientFailsWhenGatewayUnreachable(t *testing.T) {
 	_ = b.Close()
 }
 
+// panicBus is a Bus whose WriteFrame panics, modelling a misbehaving transport
+// that faults instead of returning an error on write.
+type panicBus struct {
+	closed   chan struct{}
+	closeOne sync.Once
+}
+
+func newPanicBus() *panicBus { return &panicBus{closed: make(chan struct{})} }
+
+func (b *panicBus) Run(ctx context.Context, _ func(can.Frame)) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-b.closed:
+		return nil
+	}
+}
+
+func (b *panicBus) WriteFrame(can.Frame) error { panic("bus write faulted") }
+
+func (b *panicBus) Close() error {
+	b.closeOne.Do(func() { close(b.closed) })
+	return nil
+}
+
+var _ Bus = (*panicBus)(nil)
+
+// TestClient_NewClientReturnsErrorOnClaimPanic confirms that a Bus panicking on
+// the initial address-claim write surfaces as an error from NewClient rather
+// than crashing the process. The claim runs on an n2k-owned goroutine, so
+// without an in-goroutine recover the panic would be unrecoverable by the
+// caller and take down the whole program.
+func TestClient_NewClientReturnsErrorOnClaimPanic(t *testing.T) {
+	b := newPanicBus()
+
+	done := make(chan error, 1)
+	go func() {
+		_, err := NewClient(context.Background(),
+			WithBus(b),
+			WithClaimTimeout(250*time.Millisecond),
+		)
+		done <- err
+	}()
+
+	select {
+	case err := <-done:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "panic during address claim")
+	case <-time.After(2 * time.Second):
+		t.Fatal("NewClient hung when the bus panicked on write")
+	}
+	_ = b.Close()
+}
+
+// togglePanicBus is a Bus whose writes succeed until armed, then panic. It lets
+// a client start normally (the initial claim writes must succeed) and then
+// models a transport that begins faulting on write mid-session.
+type togglePanicBus struct {
+	mu       sync.Mutex
+	armed    bool
+	written  []can.Frame
+	inbound  chan can.Frame
+	closed   chan struct{}
+	closeOne sync.Once
+}
+
+func newTogglePanicBus() *togglePanicBus {
+	return &togglePanicBus{inbound: make(chan can.Frame, 64), closed: make(chan struct{})}
+}
+
+func (b *togglePanicBus) arm()    { b.mu.Lock(); b.armed = true; b.mu.Unlock() }
+func (b *togglePanicBus) disarm() { b.mu.Lock(); b.armed = false; b.mu.Unlock() }
+
+func (b *togglePanicBus) Run(ctx context.Context, handler func(can.Frame)) error {
+	for {
+		select {
+		case f := <-b.inbound:
+			handler(f)
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-b.closed:
+			return nil
+		}
+	}
+}
+
+func (b *togglePanicBus) WriteFrame(f can.Frame) error {
+	b.mu.Lock()
+	if b.armed {
+		b.mu.Unlock()
+		panic("bus write faulted")
+	}
+	b.written = append(b.written, f)
+	b.mu.Unlock()
+	return nil
+}
+
+func (b *togglePanicBus) getWritten() []can.Frame {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	out := make([]can.Frame, len(b.written))
+	copy(out, b.written)
+	return out
+}
+
+func (b *togglePanicBus) Close() error {
+	b.closeOne.Do(func() { close(b.closed) })
+	return nil
+}
+
+var _ Bus = (*togglePanicBus)(nil)
+
+// TestClient_WriteLoopSurvivesWritePanic confirms a panicking Bus.WriteFrame on
+// an asynchronous write is contained by the write loop: the write completes with
+// an error and the loop keeps serving, rather than crashing the process or
+// wedging every later Write on the send to writeCh.
+func TestClient_WriteLoopSurvivesWritePanic(t *testing.T) {
+	b := newTogglePanicBus()
+	c, err := NewClient(context.Background(),
+		WithBus(b),
+		WithClaimTimeout(50*time.Millisecond),
+		WithHeartbeatInterval(0),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	heading := uint64(15000)
+
+	// Armed: the write faults. The result must surface the panic as an error.
+	b.arm()
+	err = c.Write(&pgn.VesselHeading{Heading: &heading}).Wait()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "panic writing message")
+
+	// Disarmed: the loop recovered and still serves — a later write succeeds.
+	b.disarm()
+	done := make(chan error, 1)
+	go func() { done <- c.Write(&pgn.VesselHeading{Heading: &heading}).Wait() }()
+	select {
+	case err := <-done:
+		require.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("write loop wedged after a recovered write panic")
+	}
+}
+
+// TestClient_ReadLoopSurvivesWritePanic confirms a panicking Bus.WriteFrame that
+// fires synchronously on the read goroutine is contained per frame. An ISO
+// request for the address-claim PGN makes the claimer write a defensive claim
+// inline while handling the frame; that fault must not tear down the read loop.
+func TestClient_ReadLoopSurvivesWritePanic(t *testing.T) {
+	b := newTogglePanicBus()
+	c, err := NewClient(context.Background(),
+		WithBus(b),
+		WithClaimTimeout(50*time.Millisecond),
+		WithHeartbeatInterval(0),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	c.mu.Lock()
+	addr := c.sourceAddr
+	c.mu.Unlock()
+
+	// Armed: handling this frame writes a defensive claim inline, which panics.
+	b.arm()
+	b.inbound <- isoRequestFrame(60928, 0x42, addr)
+	time.Sleep(50 * time.Millisecond) // let the frame be handled and the panic recover
+
+	// The read loop is still alive: disarmed, it answers a fresh claim request.
+	b.disarm()
+	before := len(framesWithPGN(b.getWritten(), 60928))
+	b.inbound <- isoRequestFrame(60928, 0x42, addr)
+	ok := waitFor(t, 2*time.Second, func() bool {
+		return len(framesWithPGN(b.getWritten(), 60928)) > before
+	})
+	require.True(t, ok, "read loop should still answer claim requests after a recovered write panic")
+}
+
 func TestClient_AddressClaim(t *testing.T) {
 	mb := newMockBus()
 
