@@ -389,6 +389,7 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.WithProductInfo(p)` | Product identity reported via PGN 126996 |
 | `n2k.WithConfigInfo(ci)` | Installation description reported via PGN 126998 |
 | `n2k.WithHeartbeatInterval(d)` | Heartbeat (PGN 126993) cadence; default 60s, 0 disables |
+| `n2k.WithReconnect(policy)` | Auto-reconnect dropped TCP gateway connections with exponential backoff (`ReconnectPolicy{InitialBackoff, MaxBackoff}`; zero values default to 500ms/30s) |
 | `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
 
 ### A Complete Bus Node
@@ -592,8 +593,11 @@ bus-node behavior, group functions, gateway/file sources, and CLI workflows.
 - Over Actisense-format TCP connections the gateway stamps its own source
   address on transmissions (the protocol carries none), so the client's
   claimed address is not authoritative on the wire.
-- Gateway TCP connections do not auto-reconnect; a dropped connection ends
-  the client's read loop.
+- Gateway TCP connections do not auto-reconnect by default; a dropped
+  connection ends the read loop. Pass `WithReconnect` to re-dial dropped
+  connections with backoff. A transparent transport reconnect does not re-run
+  NMEA 2000 address claiming, so a gateway that itself rebooted may still need
+  a fresh client.
 
 ## License
 

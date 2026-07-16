@@ -54,6 +54,11 @@ type Client struct {
 	writeCh chan writeJob
 	writeWg sync.WaitGroup
 
+	// writers counts Write calls that have passed the closed check and may
+	// still send on writeCh. Close waits for it to drain before closing the
+	// channel, so a send can never race the close. Registered under mu.
+	writers sync.WaitGroup
+
 	// mu guards writtenFrames, closed state, and sourceAddr.
 	mu            sync.Mutex
 	writtenFrames []can.Frame // captured frames (replay/testing)
@@ -114,6 +119,7 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	for _, o := range opts {
 		o.apply(&cfg)
 	}
+	cfg.applyReconnect()
 	if err := cfg.validate(); err != nil {
 		return nil, err
 	}
@@ -197,7 +203,20 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 
 	if hasBus {
 		if err := c.initBus(cfg); err != nil {
+			// cancel() unblocks the protocol goroutines so none issues a new
+			// write; closing the bus releases any write still parked waiting for
+			// an auto-reconnect (e.g. the initial claim against an unreachable
+			// gateway) and stops the read loop, so teardown cannot deadlock.
+			// Marking closed and draining in-flight senders before closing the
+			// channel keeps the teardown symmetric with Close.
 			cancel()
+			c.mu.Lock()
+			c.closed = true
+			c.mu.Unlock()
+			if c.bus != nil {
+				_ = c.bus.Close()
+			}
+			c.writers.Wait()
 			close(c.writeCh)
 			c.writeWg.Wait()
 			return nil, err
@@ -332,12 +351,6 @@ func (c *Client) initBus(cfg config) error {
 	// Start the bus read loop goroutine.
 	go c.busReadLoop()
 
-	// Send the initial address claim.
-	if err := c.claimer.Start(); err != nil {
-		return fmt.Errorf("n2k: starting address claim: %w", err)
-	}
-
-	// Wait for the claim timeout to allow the network to respond.
 	claimTimeout := defaultClaimTimeout
 	if cfg.claimTimeout != nil {
 		claimTimeout = *cfg.claimTimeout
@@ -346,6 +359,24 @@ func (c *Client) initBus(cfg config) error {
 	timer := time.NewTimer(claimTimeout)
 	defer timer.Stop()
 
+	// Send the initial address claim, bounded by the claim deadline. With an
+	// auto-reconnect policy the first write blocks until the gateway connection
+	// is established, so a gateway that is unreachable at startup must fail
+	// NewClient rather than hang it forever.
+	startErr := make(chan error, 1)
+	go func() { startErr <- c.claimer.Start() }()
+	select {
+	case err := <-startErr:
+		if err != nil {
+			return fmt.Errorf("n2k: starting address claim: %w", err)
+		}
+	case <-timer.C:
+		return errors.New("n2k: gateway unreachable — initial connection not established within claim timeout")
+	case <-c.ctx.Done():
+		return c.ctx.Err()
+	}
+
+	// Wait for the remainder of the claim window to allow the network to respond.
 	select {
 	case <-timer.C:
 	case <-c.ctx.Done():
@@ -457,9 +488,14 @@ func (c *Client) Write(msg pgn.Message) *WriteResult {
 		wr.complete(errors.New("n2k: client closed"))
 		return wr
 	}
+	// Register as an in-flight sender while still holding mu, so Close (which
+	// sets closed under the same lock) cannot start closing writeCh until this
+	// send has completed.
+	c.writers.Add(1)
 	c.mu.Unlock()
 
 	c.writeCh <- writeJob{msg: msg, result: wr}
+	c.writers.Done()
 	return wr
 }
 
@@ -621,14 +657,24 @@ func (c *Client) Close() error {
 	}
 	c.stopBroadcasters()
 
+	// Wait for any Write that already passed the closed check to finish
+	// sending, then close the channel — this ordering makes a send-on-closed
+	// channel panic impossible.
+	c.writers.Wait()
 	close(c.writeCh)
-	c.writeWg.Wait()
+
+	// Cancel the context and close the bus BEFORE waiting on the write loop.
+	// With auto-reconnect a write can be parked inside the bus waiting for the
+	// connection to come back; closing the bus releases it so writeLoop drains
+	// and exits instead of deadlocking this wait.
 	c.cancel()
+	var busErr error
+	if c.bus != nil {
+		busErr = c.bus.Close()
+	}
+	c.writeWg.Wait()
 	if c.tp != nil {
 		c.tp.Close()
 	}
-	if c.bus != nil {
-		return c.bus.Close()
-	}
-	return nil
+	return busErr
 }

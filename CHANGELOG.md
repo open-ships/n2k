@@ -17,6 +17,12 @@ stack over the boat's WiFi gateway:
   transfers and protocol frames still use `WriteFrame`. Custom `WithBus` transports can opt in.
 - Writers issued before the connection is up (the address claimer fires immediately) block until
   the dial completes rather than failing.
+- **Auto-reconnect** (`WithReconnect(ReconnectPolicy{InitialBackoff, MaxBackoff})`, defaulting to
+  500ms/30s): a dropped TCP connection is re-dialed with exponential backoff instead of ending the
+  read loop. TCP sources only; the initial connection must still succeed within the claim timeout,
+  and a transparent transport reconnect does not re-run NMEA 2000 address claiming. Writers parked
+  during an outage are released by reconnect or by `Close`, and a write is only retried on a fresh
+  connection when nothing was sent, so a retry never duplicates a partial frame.
 - Generator: `sourceDefinitions` is now assembled from per-chunk functions instead of one ~6k-line
   composite literal, fixing `go build -race ./pgn` ("NewBulk too big" internal compiler error) —
   `just test-race` works again.

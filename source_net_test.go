@@ -174,6 +174,44 @@ func TestTCPSource_ContextCancel(t *testing.T) {
 	assert.Less(t, time.Since(start), 5*time.Second, "cancel should terminate a blocked read promptly")
 }
 
+func TestTCPSource_Reconnects(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = ln.Close() })
+
+	// Each accepted connection delivers one heading line, then drops — so a
+	// second and third message can only arrive if the source reconnects.
+	go func() {
+		for {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			_, _ = conn.Write([]byte(ydHeadingLine))
+			_ = conn.Close()
+		}
+	}()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	count := 0
+	for msg, err := range Receive(ctx,
+		TCP(ln.Addr().String(), FormatYDRaw),
+		WithReconnect(ReconnectPolicy{InitialBackoff: 5 * time.Millisecond, MaxBackoff: 20 * time.Millisecond}),
+		WithLogger(testLogger()),
+	) {
+		require.NoError(t, err)
+		_, ok := msg.(*pgn.VesselHeading)
+		require.True(t, ok, "expected *pgn.VesselHeading, got %T", msg)
+		count++
+		if count == 3 {
+			break
+		}
+	}
+	assert.Equal(t, 3, count, "reconnect should keep delivering messages across drops")
+}
+
 func TestUDPSource_YDRaw(t *testing.T) {
 	// Reserve a local UDP address for the source to listen on.
 	probe, err := net.ListenPacket("udp", "127.0.0.1:0")
