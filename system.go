@@ -2,6 +2,8 @@ package n2k
 
 import (
 	"context"
+	"log/slog"
+	"runtime/debug"
 	"sync"
 
 	"github.com/brutella/can"
@@ -19,6 +21,7 @@ var systemPGNs = []uint32{126996, 126998, 126208}
 // filters can never break protocol behavior.
 type systemRouter struct {
 	ctx      context.Context
+	log      *slog.Logger
 	pipeline *readPipeline
 	ch       chan pgn.Message
 
@@ -44,6 +47,7 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 
 	r := &systemRouter{
 		ctx:      ctx,
+		log:      cfg.logger,
 		pipeline: p,
 		ch:       ch,
 		accept:   make(map[uint32]int),
@@ -117,10 +121,23 @@ func (r *systemRouter) run() {
 			copy(handlers, r.handlers)
 			r.mu.Unlock()
 			for _, h := range handlers {
-				h(msg)
+				r.dispatch(h, msg)
 			}
 		case <-r.ctx.Done():
 			return
 		}
 	}
+}
+
+// dispatch delivers one message to one handler, recovering a panic so a faulty
+// handler is logged and skipped rather than killing the dispatch loop — which
+// runs on an n2k-owned goroutine, so an escaping panic would crash the process.
+func (r *systemRouter) dispatch(h func(pgn.Message), msg pgn.Message) {
+	defer func() {
+		if rec := recover(); rec != nil {
+			r.log.Error("recovered panic in system handler",
+				"panic", rec, "stack", string(debug.Stack()))
+		}
+	}()
+	h(msg)
 }

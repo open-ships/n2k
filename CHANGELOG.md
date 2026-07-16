@@ -1,5 +1,21 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — panics in a misbehaving Bus no longer crash the process
+
+A `Bus` implementation that panics (rather than returning an error) from `WriteFrame`, `Run`, or a
+message handler previously crashed the whole host process, because n2k runs those on its own
+goroutines where an escaping panic is unrecoverable by the caller. Every n2k-owned goroutine now
+recovers panics, logs them with a stack trace, and degrades locally instead:
+
+- The initial address claim runs on an n2k goroutine (since `WithReconnect`); a panic there now
+  surfaces as a `NewClient` error (`n2k: panic during address claim: ...`) rather than a crash.
+- The write loop recovers per job, completing that write with an error and continuing to serve —
+  a panicking write no longer wedges every later `Write` blocked on the queue.
+- The bus read loop recovers per frame, so a fault while handling one frame (including the defensive
+  address claim the claimer writes inline in response to a contender or ISO request) is logged and
+  skipped without tearing down the reader.
+- The heartbeat and system-router dispatch goroutines are guarded the same way.
+
 ### Unreleased — writable TCP gateway buses
 
 `n2k.TCP(addr, format)` now works with `NewClient`, not just `Receive`/`NewScanner` — the full bus
