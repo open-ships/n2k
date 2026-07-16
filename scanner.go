@@ -25,6 +25,7 @@ func NewScanner(ctx context.Context, opts ...Option) *Scanner {
 	for _, o := range opts {
 		o.apply(&cfg)
 	}
+	cfg.applyReconnect()
 	if cfg.logger == nil {
 		cfg.logger = slog.Default()
 	}

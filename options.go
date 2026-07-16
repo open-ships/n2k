@@ -13,13 +13,14 @@ type config struct {
 	filterExpr        string
 	includeUnknown    bool
 	logger            *slog.Logger
-	sourceAddress     *uint8         // nil = auto mode
-	deviceName        *DeviceName    // nil = use default
-	claimTimeout      *time.Duration // nil = use default (1500ms)
-	heartbeatInterval *time.Duration // nil = default (60s), 0 = disabled
-	productInfo       *ProductInfo   // nil = defaults
-	configInfo        *ConfigInfo    // nil = defaults
-	bus               Bus            // pre-constructed bus
+	sourceAddress     *uint8           // nil = auto mode
+	deviceName        *DeviceName      // nil = use default
+	claimTimeout      *time.Duration   // nil = use default (1500ms)
+	heartbeatInterval *time.Duration   // nil = default (60s), 0 = disabled
+	productInfo       *ProductInfo     // nil = defaults
+	configInfo        *ConfigInfo      // nil = defaults
+	bus               Bus              // pre-constructed bus
+	reconnect         *ReconnectPolicy // nil = no auto-reconnect
 }
 
 func (c *config) validate() error {
@@ -170,6 +171,40 @@ func WithHeartbeatInterval(d time.Duration) Option {
 func WithName(name DeviceName) Option {
 	return optionFunc(func(c *config) {
 		c.deviceName = &name
+	})
+}
+
+// ReconnectPolicy configures automatic reconnection for network gateway
+// (TCP) sources after a dropped connection. The zero value is valid: both
+// fields fall back to their defaults.
+type ReconnectPolicy struct {
+	// InitialBackoff is the delay before the first reconnect attempt after a
+	// drop, and the delay restored after any successful connection. Defaults
+	// to 500ms when zero.
+	InitialBackoff time.Duration
+	// MaxBackoff caps the exponentially growing delay between attempts while
+	// the gateway stays unreachable. Defaults to 30s when zero.
+	MaxBackoff time.Duration
+}
+
+// WithReconnect enables automatic reconnection for TCP gateway sources. After
+// a connection drops, the source re-dials with exponential backoff (starting
+// at InitialBackoff, capped at MaxBackoff) until it reconnects or the context
+// is cancelled. Without this option, a dropped TCP connection ends the read
+// loop and surfaces as an error (the historical behavior).
+//
+// Reconnection covers connections that drop mid-session; the initial
+// connection must still succeed (for NewClient, within the claim timeout).
+// It applies only to TCP sources — CAN, USB, UDP, file, and replay sources
+// are unaffected. On a bus client, a transparent transport reconnect does not
+// re-run NMEA 2000 address claiming, so a gateway that itself rebooted may
+// require a fresh client.
+func WithReconnect(policy ReconnectPolicy) Option {
+	// The backoff bounds are normalized once, at the point of use, by
+	// gateway.NewBackoff (defaults for non-positive fields, MaxBackoff clamped
+	// up to InitialBackoff); the policy is stored here as given.
+	return optionFunc(func(c *config) {
+		c.reconnect = &policy
 	})
 }
 

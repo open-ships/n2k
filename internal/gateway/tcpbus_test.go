@@ -3,9 +3,11 @@ package gateway
 import (
 	"bufio"
 	"context"
+	"errors"
 	"io"
 	"log/slog"
 	"net"
+	"sync"
 	"testing"
 	"time"
 
@@ -48,7 +50,7 @@ func TestYDRawTCPBus_ReadAndWrite(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	bus := NewYDRawTCPBus(testLogger(), addr)
+	bus := NewYDRawTCPBus(testLogger(), addr, nil)
 	defer func() { _ = bus.Close() }()
 
 	frames := make(chan can.Frame, 4)
@@ -95,7 +97,7 @@ func TestYDRawTCPBus_WriteBeforeConnect(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	bus := NewYDRawTCPBus(testLogger(), addr)
+	bus := NewYDRawTCPBus(testLogger(), addr, nil)
 	defer func() { _ = bus.Close() }()
 
 	writeErr := make(chan error, 1)
@@ -122,7 +124,7 @@ func TestYDRawTCPBus_WriteBeforeConnect(t *testing.T) {
 }
 
 func TestYDRawTCPBus_CloseUnblocksWriter(t *testing.T) {
-	bus := NewYDRawTCPBus(testLogger(), "127.0.0.1:1") // never dialed
+	bus := NewYDRawTCPBus(testLogger(), "127.0.0.1:1", nil) // never dialed
 
 	writeErr := make(chan error, 1)
 	go func() { writeErr <- bus.WriteFrame(can.Frame{ID: 1, Length: 1}) }()
@@ -135,6 +137,277 @@ func TestYDRawTCPBus_CloseUnblocksWriter(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("write did not unblock after Close")
 	}
+}
+
+// TestYDRawTCPBus_CancelReleasesWriterDuringOutage confirms a write parked
+// during a reconnect outage is released (with an error) when the context is
+// cancelled — await must not block forever on a reconnection that never comes.
+func TestYDRawTCPBus_CancelReleasesWriterDuringOutage(t *testing.T) {
+	// Nothing listens, so with reconnect enabled the writer parks in await
+	// waiting for a connection that never arrives.
+	bus := NewYDRawTCPBus(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
+		InitialBackoff: 10 * time.Millisecond,
+		MaxBackoff:     20 * time.Millisecond,
+	})
+	defer func() { _ = bus.Close() }()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	runErr := make(chan error, 1)
+	go func() { runErr <- bus.Run(ctx, nil) }()
+
+	writeErr := make(chan error, 1)
+	go func() { writeErr <- bus.WriteFrame(can.Frame{ID: 1, Length: 1}) }()
+
+	time.Sleep(50 * time.Millisecond) // let the writer park during the outage
+	cancel()
+
+	select {
+	case err := <-writeErr:
+		assert.ErrorIs(t, err, context.Canceled)
+	case <-time.After(2 * time.Second):
+		t.Fatal("cancel did not release the writer parked during a reconnect outage")
+	}
+	select {
+	case err := <-runErr:
+		assert.ErrorIs(t, err, context.Canceled)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Run did not return after cancellation")
+	}
+}
+
+// TestYDRawTCPBus_CloseReleasesWriterDuringOutage confirms Close releases a
+// write parked during a reconnect outage while Run is active.
+func TestYDRawTCPBus_CloseReleasesWriterDuringOutage(t *testing.T) {
+	bus := NewYDRawTCPBus(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
+		InitialBackoff: 10 * time.Millisecond,
+		MaxBackoff:     20 * time.Millisecond,
+	})
+	runErr := make(chan error, 1)
+	go func() { runErr <- bus.Run(context.Background(), nil) }()
+
+	writeErr := make(chan error, 1)
+	go func() { writeErr <- bus.WriteFrame(can.Frame{ID: 1, Length: 1}) }()
+
+	time.Sleep(50 * time.Millisecond) // let the writer park during the outage
+	require.NoError(t, bus.Close())
+
+	select {
+	case err := <-writeErr:
+		require.Error(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Close did not release the writer parked during a reconnect outage")
+	}
+	select {
+	case err := <-runErr:
+		assert.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Run did not return after Close")
+	}
+}
+
+// TestYDRawTCPBus_Reconnects drops the connection after each frame; with a
+// reconnect policy the bus re-dials and keeps delivering frames from the
+// fresh connection.
+func TestYDRawTCPBus_Reconnects(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = ln.Close() })
+
+	frameLines := []string{
+		"17:33:21.141 R 09F80115 A0 7D E6 18 C0 05 FB D5\r\n",
+		"17:33:22.141 R 09F80116 B0 7D E6 18 C0 05 FB D5\r\n",
+	}
+	go func() {
+		for i := 0; ; i++ {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			if i < len(frameLines) {
+				_, _ = conn.Write([]byte(frameLines[i]))
+			}
+			// Drop the connection to force a reconnect.
+			_ = conn.Close()
+		}
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	bus := NewYDRawTCPBus(testLogger(), ln.Addr().String(), &ReconnectPolicy{
+		InitialBackoff: 5 * time.Millisecond,
+		MaxBackoff:     20 * time.Millisecond,
+	})
+	defer func() { _ = bus.Close() }()
+
+	frames := make(chan can.Frame, 4)
+	runErr := make(chan error, 1)
+	go func() { runErr <- bus.Run(ctx, func(f can.Frame) { frames <- f }) }()
+
+	// The first connection delivers frame A.
+	select {
+	case f := <-frames:
+		assert.Equal(t, uint32(0x09F80115), f.ID)
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for first frame")
+	}
+	// After the drop, the bus reconnects and the second connection delivers B.
+	select {
+	case f := <-frames:
+		assert.Equal(t, uint32(0x09F80116), f.ID)
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for frame after reconnect")
+	}
+
+	cancel()
+	select {
+	case err := <-runErr:
+		assert.ErrorIs(t, err, context.Canceled)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Run did not return after cancellation")
+	}
+}
+
+// TestYDRawTCPBus_CloseStopsReconnect confirms Close interrupts a pending
+// reconnect backoff instead of waiting for it to elapse, even when the
+// caller's context is never cancelled.
+func TestYDRawTCPBus_CloseStopsReconnect(t *testing.T) {
+	// Nothing listens here, so the first dial fails and the bus enters a long
+	// backoff that only Close should be able to cut short.
+	bus := NewYDRawTCPBus(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
+		InitialBackoff: 30 * time.Second,
+		MaxBackoff:     30 * time.Second,
+	})
+
+	runErr := make(chan error, 1)
+	go func() { runErr <- bus.Run(context.Background(), nil) }()
+
+	time.Sleep(50 * time.Millisecond) // let the dial fail and enter backoff
+	require.NoError(t, bus.Close())
+
+	select {
+	case err := <-runErr:
+		assert.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Close did not interrupt the reconnect backoff")
+	}
+}
+
+// TestYDRawTCPBus_NoReconnectEndsOnDrop confirms the default (nil policy)
+// still ends Run when the connection drops.
+func TestYDRawTCPBus_NoReconnectEndsOnDrop(t *testing.T) {
+	addr := startFakeGateway(t, func(conn net.Conn) {
+		_, _ = conn.Write([]byte("17:33:21.141 R 09F80115 A0 7D E6 18 C0 05 FB D5\r\n"))
+		// serve returns, closing the connection and dropping the client.
+	})
+
+	bus := NewYDRawTCPBus(testLogger(), addr, nil)
+	defer func() { _ = bus.Close() }()
+
+	runErr := make(chan error, 1)
+	go func() { runErr <- bus.Run(context.Background(), nil) }()
+
+	select {
+	case err := <-runErr:
+		assert.NoError(t, err) // clean EOF ends Run without reconnecting
+	case <-time.After(2 * time.Second):
+		t.Fatal("Run did not return after the connection dropped")
+	}
+}
+
+// scriptedConn fakes just enough of net.Conn for the write-retry tests: only
+// Write is exercised, so the embedded nil net.Conn is never dereferenced.
+type failingConn struct{ net.Conn }
+
+func (*failingConn) Write([]byte) (int, error) { return 0, errors.New("gateway_test: connection reset") }
+
+type partialConn struct{ net.Conn }
+
+func (*partialConn) Write(p []byte) (int, error) {
+	return 1, errors.New("gateway_test: connection reset")
+}
+
+type recordingConn struct {
+	net.Conn
+	mu  sync.Mutex
+	buf []byte
+}
+
+func (c *recordingConn) Write(p []byte) (int, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.buf = append(c.buf, p...)
+	return len(p), nil
+}
+
+func (c *recordingConn) written() []byte {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return append([]byte(nil), c.buf...)
+}
+
+// TestTCPLink_WriteRetriesFreshConnAfterDrop confirms a write whose connection
+// dropped before any byte was sent (n == 0) waits for the reconnect and
+// re-sends the whole frame on the fresh connection.
+func TestTCPLink_WriteRetriesFreshConnAfterDrop(t *testing.T) {
+	l := newTCPLink(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
+		InitialBackoff: time.Millisecond,
+		MaxBackoff:     time.Millisecond,
+	})
+	dead := &failingConn{}
+	good := &recordingConn{}
+
+	// Publish a connection whose first write fails with nothing sent.
+	l.mu.Lock()
+	l.conn = dead
+	l.mu.Unlock()
+
+	writeErr := make(chan error, 1)
+	go func() { writeErr <- l.write([]byte("hello")) }()
+
+	// The write fails on dead (n == 0) and waits for a different connection.
+	time.Sleep(20 * time.Millisecond)
+	require.True(t, l.markConnected(good))
+
+	select {
+	case err := <-writeErr:
+		require.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("write did not complete after reconnect")
+	}
+	assert.Equal(t, []byte("hello"), good.written())
+}
+
+// TestTCPLink_WriteNoRetryOnPartialWrite confirms a partial write is never
+// retried — a retry could duplicate the bytes already on the wire — so write
+// fails promptly instead of awaiting a reconnect.
+func TestTCPLink_WriteNoRetryOnPartialWrite(t *testing.T) {
+	l := newTCPLink(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
+		InitialBackoff: time.Millisecond,
+		MaxBackoff:     time.Millisecond,
+	})
+	l.mu.Lock()
+	l.conn = &partialConn{}
+	l.mu.Unlock()
+
+	writeErr := make(chan error, 1)
+	go func() { writeErr <- l.write([]byte("hello")) }()
+	select {
+	case err := <-writeErr:
+		require.Error(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("write blocked retrying a partial write instead of failing")
+	}
+}
+
+// TestTCPLink_WriteNoRetryWithoutReconnect confirms that without a reconnect
+// policy a failed write returns the error rather than retrying.
+func TestTCPLink_WriteNoRetryWithoutReconnect(t *testing.T) {
+	l := newTCPLink(testLogger(), "127.0.0.1:1", nil) // no reconnect
+	l.mu.Lock()
+	l.conn = &failingConn{}
+	l.mu.Unlock()
+
+	require.Error(t, l.write([]byte("hello")))
 }
 
 func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
@@ -159,7 +432,7 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	bus := NewActisenseTCPBus(testLogger(), addr)
+	bus := NewActisenseTCPBus(testLogger(), addr, nil)
 	defer func() { _ = bus.Close() }()
 
 	frames := make(chan can.Frame, 4)
@@ -223,7 +496,7 @@ func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	bus := NewActisenseTCPBus(testLogger(), addr)
+	bus := NewActisenseTCPBus(testLogger(), addr, nil)
 	defer func() { _ = bus.Close() }()
 	go func() { _ = bus.Run(ctx, nil) }()
 

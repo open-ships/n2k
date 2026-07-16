@@ -2,6 +2,7 @@ package n2k
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"sync"
 	"testing"
@@ -544,6 +545,109 @@ func (m *mockBus) getWritten() []can.Frame {
 
 // Compile-time proof that Bus is implementable with only public types.
 var _ Bus = (*mockBus)(nil)
+
+// blockingBus simulates a reconnecting transport whose writes park during an
+// outage — mirroring tcpLink.await(), which blocks a write while the gateway
+// connection is down and releases it only on reconnect or Close. Writes
+// succeed until startOutage is called; after that they block until Close.
+type blockingBus struct {
+	mu       sync.Mutex
+	outage   bool
+	written  []can.Frame
+	closed   chan struct{}
+	closeOne sync.Once
+}
+
+func newBlockingBus() *blockingBus { return &blockingBus{closed: make(chan struct{})} }
+
+func (b *blockingBus) startOutage() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.outage = true
+}
+
+func (b *blockingBus) Run(ctx context.Context, _ func(can.Frame)) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-b.closed:
+		return nil
+	}
+}
+
+func (b *blockingBus) WriteFrame(f can.Frame) error {
+	b.mu.Lock()
+	if !b.outage {
+		b.written = append(b.written, f)
+		b.mu.Unlock()
+		return nil
+	}
+	b.mu.Unlock()
+	// Park until Close, as the real bus parks a write during a reconnect outage.
+	<-b.closed
+	return errors.New("n2k: bus closed")
+}
+
+func (b *blockingBus) Close() error {
+	b.closeOne.Do(func() { close(b.closed) })
+	return nil
+}
+
+var _ Bus = (*blockingBus)(nil)
+
+// TestClient_CloseDuringReconnectOutage reproduces the shutdown deadlock: a
+// write parked in the bus during a reconnect outage must not stall Close.
+func TestClient_CloseDuringReconnectOutage(t *testing.T) {
+	b := newBlockingBus()
+	c, err := NewClient(context.Background(),
+		WithBus(b),
+		WithClaimTimeout(250*time.Millisecond),
+	)
+	require.NoError(t, err)
+
+	// The gateway drops and stays down, so further writes park in the bus.
+	b.startOutage()
+
+	// Issue a write that parks in the write loop (like a heartbeat mid-outage).
+	heading := uint64(15000)
+	c.Write(&pgn.VesselHeading{Heading: &heading})
+	time.Sleep(50 * time.Millisecond) // let the write reach and park in the bus
+
+	done := make(chan error, 1)
+	go func() { done <- c.Close() }()
+	select {
+	case err := <-done:
+		require.NoError(t, err)
+	case <-time.After(2 * time.Second):
+		t.Fatal("Close deadlocked with a write parked during a reconnect outage")
+	}
+}
+
+// TestClient_NewClientFailsWhenGatewayUnreachable confirms NewClient fails at
+// the claim timeout — rather than hanging — when the initial address-claim
+// write cannot complete because the gateway never connects.
+func TestClient_NewClientFailsWhenGatewayUnreachable(t *testing.T) {
+	b := newBlockingBus()
+	b.startOutage() // the initial address-claim write will park
+
+	done := make(chan error, 1)
+	go func() {
+		_, err := NewClient(context.Background(),
+			WithBus(b),
+			WithClaimTimeout(100*time.Millisecond),
+		)
+		done <- err
+	}()
+
+	select {
+	case err := <-done:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "unreachable")
+	case <-time.After(2 * time.Second):
+		t.Fatal("NewClient hung when the gateway was unreachable")
+	}
+	_ = b.Close()
+}
 
 func TestClient_AddressClaim(t *testing.T) {
 	mb := newMockBus()
