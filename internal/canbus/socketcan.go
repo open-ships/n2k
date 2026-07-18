@@ -3,6 +3,7 @@ package canbus
 import (
 	"context"
 	"log/slog"
+	"sync"
 
 	"github.com/brutella/can"
 	"github.com/pkg/errors"
@@ -18,6 +19,7 @@ type socketCANChannelOptions struct {
 	// This corresponds to the interface shown by `ip link show` and is typically assigned
 	// by the kernel when a CAN controller driver (such as MCP2515 over SPI) is loaded.
 	InterfaceName string `json:"interfaceName"`
+	newBus        func(string) (*can.Bus, error)
 }
 
 // socketCANChannel represents a single SocketCAN-based canbus channel for sending/receiving CAN frames.
@@ -29,11 +31,7 @@ type socketCANChannel struct {
 	// bus is the underlying brutella/can bus object that manages the CAN socket connection.
 	// It handles subscribing to incoming frames and publishing outgoing frames.
 	bus *can.Bus
-
-	// busHandler wraps the handler function passed to Run into a can.Handler
-	// interface so it can be registered with the brutella/can bus subscription
-	// system.
-	busHandler can.Handler
+	mu  sync.Mutex
 
 	// log is the structured logger for diagnostic output about interface state changes and errors.
 	log *slog.Logger
@@ -68,12 +66,18 @@ func newSocketCANChannel(log *slog.Logger, options socketCANChannelOptions) *soc
 func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) error {
 	// Open a CAN socket using the brutella/can library. This creates a raw CAN socket
 	// bound to the specified network interface and provides a higher-level pub/sub API.
-	bus, err := can.NewBusForInterfaceWithName(c.options.InterfaceName)
+	newBus := c.options.newBus
+	if newBus == nil {
+		newBus = can.NewBusForInterfaceWithName
+	}
+	bus, err := newBus(c.options.InterfaceName)
 	if err != nil {
 		return err
 	}
 
+	c.mu.Lock()
 	c.bus = bus
+	c.mu.Unlock()
 
 	// Wrap the caller's handler so a nil handler becomes a no-op, then
 	// subscribe it to receive all incoming CAN frames.
@@ -82,27 +86,42 @@ func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) err
 			handler(frame)
 		}
 	}
-	c.busHandler = can.NewHandler(frameHandler)
-	c.bus.Subscribe(c.busHandler)
+	c.bus.Subscribe(can.NewHandler(frameHandler))
+
+	watchDone := make(chan struct{})
+	defer close(watchDone)
+	go func() {
+		select {
+		case <-ctx.Done():
+			_ = c.Close()
+		case <-watchDone:
+		}
+	}()
 
 	c.log.Info("Opened SocketCAN and listening", "interfaceName", c.options.InterfaceName)
 
 	// ConnectAndPublish opens the socket and enters a blocking read loop.
 	// Each received CAN frame is published to all subscribed handlers.
 	// This call blocks until the socket is closed or an error occurs.
-	return bus.ConnectAndPublish()
+	err = bus.ConnectAndPublish()
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	return err
 }
 
-// Close shuts down the SocketCAN channel by unsubscribing the frame handler and disconnecting
-// the underlying CAN socket. It is safe to call Close() if the bus was never opened (bus is nil).
+// Close shuts down the SocketCAN channel by disconnecting the underlying CAN
+// socket. It is safe to call Close() if the bus was never opened (bus is nil).
 func (c *socketCANChannel) Close() error {
-	if c.bus == nil {
+	c.mu.Lock()
+	bus := c.bus
+	c.bus = nil
+	c.mu.Unlock()
+	if bus == nil {
 		return nil
 	}
 
-	// Unsubscribe first to stop receiving frames, then disconnect the socket.
-	c.bus.Unsubscribe(c.busHandler)
-	if err := c.bus.Disconnect(); err != nil {
+	if err := bus.Disconnect(); err != nil {
 		return errors.Wrap(err, "close underlying bus connection")
 	}
 
@@ -113,10 +132,13 @@ func (c *socketCANChannel) Close() error {
 // The brutella/can library handles encoding the frame into the Linux SocketCAN wire format
 // and writing it to the raw CAN socket. Returns an error if the bus is not yet open.
 func (c *socketCANChannel) WriteFrame(frame can.Frame) error {
-	if c.bus == nil {
+	c.mu.Lock()
+	bus := c.bus
+	c.mu.Unlock()
+	if bus == nil {
 		return errors.New("socketCAN: bus not open (interface not available or Run not called)")
 	}
-	return c.bus.Publish(frame)
+	return bus.Publish(frame)
 }
 
 // NewSocketCAN creates a SocketCAN channel for the given Linux CAN interface name.

@@ -45,6 +45,7 @@ type usbCANChannelOptions struct {
 	// the USB-CAN dongle. This is NOT the CAN bus bitrate -- it controls only the USB serial link.
 	// The USB-CAN Analyzer typically uses 2000000 (2 Mbaud).
 	SerialBaudRate int `json:"serialBaudRate"`
+	openPort       func(string, *serial.Mode) (serial.Port, error)
 }
 
 // usbCANChannel represents a single USB-CAN-based canbus channel for sending/receiving CAN frames.
@@ -59,8 +60,10 @@ type usbCANChannel struct {
 	// It is nil until Run() is called.
 	port serial.Port
 
-	// mu guards all access to port, since Run() reads and WriteFrame() writes concurrently.
-	mu sync.Mutex
+	// mu guards the port reference. Reads and writes must not hold it because
+	// Close needs to close the port concurrently to unblock them.
+	mu      sync.Mutex
+	writeMu sync.Mutex
 
 	// log is the structured logger for debug/info messages about frame parsing and errors.
 	log *slog.Logger
@@ -103,12 +106,28 @@ func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error 
 	mode := &serial.Mode{
 		BaudRate: c.options.SerialBaudRate,
 	}
-	port, err := serial.Open(c.options.SerialPortName, mode)
+	openPort := c.options.openPort
+	if openPort == nil {
+		openPort = serial.Open
+	}
+	port, err := openPort(c.options.SerialPortName, mode)
 	if err != nil {
 		return err
 	}
 
+	c.mu.Lock()
 	c.port = port
+	c.mu.Unlock()
+
+	watchDone := make(chan struct{})
+	defer close(watchDone)
+	go func() {
+		select {
+		case <-ctx.Done():
+			_ = c.Close()
+		case <-watchDone:
+		}
+	}()
 
 	// Wrap the caller's handler so a nil handler becomes a no-op.
 	c.handler = func(frame can.Frame) {
@@ -126,10 +145,11 @@ func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error 
 		// Read up to 32 bytes at a time from the serial port.
 		// The actual number of bytes returned depends on what the OS has buffered.
 		working := make([]byte, 32)
-		c.mu.Lock()
 		readBytes, err := port.Read(working)
-		c.mu.Unlock()
 		if err != nil {
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
 			return err
 		}
 		// Append only the bytes actually read (not the full 32-byte buffer) to pending.
@@ -302,10 +322,12 @@ func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 // Close shuts down the USB-CAN channel by closing the underlying serial port.
 // It is safe to call Close() even if the port was never opened (port is nil).
 func (c *usbCANChannel) Close() error {
-	if c.port != nil {
-		if err := c.port.Close(); err != nil {
-			return err
-		}
+	c.mu.Lock()
+	port := c.port
+	c.port = nil
+	c.mu.Unlock()
+	if port != nil {
+		return port.Close()
 	}
 	return nil
 }
@@ -345,8 +367,14 @@ func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 	buf = append(buf, 0x55)
 
 	c.mu.Lock()
-	o, err := c.port.Write(buf)
+	port := c.port
 	c.mu.Unlock()
+	if port == nil {
+		return fmt.Errorf("WriteFrame: USB-CAN port is not open")
+	}
+	c.writeMu.Lock()
+	o, err := port.Write(buf)
+	c.writeMu.Unlock()
 	if o != len(buf) {
 		return fmt.Errorf("WriteFrame sent %d of %d bytes", o, len(buf))
 	}
