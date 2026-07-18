@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"github.com/open-ships/n2k"
 )
@@ -60,6 +61,17 @@ func main() {
 }
 
 func sniff(args []string) error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	go func() {
+		<-ctx.Done()
+		stop()
+	}()
+
+	return sniffContext(ctx, args)
+}
+
+func sniffContext(ctx context.Context, args []string) error {
 	flags := flag.NewFlagSet("sniff", flag.ExitOnError)
 	iface := flags.String("i", "", "SocketCAN interface (Linux, e.g. can0)")
 	usb := flags.String("u", "", "USB-CAN serial port (e.g. /dev/ttyUSB0)")
@@ -92,12 +104,12 @@ func sniff(args []string) error {
 		opts = append(opts, n2k.IncludeUnknown())
 	}
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
-
 	enc := json.NewEncoder(os.Stdout)
 	for msg, err := range n2k.Receive(ctx, opts...) {
 		if err != nil {
+			if ctx.Err() != nil {
+				return nil
+			}
 			return err
 		}
 		if err := enc.Encode(msg); err != nil {
