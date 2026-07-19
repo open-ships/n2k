@@ -520,14 +520,14 @@ func (c *Client) initBus(cfg config) error {
 		}
 	}
 
-	timer := time.NewTimer(claimTimeout)
-	defer timer.Stop()
-
 	// Send the initial address claim, bounded by the claim deadline. With an
 	// auto-reconnect policy the first write blocks until the gateway connection
 	// is established, so a gateway that is unreachable at startup must fail
-	// NewClient rather than hang it forever.
+	// NewClient rather than hang it forever. Start the deadline only after the
+	// claim goroutine is scheduled: scheduler delay is not gateway delay and can
+	// otherwise consume a short claim window on a loaded machine.
 	startErr := make(chan error, 1)
+	claimStarted := make(chan struct{})
 	go func() {
 		// This goroutine is owned by n2k, so a panic from a misbehaving Bus
 		// (e.g. WriteFrame panicking instead of returning an error) would
@@ -541,8 +541,17 @@ func (c *Client) initBus(cfg config) error {
 				startErr <- fmt.Errorf("n2k: panic during address claim: %v", r)
 			}
 		}()
+		close(claimStarted)
 		startErr <- c.claimer.Start()
 	}()
+	select {
+	case <-claimStarted:
+	case <-c.ctx.Done():
+		return c.currentTerminalError(c.ctx.Err().Error())
+	}
+
+	timer := time.NewTimer(claimTimeout)
+	defer timer.Stop()
 	select {
 	case err := <-startErr:
 		if err != nil {

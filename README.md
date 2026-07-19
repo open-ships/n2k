@@ -16,7 +16,7 @@ plugin or companion layer for another app. Use it directly in telemetry
 collectors, loggers, gateways, test rigs, monitoring services, automation, and
 any Go program that needs to understand or participate on an N2K bus.
 
-![n2k sniff decoding concrete NMEA 2000 message types with physical values](.github/demo.svg)
+![n2k sniff decoding NMEA 2000 PGNs as typed JSON lines with exact wire values](.github/demo.svg)
 
 ## Why n2k
 
@@ -163,9 +163,9 @@ Completion understands source paths, stream and output formats, and known PGN
 numbers with descriptions.
 
 `sniff` and `replay` default to JSON lines containing the typed structs and
-their exact wire values. Set `--output text` for the concrete `pgn.<Type>`,
-source address, scaled physical values, SI units, and lookup type names shown
-in the demo above.
+their exact wire values. The demo projects the metadata envelope down to its
+PGN for readability. Set `--output text` for the concrete `pgn.<Type>`, source
+address, scaled physical values, SI units, and lookup type names.
 
 `record` writes replayable candump by default; JSON-lines mode retains each
 owned source observation, including Adapter and network identity, source and
