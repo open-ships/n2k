@@ -62,6 +62,63 @@ func TestDecodeFieldsEOFLeavesTrailingFieldsNil(t *testing.T) {
 	require.Nil(t, msg.Reference)
 }
 
+func TestCodecConditionSkipsProprietaryHeaderForStandardGroupFunction(t *testing.T) {
+	// Function 3 (Read Fields), commanded PGN 127250, Unique ID 7, and no
+	// repeating values. The proprietary manufacturer/reserved/industry header
+	// is absent, so Unique ID immediately follows the three-byte PGN.
+	payload := []uint8{3, 0x12, 0xF1, 0x01, 7, 0, 0}
+
+	var decoded NmeaReadFieldsGroupFunction
+	require.NoError(t, decodeFields(&decoded, payload))
+	require.Equal(t, uint64(127250), *decoded.Pgn)
+	require.Nil(t, decoded.ManufacturerCode)
+	require.Nil(t, decoded.IndustryCode)
+	require.Equal(t, uint64(7), *decoded.UniqueId)
+	require.Equal(t, uint64(0), *decoded.NumberOfSelectionPairs)
+	require.Equal(t, uint64(0), *decoded.NumberOfParameters)
+
+	encoded, err := encodeFields(&decoded)
+	require.NoError(t, err)
+	require.Equal(t, payload, encoded)
+}
+
+func TestCodecConditionIncludesProprietaryGroupFunctionHeader(t *testing.T) {
+	function := uint64(3)
+	commandedPGN := uint64(130816)
+	manufacturer := uint64(381)
+	industry := uint64(4)
+	uniqueID := uint64(7)
+	zero := uint64(0)
+	message := &NmeaReadFieldsGroupFunction{
+		FunctionCode:           &function,
+		Pgn:                    &commandedPGN,
+		ManufacturerCode:       &manufacturer,
+		IndustryCode:           &industry,
+		UniqueId:               &uniqueID,
+		NumberOfSelectionPairs: &zero,
+		NumberOfParameters:     &zero,
+	}
+
+	encoded, err := encodeFields(message)
+	require.NoError(t, err)
+	require.Len(t, encoded, 9)
+
+	var decoded NmeaReadFieldsGroupFunction
+	require.NoError(t, decodeFields(&decoded, encoded))
+	require.Equal(t, manufacturer, *decoded.ManufacturerCode)
+	require.Equal(t, industry, *decoded.IndustryCode)
+	require.Equal(t, uniqueID, *decoded.UniqueId)
+}
+
+func TestEncodeFieldsRejectsSignedValueOutsideFieldWidth(t *testing.T) {
+	tooLarge := int64(40000)
+	message := &VesselHeading{Deviation: &tooLarge}
+
+	_, err := encodeFields(message)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "16-bit signed range")
+}
+
 // bgKeyValuePayload is a hand-built PGN 130824 (B&G key-value) payload:
 //
 //	bytes 0-1   Manufacturer Code = 381 (11 bits), reserved (2 bits, ones),

@@ -153,6 +153,9 @@ func (s *sequence) complete(p *decoder.Packet) bool {
 		return true
 	}
 	p.Data = append([]uint8(nil), results[:s.expected]...)
+	// Message context belongs to the start of the wire transfer, not whichever
+	// continuation frame happened to complete an out-of-order assembly.
+	p.Info = s.zero.Info
 	p.Complete = true
 	return true
 }

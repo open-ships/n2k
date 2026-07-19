@@ -128,14 +128,14 @@ func TestISORequest_AddressedToOtherNodeIgnored(t *testing.T) {
 }
 
 func TestISORequest_UnsupportedAddressedGetsNAK(t *testing.T) {
-	_, mb, addr := newCitizenClient(t)
+	c, mb, addr := newCitizenClient(t)
 
 	mb.inbound <- isoRequestFrame(130306, 0x42, addr)
 
 	ok := waitFor(t, 2*time.Second, func() bool {
 		return len(framesWithPGN(mb.getWritten(), 59392)) > 0
 	})
-	require.True(t, ok, "expected an IsoAcknowledgement NAK")
+	require.True(t, ok, "expected an IsoAcknowledgement NAK; client error: %v", c.Err())
 
 	nakFrame := framesWithPGN(mb.getWritten(), 59392)[0]
 	// Wire layout: control (1B), group function (1B), reserved (3B),
@@ -144,6 +144,11 @@ func TestISORequest_UnsupportedAddressedGetsNAK(t *testing.T) {
 	assert.Equal(t, uint8(0xFF), nakFrame.Data[1], "group function must be the null sentinel")
 	refused := uint32(nakFrame.Data[5]) | uint32(nakFrame.Data[6])<<8 | uint32(nakFrame.Data[7])<<16
 	assert.Equal(t, uint32(130306), refused)
+}
+
+func TestISORequestNAKEncodes(t *testing.T) {
+	_, err := pgn.EncodeMessage(nakFor(130306))
+	require.NoError(t, err)
 }
 
 func TestISORequest_UnsupportedBroadcastIgnored(t *testing.T) {

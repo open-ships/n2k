@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"testing"
+	"time"
 
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
@@ -55,6 +56,17 @@ func TestActisenseReader_SingleMessage(t *testing.T) {
 	assert.Equal(t, uint8(255), got[0].Destination)
 	assert.Equal(t, uint8(0x23), got[0].Source)
 	assert.Equal(t, data, got[0].Data)
+}
+
+func TestActisenseReader_PreservesTransportTimestamp(t *testing.T) {
+	payload := n2kPayload(2, 127250, 255, 0x23, []byte{1})
+	payload[6], payload[7], payload[8], payload[9] = 0x78, 0x56, 0x34, 0x12
+	stream := wrapActisense(cmdN2KReceived, payload)
+
+	var got N2KMessage
+	NewActisenseReader().Feed(stream, func(message N2KMessage) { got = message })
+	assert.True(t, got.HasTimestamp)
+	assert.Equal(t, time.Duration(0x12345678)*time.Millisecond, got.Timestamp)
 }
 
 func TestActisenseReader_SplitAcrossFeeds(t *testing.T) {

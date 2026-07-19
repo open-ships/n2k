@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 	"sort"
 	"strconv"
@@ -68,10 +69,22 @@ const (
 	fieldKindRawNumber
 )
 
+// fieldCondition selects whether a field is present in the wire payload.
+// Conditions are compiled from the source metadata so an unknown predicate
+// cannot be silently ignored.
+type fieldCondition uint8
+
+const (
+	conditionAlways fieldCondition = iota
+	conditionPGNIsProprietary
+)
+
 // planField is one compiled field of a codecPlan.
 type planField struct {
 	// order is the 1-based metadata field order.
 	order int
+	// name is the human-readable metadata field name used in validation errors.
+	name string
 	// kind selects the decode/encode strategy.
 	kind fieldKind
 	// fieldIndex is the reflect field index in the containing struct
@@ -85,6 +98,17 @@ type planField struct {
 	bitLength uint16
 	// signed marks two's-complement numeric fields.
 	signed bool
+	// condition controls whether this field occupies space in the payload.
+	condition fieldCondition
+	// resolution and offset convert raw numeric ticks to physical values for
+	// source-schema range validation.
+	resolution float64
+	offset     float64
+	rangeMin   *float64
+	rangeMax   *float64
+	// sentinels are explicit special raw values permitted outside the normal
+	// physical range (out-of-range, reserved, and unknown states).
+	sentinels map[int64]struct{}
 	// match is the variant-selecting value for fieldKindMatch fields.
 	match *int
 	// refOrder is the order of the field holding this binary field's width
@@ -191,6 +215,13 @@ func decodeFields(m PGN, payload []uint8) (err error) {
 			}
 			continue
 		}
+		included, err := conditionSatisfied(step.field.condition, raws)
+		if err != nil {
+			return fmt.Errorf("field %d (%s): %w", step.field.order, step.field.name, err)
+		}
+		if !included {
+			continue
+		}
 		if err := decodeField(stream, step.field, target, raws); err != nil {
 			return err
 		}
@@ -244,10 +275,19 @@ func encodeCurrentFields(m PGN) ([]uint8, error) {
 		}
 		addLengthOverride(overrides, step.field, source)
 	}
+	raws := collectEncodeRaws(plan, source, overrides)
 
 	for _, step := range plan.steps {
 		if step.group != nil {
-			encodeGroup(writer, step.group, source)
+			encodeGroup(writer, step.group, source, raws)
+			continue
+		}
+		included, conditionErr := conditionSatisfied(step.field.condition, raws)
+		if conditionErr != nil {
+			writer.setErr(fmt.Errorf("field %d (%s): %w", step.field.order, step.field.name, conditionErr))
+			continue
+		}
+		if !included {
 			continue
 		}
 		encodeField(writer, step.field, source, overrides)
@@ -398,11 +438,32 @@ func compileCodecGroups(t reflect.Type, info *PgnInfo, sliceIndexes [2]int) ([2]
 // or one repeating group) so a following DYNAMIC_FIELD_VALUE can reference it.
 func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastDynLen *int) (*planField, error) {
 	desc := info.Fields[order]
+	condition, err := compileFieldCondition(desc.Condition)
+	if err != nil {
+		return nil, fmt.Errorf("field %d (%s): %w", order, desc.Name, err)
+	}
 	field := &planField{
 		order:      order,
+		name:       desc.Name,
 		fieldIndex: -1,
 		bitLength:  desc.BitLength,
 		signed:     desc.Signed,
+		condition:  condition,
+		resolution: float64(desc.Resolution),
+		rangeMin:   desc.RangeMin,
+		rangeMax:   desc.RangeMax,
+		sentinels:  make(map[int64]struct{}, 3),
+	}
+	if field.resolution == 0 {
+		field.resolution = 1
+	}
+	if desc.Offset != nil {
+		field.offset = *desc.Offset
+	}
+	for _, sentinel := range []*int64{desc.OutOfRangeValue, desc.ReservedValue, desc.UnknownValue} {
+		if sentinel != nil {
+			field.sentinels[*sentinel] = struct{}{}
+		}
 	}
 	switch desc.SourceType {
 	case "RESERVED":
@@ -464,6 +525,38 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		field.fieldIndex = index
 	}
 	return field, nil
+}
+
+func compileFieldCondition(condition string) (fieldCondition, error) {
+	switch condition {
+	case "":
+		return conditionAlways, nil
+	case "PGNIsProprietary":
+		return conditionPGNIsProprietary, nil
+	default:
+		return conditionAlways, fmt.Errorf("unsupported field condition %q", condition)
+	}
+}
+
+// conditionSatisfied evaluates a compiled predicate using raw field values
+// from the same message. PGNIsProprietary is defined by the commanded PGN in
+// field order 2 of NMEA group-function messages.
+func conditionSatisfied(condition fieldCondition, raws map[int]uint64) (bool, error) {
+	switch condition {
+	case conditionAlways:
+		return true, nil
+	case conditionPGNIsProprietary:
+		commandedPGN, ok := raws[2]
+		if !ok {
+			// A zero-value group-function struct has no commanded PGN. Treat the
+			// optional proprietary header as absent; callers still receive normal
+			// validation if they populate an invalid PGN value.
+			return false, nil
+		}
+		return IsProprietaryPGN(uint32(commandedPGN)), nil
+	default:
+		return false, fmt.Errorf("unsupported compiled field condition %d", condition)
+	}
 }
 
 // codecStructIndexes reads the `n2k` struct tags of t, returning the field
@@ -596,6 +689,13 @@ func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, 
 		element := reflect.New(group.elemType).Elem()
 		complete := true
 		for f := range group.fields {
+			included, err := conditionSatisfied(group.fields[f].condition, raws)
+			if err != nil {
+				return false, fmt.Errorf("repeating group field %d (%s): %w", group.fields[f].order, group.fields[f].name, err)
+			}
+			if !included {
+				continue
+			}
 			if err := decodeField(stream, &group.fields[f], element, raws); err != nil {
 				if !errors.Is(err, ErrUnexpectedPayloadEnd) {
 					return false, fmt.Errorf("decode repeating group field %d: %w", group.fields[f].order, err)
@@ -712,12 +812,20 @@ func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.V
 // null sentinels for nil values, and Match values for nil match fields.
 func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source reflect.Value, overrides map[int]uint64) {
 	if raw, ok := overrides[field.order]; ok {
+		if err := field.validateUnsigned(raw); err != nil {
+			writer.setErr(err)
+			return
+		}
 		writer.setErr(writer.putNumberRaw(raw, field.bitLength))
 		return
 	}
 	if field.signed {
 		value, _ := source.Field(field.fieldIndex).Interface().(*int64)
 		if value != nil {
+			if err := field.validateSigned(*value); err != nil {
+				writer.setErr(err)
+				return
+			}
 			writer.writeInt64(value, field.bitLength)
 			return
 		}
@@ -730,6 +838,10 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 	}
 	value, _ := source.Field(field.fieldIndex).Interface().(*uint64)
 	if value != nil {
+		if err := field.validateUnsigned(*value); err != nil {
+			writer.setErr(err)
+			return
+		}
 		writer.writeUInt64(value, field.bitLength)
 		return
 	}
@@ -743,7 +855,7 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 // encodeGroup writes every element of a repeating field set. Length
 // references inside a group always point at fields of the same group, so
 // derived overrides are computed per element.
-func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.Value) {
+func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.Value, parentRaws map[int]uint64) {
 	slice := source.Field(group.sliceIndex)
 	for i := 0; i < slice.Len(); i++ {
 		element := slice.Index(i)
@@ -751,10 +863,128 @@ func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.V
 		for f := range group.fields {
 			addLengthOverride(overrides, &group.fields[f], element)
 		}
+		raws := collectFieldRaws(group.fields, element, overrides, parentRaws)
 		for f := range group.fields {
+			included, err := conditionSatisfied(group.fields[f].condition, raws)
+			if err != nil {
+				writer.setErr(fmt.Errorf("repeating group field %d (%s): %w", group.fields[f].order, group.fields[f].name, err))
+				continue
+			}
+			if !included {
+				continue
+			}
 			encodeField(writer, &group.fields[f], element, overrides)
 		}
 	}
+}
+
+func collectEncodeRaws(plan *codecPlan, source reflect.Value, overrides map[int]uint64) map[int]uint64 {
+	raws := make(map[int]uint64, len(overrides)+len(plan.steps))
+	for order, raw := range overrides {
+		raws[order] = raw
+	}
+	for _, step := range plan.steps {
+		if step.field != nil {
+			collectFieldRaw(raws, step.field, source, overrides)
+		}
+	}
+	return raws
+}
+
+func collectFieldRaws(fields []planField, source reflect.Value, overrides, parent map[int]uint64) map[int]uint64 {
+	raws := make(map[int]uint64, len(parent)+len(overrides)+len(fields))
+	for order, raw := range parent {
+		raws[order] = raw
+	}
+	for order, raw := range overrides {
+		raws[order] = raw
+	}
+	for i := range fields {
+		collectFieldRaw(raws, &fields[i], source, overrides)
+	}
+	return raws
+}
+
+func collectFieldRaw(raws map[int]uint64, field *planField, source reflect.Value, overrides map[int]uint64) {
+	if raw, ok := overrides[field.order]; ok {
+		raws[field.order] = raw
+		return
+	}
+	if field.fieldIndex < 0 {
+		return
+	}
+	value := source.Field(field.fieldIndex)
+	if value.Kind() != reflect.Pointer || value.IsNil() {
+		if field.match != nil {
+			raws[field.order] = uint64(*field.match)
+		}
+		return
+	}
+	switch raw := value.Elem().Interface().(type) {
+	case uint64:
+		raws[field.order] = raw
+	case int64:
+		raws[field.order] = uint64(raw)
+	}
+}
+
+func (field *planField) validateSigned(value int64) error {
+	if field.bitLength == 0 || field.bitLength > 64 {
+		return fmt.Errorf("field %d (%s): invalid signed width %d", field.order, field.name, field.bitLength)
+	}
+	if field.bitLength < 64 {
+		minValue := -(int64(1) << (field.bitLength - 1))
+		maxValue := (int64(1) << (field.bitLength - 1)) - 1
+		if value < minValue || value > maxValue {
+			return fmt.Errorf("field %d (%s): value %d exceeds %d-bit signed range [%d,%d]", field.order, field.name, value, field.bitLength, minValue, maxValue)
+		}
+		_, declaredSentinel := field.sentinels[value]
+		if field.kind == fieldKindNullableNumber && value == maxValue && !declaredSentinel {
+			return fmt.Errorf("field %d (%s): value %d is the null sentinel; use nil", field.order, field.name, value)
+		}
+	}
+	return field.validatePhysical(float64(value)*field.resolution+field.offset, value)
+}
+
+func (field *planField) validateUnsigned(value uint64) error {
+	if field.bitLength == 0 || field.bitLength > 64 {
+		return fmt.Errorf("field %d (%s): invalid unsigned width %d", field.order, field.name, field.bitLength)
+	}
+	if field.bitLength < 64 {
+		maxValue := uint64(1)<<field.bitLength - 1
+		if value > maxValue {
+			return fmt.Errorf("field %d (%s): value %d exceeds %d-bit unsigned range [0,%d]", field.order, field.name, value, field.bitLength, maxValue)
+		}
+		_, declaredSentinel := field.sentinels[int64(value)]
+		if field.kind == fieldKindNullableNumber && value == maxValue && !declaredSentinel {
+			return fmt.Errorf("field %d (%s): value %d is the null sentinel; use nil", field.order, field.name, value)
+		}
+	}
+	if value > math.MaxInt64 {
+		return field.validatePhysical(float64(value)*field.resolution+field.offset, 0)
+	}
+	return field.validatePhysical(float64(value)*field.resolution+field.offset, int64(value))
+}
+
+func (field *planField) validatePhysical(value float64, raw int64) error {
+	if field.kind != fieldKindNullableNumber && field.kind != fieldKindRawNumber {
+		return nil
+	}
+	if _, ok := field.sentinels[raw]; ok {
+		return nil
+	}
+	if field.rangeMin != nil && value < *field.rangeMin && !approximatelyEqual(value, *field.rangeMin) {
+		return fmt.Errorf("field %d (%s): physical value %g is below minimum %g", field.order, field.name, value, *field.rangeMin)
+	}
+	if field.rangeMax != nil && value > *field.rangeMax && !approximatelyEqual(value, *field.rangeMax) {
+		return fmt.Errorf("field %d (%s): physical value %g exceeds maximum %g", field.order, field.name, value, *field.rangeMax)
+	}
+	return nil
+}
+
+func approximatelyEqual(left, right float64) bool {
+	scale := math.Max(1, math.Max(math.Abs(left), math.Abs(right)))
+	return math.Abs(left-right) <= scale*1e-12
 }
 
 // addLengthOverride records the derived value of a binary field's length

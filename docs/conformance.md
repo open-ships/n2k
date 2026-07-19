@@ -38,10 +38,36 @@ just lint
 just secure
 ```
 
-`conformance-local` gives the externally visible Commanded Address cases a
-stable, verbose test run and reruns the deep protocol modules for CAN framing,
-fast-packet discrimination, ISO transport, and address claiming. The full test
-suite remains the authoritative local regression gate.
+`conformance-local` gives the externally visible protocol cases a stable,
+verbose test run and reruns the deep protocol Modules for CAN framing,
+fast-packet discrimination, ISO transport, address claiming, gateway parsing,
+reconnect, saturation, and raw observation. The full test suite remains the
+authoritative local regression gate.
+
+The machine-readable evidence index is
+[`conformance/requirements.json`](../conformance/requirements.json). Its schema,
+unique IDs, and evidence presence are checked by
+`TestConformanceRequirementIndex`.
+
+### Requirement families
+
+| Evidence ID | Local behavior family | Representative executable evidence |
+|---|---|---|
+| AC-01 | Address claim, defense, retry, cannot-claim, and surfaced failures | `internal/claiming` suite |
+| HB-01 | Heartbeat cadence, retiming, disable, and sequence rollover | `TestHeartbeat_*` |
+| IR-01 | ISO request targeting, responses, and acknowledgements | `TestISORequest_*` |
+| GF-01 | Group-function requests, commands, fields, and scheduling | `TestGroupFunction_*` |
+| FP-01 | Fast-packet limits, assembly, ownership, and malformed input | `internal/adapter`; `internal/framer` suites |
+| BAM-01 / RTS-01 | BAM and RTS/CTS transmit/receive state machines | `internal/transport` suite |
+| MAL-01 | Malformed frames, announcements, checksums, and streams | transport and gateway hostile-input tests |
+| SAT-01 | Bounded application, protocol, subscription, and reassembly state | queue, hub, adapter, and transport tests |
+| REC-01 | Reconnect epoch reclaims before protocol restart | `TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic` |
+| TIM-01 | Claim, heartbeat, assembly, transport, and reconnect timing | deterministic clock and timeout tests |
+| CODEC-01 | Conditional fields, signed widths, ranges, and sentinels | codec and data-stream writer tests |
+| OBS-01 | Source/network identity, timestamps, direction, and ownership | observation and gateway tests |
+
+These IDs are public repository evidence identifiers. They are not licensed
+ISO or NMEA clause numbers, and they do not replace the private crosswalk.
 
 ### Commanded Address evidence map
 

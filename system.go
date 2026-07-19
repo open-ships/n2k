@@ -6,8 +6,8 @@ import (
 	"runtime/debug"
 	"sync"
 
-	"github.com/brutella/can"
 	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/raw"
 )
 
 // systemPGNs are always decoded by the system router: product information
@@ -58,14 +58,12 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 	return r, nil
 }
 
-// handleFrame feeds one raw CAN frame into the system pipeline when its PGN
-// is in the accept set.
-func (r *systemRouter) handleFrame(frame can.Frame, pgnNum uint32) {
+func (r *systemRouter) handleObservation(observation raw.Observation, pgnNum uint32) {
 	r.mu.Lock()
 	_, ok := r.accept[pgnNum]
 	r.mu.Unlock()
 	if ok {
-		r.pipeline.HandleFrame(frame)
+		r.pipeline.HandleObservation(observation)
 	}
 }
 

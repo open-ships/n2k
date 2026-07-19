@@ -884,11 +884,10 @@ func (b *togglePanicBus) Close() error {
 
 var _ Bus = (*togglePanicBus)(nil)
 
-// TestClient_WriteLoopSurvivesWritePanic confirms a panicking Bus.WriteFrame on
-// an asynchronous write is contained by the write loop: the write completes with
-// an error and the loop keeps serving, rather than crashing the process or
-// wedging every later Write on the send to writeCh.
-func TestClient_WriteLoopSurvivesWritePanic(t *testing.T) {
+// TestClient_WritePanicBecomesTerminal confirms a panicking Bus.WriteFrame is
+// contained without crashing the process and transitions the client to a
+// terminal state instead of leaving a half-alive node.
+func TestClient_WritePanicBecomesTerminal(t *testing.T) {
 	b := newTogglePanicBus()
 	c, err := NewClient(context.Background(),
 		WithBus(b),
@@ -897,6 +896,7 @@ func TestClient_WriteLoopSurvivesWritePanic(t *testing.T) {
 	)
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
+	require.True(t, waitFor(t, time.Second, func() bool { return len(b.getWritten()) >= 2 }))
 
 	heading := uint64(15000)
 
@@ -906,23 +906,15 @@ func TestClient_WriteLoopSurvivesWritePanic(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "panic writing message")
 
-	// Disarmed: the loop recovered and still serves — a later write succeeds.
+	// Disarmed: later writes still fail with the terminal runtime error.
 	b.disarm()
-	done := make(chan error, 1)
-	go func() { done <- c.Write(&pgn.VesselHeading{Heading: &heading}).Wait() }()
-	select {
-	case err := <-done:
-		require.NoError(t, err)
-	case <-time.After(2 * time.Second):
-		t.Fatal("write loop wedged after a recovered write panic")
-	}
+	require.Error(t, c.Err())
+	require.Error(t, c.Write(&pgn.VesselHeading{Heading: &heading}).Wait())
 }
 
-// TestClient_ReadLoopSurvivesWritePanic confirms a panicking Bus.WriteFrame that
-// fires synchronously on the read goroutine is contained per frame. An ISO
-// request for the address-claim PGN makes the claimer write a defensive claim
-// inline while handling the frame; that fault must not tear down the read loop.
-func TestClient_ReadLoopSurvivesWritePanic(t *testing.T) {
+// TestClient_ReadPathWritePanicBecomesTerminal confirms a panicking defensive
+// claim on the read path is surfaced instead of being a log-only failure.
+func TestClient_ReadPathWritePanicBecomesTerminal(t *testing.T) {
 	b := newTogglePanicBus()
 	c, err := NewClient(context.Background(),
 		WithBus(b),
@@ -935,20 +927,16 @@ func TestClient_ReadLoopSurvivesWritePanic(t *testing.T) {
 	c.mu.Lock()
 	addr := c.sourceAddr
 	c.mu.Unlock()
+	// Let startup enumeration leave the advisory protocol lane before arming
+	// the transport fault, so this test isolates the defensive claim path.
+	require.True(t, waitFor(t, time.Second, func() bool { return len(b.getWritten()) >= 2 }))
 
 	// Armed: handling this frame writes a defensive claim inline, which panics.
 	b.arm()
 	b.inbound <- isoRequestFrame(60928, 0x42, addr)
-	time.Sleep(50 * time.Millisecond) // let the frame be handled and the panic recover
-
-	// The read loop is still alive: disarmed, it answers a fresh claim request.
-	b.disarm()
-	before := len(framesWithPGN(b.getWritten(), 60928))
-	b.inbound <- isoRequestFrame(60928, 0x42, addr)
-	ok := waitFor(t, 2*time.Second, func() bool {
-		return len(framesWithPGN(b.getWritten(), 60928)) > before
-	})
-	require.True(t, ok, "read loop should still answer claim requests after a recovered write panic")
+	ok := waitFor(t, 2*time.Second, func() bool { return c.Err() != nil })
+	require.True(t, ok, "defensive-claim panic should become terminal")
+	assert.Contains(t, c.Err().Error(), "bus frame handler")
 }
 
 func TestClient_AddressClaim(t *testing.T) {

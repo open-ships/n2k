@@ -121,15 +121,12 @@ func TestFastPacket(t *testing.T) {
 
 	// --- Scenario 2: Out-of-order initial frame ---
 	// Sending frame 1 (0xa1 = seqId=5, frameNum=1) before frame 0. The MultiBuilder should
-	// accept it but the sequence won't be complete. Verify the sequence exists in the map
-	// under source=10, pgn=130820, seqId=5.
+	// accept it but the sequence won't be complete. Verify the sequence exists.
 	m = NewMultiBuilder()
 	p = decoder.NewPacket(NewPacketInfo(&can.Frame{ID: framer.BuildCANID(130820, 1, 10, 0), Length: 8}), []uint8{161, 5, 163, 153, 32, 128, 1, 255})
 	m.Add(p)
 	assert.False(t, p.Complete)
-	assert.NotNil(t, m.sequences[10])
-	assert.NotNil(t, m.sequences[10])
-	assert.NotNil(t, m.sequences[10][130820][5])
+	assert.NotNil(t, m.sequences[keyForPacket(p)])
 
 	// --- Scenario 3: Multi-frame in-order assembly ---
 	// Test a 5-frame sequence for PGN 130820 (using CAN ID 0x09F20183).

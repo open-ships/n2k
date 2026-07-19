@@ -2,11 +2,12 @@ package transport
 
 import (
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // handleBAMReceive processes an incoming CM_BAM announcement and sets up a receive session
 // to reassemble the subsequent DT frames.
-func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
+func (m *Manager) handleBAMReceive(frame can.Frame, source uint8, info pgn.MessageInfo) {
 	totalSize := uint16(frame.Data[1]) | uint16(frame.Data[2])<<8
 	numFrames := frame.Data[3]
 	pgn := extractPGN(frame.Data)
@@ -25,6 +26,8 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
 		destination: BroadcastAddr,
 		pgn:         pgn,
 	}
+	info.PGN = pgn
+	info.TargetId = nil
 
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -38,6 +41,7 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
 		numFrames: numFrames,
 		received:  0,
 		data:      make([]byte, totalSize),
+		info:      info,
 	}
 
 	// Set a DT timeout for the first frame.

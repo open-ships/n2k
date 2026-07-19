@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/raw"
 )
 
 // maxCANID is the largest valid 29-bit extended CAN identifier.
@@ -24,32 +26,66 @@ const maxCANID = 0x1FFFFFFF
 // bus); both carry frames. Returns ok=false for service messages, blank
 // lines, and anything else that does not carry a CAN data frame.
 func ParseYDRaw(line string) (can.Frame, bool) {
+	observation, ok := ParseYDRawObservation(line)
+	if !ok || observation.Frame == nil {
+		return can.Frame{}, false
+	}
+	return *observation.Frame, true
+}
+
+// ParseYDRawObservation preserves the gateway's relative timestamp and
+// receive/transmit direction in addition to the CAN frame.
+func ParseYDRawObservation(line string) (raw.Observation, bool) {
 	fields := strings.Fields(strings.TrimSpace(line))
 	// time, direction, ID, and at least one data byte
 	if len(fields) < 4 {
-		return can.Frame{}, false
+		return raw.Observation{}, false
 	}
 	if fields[1] != "R" && fields[1] != "T" {
-		return can.Frame{}, false
+		return raw.Observation{}, false
 	}
 	id, err := strconv.ParseUint(fields[2], 16, 32)
 	if err != nil || id > maxCANID {
-		return can.Frame{}, false
+		return raw.Observation{}, false
 	}
 
 	dataFields := fields[3:]
 	if len(dataFields) > 8 {
-		return can.Frame{}, false
+		return raw.Observation{}, false
 	}
 	frame := can.Frame{ID: uint32(id), Length: uint8(len(dataFields))}
 	for i, b := range dataFields {
 		v, err := hex.DecodeString(b)
 		if err != nil || len(v) != 1 {
-			return can.Frame{}, false
+			return raw.Observation{}, false
 		}
 		frame.Data[i] = v[0]
 	}
-	return frame, true
+	direction := raw.DirectionReceived
+	if fields[1] == "T" {
+		direction = raw.DirectionTransmitted
+	}
+	transportTimestamp, timestampOK := parseYDTime(fields[0])
+	return raw.Observation{
+		Kind:                  raw.KindFrame,
+		ReceivedAt:            time.Now(),
+		TransportTimestamp:    transportTimestamp,
+		HasTransportTimestamp: timestampOK,
+		AdapterID:             "ydraw",
+		Direction:             direction,
+		Frame:                 &frame,
+	}, true
+}
+
+func parseYDTime(value string) (time.Duration, bool) {
+	parsed, err := time.Parse("15:04:05.000", value)
+	if err != nil {
+		return 0, false
+	}
+	return time.Duration(parsed.Hour())*time.Hour +
+		time.Duration(parsed.Minute())*time.Minute +
+		time.Duration(parsed.Second())*time.Second +
+		time.Duration(parsed.Nanosecond()), true
 }
 
 // FormatYDRawTX renders a CAN frame as a Yacht Devices RAW transmit line.

@@ -7,6 +7,8 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/raw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -103,6 +105,34 @@ func TestOnCompleteRunsOutsideLock(t *testing.T) {
 	}
 	close(release)
 	<-done
+}
+
+func TestOnCompletePreservesConnectionManagementObservation(t *testing.T) {
+	var got pgn.MessageInfo
+	mgr := NewManager(ManagerConfig{
+		WriteFrame: func(can.Frame) error { return nil },
+		OnCompleteInfo: func(info pgn.MessageInfo, _ []byte) {
+			got = info
+		},
+	})
+	defer mgr.Close()
+
+	timestamp := time.Unix(100, 200)
+	info := pgn.MessageInfo{
+		Timestamp:  timestamp,
+		ReceivedAt: timestamp.Add(time.Second),
+		AdapterID:  "tcp:test",
+		NetworkID:  "network-a",
+		Direction:  raw.DirectionReceived,
+	}
+	mgr.HandleFrameWithInfo(buildCMBAMFrame(7, 1, 130816, 10), info)
+	mgr.HandleFrame(makeDTFrame(1, [7]byte{}, 10, BroadcastAddr))
+
+	assert.Equal(t, uint32(130816), got.PGN)
+	assert.Equal(t, timestamp, got.Timestamp)
+	assert.Equal(t, "tcp:test", got.AdapterID)
+	assert.Equal(t, "network-a", got.NetworkID)
+	assert.Equal(t, raw.DirectionReceived, got.Direction)
 }
 
 func TestManager_RoutesCMToCorrectHandler(t *testing.T) {

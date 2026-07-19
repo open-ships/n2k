@@ -318,7 +318,9 @@ func TestYDRawTCPBus_NoReconnectEndsOnDrop(t *testing.T) {
 // Write is exercised, so the embedded nil net.Conn is never dereferenced.
 type failingConn struct{ net.Conn }
 
-func (*failingConn) Write([]byte) (int, error) { return 0, errors.New("gateway_test: connection reset") }
+func (*failingConn) Write([]byte) (int, error) {
+	return 0, errors.New("gateway_test: connection reset")
+}
 
 type partialConn struct{ net.Conn }
 
@@ -408,6 +410,34 @@ func TestTCPLink_WriteNoRetryWithoutReconnect(t *testing.T) {
 	l.mu.Unlock()
 
 	require.Error(t, l.write([]byte("hello")))
+}
+
+func TestTCPLinkConnectionObserverGatesPublicationAndTracksEpochs(t *testing.T) {
+	link := newTCPLink(testLogger(), "127.0.0.1:1", &ReconnectPolicy{})
+	type event struct {
+		connected bool
+		epoch     uint64
+		published bool
+	}
+	var events []event
+	link.setConnectionObserver(func(connected bool, epoch uint64) {
+		link.mu.Lock()
+		published := link.conn != nil
+		link.mu.Unlock()
+		events = append(events, event{connected: connected, epoch: epoch, published: published})
+	})
+
+	first := &recordingConn{}
+	second := &recordingConn{}
+	require.True(t, link.markConnected(first))
+	link.markDisconnected(errors.New("drop"))
+	require.True(t, link.markConnected(second))
+
+	require.Equal(t, []event{
+		{connected: true, epoch: 1, published: false},
+		{connected: false, epoch: 1, published: false},
+		{connected: true, epoch: 2, published: false},
+	}, events)
 }
 
 func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {

@@ -3,11 +3,13 @@ package n2k
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/adapter"
 	"github.com/open-ships/n2k/internal/decoder"
 	"github.com/open-ships/n2k/pgn"
+	"github.com/open-ships/n2k/raw"
 )
 
 // infoCarrier is a local interface for types that expose MessageInfo through
@@ -28,6 +30,7 @@ type readPipeline struct {
 	adapter        *adapter.CANAdapter
 	decoder        *decoder.Decoder
 	emit           func(pgn.Message)
+	observe        func(raw.Observation)
 }
 
 // newReadPipeline compiles the filter eagerly and wires adapter -> decoder -> output stage.
@@ -56,19 +59,49 @@ func newReadPipeline(ctx context.Context, cfg config, emit func(pgn.Message)) (*
 		emit:           emit,
 	}
 	p.decoder.SetOutput(p)
-	p.adapter.SetOutput(p.decoder)
+	p.adapter.SetOutput(p)
 	return p, nil
 }
 
 // HandleFrame is the single entry point for raw CAN frames (pre-filter + assembly + decode).
 func (p *readPipeline) HandleFrame(frame can.Frame) {
+	now := time.Now()
+	p.HandleObservation(normalizeObservation(raw.Observation{
+		Kind:       raw.KindFrame,
+		Timestamp:  now,
+		ReceivedAt: now,
+		Direction:  raw.DirectionReceived,
+		Frame:      &frame,
+	}))
+}
+
+// HandleObservation is the source-aware pipeline entry point.
+func (p *readPipeline) HandleObservation(observation raw.Observation) {
+	observation = normalizeObservation(observation)
+	if observation.Frame == nil {
+		return
+	}
+	frame := *observation.Frame
+	info := messageInfoForObservation(observation)
 	if p.filter != nil {
-		info := adapter.NewPacketInfo(&frame)
 		if !p.filter.evalPre(info) {
 			return
 		}
 	}
-	p.adapter.HandleMessage(&frame)
+	p.adapter.HandleMessageWithInfo(&frame, info)
+}
+
+// Decode implements adapter.PacketHandler. It exposes the assembled owned
+// payload before typed decoding, then delegates to the decoder.
+func (p *readPipeline) Decode(packet decoder.Packet) {
+	if p.observe != nil {
+		p.observe(observationFromPacket(raw.KindMessage, packet, ""))
+	}
+	p.decoder.Decode(packet)
+}
+
+func (p *readPipeline) setObservationOutput(observe func(raw.Observation)) {
+	p.observe = observe
 }
 
 // InjectAssembled feeds an already-assembled payload (e.g. an ISO-TP reassembly)
@@ -81,7 +114,7 @@ func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
 	packet := decoder.NewPacket(info, data)
 	packet.Complete = true
 	packet.FilterCandidates()
-	p.decoder.Decode(*packet)
+	p.Decode(*packet)
 }
 
 // HandleStruct implements decoder.Handler: unknown-PGN policy, post-filter,
@@ -91,8 +124,24 @@ func (p *readPipeline) HandleStruct(msg pgn.Message) {
 		return
 	}
 	if u, ok := msg.(*pgn.UnknownPGN); ok && !p.includeUnknown {
+		if p.observe != nil {
+			packet := decoder.Packet{Info: u.Info, Data: append([]byte(nil), u.Data...)}
+			reason := "unknown PGN"
+			if u.Reason != nil {
+				reason = u.Reason.Error()
+			}
+			p.observe(observationFromPacket(raw.KindDecodeError, packet, reason))
+		}
 		p.log.Debug("dropping unknown PGN", "pgn", u.Info.PGN, "reason", u.Reason)
 		return
+	}
+	if u, ok := msg.(*pgn.UnknownPGN); ok && p.observe != nil {
+		packet := decoder.Packet{Info: u.Info, Data: append([]byte(nil), u.Data...)}
+		reason := "unknown PGN"
+		if u.Reason != nil {
+			reason = u.Reason.Error()
+		}
+		p.observe(observationFromPacket(raw.KindDecodeError, packet, reason))
 	}
 	if p.filter != nil && p.filter.hasPost {
 		carrier, ok := msg.(infoCarrier)

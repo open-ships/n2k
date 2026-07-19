@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/raw"
 )
 
 type config struct {
@@ -141,8 +142,23 @@ func UDP(listenAddr string, format StreamFormat) Option {
 // Replay adds a source that replays the given CAN frames. Useful for testing.
 func Replay(frames []can.Frame) Option {
 	return optionFunc(func(c *config) {
-		copied := append([]can.Frame(nil), frames...)
-		c.sources = append(c.sources, &replaySource{frames: copied})
+		observations := make([]raw.Observation, 0, len(frames))
+		for _, frame := range frames {
+			observations = append(observations, frameObservation(frame, "replay", "replay", raw.DirectionReceived))
+		}
+		c.sources = append(c.sources, &replaySource{observations: observations})
+	})
+}
+
+// ReplayObservations adds owned source-aware observations for deterministic
+// tests and capture replay. Each observation is copied before it is retained.
+func ReplayObservations(observations []Observation) Option {
+	return optionFunc(func(c *config) {
+		copied := make([]raw.Observation, len(observations))
+		for i := range observations {
+			copied[i] = observations[i].Clone()
+		}
+		c.sources = append(c.sources, &replaySource{observations: copied})
 	})
 }
 
@@ -277,10 +293,10 @@ type ReconnectPolicy struct {
 //
 // Reconnection covers connections that drop mid-session; the initial
 // connection must still succeed (for NewClient, within the claim timeout).
-// It applies only to TCP sources — CAN, USB, UDP, file, and replay sources
-// are unaffected. On a bus client, a transparent transport reconnect does not
-// re-run NMEA 2000 address claiming, so a gateway that itself rebooted may
-// require a fresh client.
+// It applies only to TCP sources — CAN, USB, UDP, file, and replay sources are
+// unaffected. A bus client starts a new network epoch after reconnect: it
+// reclaims its address, waits through contention, refreshes device discovery,
+// and then resumes scheduled transmissions.
 func WithReconnect(policy ReconnectPolicy) Option {
 	// The backoff bounds are normalized once, at the point of use, by
 	// gateway.NewBackoff (defaults for non-positive fields, MaxBackoff clamped

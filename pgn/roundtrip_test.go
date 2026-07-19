@@ -2,6 +2,7 @@ package pgn
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"sort"
 	"strings"
@@ -225,14 +226,34 @@ func populateField(field *planField, target reflect.Value, wantDerived bool, ove
 				return
 			}
 		}
-		// 1 fits every field width the schema uses for numeric fields: every
-		// signed field in upstream_definitions.go is at least 4 bits wide
-		// (2's complement range covers at least -8..7), and every unsigned
-		// field is at least 1 bit wide (range covers at least 0..1), so 1
-		// never collides with a null sentinel (nullable fields reserve their
-		// all-ones/positive-max value) and is always representable.
-		setNumericPointer(target.Field(field.fieldIndex), field.signed, 1)
+		setNumericPointer(target.Field(field.fieldIndex), field.signed, representativeNumericRaw(field))
 	}
+}
+
+// representativeNumericRaw returns a representable ordinary value inside
+// the source-schema physical range. Prefer raw tick 1 for compact payloads;
+// fields such as AIS MMSI identifiers have a much larger minimum and use the
+// first raw tick at or above that minimum instead.
+func representativeNumericRaw(field *planField) uint64 {
+	physical := field.resolution + field.offset
+	if (field.rangeMin == nil || physical >= *field.rangeMin) &&
+		(field.rangeMax == nil || physical <= *field.rangeMax) {
+		return 1
+	}
+
+	raw := float64(0)
+	if field.rangeMin != nil {
+		raw = math.Ceil((*field.rangeMin-field.offset)/field.resolution - 1e-9)
+	} else if field.rangeMax != nil {
+		raw = math.Floor((*field.rangeMax-field.offset)/field.resolution + 1e-9)
+	}
+	if field.signed {
+		return uint64(int64(raw))
+	}
+	if raw < 0 {
+		return 0
+	}
+	return uint64(raw)
 }
 
 // representativeFixedString returns an exact-width fill for a STRING_FIX

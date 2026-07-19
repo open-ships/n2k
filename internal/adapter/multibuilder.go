@@ -16,11 +16,10 @@ const (
 // single Packets. NMEA 2000 messages with payloads larger than 8 bytes are transmitted
 // as a series of CAN frames that must be reassembled.
 //
-// MultiBuilder maintains a three-level map of in-progress sequences, keyed by:
-//   - Source ID (uint8): The NMEA 2000 bus address of the sending device
-//   - PGN (uint32): The Parameter Group Number of the message
-//   - Sequence ID (uint8, 0-7): A 3-bit identifier allowing up to 8 concurrent sequences
-//     for the same source/PGN combination
+// MultiBuilder keys in-progress sequences by network identity, source address,
+// PGN, and sequence ID. Network identity is essential when several physical
+// networks are merged into one read pipeline because their dynamic source
+// addresses and three-bit sequence IDs can overlap.
 //
 // Each unique (source, PGN, seqId) tuple maps to a sequence that accumulates frames
 // until the message is complete. Once complete, the sequence is deleted to free memory.
@@ -28,20 +27,24 @@ const (
 // This structure is instantiated by CANAdapter and delegates frame-level assembly to
 // the sequence type.
 type MultiBuilder struct {
-	// sequences is the three-level map: source ID -> PGN -> sequence ID -> sequence.
-	// This hierarchy allows efficient lookup and supports multiple simultaneous transmissions
-	// from different sources, different PGNs, and multiple sequence IDs per source/PGN pair.
-	sequences map[uint8]map[uint32]map[uint8]*sequence
+	sequences map[fastPacketKey]*sequence
 	now       func() time.Time
 	ttl       time.Duration
 	maxActive int
+}
+
+type fastPacketKey struct {
+	network string
+	source  uint8
+	pgn     uint32
+	seqID   uint8
 }
 
 // NewMultiBuilder creates and returns a new MultiBuilder with an initialized (empty)
 // sequences map, ready to receive fast-packet frames.
 func NewMultiBuilder() *MultiBuilder {
 	mBuilder := MultiBuilder{
-		sequences: make(map[uint8]map[uint32]map[uint8]*sequence),
+		sequences: make(map[fastPacketKey]*sequence),
 		now:       time.Now,
 		ttl:       defaultFastPacketTTL,
 		maxActive: defaultMaxFastPacketState,
@@ -74,13 +77,13 @@ func (m *MultiBuilder) Add(p *decoder.Packet) {
 	seq := m.seqFor(p, now)
 	// Add this frame's data to the sequence.
 	if !seq.add(p, now) {
-		m.deleteSequence(p.Info.SourceId, p.Info.PGN, p.SeqId)
+		m.deleteSequence(keyForPacket(p))
 		return
 	}
 	// Check if the sequence now has all expected data and finalize if so.
 	if seq.complete(p) {
 		// Sequence is done -- delete it from the map to free memory and prevent stale data.
-		m.deleteSequence(p.Info.SourceId, p.Info.PGN, p.SeqId)
+		m.deleteSequence(keyForPacket(p))
 	}
 }
 
@@ -97,70 +100,48 @@ func (m *MultiBuilder) SeqFor(p *decoder.Packet) *sequence {
 }
 
 func (m *MultiBuilder) seqFor(p *decoder.Packet, now time.Time) *sequence {
-	if m.sequences[p.Info.SourceId] == nil || m.sequences[p.Info.SourceId][p.Info.PGN] == nil || m.sequences[p.Info.SourceId][p.Info.PGN][p.SeqId] == nil {
+	key := keyForPacket(p)
+	if m.sequences[key] == nil {
 		m.evictOldestIfFull()
 	}
-	// Lazily initialize the source-level map if this is the first packet from this source.
-	if _, t := m.sequences[p.Info.SourceId]; !t {
-		m.sequences[p.Info.SourceId] = make(map[uint32]map[uint8]*sequence)
-	}
-	// Lazily initialize the PGN-level map if this is the first packet for this PGN from this source.
-	if _, t := m.sequences[p.Info.SourceId][p.Info.PGN]; !t {
-		m.sequences[p.Info.SourceId][p.Info.PGN] = make(map[uint8]*sequence)
-	}
-	// Look up or create the sequence for this specific sequence ID.
-	seq := m.sequences[p.Info.SourceId][p.Info.PGN][p.SeqId]
+	seq := m.sequences[key]
 	if seq == nil {
 		seq = &sequence{}
 		seq.updated = now
-		m.sequences[p.Info.SourceId][p.Info.PGN][p.SeqId] = seq
+		m.sequences[key] = seq
 	}
 	return seq
 }
 
-func (m *MultiBuilder) deleteSequence(source uint8, pgn uint32, seqID uint8) {
-	byPGN := m.sequences[source]
-	if byPGN == nil {
-		return
+func keyForPacket(packet *decoder.Packet) fastPacketKey {
+	network := packet.Info.NetworkID
+	if network == "" {
+		network = packet.Info.AdapterID
 	}
-	bySeq := byPGN[pgn]
-	delete(bySeq, seqID)
-	if len(bySeq) == 0 {
-		delete(byPGN, pgn)
-	}
-	if len(byPGN) == 0 {
-		delete(m.sequences, source)
-	}
+	return fastPacketKey{network: network, source: packet.Info.SourceId, pgn: packet.Info.PGN, seqID: packet.SeqId}
+}
+
+func (m *MultiBuilder) deleteSequence(key fastPacketKey) {
+	delete(m.sequences, key)
 }
 
 func (m *MultiBuilder) evictExpired(now time.Time) {
-	for source, byPGN := range m.sequences {
-		for pgn, bySeq := range byPGN {
-			for seqID, seq := range bySeq {
-				if !seq.updated.IsZero() && now.Sub(seq.updated) >= m.ttl {
-					m.deleteSequence(source, pgn, seqID)
-				}
-			}
+	for key, seq := range m.sequences {
+		if !seq.updated.IsZero() && now.Sub(seq.updated) >= m.ttl {
+			m.deleteSequence(key)
 		}
 	}
 }
 
 func (m *MultiBuilder) evictOldestIfFull() {
-	count := 0
 	var oldest *sequence
-	var oldestSource, oldestSeq uint8
-	var oldestPGN uint32
-	for source, byPGN := range m.sequences {
-		for pgn, bySeq := range byPGN {
-			for seqID, seq := range bySeq {
-				count++
-				if oldest == nil || seq.updated.Before(oldest.updated) {
-					oldest, oldestSource, oldestPGN, oldestSeq = seq, source, pgn, seqID
-				}
-			}
+	var oldestKey fastPacketKey
+	for key, seq := range m.sequences {
+		if oldest == nil || seq.updated.Before(oldest.updated) {
+			oldest, oldestKey = seq, key
 		}
 	}
-	if count >= m.maxActive && oldest != nil {
-		m.deleteSequence(oldestSource, oldestPGN, oldestSeq)
+	if len(m.sequences) >= m.maxActive && oldest != nil {
+		m.deleteSequence(oldestKey)
 	}
 }

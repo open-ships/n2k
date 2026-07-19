@@ -2,8 +2,10 @@ package gateway
 
 import (
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/raw"
 
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,6 +17,14 @@ func TestParseYDRaw_ReceivedFrame(t *testing.T) {
 	assert.Equal(t, uint32(0x09F11201), frame.ID)
 	assert.Equal(t, uint8(8), frame.Length)
 	assert.Equal(t, [8]uint8{0x01, 0x5C, 0x3D, 0xFF, 0x7F, 0xFF, 0x7F, 0xFC}, frame.Data)
+}
+
+func TestParseYDRawObservation_PreservesTransportContext(t *testing.T) {
+	observation, ok := ParseYDRawObservation("17:33:21.107 T 09F11201 01")
+	require.True(t, ok)
+	assert.Equal(t, raw.DirectionTransmitted, observation.Direction)
+	assert.True(t, observation.HasTransportTimestamp)
+	assert.Equal(t, 17*time.Hour+33*time.Minute+21*time.Second+107*time.Millisecond, observation.TransportTimestamp)
 }
 
 func TestParseYDRaw_TransmittedFrame(t *testing.T) {

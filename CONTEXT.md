@@ -19,8 +19,15 @@ explains the runtime design.
   transfer that assigns a claimable address to the node with an exact NAME.
 - **Pipeline**: frame metadata, fast-packet assembly, decode, filtering, and
   delivery.
+- **Observation**: an owned record at the frame, assembled-message, or decode-
+  error layer carrying source/network identity, capture and receipt time, and
+  receive/transmit direction.
 - **System router**: protocol-only decode path for claiming, requests, group
   functions, correlation, and the device registry. User filters never affect it.
+- **Protocol transmission**: the required and advisory priority lanes for
+  automatic bus-citizenship traffic. Application writes cannot consume them.
+- **Connection epoch**: one successful gateway connection and its NMEA network
+  readiness cycle. A new epoch must reclaim before ordinary traffic resumes.
 - **Bus**: the extension seam for physical or virtual read/write transports.
 - **Adapter**: converts a transport representation into owned CAN frames.
 
@@ -42,11 +49,21 @@ explains the runtime design.
 8. Commanded Address changes state only after an exact nine-byte BAM transfer,
    an exact 64-bit NAME match, and a requested address in 0–251; the node then
    immediately reclaims that address before application writes resume.
+9. Required protocol traffic has bounded priority admission; rejection,
+   encoding failure, or transport failure is terminal and observable.
+10. A reconnect creates a new connection epoch, clears stale topology,
+    reclaims the address, waits through contention, then restarts enumeration
+    and scheduled transmissions.
+11. Schema-declared conditions, signed widths, ranges, and sentinels are codec
+    semantics, not documentation-only metadata.
 
 ## Where to make changes
 
 - Public lifecycle and writes: `client.go`, `status.go`, `writeresult.go`
-- Read pipeline and fan-out: `pipeline.go`, `scanner.go`, `messagehub.go`
+- Read pipeline and fan-out: `pipeline.go`, `scanner.go`, `messagehub.go`,
+  `observation.go`, `observationhub.go`, `raw/`
+- Protocol transmission policy: `protocoltx.go`, `client.go`, protocol writers
+- Connection epochs: `client.go`, `internal/gateway/tcpbus.go`, `registry.go`
 - Hardware/network seams: `bus.go`, `source*.go`, `internal/canbus/`,
   `internal/gateway/`
 - Fast-packet assembly: `internal/adapter/`

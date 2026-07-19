@@ -8,6 +8,7 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // ManagerConfig holds the dependencies for a transport protocol Manager.
@@ -24,6 +25,10 @@ type ManagerConfig struct {
 	// It receives the transported PGN, source address, destination address, and
 	// the assembled payload.
 	OnComplete func(pgn uint32, source uint8, destination uint8, data []byte)
+	// OnCompleteInfo is the source-aware completion callback. The MessageInfo
+	// comes from the connection-management frame that began the transfer, with
+	// PGN replaced by the transported PGN.
+	OnCompleteInfo func(info pgn.MessageInfo, data []byte)
 
 	// Logger for transport protocol events. If nil, a no-op logger is used.
 	Logger *slog.Logger
@@ -63,6 +68,7 @@ type session struct {
 	numFrames uint8  // expected total DT frame count
 	received  int    // number of DT frames received so far
 	data      []byte // reassembly buffer
+	info      pgn.MessageInfo
 
 	// RTS/CTS fields
 	maxPerCTS uint8 // max DT frames per CTS cycle (from RTS byte 4)
@@ -122,16 +128,30 @@ func NewManager(cfg ManagerConfig) *Manager {
 // handler based on PGN. Non-TP frames are silently ignored.
 func (m *Manager) HandleFrame(frame can.Frame) {
 	c := framer.ParseCANID(frame.ID)
+	now := time.Now()
+	priority := c.Priority
+	info := pgn.MessageInfo{Timestamp: now, ReceivedAt: now, Priority: &priority, PGN: c.PGN, SourceId: c.Source}
+	if c.Destination != BroadcastAddr {
+		destination := c.Destination
+		info.TargetId = &destination
+	}
+	m.HandleFrameWithInfo(frame, info)
+}
+
+// HandleFrameWithInfo routes a transport frame while retaining its Adapter,
+// network, timing, and direction context through reassembly.
+func (m *Manager) HandleFrameWithInfo(frame can.Frame, info pgn.MessageInfo) {
+	c := framer.ParseCANID(frame.ID)
 	switch c.PGN {
 	case PGNCM:
-		m.handleCM(frame, c.Source, c.Destination)
+		m.handleCM(frame, c.Source, c.Destination, info)
 	case PGNDT:
 		m.handleDT(frame, c.Source, c.Destination)
 	}
 }
 
 // handleCM dispatches a Connection Management frame based on the control byte.
-func (m *Manager) handleCM(frame can.Frame, source uint8, destination uint8) {
+func (m *Manager) handleCM(frame can.Frame, source uint8, destination uint8, info pgn.MessageInfo) {
 	if frame.Length != 8 {
 		return
 	}
@@ -142,12 +162,12 @@ func (m *Manager) handleCM(frame can.Frame, source uint8, destination uint8) {
 		if destination != BroadcastAddr {
 			return
 		}
-		m.handleBAMReceive(frame, source)
+		m.handleBAMReceive(frame, source, info)
 	case ControlRTS:
 		if !m.isLocalDestination(destination) {
 			return
 		}
-		m.handleRTSReceive(frame, source, destination)
+		m.handleRTSReceive(frame, source, destination, info)
 	case ControlCTS:
 		if !m.isLocalDestination(destination) {
 			return
@@ -267,6 +287,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	data := make([]byte, sess.totalSize)
 	copy(data, sess.data[:sess.totalSize])
 	dst := sess.key.destination
+	info := sess.info
 
 	// For RTS/CTS receive: build the EndOfMsgAck to send after unlocking.
 	var ackFrame *can.Frame
@@ -285,6 +306,9 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	}
 	if m.config.OnComplete != nil {
 		m.config.OnComplete(key.pgn, key.source, dst, data)
+	}
+	if m.config.OnCompleteInfo != nil {
+		m.config.OnCompleteInfo(info, data)
 	}
 }
 

@@ -74,6 +74,15 @@ func newRegistry() *registry {
 	}
 }
 
+// reset removes topology learned in a previous connection epoch. A fresh bus
+// enumeration repopulates it after reconnect, avoiding stale address bindings.
+func (r *registry) reset() {
+	r.mu.Lock()
+	r.byName = make(map[uint64]*deviceEntry)
+	r.byAddr = make(map[uint8]*deviceEntry)
+	r.mu.Unlock()
+}
+
 // handleClaim records an address claim. It returns true the first time a
 // NAME is seen, signaling the caller to request the device's product and
 // configuration info.
