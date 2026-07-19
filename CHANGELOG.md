@@ -19,7 +19,9 @@
 - The Cobra-based CLI now supports `record`, `replay`, `validate`, `devices`,
   and `pgn` in addition to typed `sniff` and version output. Nested help, typo
   suggestions, argument validation, and generated Bash, Zsh, Fish, and
-  PowerShell completion cover source paths, formats, and known PGNs.
+  PowerShell completion cover source paths, formats, and known PGNs. Text
+  output names concrete PGN types and renders generated physical values with
+  SI units; JSON retains exact wire values. `just build` produces `bin/n2k`.
 - `Client.Status` now exposes connection epochs, protocol lanes, typed/raw
   subscriber counts, write counters, and observation counters.
 - Added a machine-readable requirement index and local evidence families for

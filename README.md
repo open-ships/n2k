@@ -16,7 +16,7 @@ plugin or companion layer for another app. Use it directly in telemetry
 collectors, loggers, gateways, test rigs, monitoring services, automation, and
 any Go program that needs to understand or participate on an N2K bus.
 
-![n2k sniff decoding NMEA 2000 traffic to JSON](.github/demo.svg)
+![n2k sniff decoding concrete NMEA 2000 message types with physical values](.github/demo.svg)
 
 ## Why n2k
 
@@ -102,6 +102,12 @@ go get github.com/open-ships/n2k                    # library
 go install github.com/open-ships/n2k/cmd/n2k@latest # CLI
 ```
 
+To build the CLI from a checkout:
+
+```bash
+just build # writes bin/n2k
+```
+
 Prebuilt CLI binaries for Linux, macOS, and Windows are on the
 [releases page](https://github.com/open-ships/n2k/releases).
 
@@ -119,6 +125,9 @@ Once installed (see [Add it to your project](#add-it-to-your-project)):
 ```bash
 # Yacht Devices WiFi gateway (RAW server mode) -- decoded JSON in one command
 n2k sniff --tcp 192.168.4.1:1457
+
+# Concrete Go PGN types with scaled physical values and SI units
+n2k sniff --file capture.log --output text
 
 # SocketCAN (Linux), USB-CAN serial, UDP, or capture replay
 n2k sniff -i can0
@@ -152,6 +161,11 @@ n2k completion powershell | Out-String | Invoke-Expression # PowerShell
 
 Completion understands source paths, stream and output formats, and known PGN
 numbers with descriptions.
+
+`sniff` and `replay` default to JSON lines containing the typed structs and
+their exact wire values. Set `--output text` for the concrete `pgn.<Type>`,
+source address, scaled physical values, SI units, and lookup type names shown
+in the demo above.
 
 `record` writes replayable candump by default; JSON-lines mode retains each
 owned source observation, including Adapter and network identity, source and

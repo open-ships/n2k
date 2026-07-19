@@ -136,6 +136,7 @@ func newSniffCommand() *cobra.Command {
 	var source sourceFlagValues
 	var expression string
 	var includeUnknown bool
+	var outputFormat string
 	command := &cobra.Command{
 		Use:   "sniff",
 		Short: "Decode traffic to typed JSON lines",
@@ -150,16 +151,17 @@ func newSniffCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return runSniff(command.Context(), command.OutOrStdout(), option, expression, includeUnknown)
+			return runSniff(command.Context(), command.OutOrStdout(), option, expression, includeUnknown, outputFormat)
 		},
 	}
 	addSourceFlags(command, &source)
 	command.Flags().StringVarP(&expression, "filter", "f", "", "CEL filter expression (e.g. 'pgn == 127250')")
 	command.Flags().BoolVar(&includeUnknown, "unknown", false, "include undecodable messages as unknown PGNs")
+	addMessageOutputFlag(command, &outputFormat)
 	return command
 }
 
-func runSniff(ctx context.Context, out io.Writer, source n2k.Option, expression string, includeUnknown bool) error {
+func runSniff(ctx context.Context, out io.Writer, source n2k.Option, expression string, includeUnknown bool, outputFormat string) error {
 	opts := []n2k.Option{source}
 	if expression != "" {
 		opts = append(opts, n2k.Filter(expression))
@@ -168,7 +170,10 @@ func runSniff(ctx context.Context, out io.Writer, source n2k.Option, expression 
 		opts = append(opts, n2k.IncludeUnknown())
 	}
 
-	encoder := json.NewEncoder(out)
+	writer, err := newMessageWriter(out, outputFormat)
+	if err != nil {
+		return err
+	}
 	for message, receiveErr := range n2k.Receive(ctx, opts...) {
 		if receiveErr != nil {
 			if ctx.Err() != nil {
@@ -176,8 +181,8 @@ func runSniff(ctx context.Context, out io.Writer, source n2k.Option, expression 
 			}
 			return receiveErr
 		}
-		if err := encoder.Encode(message); err != nil {
-			return fmt.Errorf("encoding message: %w", err)
+		if err := writer.Write(message); err != nil {
+			return err
 		}
 	}
 	return nil
@@ -280,6 +285,7 @@ func newReplayCommand() *cobra.Command {
 	var timing bool
 	var expression string
 	var includeUnknown bool
+	var outputFormat string
 	command := &cobra.Command{
 		Use:   "replay [capture]",
 		Short: "Decode a candump capture",
@@ -298,18 +304,19 @@ func newReplayCommand() *cobra.Command {
 			if file == "" {
 				return errors.New("a candump capture path is required")
 			}
-			return runReplay(command.Context(), command.OutOrStdout(), file, timing, expression, includeUnknown)
+			return runReplay(command.Context(), command.OutOrStdout(), file, timing, expression, includeUnknown, outputFormat)
 		},
 	}
 	command.Flags().StringVar(&file, "file", "", "candump capture file (or pass it positionally)")
 	command.Flags().BoolVar(&timing, "timing", true, "pace by capture timestamps")
 	command.Flags().StringVarP(&expression, "filter", "f", "", "CEL filter expression")
 	command.Flags().BoolVar(&includeUnknown, "unknown", false, "include undecodable messages")
+	addMessageOutputFlag(command, &outputFormat)
 	mustConfigure(command.MarkFlagFilename("file"))
 	return command
 }
 
-func runReplay(ctx context.Context, out io.Writer, file string, timing bool, expression string, includeUnknown bool) error {
+func runReplay(ctx context.Context, out io.Writer, file string, timing bool, expression string, includeUnknown bool, outputFormat string) error {
 	var fileOpts []n2k.FileOption
 	if timing {
 		fileOpts = append(fileOpts, n2k.OriginalTiming())
@@ -321,7 +328,10 @@ func runReplay(ctx context.Context, out io.Writer, file string, timing bool, exp
 	if includeUnknown {
 		opts = append(opts, n2k.IncludeUnknown())
 	}
-	encoder := json.NewEncoder(out)
+	writer, err := newMessageWriter(out, outputFormat)
+	if err != nil {
+		return err
+	}
 	for message, receiveErr := range n2k.Receive(ctx, opts...) {
 		if receiveErr != nil {
 			if ctx.Err() != nil {
@@ -329,8 +339,8 @@ func runReplay(ctx context.Context, out io.Writer, file string, timing bool, exp
 			}
 			return receiveErr
 		}
-		if err := encoder.Encode(message); err != nil {
-			return fmt.Errorf("encoding message: %w", err)
+		if err := writer.Write(message); err != nil {
+			return err
 		}
 	}
 	return nil

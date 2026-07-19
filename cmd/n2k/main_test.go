@@ -48,8 +48,29 @@ func TestCommandHelpUsesCanonicalLongFlags(t *testing.T) {
 	require.Contains(t, stdout, "--tcp")
 	require.Contains(t, stdout, "--file")
 	require.Contains(t, stdout, "-i, --interface")
+	require.Contains(t, stdout, "--output string")
 	require.NotContains(t, stdout, " -tcp")
 	require.NotContains(t, stdout, " -file")
+}
+
+func TestTextOutputUsesConcreteTypesAndPhysicalValues(t *testing.T) {
+	stdout, _, err := executeCommand(
+		context.Background(),
+		"sniff", "--file", "../../testdata/sample.log", "--output", "text",
+	)
+	require.NoError(t, err)
+	require.Contains(t, stdout, "pgn.Attitude {pgn=127257 src=11 yaw=1.9624 rad pitch=0.0415 rad roll=-0.0305 rad}")
+	require.Contains(t, stdout, "pgn.WaterDepth {pgn=128267 src=3 sid=189 depth=2.7 m offset=0 m}")
+	require.Contains(t, stdout, "pgn.RateOfTurn {pgn=127251 src=11 rate=0.0000215 rad/s}")
+	require.NotContains(t, stdout, "000000000000")
+}
+
+func TestUnknownMessageOutputFailsClearly(t *testing.T) {
+	_, _, err := executeCommand(
+		context.Background(),
+		"replay", "../../testdata/sample.log", "--timing=false", "--output", "yaml",
+	)
+	require.EqualError(t, err, `unknown message output "yaml": use json or text`)
 }
 
 func TestCompletionCommandGeneratesShellScripts(t *testing.T) {
