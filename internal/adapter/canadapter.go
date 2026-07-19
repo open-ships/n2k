@@ -76,12 +76,19 @@ func (c *CANAdapter) SetOutput(ph PacketHandler) {
 // Parameters:
 //   - f: A *can.Frame from the brutella/can library.
 func (c *CANAdapter) HandleMessage(f *can.Frame) {
+	if f == nil || f.Length > 8 {
+		return
+	}
 	// Extract NMEA 2000 message metadata (PGN, source, priority, destination) from
 	// the 29-bit extended CAN ID.
 	pInfo := NewPacketInfo(f)
 
 	// Create a Packet and look up candidate metadata.
-	packet := decoder.NewPacket(pInfo, f.Data[:])
+	// Own the bytes beyond this call. Many CAN drivers reuse a frame buffer;
+	// fast-packet state and downstream handlers must not observe later writes
+	// through an alias to that buffer.
+	data := append([]byte(nil), f.Data[:f.Length]...)
+	packet := decoder.NewPacket(pInfo, data)
 
 	// Reference: https://endige.com/2050/nmea-2000-pgns-deciphered/
 

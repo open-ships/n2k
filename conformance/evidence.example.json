@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "not-run",
+  "implementation": {
+    "commit": "",
+    "version": "",
+    "goVersion": ""
+  },
+  "baselines": {
+    "iso11783Part3": "ISO 11783-3:2026 edition 5",
+    "iso11783Part5": "ISO 11783-5:2019 edition 3",
+    "nmea2000": "Version 3.000 with amendments"
+  },
+  "localEvidence": {
+    "command": "just conformance-local",
+    "runAt": "",
+    "result": "not-run"
+  },
+  "licensedReview": {
+    "reviewer": "",
+    "reviewedAt": "",
+    "result": "not-run",
+    "privateRequirementMatrixSha256": ""
+  },
+  "nmeaCertification": {
+    "toolVersion": "",
+    "runAt": "",
+    "manufacturerCode": "",
+    "productCode": "",
+    "result": "not-run",
+    "encryptedResultSha256": "",
+    "validatedByNMEA": false,
+    "validatedAt": ""
+  },
+  "hardware": {
+    "productModel": "",
+    "firmwareVersion": "",
+    "canInterface": "",
+    "transceiver": "",
+    "bitRate": 250000
+  },
+  "notes": []
+}

@@ -50,6 +50,9 @@ type ActisenseReader struct {
 	body      []byte
 }
 
+// Maximum unescaped body: command + one-byte length + 255 payload bytes + checksum.
+const maxActisenseBody = 258
+
 // NewActisenseReader returns a reader ready to consume stream bytes.
 func NewActisenseReader() *ActisenseReader {
 	return &ActisenseReader{}
@@ -78,6 +81,9 @@ func (r *ActisenseReader) Feed(buf []byte, emit func(N2KMessage)) {
 			case dle:
 				// Escaped DLE: a literal 0x10 body byte.
 				r.body = append(r.body, dle)
+				if len(r.body) > maxActisenseBody {
+					r.reset()
+				}
 			case etx:
 				r.finish(emit)
 			case stx:
@@ -95,7 +101,16 @@ func (r *ActisenseReader) Feed(buf []byte, emit func(N2KMessage)) {
 			continue
 		}
 		r.body = append(r.body, b)
+		if len(r.body) > maxActisenseBody {
+			r.reset()
+		}
 	}
+}
+
+func (r *ActisenseReader) reset() {
+	r.inMessage = false
+	r.escaped = false
+	r.body = r.body[:0]
 }
 
 // finish validates and emits the accumulated message body, then resets.

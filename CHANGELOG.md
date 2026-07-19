@@ -1,6 +1,43 @@
 ## Change Log for open-ships/n2k
 
-### Unreleased — panics in a misbehaving Bus no longer crash the process
+### v0.3.0 — 2026-07-18 — bounded lifecycle, wire fidelity, and hostile-input hardening
+
+- Commanded Address (PGN 65240) is now a first-class address-claim transition:
+  only an exact nine-byte broadcast ISO transport transfer for this node's
+  complete NAME and a claimable address is accepted, followed immediately by
+  a new Address Claim and contention window. Adversarial tests cover malformed,
+  mismatched, fast-packet, addressed, and special-address commands.
+- Added `just conformance-local`, a current standards/evidence guide, and a
+  machine-readable certification evidence template. These make local protocol
+  regression evidence reproducible without misrepresenting it as the licensed
+  NMEA certification run.
+- Live reads now use independent bounded subscriptions; slow consumers receive
+  `ErrReceiveOverflow` without stalling protocol handling. Writes use a bounded
+  queue and report `ErrWriteQueueFull`.
+- Runtime bus failures propagate to readers, writers, `Client.Err`, and
+  `Client.Status`. Scanner, bus, scheduler, and write shutdown paths are
+  cancellation-safe and race-tested.
+- ISO transport and fast-packet assembly validate lengths, packet ranges,
+  session ownership, timeouts, and resource bounds. Missing/out-of-order
+  packets cannot be accepted as a complete transfer.
+- Unmodified decoded messages preserve their original payload exactly; field
+  changes encode current values. String sentinel and fixed-padding edge cases
+  now round-trip consistently.
+- USB-CAN startup configures 250 kbit/s extended-frame operation before the
+  bus becomes writable, and stream parsers resynchronize after corrupt input.
+- NMEA 2000 source-address claiming now uses the valid 0–251 range. New
+  `WithPreferredAddress` lets applications restore a persisted prior address
+  while retaining automatic contention handling.
+- Added health/configuration hooks, adversarial and fuzz tests, cross-platform
+  and race CI, pinned lint/security tools, architecture context, ADRs,
+  contribution guidance, and private security-reporting instructions.
+
+### v0.2.2 — 2026-07-18 — clean CLI shutdown
+
+`n2k sniff` now handles termination signals through context cancellation and
+exits successfully after its input pipeline shuts down.
+
+### v0.2.1 — 2026-07-16 — panics in a misbehaving Bus no longer crash the process
 
 A `Bus` implementation that panics (rather than returning an error) from `WriteFrame`, `Run`, or a
 message handler previously crashed the whole host process, because n2k runs those on its own
@@ -16,7 +53,7 @@ recovers panics, logs them with a stack trace, and degrades locally instead:
   skipped without tearing down the reader.
 - The heartbeat and system-router dispatch goroutines are guarded the same way.
 
-### Unreleased — writable TCP gateway buses
+### v0.2.0 — 2026-07-15 — writable TCP gateway buses
 
 `n2k.TCP(addr, format)` now works with `NewClient`, not just `Receive`/`NewScanner` — the full bus
 stack over the boat's WiFi gateway:
@@ -44,7 +81,7 @@ stack over the boat's WiFi gateway:
   `just test-race` works again.
 - `UDP` and `File` sources remain read-only.
 
-### Unreleased — semver releases, installable CLI, typed physical accessors
+### v0.1.0 — 2026-07-14 — semver releases, installable CLI, typed physical accessors
 
 **Typed physical-value accessors** — every numeric PGN struct field with a physical
 interpretation (a unit, non-unity resolution, or offset) now has generated accessors, on
@@ -61,9 +98,8 @@ tick). Raw-tick fields are unchanged underneath, so round-trip fidelity is prese
   with `-f` CEL filters and `-unknown`.
 - `n2k version` reports the release version (set by goreleaser).
 
-**Semver releases with prebuilt binaries** — releases are now tagged `v0.x.y`: every green Test
-run on `main` auto-tags the next patch and goreleaser publishes archives for Linux/macOS/Windows
-(amd64/arm64); pushing a `v0.X.0` tag manually cuts a minor. Release names carry the CalVer date.
+**Semver releases with prebuilt binaries** — releases are tagged `v0.x.y`, and goreleaser
+publishes archives for Linux/macOS/Windows (amd64/arm64). Release names carry the CalVer date.
 A commented Homebrew-tap config is in `.goreleaser.yaml`, pending an `open-ships/homebrew-tap`
 repo and token.
 
@@ -71,7 +107,7 @@ repo and token.
 and identity PGNs removed; see `testdata/README.md`), used by new runnable `Example*` tests and
 the README quickstart, with an animated sniffer demo at `.github/demo.svg`.
 
-### Unreleased — bus citizenship, device registry, and new sources
+### 2026.07.13-2 — bus citizenship, device registry, and new sources
 
 **Bus citizenship** — bus clients now meet the protocol obligations of a real NMEA 2000 device:
 
@@ -93,11 +129,11 @@ the README quickstart, with an animated sniffer demo at `.github/demo.svg`.
 - `TCP(addr, format)` / `UDP(listenAddr, format)` — network gateway streams: `FormatYDRaw` (Yacht Devices RAW ASCII) and `FormatActisense` (Actisense binary framing; assembled messages are re-framed through the normal decode pipeline).
 - candump parsing moved from the roundtrip tool into `internal/candump` (now with timestamp extraction).
 
-### Unreleased — candump round-trip tool
+### 2026.07.12 — candump round-trip tool
 
 - `cmd/roundtrip` — replays a candump `-L` log through fast-packet assembly, decodes each message, re-encodes it, and compares against the wire bytes. Prints a before/after hex view per message (with markers under differing bytes) and a per-PGN summary; `-report <file>` collects every issue plus the summary into a file. Always processes the whole log and exits 0. Reads a log file or stdin (`candump -L vcan0 | roundtrip -`).
 
-### Unreleased — Architecture deepening
+### 2026.07.08 — Architecture deepening
 
 Seven refactors from an architecture review: one read pipeline, one CAN-ID codec, a public bus seam, a testable transport state machine, and a metadata-driven PGN codec with round-trip coverage for every PGN.
 

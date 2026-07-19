@@ -1,5 +1,7 @@
 golangci_lint_version := "v2.12.0"
 secure_go_toolchain := "go1.25.12"
+govulncheck_version := "v1.5.0"
+gosec_version := "v2.27.1"
 
 # list available recipes
 default:
@@ -13,22 +15,27 @@ setup:
         echo "Installing golangci-lint {{golangci_lint_version}}..."; \
         curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin" {{golangci_lint_version}}; \
     fi
-    @if command -v govulncheck >/dev/null; then \
-        echo "govulncheck already installed"; \
+    @if command -v govulncheck >/dev/null && govulncheck -version 2>&1 | grep -q "govulncheck@{{govulncheck_version}}"; then \
+        echo "govulncheck {{govulncheck_version}} already installed"; \
     else \
-        echo "Installing govulncheck..."; \
-        go install golang.org/x/vuln/cmd/govulncheck@latest; \
+        echo "Installing govulncheck {{govulncheck_version}}..."; \
+        go install golang.org/x/vuln/cmd/govulncheck@{{govulncheck_version}}; \
     fi
-    @if command -v gosec >/dev/null; then \
-        echo "gosec already installed"; \
+    @if command -v gosec >/dev/null && go version -m "$(command -v gosec)" 2>&1 | grep -q "github.com/securego/gosec/v2[[:space:]]*{{gosec_version}}"; then \
+        echo "gosec {{gosec_version}} already installed"; \
     else \
-        echo "Installing gosec..."; \
-        go install github.com/securego/gosec/v2/cmd/gosec@latest; \
+        echo "Installing gosec {{gosec_version}}..."; \
+        go install github.com/securego/gosec/v2/cmd/gosec@{{gosec_version}}; \
     fi
 
 # run all tests
 test:
     go test ./...
+
+# run the public, reproducible protocol evidence suite (not NMEA certification)
+conformance-local:
+    go test -count=1 -v . -run '^TestConformance'
+    go test -count=1 ./internal/adapter ./internal/claiming ./internal/framer ./internal/transport
 
 # compare runtime PGN support against the current upstream schema
 upstream-parity:
@@ -45,6 +52,13 @@ test-v:
 # run tests with race detector
 test-race:
     go test -race ./...
+
+# short, deterministic smoke run of every fuzz harness
+fuzz-smoke:
+    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=2s
+    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=2s
+    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=2s
+    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=2s
 
 # run tests with coverage
 test-cover:
@@ -79,7 +93,7 @@ lint:
 # run security review (vulnerability scan + static analysis)
 secure:
     GOTOOLCHAIN={{secure_go_toolchain}} govulncheck ./...
-    GOTOOLCHAIN={{secure_go_toolchain}} gosec -exclude-generated -exclude=G115 ./...
+    GOTOOLCHAIN={{secure_go_toolchain}} gosec -exclude-dir=.claude -exclude-generated -exclude=G115 ./...
 
 # tidy go modules
 tidy:

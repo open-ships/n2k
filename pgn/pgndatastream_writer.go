@@ -333,6 +333,12 @@ func (w *PGNDataStreamWriter) writeFixedString(s string, bitLength uint16) {
 
 func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 	sBytes := []uint8(s)
+	// 0xFF is the protocol's null-length sentinel, so 254 is the largest
+	// representable non-null string.
+	if len(sBytes) > 254 {
+		w.setErr(fmt.Errorf("STRING_LZ is %d bytes; maximum is 254", len(sBytes)))
+		return
+	}
 	length := uint8(len(sBytes))
 	w.setErr(w.putNumberRaw(uint64(length), 8))
 	w.writeBinaryData(sBytes, uint16(length)*8)
@@ -340,6 +346,10 @@ func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 
 func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) {
 	sBytes := []uint8(s)
+	if len(sBytes) > 253 {
+		w.setErr(fmt.Errorf("STRING_LAU is %d bytes; maximum is 253", len(sBytes)))
+		return
+	}
 	// totalLength counts itself, the control byte, and the string bytes -- there is no
 	// trailing NUL, matching readStringWithLengthAndControl's inverse expectations.
 	totalLength := uint8(len(sBytes) + 2)

@@ -11,12 +11,23 @@ import (
 // does not ship. Pass an implementation via WithBus.
 type Bus interface {
 	// Run opens the bus and delivers every incoming frame to handler until
-	// ctx is cancelled or an unrecoverable error occurs.
+	// ctx is cancelled or an unrecoverable error occurs. Client serializes
+	// concurrent handler calls, though Bus implementations should normally
+	// preserve wire order.
 	Run(ctx context.Context, handler func(can.Frame)) error
 	// WriteFrame sends one frame.
 	WriteFrame(frame can.Frame) error
-	// Close releases resources. Safe to call even if Run was never called.
+	// Close releases resources. It must be safe if Run was never called and
+	// safe concurrently with Run or WriteFrame so cancellation can release
+	// blocked device I/O.
 	Close() error
+}
+
+// ReadyBus is optionally implemented by buses that are not writable until
+// Run has opened their underlying device. Client waits for Ready before
+// starting address claiming, removing scheduler-dependent startup races.
+type ReadyBus interface {
+	Ready() <-chan struct{}
 }
 
 // MessageWriter is optionally implemented by Bus implementations that

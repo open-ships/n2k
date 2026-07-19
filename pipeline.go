@@ -27,13 +27,13 @@ type readPipeline struct {
 	filter         *filter
 	adapter        *adapter.CANAdapter
 	decoder        *decoder.Decoder
-	out            chan<- pgn.Message
+	emit           func(pgn.Message)
 }
 
 // newReadPipeline compiles the filter eagerly and wires adapter -> decoder -> output stage.
 // The returned pipeline delivers messages on out. It never closes out; the
 // caller that owns the frame source closes it when the source ends.
-func newReadPipeline(ctx context.Context, cfg config, out chan pgn.Message) (*readPipeline, error) {
+func newReadPipeline(ctx context.Context, cfg config, emit func(pgn.Message)) (*readPipeline, error) {
 	log := cfg.logger
 	if log == nil {
 		log = slog.Default()
@@ -53,7 +53,7 @@ func newReadPipeline(ctx context.Context, cfg config, out chan pgn.Message) (*re
 		filter:         f,
 		adapter:        adapter.NewCANAdapter(),
 		decoder:        decoder.New(),
-		out:            out,
+		emit:           emit,
 	}
 	p.decoder.SetOutput(p)
 	p.adapter.SetOutput(p.decoder)
@@ -103,8 +103,16 @@ func (p *readPipeline) HandleStruct(msg pgn.Message) {
 			return
 		}
 	}
-	select {
-	case p.out <- msg:
-	case <-p.ctx.Done():
+	if p.emit != nil && p.ctx.Err() == nil {
+		p.emit(msg)
+	}
+}
+
+func channelEmitter(ctx context.Context, out chan<- pgn.Message) func(pgn.Message) {
+	return func(msg pgn.Message) {
+		select {
+		case out <- msg:
+		case <-ctx.Done():
+		}
 	}
 }

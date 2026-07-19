@@ -1,5 +1,7 @@
 # Agent Requirements
 
+- Read `CONTEXT.md` before architecture or runtime changes; preserve its
+  invariants and update it when domain language or module ownership changes.
 - Before pushing, opening a PR, or marking work complete, run and pass:
   - `go test ./...`
   - `just pgn-sync-check`

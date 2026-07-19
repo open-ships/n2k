@@ -68,7 +68,7 @@ func TestClaimer_AutoMode_HappyPath(t *testing.T) {
 
 	c := claiming.New(claiming.Config{
 		Mode:       claiming.ModeAuto,
-		Address:    253,
+		Address:    251,
 		Name:       ourName,
 		WriteFrame: sink.write,
 		Logger:     discardLogger(),
@@ -81,9 +81,9 @@ func TestClaimer_AutoMode_HappyPath(t *testing.T) {
 	require.Equal(t, 1, sink.count())
 
 	f := sink.lastFrame()
-	assert.Equal(t, expectedCANID(253), f.ID, "CAN ID should target address 253")
+	assert.Equal(t, expectedCANID(251), f.ID, "CAN ID should use address 251")
 	assert.Equal(t, ourName, extractClaimName(f), "payload should contain our NAME")
-	assert.Equal(t, uint8(253), c.Address(), "claimed address should be 253")
+	assert.Equal(t, uint8(251), c.Address(), "claimed address should be 251")
 }
 
 func TestClaimer_AutoMode_Contention(t *testing.T) {
@@ -94,7 +94,7 @@ func TestClaimer_AutoMode_Contention(t *testing.T) {
 	var newAddr uint8
 	c := claiming.New(claiming.Config{
 		Mode:       claiming.ModeAuto,
-		Address:    253,
+		Address:    251,
 		Name:       ourName,
 		WriteFrame: sink.write,
 		OnAddressChange: func(addr uint8) {
@@ -106,16 +106,16 @@ func TestClaimer_AutoMode_Contention(t *testing.T) {
 	err := c.Start()
 	require.NoError(t, err)
 
-	// Competitor claims address 253 with a lower NAME — we lose.
-	c.HandleAddressClaim(253, competitorName)
+	// Competitor claims address 251 with a lower NAME — we lose.
+	c.HandleAddressClaim(251, competitorName)
 
-	// We should have retried on 252.
-	assert.Equal(t, uint8(252), c.Address(), "should have moved to 252")
-	assert.Equal(t, uint8(252), newAddr, "OnAddressChange should have been called with 252")
+	// We should have retried on 250.
+	assert.Equal(t, uint8(250), c.Address(), "should have moved to 250")
+	assert.Equal(t, uint8(250), newAddr, "OnAddressChange should have been called with 250")
 
-	// Two frames total: initial claim at 253, retry claim at 252.
+	// Two frames total: initial claim at 251, retry claim at 250.
 	require.Equal(t, 2, sink.count())
-	assert.Equal(t, uint8(252), extractClaimAddress(sink.lastFrame()))
+	assert.Equal(t, uint8(250), extractClaimAddress(sink.lastFrame()))
 }
 
 func TestClaimer_AutoMode_MultipleRetries(t *testing.T) {
@@ -126,7 +126,7 @@ func TestClaimer_AutoMode_MultipleRetries(t *testing.T) {
 	var addressHistory []uint8
 	c := claiming.New(claiming.Config{
 		Mode:       claiming.ModeAuto,
-		Address:    253,
+		Address:    251,
 		Name:       ourName,
 		WriteFrame: sink.write,
 		OnAddressChange: func(addr uint8) {
@@ -139,16 +139,16 @@ func TestClaimer_AutoMode_MultipleRetries(t *testing.T) {
 	require.NoError(t, err)
 
 	// Lose contention three times in a row.
-	c.HandleAddressClaim(253, competitorName)
-	assert.Equal(t, uint8(252), c.Address())
-
-	c.HandleAddressClaim(252, competitorName)
-	assert.Equal(t, uint8(251), c.Address())
-
 	c.HandleAddressClaim(251, competitorName)
 	assert.Equal(t, uint8(250), c.Address())
 
-	assert.Equal(t, []uint8{252, 251, 250}, addressHistory)
+	c.HandleAddressClaim(250, competitorName)
+	assert.Equal(t, uint8(249), c.Address())
+
+	c.HandleAddressClaim(249, competitorName)
+	assert.Equal(t, uint8(248), c.Address())
+
+	assert.Equal(t, []uint8{250, 249, 248}, addressHistory)
 
 	// 1 initial + 3 retries = 4 frames.
 	assert.Equal(t, 4, sink.count())
@@ -182,16 +182,20 @@ func TestClaimer_AutoMode_Exhaustion(t *testing.T) {
 	c.HandleAddressClaim(2, competitorName)
 	assert.Equal(t, uint8(1), c.Address())
 
-	// Contest address 1, should wrap to 253.
+	// Contest address 1, should try 0.
 	c.HandleAddressClaim(1, competitorName)
-	assert.Equal(t, uint8(253), c.Address())
+	assert.Equal(t, uint8(0), c.Address())
 
-	// Now contest every remaining address down from 253 to 4.
-	for addr := uint8(253); addr >= 4; addr-- {
+	// Contest address 0, which wraps to the highest valid address.
+	c.HandleAddressClaim(0, competitorName)
+	assert.Equal(t, uint8(251), c.Address())
+
+	// Now contest every remaining address down from 251 to 4.
+	for addr := uint8(251); addr >= 4; addr-- {
 		c.HandleAddressClaim(addr, competitorName)
 	}
 
-	// All 253 addresses exhausted — should fall back to 254.
+	// All 252 addresses exhausted — should fall back to 254.
 	assert.Equal(t, uint8(254), c.Address())
 	assert.Equal(t, uint8(254), lastAddr)
 }
@@ -364,6 +368,122 @@ func TestClaimer_WriteFrameError(t *testing.T) {
 	assert.ErrorIs(t, err, writeErr, "Start should propagate WriteFrame errors")
 }
 
+func TestClaimer_CommandedAddressReclaimsImmediately(t *testing.T) {
+	sink := &frameSink{}
+	ourName := uint64(0x9123456789ABCDEF)
+	var changedTo uint8
+	c := claiming.New(claiming.Config{
+		Mode:       claiming.ModeAuto,
+		Address:    100,
+		Name:       ourName,
+		WriteFrame: sink.write,
+		OnAddressChange: func(address uint8) {
+			changedTo = address
+		},
+		Logger: discardLogger(),
+	})
+	require.NoError(t, c.Start())
+
+	changed, err := c.HandleCommandedAddress(ourName, 42)
+	require.NoError(t, err)
+	require.True(t, changed)
+	assert.Equal(t, uint8(42), c.Address())
+	assert.Equal(t, uint8(42), changedTo)
+	require.Equal(t, 2, sink.count())
+	assert.Equal(t, expectedCANID(42), sink.lastFrame().ID)
+	assert.Equal(t, ourName, extractClaimName(sink.lastFrame()))
+
+	// A command establishes a new automatic-claim starting point. If that
+	// address then loses contention, negotiation continues from the new value.
+	c.HandleAddressClaim(42, 1)
+	assert.Equal(t, uint8(41), c.Address())
+	assert.Equal(t, expectedCANID(41), sink.lastFrame().ID)
+}
+
+func TestClaimer_CommandedAddressRejectsNonTargetsAndSpecialAddresses(t *testing.T) {
+	tests := []struct {
+		name          string
+		commandedName uint64
+		commandedAddr uint8
+	}{
+		{name: "different NAME", commandedName: 0x22, commandedAddr: 42},
+		{name: "current address", commandedName: 0x11, commandedAddr: 100},
+		{name: "reserved 252", commandedName: 0x11, commandedAddr: 252},
+		{name: "reserved 253", commandedName: 0x11, commandedAddr: 253},
+		{name: "cannot claim 254", commandedName: 0x11, commandedAddr: 254},
+		{name: "broadcast 255", commandedName: 0x11, commandedAddr: 255},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sink := &frameSink{}
+			c := claiming.New(claiming.Config{
+				Mode:       claiming.ModeAuto,
+				Address:    100,
+				Name:       0x11,
+				WriteFrame: sink.write,
+				Logger:     discardLogger(),
+			})
+			require.NoError(t, c.Start())
+
+			changed, err := c.HandleCommandedAddress(tt.commandedName, tt.commandedAddr)
+			require.NoError(t, err)
+			assert.False(t, changed)
+			assert.Equal(t, uint8(100), c.Address())
+			assert.Equal(t, 1, sink.count())
+		})
+	}
+}
+
+func TestClaimer_CommandedAddressPreservesExplicitContentionPolicy(t *testing.T) {
+	sink := &frameSink{}
+	var fatalErr error
+	c := claiming.New(claiming.Config{
+		Mode:       claiming.ModeExplicit,
+		Address:    100,
+		Name:       5000,
+		WriteFrame: sink.write,
+		OnFatalError: func(err error) {
+			fatalErr = err
+		},
+		Logger: discardLogger(),
+	})
+	require.NoError(t, c.Start())
+
+	changed, err := c.HandleCommandedAddress(5000, 42)
+	require.NoError(t, err)
+	require.True(t, changed)
+	c.HandleAddressClaim(42, 1000)
+
+	require.Error(t, fatalErr)
+	assert.Contains(t, fatalErr.Error(), "address 42 contested in explicit mode")
+	assert.Equal(t, uint8(42), c.Address())
+}
+
+func TestClaimer_CommandedAddressClaimFailureIsReturned(t *testing.T) {
+	writeErr := fmt.Errorf("bus offline")
+	writes := 0
+	c := claiming.New(claiming.Config{
+		Mode:    claiming.ModeAuto,
+		Address: 100,
+		Name:    0x11,
+		WriteFrame: func(can.Frame) error {
+			writes++
+			if writes == 2 {
+				return writeErr
+			}
+			return nil
+		},
+		Logger: discardLogger(),
+	})
+	require.NoError(t, c.Start())
+
+	changed, err := c.HandleCommandedAddress(0x11, 42)
+	assert.True(t, changed)
+	assert.ErrorIs(t, err, writeErr)
+	assert.Equal(t, uint8(42), c.Address())
+}
+
 func TestClaimer_AutoMode_WrapAround(t *testing.T) {
 	sink := &frameSink{}
 	ourName := uint64(5000)
@@ -371,7 +491,7 @@ func TestClaimer_AutoMode_WrapAround(t *testing.T) {
 
 	c := claiming.New(claiming.Config{
 		Mode:       claiming.ModeAuto,
-		Address:    1, // start at lowest valid address
+		Address:    0, // start at lowest valid address
 		Name:       ourName,
 		WriteFrame: sink.write,
 		Logger:     discardLogger(),
@@ -380,9 +500,9 @@ func TestClaimer_AutoMode_WrapAround(t *testing.T) {
 	err := c.Start()
 	require.NoError(t, err)
 
-	// Lose contention at address 1 — should wrap to 253.
-	c.HandleAddressClaim(1, competitorName)
-	assert.Equal(t, uint8(253), c.Address(), "should wrap from 1 to 253")
+	// Lose contention at address 0 — should wrap to 251.
+	c.HandleAddressClaim(0, competitorName)
+	assert.Equal(t, uint8(251), c.Address(), "should wrap from 0 to 251")
 }
 
 func TestClaimer_PayloadMatchesLittleEndianName(t *testing.T) {

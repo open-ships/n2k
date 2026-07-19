@@ -134,6 +134,40 @@ func TestActisenseReader_TruncatedPayloadDropped(t *testing.T) {
 	assert.Zero(t, count)
 }
 
+func TestActisenseReader_OversizedBodyRecovers(t *testing.T) {
+	oversized := append([]byte{dle, stx}, make([]byte, maxActisenseBody+1)...)
+	valid := wrapActisense(cmdN2KReceived, n2kPayload(2, 127250, 255, 0x23, []byte{1}))
+	stream := append(oversized, valid...)
+
+	var got []N2KMessage
+	r := NewActisenseReader()
+	r.Feed(stream, func(m N2KMessage) { got = append(got, m) })
+	require.Len(t, got, 1)
+	assert.Equal(t, []byte{1}, got[0].Data)
+}
+
+func FuzzActisenseReader(f *testing.F) {
+	f.Add(wrapActisense(cmdN2KReceived, n2kPayload(2, 127250, 255, 0x23, []byte{1, 2, 3})))
+	f.Add([]byte{dle, stx, 0x93, 0xFF})
+	f.Fuzz(func(t *testing.T, input []byte) {
+		r := NewActisenseReader()
+		emitted := 0
+		for start := 0; start < len(input); {
+			end := start + 7
+			if end > len(input) {
+				end = len(input)
+			}
+			r.Feed(input[start:end], func(m N2KMessage) {
+				emitted++
+				assert.LessOrEqual(t, len(m.Data), 244)
+			})
+			start = end
+		}
+		assert.LessOrEqual(t, len(r.body), maxActisenseBody)
+		assert.LessOrEqual(t, emitted, len(input)/3+1)
+	})
+}
+
 func TestReframe_SingleFrame(t *testing.T) {
 	// PGN 127250 (VesselHeading) is a single-frame PGN.
 	data := []byte{0x01, 0x5C, 0x3D, 0xFF, 0x7F, 0xFF, 0x7F, 0xFC}

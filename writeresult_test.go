@@ -1,12 +1,23 @@
 package n2k
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestWriteResult_WaitContext(t *testing.T) {
+	r := newWriteResult()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	assert.ErrorIs(t, r.WaitContext(ctx), context.Canceled)
+
+	r.complete(nil)
+	assert.NoError(t, r.WaitContext(context.Background()))
+}
 
 func TestWriteResult_Wait(t *testing.T) {
 	r := newWriteResult()

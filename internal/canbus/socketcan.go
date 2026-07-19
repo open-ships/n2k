@@ -30,8 +30,10 @@ type socketCANChannel struct {
 
 	// bus is the underlying brutella/can bus object that manages the CAN socket connection.
 	// It handles subscribing to incoming frames and publishing outgoing frames.
-	bus *can.Bus
-	mu  sync.Mutex
+	bus       *can.Bus
+	mu        sync.Mutex
+	ready     chan struct{}
+	readyOnce sync.Once
 
 	// log is the structured logger for diagnostic output about interface state changes and errors.
 	log *slog.Logger
@@ -53,6 +55,7 @@ func newSocketCANChannel(log *slog.Logger, options socketCANChannelOptions) *soc
 	c := socketCANChannel{
 		options: options,
 		log:     log,
+		ready:   make(chan struct{}),
 	}
 
 	return &c
@@ -78,6 +81,17 @@ func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) err
 	c.mu.Lock()
 	c.bus = bus
 	c.mu.Unlock()
+	defer func() {
+		c.mu.Lock()
+		if c.bus == bus {
+			c.bus = nil
+			c.mu.Unlock()
+			_ = bus.Disconnect()
+			return
+		}
+		c.mu.Unlock()
+	}()
+	c.readyOnce.Do(func() { close(c.ready) })
 
 	// Wrap the caller's handler so a nil handler becomes a no-op, then
 	// subscribe it to receive all incoming CAN frames.
@@ -86,7 +100,7 @@ func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) err
 			handler(frame)
 		}
 	}
-	c.bus.Subscribe(can.NewHandler(frameHandler))
+	bus.Subscribe(can.NewHandler(frameHandler))
 
 	watchDone := make(chan struct{})
 	defer close(watchDone)
@@ -132,6 +146,9 @@ func (c *socketCANChannel) Close() error {
 // The brutella/can library handles encoding the frame into the Linux SocketCAN wire format
 // and writing it to the raw CAN socket. Returns an error if the bus is not yet open.
 func (c *socketCANChannel) WriteFrame(frame can.Frame) error {
+	if frame.Length > 8 {
+		return errors.Errorf("socketCAN: invalid classical CAN payload length %d", frame.Length)
+	}
 	c.mu.Lock()
 	bus := c.bus
 	c.mu.Unlock()
@@ -140,6 +157,9 @@ func (c *socketCANChannel) WriteFrame(frame can.Frame) error {
 	}
 	return bus.Publish(frame)
 }
+
+// Ready closes once Run has opened the SocketCAN device for writes.
+func (c *socketCANChannel) Ready() <-chan struct{} { return c.ready }
 
 // NewSocketCAN creates a SocketCAN channel for the given Linux CAN interface name.
 // The channel is not opened, and no handler is registered, until Run() is called.

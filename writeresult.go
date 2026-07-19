@@ -1,5 +1,7 @@
 package n2k
 
+import "context"
+
 // WriteResult represents the outcome of an asynchronous write operation.
 // The zero value is safe to use and behaves as a completed, successful write.
 type WriteResult struct {
@@ -28,6 +30,20 @@ func (r *WriteResult) Wait() error {
 	}
 	<-r.done
 	return r.err
+}
+
+// WaitContext waits for completion or returns when ctx is done. Cancelling
+// ctx does not cancel a write that has already reached the bus.
+func (r *WriteResult) WaitContext(ctx context.Context) error {
+	if r.done == nil {
+		return nil
+	}
+	select {
+	case <-r.done:
+		return r.err
+	case <-ctx.Done():
+		return ctx.Err()
+	}
 }
 
 // Done returns a channel that is closed when the write is complete.

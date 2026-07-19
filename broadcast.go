@@ -2,7 +2,11 @@ package n2k
 
 import (
 	"context"
+	"fmt"
+	"log/slog"
+	"runtime/debug"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/open-ships/n2k/pgn"
@@ -13,27 +17,57 @@ import (
 // available yet). The first transmission happens as soon as the client's
 // address claim completes.
 //
-// provide is called once immediately to learn the PGN it produces; if it
-// returns nil there, the PGN is learned from its first non-nil message
-// instead. Scheduling the same PGN again replaces the earlier schedule. The
-// returned stop function halts transmission and is safe to call repeatedly;
-// Close also stops all broadcasters.
+// The PGN is learned asynchronously from the first non-nil message. Until
+// then, group-function lookup cannot find this schedule; BroadcastPGN avoids
+// that delay. Scheduling the same PGN again replaces the earlier schedule.
+// The returned stop function is safe to call repeatedly; Close also stops all
+// broadcasters.
 //
 // Another device can retime or pause a broadcast at runtime by sending a
 // request group function (PGN 126208) naming the broadcast PGN.
 func (c *Client) Broadcast(interval time.Duration, provide func() pgn.Message) (stop func()) {
+	return c.newBroadcast(0, false, interval, provide)
+}
+
+// BroadcastPGN is Broadcast with an explicit PGN identity. Prefer it when a
+// group-function peer must be able to retime the schedule immediately, before
+// provide returns its first non-nil message. Declaring the PGN also makes
+// replacement of an existing schedule deterministic without probing provide.
+func (c *Client) BroadcastPGN(pgnNum uint32, interval time.Duration, provide func() pgn.Message) (stop func()) {
+	return c.newBroadcast(pgnNum, true, interval, provide)
+}
+
+func (c *Client) newBroadcast(pgnNum uint32, known bool, interval time.Duration, provide func() pgn.Message) func() {
+	c.mu.Lock()
+	closed := c.closed
+	c.mu.Unlock()
+	if closed {
+		return func() {}
+	}
+	if known && pgnNum > 0x3FFFF {
+		c.log.Error("cannot schedule broadcast with invalid PGN", "pgn", pgnNum)
+		return func() {}
+	}
+	if provide == nil {
+		c.log.Error("cannot schedule broadcast with nil provider", "pgn", pgnNum)
+		return func() {}
+	}
 	b := &broadcaster{
 		write:           c.Write,
 		provide:         provide,
+		log:             c.log,
 		onPGNKnown:      c.registerBroadcaster,
+		onStop:          c.unregisterBroadcaster,
 		interval:        interval,
 		defaultInterval: interval,
 		changed:         make(chan struct{}, 1),
 		quit:            make(chan struct{}),
 		done:            make(chan struct{}),
+		pgn:             pgnNum,
+		known:           known,
+		order:           c.broadcastSeq.Add(1),
 	}
-	if first := provide(); first != nil {
-		b.pgn = first.PGNNumber()
+	if known {
 		c.registerBroadcaster(b)
 	}
 	go b.run(c.ctx, c.addrReady)
@@ -49,9 +83,14 @@ func (c *Client) Broadcast(interval time.Duration, provide func() pgn.Message) (
 func (c *Client) registerBroadcaster(b *broadcaster) {
 	pgnNum := b.pgnNumber()
 	c.bMu.Lock()
-	prev := c.broadcasters[pgnNum]
 	if c.broadcasters == nil {
 		c.broadcasters = make(map[uint32]*broadcaster)
+	}
+	prev := c.broadcasters[pgnNum]
+	if prev != nil && prev.order > b.order {
+		c.bMu.Unlock()
+		b.stop()
+		return
 	}
 	c.broadcasters[pgnNum] = b
 	c.bMu.Unlock()
@@ -89,6 +128,9 @@ func (c *Client) stopBroadcasters() {
 	for _, b := range all {
 		b.stop()
 	}
+	for _, b := range all {
+		b.wait()
+	}
 }
 
 // broadcaster periodically transmits one PGN. Its run loop mirrors the
@@ -97,12 +139,16 @@ func (c *Client) stopBroadcasters() {
 type broadcaster struct {
 	write   func(pgn.Message) *WriteResult
 	provide func() pgn.Message
+	log     *slog.Logger
 	// onPGNKnown registers the broadcaster for group-function lookup once
 	// its PGN is known (deferred when provide returned nil at registration).
 	onPGNKnown func(*broadcaster)
+	onStop     func(*broadcaster)
 
 	mu              sync.Mutex
-	pgn             uint32        // 0 until the first non-nil message
+	pgn             uint32 // valid once known is true
+	known           bool
+	order           uint64        // creation order makes deferred registration deterministic
 	interval        time.Duration // current cadence; <= 0 means paused
 	defaultInterval time.Duration // cadence given to Broadcast, for restore
 
@@ -110,10 +156,16 @@ type broadcaster struct {
 	quit     chan struct{}
 	done     chan struct{}
 	stopOnce sync.Once
+	sending  atomic.Bool
 }
 
 func (b *broadcaster) run(ctx context.Context, ready <-chan struct{}) {
 	defer close(b.done)
+	defer func() {
+		if b.onStop != nil {
+			b.onStop(b)
+		}
+	}()
 
 	select {
 	case <-ready:
@@ -136,7 +188,9 @@ func (b *broadcaster) run(ctx context.Context, ready <-chan struct{}) {
 			}
 		}
 
-		b.sendNow()
+		if !b.sendNow(ctx) {
+			return
+		}
 
 		timer := time.NewTimer(iv)
 		select {
@@ -155,21 +209,68 @@ func (b *broadcaster) run(ctx context.Context, ready <-chan struct{}) {
 
 // sendNow transmits one message immediately (nil from provide skips),
 // completing deferred PGN registration on the first non-nil message.
-func (b *broadcaster) sendNow() {
-	msg := b.provide()
+func (b *broadcaster) sendNow(ctx context.Context) bool {
+	if !b.sending.CompareAndSwap(false, true) {
+		return true
+	}
+	defer b.sending.Store(false)
+
+	type provided struct {
+		msg pgn.Message
+		err error
+	}
+	result := make(chan provided, 1)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				result <- provided{err: fmt.Errorf("provider panic: %v", r)}
+				b.log.Error("recovered panic in broadcast provider", "panic", r, "stack", string(debug.Stack()))
+			}
+		}()
+		result <- provided{msg: b.provide()}
+	}()
+	var msg pgn.Message
+	select {
+	case got := <-result:
+		if got.err != nil {
+			return true
+		}
+		msg = got.msg
+	case <-ctx.Done():
+		return false
+	case <-b.quit:
+		return false
+	}
 	if msg == nil {
-		return
+		return true
 	}
 	b.mu.Lock()
-	learned := b.pgn == 0
+	learned := !b.known
 	if learned {
 		b.pgn = msg.PGNNumber()
+		b.known = true
 	}
 	b.mu.Unlock()
+	if !learned && msg.PGNNumber() != b.pgnNumber() {
+		b.log.Warn("broadcast provider returned a different PGN", "want", b.pgnNumber(), "got", msg.PGNNumber())
+		return true
+	}
 	if learned && b.onPGNKnown != nil {
 		b.onPGNKnown(b)
+		select {
+		case <-b.quit:
+			return false
+		default:
+		}
 	}
-	b.write(msg)
+	if err := b.write(msg).WaitContext(ctx); err != nil && ctx.Err() == nil {
+		b.log.Warn("scheduled broadcast failed", "pgn", msg.PGNNumber(), "error", err)
+	}
+	return true
+}
+
+func (b *broadcaster) trigger(ctx context.Context) {
+	go func() { _ = b.sendNow(ctx) }()
 }
 
 // setInterval retimes the broadcast. Zero (or negative) pauses it; a positive
@@ -204,9 +305,12 @@ func (b *broadcaster) pgnNumber() uint32 {
 	return b.pgn
 }
 
-// stop terminates the run loop and waits for it to exit. Safe to call more
-// than once.
+// stop requests termination without waiting, so it is safe to invoke from a
+// provider callback. Client.Close waits separately for broadcaster exit.
 func (b *broadcaster) stop() {
 	b.stopOnce.Do(func() { close(b.quit) })
+}
+
+func (b *broadcaster) wait() {
 	<-b.done
 }

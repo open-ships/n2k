@@ -84,6 +84,56 @@ func TestRTSCTSReceive_HappyPath(t *testing.T) {
 	assert.Equal(t, payload, msg.data)
 }
 
+func TestRTSCTSReceive_RequestsEachCTSWindow(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame, OnComplete: h.onComplete})
+	defer mgr.Close()
+
+	const (
+		source      = uint8(42)
+		destination = uint8(10)
+		messagePGN  = uint32(126998)
+	)
+	payload := make([]byte, 29) // five DT packets
+	for i := range payload {
+		payload[i] = byte(i + 1)
+	}
+	rts := buildTestCMFrame(ControlRTS, uint16(len(payload)), 5, messagePGN, source, destination)
+	rts.Data[4] = 2
+	mgr.HandleFrame(rts)
+
+	assertCTS := func(index int, count, first uint8) {
+		t.Helper()
+		frames := h.getSentFrames()
+		require.Greater(t, len(frames), index)
+		assert.Equal(t, ControlCTS, frames[index].Data[0])
+		assert.Equal(t, count, frames[index].Data[1])
+		assert.Equal(t, first, frames[index].Data[2])
+	}
+	assertCTS(0, 2, 1)
+
+	for seq := uint8(1); seq <= 5; seq++ {
+		var data [7]byte
+		start := int(seq-1) * MaxDTDataBytes
+		if start < len(payload) {
+			copy(data[:], payload[start:])
+		}
+		mgr.HandleFrame(buildTestDTFrame(seq, data, source, destination))
+		if seq == 2 {
+			assertCTS(1, 2, 3)
+		}
+		if seq == 4 {
+			assertCTS(2, 1, 5)
+		}
+	}
+
+	msg := h.waitComplete(t, time.Second)
+	assert.Equal(t, payload, msg.data)
+	frames := h.getSentFrames()
+	require.Len(t, frames, 4)
+	assert.Equal(t, ControlEndOfMsgAck, frames[3].Data[0])
+}
+
 func TestRTSCTSTransmit_HappyPath(t *testing.T) {
 	h := newTestHelper()
 	mgr := NewManager(ManagerConfig{
@@ -160,6 +210,95 @@ func TestRTSCTSTransmit_HappyPath(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("SendRTSCTS did not return after EndOfMsgAck")
 	}
+}
+
+func TestRTSCTSTransmit_RejectsInvalidCTSRange(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+	defer mgr.Close()
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- mgr.SendRTSCTS(126998, 10, 42, make([]byte, 16))
+	}()
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 1 }, time.Second, time.Millisecond)
+
+	// Three packets exist, so a request for packets 2 through 4 is invalid.
+	mgr.HandleFrame(buildTestCTSFrame(3, 2, 126998, 42, 10))
+	select {
+	case err := <-errCh:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid CTS range")
+	case <-time.After(time.Second):
+		t.Fatal("SendRTSCTS did not reject invalid CTS")
+	}
+	assert.Len(t, h.getSentFrames(), 1, "invalid CTS must not emit DT packets")
+}
+
+func TestRTSCTSTransmit_RejectsMismatchedEndAck(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+	defer mgr.Close()
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- mgr.SendRTSCTS(126998, 10, 42, make([]byte, 16))
+	}()
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 1 }, time.Second, time.Millisecond)
+	mgr.HandleFrame(buildTestCTSFrame(3, 1, 126998, 42, 10))
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 4 }, time.Second, time.Millisecond)
+
+	mgr.HandleFrame(buildTestEndOfMsgAckFrame(15, 3, 126998, 42, 10))
+	select {
+	case err := <-errCh:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid EndOfMsgAck")
+	case <-time.After(time.Second):
+		t.Fatal("SendRTSCTS did not reject mismatched EndOfMsgAck")
+	}
+}
+
+func TestRTSCTSTransmit_EndAckRequiresEveryPacket(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+	defer mgr.Close()
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- mgr.SendRTSCTS(126998, 10, 42, make([]byte, 16))
+	}()
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 1 }, time.Second, time.Millisecond)
+
+	// A hostile peer requests only the last of three packets, then claims the
+	// transfer is complete. Seeing sequence 3 must not imply 1 and 2 were sent.
+	mgr.HandleFrame(buildTestCTSFrame(1, 3, 126998, 42, 10))
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 2 }, time.Second, time.Millisecond)
+	mgr.HandleFrame(buildTestEndOfMsgAckFrame(16, 3, 126998, 42, 10))
+
+	select {
+	case err := <-errCh:
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "packets sent=1")
+	case <-time.After(time.Second):
+		t.Fatal("SendRTSCTS accepted an acknowledgement with missing packets")
+	}
+}
+
+func TestRTSCTSTransmit_RejectsAmbiguousConcurrentSession(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+
+	first := make(chan error, 1)
+	go func() { first <- mgr.SendRTSCTS(126998, 10, 42, make([]byte, 16)) }()
+	require.Eventually(t, func() bool { return len(h.getSentFrames()) == 1 }, time.Second, time.Millisecond)
+
+	err := mgr.SendRTSCTS(126996, 10, 42, make([]byte, 16))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "session already active")
+	assert.Len(t, h.getSentFrames(), 1, "a second RTS would make incoming CTS ownership ambiguous")
+
+	mgr.Close()
+	require.Error(t, <-first)
 }
 
 // buildTestCTSFrame creates a CTS frame for testing.

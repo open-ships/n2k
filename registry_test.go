@@ -170,11 +170,32 @@ func TestRegistry_SnapshotsAreCopies(t *testing.T) {
 
 	mb.inbound <- claimFrame(testDeviceName, 0x42)
 	waitFor(t, 2*time.Second, func() bool { return len(c.Devices()) == 1 })
-	for _, f := range fastPacketFrames(t, &pgn.ProductInformation{ModelId: "sonar"}, 6, 0x42, 255) {
+	productCode := uint64(42)
+	for _, f := range fastPacketFrames(t, &pgn.ProductInformation{ModelId: "sonar", ProductCode: &productCode}, 6, 0x42, 255) {
 		mb.inbound <- f
 	}
 	waitFor(t, 2*time.Second, func() bool { return c.Devices()[0].ProductInfo != nil })
 
-	c.Devices()[0].ProductInfo.ModelId = "tampered"
+	snapshot := c.Devices()[0]
+	snapshot.ProductInfo.ModelId = "tampered"
+	*snapshot.ProductInfo.ProductCode = 99
 	assert.Equal(t, "sonar", c.Devices()[0].ProductInfo.ModelId, "snapshot mutations must not leak into the registry")
+	assert.Equal(t, uint64(42), *c.Devices()[0].ProductInfo.ProductCode)
+}
+
+func TestRegistry_AddressCollisionEvictsStaleName(t *testing.T) {
+	r := newRegistry()
+	first := testDeviceName.Pack(true)
+	secondName := testDeviceName
+	secondName.IdentityNumber++
+	second := secondName.Pack(true)
+	now := time.Now()
+
+	r.handleClaim(0x42, first, now)
+	r.handleClaim(0x42, second, now.Add(time.Second))
+
+	devices := r.snapshot()
+	require.Len(t, devices, 1)
+	assert.Equal(t, second, devices[0].RawName)
+	assert.Equal(t, uint8(0x42), devices[0].Address)
 }

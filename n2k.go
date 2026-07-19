@@ -17,6 +17,7 @@ import (
 func Receive(ctx context.Context, opts ...Option) iter.Seq2[pgn.Message, error] {
 	return func(yield func(pgn.Message, error) bool) {
 		s := NewScanner(ctx, opts...)
+		defer func() { _ = s.Close() }()
 		for s.Next() {
 			if !yield(s.Message(), nil) {
 				return

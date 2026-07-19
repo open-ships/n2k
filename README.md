@@ -1,8 +1,6 @@
 # n2k
 
-[![Test](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
-[![Lint](https://github.com/open-ships/n2k/actions/workflows/lint.yml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/lint.yml)
-[![Secure](https://github.com/open-ships/n2k/actions/workflows/security.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/security.yaml)
+[![CI](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/open-ships/n2k.svg)](https://pkg.go.dev/github.com/open-ships/n2k)
 [![Release](https://img.shields.io/github/v/release/open-ships/n2k)](https://github.com/open-ships/n2k/releases)
 
@@ -30,13 +28,15 @@ any Go program that needs to understand or participate on an N2K bus.
   database for open NMEA 2000 decoding. Every numeric field with a physical
   interpretation gets a generated SI-unit accessor (`heading.HeadingValue()` →
   radians) over raw wire ticks.
-- **Byte-perfect re-encode.** Decode → re-encode round trips preserve the
-  original payload bytes, verified against real captures — because decoded
-  numeric fields keep their raw wire ticks underneath.
+- **Wire-faithful re-encode.** An unchanged decoded message retains its exact
+  original payload, including reserved and trailing bytes. Mutating a field
+  switches encoding to the current struct values, so edits are never silently
+  discarded.
 - **A real bus node, not just a decoder.** `NewClient` claims an address per
   ISO 11783, heartbeats, answers product/configuration info and ISO requests,
-  and handles NMEA group functions (transmit / retime / pause) — the protocol
-  behavior NMEA 2000 requires of a transmitting device, handled for you.
+  accepts Commanded Address assignments, and handles NMEA group functions
+  (transmit / retime / pause) — the protocol behavior NMEA 2000 requires of a
+  transmitting device, handled for you.
 - **Pure Go, CGO-free**, cross-compiles to Linux, macOS, and Windows.
 
 ## Quick Start — No Boat Required
@@ -105,10 +105,12 @@ go install github.com/open-ships/n2k/cmd/n2k@latest # CLI
 Prebuilt CLI binaries for Linux, macOS, and Windows are on the
 [releases page](https://github.com/open-ships/n2k/releases).
 
-Releases follow semver with a `v0` major (`v0.x.y`). Every green build on
-`main` automatically cuts a patch release (with prebuilt CLI binaries); minor
-bumps are tagged manually when the API moves. While the major version is 0,
-minor releases may contain breaking API changes — pin accordingly.
+Releases follow semver with a `v0` major (`v0.x.y`). [`VERSION`](VERSION)
+declares the next deliberate release baseline. Once that tag exists, every
+fully green CI run on the current `main` commit increments the patch version
+and publishes prebuilt CLI binaries. Raise `VERSION` in a reviewed PR when the
+API warrants a minor bump. While the major version is 0, minor releases may
+contain breaking API changes — pin accordingly.
 
 ## The `n2k` CLI
 
@@ -139,8 +141,8 @@ Everything the library does, mapped to its API:
 |------|---------------|---------------|
 | Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner`, `n2k sniff` |
 | Write PGNs | Encode PGN structs back to byte-preserving CAN frames or gateway messages. | `NewClient`, `Client.Write` |
-| Act as a bus node | Claim an address, heartbeat, answer product/configuration info and ISO requests, and handle group functions. | `NewClient`, `WithName`, `WithProductInfo`, `WithConfigInfo` |
-| Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.Broadcast` |
+| Act as a bus node | Claim or accept a commanded address, heartbeat, answer product/configuration info and ISO requests, and handle group functions. | `NewClient`, `WithName`, `WithProductInfo`, `WithConfigInfo` |
+| Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.BroadcastPGN`, `Client.Broadcast` |
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
 | Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
 | Read many sources | Use SocketCAN, USB-CAN serial adapters, TCP/UDP gateways, candump logs, or in-memory frames. | `CAN`, `USB`, `TCP`, `UDP`, `File`, `Replay` |
@@ -149,6 +151,8 @@ Everything the library does, mapped to its API:
 | Filter traffic | Filter by PGN metadata or decoded fields with CEL; metadata-only filters avoid decode work. | `Filter` |
 | Preserve unknowns | Drop undecoded PGNs by default or surface them for logging/research. | `IncludeUnknown`, `*pgn.UnknownPGN` |
 | Test without hardware | Replay bundled or custom captures and inspect written frames in tests. | `File`, `OriginalTiming`, `Replay`, `WrittenFrames` |
+| Observe health | Export lifecycle errors, queue depth, address state, and structured logs. | `Client.Status`, `Client.Err`, `WithLogger` |
+| Extend transports | Provide custom frame buses, readiness, or assembled-message writers. | `Bus`, `ReadyBus`, `MessageWriter`, `WithBus` |
 
 ### Reading and Writing
 
@@ -159,8 +163,7 @@ ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 defer stop()
 
 client, err := n2k.NewClient(ctx,
-    n2k.CAN("can0"),
-    n2k.WithSourceAddress(42),
+    n2k.CAN("can0"), // auto-claims an available address
 )
 if err != nil {
     panic(err)
@@ -172,16 +175,25 @@ defer client.Close()
 heading := &pgn.VesselHeading{}
 heading.SetHeadingValue(1.5708) // radians; stored as raw wire ticks
 result := client.Write(heading)
-if err := result.Wait(); err != nil {
+if err := result.WaitContext(ctx); err != nil {
     log.Printf("write failed: %v", err)
 }
 
-// Explicitly set priority and destination
+// Explicitly set priority. VesselHeading is a broadcast (PDU2) PGN, so it
+// cannot carry a destination address.
 heading2 := &pgn.VesselHeading{
-    Info: pgn.MessageInfo{Priority: pgn.Priority(2), TargetId: pgn.Target(42)},
+    Info: pgn.MessageInfo{Priority: pgn.Priority(2)},
 }
 heading2.SetHeadingValue(1.5708)
-client.Write(heading2)
+if err := client.Write(heading2).WaitContext(ctx); err != nil { ... }
+
+// Addressed PGNs use TargetId. ISO Request is a PDU1 PGN.
+requested := uint64(126996)
+request := &pgn.IsoRequest{
+    Info: pgn.MessageInfo{TargetId: pgn.Target(42)},
+    Pgn:  &requested,
+}
+if err := client.Write(request).WaitContext(ctx); err != nil { ... }
 
 // Read messages (same as top-level API)
 for msg, err := range client.Receive() {
@@ -194,12 +206,12 @@ for msg, err := range client.Receive() {
 
 ### Address Claiming
 
-Every device that transmits on NMEA 2000 must claim a unique bus address (1–253) using the ISO 11783 address claim protocol (PGN 60928). `NewClient` handles this automatically — it broadcasts an address claim, waits for contention, and only returns once a valid address is secured.
+Every device that transmits on NMEA 2000 must claim a unique bus address (0–251) using the ISO 11783 address claim protocol (PGN 60928). `NewClient` handles this automatically — it broadcasts an address claim, waits for contention, and only returns once a valid address is secured.
 
 **How contention works:** Each device has a 64-bit NAME. When two devices claim the same address, the lower NAME wins and keeps the address; the loser must yield. The client supports two modes:
 
 ```go
-// Auto mode (default) — starts at address 253 and negotiates downward on
+// Auto mode (default) — starts at address 251 and negotiates downward on
 // contention. If all addresses are exhausted, NewClient returns an error.
 client, err := n2k.NewClient(ctx, n2k.CAN("can0"))
 
@@ -218,7 +230,7 @@ client, err := n2k.NewClient(ctx,
     n2k.CAN("can0"),
     n2k.WithName(n2k.DeviceName{
         IndustryGroup:    4,     // 3 bits: 4 = Marine
-        ManufacturerCode: 2000,  // 11 bits: unassigned/experimental range
+        ManufacturerCode: 123,   // 11 bits: replace with your assigned code
         DeviceClass:      25,    // 7 bits: 25 = Internetwork Device
         DeviceFunction:   130,   // 8 bits: 130 = PC Gateway
         DeviceInstance:   0,     // 8 bits
@@ -228,7 +240,28 @@ client, err := n2k.NewClient(ctx,
 )
 ```
 
-When `WithName` is not set, `DefaultDeviceName()` is used — it randomizes the identity number so multiple clients from the same binary can coexist on one bus.
+When `WithName` is not set, `DefaultDeviceName()` is used. That development default randomizes the identity number so multiple local processes can coexist on one bus. Production devices must provide their assigned manufacturer code and a stable, persisted identity with `WithName`; a random identity is not a provisioned product identity.
+
+Persist the last claimed address and offer it on the next start; the client
+will try it first and move if it is occupied:
+
+```go
+client, err := n2k.NewClient(ctx,
+    n2k.CAN("can0"),
+    n2k.WithPreferredAddress(loadLastAddress()),
+)
+// Save client.Status().Address after claiming or during orderly shutdown.
+```
+
+The client also handles Commanded Address (PGN 65240) without application
+code. It accepts only an exact nine-byte broadcast ISO transport (BAM)
+transfer whose full 64-bit NAME matches the client and whose requested address
+is 0–251. A valid change immediately emits a new Address Claim and places
+application writes behind a fresh contention window. Mismatched NAMEs,
+fast-packet or addressed lookalikes, malformed lengths, special addresses, and
+commands for the current address have no effect. Observe moves through
+`client.Status().Address`; user filters and unread subscriptions cannot disable
+this protocol behavior.
 
 **Claim timeout:** `NewClient` blocks for up to 1500ms (the default) to allow the network to respond to the initial claim. On heavily contested buses, increase it:
 
@@ -259,6 +292,7 @@ for msg, err := range n2k.Receive(ctx, n2k.CAN("can0")) {
 
 ```go
 s := n2k.NewScanner(ctx, n2k.CAN("can0"))
+defer s.Close()
 for s.Next() {
     fmt.Printf("Msg: %v\n", s.Message())
 }
@@ -364,7 +398,7 @@ for msg, err := range n2k.Receive(ctx,
 | Variable | Type | Description |
 |----------|------|-------------|
 | `pgn` | `int` | Parameter Group Number |
-| `source` | `int` | Source address (1-253) |
+| `source` | `int` | Source address (0-251) |
 | `priority` | `int` | Message priority (0-7) |
 | `destination` | `int` | Destination address (255 = broadcast) |
 | `msg.<field>` | varies | Decoded struct field (case-insensitive), in raw wire ticks |
@@ -385,12 +419,48 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
 | `n2k.WithLogger(l)` | Override default `slog.Logger` |
 | `n2k.WithSourceAddress(addr)` | Explicit source address for writes (contention is fatal) |
+| `n2k.WithPreferredAddress(addr)` | Starting address for automatic claiming; use a persisted prior address |
+| `n2k.WithClaimTimeout(d)` | Initial address-claim deadline; default 1500ms |
 | `n2k.WithName(name)` | ISO 11783 device NAME for address claiming |
 | `n2k.WithProductInfo(p)` | Product identity reported via PGN 126996 |
 | `n2k.WithConfigInfo(ci)` | Installation description reported via PGN 126998 |
 | `n2k.WithHeartbeatInterval(d)` | Heartbeat (PGN 126993) cadence; default 60s, 0 disables |
+| `n2k.WithReceiveBuffer(n)` | Per-subscription live receive buffer; default 64 |
+| `n2k.WithWriteQueue(n)` | Pending asynchronous write capacity; default 64 |
 | `n2k.WithReconnect(policy)` | Auto-reconnect dropped TCP gateway connections with exponential backoff (`ReconnectPolicy{InitialBackoff, MaxBackoff}`; zero values default to 500ms/30s) |
 | `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
+
+### Errors, backpressure, and health
+
+Runtime failure is surfaced through the API. A bus disconnect ends live
+iterators/scanners with that error, causes later writes to fail, and appears in
+`Client.Err()` and `Client.Status()`.
+
+Queues are deliberately bounded:
+
+- `Write` never blocks on admission. When its queue is full, the returned
+  result is already complete with `ErrWriteQueueFull`.
+- Each live `Receive` or `Scanner` call has an independent subscription. A
+  slow subscription ends with `ErrReceiveOverflow`; it cannot stall address
+  claiming, transport handling, or another reader.
+
+Use `WaitContext` when a caller has a deadline, tune bounds with
+`WithWriteQueue` / `WithReceiveBuffer`, and expose `Status()` from health or
+metrics endpoints:
+
+```go
+status := client.Status()
+fmt.Println(status.Address, status.AddressClaimed,
+    status.WriteQueueDepth, status.ReceiveSubscribers, status.TerminalError)
+```
+
+### Custom transports
+
+`WithBus` is the extension seam for hardware and gateways not included here.
+Implement `Bus` for frame-level read/write access. Optionally implement
+`ReadyBus` when opening is asynchronous, and `MessageWriter` when the gateway
+accepts assembled PGN payloads instead of CAN frames. The client still owns
+claiming, protocol routing, scheduling, and shutdown.
 
 ### A Complete Bus Node
 
@@ -406,6 +476,9 @@ NMEA 2000 requires of a transmitting device:
 - **ISO requests (PGN 59904)** — requests for supported PGNs are answered;
   requests addressed to us for anything else are refused with an ISO
   acknowledgement NAK, per ISO 11783-3.
+- **Commanded Address (PGN 65240)** — a matching nine-byte BAM assignment
+  moves the node to a claimable address, immediately reclaims it, and opens a
+  fresh contention window. Malformed and non-target commands are ignored.
 - **Group functions (PGN 126208)** — request group functions can transmit,
   retime, pause (interval 0), or restore (interval `0xFFFFFFFE`) any PGN the
   client transmits, including scheduled broadcasts. Unsupported group
@@ -426,10 +499,11 @@ if err == nil {
 ```
 
 **Periodic broadcasts** — transmit a PGN on a schedule; the provider runs on
-every tick (return nil to skip a tick):
+every tick (return nil to skip a tick). Prefer `BroadcastPGN`, which registers
+the PGN immediately for deterministic replacement and group-function retiming:
 
 ```go
-stop := client.Broadcast(time.Second, func() pgn.Message {
+stop := client.BroadcastPGN(127250, time.Second, func() pgn.Message {
     heading := &pgn.VesselHeading{}
     heading.SetHeadingValue(currentHeadingRadians())
     return heading
@@ -438,7 +512,9 @@ defer stop()
 ```
 
 Other devices can retime or pause the broadcast with a request group function
-naming its PGN.
+naming its PGN. Providers run outside the scheduler goroutine; panic is
+contained and `Close` is not held hostage by a blocked provider. Providers
+should still return promptly because Go cannot forcibly terminate a callback.
 
 ### Device Registry
 
@@ -513,8 +589,9 @@ info := pgn.MessageInfo{
 
 ## Physical Values
 
-Numeric struct fields hold **raw wire ticks** (`*uint64`/`*int64`), which is
-what makes byte-perfect re-encoding possible. Every numeric field with a
+Numeric struct fields hold **raw wire ticks** (`*uint64`/`*int64`). Exact
+round trips are preserved by an owned original-payload snapshot; raw ticks
+make field edits precise and predictable. Every numeric field with a
 physical interpretation also gets **generated typed accessors** that do the
 unit math — SI units in, SI units out, raw ticks underneath:
 
@@ -559,9 +636,28 @@ decoding would require changing generated PGN struct fields from raw-tick
 `*uint64`/`*int64` values to quantity types, which is deliberately deferred
 (see the `units` package doc comment).
 
+## Conformance Status
+
+The public, reproducible protocol evidence is run with `just
+conformance-local` and in Linux CI. Its controlled baseline is
+[ISO 11783-3:2026, edition 5](https://www.iso.org/standard/89949.html) for
+transport, [ISO 11783-5:2019, edition 3](https://www.iso.org/standard/74366.html)
+for address management, and [NMEA 2000 Version 3.000 with
+amendments](https://www.nmea.org/nmea-2000.html) for the marine application and
+certification process. The test-to-behavior matrix is in [the conformance
+guide](docs/conformance.md).
+
+This evidence is not formal NMEA certification. The official licensed tool has
+not been run against this repository alone: certification requires the actual
+product hardware and firmware, assigned manufacturer and product codes, the
+licensed tool, its encrypted result, and NMEA validation. The tracked
+[evidence template](conformance/evidence.example.json) reports those external
+steps as `not-run` until real records are supplied; the project does not infer
+or simulate a pass.
+
 ## Comparison
 
-As of July 2026, these are relevant projects that document NMEA 2000 support.
+Reviewed 2026-07-18, these are relevant projects that document NMEA 2000 support.
 Go projects come first because `n2k` is for Go applications; non-Go projects
 follow to show the broader ecosystem. NMEA 0183-only parsers are excluded.
 
@@ -580,13 +676,17 @@ present or not applicable.
 | [tomer-w/nmea2000](https://github.com/tomer-w/nmea2000) | Python | ❌ not Go | 🟡 generated Python fields | ✅ generated encode/decode | ❓ not documented | ❓ not documented | Python automation and Home Assistant |
 | [fard-draf/korri-n2k](https://github.com/fard-draf/korri-n2k) | Rust | ❌ not Go | ✅ generated structs | 🟡 generated serialization | ✅ address claiming + fast packet | ❌ roadmap gap | Embedded Rust with selectable PGN sets |
 
-For a Go application, `open-ships/n2k` is the only library here with first-class
-support across the whole surface — typed decoding, byte-preserving writes, real
-bus-node behavior, group functions, gateway/file sources, and CLI workflows.
+For a Go application, `open-ships/n2k` is designed to cover the full path in
+one API: typed decoding, byte-preserving writes, bus-node behavior, group
+functions, gateway/file sources, and CLI workflows. Evaluate the details that
+matter to your deployment rather than relying on the summary table alone.
 
 ## Known Limitations
 
 - Cross-field validation is not yet implemented.
+- Formal NMEA certification has not been run. Products that transmit on a real
+  vessel network must follow the hardware/tool workflow in [Protocol
+  conformance](docs/conformance.md) before making a certification claim.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
 - `File` and `UDP` sources are read-only; writing requires `CAN`, `USB`, `TCP`, or `Replay`.
@@ -598,10 +698,20 @@ bus-node behavior, group functions, gateway/file sources, and CLI workflows.
   connections with backoff. A transparent transport reconnect does not re-run
   NMEA 2000 address claiming, so a gateway that itself rebooted may still need
   a fresh client.
+- Live delivery is bounded by design. A reader that cannot keep up receives
+  `ErrReceiveOverflow`; increase `WithReceiveBuffer` or consume faster.
 
 ## License
 
 MIT — see LICENSE.
+
+## Development and security
+
+See [CONTEXT.md](CONTEXT.md) for architecture vocabulary and invariants,
+[the architecture guide](docs/architecture.md) for runtime ownership,
+[the conformance guide](docs/conformance.md) for standards evidence,
+[CONTRIBUTING.md](CONTRIBUTING.md) for required checks, and
+[SECURITY.md](SECURITY.md) for private vulnerability reporting.
 
 ## Acknowledgments
 

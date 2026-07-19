@@ -49,6 +49,14 @@ func TestClient_NewClient_Validation(t *testing.T) {
 		assert.Equal(t, name.Pack(true), c.deviceName)
 		assert.NoError(t, c.Close())
 	})
+
+	t.Run("explicit address clears arbitrary-address flag", func(t *testing.T) {
+		name := DeviceName{IndustryGroup: 4, IdentityNumber: 42}
+		c, err := NewClient(context.Background(), Replay(nil), WithName(name), WithSourceAddress(42))
+		require.NoError(t, err)
+		assert.Equal(t, name.Pack(false), c.deviceName)
+		assert.NoError(t, c.Close())
+	})
 }
 
 func TestNewClient_Replay_BadFilterFailsEagerly(t *testing.T) {
@@ -152,6 +160,31 @@ func TestClient_Write_AfterClose(t *testing.T) {
 	err = wr.Wait()
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "closed")
+}
+
+func TestClient_WriteRejectsNilMessages(t *testing.T) {
+	c, err := NewClient(context.Background(), Replay(nil))
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	assert.Error(t, c.Write(nil).Wait())
+	var typedNil *pgn.VesselHeading
+	assert.Error(t, c.Write(typedNil).Wait())
+}
+
+func TestClient_WriteQueueFullIsImmediate(t *testing.T) {
+	c := &Client{writeCh: make(chan writeJob, 1)}
+	first := c.Write(&pgn.VesselHeading{})
+	second := c.Write(&pgn.VesselHeading{})
+
+	select {
+	case <-second.Done():
+		assert.ErrorIs(t, second.Wait(), ErrWriteQueueFull)
+	case <-time.After(time.Second):
+		t.Fatal("saturated Write blocked instead of returning ErrWriteQueueFull")
+	}
+	job := <-c.writeCh
+	assert.Same(t, first, job.result)
 }
 
 func TestClient_Replay_Receive(t *testing.T) {
@@ -545,6 +578,96 @@ func (m *mockBus) getWritten() []can.Frame {
 
 // Compile-time proof that Bus is implementable with only public types.
 var _ Bus = (*mockBus)(nil)
+
+// terminatingBus lets tests end Bus.Run independently of context cancellation.
+// It implements ReadyBus so startup does not depend on scheduler timing.
+type terminatingBus struct {
+	ready     chan struct{}
+	terminate chan error
+	closed    chan struct{}
+	once      sync.Once
+	mu        sync.Mutex
+	written   []can.Frame
+}
+
+func newTerminatingBus() *terminatingBus {
+	return &terminatingBus{
+		ready:     make(chan struct{}),
+		terminate: make(chan error, 1),
+		closed:    make(chan struct{}),
+	}
+}
+
+func (b *terminatingBus) Ready() <-chan struct{} { return b.ready }
+
+func (b *terminatingBus) Run(ctx context.Context, _ func(can.Frame)) error {
+	b.once.Do(func() { close(b.ready) })
+	select {
+	case err := <-b.terminate:
+		return err
+	case <-b.closed:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
+func (b *terminatingBus) WriteFrame(f can.Frame) error {
+	b.mu.Lock()
+	b.written = append(b.written, f)
+	b.mu.Unlock()
+	return nil
+}
+
+func (b *terminatingBus) Close() error {
+	select {
+	case <-b.closed:
+	default:
+		close(b.closed)
+	}
+	return nil
+}
+
+var _ Bus = (*terminatingBus)(nil)
+var _ ReadyBus = (*terminatingBus)(nil)
+
+func TestClient_BusFailurePropagatesToReadersAndWriters(t *testing.T) {
+	b := newTerminatingBus()
+	c, err := NewClient(context.Background(),
+		WithBus(b),
+		WithClaimTimeout(20*time.Millisecond),
+		WithHeartbeatInterval(0),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+	scanner := c.Scanner()
+	defer func() { _ = scanner.Close() }()
+
+	want := errors.New("adapter disconnected")
+	b.terminate <- want
+	require.Eventually(t, func() bool { return c.ctx.Err() != nil }, time.Second, time.Millisecond)
+
+	assert.False(t, scanner.Next())
+	assert.ErrorIs(t, scanner.Err(), want)
+	assert.ErrorIs(t, c.Write(&pgn.VesselHeading{}).Wait(), want)
+}
+
+func TestClient_UnexpectedCleanBusStopIsTerminal(t *testing.T) {
+	b := newTerminatingBus()
+	c, err := NewClient(context.Background(),
+		WithBus(b),
+		WithClaimTimeout(20*time.Millisecond),
+		WithHeartbeatInterval(0),
+	)
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	b.terminate <- nil
+	require.Eventually(t, func() bool { return c.ctx.Err() != nil }, time.Second, time.Millisecond)
+	err = c.Write(&pgn.VesselHeading{}).Wait()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "stopped unexpectedly")
+}
 
 // blockingBus simulates a reconnecting transport whose writes park during an
 // outage — mirroring tcpLink.await(), which blocks a write while the gateway
@@ -1015,6 +1138,52 @@ func TestClient_Write_NonPGNMessageErrors(t *testing.T) {
 	if err := res.Wait(); err == nil {
 		t.Fatal("expected error writing a non-PGN message, got nil")
 	}
+}
+
+type invalidPGNMessage struct {
+	info pgn.MessageInfo
+	pgn  uint32
+}
+
+func (m *invalidPGNMessage) PGNNumber() uint32                { return m.pgn }
+func (m *invalidPGNMessage) MessageInfo() pgn.MessageInfo     { return m.info }
+func (m *invalidPGNMessage) SetMessageInfo(i pgn.MessageInfo) { m.info = i }
+func (m *invalidPGNMessage) DecodePayload([]uint8) error      { return nil }
+func (m *invalidPGNMessage) EncodePayload() ([]uint8, error)  { return []uint8{0}, nil }
+
+func TestClient_Write_RejectsNonCanonicalPGNs(t *testing.T) {
+	c, err := NewClient(context.Background(), Replay(nil))
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	tests := []struct {
+		name string
+		pgn  uint32
+	}{
+		{name: "outside 18-bit range", pgn: 0x40000},
+		{name: "reserved CAN-ID bit", pgn: 0x20000},
+		{name: "PDU1 group extension", pgn: 0xEA01},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			err := c.Write(&invalidPGNMessage{pgn: tc.pgn}).Wait()
+			require.Error(t, err)
+		})
+	}
+}
+
+func TestClient_Write_RejectsAddressedPDU2(t *testing.T) {
+	c, err := NewClient(context.Background(), Replay(nil))
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+
+	msg := &invalidPGNMessage{
+		pgn:  127250,
+		info: pgn.MessageInfo{TargetId: pgn.Target(42)},
+	}
+	err = c.Write(msg).Wait()
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "PDU2")
 }
 
 // --- MessageWriter bus path ---

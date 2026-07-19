@@ -24,13 +24,14 @@ func TestNewDistance(t *testing.T) {
 // expressed as "how many of unit X per mile".
 //
 // The conversion formula is: value * (newConv / oldConv)
-// Table values: Mile=1, Meter=1609.34, Foot=5280, NauticalMile=1.15078, Fathom=880
+// Table values are independently anchored by the exact definitions
+// 1 international mile = 1609.344 m and 1 nautical mile = 1852 m.
 func TestDistanceConvert(t *testing.T) {
 	// Mile -> Meter: 1 * (1609.34 / 1) = 1609.34
 	t.Run("Mile to Meter", func(t *testing.T) {
 		d := NewDistance(Mile, 1)
 		result := d.Convert(Meter)
-		assert.InDelta(t, 1609.34, float64(result.Value), 0.1)
+		assert.InDelta(t, 1609.344, float64(result.Value), 0.001)
 		assert.Equal(t, Meter, result.Unit)
 	})
 
@@ -41,15 +42,23 @@ func TestDistanceConvert(t *testing.T) {
 		assert.InDelta(t, 5280.0, float64(result.Value), 0.1)
 	})
 
-	// Mile -> NauticalMile: 1 * (1.15078 / 1) = 1.15078
-	// Note: The table stores NauticalMile=1.15078 which is the ratio of statute miles
-	// per nautical mile (1 NM = 1.15078 statute miles). The conversion math produces
-	// 1.15078 for 1 mile -> NM, which is the table's ratio value. See the extensive
-	// comments in the original test for the mathematical reasoning.
+	// Mile -> NauticalMile: 1609.344 / 1852 = 0.868976...
 	t.Run("Mile to NauticalMile", func(t *testing.T) {
 		d := NewDistance(Mile, 1)
 		result := d.Convert(NauticalMile)
-		assert.InDelta(t, 1.15078, float64(result.Value), 0.01)
+		assert.InDelta(t, 0.86897624, float64(result.Value), 0.000001)
+	})
+
+	t.Run("NauticalMile to Meter", func(t *testing.T) {
+		d := NewDistance(NauticalMile, 1)
+		result := d.Convert(Meter)
+		assert.InDelta(t, 1852.0, float64(result.Value), 0.001)
+	})
+
+	t.Run("1852 Meter to NauticalMile", func(t *testing.T) {
+		d := NewDistance(Meter, 1852)
+		result := d.Convert(NauticalMile)
+		assert.InDelta(t, 1.0, float64(result.Value), 0.000001)
 	})
 
 	// Mile -> Fathom: 1 * (880 / 1) = 880 (1 mile = 880 fathoms, since 1 fathom = 6 feet)

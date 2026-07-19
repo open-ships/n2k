@@ -47,6 +47,13 @@ func TestReadFixedString_PaddedWithAt(t *testing.T) {
 	assert.Equal(t, "Hi", str)
 }
 
+func TestReadFixedString_PreservesEmbeddedAt(t *testing.T) {
+	s := NewPgnDataStream([]byte("A@B@@"))
+	str, err := s.readFixedString(40)
+	assert.NoError(t, err)
+	assert.Equal(t, "A@B", str)
+}
+
 // TestReadFixedString_Empty verifies that a string consisting entirely of NUL padding
 // returns an empty string (the padding is the first byte, so everything is stripped).
 func TestReadFixedString_Empty(t *testing.T) {
@@ -77,6 +84,14 @@ func TestReadStringWithLength_NullLength(t *testing.T) {
 	_, err := s.readStringWithLength()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "null length")
+}
+
+func TestReadStringWithLengthAndControl_RejectsShortLength(t *testing.T) {
+	for _, length := range []byte{0, 1} {
+		s := NewPgnDataStream([]uint8{length, 1})
+		_, err := s.readStringWithLengthAndControl()
+		assert.Error(t, err)
+	}
 }
 
 // TestReadSignedResolution_Positive verifies that a positive signed integer is correctly

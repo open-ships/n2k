@@ -58,7 +58,7 @@ func Request[T pgn.Message](ctx context.Context, c *Client, target uint8) (T, er
 		Info: pgn.MessageInfo{TargetId: pgn.Target(target)},
 		Pgn:  &requested,
 	}
-	if err := c.Write(req).Wait(); err != nil {
+	if err := c.Write(req).WaitContext(ctx); err != nil {
 		return zero, fmt.Errorf("n2k: sending ISO request for PGN %d: %w", pgnNum, err)
 	}
 

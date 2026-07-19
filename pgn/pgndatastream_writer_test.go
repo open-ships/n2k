@@ -351,6 +351,16 @@ func TestRoundTrip_StringWithLengthAndControl(t *testing.T) {
 	assert.Equal(t, "AB", v)
 }
 
+func TestLengthPrefixedStringsRejectOverflow(t *testing.T) {
+	w := NewPGNDataStreamWriter()
+	w.writeStringWithLength(string(make([]byte, 255)))
+	assert.Error(t, w.Err())
+
+	w = NewPGNDataStreamWriter()
+	w.writeStringWithLengthAndControl(string(make([]byte, 254)))
+	assert.Error(t, w.Err())
+}
+
 // TestRoundTrip_UInt32 verifies uint32 write and read round-trip.
 func TestRoundTrip_UInt32(t *testing.T) {
 	w := NewPGNDataStreamWriter()

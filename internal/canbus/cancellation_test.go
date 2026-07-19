@@ -93,6 +93,8 @@ func (r *blockingCANReadWriteCloser) Close() error {
 type blockingSerialPort struct {
 	closed chan struct{}
 	once   sync.Once
+	mu     sync.Mutex
+	writes [][]byte
 }
 
 func newBlockingSerialPort() *blockingSerialPort {
@@ -104,13 +106,28 @@ func (p *blockingSerialPort) Read([]byte) (int, error) {
 	return 0, io.EOF
 }
 
-func (p *blockingSerialPort) Write(buf []byte) (int, error) { return len(buf), nil }
-func (p *blockingSerialPort) Drain() error                  { return nil }
-func (p *blockingSerialPort) ResetInputBuffer() error       { return nil }
-func (p *blockingSerialPort) ResetOutputBuffer() error      { return nil }
-func (p *blockingSerialPort) SetDTR(bool) error             { return nil }
-func (p *blockingSerialPort) SetRTS(bool) error             { return nil }
-func (p *blockingSerialPort) SetMode(*serial.Mode) error    { return nil }
+func (p *blockingSerialPort) Write(buf []byte) (int, error) {
+	p.mu.Lock()
+	p.writes = append(p.writes, append([]byte(nil), buf...))
+	p.mu.Unlock()
+	return len(buf), nil
+}
+
+func (p *blockingSerialPort) writtenFrames() [][]byte {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	frames := make([][]byte, len(p.writes))
+	for i := range p.writes {
+		frames[i] = append([]byte(nil), p.writes[i]...)
+	}
+	return frames
+}
+func (p *blockingSerialPort) Drain() error               { return nil }
+func (p *blockingSerialPort) ResetInputBuffer() error    { return nil }
+func (p *blockingSerialPort) ResetOutputBuffer() error   { return nil }
+func (p *blockingSerialPort) SetDTR(bool) error          { return nil }
+func (p *blockingSerialPort) SetRTS(bool) error          { return nil }
+func (p *blockingSerialPort) SetMode(*serial.Mode) error { return nil }
 func (p *blockingSerialPort) SetReadTimeout(time.Duration) error {
 	return nil
 }
