@@ -46,7 +46,7 @@ The repo bundles a real six-second capture from a sailing vessel
 
 ```bash
 git clone https://github.com/open-ships/n2k && cd n2k
-go run ./cmd/n2k sniff -file testdata/sample.log | jq .
+go run ./cmd/n2k sniff --file testdata/sample.log | jq .
 ```
 
 Or in code — it runs as-is:
@@ -118,26 +118,40 @@ Once installed (see [Add it to your project](#add-it-to-your-project)):
 
 ```bash
 # Yacht Devices WiFi gateway (RAW server mode) -- decoded JSON in one command
-n2k sniff -tcp 192.168.4.1:1457
+n2k sniff --tcp 192.168.4.1:1457
 
 # SocketCAN (Linux), USB-CAN serial, UDP, or capture replay
 n2k sniff -i can0
 n2k sniff -u /dev/ttyUSB0
-n2k sniff -udp :1457
-n2k sniff -file capture.log            # add -timing to replay at real speed
+n2k sniff --udp :1457
+n2k sniff --file capture.log            # add --timing to replay at real speed
 
 # CEL filtering, unknown PGNs, jq-friendly output
-n2k sniff -i can0 -f 'pgn == 127250' -unknown | jq .
+n2k sniff -i can0 -f 'pgn == 127250' --unknown | jq .
 
 # Record, replay, validate, discover, and inspect schema support
-n2k record -i can0 -out capture.log
-n2k record -tcp 192.168.4.1:1457 -out observations.jsonl -output-format jsonl
-n2k replay -timing=false capture.log
-n2k validate -file capture.log -strict
-n2k devices -tcp 192.168.4.1:1457 -wait 5s
+n2k record -i can0 --out capture.log
+n2k record --tcp 192.168.4.1:1457 --out observations.jsonl --output-format jsonl
+n2k replay --timing=false capture.log
+n2k validate --file capture.log --strict
+n2k devices --tcp 192.168.4.1:1457 --wait 5s
 n2k pgn 127250
 n2k pgn list | jq 'select(.complete == true)'
 ```
+
+The CLI uses Cobra for consistent nested help, argument validation, typo
+suggestions, and completion. Run `n2k help <command>` for examples and flags.
+Enable completion for the current shell with one of:
+
+```bash
+source <(n2k completion bash)                         # Bash
+source <(n2k completion zsh)                          # Zsh
+n2k completion fish | source                         # Fish
+n2k completion powershell | Out-String | Invoke-Expression # PowerShell
+```
+
+Completion understands source paths, stream and output formats, and known PGN
+numbers with descriptions.
 
 `record` writes replayable candump by default; JSON-lines mode retains each
 owned source observation, including Adapter and network identity, source and

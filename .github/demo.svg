@@ -12,7 +12,7 @@
 <circle cx="46" cy="20" r="6" fill="#febc2e"/>
 <circle cx="68" cy="20" r="6" fill="#28c840"/>
 <text x="440" y="25" text-anchor="middle" fill="#8b949e">n2k — decoded NMEA 2000</text>
-<text x="24" y="56" fill="#c9d1d9"><tspan fill="#7ee787">$ </tspan>n2k sniff -file sample.log | jq -c '{pgn:.info.pgn} + del(.info)'</text>
+<text x="24" y="56" fill="#c9d1d9"><tspan fill="#7ee787">$ </tspan>n2k sniff --file sample.log | jq -c '{pgn:.info.pgn} + del(.info)'</text>
 <text class="l" style="animation-delay:0.50s" x="24" y="78"><tspan fill="#8b949e">{"pgn":</tspan><tspan fill="#7ee787">127257</tspan><tspan fill="#c9d1d9">,"yaw":19624,"pitch":415,"roll":-305}</tspan></text>
 <text class="l" style="animation-delay:0.95s" x="24" y="100"><tspan fill="#8b949e">{"pgn":</tspan><tspan fill="#7ee787">127250</tspan><tspan fill="#c9d1d9">,"heading":19624,"variation":-2394,"reference":0}</tspan></text>
 <text class="l" style="animation-delay:1.40s" x="24" y="122"><tspan fill="#8b949e">{"pgn":</tspan><tspan fill="#7ee787">127251</tspan><tspan fill="#c9d1d9">,"rate":688}</tspan></text>

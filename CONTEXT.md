@@ -71,6 +71,7 @@ explains the runtime design.
 - Wire codec and generated messages: `pgn/`
 - Address claiming and Commanded Address: `internal/claiming/`, `client.go`
 - Device discovery: `registry.go`
+- CLI command tree, help, and completion: `cmd/n2k/`
 
 ## Required verification
 

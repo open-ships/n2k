@@ -16,8 +16,10 @@
   timestamps, gateway-relative time, direction, frames, assembled payloads,
   and decode errors. `Observe`, `Client.Observations`, and
   `ReplayObservations` use bounded, non-blocking ownership seams.
-- The CLI now supports `record`, `replay`, `validate`, `devices`, and `pgn` in
-  addition to typed `sniff` and version output.
+- The Cobra-based CLI now supports `record`, `replay`, `validate`, `devices`,
+  and `pgn` in addition to typed `sniff` and version output. Nested help, typo
+  suggestions, argument validation, and generated Bash, Zsh, Fish, and
+  PowerShell completion cover source paths, formats, and known PGNs.
 - `Client.Status` now exposes connection epochs, protocol lanes, typed/raw
   subscriber counts, write counters, and observation counters.
 - Added a machine-readable requirement index and local evidence families for
