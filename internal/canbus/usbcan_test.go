@@ -1,11 +1,15 @@
 package canbus
 
 import (
+	"context"
 	"log/slog"
 	"testing"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.bug.st/serial"
 )
 
 // newTestChannel creates a usbCANChannel for testing with a no-op logger and a handler
@@ -181,8 +185,7 @@ func TestParseFrames_ErrorRecovery_NoAA(t *testing.T) {
 }
 
 // TestParseFrames_BadEndByte verifies that a data frame with an incorrect end byte
-// (anything other than 0x55) is rejected and the buffer is cleared. The parser cannot
-// reliably determine frame boundaries after a bad end byte, so it discards everything.
+// (anything other than 0x55) is rejected without losing a valid frame that follows it.
 func TestParseFrames_BadEndByte(t *testing.T) {
 	usbChan, received := newTestChannel()
 
@@ -194,11 +197,43 @@ func TestParseFrames_BadEndByte(t *testing.T) {
 		0x10, 0x00, // ID
 		0xAA, 0xBB, // data
 		0x99, // bad end byte (should be 0x55)
+		0xAA, 0xE1, 0x83, 0x01, 0xF2, 0x09, 0x42, 0x55,
 	}
 	err := usbChan.parseFrames(&buf)
 	assert.NoError(t, err)
-	assert.Equal(t, 0, len(*received), "Bad end byte should not produce a frame")
-	assert.Equal(t, 0, len(buf), "Buffer should be cleared on bad end byte")
+	require.Len(t, *received, 1)
+	assert.Equal(t, uint8(0x42), (*received)[0].Data[0])
+	assert.Empty(t, buf)
+}
+
+func TestUSBCANRunConfiguresNMEA2000BeforeReady(t *testing.T) {
+	port := newBlockingSerialPort()
+	ch := newUSBCANChannel(testLogger(), usbCANChannelOptions{
+		SerialPortName: "test",
+		SerialBaudRate: 2000000,
+		openPort: func(string, *serial.Mode) (serial.Port, error) {
+			return port, nil
+		},
+	})
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() { done <- ch.Run(ctx, nil) }()
+
+	select {
+	case <-ch.Ready():
+	case <-time.After(time.Second):
+		t.Fatal("USB-CAN channel did not become ready")
+	}
+	require.Equal(t, [][]byte{{
+		0xAA, 0x55, 0x12, 0x05, 0x02,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+		0x1A,
+	}}, port.writtenFrames())
+
+	cancel()
+	require.ErrorIs(t, <-done, context.Canceled)
 }
 
 // TestParseFrames_IncompleteFrame_TooShort verifies that when only the start byte (0xAA)
@@ -328,4 +363,27 @@ func TestParseFrames_ZeroLengthDataFrame(t *testing.T) {
 	assert.Equal(t, uint32(0x0010), (*received)[0].ID)
 	assert.Equal(t, byte(0), (*received)[0].Length)
 	assert.Equal(t, 0, len(buf))
+}
+
+func TestParseFrames_InvalidDLCResynchronizes(t *testing.T) {
+	usbChan, received := newTestChannel()
+	buf := []byte{
+		0xAA, 0xEF, 0x01, 0x02, 0x03, // invalid DLC 15
+		0xAA, 0xE1, 0x83, 0x01, 0xF2, 0x09, 0x42, 0x55,
+	}
+	require.NoError(t, usbChan.parseFrames(&buf))
+	require.Len(t, *received, 1)
+	assert.Equal(t, uint8(1), (*received)[0].Length)
+	assert.Equal(t, uint8(0x42), (*received)[0].Data[0])
+}
+
+func FuzzUSBCANParseFrames(f *testing.F) {
+	f.Add([]byte{0xAA, 0xE1, 0x83, 0x01, 0xF2, 0x09, 0x42, 0x55})
+	f.Add([]byte{0xAA, 0xEF, 0xAA, 0x55})
+	f.Fuzz(func(t *testing.T, input []byte) {
+		ch, _ := newTestChannel()
+		buf := append([]byte(nil), input...)
+		require.NotPanics(t, func() { _ = ch.parseFrames(&buf) })
+		assert.LessOrEqual(t, len(buf), max(len(input), 20))
+	})
 }

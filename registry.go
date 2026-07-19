@@ -97,6 +97,12 @@ func (r *registry) handleClaim(source uint8, rawName uint64, now time.Time) (fir
 	if known && r.byAddr[entry.addr] == entry {
 		delete(r.byAddr, entry.addr)
 	}
+	if displaced := r.byAddr[source]; displaced != nil && displaced != entry {
+		// Two active NAMEs cannot own the same address. The new claim is the
+		// authoritative binding; remove the stale entry so snapshots never
+		// report an impossible duplicate-address topology.
+		delete(r.byName, displaced.rawName)
+	}
 	r.byAddr[source] = entry
 	entry.addr = source
 	entry.lastSeen = now
@@ -175,11 +181,35 @@ func (e *deviceEntry) device() Device {
 	}
 	if e.product != nil {
 		productCopy := *e.product
+		productCopy.Info = cloneMessageInfo(e.product.Info)
+		productCopy.Nmea2000Version = cloneUint64(e.product.Nmea2000Version)
+		productCopy.ProductCode = cloneUint64(e.product.ProductCode)
+		productCopy.CertificationLevel = cloneUint64(e.product.CertificationLevel)
+		productCopy.LoadEquivalency = cloneUint64(e.product.LoadEquivalency)
 		d.ProductInfo = &productCopy
 	}
 	if e.config != nil {
 		configCopy := *e.config
+		configCopy.Info = cloneMessageInfo(e.config.Info)
 		d.ConfigInfo = &configCopy
 	}
 	return d
+}
+
+func cloneUint64(v *uint64) *uint64 {
+	if v == nil {
+		return nil
+	}
+	copy := *v
+	return &copy
+}
+
+func cloneMessageInfo(info pgn.MessageInfo) pgn.MessageInfo {
+	if info.Priority != nil {
+		info.Priority = pgn.Priority(*info.Priority)
+	}
+	if info.TargetId != nil {
+		info.TargetId = pgn.Target(*info.TargetId)
+	}
+	return info
 }

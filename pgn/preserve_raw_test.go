@@ -29,12 +29,9 @@ func TestEncodeFieldsPassthroughForUndeclaredTrailingBytes(t *testing.T) {
 	}
 }
 
-// TestEncodeFieldsIgnoresFieldMutationAfterDecode proves the two-use-case
-// contract: a decoded message always re-encodes to the bytes it came from,
-// full stop. Mutating a field afterward does not change the encoded output
-// -- decode-then-modify-then-encode is not a supported path, so the mutation
-// is simply inert rather than partially honored.
-func TestEncodeFieldsIgnoresFieldMutationAfterDecode(t *testing.T) {
+// TestEncodeFieldsHonorsFieldMutationAfterDecode proves decoded messages stay
+// byte-exact while untouched but switch to field encoding after an edit.
+func TestEncodeFieldsHonorsFieldMutationAfterDecode(t *testing.T) {
 	msg := &IsoRequest{}
 	if err := msg.DecodePayload(isoRequestPayload); err != nil {
 		t.Fatalf("decode: %v", err)
@@ -46,8 +43,25 @@ func TestEncodeFieldsIgnoresFieldMutationAfterDecode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("encode: %v", err)
 	}
+	want := []uint8{0x14, 0xF0, 0x01}
+	if !bytesEqual(encoded, want) {
+		t.Fatalf("expected mutation to be encoded:\n want:    % x\n encoded: % x", want, encoded)
+	}
+}
+
+func TestDecodePayloadOwnsWireBuffer(t *testing.T) {
+	payload := append([]uint8(nil), isoRequestPayload...)
+	msg := &IsoRequest{}
+	if err := msg.DecodePayload(payload); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	payload[0] = 0
+	encoded, err := msg.EncodePayload()
+	if err != nil {
+		t.Fatalf("encode: %v", err)
+	}
 	if !bytesEqual(encoded, isoRequestPayload) {
-		t.Fatalf("expected mutation to be ignored and original wire bytes returned:\n wire:    % x\n encoded: % x", isoRequestPayload, encoded)
+		t.Fatalf("decoded message retained caller-owned payload: % x", encoded)
 	}
 }
 

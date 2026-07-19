@@ -3,6 +3,7 @@ package adapter
 import (
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/open-ships/n2k/internal/decoder"
 )
@@ -38,15 +39,12 @@ type sequence struct {
 	// to trim padding bytes from the final frame.
 	expected uint8
 
-	// received tracks the running total of payload bytes accumulated so far across all frames.
-	// Frame 0 contributes 6 bytes; each continuation frame contributes 7 bytes.
-	received uint8
-
 	// contents stores the data bytes from each frame, indexed by frame number. This array
 	// allows frames to be received out of order (except frame 0 which must come first).
 	// A nil entry means that frame has not been received yet. The array size is MaxFrameNum+1
 	// (32 slots) to accommodate frame numbers 0-31.
 	contents [MaxFrameNum + 1][]uint8 // need arrays since packets can be received out of order
+	updated  time.Time
 }
 
 // add copies the payload data from a CAN frame into the appropriate slot in the sequence.
@@ -67,7 +65,8 @@ type sequence struct {
 //
 // Parameters:
 //   - p: The Packet containing the raw CAN frame data with sequence/frame header in byte 0.
-func (s *sequence) add(p *decoder.Packet) {
+func (s *sequence) add(p *decoder.Packet, now time.Time) bool {
+	s.updated = now
 	if p.FrameNum == 0 {
 		if s.zero != nil { // we've received frame zero for a new sequence before completing the previous one.
 			slog.Debug("Fast sequence duplicate frame zero detected. Resetting")
@@ -76,15 +75,24 @@ func (s *sequence) add(p *decoder.Packet) {
 		s.zero = p
 		// Byte 1 of frame 0 contains the total expected payload length (not counting
 		// the 2 header bytes of frame 0 or the 1 header byte of continuation frames).
+		if len(p.Data) < 2 {
+			p.ParseErrors = append(p.ParseErrors, fmt.Errorf("fast-packet frame zero is shorter than 2 bytes"))
+			return false
+		}
 		s.expected = p.Data[1]
+		if s.expected == 0 || int(s.expected) > 223 {
+			p.ParseErrors = append(p.ParseErrors, fmt.Errorf("invalid fast-packet payload length %d", s.expected))
+			return false
+		}
 		// Bytes 2-7 of frame 0 contain the first 6 bytes of the actual payload.
-		s.contents[p.FrameNum] = p.Data[2:]
-		s.received += 6
+		s.contents[p.FrameNum] = append([]uint8(nil), p.Data[2:]...)
 	} else {
 		if s.zero == nil { // we've received a subsequent frame before getting the first one
 			slog.Debug("fast sequence received subsequent frame before zero frame, resetting",
 				"source", p.Info.SourceId, "pgn", p.Info.PGN, "seqId", p.SeqId, "frameNum", p.FrameNum)
 			s.reset()
+			s.updated = now
+			return true
 		} else if s.contents[p.FrameNum] != nil { // uh-oh, we've already seen this frame
 			// Duplicate frame detected -- likely a new sequence has started with the same
 			// sequence ID before the old one completed. Reset to avoid mixing data from
@@ -92,13 +100,15 @@ func (s *sequence) add(p *decoder.Packet) {
 			slog.Debug("fast sequence received duplicate frame, resetting sequence",
 				"source", p.Info.SourceId, "pgn", p.Info.PGN, "seqId", p.SeqId, "frameNum", p.FrameNum)
 			s.reset()
+			s.updated = now
+			return true
 		} else {
 			// Normal continuation frame: copy bytes 1-7 (7 data bytes, skipping the
 			// sequence/frame header in byte 0).
-			s.contents[p.FrameNum] = p.Data[1:]
-			s.received += 7
+			s.contents[p.FrameNum] = append([]uint8(nil), p.Data[1:]...)
 		}
 	}
+	return true
 }
 
 // complete checks whether all expected payload bytes have been received and, if so,
@@ -121,37 +131,30 @@ func (s *sequence) add(p *decoder.Packet) {
 // Returns true if the sequence is complete (either successfully or with errors), false
 // if more frames are still needed.
 func (s *sequence) complete(p *decoder.Packet) bool {
-	if s.zero != nil {
-		if s.received >= s.expected {
-			// All expected data has been received. Consolidate the per-frame data arrays
-			// into a single contiguous buffer.
-			results := make([]uint8, 0)
-			for i, d := range s.contents {
-				if d == nil { // don't allow sparse nodes
-					// A nil entry before we've collected enough bytes means frames arrived
-					// out of order with gaps -- this is a malformed sequence.
-					p.ParseErrors = append(p.ParseErrors, fmt.Errorf("sparse Data in multi"))
-					return true
-				} else {
-					results = append(results, s.contents[i]...)
-					// Once we've collected at least as many bytes as expected, stop
-					// processing further frames.
-					if len(results) >= int(s.expected) {
-						break
-					}
-				}
-			}
-			// Trim to exactly the expected length to remove padding bytes from the final
-			// CAN frame (which always carries a full 8 bytes even if not all are needed).
-			results = results[:s.expected]
-			p.Data = results
-			p.Complete = true
-			return true
-		}
+	if s.zero == nil {
+		p.Complete = false
+		return false
 	}
-	// Not yet complete -- still waiting for more frames.
-	p.Complete = false
-	return false
+	remaining := int(s.expected) - 6
+	lastFrame := 0
+	if remaining > 0 {
+		lastFrame = (remaining + 6) / 7
+	}
+	results := make([]uint8, 0, s.expected)
+	for i := 0; i <= lastFrame; i++ {
+		if s.contents[i] == nil {
+			p.Complete = false
+			return false
+		}
+		results = append(results, s.contents[i]...)
+	}
+	if len(results) < int(s.expected) {
+		p.ParseErrors = append(p.ParseErrors, fmt.Errorf("fast-packet frames contain %d bytes, expected %d", len(results), s.expected))
+		return true
+	}
+	p.Data = append([]uint8(nil), results[:s.expected]...)
+	p.Complete = true
+	return true
 }
 
 // reset clears all sequence state to allow reuse of the sequence slot for a new
@@ -161,7 +164,7 @@ func (s *sequence) complete(p *decoder.Packet) bool {
 func (s *sequence) reset() {
 	s.zero = nil
 	s.expected = 0
-	s.received = 0
+	s.updated = time.Time{}
 	// Clear all stored frame data to prevent stale data from mixing with new frames.
 	for i := range s.contents {
 		s.contents[i] = nil

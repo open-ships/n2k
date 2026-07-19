@@ -60,3 +60,46 @@ func TestNewClient_InvalidDeviceNameRejected(t *testing.T) {
 		t.Fatal("expected invalid DeviceName error")
 	}
 }
+
+func TestConfigValidationRejectsInvalidOperationalValues(t *testing.T) {
+	for _, opt := range []Option{
+		WithSourceAddress(252),
+		WithSourceAddress(254),
+		WithPreferredAddress(252),
+		WithClaimTimeout(0),
+		WithHeartbeatInterval(-time.Second),
+		WithReceiveBuffer(0),
+		WithWriteQueue(0),
+	} {
+		_, err := NewClient(context.Background(), Replay(nil), opt)
+		assert.Error(t, err)
+	}
+}
+
+func TestAddressOptions(t *testing.T) {
+	for _, opt := range []Option{WithSourceAddress(0), WithSourceAddress(251), WithPreferredAddress(0), WithPreferredAddress(251)} {
+		c, err := NewClient(context.Background(), Replay(nil), opt)
+		require.NoError(t, err)
+		require.NoError(t, c.Close())
+	}
+
+	_, err := NewClient(context.Background(), Replay(nil), WithSourceAddress(10), WithPreferredAddress(10))
+	require.Error(t, err)
+}
+
+func TestBufferOptions(t *testing.T) {
+	c, err := NewClient(context.Background(), Replay(nil), WithReceiveBuffer(3), WithWriteQueue(5))
+	require.NoError(t, err)
+	defer func() { _ = c.Close() }()
+	status := c.Status()
+	assert.Equal(t, 5, status.WriteQueueCapacity)
+	assert.True(t, status.AddressClaimed)
+}
+
+func TestNewClientRejectsAmbiguousSources(t *testing.T) {
+	_, err := NewClient(context.Background(), Replay(nil), Replay(nil))
+	assert.NoError(t, err, "multiple replay sources are valid")
+
+	_, err = NewClient(context.Background(), CAN("can0"), Replay(nil))
+	assert.Error(t, err)
+}

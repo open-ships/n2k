@@ -131,7 +131,7 @@ func (c *Client) applyRequestedInterval(pgnNum uint32, intervalTicks *uint64) {
 		return // schedule raced away since the transmitsPGN check
 	}
 	if intervalTicks == nil {
-		b.sendNow()
+		b.trigger(c.ctx)
 		return
 	}
 	switch *intervalTicks {

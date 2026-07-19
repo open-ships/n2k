@@ -146,5 +146,3 @@ func TestNumerics(t *testing.T) {
 		assert.Equal(t, tst.exp, v)
 	}
 }
-
-// TODO: Tests for strings once we get more confidence

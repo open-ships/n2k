@@ -2,6 +2,7 @@ package n2k
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -14,9 +15,12 @@ type config struct {
 	includeUnknown    bool
 	logger            *slog.Logger
 	sourceAddress     *uint8           // nil = auto mode
+	preferredAddress  *uint8           // nil = default auto-mode starting address
 	deviceName        *DeviceName      // nil = use default
 	claimTimeout      *time.Duration   // nil = use default (1500ms)
 	heartbeatInterval *time.Duration   // nil = default (60s), 0 = disabled
+	receiveBuffer     *int             // nil = default (64)
+	writeQueue        *int             // nil = default (64)
 	productInfo       *ProductInfo     // nil = defaults
 	configInfo        *ConfigInfo      // nil = defaults
 	bus               Bus              // pre-constructed bus
@@ -26,6 +30,51 @@ type config struct {
 func (c *config) validate() error {
 	if len(c.sources) == 0 && c.bus == nil {
 		return errors.New("n2k: at least one source or WithBus is required")
+	}
+	if c.sourceAddress != nil && *c.sourceAddress > 251 {
+		return fmt.Errorf("n2k: source address %d is outside 0-251", *c.sourceAddress)
+	}
+	if c.preferredAddress != nil && *c.preferredAddress > 251 {
+		return fmt.Errorf("n2k: preferred address %d is outside 0-251", *c.preferredAddress)
+	}
+	if c.sourceAddress != nil && c.preferredAddress != nil {
+		return errors.New("n2k: WithSourceAddress and WithPreferredAddress are mutually exclusive")
+	}
+	if c.claimTimeout != nil && *c.claimTimeout <= 0 {
+		return errors.New("n2k: claim timeout must be positive")
+	}
+	if c.heartbeatInterval != nil && *c.heartbeatInterval < 0 {
+		return errors.New("n2k: heartbeat interval cannot be negative")
+	}
+	if c.receiveBuffer != nil && *c.receiveBuffer <= 0 {
+		return errors.New("n2k: receive buffer must be positive")
+	}
+	if c.writeQueue != nil && *c.writeQueue <= 0 {
+		return errors.New("n2k: write queue must be positive")
+	}
+	for _, src := range c.sources {
+		switch s := src.(type) {
+		case *socketCANSource:
+			if s.iface == "" {
+				return errors.New("n2k: CAN interface name cannot be empty")
+			}
+		case *usbCANSource:
+			if s.port == "" {
+				return errors.New("n2k: USB serial port cannot be empty")
+			}
+		case *tcpSource:
+			if s.addr == "" || !s.format.valid() {
+				return fmt.Errorf("n2k: invalid TCP source address or stream format %d", s.format)
+			}
+		case *udpSource:
+			if s.addr == "" || !s.format.valid() {
+				return fmt.Errorf("n2k: invalid UDP source address or stream format %d", s.format)
+			}
+		case *fileSource:
+			if s.path == "" {
+				return errors.New("n2k: file path cannot be empty")
+			}
+		}
 	}
 	return nil
 }
@@ -61,7 +110,9 @@ func File(path string, opts ...FileOption) Option {
 	return optionFunc(func(c *config) {
 		src := &fileSource{path: path}
 		for _, o := range opts {
-			o.applyFile(src)
+			if o != nil {
+				o.applyFile(src)
+			}
 		}
 		c.sources = append(c.sources, src)
 	})
@@ -90,7 +141,8 @@ func UDP(listenAddr string, format StreamFormat) Option {
 // Replay adds a source that replays the given CAN frames. Useful for testing.
 func Replay(frames []can.Frame) Option {
 	return optionFunc(func(c *config) {
-		c.sources = append(c.sources, &replaySource{frames: frames})
+		copied := append([]can.Frame(nil), frames...)
+		c.sources = append(c.sources, &replaySource{frames: copied})
 	})
 }
 
@@ -119,11 +171,22 @@ func WithLogger(l *slog.Logger) Option {
 
 // WithSourceAddress sets an explicit NMEA 2000 source address for the client.
 // When set, the client uses this address and treats contention as a fatal error.
-// When not set (default), the client uses auto mode — starting at address 253
+// When not set (default), the client uses auto mode — starting at address 251
 // and working downward if contention occurs.
 func WithSourceAddress(addr uint8) Option {
 	return optionFunc(func(c *config) {
 		c.sourceAddress = &addr
+	})
+}
+
+// WithPreferredAddress sets the starting address for automatic address
+// claiming while retaining arbitrary-address capability. Persist the last
+// Client.Status().Address and pass it here on the next start to reclaim the
+// device's prior address when available. Valid addresses are 0 through 251.
+// Unlike WithSourceAddress, contention moves the client to another address.
+func WithPreferredAddress(addr uint8) Option {
+	return optionFunc(func(c *config) {
+		c.preferredAddress = &addr
 	})
 }
 
@@ -138,8 +201,8 @@ func WithClaimTimeout(d time.Duration) Option {
 
 // WithProductInfo sets the product identity (PGN 126996) this client reports
 // when another device requests it. Without it, a generic software-gateway
-// identity is reported. String fields longer than 32 bytes are truncated on
-// the wire.
+// identity is reported. String fields longer than 32 bytes are rejected when
+// the client is created.
 func WithProductInfo(p ProductInfo) Option {
 	return optionFunc(func(c *config) {
 		c.productInfo = &p
@@ -161,6 +224,25 @@ func WithConfigInfo(ci ConfigInfo) Option {
 func WithHeartbeatInterval(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.heartbeatInterval = &d
+	})
+}
+
+// WithReceiveBuffer sets the number of decoded messages retained per live
+// Client subscription. The default is 64. A subscriber that falls behind
+// this bound is closed with ErrReceiveOverflow so it cannot stall protocol
+// processing or other subscribers.
+func WithReceiveBuffer(size int) Option {
+	return optionFunc(func(c *config) {
+		c.receiveBuffer = &size
+	})
+}
+
+// WithWriteQueue sets the number of asynchronous writes that can wait behind
+// the active write. The default is 64. Once full, Write completes immediately
+// with ErrWriteQueueFull rather than blocking an application goroutine.
+func WithWriteQueue(size int) Option {
+	return optionFunc(func(c *config) {
+		c.writeQueue = &size
 	})
 }
 

@@ -52,3 +52,10 @@ const BAMInterFrameDelay = 50 * time.Millisecond
 
 // MaxDTDataBytes is the number of data bytes carried per DT frame (bytes 1-7).
 const MaxDTDataBytes = 7
+
+// MaxPayloadBytes is the largest payload representable by the transport
+// protocol's one-byte DT packet count (255 packets of seven data bytes).
+const MaxPayloadBytes = 255 * MaxDTDataBytes
+
+// MaxPGN is the largest value representable by an NMEA 2000 18-bit PGN.
+const MaxPGN = 0x3FFFF

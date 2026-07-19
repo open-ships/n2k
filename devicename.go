@@ -91,19 +91,18 @@ func UnpackDeviceName(name uint64) DeviceName {
 	}
 }
 
-// DefaultDeviceName returns a DeviceName pre-configured for a PC-based software
-// gateway operating on an NMEA 2000 marine network. The identity number is
-// randomized so that multiple processes using the same binary can coexist on
-// the same bus without NAME collisions during address claiming.
+// DefaultDeviceName returns a development-oriented DeviceName for a PC-based
+// software gateway. Production devices should use WithName with the vendor's
+// assigned manufacturer code and a stable, persisted identity number. The
+// default identity is randomized so multiple development processes can coexist
+// on one bus, but it is not a substitute for a provisioned product identity.
 func DefaultDeviceName() DeviceName {
 	return DeviceName{
 		// Marine industry group per NMEA 2000 specification.
 		IndustryGroup: 4,
 
-		// Manufacturer code 2000 is in the unassigned/experimental range (1864-2045).
-		// Codes 2046-2047 are reserved sentinels in the NMEA 2000 spec. Using an
-		// unassigned code avoids conflicts with real manufacturers while being clearly
-		// identifiable as a software gateway rather than a hardware device.
+		// Development placeholder only. Production applications must replace it
+		// with their assigned manufacturer code via WithName.
 		ManufacturerCode: 2000,
 
 		// Device Class 25 = "Internetwork Device" per NMEA 2000 device class table.
@@ -131,6 +130,15 @@ func DefaultDeviceName() DeviceName {
 // ISO 11783 NAME identity number.
 func randomIdentityNumber() uint32 {
 	var buf [4]byte
-	_, _ = rand.Read(buf[:])
-	return binary.LittleEndian.Uint32(buf[:]) & 0x1FFFFF
+	if _, err := rand.Read(buf[:]); err != nil {
+		// crypto/rand failures are exceptionally rare and DefaultDeviceName
+		// cannot return an error without breaking its API. Zero is a valid but
+		// collision-prone identity, so reserve 1 as the explicit fallback.
+		return 1
+	}
+	identity := binary.LittleEndian.Uint32(buf[:]) & 0x1FFFFF
+	if identity == 0 {
+		return 1
+	}
+	return identity
 }

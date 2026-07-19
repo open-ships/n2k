@@ -182,21 +182,23 @@ func IsProprietaryPGN(pgn uint32) bool {
 // If called on a non-proprietary PGN, the returned values will be meaningless since
 // those bytes have a different field layout.
 func GetProprietaryInfo(data []uint8) (ManufacturerCodeConst, IndustryCodeConst, error) {
+	if len(data) < 2 {
+		return 0, 0, fmt.Errorf("proprietary payload header requires 2 bytes, got %d", len(data))
+	}
 	stream := NewPgnDataStream(data)
-	var man ManufacturerCodeConst
-	var ind IndustryCodeConst
-	var err error
 	// Read the 11-bit manufacturer code from bits 0-10.
-	if v, err := stream.readLookupField(11); err == nil {
-		man = ManufacturerCodeConst(v)
+	manufacturer, err := stream.readLookupField(11)
+	if err != nil {
+		return 0, 0, fmt.Errorf("read manufacturer code: %w", err)
 	}
 	// Skip the 2 reserved bits (bits 11-12).
 	stream.skipBits(2)
 	// Read the 3-bit industry code from bits 13-15.
-	if v, err := stream.readLookupField(3); err == nil {
-		ind = IndustryCodeConst(v)
+	industry, err := stream.readLookupField(3)
+	if err != nil {
+		return 0, 0, fmt.Errorf("read industry code: %w", err)
 	}
-	return man, ind, err
+	return ManufacturerCodeConst(manufacturer), IndustryCodeConst(industry), nil
 }
 
 // GetFieldDescriptor looks up the FieldDescriptor for a specific field within a PGN.

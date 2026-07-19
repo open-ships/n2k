@@ -8,6 +8,7 @@ import (
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // fakeTimer is a no-op Timer used by fakeClock.
@@ -142,6 +143,80 @@ func TestManager_RoutesCMToCorrectHandler(t *testing.T) {
 	sentFrames := h.getSentFrames()
 	assert.Len(t, sentFrames, 1, "should have sent exactly one CTS for the RTS")
 	assert.Equal(t, ControlCTS, sentFrames[0].Data[0], "response should be a CTS")
+}
+
+func TestManager_IgnoresAddressedTrafficForAnotherNode(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{
+		WriteFrame:   h.writeFrame,
+		OnComplete:   h.onComplete,
+		LocalAddress: func() uint8 { return 10 },
+	})
+	defer mgr.Close()
+
+	rts := buildTestCMFrame(ControlRTS, 14, 2, 126998, 42, 11)
+	rts.Data[4] = 2
+	mgr.HandleFrame(rts)
+	mgr.HandleFrame(buildTestDTFrame(1, [7]byte{}, 42, 11))
+
+	assert.Zero(t, activeSessionCount(mgr))
+	assert.Empty(t, h.getSentFrames())
+	assert.Empty(t, h.getCompleted())
+}
+
+func TestManager_RejectsMalformedAnnouncements(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+	defer mgr.Close()
+
+	// Sixteen bytes require three packets, not two.
+	mgr.HandleFrame(buildTestCMFrame(ControlBAM, 16, 2, 126998, 42, BroadcastAddr))
+	rts := buildTestCMFrame(ControlRTS, 16, 2, 126998, 42, 10)
+	rts.Data[4] = 2
+	mgr.HandleFrame(rts)
+
+	assert.Zero(t, activeSessionCount(mgr))
+	assert.Empty(t, h.getSentFrames())
+}
+
+func TestManager_IgnoresNonClassicalTPFrames(t *testing.T) {
+	h := newTestHelper()
+	mgr := NewManager(ManagerConfig{WriteFrame: h.writeFrame})
+	defer mgr.Close()
+
+	cm := buildTestCMFrame(ControlBAM, 7, 1, 126998, 42, BroadcastAddr)
+	cm.Length = 9
+	mgr.HandleFrame(cm)
+	dt := buildTestDTFrame(1, [7]byte{}, 42, BroadcastAddr)
+	dt.Length = 7
+	mgr.HandleFrame(dt)
+
+	assert.Zero(t, activeSessionCount(mgr))
+	assert.Empty(t, h.getSentFrames())
+}
+
+func TestTransportSendRejectsOutOfRangePGN(t *testing.T) {
+	mgr := NewManager(ManagerConfig{WriteFrame: func(can.Frame) error { return nil }})
+	defer mgr.Close()
+
+	assert.Error(t, mgr.SendBAM(MaxPGN+1, 10, make([]byte, 9)))
+	assert.Error(t, mgr.SendRTSCTS(MaxPGN+1, 10, 42, make([]byte, 9)))
+	assert.Error(t, mgr.SendBAM(0x20000, 10, make([]byte, 9)))
+	assert.Error(t, mgr.SendRTSCTS(0xEA01, 10, 42, make([]byte, 9)))
+}
+
+func TestManager_ReplacesAmbiguousReceiveSession(t *testing.T) {
+	mgr := NewManager(ManagerConfig{WriteFrame: func(can.Frame) error { return nil }})
+	defer mgr.Close()
+
+	mgr.HandleFrame(buildTestCMFrame(ControlBAM, 7, 1, 130816, 42, BroadcastAddr))
+	mgr.HandleFrame(buildTestCMFrame(ControlBAM, 7, 1, 130817, 42, BroadcastAddr))
+
+	mgr.mu.Lock()
+	defer mgr.mu.Unlock()
+	require.Len(t, mgr.sessions, 1)
+	_, ok := mgr.sessions[sessionKey{source: 42, destination: BroadcastAddr, pgn: 130817}]
+	assert.True(t, ok)
 }
 
 func TestManager_IgnoresNonTPFrames(t *testing.T) {

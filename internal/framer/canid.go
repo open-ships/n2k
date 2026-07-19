@@ -21,7 +21,7 @@ package framer
 // Parameters:
 //   - pgn: The Parameter Group Number (18-bit). For PDU1 PGNs, the low byte must be 0.
 //   - priority: Message priority (0-7). Only the lower 3 bits are used.
-//   - source: Source address of the transmitting device (0-253, 254-255 reserved).
+//   - source: Source address of the transmitting device (0-251; 252-255 are reserved/special in NMEA 2000).
 //   - destination: Destination address for PDU1 (addressed) PGNs. Ignored for PDU2 (broadcast) PGNs.
 //
 // Returns the constructed 29-bit CAN ID.

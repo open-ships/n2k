@@ -62,8 +62,10 @@ type usbCANChannel struct {
 
 	// mu guards the port reference. Reads and writes must not hold it because
 	// Close needs to close the port concurrently to unblock them.
-	mu      sync.Mutex
-	writeMu sync.Mutex
+	mu        sync.Mutex
+	writeMu   sync.Mutex
+	ready     chan struct{}
+	readyOnce sync.Once
 
 	// log is the structured logger for debug/info messages about frame parsing and errors.
 	log *slog.Logger
@@ -86,6 +88,7 @@ func newUSBCANChannel(log *slog.Logger, options usbCANChannelOptions) *usbCANCha
 	c := usbCANChannel{
 		options: options,
 		log:     log,
+		ready:   make(chan struct{}),
 	}
 
 	return &c
@@ -118,6 +121,16 @@ func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error 
 	c.mu.Lock()
 	c.port = port
 	c.mu.Unlock()
+	defer func() {
+		c.mu.Lock()
+		if c.port == port {
+			c.port = nil
+			c.mu.Unlock()
+			_ = port.Close()
+			return
+		}
+		c.mu.Unlock()
+	}()
 
 	watchDone := make(chan struct{})
 	defer close(watchDone)
@@ -128,6 +141,21 @@ func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error 
 		case <-watchDone:
 		}
 	}()
+
+	// Put the adapter in normal, extended-frame mode at the NMEA 2000 CAN
+	// bitrate before making it available to writers. The serial baud rate above
+	// configures only the host-to-adapter link.
+	settings := usbCANSettingsFrame()
+	c.writeMu.Lock()
+	written, writeErr := port.Write(settings[:])
+	c.writeMu.Unlock()
+	if writeErr != nil {
+		return fmt.Errorf("configure USB-CAN adapter: %w", writeErr)
+	}
+	if written != len(settings) {
+		return fmt.Errorf("configure USB-CAN adapter: wrote %d of %d bytes", written, len(settings))
+	}
+	c.readyOnce.Do(func() { close(c.ready) })
 
 	// Wrap the caller's handler so a nil handler becomes a no-op.
 	c.handler = func(frame can.Frame) {
@@ -253,6 +281,11 @@ func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 
 			// Bits [3:0] of the info byte encode the number of data bytes (0-8).
 			dataLen := buf[1] & 0xf
+			if dataLen > 8 {
+				c.log.Warn("discarding USB-CAN frame with invalid payload length", "length", dataLen)
+				*bufAddr = buf[1:]
+				continue
+			}
 
 			// Total frame length = header (2) + ID bytes (2 or 4) + data bytes + end byte (0x55)
 			frameLen += dataLen + 1
@@ -279,17 +312,17 @@ func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 			// Extract the data payload bytes (located between the ID and the end byte).
 			dataBytes := buf[frameLen-1-dataLen : frameLen-1]
 			if endByte != 0x55 {
-				// If the end byte is wrong, the frame is corrupt. Log it and discard the entire
-				// buffer since we can't reliably determine where the next valid frame starts.
+				// If the end byte is wrong, discard only this candidate start byte.
+				// The outer resynchronizer can then recover a valid frame already
+				// buffered behind the corrupt candidate.
 				c.log.Debug("Data frame with bad end byte",
 					"extended", extendedFrame, "remote", remoteFrame,
 					"frameID", fmt.Sprintf("%X", frameID),
 					"data", fmt.Sprintf("%+v", dataBytes),
 					"endByte", fmt.Sprintf("%X", endByte))
-				*bufAddr = []byte{}
-				return nil
+				*bufAddr = buf[1:]
+				continue
 			}
-
 			// Build a can.Frame struct with the parsed data. The can.Frame.Data field is a
 			// fixed [8]byte array, so we copy only the actual data bytes into it.
 			fData := [8]byte{}
@@ -312,11 +345,31 @@ func (c *usbCANChannel) parseFrames(bufAddr *[]byte) error {
 
 		// ----- Unknown Frame Type -----
 		// If we get here, the byte after 0xAA is neither 0x55 (command) nor has bits[7:6]=0b11 (data).
-		// This is an unrecognized frame type -- log it and discard the buffer.
+		// Discard only this false start so a later valid frame can still be found.
 		c.log.Debug("Unknown frame", "data", fmt.Sprintf("%+v", buf))
-		*bufAddr = []byte{}
-		return nil
+		*bufAddr = buf[1:]
+		continue
 	}
+}
+
+// usbCANSettingsFrame selects 250 kbit/s CAN, 29-bit extended frames, and
+// normal (non-loopback, non-silent) operation. The final byte is the protocol
+// checksum: the low byte of the sum of bytes 2 through 18.
+func usbCANSettingsFrame() [20]byte {
+	settings := [20]byte{
+		0xAA, 0x55, 0x12,
+		0x05,                   // 250 kbit/s CAN bitrate
+		0x02,                   // extended CAN frames
+		0x00, 0x00, 0x00, 0x00, // acceptance code
+		0x00, 0x00, 0x00, 0x00, // acceptance mask
+		0x00, // normal mode
+		0x01, // apply settings
+		0x00, 0x00, 0x00, 0x00,
+	}
+	for _, b := range settings[2:19] {
+		settings[19] += b
+	}
+	return settings
 }
 
 // Close shuts down the USB-CAN channel by closing the underlying serial port.
@@ -337,30 +390,25 @@ func (c *usbCANChannel) Close() error {
 //
 // Outgoing data frame format:
 //   - Byte 0: 0xAA (start-of-frame marker)
-//   - Byte 1: 0xC0 | dataLen (info byte: bits[7:6]=0b11 for data frame, bits[3:0]=length)
-//     If the CAN ID requires more than 16 bits, bit 5 is set for extended frame.
-//   - Bytes 2-3 (standard) or 2-5 (extended): CAN ID in little-endian byte order
+//   - Byte 1: 0xE0 | dataLen (data frame + 29-bit extended-ID flag + length)
+//   - Bytes 2-5: CAN ID in little-endian byte order
 //   - Next N bytes: data payload (N = frame.Length)
 //   - Final byte: 0x55 (end-of-frame marker)
-//
-// Note: This currently defaults to standard frames and switches to extended only if the
-// frame ID exceeds 0xFFFF. For NMEA 2000, which always uses 29-bit extended IDs, the
-// frame ID will always exceed 0xFFFF, so extended mode is used automatically.
 func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
-	// Build the frame header: start byte + info byte + 2-byte little-endian ID (standard).
+	if frame.Length > 8 {
+		return fmt.Errorf("WriteFrame: invalid classical CAN payload length %d", frame.Length)
+	}
+	if frame.ID > 0x1FFFFFFF {
+		return fmt.Errorf("WriteFrame: invalid 29-bit CAN ID 0x%X", frame.ID)
+	}
+	// NMEA 2000 always uses a four-byte, 29-bit extended CAN identifier.
 	buf := []byte{
 		0xaa,
-		0xC0 | frame.Length, // 0xC0 = bits[7:6]=0b11 (data frame), OR'd with data length in bits[3:0]
-		byte(frame.ID),      // CAN ID low byte
-		byte(frame.ID >> 8), // CAN ID high byte (for standard frames)
-	}
-	// Not sure if this is the right way to do it, but for now give it a shot
-	// (we're only sending standard frames over calex, so need to test this on n2k someday if we care...)
-	if frame.ID > 0xffff {
-		// The CAN ID needs more than 16 bits, so switch to extended frame format.
-		// Set bit 5 of the info byte to indicate extended frame, and append the upper 2 ID bytes.
-		buf[1] |= 0x20
-		buf = append(buf, byte(frame.ID>>16), byte(frame.ID>>24))
+		0xE0 | frame.Length,
+		byte(frame.ID),
+		byte(frame.ID >> 8),
+		byte(frame.ID >> 16),
+		byte(frame.ID >> 24),
 	}
 	// Append the data payload bytes and the end-of-frame marker.
 	buf = append(buf, frame.Data[0:frame.Length]...)
@@ -384,6 +432,9 @@ func (c *usbCANChannel) WriteFrame(frame can.Frame) error {
 
 	return nil
 }
+
+// Ready closes once Run has opened the serial adapter for writes.
+func (c *usbCANChannel) Ready() <-chan struct{} { return c.ready }
 
 // NewUSBCAN creates a USB-CAN channel for the given serial port.
 // The channel is not opened, and no handler is registered, until Run() is called.

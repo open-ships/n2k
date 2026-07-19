@@ -32,7 +32,7 @@ func vesselHeadingFrame(t *testing.T) can.Frame {
 func TestReadPipeline_DecodesFrame(t *testing.T) {
 	ctx := context.Background()
 	out := make(chan pgn.Message, 1)
-	p, err := newReadPipeline(ctx, config{logger: testLogger()}, out)
+	p, err := newReadPipeline(ctx, config{logger: testLogger()}, channelEmitter(ctx, out))
 	if err != nil {
 		t.Fatalf("newReadPipeline: %v", err)
 	}
@@ -49,7 +49,7 @@ func TestReadPipeline_DecodesFrame(t *testing.T) {
 
 func TestReadPipeline_FilterCompileErrorIsEager(t *testing.T) {
 	out := make(chan pgn.Message, 1)
-	_, err := newReadPipeline(context.Background(), config{logger: testLogger(), filterExpr: "((("}, out)
+	_, err := newReadPipeline(context.Background(), config{logger: testLogger(), filterExpr: "((("}, channelEmitter(context.Background(), out))
 	if err == nil {
 		t.Fatal("expected filter compile error")
 	}
@@ -58,7 +58,7 @@ func TestReadPipeline_FilterCompileErrorIsEager(t *testing.T) {
 func TestReadPipeline_DropsUnknownByDefault(t *testing.T) {
 	ctx := context.Background()
 	out := make(chan pgn.Message, 1)
-	p, err := newReadPipeline(ctx, config{logger: testLogger()}, out)
+	p, err := newReadPipeline(ctx, config{logger: testLogger()}, channelEmitter(ctx, out))
 	if err != nil {
 		t.Fatalf("newReadPipeline: %v", err)
 	}
@@ -74,7 +74,7 @@ func TestReadPipeline_DropsUnknownByDefault(t *testing.T) {
 func TestReadPipeline_InjectAssembledAppliesPreFilter(t *testing.T) {
 	ctx := context.Background()
 	out := make(chan pgn.Message, 2)
-	p, err := newReadPipeline(ctx, config{logger: testLogger(), filterExpr: "pgn == 127250"}, out)
+	p, err := newReadPipeline(ctx, config{logger: testLogger(), filterExpr: "pgn == 127250"}, channelEmitter(ctx, out))
 	if err != nil {
 		t.Fatalf("newReadPipeline: %v", err)
 	}

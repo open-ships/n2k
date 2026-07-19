@@ -1,6 +1,8 @@
 package pgn
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"reflect"
 	"sort"
@@ -132,7 +134,7 @@ var codecPlanCache sync.Map // reflect.Type -> *codecPlan
 // dispatch can try the next candidate), reads numeric fields with null-sentinel
 // detection, expands repeating field sets into slice fields, and resolves
 // variable-length binary fields via their length-field references.
-func decodeFields(m PGN, payload []uint8) error {
+func decodeFields(m PGN, payload []uint8) (err error) {
 	// Stash the wire payload so a later encodeFields call on this same
 	// struct can reproduce it byte-for-bit in RESERVED/STRING_FIX
 	// positions instead of always applying the default fill. This must
@@ -140,8 +142,21 @@ func decodeFields(m PGN, payload []uint8) error {
 	// this decode's info fields (PGN, source, etc.), which dispatch's
 	// decodePGNCandidates already set on the candidate before calling in.
 	info := m.MessageInfo()
-	info.rawPayload = payload
+	info.rawPayload = append([]uint8(nil), payload...)
+	info.rawCanonical = nil
 	m.SetMessageInfo(info)
+	defer func() {
+		if err != nil {
+			return
+		}
+		canonical, encodeErr := encodeCurrentFields(m)
+		if encodeErr != nil {
+			return
+		}
+		decodedInfo := m.MessageInfo()
+		decodedInfo.rawCanonical = append([]uint8(nil), canonical...)
+		m.SetMessageInfo(decodedInfo)
+	}()
 
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
@@ -193,19 +208,22 @@ func decodeFields(m PGN, payload []uint8) error {
 // lengths, and deriving variable-length binary length fields from the data
 // slice length.
 //
-// When m was produced by decodeFields, its stashed wire payload is returned
-// verbatim, unconditionally -- this is the only supported way to encode a
-// decoded message, and it reproduces bytes the schema has no field for at
-// all (e.g. trailing filler some devices pad single-frame messages with)
-// that no amount of per-field reconstruction could cover. Any field changes
-// made after decode have no effect on the encoded output. A message built
-// from scratch (never decoded) has no stashed payload and always goes
-// through the normal per-field encode below.
+// When m was produced by decodeFields, untouched fields return the original
+// wire payload exactly, including reserved bits and trailing filler. If any
+// decoded field changes, the current field values are encoded instead.
 func encodeFields(m PGN) ([]uint8, error) {
-	if raw := m.MessageInfo().rawPayload; len(raw) > 0 {
-		return append([]uint8(nil), raw...), nil
+	info := m.MessageInfo()
+	current, err := encodeCurrentFields(m)
+	if err != nil {
+		return nil, err
 	}
+	if len(info.rawPayload) > 0 && len(info.rawCanonical) > 0 && bytes.Equal(current, info.rawCanonical) {
+		return append([]uint8(nil), info.rawPayload...), nil
+	}
+	return current, nil
+}
 
+func encodeCurrentFields(m PGN) ([]uint8, error) {
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
 		return nil, err
@@ -579,8 +597,11 @@ func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, 
 		complete := true
 		for f := range group.fields {
 			if err := decodeField(stream, &group.fields[f], element, raws); err != nil {
-				// The payload ended (or turned unreadable) inside this
-				// element: discard the partial element and stop cleanly.
+				if !errors.Is(err, ErrUnexpectedPayloadEnd) {
+					return false, fmt.Errorf("decode repeating group field %d: %w", group.fields[f].order, err)
+				}
+				// Truncated payloads may legitimately end inside a final
+				// repeating element; discard only that partial element.
 				complete = false
 				break
 			}

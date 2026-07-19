@@ -40,7 +40,7 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 	sysCfg.includeUnknown = false
 
 	ch := make(chan pgn.Message, 64)
-	p, err := newReadPipeline(ctx, sysCfg, ch)
+	p, err := newReadPipeline(ctx, sysCfg, channelEmitter(ctx, ch))
 	if err != nil {
 		return nil, err
 	}

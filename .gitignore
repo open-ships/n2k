@@ -22,5 +22,14 @@ dist/
 # Scratch
 scratch/*
 
+# Licensed/certification evidence is local to the manufacturer. The tracked
+# example under conformance/ documents the metadata shape without test output.
+conformance-artifacts/
+
 # Internal docs
 docs/*
+!docs/architecture.md
+!docs/conformance.md
+!docs/adr/
+docs/adr/*
+!docs/adr/*.md

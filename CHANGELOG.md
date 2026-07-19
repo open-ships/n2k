@@ -1,5 +1,37 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — bounded lifecycle, wire fidelity, and hostile-input hardening
+
+- Commanded Address (PGN 65240) is now a first-class address-claim transition:
+  only an exact nine-byte broadcast ISO transport transfer for this node's
+  complete NAME and a claimable address is accepted, followed immediately by
+  a new Address Claim and contention window. Adversarial tests cover malformed,
+  mismatched, fast-packet, addressed, and special-address commands.
+- Added `just conformance-local`, a current standards/evidence guide, and a
+  machine-readable certification evidence template. These make local protocol
+  regression evidence reproducible without misrepresenting it as the licensed
+  NMEA certification run.
+- Live reads now use independent bounded subscriptions; slow consumers receive
+  `ErrReceiveOverflow` without stalling protocol handling. Writes use a bounded
+  queue and report `ErrWriteQueueFull`.
+- Runtime bus failures propagate to readers, writers, `Client.Err`, and
+  `Client.Status`. Scanner, bus, scheduler, and write shutdown paths are
+  cancellation-safe and race-tested.
+- ISO transport and fast-packet assembly validate lengths, packet ranges,
+  session ownership, timeouts, and resource bounds. Missing/out-of-order
+  packets cannot be accepted as a complete transfer.
+- Unmodified decoded messages preserve their original payload exactly; field
+  changes encode current values. String sentinel and fixed-padding edge cases
+  now round-trip consistently.
+- USB-CAN startup configures 250 kbit/s extended-frame operation before the
+  bus becomes writable, and stream parsers resynchronize after corrupt input.
+- NMEA 2000 source-address claiming now uses the valid 0–251 range. New
+  `WithPreferredAddress` lets applications restore a persisted prior address
+  while retaining automatic contention handling.
+- Added health/configuration hooks, adversarial and fuzz tests, cross-platform
+  and race CI, pinned lint/security tools, architecture context, ADRs,
+  contribution guidance, and private security-reporting instructions.
+
 ### Unreleased — panics in a misbehaving Bus no longer crash the process
 
 A `Bus` implementation that panics (rather than returning an error) from `WriteFrame`, `Run`, or a

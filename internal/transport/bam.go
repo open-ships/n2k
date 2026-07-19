@@ -11,8 +11,12 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
 	numFrames := frame.Data[3]
 	pgn := extractPGN(frame.Data)
 
-	if totalSize == 0 || numFrames == 0 {
-		m.logger.Warn("BAM with zero size or frames", "source", source, "pgn", pgn)
+	if err := validateAnnouncement(totalSize, numFrames); err != nil {
+		m.logger.Warn("invalid BAM announcement", "source", source, "pgn", pgn, "error", err)
+		return
+	}
+	if err := validateTransportPGN(pgn); err != nil {
+		m.logger.Warn("invalid BAM PGN", "source", source, "pgn", pgn, "error", err)
 		return
 	}
 
@@ -25,8 +29,7 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	// If there's already a session for this key, clean it up first.
-	m.removeSession(key)
+	m.removeReceiveSessions(source, BroadcastAddr)
 
 	sess := &session{
 		key:       key,

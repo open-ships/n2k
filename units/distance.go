@@ -20,19 +20,15 @@ type DistanceUnit int
 // Conversion math: value_in_new_unit = value_in_old_unit * (newConv / oldConv)
 //
 // Examples:
-//   - 1 Mile -> Meter: 1 * (1609.34 / 1) = 1609.34 meters
-//   - 1 Foot -> Meter: 1 * (1609.34 / 5280) = 0.3048 meters
+//   - 1 Mile -> Meter: 1 * (1609.344 / 1) = 1609.344 meters
+//   - 1 Foot -> Meter: 1 * (1609.344 / 5280) = 0.3048 meters
 //   - 1 Mile -> Fathom: 1 * (880 / 1) = 880 fathoms
-//
-// Note on NauticalMile: The value 1.15078 means "1 mile = 1.15078 in the NauticalMile column".
-// Since 1 NM = 1.15078 statute miles, this means converting 1 mile gives 1.15078 "NM units"
-// in this table's math. The table encodes ratios, not physical equivalences directly.
 var distanceConversions = map[DistanceUnit]float32{
-	Meter:        1609.34, // 1 mile = 1609.34 meters
-	Foot:         5280,    // 1 mile = 5280 feet
-	Mile:         1,       // Reference unit: miles
-	NauticalMile: 1.15078, // Ratio relative to miles (1 NM = 1.15078 statute miles)
-	Fathom:       880,     // 1 mile = 880 fathoms (1 fathom = 6 feet)
+	Meter:        1609.344,          // international statute mile, exact
+	Foot:         5280,              // 1 mile = 5280 feet
+	Mile:         1,                 // Reference unit: miles
+	NauticalMile: 1609.344 / 1852.0, // 1 nautical mile = 1852 meters, exact
+	Fathom:       880,               // 1 mile = 880 fathoms (1 fathom = 6 feet)
 }
 
 // Distance is a type-safe unit structure that represents a distance/length measurement.

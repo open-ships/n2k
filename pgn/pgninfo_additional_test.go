@@ -99,6 +99,13 @@ func TestGetProprietaryInfo_DifferentManufacturer(t *testing.T) {
 	assert.Equal(t, IndustryCodeConst(4), ind)
 }
 
+func TestGetProprietaryInfo_RejectsShortHeader(t *testing.T) {
+	for _, payload := range [][]uint8{nil, {0x01}} {
+		_, _, err := GetProprietaryInfo(payload)
+		assert.Error(t, err)
+	}
+}
+
 // TestGetFieldDescriptor_KnownPGN verifies that field descriptors can be retrieved for
 // a well-known PGN (127250 Vessel Heading). Checks both field 1 (SID, 8-bit) and
 // field 2 (Heading) to ensure the field map is correctly populated by the generated code.

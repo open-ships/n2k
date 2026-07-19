@@ -106,7 +106,7 @@ func TestParseCANIDInverseOfBuild(t *testing.T) {
 	}{
 		{"pdu2 broadcast", 127250, 2, 42, 255, false},
 		{"pdu1 addressed", 59904, 6, 10, 42, true},
-		{"pdu1 broadcast dest", 60928, 6, 253, 255, true},
+		{"pdu1 broadcast dest", 60928, 6, 251, 255, true},
 		{"high pgn", 130824, 7, 1, 255, false},
 	}
 	for _, tc := range cases {

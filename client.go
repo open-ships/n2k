@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"iter"
 	"log/slog"
+	"reflect"
 	"runtime/debug"
 	"sync"
 	"sync/atomic"
@@ -23,6 +24,18 @@ import (
 // defaultClaimTimeout is the maximum time NewClient blocks waiting for address
 // claiming to complete.
 const defaultClaimTimeout = 1500 * time.Millisecond
+
+const defaultWriteQueue = 64
+
+const pgnISOCommandedAddress uint32 = 65240
+
+var (
+	// ErrWriteQueueFull reports that an asynchronous write could not be admitted
+	// without blocking the caller. Callers may retry or apply their own policy.
+	ErrWriteQueueFull = errors.New("n2k: write queue full")
+	// ErrClientClosed reports an operation attempted after Client.Close.
+	ErrClientClosed = errors.New("n2k: client closed")
+)
 
 // Client is a read/write NMEA 2000 bus node. It composes address claiming,
 // transport protocol, encoding, and framing into a single type that can both
@@ -55,26 +68,26 @@ type Client struct {
 	writeCh chan writeJob
 	writeWg sync.WaitGroup
 
-	// writers counts Write calls that have passed the closed check and may
-	// still send on writeCh. Close waits for it to drain before closing the
-	// channel, so a send can never race the close. Registered under mu.
-	writers sync.WaitGroup
-
 	// mu guards writtenFrames, closed state, and sourceAddr.
 	mu            sync.Mutex
 	writtenFrames []can.Frame // captured frames (replay/testing)
 	closed        bool
+	terminalErr   error
+	claimed       bool
+	claimEpoch    uint64
+	txReady       chan struct{}
 
 	bus     Bus
+	busDone chan struct{}
 	claimer *claiming.Claimer
 	addrErr error // set by OnFatalError during address claiming
 
 	// addrReady is closed once address claiming completes (or immediately for replay).
 	addrReady chan struct{}
 
-	// msgCh delivers decoded messages from the internal read loop to the read API.
-	// nil for replay clients.
-	msgCh chan pgn.Message
+	// msgHub delivers decoded live messages without allowing application
+	// backpressure to stall protocol processing. It is nil for replay clients.
+	msgHub *messageHub
 
 	// pipeline is the persistent read pipeline (pre-filter -> assembly ->
 	// decode -> unknown-PGN policy -> post-filter -> msgCh) for the internal
@@ -101,6 +114,7 @@ type Client struct {
 	// bMu guards broadcasters, the active periodic transmissions by PGN.
 	bMu          sync.Mutex
 	broadcasters map[uint32]*broadcaster
+	broadcastSeq atomic.Uint64
 
 	// registry tracks devices observed on the bus, keyed by NAME. Only set
 	// for bus clients.
@@ -112,12 +126,65 @@ type writeJob struct {
 	result *WriteResult
 }
 
+func validateClientConfig(cfg config) error {
+	if cfg.bus != nil && len(cfg.sources) > 0 {
+		return errors.New("n2k: WithBus cannot be combined with source options")
+	}
+	busSources := 0
+	for _, src := range cfg.sources {
+		if _, ok := src.(busBacked); ok {
+			busSources++
+		}
+	}
+	if busSources > 1 || (busSources == 1 && len(cfg.sources) != 1) {
+		return errors.New("n2k: Client requires exactly one writable bus source")
+	}
+	if cfg.bus == nil && busSources == 0 {
+		for _, src := range cfg.sources {
+			if _, ok := src.(*replaySource); !ok {
+				return errors.New("n2k: File and UDP are read-only; use Receive or NewScanner")
+			}
+		}
+	}
+	if cfg.reconnect != nil && busSources == 0 {
+		return errors.New("n2k: WithReconnect requires a TCP source")
+	}
+	if cfg.productInfo != nil {
+		fields := map[string]string{
+			"model ID":         cfg.productInfo.ModelID,
+			"software version": cfg.productInfo.SoftwareVersion,
+			"model version":    cfg.productInfo.ModelVersion,
+			"serial number":    cfg.productInfo.SerialNumber,
+		}
+		for name, value := range fields {
+			if len([]byte(value)) > 32 {
+				return fmt.Errorf("n2k: product %s exceeds 32 bytes", name)
+			}
+		}
+	}
+	if cfg.configInfo != nil {
+		for name, value := range map[string]string{
+			"installation description 1": cfg.configInfo.InstallationDescription1,
+			"installation description 2": cfg.configInfo.InstallationDescription2,
+			"manufacturer information":   cfg.configInfo.ManufacturerInformation,
+		} {
+			if len([]byte(value)) > 253 {
+				return fmt.Errorf("n2k: configuration %s exceeds 253 bytes", name)
+			}
+		}
+	}
+	return nil
+}
+
 // NewClient creates a Client that can read and write NMEA 2000 messages.
 // Provide CAN, USB, TCP, Replay, or WithBus for writable clients; File and UDP
 // are read-only sources for Receive/NewScanner.
 func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	cfg := config{}
 	for _, o := range opts {
+		if o == nil {
+			return nil, errors.New("n2k: nil Option")
+		}
 		o.apply(&cfg)
 	}
 	cfg.applyReconnect()
@@ -126,6 +193,9 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	}
 	if cfg.logger == nil {
 		cfg.logger = slog.Default()
+	}
+	if err := validateClientConfig(cfg); err != nil {
+		return nil, err
 	}
 
 	// Validate the device NAME eagerly so a malformed NAME fails fast.
@@ -150,10 +220,11 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 
 	// Determine device NAME.
 	var deviceName uint64
+	arbitraryAddressCapable := cfg.sourceAddress == nil
 	if cfg.deviceName != nil {
-		deviceName = cfg.deviceName.Pack(true)
+		deviceName = cfg.deviceName.Pack(arbitraryAddressCapable)
 	} else {
-		deviceName = DefaultDeviceName().Pack(true)
+		deviceName = DefaultDeviceName().Pack(arbitraryAddressCapable)
 	}
 
 	// Determine if we have a hardware bus or replay-only.
@@ -171,8 +242,10 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	var sourceAddr uint8
 	if cfg.sourceAddress != nil {
 		sourceAddr = *cfg.sourceAddress
+	} else if cfg.preferredAddress != nil {
+		sourceAddr = *cfg.preferredAddress
 	} else if hasBus {
-		sourceAddr = 253
+		sourceAddr = 251
 	}
 	// else: replay default is 0
 
@@ -184,7 +257,9 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 		sourceAddr: sourceAddr,
 		deviceName: deviceName,
 		addrReady:  make(chan struct{}),
+		busDone:    make(chan struct{}),
 	}
+	c.txReady = c.addrReady
 
 	c.productInfo = defaultProductInfo(UnpackDeviceName(deviceName).IdentityNumber)
 	if cfg.productInfo != nil {
@@ -198,7 +273,11 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	// Start the single writer goroutine for FIFO ordering. It must exist
 	// before initBus so the client's own protocol goroutines (heartbeat,
 	// info responses) can write as soon as the address claim completes.
-	c.writeCh = make(chan writeJob, 64)
+	writeQueue := defaultWriteQueue
+	if cfg.writeQueue != nil {
+		writeQueue = *cfg.writeQueue
+	}
+	c.writeCh = make(chan writeJob, writeQueue)
 	c.writeWg.Add(1)
 	go c.writeLoop()
 
@@ -213,17 +292,20 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 			cancel()
 			c.mu.Lock()
 			c.closed = true
+			c.terminalErr = err
 			c.mu.Unlock()
 			if c.bus != nil {
 				_ = c.bus.Close()
 			}
-			c.writers.Wait()
-			close(c.writeCh)
+			if c.tp != nil {
+				c.tp.Close()
+			}
 			c.writeWg.Wait()
 			return nil, err
 		}
 	} else {
 		// Replay path: capture frames in memory.
+		c.claimed = true
 		close(c.addrReady)
 
 		c.writeFrame = func(f can.Frame) error {
@@ -280,22 +362,34 @@ func (c *Client) initBus(cfg config) error {
 	// through the read pipeline.
 	c.tp = transport.NewManager(transport.ManagerConfig{
 		WriteFrame: c.writeFrame,
+		LocalAddress: func() uint8 {
+			c.mu.Lock()
+			defer c.mu.Unlock()
+			return c.sourceAddr
+		},
 		OnComplete: func(tpPGN uint32, source uint8, destination uint8, data []byte) {
 			priority := uint8(6)
 			info := pgn.MessageInfo{Timestamp: time.Now(), PGN: tpPGN, SourceId: source, Priority: &priority}
 			if destination != framer.BroadcastAddr {
 				info.TargetId = &destination
 			}
-			c.pipeline.InjectAssembled(info, data)
+			if tpPGN == pgnISOCommandedAddress {
+				c.handleCommandedAddressTransfer(destination, data)
+			}
 			c.system.handleAssembled(info, data)
+			c.pipeline.InjectAssembled(info, data)
 		},
 		Logger: c.log,
 	})
 
-	// Set up the persistent read pipeline (pre-filter -> assembly -> decode
-	// -> unknown-PGN policy -> post-filter -> msgCh).
-	c.msgCh = make(chan pgn.Message, 64)
-	p, err := newReadPipeline(c.ctx, cfg, c.msgCh)
+	// Set up the persistent read pipeline (pre-filter -> assembly -> decode ->
+	// unknown-PGN policy -> post-filter -> non-blocking subscription hub).
+	receiveBuffer := defaultReceiveBuffer
+	if cfg.receiveBuffer != nil {
+		receiveBuffer = *cfg.receiveBuffer
+	}
+	c.msgHub = newMessageHub(receiveBuffer)
+	p, err := newReadPipeline(c.ctx, cfg, c.msgHub.publish)
 	if err != nil {
 		return err
 	}
@@ -339,15 +433,17 @@ func (c *Client) initBus(cfg config) error {
 		Name:       c.deviceName,
 		WriteFrame: c.writeFrame,
 		OnAddressChange: func(newAddr uint8) {
-			c.mu.Lock()
-			c.sourceAddr = newAddr
-			c.mu.Unlock()
+			c.handleAddressChange(newAddr)
 		},
 		OnFatalError: func(err error) {
 			c.log.Error("address claiming fatal error", "error", err)
 			c.mu.Lock()
 			c.addrErr = err
+			active := c.claimed
 			c.mu.Unlock()
+			if active {
+				c.fail(fmt.Errorf("n2k: address claiming failed: %w", err))
+			}
 		},
 		Logger: c.log,
 	})
@@ -358,6 +454,21 @@ func (c *Client) initBus(cfg config) error {
 	claimTimeout := defaultClaimTimeout
 	if cfg.claimTimeout != nil {
 		claimTimeout = *cfg.claimTimeout
+	}
+	if readyBus, ok := c.bus.(ReadyBus); ok {
+		readyTimer := time.NewTimer(claimTimeout)
+		select {
+		case <-readyBus.Ready():
+			readyTimer.Stop()
+		case <-c.busDone:
+			readyTimer.Stop()
+			return c.currentTerminalError("n2k: bus stopped before becoming ready")
+		case <-readyTimer.C:
+			return errors.New("n2k: bus did not become ready within claim timeout")
+		case <-c.ctx.Done():
+			readyTimer.Stop()
+			return c.currentTerminalError(c.ctx.Err().Error())
+		}
 	}
 
 	timer := time.NewTimer(claimTimeout)
@@ -391,14 +502,14 @@ func (c *Client) initBus(cfg config) error {
 	case <-timer.C:
 		return errors.New("n2k: gateway unreachable — initial connection not established within claim timeout")
 	case <-c.ctx.Done():
-		return c.ctx.Err()
+		return c.currentTerminalError(c.ctx.Err().Error())
 	}
 
 	// Wait for the remainder of the claim window to allow the network to respond.
 	select {
 	case <-timer.C:
 	case <-c.ctx.Done():
-		return c.ctx.Err()
+		return c.currentTerminalError(c.ctx.Err().Error())
 	}
 
 	// Check if a fatal error occurred during the claim window.
@@ -419,6 +530,7 @@ func (c *Client) initBus(cfg config) error {
 	// Update sourceAddr with the final claimed address.
 	c.mu.Lock()
 	c.sourceAddr = addr
+	c.claimed = true
 	c.mu.Unlock()
 
 	close(c.addrReady)
@@ -476,13 +588,13 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 		c.tp.HandleFrame(frame)
 	}
 
-	// Decode for the read API using the persistent pipeline (pre-filter moved
-	// inside HandleFrame).
-	c.pipeline.HandleFrame(frame)
-
 	// Decode protocol PGNs for the client's own use, independent of the user
 	// filter.
 	c.system.handleFrame(frame, info.PGN)
+
+	// Decode for the read API after all synchronous protocol routing. User
+	// delivery itself is non-blocking through msgHub.
+	c.pipeline.HandleFrame(frame)
 }
 
 // busReadLoop runs the bus and closes the message channel when done.
@@ -499,20 +611,112 @@ func (c *Client) recoverGoroutine(name string) {
 }
 
 func (c *Client) busReadLoop() {
-	defer close(c.msgCh)
-	defer c.recoverGoroutine("bus read loop")
+	defer close(c.busDone)
+	defer func() {
+		if r := recover(); r != nil {
+			err := fmt.Errorf("n2k: panic in bus read loop: %v", r)
+			c.log.Error("recovered panic in bus read loop", "panic", r, "stack", string(debug.Stack()))
+			c.fail(err)
+		}
+	}()
 
 	// Handling an inbound frame can write synchronously on this goroutine — the
 	// claimer defends its address by re-broadcasting a claim in response to a
 	// contender or ISO request — so a panicking Bus surfaces here, not only on
 	// the write loop. Recover per frame so one bad frame is logged and skipped
 	// rather than tearing down the read loop (and with it the whole process).
+	var handleMu sync.Mutex
 	handle := func(f can.Frame) {
+		handleMu.Lock()
+		defer handleMu.Unlock()
 		defer c.recoverGoroutine("bus frame handler")
 		c.handleBusFrame(f)
 	}
-	if err := c.bus.Run(c.ctx, handle); err != nil && c.ctx.Err() == nil {
+	err := c.bus.Run(c.ctx, handle)
+	if c.ctx.Err() == nil {
+		if err == nil {
+			err = errors.New("bus stopped unexpectedly")
+		}
+		wrapped := fmt.Errorf("n2k: bus read loop: %w", err)
 		c.log.Error("bus read loop error", "error", err)
+		c.fail(wrapped)
+		return
+	}
+	if c.msgHub != nil {
+		c.msgHub.close(nil)
+	}
+}
+
+func (c *Client) currentTerminalError(fallback string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.terminalErr != nil {
+		return c.terminalErr
+	}
+	return errors.New(fallback)
+}
+
+func (c *Client) fail(err error) {
+	if err == nil {
+		return
+	}
+	c.mu.Lock()
+	if c.terminalErr == nil {
+		c.terminalErr = err
+	}
+	c.mu.Unlock()
+	if c.msgHub != nil {
+		c.msgHub.close(err)
+	}
+	c.cancel()
+}
+
+// handleAddressChange moves application writes behind a fresh contention
+// window whenever an active auto-claiming client changes address.
+func (c *Client) handleAddressChange(newAddr uint8) {
+	c.mu.Lock()
+	c.sourceAddr = newAddr
+	if !c.claimed {
+		c.mu.Unlock()
+		return
+	}
+	if newAddr == 254 {
+		c.mu.Unlock()
+		c.fail(errors.New("n2k: address claiming failed: no address available"))
+		return
+	}
+	c.claimEpoch++
+	epoch := c.claimEpoch
+	ready := make(chan struct{})
+	c.txReady = ready
+	c.mu.Unlock()
+
+	time.AfterFunc(250*time.Millisecond, func() {
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if !c.closed && c.claimEpoch == epoch && c.txReady == ready {
+			close(ready)
+		}
+	})
+}
+
+// handleCommandedAddressTransfer validates the transfer-level requirements
+// that are lost after generic PGN decoding, then delegates the address state
+// transition to the claiming module. PGN 65240 is acted on only when it arrives
+// as a broadcast ISO transport transfer with its exact nine-byte payload.
+func (c *Client) handleCommandedAddressTransfer(destination uint8, data []byte) {
+	if destination != framer.BroadcastAddr || len(data) != 9 {
+		return
+	}
+
+	commandedName := binary.LittleEndian.Uint64(data[:8])
+	changed, err := c.claimer.HandleCommandedAddress(commandedName, data[8])
+	if err != nil {
+		c.fail(fmt.Errorf("n2k: commanded address failed: %w", err))
+		return
+	}
+	if changed {
+		c.log.Info("address changed by PGN 65240", "address", data[8])
 	}
 }
 
@@ -526,24 +730,41 @@ func (c *Client) Write(msg pgn.Message) *WriteResult {
 	c.mu.Lock()
 	if c.closed {
 		c.mu.Unlock()
-		wr.complete(errors.New("n2k: client closed"))
+		wr.complete(ErrClientClosed)
 		return wr
 	}
-	// Register as an in-flight sender while still holding mu, so Close (which
-	// sets closed under the same lock) cannot start closing writeCh until this
-	// send has completed.
-	c.writers.Add(1)
+	if c.terminalErr != nil {
+		err := c.terminalErr
+		c.mu.Unlock()
+		wr.complete(err)
+		return wr
+	}
+	select {
+	case c.writeCh <- writeJob{msg: msg, result: wr}:
+	default:
+		wr.complete(ErrWriteQueueFull)
+	}
 	c.mu.Unlock()
-
-	c.writeCh <- writeJob{msg: msg, result: wr}
-	c.writers.Done()
 	return wr
 }
 
 func (c *Client) writeLoop() {
 	defer c.writeWg.Done()
-	for job := range c.writeCh {
-		c.runWriteJob(job)
+	for {
+		select {
+		case job := <-c.writeCh:
+			c.runWriteJob(job)
+		case <-c.ctx.Done():
+			err := c.currentTerminalError(c.ctx.Err().Error())
+			for {
+				select {
+				case job := <-c.writeCh:
+					job.result.complete(err)
+				default:
+					return
+				}
+			}
+		}
 	}
 }
 
@@ -564,11 +785,36 @@ func (c *Client) runWriteJob(job writeJob) {
 
 // doWrite performs the synchronous work of encoding and framing a PGN message.
 func (c *Client) doWrite(msg pgn.Message) error {
+	if msg == nil {
+		return errors.New("n2k: cannot write a nil message")
+	}
+	v := reflect.ValueOf(msg)
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return fmt.Errorf("n2k: cannot write a nil %T", msg)
+	}
+
 	// Wait for address readiness before sending.
+	c.mu.Lock()
+	ready := c.txReady
+	terminalErr := c.terminalErr
+	c.mu.Unlock()
+	if terminalErr != nil {
+		return terminalErr
+	}
 	select {
-	case <-c.addrReady:
+	case <-ready:
 	case <-c.ctx.Done():
-		return c.ctx.Err()
+		return c.currentTerminalError(c.ctx.Err().Error())
+	}
+	c.mu.Lock()
+	closed := c.closed
+	terminalErr = c.terminalErr
+	c.mu.Unlock()
+	if terminalErr != nil {
+		return terminalErr
+	}
+	if closed {
+		return ErrClientClosed
 	}
 
 	pgnNum := msg.PGNNumber()
@@ -577,6 +823,16 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	pgnMsg, ok := msg.(pgn.PGN)
 	if !ok {
 		return fmt.Errorf("n2k: %T does not implement pgn.PGN", msg)
+	}
+	if pgnNum > 0x3FFFF {
+		return fmt.Errorf("n2k: PGN %d exceeds the 18-bit range", pgnNum)
+	}
+	if pgnNum&0x20000 != 0 {
+		return fmt.Errorf("n2k: PGN %d sets the reserved CAN-ID bit", pgnNum)
+	}
+	pduFormat := uint8((pgnNum >> 8) & 0xFF)
+	if pduFormat < 240 && pgnNum&0xFF != 0 {
+		return fmt.Errorf("n2k: PDU1 PGN %d must have a zero group-extension byte", pgnNum)
 	}
 
 	payload, err := pgn.EncodeMessage(msg)
@@ -590,10 +846,16 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	if info.Priority != nil {
 		priority = *info.Priority
 	}
+	if priority > 7 {
+		return fmt.Errorf("n2k: priority %d is outside 0-7", priority)
+	}
 
 	var destination uint8 = 255
 	if info.TargetId != nil {
 		destination = *info.TargetId
+	}
+	if info.TargetId != nil && destination != framer.BroadcastAddr && pduFormat >= 240 {
+		return fmt.Errorf("n2k: PDU2 PGN %d cannot target address %d", pgnNum, destination)
 	}
 
 	// Read sourceAddr under lock.
@@ -631,6 +893,9 @@ func (c *Client) doWrite(msg pgn.Message) error {
 		return nil
 	}
 
+	if destination != framer.BroadcastAddr {
+		return c.tp.SendRTSCTS(pgnNum, srcAddr, destination, payload)
+	}
 	return c.tp.SendBAM(pgnNum, srcAddr, payload)
 }
 
@@ -638,17 +903,23 @@ func (c *Client) doWrite(msg pgn.Message) error {
 // it reads from the internal message channel; for replay clients it builds a
 // fresh Scanner over the client's config so each call gets a full replay.
 func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
-	if c.msgCh != nil {
+	if c.msgHub != nil {
 		return func(yield func(pgn.Message, error) bool) {
-			for msg := range c.msgCh {
+			sub := c.msgHub.subscribe()
+			defer sub.unsubscribe()
+			for msg := range sub.ch {
 				if !yield(msg, nil) {
 					return
 				}
+			}
+			if err := sub.terminalError(); err != nil {
+				yield(nil, err)
 			}
 		}
 	}
 	return func(yield func(pgn.Message, error) bool) {
 		s := c.newReplayScanner()
+		defer func() { _ = s.Close() }()
 		for s.Next() {
 			if !yield(s.Message(), nil) {
 				return
@@ -664,17 +935,8 @@ func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
 // it reads from the internal message channel; for replay clients it builds a
 // fresh Scanner over the client's config.
 func (c *Client) Scanner() *Scanner {
-	if c.msgCh != nil {
-		s := &Scanner{
-			ctx: c.ctx,
-			cfg: c.cfg,
-			ch:  c.msgCh,
-		}
-		// ch is already live (fed by the client's own read pipeline), so
-		// suppress Next()'s lazy-start goroutine: firing once.Do here means
-		// the real closure passed to Next()'s once.Do never runs.
-		s.once.Do(func() {})
-		return s
+	if c.msgHub != nil {
+		return &Scanner{ctx: c.ctx, cfg: c.cfg, sub: c.msgHub.subscribe()}
 	}
 	return c.newReplayScanner()
 }
@@ -682,7 +944,12 @@ func (c *Client) Scanner() *Scanner {
 // newReplayScanner builds a Scanner over the client's already-parsed config,
 // so replay clients share the exact pipeline code without re-parsing options.
 func (c *Client) newReplayScanner() *Scanner {
-	return &Scanner{ctx: c.ctx, cfg: c.cfg, ch: make(chan pgn.Message, 64)}
+	ctx, cancel := context.WithCancel(c.ctx)
+	receiveBuffer := defaultReceiveBuffer
+	if c.cfg.receiveBuffer != nil {
+		receiveBuffer = *c.cfg.receiveBuffer
+	}
+	return &Scanner{ctx: ctx, cancel: cancel, cfg: c.cfg, ch: make(chan pgn.Message, receiveBuffer)}
 }
 
 // WrittenFrames returns a copy of all CAN frames written through this client.
@@ -706,31 +973,25 @@ func (c *Client) Close() error {
 	c.closed = true
 	c.mu.Unlock()
 
-	// Stop protocol writers before closing the write channel so their final
-	// writes cannot race the shutdown.
-	if c.heartbeat != nil {
-		c.heartbeat.stop()
-	}
-	c.stopBroadcasters()
-
-	// Wait for any Write that already passed the closed check to finish
-	// sending, then close the channel — this ordering makes a send-on-closed
-	// channel panic impossible.
-	c.writers.Wait()
-	close(c.writeCh)
-
-	// Cancel the context and close the bus BEFORE waiting on the write loop.
-	// With auto-reconnect a write can be parked inside the bus waiting for the
-	// connection to come back; closing the bus releases it so writeLoop drains
-	// and exits instead of deadlocking this wait.
+	// Cancel first and close the bus so an active hardware write is released.
+	// Write never blocks on queue admission and the write channel is not closed,
+	// so concurrent callers cannot race a send-on-closed-channel panic.
 	c.cancel()
 	var busErr error
 	if c.bus != nil {
 		busErr = c.bus.Close()
 	}
-	c.writeWg.Wait()
+
+	if c.heartbeat != nil {
+		c.heartbeat.stop()
+	}
+	c.stopBroadcasters()
 	if c.tp != nil {
 		c.tp.Close()
+	}
+	c.writeWg.Wait()
+	if c.msgHub != nil {
+		c.msgHub.close(nil)
 	}
 	return busErr
 }

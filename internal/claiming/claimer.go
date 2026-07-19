@@ -28,16 +28,18 @@ const globalDestination = 255
 const cannotClaimAddress = 254
 
 // minAddress is the lowest valid claimable address on an NMEA 2000 network.
-const minAddress = 1
+const minAddress = 0
 
 // maxAddress is the highest valid claimable address on an NMEA 2000 network.
-const maxAddress = 253
+const maxAddress = 251
+
+const claimableAddressCount = int(maxAddress-minAddress) + 1
 
 // Mode controls how the claimer responds to address contention.
 type Mode int
 
 const (
-	// ModeAuto starts at the configured address (default 253) and works
+	// ModeAuto starts at the configured address (default 251) and works
 	// downward on contention until all addresses are exhausted, at which
 	// point it falls back to address 254 (cannot claim).
 	ModeAuto Mode = iota
@@ -53,7 +55,7 @@ type Config struct {
 	Mode Mode
 
 	// Address is the starting address in auto mode or the fixed address in
-	// explicit mode. Valid range is 1-253.
+	// explicit mode. Valid range is 0-251.
 	Address uint8
 
 	// Name is our device's 64-bit ISO 11783 NAME used for arbitration.
@@ -63,8 +65,9 @@ type Config struct {
 	// WriteFrame sends a CAN frame onto the bus.
 	WriteFrame func(can.Frame) error
 
-	// OnAddressChange is called when the claimed address changes (auto mode).
-	// It may be nil if the caller does not need notifications.
+	// OnAddressChange is called when the claimed address changes, either while
+	// resolving contention or after a matching Commanded Address transfer. It
+	// may be nil if the caller does not need notifications.
 	OnAddressChange func(newAddr uint8)
 
 	// OnFatalError is called when an unrecoverable error occurs, such as
@@ -175,8 +178,41 @@ func (c *Claimer) HandleISORequest() {
 	}
 }
 
+// HandleCommandedAddress applies an ISO Commanded Address (PGN 65240) to this
+// node. The caller is responsible for accepting the command only from a fully
+// reassembled, nine-byte broadcast transport transfer.
+//
+// A command is ignored unless its complete 64-bit NAME matches this node and
+// the requested address is claimable (0-251). A real change resets automatic
+// contention history, notifies the owner, and immediately broadcasts a fresh
+// Address Claim from the commanded address. The returned bool reports whether
+// a change was applied.
+func (c *Claimer) HandleCommandedAddress(commandedName uint64, newAddress uint8) (bool, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if commandedName != c.cfg.Name || newAddress > maxAddress || newAddress == c.address {
+		return false, nil
+	}
+
+	oldAddress := c.address
+	c.address = newAddress
+	c.tried = map[uint8]bool{newAddress: true}
+	c.cfg.Logger.Info("applying commanded address",
+		"oldAddress", oldAddress,
+		"newAddress", newAddress,
+	)
+	if c.cfg.OnAddressChange != nil {
+		c.cfg.OnAddressChange(newAddress)
+	}
+	if err := c.sendClaim(); err != nil {
+		return true, fmt.Errorf("claiming commanded address %d: %w", newAddress, err)
+	}
+	return true, nil
+}
+
 // Address returns the currently claimed address. This value may change over
-// time in auto mode as contention is resolved.
+// time as contention is resolved or a matching Commanded Address is applied.
 func (c *Claimer) Address() uint8 {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -193,21 +229,24 @@ func (c *Claimer) sendClaim() error {
 }
 
 // tryNextAddress searches downward from the current address for an untried
-// address. If all addresses (1-253) have been tried, it falls back to 254.
+// address. If all addresses (0-251) have been tried, it falls back to 254.
 // The caller must hold c.mu.
 func (c *Claimer) tryNextAddress() {
 	oldAddr := c.address
 
-	// Scan downward from current address-1, wrapping around from minAddress
-	// back to maxAddress, covering all 253 valid addresses.
-	for candidate := oldAddr - 1; ; candidate-- {
-		if candidate < minAddress {
-			candidate = maxAddress
+	// Scan downward and wrap without uint8 underflow. The final iteration
+	// revisits oldAddr, which is already marked tried, so every one of the 252
+	// valid NMEA 2000 source addresses is considered exactly once.
+	start := int(oldAddr)
+	if oldAddr > maxAddress {
+		start = int(maxAddress) + 1
+	}
+	for offset := 1; offset <= claimableAddressCount; offset++ {
+		candidateInt := start - offset
+		for candidateInt < int(minAddress) {
+			candidateInt += claimableAddressCount
 		}
-		if candidate == oldAddr {
-			// We have wrapped all the way around — no addresses available.
-			break
-		}
+		candidate := uint8(candidateInt)
 		if !c.tried[candidate] {
 			c.address = candidate
 			c.tried[candidate] = true

@@ -1,12 +1,17 @@
 name: Test
 
 on:
+  pull_request:
   push:
-    branches: ["**"]
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -22,7 +27,34 @@ jobs:
         uses: extractions/setup-just@v3
 
       - name: PGN sync check
+        if: runner.os == 'Linux'
         run: just pgn-sync-check
+
+      - name: Local conformance evidence
+        if: runner.os == 'Linux'
+        run: just conformance-local
 
       - name: Test
         run: go test ./...
+
+  race-and-fuzz:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.x
+          check-latest: true
+
+      - name: Set up just
+        uses: extractions/setup-just@v3
+
+      - name: Race detector
+        run: just test-race
+
+      - name: Fuzz smoke tests
+        run: just fuzz-smoke

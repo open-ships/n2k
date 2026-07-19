@@ -89,11 +89,11 @@ func TestBroadcast_CloseStopsAll(t *testing.T) {
 func TestBroadcast_SamePGNReplacesEarlier(t *testing.T) {
 	c, _, _ := newCitizenClient(t)
 
-	stop1 := c.Broadcast(time.Hour, headingProvider)
+	stop1 := c.BroadcastPGN(127250, time.Hour, headingProvider)
 	b1 := c.broadcasterFor(127250)
 	require.NotNil(t, b1)
 
-	stop2 := c.Broadcast(time.Hour, headingProvider)
+	stop2 := c.BroadcastPGN(127250, time.Hour, headingProvider)
 	b2 := c.broadcasterFor(127250)
 	require.NotNil(t, b2)
 	assert.NotSame(t, b1, b2, "re-registering a PGN should install a new broadcaster")
@@ -102,4 +102,60 @@ func TestBroadcast_SamePGNReplacesEarlier(t *testing.T) {
 	assert.NotNil(t, c.broadcasterFor(127250))
 	stop2()
 	assert.Nil(t, c.broadcasterFor(127250))
+}
+
+func TestBroadcast_BlockingProviderDoesNotBlockStopOrClose(t *testing.T) {
+	c, _, _ := newCitizenClient(t)
+	blocked := make(chan struct{})
+	stop := c.BroadcastPGN(127250, time.Hour, func() pgn.Message {
+		<-blocked
+		return headingProvider()
+	})
+
+	require.Eventually(t, func() bool {
+		return c.broadcasterFor(127250) != nil
+	}, time.Second, time.Millisecond)
+	stopDone := make(chan struct{})
+	go func() { stop(); close(stopDone) }()
+	select {
+	case <-stopDone:
+	case <-time.After(time.Second):
+		t.Fatal("stop blocked on provider")
+	}
+	closeDone := make(chan error, 1)
+	go func() { closeDone <- c.Close() }()
+	select {
+	case err := <-closeDone:
+		require.NoError(t, err)
+	case <-time.After(time.Second):
+		t.Fatal("Close blocked on provider")
+	}
+	close(blocked)
+}
+
+func TestBroadcast_ProviderPanicIsContained(t *testing.T) {
+	c, _, _ := newCitizenClient(t)
+	var calls atomic.Int32
+	stop := c.BroadcastPGN(127250, 10*time.Millisecond, func() pgn.Message {
+		if calls.Add(1) == 1 {
+			panic("bad sensor callback")
+		}
+		return headingProvider()
+	})
+	defer stop()
+
+	require.Eventually(t, func() bool { return calls.Load() >= 2 }, time.Second, time.Millisecond)
+}
+
+func TestBroadcastPGN_SkipsMismatchedProviderMessage(t *testing.T) {
+	c, mb, _ := newCitizenClient(t)
+	var calls atomic.Int32
+	stop := c.BroadcastPGN(127250, 10*time.Millisecond, func() pgn.Message {
+		calls.Add(1)
+		return &pgn.WaterDepth{}
+	})
+	defer stop()
+
+	require.Eventually(t, func() bool { return calls.Load() >= 2 }, time.Second, time.Millisecond)
+	assert.Empty(t, framesWithPGN(mb.getWritten(), 128267), "a provider must not silently change its declared PGN")
 }

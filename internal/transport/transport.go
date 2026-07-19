@@ -15,6 +15,11 @@ type ManagerConfig struct {
 	// WriteFrame sends a CAN frame onto the bus.
 	WriteFrame func(can.Frame) error
 
+	// LocalAddress returns the client's currently claimed address. When set,
+	// addressed TP traffic for other nodes is ignored. A function is used
+	// because address claiming may move the client at runtime.
+	LocalAddress func() uint8
+
 	// OnComplete is called when a multi-frame message has been fully reassembled.
 	// It receives the transported PGN, source address, destination address, and
 	// the assembled payload.
@@ -66,11 +71,11 @@ type session struct {
 	timer Timer
 
 	// Transmit-side fields for RTS/CTS
-	txPayload []byte        // full payload to transmit
-	txOffset  int           // current offset into txPayload
-	txSeqNum  uint8         // next DT sequence number to send (1-based)
-	txDone    chan struct{} // closed when transmit completes
-	txErr     error         // set if transmit fails
+	txPayload   []byte        // full payload to transmit
+	txSent      [256]bool     // successfully sent DT sequence numbers
+	txSentCount int           // number of unique DT packets sent
+	txDone      chan struct{} // closed when transmit completes
+	txErr       error         // set if transmit fails
 }
 
 // Manager orchestrates ISO 11783 transport protocol sessions, handling both
@@ -87,6 +92,11 @@ type Manager struct {
 
 // NewManager creates a new transport protocol Manager.
 func NewManager(cfg ManagerConfig) *Manager {
+	if cfg.WriteFrame == nil {
+		cfg.WriteFrame = func(can.Frame) error {
+			return fmt.Errorf("transport WriteFrame is nil")
+		}
+	}
 	logger := cfg.Logger
 	if logger == nil {
 		logger = slog.Default()
@@ -122,21 +132,36 @@ func (m *Manager) HandleFrame(frame can.Frame) {
 
 // handleCM dispatches a Connection Management frame based on the control byte.
 func (m *Manager) handleCM(frame can.Frame, source uint8, destination uint8) {
-	if frame.Length < 8 {
+	if frame.Length != 8 {
 		return
 	}
 	controlByte := frame.Data[0]
 
 	switch controlByte {
 	case ControlBAM:
+		if destination != BroadcastAddr {
+			return
+		}
 		m.handleBAMReceive(frame, source)
 	case ControlRTS:
+		if !m.isLocalDestination(destination) {
+			return
+		}
 		m.handleRTSReceive(frame, source, destination)
 	case ControlCTS:
+		if !m.isLocalDestination(destination) {
+			return
+		}
 		m.handleCTSReceive(frame, source, destination)
 	case ControlEndOfMsgAck:
+		if !m.isLocalDestination(destination) {
+			return
+		}
 		m.handleEndOfMsgAckReceive(frame, source, destination)
 	case ControlAbort:
+		if !m.isLocalDestination(destination) {
+			return
+		}
 		m.handleAbortReceive(frame, source, destination)
 	default:
 		m.logger.Warn("unknown TP.CM control byte", "controlByte", controlByte, "source", source)
@@ -145,7 +170,10 @@ func (m *Manager) handleCM(frame can.Frame, source uint8, destination uint8) {
 
 // handleDT delivers a Data Transfer frame to the matching active session.
 func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
-	if frame.Length < 8 {
+	if frame.Length != 8 {
+		return
+	}
+	if destination != BroadcastAddr && !m.isLocalDestination(destination) {
 		return
 	}
 
@@ -172,6 +200,12 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	// Copy data bytes into the reassembly buffer.
 	offset := int(seqNum-1) * MaxDTDataBytes
 	remaining := int(sess.totalSize) - offset
+	if remaining <= 0 || offset < 0 || offset >= len(sess.data) {
+		m.logger.Warn("DT frame exceeds announced payload", "sequence", seqNum, "size", sess.totalSize)
+		m.removeSession(sess.key)
+		m.mu.Unlock()
+		return
+	}
 	n := MaxDTDataBytes
 	if remaining < n {
 		n = remaining
@@ -185,6 +219,26 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	}
 
 	if sess.received < int(sess.numFrames) {
+		// Addressed transfers are flow-controlled in blocks. Once the block
+		// granted by the previous CTS has arrived, grant the next one. BAM has
+		// no CTS exchanges and continues directly to the timeout re-arm below.
+		var nextCTS *can.Frame
+		if sess.key.destination != BroadcastAddr && sess.received%int(sess.maxPerCTS) == 0 {
+			remainingFrames := int(sess.numFrames) - sess.received
+			requested := int(sess.maxPerCTS)
+			if remainingFrames < requested {
+				requested = remainingFrames
+			}
+			f := buildCTSFrame(
+				uint8(requested),
+				uint8(sess.received+1),
+				sess.key.pgn,
+				sess.key.destination,
+				sess.key.source,
+			)
+			nextCTS = &f
+		}
+
 		// More frames expected; set a DT timeout.
 		sess.timer = m.afterFunc(DTTimeout, func() {
 			m.mu.Lock()
@@ -193,7 +247,16 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 				"received", sess.received, "expected", sess.numFrames)
 			m.removeSession(sess.key)
 		})
+		key := sess.key
 		m.mu.Unlock()
+		if nextCTS != nil {
+			if err := m.config.WriteFrame(*nextCTS); err != nil {
+				m.mu.Lock()
+				m.removeSession(key)
+				m.mu.Unlock()
+				m.logger.Warn("failed to send next CTS", "error", err, "pgn", key.pgn)
+			}
+		}
 		return
 	}
 
@@ -230,7 +293,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 func (m *Manager) findSession(source uint8, destination uint8) *session {
 	// Try each PGN — we iterate sessions since PGN is part of the key.
 	for k, s := range m.sessions {
-		if k.source == source && k.destination == destination {
+		if k.source == source && k.destination == destination && s.state == stateReceivingDT {
 			return s
 		}
 	}
@@ -243,6 +306,58 @@ func (m *Manager) findSession(source uint8, destination uint8) *session {
 		}
 	}
 	return nil
+}
+
+func (m *Manager) isLocalDestination(destination uint8) bool {
+	return m.config.LocalAddress == nil || destination == m.config.LocalAddress()
+}
+
+func validateAnnouncement(totalSize uint16, numFrames uint8) error {
+	if totalSize == 0 || numFrames == 0 {
+		return fmt.Errorf("zero size or frame count")
+	}
+	if totalSize > MaxPayloadBytes {
+		return fmt.Errorf("payload size %d exceeds maximum %d", totalSize, MaxPayloadBytes)
+	}
+	want := (int(totalSize) + MaxDTDataBytes - 1) / MaxDTDataBytes
+	if int(numFrames) != want {
+		return fmt.Errorf("frame count %d does not match size %d (want %d)", numFrames, totalSize, want)
+	}
+	return nil
+}
+
+func validatePayload(payload []byte) error {
+	if len(payload) == 0 {
+		return fmt.Errorf("empty transport payload")
+	}
+	if len(payload) > MaxPayloadBytes {
+		return fmt.Errorf("payload size %d exceeds maximum %d", len(payload), MaxPayloadBytes)
+	}
+	return nil
+}
+
+func validateTransportPGN(pgn uint32) error {
+	if pgn > MaxPGN {
+		return fmt.Errorf("PGN %d exceeds the 18-bit range", pgn)
+	}
+	if pgn&0x20000 != 0 {
+		return fmt.Errorf("PGN %d sets the reserved CAN-ID bit", pgn)
+	}
+	if ((pgn>>8)&0xFF) < 240 && pgn&0xFF != 0 {
+		return fmt.Errorf("PDU1 PGN %d must have a zero group-extension byte", pgn)
+	}
+	return nil
+}
+
+// removeReceiveSessions removes the one active receive transfer for a source
+// and destination. DT packets carry no PGN, so allowing multiple such
+// sessions would make packet ownership ambiguous.
+func (m *Manager) removeReceiveSessions(source, destination uint8) {
+	for key, sess := range m.sessions {
+		if key.source == source && key.destination == destination && sess.state == stateReceivingDT {
+			m.removeSession(key)
+		}
+	}
 }
 
 // removeSession stops timers and deletes a session from the map.
@@ -259,6 +374,19 @@ func (m *Manager) removeSession(key sessionKey) {
 // This blocks the caller for the duration of the transmission due to the required
 // inter-frame delays.
 func (m *Manager) SendBAM(pgn uint32, source uint8, payload []byte) error {
+	if err := validateTransportPGN(pgn); err != nil {
+		return fmt.Errorf("send BAM: %w", err)
+	}
+	if err := validatePayload(payload); err != nil {
+		return fmt.Errorf("send BAM: %w", err)
+	}
+	m.mu.Lock()
+	closed := m.closed
+	m.mu.Unlock()
+	if closed {
+		return fmt.Errorf("send BAM: manager closed")
+	}
+	payload = append([]byte(nil), payload...)
 	totalSize := uint16(len(payload))
 	numFrames := uint8((len(payload) + MaxDTDataBytes - 1) / MaxDTDataBytes)
 
@@ -274,6 +402,12 @@ func (m *Manager) SendBAM(pgn uint32, source uint8, payload []byte) error {
 		if i > 0 {
 			m.sleep(BAMInterFrameDelay)
 		}
+		m.mu.Lock()
+		closed := m.closed
+		m.mu.Unlock()
+		if closed {
+			return fmt.Errorf("send BAM: manager closed")
+		}
 		if err := m.config.WriteFrame(f); err != nil {
 			return fmt.Errorf("send DT frame %d: %w", i+1, err)
 		}
@@ -285,6 +419,15 @@ func (m *Manager) SendBAM(pgn uint32, source uint8, payload []byte) error {
 // SendRTSCTS transmits a multi-frame message using RTS/CTS flow control.
 // This blocks until the transfer completes or a timeout/error occurs.
 func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payload []byte) error {
+	if destination == BroadcastAddr {
+		return fmt.Errorf("send RTS/CTS: broadcast destination is invalid")
+	}
+	if err := validatePayload(payload); err != nil {
+		return fmt.Errorf("send RTS/CTS: %w", err)
+	}
+	if err := validateTransportPGN(pgn); err != nil {
+		return fmt.Errorf("send RTS/CTS: %w", err)
+	}
 	totalSize := uint16(len(payload))
 	numFrames := uint8((len(payload) + MaxDTDataBytes - 1) / MaxDTDataBytes)
 
@@ -295,9 +438,7 @@ func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payloa
 		state:     stateWaitingForCTS,
 		totalSize: totalSize,
 		numFrames: numFrames,
-		txPayload: payload,
-		txOffset:  0,
-		txSeqNum:  1,
+		txPayload: append([]byte(nil), payload...),
 		txDone:    make(chan struct{}),
 	}
 
@@ -305,6 +446,12 @@ func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payloa
 	if m.closed {
 		m.mu.Unlock()
 		return fmt.Errorf("manager closed")
+	}
+	for activeKey, active := range m.sessions {
+		if active.txDone != nil && activeKey.source == source && activeKey.destination == destination {
+			m.mu.Unlock()
+			return fmt.Errorf("transport session already active for source %d destination %d", source, destination)
+		}
 	}
 	m.sessions[key] = sess
 
@@ -355,8 +502,39 @@ func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination ui
 
 	m.mu.Lock()
 	sess, ok := m.sessions[key]
-	if !ok {
+	if !ok || sess.state != stateWaitingForCTS {
 		m.mu.Unlock()
+		return
+	}
+	if numFrames == 0 {
+		// A zero-packet CTS asks the transmitter to keep waiting. Re-arm the
+		// timeout so a peer can apply backpressure without corrupting state.
+		if sess.timer != nil {
+			sess.timer.Stop()
+		}
+		sess.timer = m.afterFunc(CTSTimeout, func() {
+			m.mu.Lock()
+			defer m.mu.Unlock()
+			if _, active := m.sessions[key]; active {
+				sess.txErr = fmt.Errorf("CTS timeout while receiver paused transfer")
+				m.removeSession(key)
+				close(sess.txDone)
+			}
+		})
+		m.mu.Unlock()
+		return
+	}
+	lastSeqNum := int(nextSeqNum) + int(numFrames) - 1
+	if nextSeqNum == 0 || int(nextSeqNum) > int(sess.numFrames) || lastSeqNum > int(sess.numFrames) {
+		sess.txErr = fmt.Errorf(
+			"invalid CTS range: first=%d count=%d total=%d",
+			nextSeqNum,
+			numFrames,
+			sess.numFrames,
+		)
+		m.removeSession(key)
+		m.mu.Unlock()
+		close(sess.txDone)
 		return
 	}
 
@@ -366,7 +544,6 @@ func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination ui
 	}
 
 	sess.state = stateSendingDT
-	sess.txSeqNum = nextSeqNum
 	payload := sess.txPayload // immutable after session creation; safe to read unlocked
 	m.mu.Unlock()
 
@@ -387,6 +564,13 @@ func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination ui
 			}
 			return
 		}
+		m.mu.Lock()
+		seq := dtFrame.Data[0]
+		if !sess.txSent[seq] {
+			sess.txSent[seq] = true
+			sess.txSentCount++
+		}
+		m.mu.Unlock()
 	}
 
 	// After sending DT frames, set a CTS timeout for the next CTS or EndOfMsgAck.
@@ -417,8 +601,24 @@ func (m *Manager) handleEndOfMsgAckReceive(frame can.Frame, source uint8, destin
 
 	m.mu.Lock()
 	sess, ok := m.sessions[key]
-	if !ok {
+	if !ok || sess.state != stateWaitingForCTS {
 		m.mu.Unlock()
+		return
+	}
+	totalSize := uint16(frame.Data[1]) | uint16(frame.Data[2])<<8
+	numFrames := frame.Data[3]
+	if totalSize != sess.totalSize || numFrames != sess.numFrames || sess.txSentCount != int(sess.numFrames) {
+		sess.txErr = fmt.Errorf(
+			"invalid EndOfMsgAck: size=%d frames=%d packets sent=%d; want size=%d frames=%d",
+			totalSize,
+			numFrames,
+			sess.txSentCount,
+			sess.totalSize,
+			sess.numFrames,
+		)
+		m.removeSession(key)
+		m.mu.Unlock()
+		close(sess.txDone)
 		return
 	}
 

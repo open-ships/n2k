@@ -1,10 +1,15 @@
 package pgn
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strings"
 )
+
+// ErrUnexpectedPayloadEnd identifies a field read that extends beyond the
+// available PGN payload.
+var ErrUnexpectedPayloadEnd = errors.New("unexpected end of PGN payload")
 
 // PGNDataStream provides a bit-level sequential reader over raw NMEA 2000 message data.
 // It is the core decoding primitive: generated PGN decoder functions create a PGNDataStream
@@ -364,6 +369,9 @@ func (s *PGNDataStream) readStringWithLengthAndControl() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if lc[0] < 2 {
+		return "", fmt.Errorf("invalid STRING_LAU length %d", lc[0])
+	}
 	// Subtract 2 from the length to exclude the length and control bytes themselves,
 	// then convert to bits for readBinaryData.
 	dataLen := (uint16(lc[0]) - 2) * 8
@@ -409,9 +417,8 @@ func (s *PGNDataStream) readStringWithLength() (string, error) {
 //   - 0xFF: "data not available" fill byte
 //   - '@': legacy padding character used by some older devices
 //
-// The string is truncated at the first occurrence of any of these pad characters.
-// This means a string cannot legitimately contain '@' or 0xFF as content -- an
-// acceptable limitation given typical marine device naming conventions.
+// NUL and 0xFF are terminators. '@' is removed only when trailing, because it
+// is also a legitimate character inside device names and descriptions.
 func (s *PGNDataStream) readFixedString(bitLength uint16) (string, error) {
 	arr, err := s.readBinaryData(bitLength)
 	if err != nil {
@@ -419,7 +426,8 @@ func (s *PGNDataStream) readFixedString(bitLength uint16) (string, error) {
 	}
 	str := string(arr)
 
-	// Truncate at the first padding character found (NUL, 0xFF, or '@').
+	// Truncate at the first byte-valued terminator, then remove legacy trailing
+	// '@' padding without damaging an embedded '@'.
 	i := strings.IndexByte(str, 0)
 	if i != -1 {
 		str = str[:i]
@@ -428,12 +436,7 @@ func (s *PGNDataStream) readFixedString(bitLength uint16) (string, error) {
 	if i != -1 {
 		str = str[:i]
 	}
-	i = strings.IndexRune(str, '@')
-	if i != -1 {
-		str = str[:i]
-	}
-
-	return str, nil
+	return strings.TrimRight(str, "@"), nil
 }
 
 // getNumberRaw is the lowest-level read primitive. It extracts up to 64 bits from the
@@ -458,7 +461,7 @@ func (s *PGNDataStream) getNumberRaw(bitLength uint16) (uint64, error) {
 
 	for bitLength > 0 {
 		if int(s.byteOffset) >= len(s.data) {
-			return 0, fmt.Errorf("reading byte(%d) off end of pgn (len:%d)", s.byteOffset, len(s.data))
+			return 0, fmt.Errorf("%w: reading byte %d from %d-byte payload", ErrUnexpectedPayloadEnd, s.byteOffset, len(s.data))
 		}
 
 		// How many bits remain in the current source byte from the current bit position.
