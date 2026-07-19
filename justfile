@@ -32,10 +32,15 @@ setup:
 test:
     go test ./...
 
+# build the n2k CLI to bin/n2k
+build:
+    mkdir -p bin
+    go build -trimpath -o bin/n2k ./cmd/n2k
+
 # run the public, reproducible protocol evidence suite (not NMEA certification)
 conformance-local:
-    go test -count=1 -v . -run '^TestConformance'
-    go test -count=1 ./internal/adapter ./internal/claiming ./internal/framer ./internal/transport
+    go test -count=1 -v . -run '^(TestConformance|TestHeartbeat_|TestISORequest_|TestGroupFunction_|TestProtocolTransmission|TestRequiredProtocol|TestAdvisoryProtocol|TestTCPClientReconnect|TestObservationHub|TestReplayObservation)'
+    go test -count=1 ./internal/adapter ./internal/claiming ./internal/framer ./internal/gateway ./internal/transport
 
 # compare runtime PGN support against the current upstream schema
 upstream-parity:

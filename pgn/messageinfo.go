@@ -2,6 +2,8 @@ package pgn
 
 import (
 	"time"
+
+	"github.com/open-ships/n2k/raw"
 )
 
 // MessageInfo carries the CAN bus header metadata that accompanies every NMEA 2000 message.
@@ -9,11 +11,17 @@ import (
 // is passed to a PGN decoder. Every PGN struct embeds a MessageInfo as its "info"
 // field, with an exported MessageInfo() accessor.
 type MessageInfo struct {
-	Timestamp time.Time `json:"timestamp"`
-	Priority  *uint8    `json:"priority"`
-	PGN       uint32    `json:"pgn"`
-	SourceId  uint8     `json:"sourceId"`
-	TargetId  *uint8    `json:"targetId"`
+	Timestamp             time.Time     `json:"timestamp"`
+	ReceivedAt            time.Time     `json:"receivedAt,omitempty"`
+	TransportTimestamp    time.Duration `json:"transportTimestamp,omitempty"`
+	HasTransportTimestamp bool          `json:"hasTransportTimestamp,omitempty"`
+	AdapterID             string        `json:"adapterId,omitempty"`
+	NetworkID             string        `json:"networkId,omitempty"`
+	Direction             raw.Direction `json:"direction,omitempty"`
+	Priority              *uint8        `json:"priority"`
+	PGN                   uint32        `json:"pgn"`
+	SourceId              uint8         `json:"sourceId"`
+	TargetId              *uint8        `json:"targetId"`
 
 	// rawPayload and rawCanonical are codec bookkeeping. An untouched decoded
 	// message returns rawPayload exactly; once fields differ from rawCanonical,

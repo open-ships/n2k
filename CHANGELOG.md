@@ -1,5 +1,38 @@
 ## Change Log for open-ships/n2k
 
+### v1.0.0 — 2026-07-18 — schema-safe codec, resilient network sessions, and raw observability
+
+- The shared PGN codec now executes schema-declared conditional fields,
+  including the proprietary header in PGN 126208, and validates signed-width
+  representability, declared physical ranges, nulls, and special sentinels.
+- Automatic bus-citizenship traffic has bounded required and advisory priority
+  lanes. Heartbeat, address claim, ISO request, group-function, enumeration,
+  and device-information failures can no longer disappear as discarded write
+  results or log-only errors.
+- TCP reconnect starts a new NMEA network epoch: writes are gated while the
+  client reclaims its address, waits through contention, clears stale device
+  topology, re-enumerates, and restarts scheduled traffic.
+- Added owned raw observations with Adapter/network identity, source and host
+  timestamps, gateway-relative time, direction, frames, assembled payloads,
+  and decode errors. `Observe`, `Client.Observations`, and
+  `ReplayObservations` use bounded, non-blocking ownership seams.
+- The Cobra-based CLI now supports `record`, `replay`, `validate`, `devices`,
+  and `pgn` in addition to typed `sniff` and version output. Nested help, typo
+  suggestions, argument validation, and generated Bash, Zsh, Fish, and
+  PowerShell completion cover source paths, formats, and known PGNs. Text
+  output names concrete PGN types and renders generated physical values with
+  SI units; JSON retains exact wire values. `just build` produces `bin/n2k`.
+- `Client.Status` now exposes connection epochs, protocol lanes, typed/raw
+  subscriber counts, write counters, and observation counters.
+- Added a machine-readable requirement index and local evidence families for
+  claiming, heartbeat, ISO requests, group functions, fast packet, BAM,
+  RTS/CTS, malformed traffic, saturation, reconnect, timing, codec semantics,
+  and raw observation. Licensed review, hardware-in-the-loop execution, and
+  official NMEA certification remain external product-release activities.
+- The module now declares a stable v1 baseline. Exported v1 compatibility
+  follows semantic versioning; the release workflow publishes the `v1.0.0`
+  tag after the required gates pass on the release commit.
+
 ### v0.3.0 — 2026-07-18 — bounded lifecycle, wire fidelity, and hostile-input hardening
 
 - Commanded Address (PGN 65240) is now a first-class address-claim transition:

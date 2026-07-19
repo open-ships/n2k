@@ -16,7 +16,7 @@ plugin or companion layer for another app. Use it directly in telemetry
 collectors, loggers, gateways, test rigs, monitoring services, automation, and
 any Go program that needs to understand or participate on an N2K bus.
 
-![n2k sniff decoding NMEA 2000 traffic to JSON](.github/demo.svg)
+![n2k sniff decoding concrete NMEA 2000 message types with physical values](.github/demo.svg)
 
 ## Why n2k
 
@@ -46,7 +46,7 @@ The repo bundles a real six-second capture from a sailing vessel
 
 ```bash
 git clone https://github.com/open-ships/n2k && cd n2k
-go run ./cmd/n2k sniff -file testdata/sample.log | jq .
+go run ./cmd/n2k sniff --file testdata/sample.log | jq .
 ```
 
 Or in code — it runs as-is:
@@ -102,15 +102,21 @@ go get github.com/open-ships/n2k                    # library
 go install github.com/open-ships/n2k/cmd/n2k@latest # CLI
 ```
 
+To build the CLI from a checkout:
+
+```bash
+just build # writes bin/n2k
+```
+
 Prebuilt CLI binaries for Linux, macOS, and Windows are on the
 [releases page](https://github.com/open-ships/n2k/releases).
 
-Releases follow semver with a `v0` major (`v0.x.y`). [`VERSION`](VERSION)
-declares the next deliberate release baseline. Once that tag exists, every
-fully green CI run on the current `main` commit increments the patch version
-and publishes prebuilt CLI binaries. Raise `VERSION` in a reviewed PR when the
-API warrants a minor bump. While the major version is 0, minor releases may
-contain breaking API changes — pin accordingly.
+Releases follow semantic versioning. [`VERSION`](VERSION) declares the release
+baseline; v1 provides the stable Go module path that pkg.go.dev and Go tooling
+recognize as production-ready. The project preserves exported v1 behavior
+across minor and patch releases, adds deprecations before removal, and reserves
+breaking changes for a new major module path. Fully green release automation
+publishes the tag and prebuilt CLI binaries.
 
 ## The `n2k` CLI
 
@@ -118,20 +124,54 @@ Once installed (see [Add it to your project](#add-it-to-your-project)):
 
 ```bash
 # Yacht Devices WiFi gateway (RAW server mode) -- decoded JSON in one command
-n2k sniff -tcp 192.168.4.1:1457
+n2k sniff --tcp 192.168.4.1:1457
+
+# Concrete Go PGN types with scaled physical values and SI units
+n2k sniff --file capture.log --output text
 
 # SocketCAN (Linux), USB-CAN serial, UDP, or capture replay
 n2k sniff -i can0
 n2k sniff -u /dev/ttyUSB0
-n2k sniff -udp :1457
-n2k sniff -file capture.log            # add -timing to replay at real speed
+n2k sniff --udp :1457
+n2k sniff --file capture.log            # add --timing to replay at real speed
 
 # CEL filtering, unknown PGNs, jq-friendly output
-n2k sniff -i can0 -f 'pgn == 127250' -unknown | jq .
+n2k sniff -i can0 -f 'pgn == 127250' --unknown | jq .
+
+# Record, replay, validate, discover, and inspect schema support
+n2k record -i can0 --out capture.log
+n2k record --tcp 192.168.4.1:1457 --out observations.jsonl --output-format jsonl
+n2k replay --timing=false capture.log
+n2k validate --file capture.log --strict
+n2k devices --tcp 192.168.4.1:1457 --wait 5s
+n2k pgn 127250
+n2k pgn list | jq 'select(.complete == true)'
 ```
 
-The CLI currently ships `sniff` and `version`; the Go API provides the full
-read/write client, replay, request/response, registry, and broadcast features.
+The CLI uses Cobra for consistent nested help, argument validation, typo
+suggestions, and completion. Run `n2k help <command>` for examples and flags.
+Enable completion for the current shell with one of:
+
+```bash
+source <(n2k completion bash)                         # Bash
+source <(n2k completion zsh)                          # Zsh
+n2k completion fish | source                         # Fish
+n2k completion powershell | Out-String | Invoke-Expression # PowerShell
+```
+
+Completion understands source paths, stream and output formats, and known PGN
+numbers with descriptions.
+
+`sniff` and `replay` default to JSON lines containing the typed structs and
+their exact wire values. Set `--output text` for the concrete `pgn.<Type>`,
+source address, scaled physical values, SI units, and lookup type names shown
+in the demo above.
+
+`record` writes replayable candump by default; JSON-lines mode retains each
+owned source observation, including Adapter and network identity, source and
+receipt timestamps, gateway-relative time, direction, and frame bytes. The Go
+client observation stream additionally exposes assembled messages and decode
+errors.
 
 ## Using `n2k`
 
@@ -139,20 +179,23 @@ Everything the library does, mapped to its API:
 
 | Area | Functionality | API / command |
 |------|---------------|---------------|
-| Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner`, `n2k sniff` |
+| Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner`, `n2k sniff`, `n2k replay` |
+| Observe raw traffic | Retain owned frame/message/decode-error records with transport context. | `Observe`, `Client.Observations`, `ReplayObservations`, `n2k record` |
 | Write PGNs | Encode PGN structs back to byte-preserving CAN frames or gateway messages. | `NewClient`, `Client.Write` |
 | Act as a bus node | Claim or accept a commanded address, heartbeat, answer product/configuration info and ISO requests, and handle group functions. | `NewClient`, `WithName`, `WithProductInfo`, `WithConfigInfo` |
 | Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.BroadcastPGN`, `Client.Broadcast` |
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
-| Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
+| Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt`, `n2k devices` |
 | Read many sources | Use SocketCAN, USB-CAN serial adapters, TCP/UDP gateways, candump logs, or in-memory frames. | `CAN`, `USB`, `TCP`, `UDP`, `File`, `Replay` |
 | Gateway formats | Speak Yacht Devices RAW and Actisense-format gateway streams. | `FormatYDRaw`, `FormatActisense` |
 | Physical values | Keep raw wire ticks while exposing generated SI-unit accessors. | `<Field>Value`, `Set<Field>Value`, `pgn.PhysicalValue` |
 | Filter traffic | Filter by PGN metadata or decoded fields with CEL; metadata-only filters avoid decode work. | `Filter` |
 | Preserve unknowns | Drop undecoded PGNs by default or surface them for logging/research. | `IncludeUnknown`, `*pgn.UnknownPGN` |
 | Test without hardware | Replay bundled or custom captures and inspect written frames in tests. | `File`, `OriginalTiming`, `Replay`, `WrittenFrames` |
-| Observe health | Export lifecycle errors, queue depth, address state, and structured logs. | `Client.Status`, `Client.Err`, `WithLogger` |
-| Extend transports | Provide custom frame buses, readiness, or assembled-message writers. | `Bus`, `ReadyBus`, `MessageWriter`, `WithBus` |
+| Validate captures | Count typed and undecodable messages by PGN and optionally fail CI. | `n2k validate` |
+| Inspect PGN support | Query complete runtime metadata, fields, ranges, and confidence. | `pgn.PgnInfoLookup`, `n2k pgn` |
+| Observe health | Export connection epochs, queue/counter metrics, address state, and structured logs. | `Client.Status`, `Client.Err`, `WithLogger` |
+| Extend transports | Provide custom frame buses, observation buses, readiness, lifecycle, or assembled-message writers. | `Bus`, `ObservationBus`, `ReadyBus`, `ConnectionLifecycleBus`, `MessageWriter`, `WithBus` |
 
 ### Reading and Writing
 
@@ -301,6 +344,27 @@ if err := s.Err(); err != nil {
 }
 ```
 
+#### Raw observations
+
+Use `Observe` when typed decoding would discard context needed by a recorder,
+bridge, latency monitor, or multi-network diagnostic:
+
+```go
+for observation, err := range n2k.Observe(ctx, n2k.File("capture.log")) {
+    if err != nil {
+        return err
+    }
+    fmt.Println(observation.AdapterID, observation.NetworkID,
+        observation.Timestamp, observation.Direction, observation.Frame)
+}
+```
+
+`client.Observations()` additionally publishes assembled-message and
+decode-error events. Every record owns its frame and payload bytes. A slow
+subscriber ends with `ErrObservationOverflow` without delaying address claims,
+ISO responses, decoding, or other subscribers. `pgn.MessageInfo` carries the
+same timing, Adapter, network, and direction context into typed messages.
+
 ### Multiple Networks
 
 Read from multiple CAN interfaces simultaneously:
@@ -443,6 +507,10 @@ Queues are deliberately bounded:
 - Each live `Receive` or `Scanner` call has an independent subscription. A
   slow subscription ends with `ErrReceiveOverflow`; it cannot stall address
   claiming, transport handling, or another reader.
+- Each raw observation subscription is independently bounded and ends with
+  `ErrObservationOverflow` when slow.
+- Required automatic protocol traffic uses a dedicated priority queue. Queue,
+  encoding, and transport failures become terminal state instead of logs.
 
 Use `WaitContext` when a caller has a deadline, tune bounds with
 `WithWriteQueue` / `WithReceiveBuffer`, and expose `Status()` from health or
@@ -450,17 +518,21 @@ metrics endpoints:
 
 ```go
 status := client.Status()
-fmt.Println(status.Address, status.AddressClaimed,
-    status.WriteQueueDepth, status.ReceiveSubscribers, status.TerminalError)
+fmt.Println(status.Address, status.AddressClaimed, status.Connected,
+    status.ConnectionEpoch, status.WriteQueueDepth,
+    status.ProtocolRequiredQueueDepth, status.ReceiveSubscribers,
+    status.ObservationSubscribers, status.TerminalError)
 ```
 
 ### Custom transports
 
 `WithBus` is the extension seam for hardware and gateways not included here.
 Implement `Bus` for frame-level read/write access. Optionally implement
-`ReadyBus` when opening is asynchronous, and `MessageWriter` when the gateway
-accepts assembled PGN payloads instead of CAN frames. The client still owns
-claiming, protocol routing, scheduling, and shutdown.
+`ObservationBus` to retain transport context, `ReadyBus` when opening is
+asynchronous, `ConnectionLifecycleBus` for reconnect epochs, and
+`MessageWriter` when the gateway accepts assembled PGN payloads instead of CAN
+frames. The client still owns claiming, protocol routing, scheduling, and
+shutdown.
 
 ### A Complete Bus Node
 
@@ -683,7 +755,9 @@ matter to your deployment rather than relying on the summary table alone.
 
 ## Known Limitations
 
-- Cross-field validation is not yet implemented.
+- The codec implements the schema's current `PGNIsProprietary` field condition;
+  a future schema condition expression must be added explicitly and otherwise
+  fails closed during codec-plan compilation.
 - Formal NMEA certification has not been run. Products that transmit on a real
   vessel network must follow the hardware/tool workflow in [Protocol
   conformance](docs/conformance.md) before making a certification claim.
@@ -695,11 +769,12 @@ matter to your deployment rather than relying on the summary table alone.
   claimed address is not authoritative on the wire.
 - Gateway TCP connections do not auto-reconnect by default; a dropped
   connection ends the read loop. Pass `WithReconnect` to re-dial dropped
-  connections with backoff. A transparent transport reconnect does not re-run
-  NMEA 2000 address claiming, so a gateway that itself rebooted may still need
-  a fresh client.
+  connections with backoff. Each new connection epoch reclaims the address,
+  clears stale registry topology, waits through contention, re-enumerates, and
+  resumes scheduled traffic.
 - Live delivery is bounded by design. A reader that cannot keep up receives
-  `ErrReceiveOverflow`; increase `WithReceiveBuffer` or consume faster.
+  `ErrReceiveOverflow` or `ErrObservationOverflow`; increase
+  `WithReceiveBuffer` or consume faster.
 
 ## License
 

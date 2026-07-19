@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/candump"
+	"github.com/open-ships/n2k/raw"
 )
 
 // fileSource replays CAN frames from a candump -L / -l log file.
@@ -36,7 +36,7 @@ func OriginalTiming() FileOption {
 	})
 }
 
-func (s *fileSource) run(ctx context.Context, log *slog.Logger, handler func(can.Frame)) error {
+func (s *fileSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
 	f, err := os.Open(s.path) // #nosec G304 -- reading the user-supplied capture log is this source's purpose.
 	if err != nil {
 		return fmt.Errorf("n2k: opening log file: %w", err)
@@ -52,10 +52,11 @@ func (s *fileSource) run(ctx context.Context, log *slog.Logger, handler func(can
 		default:
 		}
 
-		frame, ts, ok := candump.Parse(scanner.Text())
+		record, ok := candump.ParseRecord(scanner.Text())
 		if !ok {
 			continue
 		}
+		frame, ts := record.Frame, record.Timestamp
 
 		if s.originalTiming && !ts.IsZero() && !lastTS.IsZero() {
 			if delta := ts.Sub(lastTS); delta > 0 {
@@ -72,7 +73,24 @@ func (s *fileSource) run(ctx context.Context, log *slog.Logger, handler func(can
 			lastTS = ts
 		}
 
-		handler(frame)
+		now := time.Now()
+		timestamp := ts
+		if timestamp.IsZero() {
+			timestamp = now
+		}
+		networkID := record.Network
+		if networkID == "" {
+			networkID = s.path
+		}
+		handler(normalizeObservation(raw.Observation{
+			Kind:       raw.KindFrame,
+			Timestamp:  timestamp,
+			ReceivedAt: now,
+			AdapterID:  "file:" + s.path,
+			NetworkID:  networkID,
+			Direction:  raw.DirectionReceived,
+			Frame:      &frame,
+		}))
 	}
 	if err := scanner.Err(); err != nil {
 		return fmt.Errorf("n2k: reading log file: %w", err)

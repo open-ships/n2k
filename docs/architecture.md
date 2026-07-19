@@ -10,18 +10,18 @@ CAN / USB / TCP / UDP / capture
        Bus or read-only source
               |
               v
-      frame ownership boundary
+      owned Observation Adapter
               |
-      +-------+------------------+
-      |                          |
-      v                          v
-system protocol path       user read pipeline
-claim / ISO request        metadata filter
-ISO transport              fast-packet assembly
-group functions            typed PGN decode
+      +-------+------------------+----------------+
+      |                          |                |
+      v                          v                v
+system protocol path       user read pipeline   raw observation stream
+claim / ISO request        metadata filter      frame / message / error
+ISO transport              fast-packet assembly adapter / network / time
+group functions            typed PGN decode     direction / owned bytes
 registry / correlator      field filter
-      |                          |
-      +-----------+--------------+
+      |                          |                |
+      +-----------+--------------+----------------+
                   v
           bounded subscriptions
 ```
@@ -29,10 +29,20 @@ registry / correlator      field filter
 ## Runtime ownership
 
 One `Client` owns one writable `Bus`, one address claimer, one ISO transport
-manager, one system router, one serialized write queue, and zero or more live
-read subscriptions. `Receive` and `Scanner` subscriptions are independent.
+manager, one system router, one serialized application-write queue, two
+protocol-transmission queues, and zero or more live typed and observation
+subscriptions. `Receive`, `Scanner`, and `Observations` subscriptions are
+independent.
 When one subscriber exceeds its configured buffer, only that subscriber ends
 with `ErrReceiveOverflow`.
+
+The observation Module is the ownership Seam between transport Adapters and
+consumers. Its Interface preserves `AdapterID`, `NetworkID`, source time, host
+receipt time, relative gateway time, and direction. Payloads and frames are
+copied before publication, keeping failure Locality at the subscriber that
+falls behind (`ErrObservationOverflow`). This Depth supports faithful capture,
+multi-network diagnostics, and bridging without coupling the codec to a
+specific transport Implementation.
 
 The system path receives frames first. It handles protocol traffic regardless
 of a user's CEL filter or whether the application is currently reading. This
@@ -62,6 +72,24 @@ Message-oriented gateways may implement `MessageWriter` and accept assembled
 payloads up to 223 bytes. Buses that open asynchronously may implement
 `ReadyBus`; the client will not begin address claiming until `Ready` closes.
 
+Automatic protocol writes enter a dedicated protocol-transmission Module.
+Required traffic (heartbeat, claims, ISO and group-function responses) has a
+bounded high-priority lane; enumeration and information probes have a bounded
+advisory lane with admission retry. Application writes cannot starve either
+lane. This narrow Interface gives high Leverage: queue saturation, encoding,
+transport failure, retry policy, and metrics have one Implementation and one
+test Seam.
+
+## Connection epochs
+
+Reconnect-capable buses implement `ConnectionLifecycleBus`. A connection is
+not published to writers until Client installs a new readiness gate. After a
+drop, stale registry topology is cleared. On the next epoch the client sends a
+fresh Address Claim, waits through contention, then reopens writes, enumerates
+the bus, and restarts the heartbeat. The network-session lifecycle Module
+therefore owns both TCP connectivity and NMEA network citizenship instead of
+leaving distributed reconnect checks at call sites.
+
 ## Failure model
 
 Bus termination, address-claim failure, and receive overflow are data, not log
@@ -78,6 +106,22 @@ fields. Encode compares current fields with the canonical bytes. If unchanged,
 it returns a copy of the original payload, retaining reserved bits and trailing
 bytes. If changed, it encodes the current fields. See
 [ADR 0002](adr/0002-wire-fidelity.md).
+
+The schema-semantic codec Module also owns field conditions, signed
+representability, physical ranges, declared sentinel values, and malformed
+versus truncated errors. Unknown condition expressions fail during plan
+compilation instead of silently shifting subsequent fields. Centralizing these
+rules across all generated PGNs is the primary codec Leverage point.
+
+## Conformance lab
+
+[`conformance/requirements.json`](../conformance/requirements.json) is the
+machine-readable local evidence index. `just conformance-local` runs the
+claiming, heartbeat, ISO request, group-function, fast-packet, BAM, RTS/CTS,
+hostile-input, saturation, reconnect, timing, codec, and observation Seams.
+Licensed review, hardware-in-the-loop evidence, and formal NMEA certification
+remain external release activities described in
+[`docs/conformance.md`](conformance.md).
 
 ## Generated boundary
 

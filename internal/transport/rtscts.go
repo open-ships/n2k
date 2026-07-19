@@ -3,11 +3,12 @@ package transport
 import (
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // handleRTSReceive processes an incoming RTS frame and sets up a receive session.
 // It responds with a CTS frame to begin the data transfer.
-func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination uint8) {
+func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination uint8, info pgn.MessageInfo) {
 	totalSize := uint16(frame.Data[1]) | uint16(frame.Data[2])<<8
 	numFrames := frame.Data[3]
 	maxPerCTS := frame.Data[4]
@@ -31,6 +32,8 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 		destination: destination,
 		pgn:         pgn,
 	}
+	info.PGN = pgn
+	info.TargetId = pgnTarget(destination)
 
 	m.mu.Lock()
 
@@ -44,6 +47,7 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 		maxPerCTS: maxPerCTS,
 		received:  0,
 		data:      make([]byte, totalSize),
+		info:      info,
 	}
 
 	// Set a DT timeout.
@@ -74,6 +78,8 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 		m.logger.Warn("failed to send CTS", "error", err, "pgn", pgn)
 	}
 }
+
+func pgnTarget(destination uint8) *uint8 { return &destination }
 
 // buildCTSFrame constructs a CTS (Clear To Send) frame.
 func buildCTSFrame(numFrames uint8, nextSeqNum uint8, pgn uint32, source uint8, destination uint8) can.Frame {

@@ -19,6 +19,7 @@ import (
 	"github.com/brutella/can"
 
 	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/pgn"
 )
 
 // CANAdapter reads raw CAN bus frames and outputs complete NMEA 2000 Packets.
@@ -76,12 +77,18 @@ func (c *CANAdapter) SetOutput(ph PacketHandler) {
 // Parameters:
 //   - f: A *can.Frame from the brutella/can library.
 func (c *CANAdapter) HandleMessage(f *can.Frame) {
+	if f == nil {
+		return
+	}
+	c.HandleMessageWithInfo(f, NewPacketInfo(f))
+}
+
+// HandleMessageWithInfo processes a frame using observation metadata supplied
+// by the source Adapter rather than reconstructing its timestamp and identity.
+func (c *CANAdapter) HandleMessageWithInfo(f *can.Frame, pInfo pgn.MessageInfo) {
 	if f == nil || f.Length > 8 {
 		return
 	}
-	// Extract NMEA 2000 message metadata (PGN, source, priority, destination) from
-	// the 29-bit extended CAN ID.
-	pInfo := NewPacketInfo(f)
 
 	// Create a Packet and look up candidate metadata.
 	// Own the bytes beyond this call. Many CAN drivers reuse a frame buffer;

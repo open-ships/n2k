@@ -115,7 +115,7 @@ func (s *Scanner) run() {
 		s.err = err
 		return
 	}
-	if err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, p.HandleFrame); err != nil && s.ctx.Err() == nil {
+	if err := runSources(s.ctx, s.cfg.logger, s.cfg.sources, p.HandleObservation); err != nil && s.ctx.Err() == nil {
 		s.err = err
 	}
 }

@@ -110,6 +110,18 @@ func (c *Claimer) Start() error {
 	return c.sendClaim()
 }
 
+// Reclaim starts a fresh contention epoch at the current address after a
+// transport reconnect. It resets prior contention history and immediately
+// broadcasts Address Claim.
+func (c *Claimer) Reclaim() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	c.tried = map[uint8]bool{c.address: true}
+	c.cfg.Logger.Info("rejoining network", "address", c.address)
+	return c.sendClaim()
+}
+
 // HandleAddressClaim processes an incoming Address Claim (PGN 60928) from
 // another device. source is the CAN source address of the competing device and
 // name is its 64-bit NAME.
@@ -141,7 +153,7 @@ func (c *Claimer) HandleAddressClaim(source uint8, name uint64) {
 			"contenderName", fmt.Sprintf("0x%016X", name),
 		)
 		if err := c.sendClaim(); err != nil {
-			c.cfg.Logger.Error("failed to send defensive claim", "error", err)
+			c.reportFatal("send defensive claim", err)
 		}
 		return
 	}
@@ -174,7 +186,7 @@ func (c *Claimer) HandleISORequest() {
 	defer c.mu.Unlock()
 
 	if err := c.sendClaim(); err != nil {
-		c.cfg.Logger.Error("failed to respond to ISO request", "error", err)
+		c.reportFatal("respond to ISO address-claim request", err)
 	}
 }
 
@@ -258,7 +270,7 @@ func (c *Claimer) tryNextAddress() {
 				c.cfg.OnAddressChange(c.address)
 			}
 			if err := c.sendClaim(); err != nil {
-				c.cfg.Logger.Error("failed to send claim for new address", "error", err)
+				c.reportFatal("claim new address after contention", err)
 			}
 			return
 		}
@@ -272,7 +284,15 @@ func (c *Claimer) tryNextAddress() {
 	}
 	// Send a "cannot claim" announcement from address 254.
 	if err := c.sendClaim(); err != nil {
-		c.cfg.Logger.Error("failed to send cannot-claim announcement", "error", err)
+		c.reportFatal("send cannot-claim announcement", err)
+	}
+}
+
+func (c *Claimer) reportFatal(operation string, err error) {
+	wrapped := fmt.Errorf("%s: %w", operation, err)
+	c.cfg.Logger.Error("address claiming fatal error", "operation", operation, "error", err)
+	if c.cfg.OnFatalError != nil {
+		c.cfg.OnFatalError(wrapped)
 	}
 }
 

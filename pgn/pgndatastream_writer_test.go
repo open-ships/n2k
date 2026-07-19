@@ -135,6 +135,32 @@ func TestRoundTrip_SignedResolution(t *testing.T) {
 	assert.InDelta(t, float32(-0.5), *v, 0.0001)
 }
 
+func TestPutSignedNumberRejectsValuesOutsideSignedWidth(t *testing.T) {
+	tests := []struct {
+		name  string
+		value int64
+		ok    bool
+	}{
+		{name: "minimum", value: -2048, ok: true},
+		{name: "maximum", value: 2047, ok: true},
+		{name: "below minimum", value: -2049},
+		{name: "above maximum", value: 2048},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			writer := NewPGNDataStreamWriter()
+			err := writer.putSignedNumber(test.value, 12)
+			if test.ok {
+				assert.NoError(t, err)
+				return
+			}
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "12-bit signed range")
+		})
+	}
+}
+
 // TestRoundTrip_SignedResolution64Override verifies the float64 resolution variant
 // for high-precision fields like latitude/longitude.
 func TestRoundTrip_SignedResolution64Override(t *testing.T) {

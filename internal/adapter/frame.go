@@ -61,9 +61,16 @@ SOFTWARE.
 // Returns a pgn.MessageInfo populated with the extracted PGN, source, priority, target,
 // and current timestamp.
 func NewPacketInfo(message *can.Frame) pgn.MessageInfo {
+	return NewPacketInfoAt(message, time.Now())
+}
+
+// NewPacketInfoAt extracts CAN identifier metadata using timestamp as the
+// observation time. It is used when a capture or gateway supplied a more
+// faithful time than the host's current clock.
+func NewPacketInfoAt(message *can.Frame, timestamp time.Time) pgn.MessageInfo {
 	c := framer.ParseCANID(message.ID)
 	p := pgn.MessageInfo{
-		Timestamp: time.Now(),
+		Timestamp: timestamp,
 		SourceId:  c.Source,
 		PGN:       c.PGN,
 		Priority:  &c.Priority,

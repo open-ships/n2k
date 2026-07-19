@@ -27,6 +27,28 @@ func TestFastPacketOwnsFrameBytes(t *testing.T) {
 	assert.Equal(t, []byte{1, 2, 3, 4, 5, 6, 7, 8}, last.Data)
 }
 
+func TestFastPacketSessionsAreIsolatedByNetwork(t *testing.T) {
+	m := NewMultiBuilder()
+	base := NewPacketInfo(&can.Frame{ID: framer.BuildCANID(130820, 1, 10, 255), Length: 8})
+	infoA, infoB := base, base
+	infoA.NetworkID = "can0"
+	infoB.NetworkID = "can1"
+
+	a0 := decoder.NewPacket(infoA, []byte{0x20, 8, 1, 2, 3, 4, 5, 6})
+	b0 := decoder.NewPacket(infoB, []byte{0x20, 8, 11, 12, 13, 14, 15, 16})
+	m.Add(a0)
+	m.Add(b0)
+	a1 := decoder.NewPacket(infoA, []byte{0x21, 7, 8})
+	b1 := decoder.NewPacket(infoB, []byte{0x21, 17, 18})
+	m.Add(a1)
+	m.Add(b1)
+
+	require.True(t, a1.Complete)
+	require.True(t, b1.Complete)
+	assert.Equal(t, []byte{1, 2, 3, 4, 5, 6, 7, 8}, a1.Data)
+	assert.Equal(t, []byte{11, 12, 13, 14, 15, 16, 17, 18}, b1.Data)
+}
+
 func TestMultiBuilderEvictsExpiredAndCapsState(t *testing.T) {
 	m := NewMultiBuilder()
 	now := time.Unix(100, 0)
@@ -49,13 +71,7 @@ func TestMultiBuilderEvictsExpiredAndCapsState(t *testing.T) {
 }
 
 func activeFastPacketSequences(m *MultiBuilder) int {
-	total := 0
-	for _, byPGN := range m.sequences {
-		for _, bySeq := range byPGN {
-			total += len(bySeq)
-		}
-	}
-	return total
+	return len(m.sequences)
 }
 
 func FuzzCANAdapter(f *testing.F) {

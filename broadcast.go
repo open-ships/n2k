@@ -53,7 +53,10 @@ func (c *Client) newBroadcast(pgnNum uint32, known bool, interval time.Duration,
 		return func() {}
 	}
 	b := &broadcaster{
-		write:           c.Write,
+		write: c.Write,
+		protocolWrite: func(msg pgn.Message) *WriteResult {
+			return c.writeProtocol("group-function scheduled PGN response", protocolRequired, msg)
+		},
 		provide:         provide,
 		log:             c.log,
 		onPGNKnown:      c.registerBroadcaster,
@@ -137,9 +140,10 @@ func (c *Client) stopBroadcasters() {
 // heartbeater's: park while the interval is zero, otherwise send then wait
 // out the interval, waking early on retiming.
 type broadcaster struct {
-	write   func(pgn.Message) *WriteResult
-	provide func() pgn.Message
-	log     *slog.Logger
+	write         func(pgn.Message) *WriteResult
+	protocolWrite func(pgn.Message) *WriteResult
+	provide       func() pgn.Message
+	log           *slog.Logger
 	// onPGNKnown registers the broadcaster for group-function lookup once
 	// its PGN is known (deferred when provide returned nil at registration).
 	onPGNKnown func(*broadcaster)
@@ -188,7 +192,7 @@ func (b *broadcaster) run(ctx context.Context, ready <-chan struct{}) {
 			}
 		}
 
-		if !b.sendNow(ctx) {
+		if !b.sendNow(ctx, b.write) {
 			return
 		}
 
@@ -209,7 +213,7 @@ func (b *broadcaster) run(ctx context.Context, ready <-chan struct{}) {
 
 // sendNow transmits one message immediately (nil from provide skips),
 // completing deferred PGN registration on the first non-nil message.
-func (b *broadcaster) sendNow(ctx context.Context) bool {
+func (b *broadcaster) sendNow(ctx context.Context, write func(pgn.Message) *WriteResult) bool {
 	if !b.sending.CompareAndSwap(false, true) {
 		return true
 	}
@@ -263,14 +267,14 @@ func (b *broadcaster) sendNow(ctx context.Context) bool {
 		default:
 		}
 	}
-	if err := b.write(msg).WaitContext(ctx); err != nil && ctx.Err() == nil {
+	if err := write(msg).WaitContext(ctx); err != nil && ctx.Err() == nil {
 		b.log.Warn("scheduled broadcast failed", "pgn", msg.PGNNumber(), "error", err)
 	}
 	return true
 }
 
 func (b *broadcaster) trigger(ctx context.Context) {
-	go func() { _ = b.sendNow(ctx) }()
+	go func() { _ = b.sendNow(ctx, b.protocolWrite) }()
 }
 
 // setInterval retimes the broadcast. Zero (or negative) pauses it; a positive

@@ -4,9 +4,11 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"syscall"
 	"testing"
 	"time"
@@ -16,7 +18,11 @@ import (
 
 func TestSniffTerminatesCleanlyOnSIGTERM(t *testing.T) {
 	if os.Getenv("N2K_SIGTERM_HELPER") == "1" {
-		err := sniff([]string{"-file", "../../testdata/sample.log", "-timing", "-unknown"})
+		ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM)
+		defer stop()
+		root := newRootCommand(os.Stdin, os.Stdout, os.Stderr)
+		root.SetArgs([]string{"sniff", "--file", "../../testdata/sample.log", "--timing", "--unknown"})
+		err := root.ExecuteContext(ctx)
 		if err != nil {
 			os.Exit(1)
 		}

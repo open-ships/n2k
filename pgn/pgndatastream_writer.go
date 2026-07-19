@@ -124,6 +124,20 @@ func (w *PGNDataStreamWriter) putNumberRaw(value uint64, bitLength uint16) error
 // Negative values are converted to their two's-complement unsigned representation
 // by masking to the specified bit width.
 func (w *PGNDataStreamWriter) putSignedNumber(value int64, bitLength uint16) error {
+	if bitLength == 0 || bitLength > 64 {
+		err := fmt.Errorf("invalid signed bit width %d", bitLength)
+		w.setErr(err)
+		return err
+	}
+	if bitLength < 64 {
+		minValue := -(int64(1) << (bitLength - 1))
+		maxValue := (int64(1) << (bitLength - 1)) - 1
+		if value < minValue || value > maxValue {
+			err := fmt.Errorf("value %d exceeds %d-bit signed range [%d,%d]", value, bitLength, minValue, maxValue)
+			w.setErr(err)
+			return err
+		}
+	}
 	var raw uint64
 	if value >= 0 {
 		raw = uint64(value)

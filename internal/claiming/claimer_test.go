@@ -307,6 +307,32 @@ func TestClaimer_HandleISORequest(t *testing.T) {
 	assert.Equal(t, ourName, extractClaimName(f))
 }
 
+func TestClaimer_RuntimeClaimWriteFailureIsFatal(t *testing.T) {
+	writeErr := fmt.Errorf("bus offline")
+	writes := 0
+	var fatalErr error
+	c := claiming.New(claiming.Config{
+		Mode:    claiming.ModeAuto,
+		Address: 200,
+		Name:    42424242,
+		WriteFrame: func(can.Frame) error {
+			writes++
+			if writes > 1 {
+				return writeErr
+			}
+			return nil
+		},
+		OnFatalError: func(err error) { fatalErr = err },
+		Logger:       discardLogger(),
+	})
+	require.NoError(t, c.Start())
+
+	c.HandleISORequest()
+
+	require.ErrorIs(t, fatalErr, writeErr)
+	assert.Contains(t, fatalErr.Error(), "respond to ISO address-claim request")
+}
+
 func TestClaimer_IgnoresDifferentAddress(t *testing.T) {
 	sink := &frameSink{}
 	ourName := uint64(5000)

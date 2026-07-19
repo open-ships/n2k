@@ -1,7 +1,9 @@
 package gateway
 
 import (
+	"encoding/binary"
 	"fmt"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
@@ -39,6 +41,9 @@ type N2KMessage struct {
 	Destination uint8
 	Source      uint8
 	Data        []byte
+	// Timestamp is the gateway's relative millisecond clock.
+	Timestamp    time.Duration
+	HasTimestamp bool
 }
 
 // ActisenseReader is an incremental decoder for the Actisense binary stream
@@ -149,11 +154,13 @@ func (r *ActisenseReader) finish(emit func(N2KMessage)) {
 	data := make([]byte, dataLen)
 	copy(data, payload[n2kHeaderLen:])
 	emit(N2KMessage{
-		Priority:    payload[0],
-		PGN:         uint32(payload[1]) | uint32(payload[2])<<8 | uint32(payload[3])<<16,
-		Destination: payload[4],
-		Source:      payload[5],
-		Data:        data,
+		Priority:     payload[0],
+		PGN:          uint32(payload[1]) | uint32(payload[2])<<8 | uint32(payload[3])<<16,
+		Destination:  payload[4],
+		Source:       payload[5],
+		Timestamp:    time.Duration(binary.LittleEndian.Uint32(payload[6:10])) * time.Millisecond,
+		HasTimestamp: true,
+		Data:         data,
 	})
 }
 

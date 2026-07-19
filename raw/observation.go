@@ -1,0 +1,71 @@
+// Package raw defines owned observations from NMEA 2000 transport adapters.
+package raw
+
+import (
+	"time"
+
+	"github.com/brutella/can"
+)
+
+// Kind identifies the layer represented by an Observation.
+type Kind string
+
+const (
+	KindFrame       Kind = "frame"
+	KindMessage     Kind = "message"
+	KindDecodeError Kind = "decode_error"
+)
+
+// Direction identifies how an observation crossed its Adapter.
+type Direction string
+
+const (
+	DirectionUnknown     Direction = "unknown"
+	DirectionReceived    Direction = "received"
+	DirectionTransmitted Direction = "transmitted"
+)
+
+// Observation is an owned raw record from a transport Adapter or decode
+// pipeline. Frame observations retain the classical CAN frame; message
+// observations retain an assembled PGN payload; decode-error observations
+// retain the same payload and a stable error string.
+type Observation struct {
+	Kind Kind `json:"kind"`
+
+	// Timestamp is the best source timestamp available. ReceivedAt is always
+	// the host receipt time. When a gateway exposes only a relative clock,
+	// TransportTimestamp preserves it without pretending it is wall time.
+	Timestamp             time.Time     `json:"timestamp"`
+	ReceivedAt            time.Time     `json:"receivedAt"`
+	TransportTimestamp    time.Duration `json:"transportTimestamp,omitempty"`
+	HasTransportTimestamp bool          `json:"hasTransportTimestamp,omitempty"`
+
+	AdapterID string    `json:"adapterId"`
+	NetworkID string    `json:"networkId"`
+	Direction Direction `json:"direction"`
+
+	Frame *can.Frame `json:"frame,omitempty"`
+
+	PGN         uint32 `json:"pgn,omitempty"`
+	Priority    uint8  `json:"priority,omitempty"`
+	Source      uint8  `json:"source,omitempty"`
+	Destination *uint8 `json:"destination,omitempty"`
+	Payload     []byte `json:"payload,omitempty"`
+	Error       string `json:"error,omitempty"`
+}
+
+// Clone returns a fully owned copy safe for another goroutine or caller to
+// retain and mutate.
+func (o Observation) Clone() Observation {
+	copy := o
+	if o.Frame != nil {
+		frame := *o.Frame
+		copy.Frame = &frame
+	}
+	if o.Destination != nil {
+		destination := *o.Destination
+		copy.Destination = &destination
+	}
+	copy.Payload = append([]byte(nil), o.Payload...)
+	return copy
+}

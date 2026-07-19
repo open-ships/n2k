@@ -17,6 +17,13 @@ func TestParse_LineWithTimestamp(t *testing.T) {
 	assert.Equal(t, time.Unix(1720000000, 500000000).UTC(), ts.UTC())
 }
 
+func TestParseRecord_PreservesNetwork(t *testing.T) {
+	record, ok := ParseRecord("(1720000000.500000) can7 09F50E7F#00FFFFFFFFFFFFFF")
+	require.True(t, ok)
+	assert.Equal(t, "can7", record.Network)
+	assert.Equal(t, time.Unix(1720000000, 500000000), record.Timestamp)
+}
+
 func TestParse_LineWithoutTimestamp(t *testing.T) {
 	frame, ts, ok := Parse("09F10D01#0102030405060708")
 	require.True(t, ok)
@@ -35,14 +42,14 @@ func TestParse_ShortPayload(t *testing.T) {
 
 func TestParse_Rejects(t *testing.T) {
 	cases := []string{
-		"",                                    // empty
-		"# comment line",                      // comment
-		"(1.0) can0 123#R",                    // RTR frame
-		"(1.0) can0 123##1AABB",               // CAN FD frame
-		"(1.0) can0 ZZZ#AABB",                 // bad ID
-		"(1.0) can0 123#GGHH",                 // bad hex payload
-		"(1.0) can0 123#010203040506070809",   // > 8 bytes
-		"no frame data here",                  // no # field
+		"",                                  // empty
+		"# comment line",                    // comment
+		"(1.0) can0 123#R",                  // RTR frame
+		"(1.0) can0 123##1AABB",             // CAN FD frame
+		"(1.0) can0 ZZZ#AABB",               // bad ID
+		"(1.0) can0 123#GGHH",               // bad hex payload
+		"(1.0) can0 123#010203040506070809", // > 8 bytes
+		"no frame data here",                // no # field
 	}
 	for _, line := range cases {
 		_, _, ok := Parse(line)

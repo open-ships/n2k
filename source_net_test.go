@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -210,6 +211,80 @@ func TestTCPSource_Reconnects(t *testing.T) {
 		}
 	}
 	assert.Equal(t, 3, count, "reconnect should keep delivering messages across drops")
+}
+
+func TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = listener.Close() })
+
+	type observed struct {
+		connection int
+		pgn        uint32
+	}
+	observations := make(chan observed, 32)
+	go func() {
+		for connection := 1; connection <= 2; connection++ {
+			conn, acceptErr := listener.Accept()
+			if acceptErr != nil {
+				return
+			}
+			scanner := bufio.NewScanner(conn)
+			for scanner.Scan() {
+				fields := strings.Fields(scanner.Text())
+				if len(fields) == 0 {
+					continue
+				}
+				id, parseErr := strconv.ParseUint(fields[0], 16, 32)
+				if parseErr != nil {
+					continue
+				}
+				pgnNum := framer.ParseCANID(uint32(id)).PGN
+				observations <- observed{connection: connection, pgn: pgnNum}
+				if connection == 1 && pgnNum == framer.PGNISOAddressClaim {
+					// Let the initial contention window finish, then simulate a
+					// gateway restart after NewClient has become active.
+					time.Sleep(100 * time.Millisecond)
+					_ = conn.Close()
+					break
+				}
+			}
+			if connection == 2 {
+				_ = conn.Close()
+			}
+		}
+	}()
+
+	client, err := NewClient(context.Background(),
+		TCP(listener.Addr().String(), FormatYDRaw),
+		WithReconnect(ReconnectPolicy{InitialBackoff: 5 * time.Millisecond, MaxBackoff: 20 * time.Millisecond}),
+		WithClaimTimeout(50*time.Millisecond),
+		WithHeartbeatInterval(0),
+		WithLogger(testLogger()),
+	)
+	require.NoError(t, err)
+	defer func() { _ = client.Close() }()
+
+	seenReclaim := false
+	seenEnumeration := false
+	deadline := time.After(3 * time.Second)
+	for !seenReclaim || !seenEnumeration {
+		select {
+		case got := <-observations:
+			if got.connection != 2 {
+				continue
+			}
+			switch got.pgn {
+			case framer.PGNISOAddressClaim:
+				seenReclaim = true
+			case framer.PGNISORequest:
+				seenEnumeration = true
+				require.True(t, seenReclaim, "protocol traffic resumed before reconnect claim")
+			}
+		case <-deadline:
+			t.Fatalf("reconnect lifecycle incomplete: reclaim=%v enumeration=%v status=%+v", seenReclaim, seenEnumeration, client.Status())
+		}
+	}
 }
 
 func TestUDPSource_YDRaw(t *testing.T) {

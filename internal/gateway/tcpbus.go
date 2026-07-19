@@ -9,9 +9,11 @@ import (
 	"log/slog"
 	"net"
 	"sync"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/raw"
 )
 
 // errBusClosed is returned to writers and the read loop once the link is
@@ -40,6 +42,10 @@ type tcpLink struct {
 	stopErr error         // why run stopped, returned to writers still in await
 	ready   chan struct{} // closed (and re-armed) on every state change await must observe
 	done    chan struct{} // closed once by Close to interrupt dials, reads, and backoff
+	epoch   uint64
+	// observer runs before a new connection is published to writers and after
+	// a dead connection is removed. It must not perform link I/O.
+	observer func(connected bool, epoch uint64)
 
 	// writeMu serializes writes so concurrent callers (address claimer,
 	// heartbeat, user writes) cannot interleave partial frames.
@@ -50,17 +56,23 @@ func newTCPLink(log *slog.Logger, addr string, reconnect *ReconnectPolicy) *tcpL
 	return &tcpLink{log: log, addr: addr, reconnect: reconnect, ready: make(chan struct{}), done: make(chan struct{})}
 }
 
+func (l *tcpLink) setConnectionObserver(observer func(connected bool, epoch uint64)) {
+	l.mu.Lock()
+	l.observer = observer
+	l.mu.Unlock()
+}
+
 // readFunc consumes one live connection until it drops (returning the read
 // error, or nil on a clean EOF). A fresh readFunc invocation per connection
 // gives protocols with reassembly state (Actisense) a clean slate after a
 // reconnect.
-type readFunc func(r io.Reader, handler func(can.Frame)) error
+type readFunc func(r io.Reader, handler func(raw.Observation)) error
 
 // run dials, sends the optional greeting, and delivers incoming frames via
 // read until ctx is cancelled or the link is closed. With a ReconnectPolicy
 // it re-dials dropped connections with backoff; without one it returns on the
 // first drop or dial failure.
-func (l *tcpLink) run(ctx context.Context, greeting []byte, read readFunc, handler func(can.Frame)) (rerr error) {
+func (l *tcpLink) run(ctx context.Context, greeting []byte, read readFunc, handler func(raw.Observation)) (rerr error) {
 	// runCtx is cancelled by the caller's ctx or by Close, so an in-progress
 	// dial, read, or backoff all unblock promptly on shutdown either way.
 	runCtx, cancel := context.WithCancel(ctx)
@@ -185,6 +197,22 @@ func (l *tcpLink) dialOnce(ctx context.Context, greeting []byte) (net.Conn, erro
 // link was closed while dialing.
 func (l *tcpLink) markConnected(conn net.Conn) bool {
 	l.mu.Lock()
+	if l.closed {
+		l.mu.Unlock()
+		return false
+	}
+	l.epoch++
+	epoch := l.epoch
+	observer := l.observer
+	l.mu.Unlock()
+
+	// Install the client's reconnect gate before making conn available to any
+	// writer parked in await.
+	if observer != nil {
+		observer(true, epoch)
+	}
+
+	l.mu.Lock()
 	defer l.mu.Unlock()
 	if l.closed {
 		return false
@@ -200,11 +228,17 @@ func (l *tcpLink) markConnected(conn net.Conn) bool {
 // without it, they are woken to observe the error.
 func (l *tcpLink) markDisconnected(err error) {
 	l.mu.Lock()
-	defer l.mu.Unlock()
+	wasConnected := l.conn != nil
 	l.conn = nil
 	l.dialErr = err
+	observer := l.observer
+	epoch := l.epoch
 	if l.reconnect == nil {
 		l.broadcast()
+	}
+	l.mu.Unlock()
+	if wasConnected && observer != nil {
+		observer(false, epoch)
 	}
 }
 
@@ -331,10 +365,19 @@ func (l *tcpLink) Close() error {
 // a read error. It is the single reader for the RAW protocol, shared by the TCP
 // bus and the read-only network sources.
 func ReadYDRaw(r io.Reader, handler func(can.Frame)) error {
+	return ReadYDRawObservations(r, func(observation raw.Observation) {
+		if handler != nil && observation.Frame != nil {
+			handler(*observation.Frame)
+		}
+	})
+}
+
+// ReadYDRawObservations preserves direction and gateway-relative timestamps.
+func ReadYDRawObservations(r io.Reader, handler func(raw.Observation)) error {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		if frame, ok := ParseYDRaw(scanner.Text()); ok && handler != nil {
-			handler(frame)
+		if observation, ok := ParseYDRawObservation(scanner.Text()); ok && handler != nil {
+			handler(observation)
 		}
 	}
 	return scanner.Err()
@@ -345,12 +388,38 @@ func ReadYDRaw(r io.Reader, handler func(can.Frame)) error {
 // the Actisense protocol, shared by the TCP bus and the read-only network
 // sources.
 func ReadActisense(r io.Reader, handler func(can.Frame)) error {
-	reader := NewActisenseReader()
-	emit := ReframeEmitter(func(f can.Frame) {
-		if handler != nil {
-			handler(f)
+	return ReadActisenseObservations(r, func(observation raw.Observation) {
+		if handler != nil && observation.Frame != nil {
+			handler(*observation.Frame)
 		}
 	})
+}
+
+// ReadActisenseObservations preserves the gateway-relative timestamp on every
+// CAN frame reconstructed from an assembled message.
+func ReadActisenseObservations(r io.Reader, handler func(raw.Observation)) error {
+	reader := NewActisenseReader()
+	var seq uint8
+	emit := func(message N2KMessage) {
+		frames, err := Reframe(message, seq)
+		if err != nil {
+			return
+		}
+		seq = (seq + 1) % 8
+		for _, frame := range frames {
+			if handler != nil {
+				handler(raw.Observation{
+					Kind:                  raw.KindFrame,
+					ReceivedAt:            time.Now(),
+					TransportTimestamp:    message.Timestamp,
+					HasTransportTimestamp: message.HasTimestamp,
+					AdapterID:             "actisense",
+					Direction:             raw.DirectionReceived,
+					Frame:                 &frame,
+				})
+			}
+		}
+	}
 	buf := make([]byte, 4096)
 	for {
 		n, err := r.Read(buf)
@@ -385,12 +454,32 @@ func NewYDRawTCPBus(log *slog.Logger, addr string, reconnect *ReconnectPolicy) *
 // Run connects and delivers incoming frames to handler until ctx is
 // cancelled or (without a reconnect policy) the connection fails.
 func (b *YDRawTCPBus) Run(ctx context.Context, handler func(can.Frame)) error {
-	return b.link.run(ctx, nil, ReadYDRaw, handler)
+	return b.RunObservations(ctx, func(observation raw.Observation) {
+		if handler != nil && observation.Frame != nil {
+			handler(*observation.Frame)
+		}
+	})
+}
+
+// RunObservations preserves gateway transport context.
+func (b *YDRawTCPBus) RunObservations(ctx context.Context, handler func(raw.Observation)) error {
+	return b.link.run(ctx, nil, ReadYDRawObservations, func(observation raw.Observation) {
+		observation.AdapterID = "tcp:" + b.link.addr
+		observation.NetworkID = b.link.addr
+		if handler != nil {
+			handler(observation)
+		}
+	})
 }
 
 // WriteFrame transmits one CAN frame as a RAW line.
 func (b *YDRawTCPBus) WriteFrame(frame can.Frame) error {
 	return b.link.write(FormatYDRawTX(frame))
+}
+
+// SetConnectionObserver installs reconnect lifecycle observation for Client.
+func (b *YDRawTCPBus) SetConnectionObserver(observer func(bool, uint64)) {
+	b.link.setConnectionObserver(observer)
 }
 
 // Close releases the connection.
@@ -419,7 +508,22 @@ func NewActisenseTCPBus(log *slog.Logger, addr string, reconnect *ReconnectPolic
 // handler as re-framed CAN frames until ctx is cancelled or (without a
 // reconnect policy) the connection fails.
 func (b *ActisenseTCPBus) Run(ctx context.Context, handler func(can.Frame)) error {
-	return b.link.run(ctx, EncodeStartup(), ReadActisense, handler)
+	return b.RunObservations(ctx, func(observation raw.Observation) {
+		if handler != nil && observation.Frame != nil {
+			handler(*observation.Frame)
+		}
+	})
+}
+
+// RunObservations preserves gateway transport context.
+func (b *ActisenseTCPBus) RunObservations(ctx context.Context, handler func(raw.Observation)) error {
+	return b.link.run(ctx, EncodeStartup(), ReadActisenseObservations, func(observation raw.Observation) {
+		observation.AdapterID = "tcp:" + b.link.addr
+		observation.NetworkID = b.link.addr
+		if handler != nil {
+			handler(observation)
+		}
+	})
 }
 
 // WriteFrame transmits one CAN frame as a whole message. This is correct
@@ -445,6 +549,11 @@ func (b *ActisenseTCPBus) WriteMessage(pgnNum uint32, priority, _, destination u
 		return err
 	}
 	return b.link.write(buf)
+}
+
+// SetConnectionObserver installs reconnect lifecycle observation for Client.
+func (b *ActisenseTCPBus) SetConnectionObserver(observer func(bool, uint64)) {
+	b.link.setConnectionObserver(observer)
 }
 
 // Close releases the connection.

@@ -30,16 +30,16 @@ func (c *Client) handleISORequest(info pgn.MessageInfo, frame can.Frame) {
 	case framer.PGNISOAddressClaim:
 		c.claimer.HandleISORequest()
 	case 126996:
-		c.Write(c.productInfo.message())
+		c.writeProtocol("ISO product information response", protocolRequired, c.productInfo.message())
 	case 126998:
-		c.Write(c.configInfo.message())
+		c.writeProtocol("ISO configuration information response", protocolRequired, c.configInfo.message())
 	case 126993:
 		if c.heartbeat != nil {
 			c.heartbeat.sendNow()
 		}
 	default:
 		if !broadcast {
-			c.Write(nakFor(requested))
+			c.writeProtocol("ISO request NAK", protocolRequired, nakFor(requested))
 		}
 	}
 }

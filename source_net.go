@@ -1,7 +1,6 @@
 package n2k
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"fmt"
@@ -9,8 +8,8 @@ import (
 	"log/slog"
 	"net"
 
-	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/gateway"
+	"github.com/open-ships/n2k/raw"
 )
 
 // StreamFormat identifies the wire format spoken by a network gateway.
@@ -37,7 +36,7 @@ type tcpSource struct {
 	reconnect *gateway.ReconnectPolicy // nil = no auto-reconnect
 }
 
-func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(can.Frame)) error {
+func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
 	if !s.format.valid() {
 		return fmt.Errorf("n2k: unknown stream format %d", s.format)
 	}
@@ -74,7 +73,7 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(can.
 // dialAndRead opens one connection and reads it to completion. The returned
 // bool reports whether the connection was established (used to reset backoff);
 // the error is the dial or read error (nil on a clean EOF).
-func (s *tcpSource) dialAndRead(ctx context.Context, handler func(can.Frame)) (bool, error) {
+func (s *tcpSource) dialAndRead(ctx context.Context, handler func(raw.Observation)) (bool, error) {
 	var d net.Dialer
 	conn, err := d.DialContext(ctx, "tcp", s.addr)
 	if err != nil {
@@ -93,7 +92,11 @@ func (s *tcpSource) dialAndRead(ctx context.Context, handler func(can.Frame)) (b
 		}
 	}()
 
-	return true, readStream(conn, s.format, handler)
+	return true, readStreamObservations(conn, s.format, func(observation raw.Observation) {
+		observation.AdapterID = "tcp:" + s.addr
+		observation.NetworkID = s.addr
+		handler(observation)
+	})
 }
 
 // newBus opens the gateway connection as a read/write Bus for NewClient.
@@ -135,12 +138,12 @@ func (c *config) applyReconnect() {
 // readStream consumes a gateway byte stream until EOF or a read error,
 // delegating to the shared per-protocol readers so the TCP bus and the
 // read-only network sources decode identically.
-func readStream(r io.Reader, format StreamFormat, handler func(can.Frame)) error {
+func readStreamObservations(r io.Reader, format StreamFormat, handler func(raw.Observation)) error {
 	switch format {
 	case FormatYDRaw:
-		return gateway.ReadYDRaw(r, handler)
+		return gateway.ReadYDRawObservations(r, handler)
 	case FormatActisense:
-		return gateway.ReadActisense(r, handler)
+		return gateway.ReadActisenseObservations(r, handler)
 	}
 	return fmt.Errorf("n2k: unknown stream format %d", format)
 }
@@ -151,7 +154,7 @@ type udpSource struct {
 	format StreamFormat
 }
 
-func (s *udpSource) run(ctx context.Context, log *slog.Logger, handler func(can.Frame)) error {
+func (s *udpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
 	if !s.format.valid() {
 		return fmt.Errorf("n2k: unknown stream format %d", s.format)
 	}
@@ -173,23 +176,17 @@ func (s *udpSource) run(ctx context.Context, log *slog.Logger, handler func(can.
 		}
 	}()
 
-	reader := gateway.NewActisenseReader()
-	emit := gateway.ReframeEmitter(handler)
 	buf := make([]byte, 65536)
 	for {
-		n, _, err := conn.ReadFrom(buf)
+		n, remote, err := conn.ReadFrom(buf)
 		if n > 0 {
-			switch s.format {
-			case FormatYDRaw:
-				scanner := bufio.NewScanner(bytes.NewReader(buf[:n]))
-				for scanner.Scan() {
-					if frame, ok := gateway.ParseYDRaw(scanner.Text()); ok {
-						handler(frame)
-					}
-				}
-			case FormatActisense:
-				reader.Feed(buf[:n], emit)
+			networkID := remote.String()
+			emit := func(observation raw.Observation) {
+				observation.AdapterID = "udp:" + s.addr
+				observation.NetworkID = networkID
+				handler(observation)
 			}
+			_ = readStreamObservations(bytes.NewReader(buf[:n]), s.format, emit)
 		}
 		if err != nil {
 			if ctx.Err() != nil {

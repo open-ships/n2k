@@ -104,10 +104,10 @@ func (c *Client) transmitsPGN(pgnNum uint32) bool {
 func (c *Client) applyRequestedInterval(pgnNum uint32, intervalTicks *uint64) {
 	switch pgnNum {
 	case 126996:
-		c.Write(c.productInfo.message())
+		c.writeProtocol("group-function product information response", protocolRequired, c.productInfo.message())
 		return
 	case 126998:
-		c.Write(c.configInfo.message())
+		c.writeProtocol("group-function configuration information response", protocolRequired, c.configInfo.message())
 		return
 	case 126993:
 		if intervalTicks == nil {
@@ -173,7 +173,7 @@ func (c *Client) ackGroupFunctionError(pgnNum uint32, errorCode uint64) {
 	refused := uint64(pgnNum)
 	intervalErr := uint64(0) // acknowledge (no interval/priority complaint)
 	params := uint64(0)
-	c.Write(&pgn.NmeaAcknowledgeGroupFunction{
+	c.writeProtocol("group-function acknowledgement", protocolRequired, &pgn.NmeaAcknowledgeGroupFunction{
 		Info:                                  pgn.MessageInfo{Priority: pgn.Priority(3)},
 		FunctionCode:                          &fc,
 		Pgn:                                   &refused,
