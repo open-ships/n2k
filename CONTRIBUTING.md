@@ -32,5 +32,15 @@ non-confidential requirement identifiers and hashes.
 PGN files and metadata are generated. Modify the generator or its inputs and
 run `just pgn-sync`; do not hand-edit generated category files.
 
+## Releases
+
+[`VERSION`](VERSION) is the minimum version the next successful `main` build
+will release. Raise it in the same reviewed pull request as a breaking or
+minor-level API change. After that version has been published, subsequent
+fully green CI runs increment the patch component automatically. Do not push
+release tags manually: the release workflow tags the exact current `main`
+commit only after its test, conformance, race/fuzz, lint, and security jobs all
+pass.
+
 Architecture vocabulary and invariants live in [CONTEXT.md](CONTEXT.md).
 Design rationale lives in [docs/adr](docs/adr).

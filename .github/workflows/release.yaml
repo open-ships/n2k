@@ -1,51 +1,65 @@
 name: Release
 
-# Two ways in:
-#   - Every green Test run on main auto-tags the next v0.x.y patch release.
-#   - Manually pushing a v*.*.* tag (e.g. a minor bump: git tag v0.2.0 &&
-#     git push origin v0.2.0) releases that tag directly.
+# A successful CI run on the current main commit is the only release path.
+# VERSION sets the next deliberate baseline; later releases increment patch.
 on:
   workflow_run:
-    workflows: [Test]
+    workflows: [CI]
     branches: [main]
     types: [completed]
-  push:
-    tags: ["v*.*.*"]
 
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Compute next patch version
+      - name: Compute release version
         id: version
-        if: ${{ github.event_name == 'workflow_run' }}
         run: |
+          git fetch origin main --tags
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "A newer main commit superseded this CI run; nothing to release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if git describe --tags --exact-match --match 'v*.*.*' HEAD >/dev/null 2>&1; then
             echo "HEAD is already tagged; nothing to release."
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
+          BASE_VERSION=$(tr -d '[:space:]' < VERSION)
+          if ! echo "$BASE_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "VERSION must contain a semantic version without a leading v." >&2
+            exit 1
+          fi
+          BASE_TAG="v$BASE_VERSION"
           LATEST=$(git tag --list 'v*.*.*' | sort -V | tail -n 1)
           if [ -z "$LATEST" ]; then
-            TAG="v0.1.0"
+            TAG="$BASE_TAG"
+          elif [ "$LATEST" != "$BASE_TAG" ] && [ "$(printf '%s\n%s\n' "$LATEST" "$BASE_TAG" | sort -V | tail -n 1)" = "$BASE_TAG" ]; then
+            TAG="$BASE_TAG"
           else
             TAG=$(echo "$LATEST" | awk -F '[v.]' '{printf "v%d.%d.%d", $2, $3, $4 + 1}')
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create and push tag
-        if: ${{ github.event_name == 'workflow_run' && steps.version.outputs.skip != 'true' }}
+        if: ${{ steps.version.outputs.skip != 'true' }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -53,14 +67,14 @@ jobs:
           git push origin "${{ steps.version.outputs.tag }}"
 
       - name: Set up Go
-        if: ${{ github.event_name == 'push' || steps.version.outputs.skip != 'true' }}
+        if: ${{ steps.version.outputs.skip != 'true' }}
         uses: actions/setup-go@v5
         with:
           go-version: 1.23.x
           check-latest: true
 
       - name: Run goreleaser
-        if: ${{ github.event_name == 'push' || steps.version.outputs.skip != 'true' }}
+        if: ${{ steps.version.outputs.skip != 'true' }}
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser

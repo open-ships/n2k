@@ -1,8 +1,6 @@
 # n2k
 
-[![Test](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
-[![Lint](https://github.com/open-ships/n2k/actions/workflows/lint.yml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/lint.yml)
-[![Secure](https://github.com/open-ships/n2k/actions/workflows/security.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/security.yaml)
+[![CI](https://github.com/open-ships/n2k/actions/workflows/test.yaml/badge.svg)](https://github.com/open-ships/n2k/actions/workflows/test.yaml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/open-ships/n2k.svg)](https://pkg.go.dev/github.com/open-ships/n2k)
 [![Release](https://img.shields.io/github/v/release/open-ships/n2k)](https://github.com/open-ships/n2k/releases)
 
@@ -107,10 +105,12 @@ go install github.com/open-ships/n2k/cmd/n2k@latest # CLI
 Prebuilt CLI binaries for Linux, macOS, and Windows are on the
 [releases page](https://github.com/open-ships/n2k/releases).
 
-Releases follow semver with a `v0` major (`v0.x.y`). Every green build on
-`main` automatically cuts a patch release (with prebuilt CLI binaries); minor
-bumps are tagged manually when the API moves. While the major version is 0,
-minor releases may contain breaking API changes — pin accordingly.
+Releases follow semver with a `v0` major (`v0.x.y`). [`VERSION`](VERSION)
+declares the next deliberate release baseline. Once that tag exists, every
+fully green CI run on the current `main` commit increments the patch version
+and publishes prebuilt CLI binaries. Raise `VERSION` in a reviewed PR when the
+API warrants a minor bump. While the major version is 0, minor releases may
+contain breaking API changes — pin accordingly.
 
 ## The `n2k` CLI
 
