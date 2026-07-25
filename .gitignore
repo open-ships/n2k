@@ -1,5 +1,3 @@
-bin
-
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -14,10 +12,6 @@ bin
 *.out
 
 .vscode**
-sniffer
-
-# goreleaser output
-dist/
 
 # Scratch
 scratch/*

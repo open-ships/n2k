@@ -1,5 +1,13 @@
 ## Change Log for open-ships/n2k
 
+### Unreleased — library-only module
+
+- Removed the in-repository `n2k` command, its tests and demo, Cobra
+  dependencies, build recipe, and GoReleaser packaging. Command-line tooling
+  now lives in the separate `open-ships/n2k-cli` repository.
+- Releases now publish the Go module's source tag without prebuilt command
+  archives.
+
 ### v1.0.0 — 2026-07-18 — schema-safe codec, resilient network sessions, and raw observability
 
 - The shared PGN codec now executes schema-declared conditional fields,
