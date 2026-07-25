@@ -989,7 +989,7 @@ func (c *Client) doWrite(msg pgn.Message) error {
 		return errors.New("n2k: cannot write a nil message")
 	}
 	v := reflect.ValueOf(msg)
-	if v.Kind() == reflect.Ptr && v.IsNil() {
+	if v.Kind() == reflect.Pointer && v.IsNil() {
 		return fmt.Errorf("n2k: cannot write a nil %T", msg)
 	}
 

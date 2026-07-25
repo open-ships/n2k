@@ -7,7 +7,7 @@ when practical.
 
 ## Development
 
-Go 1.23 or newer and `just` are required. Run `just setup` once to install the
+Go 1.26.5 or newer and `just` are required. Run `just setup` once to install the
 pinned development tools.
 
 Before submitting a change, run:
