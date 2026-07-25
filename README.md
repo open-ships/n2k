@@ -4,9 +4,9 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/open-ships/n2k.svg)](https://pkg.go.dev/github.com/open-ships/n2k)
 [![Release](https://img.shields.io/github/v/release/open-ships/n2k)](https://github.com/open-ships/n2k/releases)
 
-`n2k` is a standalone Go library and CLI for NMEA 2000 (N2K) — the CAN-based
-network that connects marine instruments (GPS, depth, wind, engine, autopilot)
-on boats. It reads, writes, filters, and replays bus traffic from CAN hardware,
+`n2k` is a standalone Go library for NMEA 2000 (N2K) — the CAN-based network
+that connects marine instruments (GPS, depth, wind, engine, autopilot) on
+boats. It reads, writes, filters, and replays bus traffic from CAN hardware,
 USB-CAN adapters, WiFi gateways, and capture files, decoding messages into
 strongly typed Go structs while preserving byte-exact wire payloads for
 re-encoding.
@@ -15,8 +15,6 @@ It is the Go foundation for NMEA 2000 software — the bus toolkit itself, not a
 plugin or companion layer for another app. Use it directly in telemetry
 collectors, loggers, gateways, test rigs, monitoring services, automation, and
 any Go program that needs to understand or participate on an N2K bus.
-
-![n2k sniff decoding NMEA 2000 PGNs as typed JSON lines with exact wire values](.github/demo.svg)
 
 ## Why n2k
 
@@ -42,14 +40,7 @@ any Go program that needs to understand or participate on an N2K bus.
 ## Quick Start — No Boat Required
 
 The repo bundles a real six-second capture from a sailing vessel
-(`testdata/sample.log`), so your first run works at a desk:
-
-```bash
-git clone https://github.com/open-ships/n2k && cd n2k
-go run ./cmd/n2k sniff --file testdata/sample.log | jq .
-```
-
-Or in code — it runs as-is:
+(`testdata/sample.log`), so this program runs as-is at a desk:
 
 ```go
 package main
@@ -98,102 +89,39 @@ WiFi gateway.
 ### Add it to your project
 
 ```bash
-go get github.com/open-ships/n2k                    # library
-go install github.com/open-ships/n2k/cmd/n2k@latest # CLI
+go get github.com/open-ships/n2k
 ```
 
-To build the CLI from a checkout:
-
-```bash
-just build # writes bin/n2k
-```
-
-Prebuilt CLI binaries for Linux, macOS, and Windows are on the
-[releases page](https://github.com/open-ships/n2k/releases).
+For command-line capture and diagnostics, install
+[`open-ships/n2k-cli`](https://github.com/open-ships/n2k-cli).
 
 Releases follow semantic versioning. [`VERSION`](VERSION) declares the release
 baseline; v1 provides the stable Go module path that pkg.go.dev and Go tooling
 recognize as production-ready. The project preserves exported v1 behavior
 across minor and patch releases, adds deprecations before removal, and reserves
 breaking changes for a new major module path. Fully green release automation
-publishes the tag and prebuilt CLI binaries.
-
-## The `n2k` CLI
-
-Once installed (see [Add it to your project](#add-it-to-your-project)):
-
-```bash
-# Yacht Devices WiFi gateway (RAW server mode) -- decoded JSON in one command
-n2k sniff --tcp 192.168.4.1:1457
-
-# Concrete Go PGN types with scaled physical values and SI units
-n2k sniff --file capture.log --output text
-
-# SocketCAN (Linux), USB-CAN serial, UDP, or capture replay
-n2k sniff -i can0
-n2k sniff -u /dev/ttyUSB0
-n2k sniff --udp :1457
-n2k sniff --file capture.log            # add --timing to replay at real speed
-
-# CEL filtering, unknown PGNs, jq-friendly output
-n2k sniff -i can0 -f 'pgn == 127250' --unknown | jq .
-
-# Record, replay, validate, discover, and inspect schema support
-n2k record -i can0 --out capture.log
-n2k record --tcp 192.168.4.1:1457 --out observations.jsonl --output-format jsonl
-n2k replay --timing=false capture.log
-n2k validate --file capture.log --strict
-n2k devices --tcp 192.168.4.1:1457 --wait 5s
-n2k pgn 127250
-n2k pgn list | jq 'select(.complete == true)'
-```
-
-The CLI uses Cobra for consistent nested help, argument validation, typo
-suggestions, and completion. Run `n2k help <command>` for examples and flags.
-Enable completion for the current shell with one of:
-
-```bash
-source <(n2k completion bash)                         # Bash
-source <(n2k completion zsh)                          # Zsh
-n2k completion fish | source                         # Fish
-n2k completion powershell | Out-String | Invoke-Expression # PowerShell
-```
-
-Completion understands source paths, stream and output formats, and known PGN
-numbers with descriptions.
-
-`sniff` and `replay` default to JSON lines containing the typed structs and
-their exact wire values. The demo projects the metadata envelope down to its
-PGN for readability. Set `--output text` for the concrete `pgn.<Type>`, source
-address, scaled physical values, SI units, and lookup type names.
-
-`record` writes replayable candump by default; JSON-lines mode retains each
-owned source observation, including Adapter and network identity, source and
-receipt timestamps, gateway-relative time, direction, and frame bytes. The Go
-client observation stream additionally exposes assembled messages and decode
-errors.
+publishes the tag.
 
 ## Using `n2k`
 
 Everything the library does, mapped to its API:
 
-| Area | Functionality | API / command |
-|------|---------------|---------------|
-| Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner`, `n2k sniff`, `n2k replay` |
-| Observe raw traffic | Retain owned frame/message/decode-error records with transport context. | `Observe`, `Client.Observations`, `ReplayObservations`, `n2k record` |
+| Area | Functionality | API |
+|------|---------------|-----|
+| Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner` |
+| Observe raw traffic | Retain owned frame/message/decode-error records with transport context. | `Observe`, `Client.Observations`, `ReplayObservations` |
 | Write PGNs | Encode PGN structs back to byte-preserving CAN frames or gateway messages. | `NewClient`, `Client.Write` |
 | Act as a bus node | Claim or accept a commanded address, heartbeat, answer product/configuration info and ISO requests, and handle group functions. | `NewClient`, `WithName`, `WithProductInfo`, `WithConfigInfo` |
 | Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.BroadcastPGN`, `Client.Broadcast` |
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
-| Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt`, `n2k devices` |
+| Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
 | Read many sources | Use SocketCAN, USB-CAN serial adapters, TCP/UDP gateways, candump logs, or in-memory frames. | `CAN`, `USB`, `TCP`, `UDP`, `File`, `Replay` |
 | Gateway formats | Speak Yacht Devices RAW and Actisense-format gateway streams. | `FormatYDRaw`, `FormatActisense` |
 | Physical values | Keep raw wire ticks while exposing generated SI-unit accessors. | `<Field>Value`, `Set<Field>Value`, `pgn.PhysicalValue` |
 | Filter traffic | Filter by PGN metadata or decoded fields with CEL; metadata-only filters avoid decode work. | `Filter` |
 | Preserve unknowns | Drop undecoded PGNs by default or surface them for logging/research. | `IncludeUnknown`, `*pgn.UnknownPGN` |
 | Test without hardware | Replay bundled or custom captures and inspect written frames in tests. | `File`, `OriginalTiming`, `Replay`, `WrittenFrames` |
-| Validate captures | Count typed and undecodable messages by PGN and optionally fail CI. | `n2k validate` |
-| Inspect PGN support | Query complete runtime metadata, fields, ranges, and confidence. | `pgn.PgnInfoLookup`, `n2k pgn` |
+| Inspect PGN support | Query complete runtime metadata, fields, ranges, and confidence. | `pgn.PgnInfoLookup` |
 | Observe health | Export connection epochs, queue/counter metrics, address state, and structured logs. | `Client.Status`, `Client.Err`, `WithLogger` |
 | Extend transports | Provide custom frame buses, observation buses, readiness, lifecycle, or assembled-message writers. | `Bus`, `ObservationBus`, `ReadyBus`, `ConnectionLifecycleBus`, `MessageWriter`, `WithBus` |
 
@@ -750,8 +678,8 @@ present or not applicable.
 
 For a Go application, `open-ships/n2k` is designed to cover the full path in
 one API: typed decoding, byte-preserving writes, bus-node behavior, group
-functions, gateway/file sources, and CLI workflows. Evaluate the details that
-matter to your deployment rather than relying on the summary table alone.
+functions, and gateway/file sources. Evaluate the details that matter to your
+deployment rather than relying on the summary table alone.
 
 ## Known Limitations
 
