@@ -24,7 +24,7 @@ jobs:
         github.event.workflow_run.event == 'push' &&
         github.event.workflow_run.head_repository.full_name == github.repository
       }}
-    uses: open-ships/ci/.github/workflows/release-go.yaml@564eb8691843720c6d9eb99d79dba7f3b437c0bc
+    uses: open-ships/ci/.github/workflows/release-go.yaml@57a20d38b43f01b49d02b82cae004e57f49edaa2 # v1.0.0
     with:
       commit-sha: ${{ github.event.workflow_run.head_sha }}
       project-name: n2k
