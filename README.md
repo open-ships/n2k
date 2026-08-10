@@ -100,7 +100,9 @@ baseline; v1 provides the stable Go module path that pkg.go.dev and Go tooling
 recognize as production-ready. The project preserves exported v1 behavior
 across minor and patch releases, adds deprecations before removal, and reserves
 breaking changes for a new major module path. Fully green release automation
-publishes the tag.
+publishes an annotated tag, deterministic source archive, checksums, SBOM, and
+separate build-provenance and SBOM attestations through the shared Open Ships
+release policy.
 
 ## Using `n2k`
 
