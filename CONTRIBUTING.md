@@ -40,9 +40,9 @@ minor-level API change. After that version has been published, subsequent
 fully green CI runs increment the patch component automatically. Do not push
 release tags manually: the release workflow tags the exact current `main`
 commit only after its test, conformance, race/fuzz, lint, and security jobs all
-pass. The repository pins the shared Open Ships release policy by commit SHA;
-that policy publishes a deterministic source archive with checksums, an SBOM,
-and separate build-provenance and SBOM attestations.
+pass. The repository references an exact semantic-version tag of the shared
+Open Ships release policy; that policy publishes a deterministic source archive
+with checksums, an SBOM, and separate build-provenance and SBOM attestations.
 
 Architecture vocabulary and invariants live in [CONTEXT.md](CONTEXT.md).
 Design rationale lives in [docs/adr](docs/adr).
