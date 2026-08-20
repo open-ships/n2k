@@ -36,6 +36,20 @@ setup:
 test:
     go test ./...
 
+# require every tracked Go file to match gofmt
+format-check:
+    @unformatted=$(git ls-files -z '*.go' | xargs -0 gofmt -l); \
+        if [ -n "$unformatted" ]; then \
+            echo "tracked Go files require gofmt:" >&2; \
+            echo "$unformatted" >&2; \
+            exit 1; \
+        fi
+
+# verify VERSION, changelog, and published-tag consistency
+release-check:
+    git fetch origin --tags --force
+    bash scripts/release-check.sh
+
 # run the public, reproducible protocol evidence suite (not NMEA certification)
 conformance-local:
     go test -count=1 -v . -run '^(TestConformance|TestHeartbeat_|TestISORequest_|TestGroupFunction_|TestProtocolTransmission|TestRequiredProtocol|TestAdvisoryProtocol|TestTCPClientReconnect|TestObservationHub|TestReplayObservation)'

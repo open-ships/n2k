@@ -1,12 +1,17 @@
 ## Change Log for open-ships/n2k
 
-### Unreleased — library-only module
+### v1.1.0 — 2026-08-20 — Actisense raw CAN, serial, and capture support
 
 - Added a bounded Actisense protocol Module for BST-93/94/95/D0, Type-2
   lengths, acknowledged BEM mode and Tx-PGN management, typed F0/F1/F2/F4
   diagnostics, direct 115200 8N1 serial access and enumeration, and EBL replay.
   `FormatActisenseRaw` is a source-authoritative BST-95 `Bus`; the existing
   `FormatActisense` route remains the gateway-owned v1 message session.
+- Added `ActisenseTCP` and `ActisenseSerial` constructors. Read-only callers use
+  compatible Actisense receive behavior, while `NewClient` requires
+  acknowledged mode 5 and never falls back to gateway-owned writes. Explicit
+  stream formats remain available as compatibility escape hatches;
+  `ActisenseModeError` makes negotiation failures available to `errors.As`.
 - Actisense parser and gateway failures now surface as owned transport/gateway
   observations and status counters instead of disappearing silently. D0
   payloads enter the Pipeline as assembled Messages up to the NMEA transport
@@ -16,6 +21,14 @@
   canboat master so schema upgrades are reviewed explicitly.
 - Updated the pinned Go and CI toolchain to 1.26.6 for current standard-library
   security fixes.
+
+### v1.0.2 — 2026-07-25 — Go toolchain update
+
+- Updated the pinned Go and CI toolchain to 1.26.5 and refreshed security-tool
+  versions while preserving CGO-free Linux, macOS, and Windows builds.
+
+### v1.0.1 — 2026-07-25 — library-only distribution
+
 - Removed the in-repository `n2k` command, its tests and demo, Cobra
   dependencies, build recipe, and GoReleaser packaging. Command-line tooling
   now lives in the separate `open-ships/n2k-cli` repository.

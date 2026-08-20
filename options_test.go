@@ -108,6 +108,8 @@ func TestConfigValidationRejectsInvalidCaptureAndSerialSources(t *testing.T) {
 	for _, opt := range []Option{
 		Serial("", FormatActisense),
 		Serial("/dev/ttyUSB0", FormatYDRaw),
+		ActisenseSerial(""),
+		ActisenseTCP(""),
 		EBL(""),
 	} {
 		cfg := config{}
@@ -117,8 +119,37 @@ func TestConfigValidationRejectsInvalidCaptureAndSerialSources(t *testing.T) {
 }
 
 func TestConfigValidationRequiresTCPForReconnect(t *testing.T) {
+	for _, opt := range []Option{
+		Serial("/dev/ttyUSB0", FormatActisenseRaw),
+		ActisenseSerial("/dev/ttyUSB0"),
+	} {
+		cfg := config{}
+		opt.apply(&cfg)
+		WithReconnect(ReconnectPolicy{}).apply(&cfg)
+		assert.ErrorContains(t, cfg.validate(), "requires a TCP source")
+	}
+
 	cfg := config{}
-	Serial("/dev/ttyUSB0", FormatActisenseRaw).apply(&cfg)
+	ActisenseTCP("127.0.0.1:2000").apply(&cfg)
 	WithReconnect(ReconnectPolicy{}).apply(&cfg)
-	assert.ErrorContains(t, cfg.validate(), "requires a TCP source")
+	cfg.applyReconnect()
+	require.NoError(t, cfg.validate())
+	require.Len(t, cfg.sources, 1)
+	source, ok := cfg.sources[0].(*actisenseTCPSource)
+	require.True(t, ok)
+	assert.NotNil(t, source.reconnect)
+}
+
+func TestActisenseConstructorsCreateRoleAwareSources(t *testing.T) {
+	var cfg config
+	ActisenseTCP("127.0.0.1:2000").apply(&cfg)
+	ActisenseSerial("/dev/ttyUSB0").apply(&cfg)
+
+	require.Len(t, cfg.sources, 2)
+	tcp, ok := cfg.sources[0].(*actisenseTCPSource)
+	require.True(t, ok)
+	assert.Equal(t, "127.0.0.1:2000", tcp.addr)
+	serial, ok := cfg.sources[1].(*actisenseSerialSource)
+	require.True(t, ok)
+	assert.Equal(t, "/dev/ttyUSB0", serial.port)
 }

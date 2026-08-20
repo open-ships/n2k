@@ -716,6 +716,7 @@ func (c *Client) busReadLoop() {
 			handle(frameObservation(frame, "bus", "bus", raw.DirectionReceived))
 		})
 	}
+	err = wrapActisenseModeError(err)
 	if c.ctx.Err() == nil {
 		if err == nil {
 			err = errors.New("bus stopped unexpectedly")

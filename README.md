@@ -77,9 +77,8 @@ n2k.CAN("can0")                            // SocketCAN (Linux)
 n2k.USB("/dev/ttyUSB0")                    // USB-CAN serial adapter
 n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)  // Yacht Devices WiFi gateway
 n2k.UDP(":1457", n2k.FormatYDRaw)          // same gateway, UDP broadcast
-n2k.TCP("10.0.0.5:2000", n2k.FormatActisense) // Actisense-format streams
-n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisense) // direct NGT/NGX
-n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw) // BST-95 raw CAN
+n2k.ActisenseTCP("10.0.0.5:2000")          // role-aware Actisense TCP
+n2k.ActisenseSerial("/dev/cu.usbserial-1234") // direct NGT/NGX
 ```
 
 The TCP/UDP sources mean you can develop on your laptop against your boat's
@@ -97,14 +96,14 @@ go get github.com/open-ships/n2k
 For command-line capture and diagnostics, install
 [`open-ships/n2k-cli`](https://github.com/open-ships/n2k-cli).
 
-Releases follow semantic versioning. [`VERSION`](VERSION) declares the release
-baseline; v1 provides the stable Go module path that pkg.go.dev and Go tooling
-recognize as production-ready. The project preserves exported v1 behavior
-across minor and patch releases, adds deprecations before removal, and reserves
-breaking changes for a new major module path. Fully green release automation
-publishes an annotated tag, deterministic source archive, checksums, SBOM, and
-separate build-provenance and SBOM attestations through the shared Open Ships
-release policy.
+Releases follow semantic versioning. [`VERSION`](VERSION) declares the exact
+version published by the next successful `main` build; v1 provides the stable
+Go module path that pkg.go.dev and Go tooling recognize as production-ready.
+The project preserves exported v1 behavior across minor and patch releases,
+adds deprecations before removal, and reserves breaking changes for a new major
+module path. Fully green release automation publishes an annotated tag,
+deterministic source archive, checksums, SBOM, and separate build-provenance and
+SBOM attestations through the shared Open Ships release policy.
 
 ## Using `n2k`
 
@@ -331,12 +330,11 @@ for msg, err := range n2k.Receive(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDR
 for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... }
 
 // Actisense-format streams (W2K-1 gateways, or an NGT-1 behind a TCP
-// bridge). Messages arrive pre-assembled and are re-framed internally so
-// they flow through the same decode pipeline.
-for msg, err := range n2k.Receive(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense)) { ... }
+// bridge). Read-only use passively accepts all supported BST records.
+for msg, err := range n2k.Receive(ctx, n2k.ActisenseTCP("10.0.0.5:2000")) { ... }
 
 // Direct NGT/NGX serial connection at 115200 8N1.
-for msg, err := range n2k.Receive(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisense)) { ... }
+for msg, err := range n2k.Receive(ctx, n2k.ActisenseSerial("/dev/cu.usbserial-1234")) { ... }
 ```
 
 `File`, `EBL`, and `UDP` are read-only (use them with
@@ -349,17 +347,21 @@ for msg, err := range n2k.Receive(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.
 // transmitted frames back, so the client also observes its own traffic.
 client, err := n2k.NewClient(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw))
 
-// Writing over Actisense-format connections also works, with one caveat:
-// the protocol is message-oriented and carries no source address on sends,
-// so the gateway transmits under its own claimed address and does its own
-// fast-packet fragmentation.
-client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
+// Preferred Actisense Client path. The dedicated constructors query the prior
+// mode, set and acknowledge mode 5, then exchange source-authoritative BST-95
+// frames. A gateway that rejects or strips BEM setup fails explicitly; there
+// is no automatic fallback to gateway-owned writes.
+client, err := n2k.NewClient(ctx, n2k.ActisenseTCP("10.0.0.5:2000"))
+client, err := n2k.NewClient(ctx, n2k.ActisenseSerial("/dev/cu.usbserial-1234"))
 
-// Preferred Actisense Client path. The session queries the prior mode, sets
-// and acknowledges mode 5, then exchanges source-authoritative BST-95 frames.
-// A gateway that rejects or strips BEM setup fails readiness explicitly.
-client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw))
-client, err := n2k.NewClient(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisenseRaw))
+// Explicit compatibility escape hatch for hardware without mode 5. The
+// gateway supplies the transmitting source address and fragments messages.
+client, err := n2k.NewClient(ctx,
+    n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
+
+// Explicit raw selection also remains available.
+client, err := n2k.NewClient(ctx,
+    n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw))
 ```
 
 #### Source support by platform
@@ -369,10 +371,10 @@ client, err := n2k.NewClient(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.Forma
 | `CAN` (SocketCAN) | ✅ | ❌ | ❌ | ✅ |
 | `USB` (serial CAN adapter) | ✅ | ✅ | ✅ | ✅ |
 | `TCP` (Yacht Devices RAW) | ✅ | ✅ | ✅ | ✅ full frame-level control |
-| `TCP` (Actisense format) | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
-| `TCP` (Actisense raw) | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
-| `Serial` (Actisense format) | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
-| `Serial` (Actisense raw) | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
+| `ActisenseTCP` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
+| `ActisenseSerial` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
+| Explicit Actisense message format | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
+| Explicit Actisense raw format | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
 | `UDP` (gateway formats) | ✅ | ✅ | ✅ | ❌ read-only |
 | `File` (candump `-L`/`-l`) | ✅ | ✅ | ✅ | ❌ read-only |
 | `EBL` (Actisense capture) | ✅ | ✅ | ✅ | ❌ read-only |
@@ -424,10 +426,12 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 |--------|-------------|
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
+| `n2k.ActisenseSerial(port)` | Role-aware Actisense serial source; compatible reads, source-authoritative raw `NewClient` |
 | `n2k.Serial(port, format)` | Direct Actisense serial source at 115200 8N1; message or BST-95 raw mode |
 | `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields |
 | `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
 | `n2k.EBL(path, ...opts)` | Actisense Enhanced Binary Log source (read-only); supports raw BDTP and BSTRawFrame records |
+| `n2k.ActisenseTCP(addr)` | Role-aware Actisense TCP source; passive reads, source-authoritative raw `NewClient` |
 | `n2k.TCP(addr, format)` | Network gateway over TCP (read/write); format is `n2k.FormatYDRaw`, `n2k.FormatActisense`, or `n2k.FormatActisenseRaw` |
 | `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats; raw Actisense requires an upstream BST-95 configuration |
 | `n2k.Replay(frames)` | Replay source for testing |
@@ -451,6 +455,17 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 Runtime failure is surfaced through the API. A bus disconnect ends live
 iterators/scanners with that error, causes later writes to fail, and appears in
 `Client.Err()` and `Client.Status()`.
+
+An Actisense operating-mode failure is available to `errors.As` without losing
+the underlying timeout or device error. This lets an application deliberately
+offer a legacy configuration instead of receiving a silent downgrade:
+
+```go
+var modeErr *n2k.ActisenseModeError
+if errors.As(err, &modeErr) && modeErr.RequestedMode == 5 {
+    // Ask the operator whether to reconnect with explicit FormatActisense.
+}
+```
 
 Queues are deliberately bounded:
 
@@ -716,12 +731,14 @@ deployment rather than relying on the summary table alone.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
 - `File`, `EBL`, and `UDP` sources are read-only; writing requires `CAN`, `USB`, `Serial`, `TCP`, or `Replay`.
-- Over legacy `FormatActisense` TCP or serial connections the gateway stamps its own source
+- Over explicit legacy `FormatActisense` TCP or serial connections the gateway stamps its own source
   address on transmissions (the protocol carries none), so the client's
-  claimed address is not authoritative on the wire. Use
-  `FormatActisenseRaw` on mode-5-capable hardware for full `Bus` semantics.
+  claimed address is not authoritative on the wire. Prefer `ActisenseTCP` or
+  `ActisenseSerial`; use `FormatActisenseRaw` when an explicit format is needed.
 - Mode 5 is not available on NGT-class hardware. Raw mode does not silently
-  fall back; an unsupported or unacknowledged BEM setup fails startup.
+  fall back; an unsupported or unacknowledged BEM setup fails `NewClient`
+  startup. Such hardware can still be read through the dedicated constructors,
+  or used for writes through an explicit `FormatActisense` selection.
 - Gateway TCP connections do not auto-reconnect by default; a dropped
   connection ends the read loop. Pass `WithReconnect` to re-dial dropped
   connections with backoff. Each new connection epoch reclaims the address,

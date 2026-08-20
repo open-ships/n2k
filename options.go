@@ -68,10 +68,19 @@ func (c *config) validate() error {
 			if s.port == "" || (s.format != FormatActisense && s.format != FormatActisenseRaw) {
 				return fmt.Errorf("n2k: invalid serial source port or Actisense stream format %d", s.format)
 			}
+		case *actisenseSerialSource:
+			if s.port == "" {
+				return errors.New("n2k: Actisense serial port cannot be empty")
+			}
 		case *tcpSource:
 			hasTCP = true
 			if s.addr == "" || !s.format.valid() {
 				return fmt.Errorf("n2k: invalid TCP source address or stream format %d", s.format)
+			}
+		case *actisenseTCPSource:
+			hasTCP = true
+			if s.addr == "" {
+				return errors.New("n2k: Actisense TCP address cannot be empty")
 			}
 		case *udpSource:
 			if s.addr == "" || !s.format.valid() {
@@ -93,7 +102,7 @@ func (c *config) validate() error {
 	return nil
 }
 
-// Option configures the behavior of Receive and NewScanner.
+// Option configures Receive, Observe, NewScanner, or NewClient.
 type Option interface {
 	apply(*config)
 }
@@ -126,6 +135,18 @@ func Serial(port string, format StreamFormat) Option {
 	})
 }
 
+// ActisenseSerial adds a directly connected Actisense gateway at 115200 8N1.
+// Receive, Observe, and NewScanner use the compatible gateway-owned message
+// session. NewClient requires acknowledged mode 5 and uses source-authoritative
+// BST-95 raw CAN; it fails rather than falling back when raw mode is
+// unavailable. Use Serial with an explicit Actisense format to override this
+// role-based policy.
+func ActisenseSerial(port string) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &actisenseSerialSource{port: port})
+	})
+}
+
 // File adds a source that replays CAN frames from a candump -L / -l log file.
 // By default frames are delivered as fast as they can be read; pass
 // OriginalTiming() to pace them by the log's timestamps. File sources are
@@ -152,6 +173,18 @@ func File(path string, opts ...FileOption) Option {
 func TCP(addr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})
+	})
+}
+
+// ActisenseTCP adds an Actisense gateway over TCP. Receive, Observe, and
+// NewScanner passively decode all supported BST records without changing the
+// gateway's operating mode. NewClient requires acknowledged mode 5 and uses
+// source-authoritative BST-95 raw CAN; it fails rather than falling back when
+// raw mode is unavailable. Use TCP with an explicit Actisense format to
+// override this role-based policy.
+func ActisenseTCP(addr string) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &actisenseTCPSource{addr: addr})
 	})
 }
 

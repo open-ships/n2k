@@ -15,8 +15,10 @@ Before submitting a change, run:
 ```sh
 go test ./...
 just pgn-sync-check
+just format-check
 just lint
 just secure
+just release-check
 ```
 
 Use `just test-race` for lifecycle/concurrency work and `just fuzz-smoke` for
@@ -34,15 +36,21 @@ run `just pgn-sync`; do not hand-edit generated category files.
 
 ## Releases
 
-[`VERSION`](VERSION) is the minimum version the next successful `main` build
-will release. Raise it in the same reviewed pull request as a breaking or
-minor-level API change. After that version has been published, subsequent
-fully green CI runs increment the patch component automatically. Do not push
-release tags manually: the release workflow tags the exact current `main`
-commit only after its test, conformance, race/fuzz, lint, and security jobs all
-pass. The repository references an exact semantic-version tag of the shared
-Open Ships release policy; that policy publishes a deterministic source archive
-with checksums, an SBOM, and separate build-provenance and SBOM attestations.
+[`VERSION`](VERSION) is the exact version the next successful `main` build must
+release. Every pull request must increment it according to semantic versioning
+and replace the first `CHANGELOG.md` section with a completed
+`### v<VERSION> — YYYY-MM-DD — <summary>` entry, including documentation, CI,
+and maintenance-only changes. `just release-check` rejects stale or mismatched
+metadata and prevents the release workflow from silently inventing a patch
+version.
+
+Do not push release tags manually. After all required CI jobs pass, the release
+workflow creates the annotated `v<VERSION>` tag at that exact `main` commit and
+publishes its GitHub release. A missing or failed release blocks subsequent
+merges until it is repaired and verified. The repository references an exact
+semantic-version tag of the shared Open Ships release policy; that policy
+publishes a deterministic source archive with checksums, an SBOM, and separate
+build-provenance and SBOM attestations.
 
 Architecture vocabulary and invariants live in [CONTEXT.md](CONTEXT.md).
 Design rationale lives in [docs/adr](docs/adr).

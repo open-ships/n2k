@@ -104,15 +104,40 @@ jobs:
           go install github.com/securego/gosec/v2/cmd/gosec@v2.27.1
           gosec -exclude-generated -exclude-dir=.claude -exclude=G115 ./...
 
+  release-metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout with release tags
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: 1.26.6
+          check-latest: true
+
+      - name: Set up just
+        uses: extractions/setup-just@v4
+
+      - name: Check tracked formatting
+        run: just format-check
+
+      - name: Check release metadata
+        run: just release-check
+
   release-gate:
     if: ${{ always() }}
-    needs: [test, race-and-fuzz, lint, secure]
+    needs: [test, race-and-fuzz, lint, secure, release-metadata]
     runs-on: ubuntu-latest
     env:
       TEST_RESULT: ${{ needs.test.result }}
       RACE_FUZZ_RESULT: ${{ needs.race-and-fuzz.result }}
       LINT_RESULT: ${{ needs.lint.result }}
       SECURE_RESULT: ${{ needs.secure.result }}
+      RELEASE_METADATA_RESULT: ${{ needs.release-metadata.result }}
 
     steps:
       - name: Require every release gate
@@ -121,3 +146,4 @@ jobs:
           test "$RACE_FUZZ_RESULT" = success
           test "$LINT_RESULT" = success
           test "$SECURE_RESULT" = success
+          test "$RELEASE_METADATA_RESULT" = success

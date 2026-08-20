@@ -42,6 +42,23 @@ type tcpSource struct {
 	reconnect *gateway.ReconnectPolicy // nil = no auto-reconnect
 }
 
+// actisenseTCPSource selects Actisense behavior at the existing source/Bus
+// seam: reads stay passive and compatible, while Client use requires the
+// source-authoritative raw CAN Bus.
+type actisenseTCPSource struct {
+	addr      string
+	reconnect *gateway.ReconnectPolicy
+}
+
+func (s *actisenseTCPSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
+	legacy := tcpSource{addr: s.addr, format: FormatActisense, reconnect: s.reconnect}
+	return legacy.run(ctx, log, handler)
+}
+
+func (s *actisenseTCPSource) newBus(log *slog.Logger) Bus {
+	return gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
+}
+
 func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
 	if !s.format.valid() {
 		return fmt.Errorf("n2k: unknown stream format %d", s.format)
@@ -49,7 +66,7 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 	if s.format == FormatActisenseRaw {
 		bus := gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
 		defer func() { _ = bus.Close() }()
-		return bus.RunObservations(ctx, handler)
+		return wrapActisenseModeError(bus.RunObservations(ctx, handler))
 	}
 
 	var backoff *gateway.Backoff
@@ -142,8 +159,11 @@ func (c *config) applyReconnect() {
 		MaxBackoff:     c.reconnect.MaxBackoff,
 	}
 	for _, src := range c.sources {
-		if ts, ok := src.(*tcpSource); ok {
-			ts.reconnect = gp
+		switch s := src.(type) {
+		case *tcpSource:
+			s.reconnect = gp
+		case *actisenseTCPSource:
+			s.reconnect = gp
 		}
 	}
 }

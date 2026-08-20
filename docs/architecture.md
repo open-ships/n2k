@@ -52,6 +52,12 @@ Observations. The session is the sole reader and serialized writer for one
 connection epoch, so response correlation, mode readiness, reset handling,
 and disconnect cancellation retain Locality.
 
+The public `ActisenseTCP` and `ActisenseSerial` Adapters apply role policy at
+the existing source/Bus seam. Their `source.run` Interface uses compatible
+receive behavior; their `busBacked.newBus` Interface, reached by `NewClient`,
+requires the source-authoritative raw CAN Bus. This keeps mode selection local
+while explicit stream-format Adapters remain available for compatibility.
+
 The system path receives frames first. It handles protocol traffic regardless
 of a user's CEL filter or whether the application is currently reading. This
 ordering prevents user code from breaking address defense, request correlation,
@@ -104,7 +110,8 @@ leaving distributed reconnect checks at call sites.
 For Actisense, an epoch is published only after the gateway acknowledges the
 requested operating mode. Raw mode fails closed when BEM is rejected or
 stripped. Volatile mode changes are best-effort restored on clean close and
-are never committed to EEPROM or flash.
+are never committed to EEPROM or flash. The role-aware public constructors do
+not fall back from raw CAN to a gateway-owned message session.
 
 ## Failure model
 

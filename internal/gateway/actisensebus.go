@@ -31,6 +31,19 @@ type actisenseConnection interface {
 
 type actisenseOpen func(context.Context) (actisenseConnection, error)
 
+// ActisenseModeSetupError reports a failed acknowledged operating-mode setup.
+// The public package translates it into ActisenseModeError.
+type ActisenseModeSetupError struct {
+	RequestedMode actisense.OperatingMode
+	Err           error
+}
+
+func (e *ActisenseModeSetupError) Error() string {
+	return fmt.Sprintf("actisense: acknowledged mode-%d setup failed: %v", e.RequestedMode, e.Err)
+}
+
+func (e *ActisenseModeSetupError) Unwrap() error { return e.Err }
+
 type actisenseEpoch struct {
 	connection  actisenseConnection
 	session     *actisense.Session
@@ -221,7 +234,7 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 		_ = connection.Close()
 		epoch.session.Close(err)
 		<-readErr
-		return fmt.Errorf("actisense: acknowledged mode-%d setup failed: %w", b.mode, err), false
+		return &ActisenseModeSetupError{RequestedMode: b.mode, Err: err}, false
 	}
 
 	if !b.publishEpoch(epoch) {

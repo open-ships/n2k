@@ -20,6 +20,13 @@ serial, EBL, and observation code are thin Adapters around that Module.
 session. `FormatActisenseRaw` is the source-authoritative BST-95 `Bus` and is
 the preferred Actisense route for `NewClient`.
 
+The public `ActisenseTCP` and `ActisenseSerial` constructors select behavior at
+the existing source/`Bus` seam. `Receive`, `Observe`, and `NewScanner` use
+compatible receive behavior; `NewClient` always selects the
+source-authoritative raw CAN `Bus`. The explicit formats remain available as
+escape hatches. There is no automatic UDP constructor because a one-way
+datagram source cannot negotiate or verify an operating mode.
+
 Every writable session queries its prior mode, sets and verifies the requested
 mode, and only then publishes readiness. Mode 2 retains an active Tx PGN list,
 so the legacy writer queries/enables each first-used PGN and activates the
@@ -32,7 +39,9 @@ is an explicit readiness failure; raw mode never falls back silently.
 
 Existing `Receive` callers keep BST-93 behavior, while BST-D0 can enter the
 Pipeline as an assembled Message without synthetic CAN frames. Applications
-that require independent node identity use `FormatActisenseRaw`. NGT-class
-hardware that does not support mode 5 must remain a gateway-owned message
-session. Reconnect creates fresh parser, correlation, Tx-list cache, and
-operating-mode state before the next connection epoch becomes writable.
+that require independent node identity use the dedicated constructors or
+`FormatActisenseRaw`. NGT-class hardware that does not support mode 5 can be
+read through the dedicated constructors, but writable use must explicitly
+select the gateway-owned message session. Reconnect creates fresh parser,
+correlation, Tx-list cache, and operating-mode state before the next connection
+epoch becomes writable.
