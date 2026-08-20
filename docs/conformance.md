@@ -65,6 +65,8 @@ unique IDs, and evidence presence are checked by
 | TIM-01 | Claim, heartbeat, assembly, transport, and reconnect timing | deterministic clock and timeout tests |
 | CODEC-01 | Conditional fields, signed widths, ranges, and sentinels | codec and data-stream writer tests |
 | OBS-01 | Source/network identity, timestamps, direction, and ownership | observation and gateway tests |
+| ACT-01 | Bounded Actisense framing, per-epoch acknowledged readiness, source-authoritative raw CAN, and explicit failure | `internal/actisense`; `TestActisenseRawSerialBusReadinessFramesAndRestore`; `TestActisenseRawBusReconnectsWithFreshHandshake`; `TestNewClient_TCPActisenseRawPreservesClientSource` |
+| EBL-01 | Bounded Actisense capture replay, timestamps, direction, Type-2 messages, and corruption recovery | `internal/ebl`; `TestEBLSourceFeedsLargeD0AsAssembledMessage` |
 
 These IDs are public repository evidence identifiers. They are not licensed
 ISO or NMEA clause numbers, and they do not replace the private crosswalk.

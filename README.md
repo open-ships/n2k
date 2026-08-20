@@ -78,6 +78,8 @@ n2k.USB("/dev/ttyUSB0")                    // USB-CAN serial adapter
 n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)  // Yacht Devices WiFi gateway
 n2k.UDP(":1457", n2k.FormatYDRaw)          // same gateway, UDP broadcast
 n2k.TCP("10.0.0.5:2000", n2k.FormatActisense) // Actisense-format streams
+n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisense) // direct NGT/NGX
+n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw) // BST-95 raw CAN
 ```
 
 The TCP/UDP sources mean you can develop on your laptop against your boat's
@@ -111,14 +113,14 @@ Everything the library does, mapped to its API:
 | Area | Functionality | API |
 |------|---------------|-----|
 | Read decoded traffic | Decode live or recorded NMEA 2000 frames into typed PGN structs. | `Receive`, `NewScanner` |
-| Observe raw traffic | Retain owned frame/message/decode-error records with transport context. | `Observe`, `Client.Observations`, `ReplayObservations` |
+| Observe raw traffic | Retain owned frame/message/gateway/transport-error records with transport context. | `Observe`, `Client.Observations`, `ReplayObservations` |
 | Write PGNs | Encode PGN structs back to byte-preserving CAN frames or gateway messages. | `NewClient`, `Client.Write` |
 | Act as a bus node | Claim or accept a commanded address, heartbeat, answer product/configuration info and ISO requests, and handle group functions. | `NewClient`, `WithName`, `WithProductInfo`, `WithConfigInfo` |
 | Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.BroadcastPGN`, `Client.Broadcast` |
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
 | Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
-| Read many sources | Use SocketCAN, USB-CAN serial adapters, TCP/UDP gateways, candump logs, or in-memory frames. | `CAN`, `USB`, `TCP`, `UDP`, `File`, `Replay` |
-| Gateway formats | Speak Yacht Devices RAW and Actisense-format gateway streams. | `FormatYDRaw`, `FormatActisense` |
+| Read many sources | Use SocketCAN, USB-CAN adapters, direct Actisense serial, TCP/UDP gateways, candump/EBL logs, or in-memory frames. | `CAN`, `USB`, `Serial`, `TCP`, `UDP`, `File`, `EBL`, `Replay` |
+| Gateway formats | Speak Yacht Devices RAW, gateway-owned Actisense messages, and source-authoritative BST-95 CAN. | `FormatYDRaw`, `FormatActisense`, `FormatActisenseRaw` |
 | Physical values | Keep raw wire ticks while exposing generated SI-unit accessors. | `<Field>Value`, `Set<Field>Value`, `pgn.PhysicalValue` |
 | Filter traffic | Filter by PGN metadata or decoded fields with CEL; metadata-only filters avoid decode work. | `Filter` |
 | Preserve unknowns | Drop undecoded PGNs by default or surface them for logging/research. | `IncludeUnknown`, `*pgn.UnknownPGN` |
@@ -289,11 +291,12 @@ for observation, err := range n2k.Observe(ctx, n2k.File("capture.log")) {
 }
 ```
 
-`client.Observations()` additionally publishes assembled-message and
-decode-error events. Every record owns its frame and payload bytes. A slow
-subscriber ends with `ErrObservationOverflow` without delaying address claims,
-ISO responses, decoding, or other subscribers. `pgn.MessageInfo` carries the
-same timing, Adapter, network, and direction context into typed messages.
+`client.Observations()` additionally publishes assembled-message, decode-error,
+gateway, and transport-error events. Every record owns its frame and payload
+bytes. A slow subscriber ends with `ErrObservationOverflow` without delaying
+address claims, ISO responses, decoding, or other subscribers.
+`pgn.MessageInfo` carries the same timing, Adapter, network, and direction
+context into typed messages.
 
 ### Multiple Networks
 
@@ -320,6 +323,9 @@ for msg, err := range n2k.Receive(ctx, n2k.File("testdata/sample.log")) { ... }
 // ...or paced by the log's own timestamps.
 for msg, err := range n2k.Receive(ctx, n2k.File("capture.log", n2k.OriginalTiming())) { ... }
 
+// Replay an Actisense EBL capture (raw BDTP or BSTRawFrame records).
+for msg, err := range n2k.Receive(ctx, n2k.EBL("capture.ebl", n2k.OriginalTiming())) { ... }
+
 // Yacht Devices YDWG-02 (RAW server mode) over TCP or UDP.
 for msg, err := range n2k.Receive(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)) { ... }
 for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... }
@@ -328,10 +334,13 @@ for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... 
 // bridge). Messages arrive pre-assembled and are re-framed internally so
 // they flow through the same decode pipeline.
 for msg, err := range n2k.Receive(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense)) { ... }
+
+// Direct NGT/NGX serial connection at 115200 8N1.
+for msg, err := range n2k.Receive(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisense)) { ... }
 ```
 
-`File` and `UDP` are read-only (use them with `Receive`/`NewScanner`). `TCP`
-also works with `NewClient` for full read/write bus access:
+`File`, `EBL`, and `UDP` are read-only (use them with
+`Receive`/`NewScanner`). `TCP` and `Serial` also work with `NewClient`:
 
 ```go
 // A complete bus device over the boat's WiFi gateway. RAW mode is
@@ -345,6 +354,12 @@ client, err := n2k.NewClient(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw))
 // so the gateway transmits under its own claimed address and does its own
 // fast-packet fragmentation.
 client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
+
+// Preferred Actisense Client path. The session queries the prior mode, sets
+// and acknowledges mode 5, then exchanges source-authoritative BST-95 frames.
+// A gateway that rejects or strips BEM setup fails readiness explicitly.
+client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw))
+client, err := n2k.NewClient(ctx, n2k.Serial("/dev/cu.usbserial-1234", n2k.FormatActisenseRaw))
 ```
 
 #### Source support by platform
@@ -355,8 +370,12 @@ client, err := n2k.NewClient(ctx, n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
 | `USB` (serial CAN adapter) | ✅ | ✅ | ✅ | ✅ |
 | `TCP` (Yacht Devices RAW) | ✅ | ✅ | ✅ | ✅ full frame-level control |
 | `TCP` (Actisense format) | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
-| `UDP` (both formats) | ✅ | ✅ | ✅ | ❌ read-only |
+| `TCP` (Actisense raw) | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
+| `Serial` (Actisense format) | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
+| `Serial` (Actisense raw) | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
+| `UDP` (gateway formats) | ✅ | ✅ | ✅ | ❌ read-only |
 | `File` (candump `-L`/`-l`) | ✅ | ✅ | ✅ | ❌ read-only |
+| `EBL` (Actisense capture) | ✅ | ✅ | ✅ | ❌ read-only |
 | `Replay` (in-memory frames) | ✅ | ✅ | ✅ | ✅ writes captured via `WrittenFrames` |
 
 ### Filter Messages using Common Expression Language
@@ -405,9 +424,12 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 |--------|-------------|
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
+| `n2k.Serial(port, format)` | Direct Actisense serial source at 115200 8N1; message or BST-95 raw mode |
+| `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields |
 | `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
-| `n2k.TCP(addr, format)` | Network gateway over TCP (read/write); format is `n2k.FormatYDRaw` or `n2k.FormatActisense` |
-| `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats |
+| `n2k.EBL(path, ...opts)` | Actisense Enhanced Binary Log source (read-only); supports raw BDTP and BSTRawFrame records |
+| `n2k.TCP(addr, format)` | Network gateway over TCP (read/write); format is `n2k.FormatYDRaw`, `n2k.FormatActisense`, or `n2k.FormatActisenseRaw` |
+| `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats; raw Actisense requires an upstream BST-95 configuration |
 | `n2k.Replay(frames)` | Replay source for testing |
 | `n2k.Filter(expr)` | CEL filter expression |
 | `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
@@ -693,10 +715,13 @@ deployment rather than relying on the summary table alone.
   conformance](docs/conformance.md) before making a certification claim.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
-- `File` and `UDP` sources are read-only; writing requires `CAN`, `USB`, `TCP`, or `Replay`.
-- Over Actisense-format TCP connections the gateway stamps its own source
+- `File`, `EBL`, and `UDP` sources are read-only; writing requires `CAN`, `USB`, `Serial`, `TCP`, or `Replay`.
+- Over legacy `FormatActisense` TCP or serial connections the gateway stamps its own source
   address on transmissions (the protocol carries none), so the client's
-  claimed address is not authoritative on the wire.
+  claimed address is not authoritative on the wire. Use
+  `FormatActisenseRaw` on mode-5-capable hardware for full `Bus` semantics.
+- Mode 5 is not available on NGT-class hardware. Raw mode does not silently
+  fall back; an unsupported or unacknowledged BEM setup fails startup.
 - Gateway TCP connections do not auto-reconnect by default; a dropped
   connection ends the read loop. Pass `WithReconnect` to re-dial dropped
   connections with backoff. Each new connection epoch reclaims the address,

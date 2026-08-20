@@ -175,7 +175,7 @@ func FuzzActisenseReader(f *testing.F) {
 			})
 			start = end
 		}
-		assert.LessOrEqual(t, len(r.body), maxActisenseBody)
+		assert.LessOrEqual(t, r.parser.BufferedBytes(), maxActisenseBody)
 		assert.LessOrEqual(t, emitted, len(input)/3+1)
 	})
 }

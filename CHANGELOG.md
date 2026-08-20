@@ -2,6 +2,20 @@
 
 ### Unreleased — library-only module
 
+- Added a bounded Actisense protocol Module for BST-93/94/95/D0, Type-2
+  lengths, acknowledged BEM mode and Tx-PGN management, typed F0/F1/F2/F4
+  diagnostics, direct 115200 8N1 serial access and enumeration, and EBL replay.
+  `FormatActisenseRaw` is a source-authoritative BST-95 `Bus`; the existing
+  `FormatActisense` route remains the gateway-owned v1 message session.
+- Actisense parser and gateway failures now surface as owned transport/gateway
+  observations and status counters instead of disappearing silently. D0
+  payloads enter the Pipeline as assembled Messages up to the NMEA transport
+  maximum without fabricated CAN frames.
+- Pinned PGN generation to the canboat v7.1.0 source revision represented by
+  the stable public API; the separate upstream-parity check continues to track
+  canboat master so schema upgrades are reviewed explicitly.
+- Updated the pinned Go and CI toolchain to 1.26.6 for current standard-library
+  security fixes.
 - Removed the in-repository `n2k` command, its tests and demo, Cobra
   dependencies, build recipe, and GoReleaser packaging. Command-line tooling
   now lives in the separate `open-ships/n2k-cli` repository.

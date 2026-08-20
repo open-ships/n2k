@@ -9,10 +9,8 @@ import (
 	"log/slog"
 	"net"
 	"sync"
-	"time"
 
 	"github.com/brutella/can"
-	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/raw"
 )
 
@@ -383,58 +381,6 @@ func ReadYDRawObservations(r io.Reader, handler func(raw.Observation)) error {
 	return scanner.Err()
 }
 
-// ReadActisense reassembles Actisense messages from r and emits them as
-// re-framed CAN frames until EOF or a read error. It is the single reader for
-// the Actisense protocol, shared by the TCP bus and the read-only network
-// sources.
-func ReadActisense(r io.Reader, handler func(can.Frame)) error {
-	return ReadActisenseObservations(r, func(observation raw.Observation) {
-		if handler != nil && observation.Frame != nil {
-			handler(*observation.Frame)
-		}
-	})
-}
-
-// ReadActisenseObservations preserves the gateway-relative timestamp on every
-// CAN frame reconstructed from an assembled message.
-func ReadActisenseObservations(r io.Reader, handler func(raw.Observation)) error {
-	reader := NewActisenseReader()
-	var seq uint8
-	emit := func(message N2KMessage) {
-		frames, err := Reframe(message, seq)
-		if err != nil {
-			return
-		}
-		seq = (seq + 1) % 8
-		for _, frame := range frames {
-			if handler != nil {
-				handler(raw.Observation{
-					Kind:                  raw.KindFrame,
-					ReceivedAt:            time.Now(),
-					TransportTimestamp:    message.Timestamp,
-					HasTransportTimestamp: message.HasTimestamp,
-					AdapterID:             "actisense",
-					Direction:             raw.DirectionReceived,
-					Frame:                 &frame,
-				})
-			}
-		}
-	}
-	buf := make([]byte, 4096)
-	for {
-		n, err := r.Read(buf)
-		if n > 0 {
-			reader.Feed(buf[:n], emit)
-		}
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				return nil
-			}
-			return err
-		}
-	}
-}
-
 // YDRawTCPBus is a read/write bus over a TCP gateway speaking the Yacht
 // Devices RAW line protocol (YDWG-02 RAW server mode and compatibles). RAW
 // mode is frame-level in both directions, so the full client stack —
@@ -484,77 +430,3 @@ func (b *YDRawTCPBus) SetConnectionObserver(observer func(bool, uint64)) {
 
 // Close releases the connection.
 func (b *YDRawTCPBus) Close() error { return b.link.Close() }
-
-// ActisenseTCPBus is a read/write bus over a TCP connection speaking the
-// Actisense binary stream protocol (W2K-1 gateways, or an NGT-1 behind a
-// TCP bridge). The protocol is message-level: incoming messages arrive
-// assembled and are re-framed for the frame-based decode pipeline, and
-// outgoing messages are sent whole via WriteMessage — the gateway performs
-// fast-packet fragmentation and stamps its own claimed source address, so
-// the client's source address is not authoritative on the wire.
-type ActisenseTCPBus struct {
-	link *tcpLink
-}
-
-// NewActisenseTCPBus returns an unconnected bus; Run dials and sends the
-// gateway initialization command. A non-nil reconnect policy makes Run
-// re-dial dropped connections, re-sending the initialization command each
-// time.
-func NewActisenseTCPBus(log *slog.Logger, addr string, reconnect *ReconnectPolicy) *ActisenseTCPBus {
-	return &ActisenseTCPBus{link: newTCPLink(log, addr, reconnect)}
-}
-
-// Run connects, initializes the gateway, and delivers incoming messages to
-// handler as re-framed CAN frames until ctx is cancelled or (without a
-// reconnect policy) the connection fails.
-func (b *ActisenseTCPBus) Run(ctx context.Context, handler func(can.Frame)) error {
-	return b.RunObservations(ctx, func(observation raw.Observation) {
-		if handler != nil && observation.Frame != nil {
-			handler(*observation.Frame)
-		}
-	})
-}
-
-// RunObservations preserves gateway transport context.
-func (b *ActisenseTCPBus) RunObservations(ctx context.Context, handler func(raw.Observation)) error {
-	return b.link.run(ctx, EncodeStartup(), ReadActisenseObservations, func(observation raw.Observation) {
-		observation.AdapterID = "tcp:" + b.link.addr
-		observation.NetworkID = b.link.addr
-		if handler != nil {
-			handler(observation)
-		}
-	})
-}
-
-// WriteFrame transmits one CAN frame as a whole message. This is correct
-// for single-frame PGNs (address claims, ISO requests, transport-protocol
-// frames); fast-packet payloads must go through WriteMessage instead, which
-// the client's write path does automatically.
-func (b *ActisenseTCPBus) WriteFrame(frame can.Frame) error {
-	id := framer.ParseCANID(frame.ID)
-	return b.WriteMessage(id.PGN, id.Priority, id.Source, id.Destination, frame.Data[:frame.Length])
-}
-
-// WriteMessage transmits an assembled PGN payload (up to 223 bytes). The
-// source address is accepted for interface symmetry but not transmitted:
-// the gateway substitutes its own claimed address.
-func (b *ActisenseTCPBus) WriteMessage(pgnNum uint32, priority, _, destination uint8, payload []byte) error {
-	buf, err := EncodeSend(N2KMessage{
-		Priority:    priority,
-		PGN:         pgnNum,
-		Destination: destination,
-		Data:        payload,
-	})
-	if err != nil {
-		return err
-	}
-	return b.link.write(buf)
-}
-
-// SetConnectionObserver installs reconnect lifecycle observation for Client.
-func (b *ActisenseTCPBus) SetConnectionObserver(observer func(bool, uint64)) {
-	b.link.setConnectionObserver(observer)
-}
-
-// Close releases the connection.
-func (b *ActisenseTCPBus) Close() error { return b.link.Close() }

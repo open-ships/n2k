@@ -103,3 +103,22 @@ func TestNewClientRejectsAmbiguousSources(t *testing.T) {
 	_, err = NewClient(context.Background(), CAN("can0"), Replay(nil))
 	assert.Error(t, err)
 }
+
+func TestConfigValidationRejectsInvalidCaptureAndSerialSources(t *testing.T) {
+	for _, opt := range []Option{
+		Serial("", FormatActisense),
+		Serial("/dev/ttyUSB0", FormatYDRaw),
+		EBL(""),
+	} {
+		cfg := config{}
+		opt.apply(&cfg)
+		assert.Error(t, cfg.validate())
+	}
+}
+
+func TestConfigValidationRequiresTCPForReconnect(t *testing.T) {
+	cfg := config{}
+	Serial("/dev/ttyUSB0", FormatActisenseRaw).apply(&cfg)
+	WithReconnect(ReconnectPolicy{}).apply(&cfg)
+	assert.ErrorContains(t, cfg.validate(), "requires a TCP source")
+}

@@ -136,6 +136,8 @@ type Client struct {
 	framesTransmitted          atomic.Uint64
 	messagesObserved           atomic.Uint64
 	decodeErrorsObserved       atomic.Uint64
+	gatewayEventsObserved      atomic.Uint64
+	transportErrorsObserved    atomic.Uint64
 }
 
 type writeJob struct {
@@ -174,12 +176,9 @@ func validateClientConfig(cfg config) error {
 	if cfg.bus == nil && busSources == 0 {
 		for _, src := range cfg.sources {
 			if _, ok := src.(*replaySource); !ok {
-				return errors.New("n2k: File and UDP are read-only; use Receive or NewScanner")
+				return errors.New("n2k: File, EBL, and UDP are read-only; use Receive or NewScanner")
 			}
 		}
-	}
-	if cfg.reconnect != nil && busSources == 0 {
-		return errors.New("n2k: WithReconnect requires a TCP source")
 	}
 	if cfg.productInfo != nil {
 		fields := map[string]string{
@@ -209,8 +208,8 @@ func validateClientConfig(cfg config) error {
 }
 
 // NewClient creates a Client that can read and write NMEA 2000 messages.
-// Provide CAN, USB, TCP, Replay, or WithBus for writable clients; File and UDP
-// are read-only sources for Receive/NewScanner.
+// Provide CAN, USB, Serial, TCP, Replay, or WithBus for writable clients;
+// File, EBL, and UDP are read-only sources for Receive/NewScanner.
 func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	cfg := config{}
 	for _, o := range opts {
@@ -377,7 +376,7 @@ func (c *Client) initBus(cfg config) error {
 		}
 	}
 	if c.bus == nil {
-		return errors.New("n2k: no writable bus available — File and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN, USB, or TCP source or WithBus")
+		return errors.New("n2k: no writable bus available — File, EBL, and UDP sources are read-only; use Receive/NewScanner with them, or give the client a CAN, USB, Serial, or TCP source or WithBus")
 	}
 
 	// Set writeFrame to delegate to the bus.
@@ -629,11 +628,14 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 // is published before synchronous protocol handling.
 func (c *Client) handleBusObservation(observation raw.Observation) {
 	observation = normalizeObservation(observation)
+	c.publishObservation(observation)
 	if observation.Frame == nil {
+		if observation.Kind == raw.KindMessage {
+			c.pipeline.HandleObservation(observation)
+		}
 		return
 	}
 	frame := *observation.Frame
-	c.publishObservation(observation)
 	info := messageInfoForObservation(observation)
 
 	// Route address claim frames (PGN 60928) to the claimer and the device

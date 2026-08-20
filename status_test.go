@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/open-ships/n2k/raw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,4 +27,14 @@ func TestNilClientStatus(t *testing.T) {
 	var c *Client
 	assert.True(t, c.Status().Closed)
 	assert.ErrorIs(t, c.Err(), ErrClientClosed)
+}
+
+func TestClientStatusTracksGatewayAndTransportObservations(t *testing.T) {
+	c := &Client{observationHub: newObservationHub(2)}
+
+	c.publishObservation(raw.Observation{Kind: raw.KindGateway})
+	c.publishObservation(raw.Observation{Kind: raw.KindTransportError})
+	status := c.Status()
+	assert.Equal(t, uint64(1), status.GatewayEventsObserved)
+	assert.Equal(t, uint64(1), status.TransportErrorsObserved)
 }

@@ -11,9 +11,11 @@ import (
 type Kind string
 
 const (
-	KindFrame       Kind = "frame"
-	KindMessage     Kind = "message"
-	KindDecodeError Kind = "decode_error"
+	KindFrame          Kind = "frame"
+	KindMessage        Kind = "message"
+	KindDecodeError    Kind = "decode_error"
+	KindGateway        Kind = "gateway"
+	KindTransportError Kind = "transport_error"
 )
 
 // Direction identifies how an observation crossed its Adapter.
@@ -27,8 +29,8 @@ const (
 
 // Observation is an owned raw record from a transport Adapter or decode
 // pipeline. Frame observations retain the classical CAN frame; message
-// observations retain an assembled PGN payload; decode-error observations
-// retain the same payload and a stable error string.
+// observations retain an assembled PGN payload; gateway and transport-error
+// observations retain bounded protocol context and stable error text.
 type Observation struct {
 	Kind Kind `json:"kind"`
 
@@ -52,6 +54,16 @@ type Observation struct {
 	Destination *uint8 `json:"destination,omitempty"`
 	Payload     []byte `json:"payload,omitempty"`
 	Error       string `json:"error,omitempty"`
+
+	// Protocol fields retain gateway control-plane and framing diagnostics
+	// without coupling consumers to a concrete Adapter implementation.
+	Protocol     string `json:"protocol,omitempty"`
+	DatagramID   uint16 `json:"datagramId,omitempty"`
+	CommandID    uint16 `json:"commandId,omitempty"`
+	Sequence     uint8  `json:"sequence,omitempty"`
+	DeviceModel  uint32 `json:"deviceModel,omitempty"`
+	DeviceSerial uint32 `json:"deviceSerial,omitempty"`
+	DeviceError  int32  `json:"deviceError,omitempty"`
 }
 
 // Clone returns a fully owned copy safe for another goroutine or caller to

@@ -23,9 +23,11 @@ type ObservationKind = raw.Kind
 type Direction = raw.Direction
 
 const (
-	ObservationFrame       = raw.KindFrame
-	ObservationMessage     = raw.KindMessage
-	ObservationDecodeError = raw.KindDecodeError
+	ObservationFrame          = raw.KindFrame
+	ObservationMessage        = raw.KindMessage
+	ObservationDecodeError    = raw.KindDecodeError
+	ObservationGateway        = raw.KindGateway
+	ObservationTransportError = raw.KindTransportError
 
 	DirectionUnknown     = raw.DirectionUnknown
 	DirectionReceived    = raw.DirectionReceived
@@ -135,7 +137,22 @@ func Observe(ctx context.Context, opts ...Option) iter.Seq2[Observation, error] 
 }
 
 func messageInfoForObservation(observation raw.Observation) pgn.MessageInfo {
-	info := adapter.NewPacketInfoAt(observation.Frame, observation.Timestamp)
+	var info pgn.MessageInfo
+	if observation.Frame != nil {
+		info = adapter.NewPacketInfoAt(observation.Frame, observation.Timestamp)
+	} else {
+		priority := observation.Priority
+		info = pgn.MessageInfo{
+			Timestamp: observation.Timestamp,
+			Priority:  &priority,
+			PGN:       observation.PGN,
+			SourceId:  observation.Source,
+		}
+		if observation.Destination != nil {
+			destination := *observation.Destination
+			info.TargetId = &destination
+		}
+	}
 	info.ReceivedAt = observation.ReceivedAt
 	info.TransportTimestamp = observation.TransportTimestamp
 	info.HasTransportTimestamp = observation.HasTransportTimestamp
@@ -199,6 +216,10 @@ func (c *Client) publishObservation(observation raw.Observation) {
 		c.messagesObserved.Add(1)
 	case raw.KindDecodeError:
 		c.decodeErrorsObserved.Add(1)
+	case raw.KindGateway:
+		c.gatewayEventsObserved.Add(1)
+	case raw.KindTransportError:
+		c.transportErrorsObserved.Add(1)
 	}
 	c.observationHub.publish(observation)
 }

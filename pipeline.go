@@ -78,7 +78,18 @@ func (p *readPipeline) HandleFrame(frame can.Frame) {
 // HandleObservation is the source-aware pipeline entry point.
 func (p *readPipeline) HandleObservation(observation raw.Observation) {
 	observation = normalizeObservation(observation)
-	if observation.Frame == nil {
+	if observation.Kind == raw.KindMessage {
+		info := messageInfoForObservation(observation)
+		if p.filter != nil && !p.filter.evalPre(info) {
+			return
+		}
+		packet := decoder.NewPacket(info, observation.Payload)
+		packet.Complete = true
+		packet.FilterCandidates()
+		p.decoder.Decode(*packet)
+		return
+	}
+	if observation.Kind != raw.KindFrame || observation.Frame == nil {
 		return
 	}
 	frame := *observation.Frame

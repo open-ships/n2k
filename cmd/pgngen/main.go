@@ -19,11 +19,16 @@ import (
 const definitionsPath = "pgn/upstream_definitions.go"
 const dispatchPath = "pgn/dispatch.go"
 
+// upstreamRevision pins generation to the schema version represented by the
+// checked-in public API. The separate upstream-parity test intentionally
+// follows canboat master so maintainers can review schema upgrades explicitly.
+const upstreamRevision = "8f737e93ba2a1dd8684d4bc267126c55173c3ee5" // canboat schema 7.1.0
+
 var upstreamURL = upstreamSchemaURL()
 
 func upstreamSchemaURL() string {
 	project := "can" + "boat"
-	return "https://raw.githubusercontent.com/" + project + "/" + project + "/refs/heads/master/docs/" + project + ".json"
+	return "https://raw.githubusercontent.com/" + project + "/" + project + "/" + upstreamRevision + "/docs/" + project + ".json"
 }
 
 type sourceFile struct {
