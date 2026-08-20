@@ -16,6 +16,21 @@ type serialSource struct {
 	format StreamFormat
 }
 
+// actisenseSerialSource selects the compatible message session for read-only
+// use and the source-authoritative raw CAN Bus for Client use.
+type actisenseSerialSource struct {
+	port string
+}
+
+func (s *actisenseSerialSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
+	legacy := serialSource{port: s.port, format: FormatActisense}
+	return legacy.run(ctx, log, handler)
+}
+
+func (s *actisenseSerialSource) newBus(log *slog.Logger) Bus {
+	return gateway.NewActisenseRawSerialBus(log, s.port)
+}
+
 func (s *serialSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
 	bus := s.newBus(log)
 	if bus == nil {
@@ -23,11 +38,11 @@ func (s *serialSource) run(ctx context.Context, log *slog.Logger, handler func(r
 	}
 	defer func() { _ = bus.Close() }()
 	if observationBus, ok := bus.(ObservationBus); ok {
-		return observationBus.RunObservations(ctx, handler)
+		return wrapActisenseModeError(observationBus.RunObservations(ctx, handler))
 	}
-	return bus.Run(ctx, func(frame can.Frame) {
+	return wrapActisenseModeError(bus.Run(ctx, func(frame can.Frame) {
 		handler(frameObservation(frame, "serial:"+s.port, s.port, raw.DirectionReceived))
-	})
+	}))
 }
 
 func (s *serialSource) newBus(log *slog.Logger) Bus {

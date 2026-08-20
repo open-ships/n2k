@@ -7,6 +7,11 @@
   diagnostics, direct 115200 8N1 serial access and enumeration, and EBL replay.
   `FormatActisenseRaw` is a source-authoritative BST-95 `Bus`; the existing
   `FormatActisense` route remains the gateway-owned v1 message session.
+- Added `ActisenseTCP` and `ActisenseSerial` constructors. Read-only callers use
+  compatible Actisense receive behavior, while `NewClient` requires
+  acknowledged mode 5 and never falls back to gateway-owned writes. Explicit
+  stream formats remain available as compatibility escape hatches;
+  `ActisenseModeError` makes negotiation failures available to `errors.As`.
 - Actisense parser and gateway failures now surface as owned transport/gateway
   observations and status counters instead of disappearing silently. D0
   payloads enter the Pipeline as assembled Messages up to the NMEA transport

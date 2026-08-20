@@ -7,6 +7,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -132,7 +133,7 @@ func TestTCPSource_YDRaw(t *testing.T) {
 	assert.Equal(t, uint64(15708), *vh.Heading)
 }
 
-func TestTCPSource_ActisenseFastPacket(t *testing.T) {
+func TestActisenseTCPReceivePassivelyDecodesFastPacket(t *testing.T) {
 	// A fast-packet ProductInformation crosses re-framing and reassembly.
 	product := &pgn.ProductInformation{
 		ProductCode: u64(1234),
@@ -145,19 +146,24 @@ func TestTCPSource_ActisenseFastPacket(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = ln.Close() }()
 
+	clientWrote := make(chan bool, 1)
 	go func() {
 		conn, err := ln.Accept()
 		if err != nil {
 			return
 		}
 		_, _ = conn.Write(actisenseN2K(6, 126996, 255, 0x42, payload))
+		_ = conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
+		buf := make([]byte, 64)
+		n, _ := conn.Read(buf)
+		clientWrote <- n > 0
 		_ = conn.Close()
 	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	msgs := collectMessages(t, ctx, TCP(ln.Addr().String(), FormatActisense), 1)
+	msgs := collectMessages(t, ctx, ActisenseTCP(ln.Addr().String()), 1)
 	require.Len(t, msgs, 1)
 	pi, ok := msgs[0].(*pgn.ProductInformation)
 	require.True(t, ok, "expected *pgn.ProductInformation, got %T", msgs[0])
@@ -165,6 +171,7 @@ func TestTCPSource_ActisenseFastPacket(t *testing.T) {
 	assert.Equal(t, uint64(1234), *pi.ProductCode)
 	assert.Equal(t, "test gateway", pi.ModelId)
 	assert.Equal(t, uint8(0x42), pi.Info.SourceId)
+	assert.False(t, <-clientWrote, "read-only Actisense TCP must not send BEM mode commands")
 }
 
 func TestTCPSource_DialFailure(t *testing.T) {
@@ -524,7 +531,7 @@ func TestNewClient_TCPActisense_Writes(t *testing.T) {
 	}
 }
 
-func TestNewClient_TCPActisenseRawPreservesClientSource(t *testing.T) {
+func TestNewClient_ActisenseTCPPreservesClientSource(t *testing.T) {
 	frames := make(chan can.Frame, 32)
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
@@ -560,7 +567,7 @@ func TestNewClient_TCPActisenseRawPreservesClientSource(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	client, err := NewClient(ctx,
-		TCP(listener.Addr().String(), FormatActisenseRaw),
+		ActisenseTCP(listener.Addr().String()),
 		WithSourceAddress(42),
 		WithClaimTimeout(time.Second),
 		WithHeartbeatInterval(0),
@@ -591,6 +598,85 @@ func TestNewClient_TCPActisenseRawPreservesClientSource(t *testing.T) {
 	}
 }
 
+func TestNewClient_ActisenseTCPDoesNotFallBackWhenRawModeRejected(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = listener.Close() })
+
+	var sawRawMode, sawLegacyMode, sawLegacyWrite atomic.Bool
+	serverDone := make(chan struct{})
+	go func() {
+		defer close(serverDone)
+		connection, acceptErr := listener.Accept()
+		if acceptErr != nil {
+			return
+		}
+		defer func() { _ = connection.Close() }()
+		parser := actisense.NewParser()
+		buf := make([]byte, 4096)
+		for {
+			n, readErr := connection.Read(buf)
+			if n > 0 {
+				parser.Feed(buf[:n], func(datagram actisense.Datagram) {
+					if datagram.ID == actisense.BSTN2KTransmit {
+						sawLegacyWrite.Store(true)
+					}
+					if datagram.ID != actisense.BSTBEMCommand || len(datagram.Payload) == 0 || datagram.Payload[0] != actisense.BEMOperatingMode {
+						return
+					}
+
+					response := make([]byte, 12)
+					response[0] = actisense.BEMOperatingMode
+					if len(datagram.Payload) == 1 {
+						response = append(response, actisense.OperatingModeSet(actisense.ModeTransferNormal)...)
+					} else if len(datagram.Payload) >= 3 {
+						requested := actisense.OperatingMode(binary.LittleEndian.Uint16(datagram.Payload[1:3]))
+						switch requested {
+						case actisense.ModeCANPacket:
+							sawRawMode.Store(true)
+							errorCode := int32(-1)
+							binary.LittleEndian.PutUint32(response[8:12], uint32(errorCode))
+						case actisense.ModeTransferReceiveAll:
+							sawLegacyMode.Store(true)
+						}
+					}
+					wire, encodeErr := actisense.EncodeDatagram(actisense.BSTBEMResponse, response)
+					if encodeErr == nil {
+						_, _ = connection.Write(wire)
+					}
+				}, nil)
+			}
+			if readErr != nil {
+				return
+			}
+		}
+	}()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	client, err := NewClient(ctx,
+		ActisenseTCP(listener.Addr().String()),
+		WithSourceAddress(42),
+		WithClaimTimeout(time.Second),
+	)
+	require.Error(t, err)
+	assert.Nil(t, client)
+	var modeErr *ActisenseModeError
+	require.ErrorAs(t, err, &modeErr)
+	assert.Equal(t, uint16(actisense.ModeCANPacket), modeErr.RequestedMode)
+	var deviceErr *actisense.DeviceError
+	require.ErrorAs(t, err, &deviceErr)
+	assert.ErrorContains(t, err, "acknowledged mode-5 setup failed")
+	select {
+	case <-serverDone:
+	case <-time.After(time.Second):
+		t.Fatal("Actisense test gateway did not stop")
+	}
+	assert.True(t, sawRawMode.Load())
+	assert.False(t, sawLegacyMode.Load(), "automatic Client must not fall back to mode 2")
+	assert.False(t, sawLegacyWrite.Load(), "automatic Client must not fall back to BST-94 writes")
+}
+
 func TestActisenseRawBusDoesNotExposeGatewayMessageWrites(t *testing.T) {
 	rawBus := (&tcpSource{format: FormatActisenseRaw}).newBus(nil)
 	defer func() { _ = rawBus.Close() }()
@@ -601,6 +687,16 @@ func TestActisenseRawBusDoesNotExposeGatewayMessageWrites(t *testing.T) {
 	defer func() { _ = legacyBus.Close() }()
 	_, legacyIsMessageWriter := legacyBus.(MessageWriter)
 	assert.True(t, legacyIsMessageWriter)
+
+	autoTCPBus := (&actisenseTCPSource{}).newBus(nil)
+	defer func() { _ = autoTCPBus.Close() }()
+	_, autoTCPIsMessageWriter := autoTCPBus.(MessageWriter)
+	assert.False(t, autoTCPIsMessageWriter)
+
+	autoSerialBus := (&actisenseSerialSource{}).newBus(nil)
+	defer func() { _ = autoSerialBus.Close() }()
+	_, autoSerialIsMessageWriter := autoSerialBus.(MessageWriter)
+	assert.False(t, autoSerialIsMessageWriter)
 }
 
 // containsActisenseSend reports whether buf contains a framed 0x94 send

@@ -118,6 +118,9 @@ func TestActisenseRawBusRejectsUnacknowledgedMode(t *testing.T) {
 	go func() { _, _ = io.Copy(io.Discard, gatewayConnection) }()
 	err := bus.Run(context.Background(), nil)
 	require.Error(t, err)
+	var modeErr *ActisenseModeSetupError
+	require.ErrorAs(t, err, &modeErr)
+	assert.Equal(t, actisense.ModeCANPacket, modeErr.RequestedMode)
 	assert.Contains(t, err.Error(), "acknowledged mode-5 setup failed")
 	select {
 	case <-bus.Ready():
