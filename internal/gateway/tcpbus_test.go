@@ -15,7 +15,6 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/actisense"
-	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -481,7 +480,7 @@ func TestTCPLinkConnectionObserverGatesPublicationAndTracksEpochs(t *testing.T) 
 	}, events)
 }
 
-func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
+func TestActisenseTCPGatewaySessionStartupReadAndWrite(t *testing.T) {
 	received := make(chan []byte, 4)
 	addr := startFakeGateway(t, func(conn net.Conn) {
 		// Feed one assembled message to the client, then capture its writes.
@@ -506,11 +505,11 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	bus := NewActisenseTCPBus(testLogger(), addr, nil)
-	defer func() { _ = bus.Close() }()
+	session := NewActisenseTCPGatewaySession(testLogger(), addr, nil, actisense.ModeTransferReceiveAll)
+	defer func() { _ = session.Close() }()
 
 	frames := make(chan can.Frame, 4)
-	go func() { _ = bus.Run(ctx, func(f can.Frame) { frames <- f }) }()
+	go func() { _ = session.Run(ctx, func(f can.Frame) { frames <- f }) }()
 
 	// The re-framed single-frame PGN should arrive with the gateway's
 	// source address in the CAN ID.
@@ -542,59 +541,11 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 	for i := range data {
 		data[i] = byte(i)
 	}
-	require.NoError(t, bus.WriteMessage(126996, 6, 42, 255, data))
+	require.NoError(t, session.WriteMessage(126996, 6, 255, data))
 	want, err := EncodeSend(N2KMessage{Priority: 6, PGN: 126996, Destination: 255, Data: data})
 	require.NoError(t, err)
 	for !bytes.Contains(wire, want) {
 		wire = append(wire, collect()...)
-	}
-	assert.True(t, bytes.Contains(wire, want))
-}
-
-func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
-	received := make(chan []byte, 4)
-	addr := startFakeGateway(t, func(conn net.Conn) {
-		parser := actisense.NewParser()
-		mode := actisense.ModeTransferNormal
-		buf := make([]byte, 4096)
-		for {
-			n, err := conn.Read(buf)
-			if n > 0 {
-				chunk := make([]byte, n)
-				copy(chunk, buf[:n])
-				received <- chunk
-				respondToActisenseBEM(t, conn, parser, chunk, &mode)
-			}
-			if err != nil {
-				return
-			}
-		}
-	})
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	bus := NewActisenseTCPBus(testLogger(), addr, nil)
-	defer func() { _ = bus.Close() }()
-	go func() { _ = bus.Run(ctx, nil) }()
-
-	// An address-claim frame (PDU1, destination in the CAN ID) becomes a
-	// whole message send.
-	claimID := framer.BuildCANID(60928, 6, 42, 255)
-	frame := can.Frame{ID: claimID, Length: 8, Data: [8]uint8{1, 2, 3, 4, 5, 6, 7, 8}}
-	require.NoError(t, bus.WriteFrame(frame))
-
-	want, err := EncodeSend(N2KMessage{Priority: 6, PGN: 60928, Destination: 255, Data: frame.Data[:]})
-	require.NoError(t, err)
-
-	var wire []byte
-	deadline := time.After(2 * time.Second)
-	for !bytes.Contains(wire, want) {
-		select {
-		case chunk := <-received:
-			wire = append(wire, chunk...)
-		case <-deadline:
-			t.Fatal("timed out waiting for client bytes")
-		}
 	}
 	assert.True(t, bytes.Contains(wire, want))
 }

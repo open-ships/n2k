@@ -7,6 +7,12 @@ import (
 	"github.com/open-ships/n2k/internal/gateway"
 )
 
+// ErrActisenseGatewaySessionRequired reports an attempt to run a source-
+// authoritative Client over gateway-owned BST-93/94 traffic. Use a public
+// ActisenseGatewaySession for legacy message sends, or BST-95 raw mode for a
+// Client with its own NMEA 2000 identity.
+var ErrActisenseGatewaySessionRequired = errors.New("n2k: gateway-owned Actisense message formats cannot back Client; use NewActisenseTCPSession/NewActisenseSerialSession or a source-authoritative raw CAN format")
+
 // ActisenseModeError reports that an Actisense gateway did not acknowledge a
 // requested operating mode. RequestedMode is the Actisense wire value; raw
 // CAN mode is 5. The wrapped error retains timeout, disconnect, negative

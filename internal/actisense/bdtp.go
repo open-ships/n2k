@@ -66,10 +66,11 @@ func (d Datagram) Clone() Datagram {
 // Parser incrementally decodes a BDTP byte stream. Its retained state is
 // bounded by MaxDatagramLength plus one checksum byte.
 type Parser struct {
-	inFrame bool
-	escaped bool
-	body    []byte
-	dropped bool
+	inFrame       bool
+	escaped       bool
+	body          []byte
+	dropped       bool
+	unframedBytes uint64
 }
 
 // NewParser returns a parser ready for one connection epoch.
@@ -81,13 +82,24 @@ func NewParser() *Parser {
 // bounded-state tests.
 func (p *Parser) BufferedBytes() int { return len(p.body) }
 
+// UnframedBytes reports how many bytes were discarded while hunting for a
+// DLE/STX marker. It includes a pending DLE flushed by End.
+func (p *Parser) UnframedBytes() uint64 { return p.unframedBytes }
+
 // End reports and discards an incomplete candidate at an input boundary such
 // as connection close or end-of-file.
 func (p *Parser) End(report func(DecodeError)) {
+	p.EndWithUnframed(report, nil)
+}
+
+// EndWithUnframed is End with exact delivery of a pending unframed DLE.
+func (p *Parser) EndWithUnframed(report func(DecodeError), unframed func([]byte)) {
 	if p.inFrame || len(p.body) > 0 {
 		if report != nil {
 			report(DecodeError{Kind: DecodeFraming, ID: p.id(), Err: errors.New("truncated datagram")})
 		}
+	} else if p.escaped {
+		p.emitUnframed(DLE, unframed)
 	}
 	p.reset()
 }
@@ -95,15 +107,30 @@ func (p *Parser) End(report func(DecodeError)) {
 // Feed consumes arbitrary stream chunks. Complete datagrams and recoverable
 // errors are delivered synchronously in wire order.
 func (p *Parser) Feed(buf []byte, emit func(Datagram), report func(DecodeError)) {
+	p.FeedWithUnframed(buf, emit, report, nil)
+}
+
+// FeedWithUnframed additionally delivers exact bytes found outside BDTP
+// frames. This supports boot-banner evidence and mode-6 binary/ASCII demux.
+// The callback must not retain its one-byte slice.
+func (p *Parser) FeedWithUnframed(buf []byte, emit func(Datagram), report func(DecodeError), unframed func([]byte)) {
 	for _, b := range buf {
 		if !p.inFrame {
-			if p.escaped && b == STX {
-				p.inFrame = true
-				p.body = p.body[:0]
+			if p.escaped {
+				if b == STX {
+					p.inFrame = true
+					p.body = p.body[:0]
+					p.escaped = false
+					p.dropped = false
+					continue
+				}
+				p.emitUnframed(DLE, unframed)
 				p.escaped = false
-				p.dropped = false
+			}
+			if b == DLE {
+				p.escaped = true
 			} else {
-				p.escaped = b == DLE
+				p.emitUnframed(b, unframed)
 			}
 			continue
 		}
@@ -136,6 +163,14 @@ func (p *Parser) Feed(buf []byte, emit func(Datagram), report func(DecodeError))
 			continue
 		}
 		p.appendBody(b, report)
+	}
+}
+
+func (p *Parser) emitUnframed(value byte, emit func([]byte)) {
+	p.unframedBytes++
+	if emit != nil {
+		one := [1]byte{value}
+		emit(one[:])
 	}
 }
 

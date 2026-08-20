@@ -96,12 +96,12 @@ go get github.com/open-ships/n2k
 For command-line capture and diagnostics, install
 [`open-ships/n2k-cli`](https://github.com/open-ships/n2k-cli).
 
-Releases follow semantic versioning. [`VERSION`](VERSION) declares the exact
-version published by the next successful `main` build; v1 provides the stable
-Go module path that pkg.go.dev and Go tooling recognize as production-ready.
-The project preserves exported v1 behavior across minor and patch releases,
-adds deprecations before removal, and reserves breaking changes for a new major
-module path. Fully green release automation publishes an annotated tag,
+[`VERSION`](VERSION) declares the exact version published by the next
+successful `main` build. The project remains on the
+`github.com/open-ships/n2k` v1 module path while its public API is known to be
+in flux; minor releases may deliberately refine or replace contracts such as
+the Actisense gateway/Client boundary. Pin the minor version when stability is
+required. Fully green release automation publishes an annotated tag,
 deterministic source archive, checksums, SBOM, and separate build-provenance and
 SBOM attestations through the shared Open Ships release policy.
 
@@ -119,7 +119,9 @@ Everything the library does, mapped to its API:
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
 | Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
 | Read many sources | Use SocketCAN, USB-CAN adapters, direct Actisense serial, TCP/UDP gateways, candump/EBL logs, or in-memory frames. | `CAN`, `USB`, `Serial`, `TCP`, `UDP`, `File`, `EBL`, `Replay` |
-| Gateway formats | Speak Yacht Devices RAW, gateway-owned Actisense messages, and source-authoritative BST-95 CAN. | `FormatYDRaw`, `FormatActisense`, `FormatActisenseRaw` |
+| Gateway formats | Speak Yacht Devices RAW, Actisense binary/ASCII messages, and source-authoritative BST-95 or mode-6 CAN. | `FormatYDRaw`, `FormatActisense*` |
+| Control Actisense devices | Use typed local BEM through an honest gateway session or the same commands remotely over PGN 126720. | `ActisenseGatewaySession`, `ActisenseRemoteDevice` |
+| Record Actisense evidence | Write EBL files or attach an exact session wire trace with per-layer metrics. | `NewEBLWriter`, `NewActisenseEBLTrace`, `WithActisenseWireTrace` |
 | Physical values | Keep raw wire ticks while exposing generated SI-unit accessors. | `<Field>Value`, `Set<Field>Value`, `pgn.PhysicalValue` |
 | Filter traffic | Filter by PGN metadata or decoded fields with CEL; metadata-only filters avoid decode work. | `Filter` |
 | Preserve unknowns | Drop undecoded PGNs by default or surface them for logging/research. | `IncludeUnknown`, `*pgn.UnknownPGN` |
@@ -333,7 +335,7 @@ for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... 
 // bridge). Read-only use passively accepts all supported BST records.
 for msg, err := range n2k.Receive(ctx, n2k.ActisenseTCP("10.0.0.5:2000")) { ... }
 
-// Direct NGT/NGX serial connection at 115200 8N1.
+// Direct NGT/NGX serial connection; defaults to 115200 8N1.
 for msg, err := range n2k.Receive(ctx, n2k.ActisenseSerial("/dev/cu.usbserial-1234")) { ... }
 ```
 
@@ -354,10 +356,10 @@ client, err := n2k.NewClient(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw))
 client, err := n2k.NewClient(ctx, n2k.ActisenseTCP("10.0.0.5:2000"))
 client, err := n2k.NewClient(ctx, n2k.ActisenseSerial("/dev/cu.usbserial-1234"))
 
-// Explicit compatibility escape hatch for hardware without mode 5. The
-// gateway supplies the transmitting source address and fragments messages.
-client, err := n2k.NewClient(ctx,
-    n2k.TCP("10.0.0.5:2000", n2k.FormatActisense))
+// Gateway-owned BST-94 transmission is a separate session because the wire
+// format has no source-address field. It never runs a virtual address claim.
+session, err := n2k.NewActisenseTCPSession(ctx, "10.0.0.5:2000")
+err = session.SendRawPGN(ctx, 126992, 3, 255, payload)
 
 // Explicit raw selection also remains available.
 client, err := n2k.NewClient(ctx,
@@ -373,12 +375,46 @@ client, err := n2k.NewClient(ctx,
 | `TCP` (Yacht Devices RAW) | ✅ | ✅ | ✅ | ✅ full frame-level control |
 | `ActisenseTCP` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
 | `ActisenseSerial` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
-| Explicit Actisense message format | ✅ | ✅ | ✅ | ✅ gateway stamps its own source address |
+| Explicit Actisense message/N2K ASCII format | ✅ | ✅ | ✅ | ❌ read-only; use `ActisenseGatewaySession` to send |
 | Explicit Actisense raw format | ✅ | ✅ | ✅ | ✅ full BST-95 frame-level control |
+| Explicit Actisense CAN ASCII format | ✅ | ✅ | ✅ | ✅ source-authoritative mode-6 control |
 | `UDP` (gateway formats) | ✅ | ✅ | ✅ | ❌ read-only |
 | `File` (candump `-L`/`-l`) | ✅ | ✅ | ✅ | ❌ read-only |
 | `EBL` (Actisense capture) | ✅ | ✅ | ✅ | ❌ read-only |
 | `Replay` (in-memory frames) | ✅ | ✅ | ✅ | ✅ writes captured via `WrittenFrames` |
+
+### Actisense sessions and device control
+
+BST-94 does not carry a source address, so the library never exposes it as a `Client`
+Bus. Use a gateway session for assembled sends and local control:
+
+```go
+session, err := n2k.NewActisenseTCPSession(ctx, "10.0.0.5:2000")
+if err != nil { ... }
+defer session.Close()
+
+product, err := session.GetProductInfo(ctx)
+diagnostics := session.Diagnostics()
+status := session.Status()
+```
+
+The session exposes the complete compiled NMEA 2000 BEM command set, including
+product/CAN/port information, Rx/Tx PGN controls, multi-reply lists, explicit
+commit/reinitialize methods, EBL wire trace, and cumulative metrics. Sends do
+not mutate Tx lists. `ConfigureTransmitPGNs` provides an explicit batched,
+rollback-capable volatile transaction.
+
+With a source-authoritative raw `Client`, the same typed command Interface can
+target another Actisense device through addressed PGN 126720:
+
+```go
+remote, err := client.ActisenseRemoteDevice(35)
+product, err := remote.GetProductInfo(ctx)
+```
+
+See [Actisense NMEA 2000 support](docs/actisense.md) for the command ledger,
+serial settings, persistence rules, formats, model caveats, and parity
+evidence.
 
 ### Filter Messages using Common Expression Language
 
@@ -426,13 +462,15 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 |--------|-------------|
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
-| `n2k.ActisenseSerial(port)` | Role-aware Actisense serial source; compatible reads, source-authoritative raw `NewClient` |
-| `n2k.Serial(port, format)` | Direct Actisense serial source at 115200 8N1; message or BST-95 raw mode |
+| `n2k.ActisenseSerial(port, ...opts)` | Role-aware Actisense serial source; passive reads, source-authoritative raw `NewClient`; configurable baud/data/parity/stop bits |
+| `n2k.Serial(port, format, ...opts)` | Direct Actisense serial source; binary message, BST-95 raw, CAN ASCII, or N2K ASCII |
 | `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields |
 | `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
 | `n2k.EBL(path, ...opts)` | Actisense Enhanced Binary Log source (read-only); supports raw BDTP and BSTRawFrame records |
+| `n2k.NewEBLWriter(w, ...opts)` | SDK-compatible EBL writer used directly or by an `ActisenseEBLTrace` |
 | `n2k.ActisenseTCP(addr)` | Role-aware Actisense TCP source; passive reads, source-authoritative raw `NewClient` |
-| `n2k.TCP(addr, format)` | Network gateway over TCP (read/write); format is `n2k.FormatYDRaw`, `n2k.FormatActisense`, or `n2k.FormatActisenseRaw` |
+| `n2k.NewActisenseTCPSession(ctx, addr, ...opts)` | Gateway-owned BST-93/94 sends, typed local BEM, diagnostics, metrics, and optional reconnect/trace |
+| `n2k.TCP(addr, format)` | Network gateway over TCP; supports Yacht Devices RAW and Actisense binary/raw/CAN-ASCII/N2K-ASCII formats |
 | `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats; raw Actisense requires an upstream BST-95 configuration |
 | `n2k.Replay(frames)` | Replay source for testing |
 | `n2k.Filter(expr)` | CEL filter expression |
@@ -463,7 +501,8 @@ offer a legacy configuration instead of receiving a silent downgrade:
 ```go
 var modeErr *n2k.ActisenseModeError
 if errors.As(err, &modeErr) && modeErr.RequestedMode == 5 {
-    // Ask the operator whether to reconnect with explicit FormatActisense.
+    // Raw Client semantics are unavailable; choose a gateway session only if
+    // the application can accept the physical gateway's source identity.
 }
 ```
 
@@ -731,14 +770,14 @@ deployment rather than relying on the summary table alone.
 - One physical bus per client.
 - Address claiming uses a 1500ms default timeout; on heavily contested buses, increase via `WithClaimTimeout`.
 - `File`, `EBL`, and `UDP` sources are read-only; writing requires `CAN`, `USB`, `Serial`, `TCP`, or `Replay`.
-- Over explicit legacy `FormatActisense` TCP or serial connections the gateway stamps its own source
-  address on transmissions (the protocol carries none), so the client's
-  claimed address is not authoritative on the wire. Prefer `ActisenseTCP` or
-  `ActisenseSerial`; use `FormatActisenseRaw` when an explicit format is needed.
+- `FormatActisense` and `FormatActisenseN2KASCII` are gateway-owned read
+  sources and are rejected by `NewClient`. Use `ActisenseGatewaySession` for
+  sends under the physical gateway identity, or BST-95/CAN ASCII for a true
+  source-authoritative Client.
 - Mode 5 is not available on NGT-class hardware. Raw mode does not silently
   fall back; an unsupported or unacknowledged BEM setup fails `NewClient`
-  startup. Such hardware can still be read through the dedicated constructors,
-  or used for writes through an explicit `FormatActisense` selection.
+  startup. Such hardware can still be read passively or used through an
+  `ActisenseGatewaySession`, without virtual-node claims.
 - Gateway TCP connections do not auto-reconnect by default; a dropped
   connection ends the read loop. Pass `WithReconnect` to re-dial dropped
   connections with backoff. Each new connection epoch reclaims the address,

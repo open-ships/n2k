@@ -77,6 +77,32 @@ func TestParserOversizeIsBoundedAndRecovers(t *testing.T) {
 	require.Len(t, got, 1)
 }
 
+func TestParserReportsExactUnframedBytesAcrossChunks(t *testing.T) {
+	wire, err := EncodeDatagram(BSTN2KReceive, []byte{1})
+	require.NoError(t, err)
+	input := append([]byte("boot\r\n"), DLE, DLE)
+	input = append(input, wire[1:]...)
+	input = append(input, 'x', DLE)
+
+	parser := NewParser()
+	var (
+		unframed []byte
+		dgrams   []Datagram
+	)
+	for _, chunk := range [][]byte{input[:3], input[3:8], input[8:]} {
+		parser.FeedWithUnframed(chunk, func(datagram Datagram) { dgrams = append(dgrams, datagram) }, func(err DecodeError) { t.Fatal(err) }, func(data []byte) {
+			unframed = append(unframed, data...)
+		})
+	}
+	parser.EndWithUnframed(func(err DecodeError) { t.Fatal(err) }, func(data []byte) {
+		unframed = append(unframed, data...)
+	})
+
+	require.Len(t, dgrams, 1)
+	assert.Equal(t, append([]byte("boot\r\n"), DLE, 'x', DLE), unframed)
+	assert.Equal(t, uint64(len(unframed)), parser.UnframedBytes())
+}
+
 func FuzzParser(f *testing.F) {
 	seed, err := EncodeDatagram(BSTN2KReceive, []byte{1, 2, 3})
 	require.NoError(f, err)

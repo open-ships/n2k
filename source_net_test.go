@@ -468,67 +468,10 @@ func gatewayParseForTest(line string) (uint32, bool) {
 	return uint32(id), true
 }
 
-func TestNewClient_TCPActisense_Writes(t *testing.T) {
-	sends := make(chan []byte, 16)
-	ln, err := net.Listen("tcp", "127.0.0.1:0")
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = ln.Close() })
-	go func() {
-		conn, err := ln.Accept()
-		if err != nil {
-			return
-		}
-		defer func() { _ = conn.Close() }()
-		parser := actisense.NewParser()
-		mode := actisense.ModeTransferNormal
-		buf := make([]byte, 4096)
-		for {
-			n, err := conn.Read(buf)
-			if n > 0 {
-				chunk := make([]byte, n)
-				copy(chunk, buf[:n])
-				select {
-				case sends <- chunk:
-				default:
-				}
-				respondToActisenseControl(conn, parser, chunk, &mode)
-			}
-			if err != nil {
-				return
-			}
-		}
-	}()
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// Actisense sends carry no source address, so address claiming cannot
-	// arbitrate; use an explicit address so NewClient returns promptly.
-	c, err := NewClient(ctx,
-		TCP(ln.Addr().String(), FormatActisense),
-		WithSourceAddress(42),
-		WithClaimTimeout(500*time.Millisecond),
-	)
-	require.NoError(t, err)
-	defer func() { _ = c.Close() }()
-
-	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.5708)
-	require.NoError(t, c.Write(heading).Wait())
-
-	// Collect stream bytes until a 0x94 send command for PGN 127250 appears.
-	var wire []byte
-	deadline := time.After(2 * time.Second)
-	found := false
-	for !found {
-		select {
-		case chunk := <-sends:
-			wire = append(wire, chunk...)
-			found = containsActisenseSend(wire, 127250)
-		case <-deadline:
-			t.Fatalf("no Actisense send command for PGN 127250 seen; got %d bytes", len(wire))
-		}
-	}
+func TestNewClient_TCPActisense_RequiresGatewaySession(t *testing.T) {
+	client, err := NewClient(context.Background(), TCP("not-dialed.invalid:1", FormatActisense))
+	require.ErrorIs(t, err, ErrActisenseGatewaySessionRequired)
+	assert.Nil(t, client)
 }
 
 func TestNewClient_ActisenseTCPPreservesClientSource(t *testing.T) {
@@ -683,10 +626,7 @@ func TestActisenseRawBusDoesNotExposeGatewayMessageWrites(t *testing.T) {
 	_, rawIsMessageWriter := rawBus.(MessageWriter)
 	assert.False(t, rawIsMessageWriter)
 
-	legacyBus := (&tcpSource{format: FormatActisense}).newBus(nil)
-	defer func() { _ = legacyBus.Close() }()
-	_, legacyIsMessageWriter := legacyBus.(MessageWriter)
-	assert.True(t, legacyIsMessageWriter)
+	assert.Nil(t, (&tcpSource{format: FormatActisense}).newBus(nil))
 
 	autoTCPBus := (&actisenseTCPSource{}).newBus(nil)
 	defer func() { _ = autoTCPBus.Close() }()
@@ -697,24 +637,4 @@ func TestActisenseRawBusDoesNotExposeGatewayMessageWrites(t *testing.T) {
 	defer func() { _ = autoSerialBus.Close() }()
 	_, autoSerialIsMessageWriter := autoSerialBus.(MessageWriter)
 	assert.False(t, autoSerialIsMessageWriter)
-}
-
-// containsActisenseSend reports whether buf contains a framed 0x94 send
-// command whose payload targets pgnNum. It is a lenient scan sufficient for
-// the test: it looks for the DLE STX 0x94 header and decodes the PGN.
-func containsActisenseSend(buf []byte, pgnNum uint32) bool {
-	for i := 0; i+6 < len(buf); i++ {
-		if buf[i] == 0x10 && buf[i+1] == 0x02 && buf[i+2] == 0x94 {
-			// payload begins after cmd(1)+len(1): prio(1) then PGN(3 LE).
-			p := i + 5
-			if p+3 >= len(buf) {
-				return false
-			}
-			got := uint32(buf[p]) | uint32(buf[p+1])<<8 | uint32(buf[p+2])<<16
-			if got == pgnNum {
-				return true
-			}
-		}
-	}
-	return false
 }

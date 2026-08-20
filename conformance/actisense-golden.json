@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "baseline": {
+    "sdk_commit": "9de7343b86736a2df5b71ed2f9365a7e68d8f1d5",
+    "captured_on": "2026-08-20",
+    "sources": [
+      "code/cpp/src/protocols/bdtp/bdtp_protocol.cpp",
+      "code/cpp/src/protocols/bem/bem_protocol.cpp",
+      "code/cpp/src/protocols/bem/bem_commands/",
+      "code/cpp/src/protocols/bem/bem_wrap_126720.cpp",
+      "code/cpp/src/ebl/ebl_writer.cpp",
+      "docs/DataFormats/ASCII/can-frame-ascii-A.md",
+      "docs/DataFormats/ASCII/nmea2000-type-A.md"
+    ]
+  },
+  "local_bem_requests": [
+    {"id":"reinitialize","command":0,"data_hex":"","bdtp_hex":"1002a101005e1003"},
+    {"id":"commit-eeprom","command":1,"data_hex":"","bdtp_hex":"1002a101015d1003"},
+    {"id":"commit-flash","command":2,"data_hex":"","bdtp_hex":"1002a101025c1003"},
+    {"id":"operating-mode-get","command":17,"data_hex":"","bdtp_hex":"1002a101114d1003"},
+    {"id":"operating-mode-set-5","command":17,"data_hex":"0500","bdtp_hex":"1002a103110500461003"},
+    {"id":"port-pcode-get","command":19,"data_hex":"","bdtp_hex":"1002a101134b1003"},
+    {"id":"port-pcode-set","command":19,"data_hex":"0001ff","bdtp_hex":"1002a104130001ff481003"},
+    {"id":"total-time-get","command":21,"data_hex":"","bdtp_hex":"1002a10115491003"},
+    {"id":"total-time-set","command":21,"data_hex":"78563412efcdab90","bdtp_hex":"1002a1091578563412efcdab90361003"},
+    {"id":"port-baud-get","command":23,"data_hex":"07","bdtp_hex":"1002a10217073f1003"},
+    {"id":"port-baud-set","command":23,"data_hex":"0700c20100ffffffff","bdtp_hex":"1002a10a170700c20100ffffffff781003"},
+    {"id":"echo","command":24,"data_hex":"03010203","bdtp_hex":"1002a1051803010203391003"},
+    {"id":"port-inventory","command":27,"data_hex":"","bdtp_hex":"1002a1011b431003"},
+    {"id":"supported-pgn-list","command":64,"data_hex":"0709","bdtp_hex":"1002a1034007090c1003"},
+    {"id":"product-info","command":65,"data_hex":"","bdtp_hex":"1002a101411d1003"},
+    {"id":"can-config-get","command":66,"data_hex":"","bdtp_hex":"1002a101421c1003"},
+    {"id":"can-config-set","command":66,"data_hex":"08070605040302012a","bdtp_hex":"1002a10a4208070605040302012ac51003"},
+    {"id":"can-info-1-get","command":67,"data_hex":"","bdtp_hex":"1002a101431b1003"},
+    {"id":"can-info-1-set","command":67,"data_hex":"04014869","bdtp_hex":"1002a1054304014869611003"},
+    {"id":"can-info-2-get","command":68,"data_hex":"","bdtp_hex":"1002a101441a1003"},
+    {"id":"can-info-2-set","command":68,"data_hex":"04014869","bdtp_hex":"1002a1054404014869601003"},
+    {"id":"can-info-3-get","command":69,"data_hex":"","bdtp_hex":"1002a10145191003"},
+    {"id":"rx-pgn-get","command":70,"data_hex":"10f00100","bdtp_hex":"1002a105461010f00100131003"},
+    {"id":"rx-pgn-set-mask","command":70,"data_hex":"10f0010001ddccbbaa","bdtp_hex":"1002a10a461010f0010001ddccbbaaff1003"},
+    {"id":"tx-pgn-get","command":71,"data_hex":"10f00100","bdtp_hex":"1002a105471010f00100121003"},
+    {"id":"tx-pgn-set-rate","command":71,"data_hex":"10f0010002e8030000","bdtp_hex":"1002a10a471010f0010002e8030000201003"},
+    {"id":"delete-pgn-lists","command":74,"data_hex":"02","bdtp_hex":"1002a1024a02111003"},
+    {"id":"activate-pgn-lists","command":75,"data_hex":"","bdtp_hex":"1002a1014b131003"},
+    {"id":"default-pgn-lists","command":76,"data_hex":"02","bdtp_hex":"1002a1024c020f1003"},
+    {"id":"pgn-list-parameters","command":77,"data_hex":"","bdtp_hex":"1002a1014d111003"},
+    {"id":"rx-pgn-list-f2","command":78,"data_hex":"","bdtp_hex":"1002a1014e10101003"},
+    {"id":"tx-pgn-list-f2","command":79,"data_hex":"","bdtp_hex":"1002a1014f0f1003"}
+  ],
+  "local_bem_responses": [
+    {"id":"reinitialize","command":0,"data_hex":"","bdtp_hex":"1002a00c00010e0044332211000000009b1003"},
+    {"id":"commit-eeprom","command":1,"data_hex":"","bdtp_hex":"1002a00c01010e0044332211000000009a1003"},
+    {"id":"commit-flash","command":2,"data_hex":"","bdtp_hex":"1002a00c02010e004433221100000000991003"},
+    {"id":"operating-mode","command":17,"data_hex":"0500","bdtp_hex":"1002a00e11010e0044332211000000000500831003"},
+    {"id":"port-pcode","command":19,"data_hex":"030001ff","bdtp_hex":"1002a0101013010e004433221100000000030001ff811003"},
+    {"id":"total-time","command":21,"data_hex":"78563412","bdtp_hex":"1002a0101015010e004433221100000000785634126e1003"},
+    {"id":"port-baud","command":23,"data_hex":"02070100c2010000c20100","bdtp_hex":"1002a01717010e00443322110000000002070100c2010000c20100e91003"},
+    {"id":"echo","command":24,"data_hex":"03010203","bdtp_hex":"1002a0101018010e00443322110000000003010203761003"},
+    {"id":"port-inventory","command":27,"data_hex":"090411000001000100000000200390d0030090d0030043414e3000000000","bdtp_hex":"1002a02a1b010e004433221100000000090411000001000100000000200390d0030090d0030043414e3000000000571003"},
+    {"id":"supported-pgn-list","command":64,"data_hex":"090011000001000100010010f001","bdtp_hex":"1002a01a40010e00443322110000000009001100000100010001001010f0012f1003"},
+    {"id":"product-info-legacy-part-1","command":65,"data_hex":"340865000102","bdtp_hex":"1002a01241010e004433221100000000340865000102b01003"},
+    {"id":"can-config","command":66,"data_hex":"08070605040302012a","bdtp_hex":"1002a01542010e00443322110000000008070605040302012a021003"},
+    {"id":"can-info-1","command":67,"data_hex":"04014869","bdtp_hex":"1002a0101043010e004433221100000000040148699e1003"},
+    {"id":"can-info-2","command":68,"data_hex":"04014869","bdtp_hex":"1002a0101044010e004433221100000000040148699d1003"},
+    {"id":"can-info-3","command":69,"data_hex":"04014869","bdtp_hex":"1002a0101045010e004433221100000000040148699c1003"},
+    {"id":"rx-pgn","command":70,"data_hex":"10f0010001ddccbbaa","bdtp_hex":"1002a01546010e0044332211000000001010f0010001ddccbbaa3c1003"},
+    {"id":"tx-pgn","command":71,"data_hex":"10f0010002e80300000000000003","bdtp_hex":"1002a01a47010e0044332211000000001010f0010002e80300000000000003551003"},
+    {"id":"delete-pgn-lists","command":74,"data_hex":"","bdtp_hex":"1002a00c4a010e004433221100000000511003"},
+    {"id":"activate-pgn-lists","command":75,"data_hex":"","bdtp_hex":"1002a00c4b010e004433221100000000501003"},
+    {"id":"default-pgn-lists","command":76,"data_hex":"","bdtp_hex":"1002a00c4c010e0044332211000000004f1003"},
+    {"id":"pgn-list-parameters","command":77,"data_hex":"0a00020003001400040005000001","bdtp_hex":"1002a01a4d010e0044332211000000000a00020003001400040005000001131003"},
+    {"id":"rx-pgn-list-f2","command":78,"data_hex":"08011100000100010301","bdtp_hex":"1002a0164e010e00443322110000000008011100000100010301231003"},
+    {"id":"tx-pgn-list-f2","command":79,"data_hex":"08021100000100010706e803","bdtp_hex":"1002a0184f010e00443322110000000008021100000100010706e8032b1003"}
+  ],
+  "remote_bem_requests": [
+    {"id":"operating-mode-get","command":17,"data_hex":"","pgn_payload_hex":"1199a10111"}
+  ],
+  "ascii_vectors": {
+    "can": "17:33:21.107 R 19F51323 01 2F 30 70 00 2F 30 70",
+    "n2k": "A173321.107 23FF7 1F513 012F3070002F30709F"
+  },
+  "ebl_records": {
+    "version_1002_hex": "1b0101ea0300001b0a"
+  }
+}

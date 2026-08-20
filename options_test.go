@@ -51,6 +51,13 @@ func TestWithClaimTimeout(t *testing.T) {
 	assert.Equal(t, 2*time.Second, *cfg.claimTimeout)
 }
 
+func TestWithReadyTimeout(t *testing.T) {
+	var cfg config
+	WithReadyTimeout(3 * time.Second).apply(&cfg)
+	require.NotNil(t, cfg.readyTimeout)
+	assert.Equal(t, 3*time.Second, *cfg.readyTimeout)
+}
+
 func TestNewClient_InvalidDeviceNameRejected(t *testing.T) {
 	_, err := NewClient(context.Background(),
 		Replay(nil),

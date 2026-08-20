@@ -25,6 +25,11 @@ import (
 // claiming to complete.
 const defaultClaimTimeout = 1500 * time.Millisecond
 
+// defaultReadyTimeout bounds transport opening and readiness negotiation. It
+// must remain longer than built-in gateway command deadlines so their typed
+// errors reach NewClient before this outer guard fires.
+const defaultReadyTimeout = 5 * time.Second
+
 const defaultWriteQueue = 64
 
 const pgnISOCommandedAddress uint32 = 65240
@@ -118,6 +123,9 @@ type Client struct {
 	// correlator matches system messages to in-flight Request calls. Only
 	// set for bus clients.
 	correlator *correlator
+	// actisenseRemote owns destination- and epoch-safe BEM correlation over
+	// proprietary PGN 126720.
+	actisenseRemote *actisenseRemoteManager
 
 	// bMu guards broadcasters, the active periodic transmissions by PGN.
 	bMu          sync.Mutex
@@ -166,6 +174,16 @@ func validateClientConfig(cfg config) error {
 	}
 	busSources := 0
 	for _, src := range cfg.sources {
+		switch value := src.(type) {
+		case *tcpSource:
+			if value.format == FormatActisense || value.format == FormatActisenseN2KASCII {
+				return ErrActisenseGatewaySessionRequired
+			}
+		case *serialSource:
+			if value.format == FormatActisense || value.format == FormatActisenseN2KASCII {
+				return ErrActisenseGatewaySessionRequired
+			}
+		}
 		if _, ok := src.(busBacked); ok {
 			busSources++
 		}
@@ -439,10 +457,12 @@ func (c *Client) initBus(cfg config) error {
 	}
 	c.system = sys
 	c.correlator = newCorrelator()
+	c.actisenseRemote = newActisenseRemoteManager(c)
 	c.registry = newRegistry()
 	sys.addHandler(c.correlator.observe)
 	sys.addHandler(c.handleGroupFunction)
 	sys.addHandler(c.registry.observe)
+	sys.addObservationHandler(c.actisenseRemote.observe)
 	go sys.run()
 
 	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
@@ -504,7 +524,11 @@ func (c *Client) initBus(cfg config) error {
 		claimTimeout = *cfg.claimTimeout
 	}
 	if readyBus, ok := c.bus.(ReadyBus); ok {
-		readyTimer := time.NewTimer(claimTimeout)
+		readyTimeout := defaultReadyTimeout
+		if cfg.readyTimeout != nil {
+			readyTimeout = *cfg.readyTimeout
+		}
+		readyTimer := time.NewTimer(readyTimeout)
 		select {
 		case <-readyBus.Ready():
 			readyTimer.Stop()
@@ -512,7 +536,7 @@ func (c *Client) initBus(cfg config) error {
 			readyTimer.Stop()
 			return c.currentTerminalError("n2k: bus stopped before becoming ready")
 		case <-readyTimer.C:
-			return errors.New("n2k: bus did not become ready within claim timeout")
+			return errors.New("n2k: bus did not become ready within ready timeout")
 		case <-c.ctx.Done():
 			readyTimer.Stop()
 			return c.currentTerminalError(c.ctx.Err().Error())
@@ -754,6 +778,9 @@ func (c *Client) fail(err error) {
 	c.connected = false
 	c.rejoining = false
 	c.mu.Unlock()
+	if c.actisenseRemote != nil {
+		c.actisenseRemote.close(err)
+	}
 	if c.msgHub != nil {
 		c.msgHub.close(err)
 	}
@@ -774,6 +801,12 @@ func (c *Client) handleConnectionChange(connected bool, epoch uint64) {
 	}
 	c.connected = connected
 	c.connectionEpoch = epoch
+	if c.actisenseRemote != nil {
+		// Hold the Client epoch lock through invalidation. Remote request
+		// registration takes the same Client -> manager lock order, so a
+		// request is atomically assigned to either the old or new epoch.
+		c.actisenseRemote.invalidate(ErrActisenseRemoteEpochChanged)
+	}
 	active := c.claimed
 	if !active {
 		c.mu.Unlock()
@@ -856,6 +889,9 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 func (c *Client) handleAddressChange(newAddr uint8) {
 	c.mu.Lock()
 	c.sourceAddr = newAddr
+	if c.actisenseRemote != nil {
+		c.actisenseRemote.invalidate(ErrActisenseRemoteEpochChanged)
+	}
 	if !c.claimed {
 		c.mu.Unlock()
 		return
@@ -1195,6 +1231,9 @@ func (c *Client) Close() error {
 	c.connected = false
 	c.rejoining = false
 	c.mu.Unlock()
+	if c.actisenseRemote != nil {
+		c.actisenseRemote.close(ErrClientClosed)
+	}
 
 	// Cancel first and close the bus so an active hardware write is released.
 	// Write never blocks on queue admission and the write channel is not closed,

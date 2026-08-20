@@ -1,0 +1,34 @@
+{
+  "devices": [
+    {
+      "name": "ngx-1-over-tcp",
+      "transport": "tcp",
+      "endpoint": "192.0.2.10:2000",
+      "expected_model_id": 59,
+      "supported_pgn_list": true,
+      "f2_lists": true,
+      "port_inventory": true,
+      "raw_client": true,
+      "client_source": 80,
+      "remote_source": 35,
+      "remote_model_id": 59
+    },
+    {
+      "name": "ngt-1-over-serial",
+      "transport": "serial",
+      "endpoint": "/dev/ttyUSB0",
+      "serial": {
+        "BaudRate": 115200,
+        "DataBits": 8,
+        "Parity": 0,
+        "StopBits": 0
+      },
+      "expected_model_id": 14,
+      "supported_pgn_list": true,
+      "f2_lists": false,
+      "port_inventory": false,
+      "raw_client": true,
+      "client_source": 81
+    }
+  ]
+}

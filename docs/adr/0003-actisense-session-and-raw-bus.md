@@ -1,6 +1,11 @@
 # ADR 0003: Separate Actisense gateway sessions from raw CAN buses
 
-Status: accepted
+Status: superseded by [ADR 0004](0004-actisense-session-contract.md)
+
+This record preserves the v1 decision history. Its compatibility exception for
+using gateway-owned BST-93/94 as a `Bus`, its implicit per-PGN transmit-list
+mutation, and its prohibition on exposing explicit persistence commands are no
+longer active decisions.
 
 ## Context
 

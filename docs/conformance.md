@@ -65,11 +65,38 @@ unique IDs, and evidence presence are checked by
 | TIM-01 | Claim, heartbeat, assembly, transport, and reconnect timing | deterministic clock and timeout tests |
 | CODEC-01 | Conditional fields, signed widths, ranges, and sentinels | codec and data-stream writer tests |
 | OBS-01 | Source/network identity, timestamps, direction, and ownership | observation and gateway tests |
-| ACT-01 | Bounded Actisense framing, per-epoch acknowledged readiness, source-authoritative raw CAN, and explicit failure | `internal/actisense`; `TestActisenseRawSerialBusReadinessFramesAndRestore`; `TestActisenseRawBusReconnectsWithFreshHandshake`; `TestNewClient_ActisenseTCPPreservesClientSource`; `TestNewClient_ActisenseTCPDoesNotFallBackWhenRawModeRejected` |
-| EBL-01 | Bounded Actisense capture replay, timestamps, direction, Type-2 messages, and corruption recovery | `internal/ebl`; `TestEBLSourceFeedsLargeD0AsAssembledMessage` |
+| ACT-01 | Honest gateway-session versus source-authoritative Client roles, acknowledged readiness, explicit Tx-list mutation | `TestGatewaySessionDoesNotMutateTransmitListImplicitly`; `TestNewClient_TCPActisense_RequiresGatewaySession`; raw reconnect/source tests |
+| ACT-02 | Complete compiled solicited BEM surface, independent local request/reply bytes, bounded correlation, typed partials | `conformance/actisense-golden.json`; `TestActisenseGolden*`; `internal/actisense` session tests |
+| ACT-03 | Remote BEM PGN-126720 envelope, address/epoch correlation, cancellation, errors, and metrics | `TestConformanceActisenseRemoteGoldenEnvelope`; `TestActisenseRemote*` |
+| ACT-04 | CAN ASCII mode 6 and N2K Type-A ASCII parse/emit fidelity and bounds | `TestConformanceActisenseASCIIGoldenVectors`; `internal/gateway` ASCII tests |
+| EBL-01 | Bounded EBL read/write, live wire trace, timestamps, direction, exact invalid/unframed evidence, Type-2 replay | `TestConformanceActisenseEBLGoldenVersionRecord`; `internal/ebl`; public trace/replay tests |
 
 These IDs are public repository evidence identifiers. They are not licensed
 ISO or NMEA clause numbers, and they do not replace the private crosswalk.
+
+### Actisense parity evidence
+
+[`conformance/actisense-golden.json`](../conformance/actisense-golden.json)
+pins the reference implementation at Actisense SDK commit `9de7343` and stores
+independent bytes for every compiled solicited BEM command and response, the
+remote PGN-126720 envelope, CAN/N2K ASCII, and EBL. Tests consume this corpus
+directly. The ledger in [Actisense support](actisense.md) classifies compiled,
+deprecated, documentation-only, and intentionally superseded behavior.
+
+Physical evidence is opt-in because public CI has no NGT/NGX hardware. Copy
+[`conformance/actisense-hardware.example.json`](../conformance/actisense-hardware.example.json),
+replace the example endpoints, then run:
+
+```sh
+just actisense-hardware conformance/actisense-hardware.local.json
+```
+
+The runner exercises local product/mode/echo commands, selected supported/F2
+lists and port inventory, live EBL trace, source-authoritative raw Client
+startup, and optional remote BEM. Record hardware model, serial-safe identity,
+firmware, runner commit, result, and capture hash outside git. An absent or
+skipped lab configuration is not a hardware pass and does not support a 100%
+hardware-parity claim.
 
 ### Commanded Address evidence map
 

@@ -12,26 +12,40 @@ import (
 )
 
 type serialSource struct {
-	port   string
-	format StreamFormat
+	port         string
+	format       StreamFormat
+	serialConfig ActisenseSerialConfig
+	configErr    error
 }
 
 // actisenseSerialSource selects the compatible message session for read-only
 // use and the source-authoritative raw CAN Bus for Client use.
 type actisenseSerialSource struct {
-	port string
+	port         string
+	serialConfig ActisenseSerialConfig
+	configErr    error
 }
 
 func (s *actisenseSerialSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
-	legacy := serialSource{port: s.port, format: FormatActisense}
+	legacy := serialSource{port: s.port, format: FormatActisense, serialConfig: s.serialConfig, configErr: s.configErr}
 	return legacy.run(ctx, log, handler)
 }
 
 func (s *actisenseSerialSource) newBus(log *slog.Logger) Bus {
-	return gateway.NewActisenseRawSerialBus(log, s.port)
+	return gateway.NewActisenseRawSerialBus(log, s.port, gatewayActisenseSerialSettings(s.serialConfig))
 }
 
 func (s *serialSource) run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error {
+	if s.configErr != nil {
+		return s.configErr
+	}
+	settings := gatewayActisenseSerialSettings(s.serialConfig)
+	switch s.format {
+	case FormatActisense:
+		return gateway.RunPassiveActisenseSerialObservations(ctx, s.port, settings, handler)
+	case FormatActisenseN2KASCII:
+		return gateway.RunPassiveActisenseN2KASCIISerialObservations(ctx, s.port, settings, handler)
+	}
 	bus := s.newBus(log)
 	if bus == nil {
 		return fmt.Errorf("n2k: serial format %d is not supported", s.format)
@@ -47,12 +61,21 @@ func (s *serialSource) run(ctx context.Context, log *slog.Logger, handler func(r
 
 func (s *serialSource) newBus(log *slog.Logger) Bus {
 	switch s.format {
-	case FormatActisense:
-		return gateway.NewActisenseSerialBus(log, s.port)
 	case FormatActisenseRaw:
-		return gateway.NewActisenseRawSerialBus(log, s.port)
+		return gateway.NewActisenseRawSerialBus(log, s.port, gatewayActisenseSerialSettings(s.serialConfig))
+	case FormatActisenseCANASCII:
+		return gateway.NewActisenseCANASCIISerialBus(log, s.port, gatewayActisenseSerialSettings(s.serialConfig))
 	default:
 		return nil
+	}
+}
+
+func gatewayActisenseSerialSettings(config ActisenseSerialConfig) gateway.ActisenseSerialSettings {
+	return gateway.ActisenseSerialSettings{
+		BaudRate: config.BaudRate,
+		DataBits: config.DataBits,
+		Parity:   uint8(config.Parity),
+		StopBits: uint8(config.StopBits),
 	}
 }
 
