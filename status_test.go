@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/open-ships/n2k/internal/gateway"
 	"github.com/open-ships/n2k/raw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,4 +38,14 @@ func TestClientStatusTracksGatewayAndTransportObservations(t *testing.T) {
 	status := c.Status()
 	assert.Equal(t, uint64(1), status.GatewayEventsObserved)
 	assert.Equal(t, uint64(1), status.TransportErrorsObserved)
+}
+
+func TestClientStatusExposesActisenseBusMetrics(t *testing.T) {
+	bus := gateway.NewActisenseRawTCPBus(nil, "127.0.0.1:1", nil)
+	c := &Client{bus: bus}
+
+	status := c.Status()
+	require.NotNil(t, status.Actisense)
+	assert.Zero(t, status.Actisense.ConnectionEpochs)
+	assert.NotNil(t, status.Actisense.Protocol.BSTFrames)
 }

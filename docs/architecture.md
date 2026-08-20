@@ -45,18 +45,26 @@ multi-network diagnostics, and bridging without coupling the codec to a
 specific transport Implementation.
 
 Actisense transports first cross a bounded BDTP/BST Module. BST-95 becomes a
-source-authoritative Frame, BST-93 retains its v1 synthetic-frame Adapter, and
-BST-D0 becomes an assembled Message directly. BEM records stay in a
-gateway-session control path and surface as gateway or transport-error
-Observations. The session is the sole reader and serialized writer for one
-connection epoch, so response correlation, mode readiness, reset handling,
-and disconnect cancellation retain Locality.
+source-authoritative Frame; BST-93 and Type-A ASCII remain gateway-owned
+assembled Messages; BST-D0 becomes an assembled Message directly. BEM records
+stay in a control path and surface as typed diagnostics as well as gateway or
+transport-error Observations. The session is the sole reader and serialized
+writer for one connection epoch, so response correlation, mode readiness,
+reset handling, exact wire tracing, and disconnect cancellation retain
+Locality.
 
 The public `ActisenseTCP` and `ActisenseSerial` Adapters apply role policy at
-the existing source/Bus seam. Their `source.run` Interface uses compatible
-receive behavior; their `busBacked.newBus` Interface, reached by `NewClient`,
-requires the source-authoritative raw CAN Bus. This keeps mode selection local
-while explicit stream-format Adapters remain available for compatibility.
+the existing source/Bus seam. Their `source.run` Interface passively receives
+gateway-owned messages; their `busBacked.newBus` Interface, reached by
+`NewClient`, requires source-authoritative raw CAN. Explicit gateway-owned
+formats have no Bus implementation and are rejected by `NewClient`.
+
+`ActisenseGatewaySession` is the separate Interface for BST-93/94 transmission.
+It exposes observations, diagnostics, status, raw/typed PGN sends, and the full
+typed local BEM command Module without pretending that the caller controls the
+gateway's CAN source. The same command Module sits behind
+`ActisenseRemoteDevice`; only its addressed PGN-126720 envelope Adapter and
+correlation origin differ.
 
 The system path receives frames first. It handles protocol traffic regardless
 of a user's CEL filter or whether the application is currently reading. This
@@ -82,12 +90,12 @@ Application writes wait through a fresh contention window after the move.
 | Larger broadcast, at most 1785 bytes | ISO TP BAM |
 | Larger addressed, at most 1785 bytes | ISO TP RTS/CTS |
 
-Message-oriented gateways may implement `MessageWriter` and accept assembled
-payloads up to 223 bytes. Buses that open asynchronously may implement
-`ReadyBus`; the client will not begin address claiming until `Ready` closes.
-The legacy Actisense BST-93/94 route is such a gateway-owned message session;
-its wire source address is not controlled by the client. Actisense BST-95 raw
-mode is the corresponding true `Bus` Adapter.
+Message-oriented custom gateways may implement `MessageWriter` only when their
+Bus contract can still honor the Client's source identity. Buses that open
+asynchronously may implement `ReadyBus`; the client will not begin address
+claiming until `Ready` closes. Actisense BST-93/94 is deliberately outside that
+seam because its wire source is owned by the gateway. Actisense BST-95 and CAN
+ASCII mode 6 are true `Bus` Adapters.
 
 Automatic protocol writes enter a dedicated protocol-transmission Module.
 Required traffic (heartbeat, claims, ISO and group-function responses) has a
@@ -109,18 +117,22 @@ leaving distributed reconnect checks at call sites.
 
 For Actisense, an epoch is published only after the gateway acknowledges the
 requested operating mode. Raw mode fails closed when BEM is rejected or
-stripped. Volatile mode changes are best-effort restored on clean close and
-are never committed to EEPROM or flash. The role-aware public constructors do
-not fall back from raw CAN to a gateway-owned message session.
+stripped. Volatile mode changes are best-effort restored on clean close. PGN
+list changes are explicit batched transactions with one activation and a
+same-epoch restore; sends never change the list. EEPROM/flash commits and
+reinitialization exist only as explicit caller methods. The role-aware public
+constructors do not fall back from raw CAN to a gateway-owned message session.
 
 ## Failure model
 
 Bus termination, address-claim failure, and receive overflow are data, not log
 side effects. They propagate through iterators/scanners and write results.
-`Client.Status` supplies a polling seam for health checks and metrics. `slog`
-supplies structured diagnostics. `Close` cancels owned work, closes the bus to
-release blocked I/O, stops scheduled protocol work, fails queued writes, and
-waits for owned goroutines.
+`Client.Status` supplies a polling seam for health checks and metrics. Raw
+Actisense Clients and gateway sessions add cumulative transport byte/call,
+BDTP failure, per-BST, BEM correlation/error/timeout, latency, reconnect, and
+gateway-reset metrics. `slog` supplies structured diagnostics. `Close` cancels
+owned work, closes the bus to release blocked I/O, stops scheduled protocol
+work, fails queued writes, and waits for owned goroutines.
 
 ## Codec fidelity
 
@@ -145,6 +157,11 @@ hostile-input, saturation, reconnect, timing, codec, and observation Seams.
 Licensed review, hardware-in-the-loop evidence, and formal NMEA certification
 remain external release activities described in
 [`docs/conformance.md`](conformance.md).
+
+Actisense additionally uses the SDK-pinned independent corpus in
+[`conformance/actisense-golden.json`](../conformance/actisense-golden.json).
+`just actisense-hardware <config>` runs the opt-in NGT/NGX matrix; a skipped
+hardware test is never represented as a pass.
 
 ## Generated boundary
 

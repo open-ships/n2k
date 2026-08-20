@@ -29,10 +29,17 @@ const (
 	// UDP expects an upstream gateway already configured for BST-95. A writable
 	// session that rejects or strips BEM setup fails rather than falling back.
 	FormatActisenseRaw
+	// FormatActisenseCANASCII selects acknowledged operating mode 6 and carries
+	// source-authoritative CAN frames as human-readable lines. Binary BEM
+	// control replies may be interleaved with the ASCII stream.
+	FormatActisenseCANASCII
+	// FormatActisenseN2KASCII reads gateway-assembled Type-A NMEA 2000
+	// messages. Like FormatActisense, it is not a source-authoritative Bus.
+	FormatActisenseN2KASCII
 )
 
 func (f StreamFormat) valid() bool {
-	return f == FormatYDRaw || f == FormatActisense || f == FormatActisenseRaw
+	return f >= FormatYDRaw && f <= FormatActisenseN2KASCII
 }
 
 // tcpSource reads gateway traffic from a TCP connection.
@@ -63,10 +70,15 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 	if !s.format.valid() {
 		return fmt.Errorf("n2k: unknown stream format %d", s.format)
 	}
-	if s.format == FormatActisenseRaw {
-		bus := gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
+	if s.format == FormatActisenseRaw || s.format == FormatActisenseCANASCII {
+		var bus Bus
+		if s.format == FormatActisenseRaw {
+			bus = gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
+		} else {
+			bus = gateway.NewActisenseCANASCIITCPBus(log, s.addr, s.reconnect)
+		}
 		defer func() { _ = bus.Close() }()
-		return wrapActisenseModeError(bus.RunObservations(ctx, handler))
+		return wrapActisenseModeError(bus.(ObservationBus).RunObservations(ctx, handler))
 	}
 
 	var backoff *gateway.Backoff
@@ -127,20 +139,17 @@ func (s *tcpSource) dialAndRead(ctx context.Context, handler func(raw.Observatio
 	})
 }
 
-// newBus opens the gateway connection as a read/write Bus for NewClient.
-// YD RAW is frame-level in both directions, so the client behaves exactly
-// as on CAN hardware (the gateway echoes transmitted frames back with
-// direction T). Legacy Actisense is message-level: the bus implements
-// MessageWriter, and the gateway fragments fast-packet payloads and stamps
-// its own claimed source address. Actisense raw mode is frame-level BST-95.
+// newBus opens a source-authoritative gateway connection for NewClient.
+// Gateway-owned Actisense formats deliberately have no Bus implementation;
+// validateClientConfig directs callers to ActisenseGatewaySession instead.
 func (s *tcpSource) newBus(log *slog.Logger) Bus {
 	switch s.format {
 	case FormatYDRaw:
 		return gateway.NewYDRawTCPBus(log, s.addr, s.reconnect)
-	case FormatActisense:
-		return gateway.NewActisenseTCPBus(log, s.addr, s.reconnect)
 	case FormatActisenseRaw:
 		return gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
+	case FormatActisenseCANASCII:
+		return gateway.NewActisenseCANASCIITCPBus(log, s.addr, s.reconnect)
 	default:
 		return nil
 	}
@@ -177,6 +186,10 @@ func readStreamObservations(r io.Reader, format StreamFormat, handler func(raw.O
 		return gateway.ReadYDRawObservations(r, handler)
 	case FormatActisense, FormatActisenseRaw:
 		return gateway.ReadActisenseObservations(r, handler)
+	case FormatActisenseCANASCII:
+		return gateway.ReadActisenseCANASCIIObservations(r, handler)
+	case FormatActisenseN2KASCII:
+		return gateway.ReadActisenseN2KASCIIObservations(r, handler)
 	}
 	return fmt.Errorf("n2k: unknown stream format %d", format)
 }

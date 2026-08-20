@@ -99,6 +99,22 @@ func TestEBLSourceReportsNewerVersion(t *testing.T) {
 	t.Fatal("expected unsupported EBL version error")
 }
 
+func TestEBLSourceSurfacesUnframedBytesAsOwnedEvidence(t *testing.T) {
+	capture := append(eblVersionRecord(internalebl.CurrentVersion), []byte("boot banner\r\n")...)
+	path := filepath.Join(t.TempDir(), "unframed.ebl")
+	require.NoError(t, os.WriteFile(path, capture, 0o600))
+
+	var observations []Observation
+	for observation, err := range Observe(context.Background(), EBL(path)) {
+		require.NoError(t, err)
+		observations = append(observations, observation)
+	}
+	require.Len(t, observations, 1)
+	assert.Equal(t, ObservationTransportError, observations[0].Kind)
+	assert.Equal(t, "actisense-bdtp", observations[0].Protocol)
+	assert.Equal(t, []byte("boot banner\r\n"), observations[0].Payload)
+}
+
 func TestPipelineHandlesOwnedMessageObservation(t *testing.T) {
 	ctx := context.Background()
 	data := []byte{1, 2, 3, 4}

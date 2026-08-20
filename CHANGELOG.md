@@ -1,5 +1,34 @@
 ## Change Log for open-ships/n2k
 
+### v1.2.0 — 2026-08-20 — complete Actisense NMEA 2000 control plane
+
+- Replaced gateway-owned Actisense `Client` writes with the honest
+  `ActisenseGatewaySession` contract. BST-93/94 sends now run under the
+  physical gateway identity, while `NewClient` accepts only source-authoritative
+  BST-95 or CAN-ASCII representations. This is an intentional v1 contract
+  refinement while the API is documented as in flux.
+- Added one typed BEM command Module covering every compiled NMEA 2000-facing
+  verb: product/CAN/port information, Rx/Tx state and multi-reply lists,
+  lifecycle, echo/time, and explicit EEPROM, flash, default, and reinitialize
+  operations. Sends never mutate Tx lists; explicit batched changes snapshot,
+  activate once, roll back, and best-effort restore.
+- Added remote Actisense device control through the exact variable-length
+  addressed PGN-126720 envelope. Correlation binds remote source, local
+  destination, response group, verb, connection epoch, and claim epoch;
+  duplicate keys, pending tables, and response trains are bounded.
+- Hardened the sole-reader session with response-group/origin correlation,
+  scoped negative acknowledgements, immediate send failure, typed partial
+  results, safe reply #257 overflow, complete Port Inventory accumulation, and
+  NGX F2 completion that requires both standard slots and proprietary bitmaps.
+- Added configurable serial settings, Actisense CAN ASCII mode 6 and NMEA 2000
+  Type-A ASCII parsing/emission, a custom byte-stream session seam, EBL writing
+  and live wire tracing, exact unframed replay evidence, typed diagnostics,
+  and cumulative per-layer transport/BST/BEM/latency/reset metrics.
+- Added an SDK-commit-pinned independent corpus with request and response bytes
+  for all 23 solicited commands, remote/ASCII/EBL vectors, and an opt-in NGT/NGX
+  hardware matrix runner. Known SDK defects remain deliberate compatibility
+  deviations rather than copied behavior.
+
 ### v1.1.0 — 2026-08-20 — Actisense raw CAN, serial, and capture support
 
 - Added a bounded Actisense protocol Module for BST-93/94/95/D0, Type-2

@@ -19,6 +19,7 @@ type config struct {
 	preferredAddress  *uint8           // nil = default auto-mode starting address
 	deviceName        *DeviceName      // nil = use default
 	claimTimeout      *time.Duration   // nil = use default (1500ms)
+	readyTimeout      *time.Duration   // nil = use default (5s)
 	heartbeatInterval *time.Duration   // nil = default (60s), 0 = disabled
 	receiveBuffer     *int             // nil = default (64)
 	writeQueue        *int             // nil = default (64)
@@ -44,6 +45,9 @@ func (c *config) validate() error {
 	if c.claimTimeout != nil && *c.claimTimeout <= 0 {
 		return errors.New("n2k: claim timeout must be positive")
 	}
+	if c.readyTimeout != nil && *c.readyTimeout <= 0 {
+		return errors.New("n2k: ready timeout must be positive")
+	}
 	if c.heartbeatInterval != nil && *c.heartbeatInterval < 0 {
 		return errors.New("n2k: heartbeat interval cannot be negative")
 	}
@@ -65,12 +69,25 @@ func (c *config) validate() error {
 				return errors.New("n2k: USB serial port cannot be empty")
 			}
 		case *serialSource:
-			if s.port == "" || (s.format != FormatActisense && s.format != FormatActisenseRaw) {
+			if s.configErr != nil {
+				return s.configErr
+			}
+			if s.port == "" || (s.format != FormatActisense && s.format != FormatActisenseRaw &&
+				s.format != FormatActisenseCANASCII && s.format != FormatActisenseN2KASCII) {
 				return fmt.Errorf("n2k: invalid serial source port or Actisense stream format %d", s.format)
 			}
+			if err := s.serialConfig.validate(); err != nil {
+				return err
+			}
 		case *actisenseSerialSource:
+			if s.configErr != nil {
+				return s.configErr
+			}
 			if s.port == "" {
 				return errors.New("n2k: Actisense serial port cannot be empty")
+			}
+			if err := s.serialConfig.validate(); err != nil {
+				return err
 			}
 		case *tcpSource:
 			hasTCP = true
@@ -126,12 +143,13 @@ func USB(port string) Option {
 }
 
 // Serial adds a directly connected Actisense-format gateway at 115200 8N1.
-// FormatActisense retains the gateway-owned BST-93/94 message session;
-// FormatActisenseRaw performs acknowledged mode-5 setup and provides a true
-// BST-95 raw CAN Bus for NewClient.
-func Serial(port string, format StreamFormat) Option {
+// FormatActisense and FormatActisenseN2KASCII are passive, gateway-owned
+// message sources. FormatActisenseRaw and FormatActisenseCANASCII perform an
+// acknowledged mode setup and provide source-authoritative CAN frames.
+func Serial(port string, format StreamFormat, options ...ActisenseSerialOption) Option {
 	return optionFunc(func(c *config) {
-		c.sources = append(c.sources, &serialSource{port: port, format: format})
+		serialConfig, err := applyActisenseSerialOptions(options)
+		c.sources = append(c.sources, &serialSource{port: port, format: format, serialConfig: serialConfig, configErr: err})
 	})
 }
 
@@ -141,9 +159,10 @@ func Serial(port string, format StreamFormat) Option {
 // BST-95 raw CAN; it fails rather than falling back when raw mode is
 // unavailable. Use Serial with an explicit Actisense format to override this
 // role-based policy.
-func ActisenseSerial(port string) Option {
+func ActisenseSerial(port string, options ...ActisenseSerialOption) Option {
 	return optionFunc(func(c *config) {
-		c.sources = append(c.sources, &actisenseSerialSource{port: port})
+		serialConfig, err := applyActisenseSerialOptions(options)
+		c.sources = append(c.sources, &actisenseSerialSource{port: port, serialConfig: serialConfig, configErr: err})
 	})
 }
 
@@ -167,9 +186,9 @@ func File(path string, opts ...FileOption) Option {
 // TCP adds a source that dials a network gateway (e.g. a Yacht Devices
 // YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port").
 // TCP works with Receive/NewScanner and can also back NewClient for writes.
-// FormatYDRaw and FormatActisenseRaw provide frame-level access.
-// FormatActisense retains the legacy gateway-owned message session, where the
-// gateway stamps its own source address.
+// FormatYDRaw, FormatActisenseRaw, and FormatActisenseCANASCII provide
+// frame-level access. The two Actisense message formats are read-only here;
+// use NewActisenseTCPSession for a writable gateway-owned binary session.
 func TCP(addr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})
@@ -191,8 +210,8 @@ func ActisenseTCP(addr string) Option {
 // UDP adds a source that listens on listenAddr (e.g. ":1457" or
 // "0.0.0.0:1457") for datagrams broadcast by a network gateway. UDP sources
 // are read-only: they work with Receive and NewScanner but not NewClient.
-// FormatActisenseRaw requires the upstream gateway to already emit BST-95,
-// because UDP has no return channel for BEM mode setup.
+// Raw/ASCII formats require the upstream gateway to already emit the selected
+// representation because UDP has no return channel for BEM mode setup.
 func UDP(listenAddr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &udpSource{addr: listenAddr, format: format})
@@ -272,6 +291,17 @@ func WithPreferredAddress(addr uint8) Option {
 func WithClaimTimeout(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.claimTimeout = &d
+	})
+}
+
+// WithReadyTimeout sets how long NewClient waits for an asynchronous Bus to
+// open and finish transport-specific readiness work before address claiming
+// starts. The default is five seconds. This deadline is intentionally separate
+// from WithClaimTimeout so a gateway handshake can return its typed failure
+// instead of being hidden by the address-claim deadline.
+func WithReadyTimeout(d time.Duration) Option {
+	return optionFunc(func(c *config) {
+		c.readyTimeout = &d
 	})
 }
 

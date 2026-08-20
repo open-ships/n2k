@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"time"
 )
 
 var (
@@ -30,6 +31,18 @@ type responseResult struct {
 	err      error
 }
 
+type responseKey struct {
+	bstID  byte
+	bemID  byte
+	origin BEMOrigin
+}
+
+type pendingRequest struct {
+	results   chan responseResult
+	multi     bool
+	delivered int
+}
+
 // Session serializes one Actisense connection epoch. It owns the sole wire
 // writer and a bounded BEM correlation table with at most one request per
 // response/BEM key.
@@ -38,7 +51,7 @@ type Session struct {
 
 	writeMu sync.Mutex
 	mu      sync.Mutex
-	pending map[byte]chan responseResult
+	pending map[responseKey]*pendingRequest
 	done    chan struct{}
 	doneErr error
 	once    sync.Once
@@ -46,24 +59,46 @@ type Session struct {
 	onDatagram    func(Datagram)
 	onDiagnostic  func(Diagnostic)
 	onDecodeError func(DecodeError)
+	onWireBytes   func(WireDirection, time.Time, []byte)
+	onUnframed    func([]byte)
+	metrics       sessionMetrics
 }
+
+type WireDirection uint8
+
+const (
+	WireReceived WireDirection = iota
+	WireTransmitted
+)
 
 type SessionConfig struct {
 	Write         func([]byte) error
 	OnDatagram    func(Datagram)
 	OnDiagnostic  func(Diagnostic)
 	OnDecodeError func(DecodeError)
+	OnWireBytes   func(WireDirection, time.Time, []byte)
+	OnUnframed    func([]byte)
 }
 
 func NewSession(config SessionConfig) *Session {
 	return &Session{
 		write:         config.Write,
-		pending:       make(map[byte]chan responseResult),
+		pending:       make(map[responseKey]*pendingRequest),
 		done:          make(chan struct{}),
 		onDatagram:    config.OnDatagram,
 		onDiagnostic:  config.OnDiagnostic,
 		onDecodeError: config.OnDecodeError,
+		onWireBytes:   config.OnWireBytes,
+		onUnframed:    config.OnUnframed,
 	}
+}
+
+// Metrics returns a concurrency-safe point-in-time snapshot.
+func (s *Session) Metrics() SessionMetrics {
+	if s == nil {
+		return SessionMetrics{BSTFrames: make(map[byte]uint64)}
+	}
+	return s.metrics.snapshot()
 }
 
 // Run reads one connection until EOF or failure. It must be called once.
@@ -72,13 +107,20 @@ func (s *Session) Run(reader io.Reader) error {
 	buf := make([]byte, 4096)
 	for {
 		n, err := reader.Read(buf)
+		s.metrics.transportReadCalls.Add(1)
 		if n > 0 {
-			parser.Feed(buf[:n], s.handleDatagram, s.handleDecodeError)
+			s.metrics.transportReadBytes.Add(uint64(n))
+			if s.onWireBytes != nil {
+				s.onWireBytes(WireReceived, time.Now(), append([]byte(nil), buf[:n]...))
+			}
+			parser.FeedWithUnframed(buf[:n], s.handleDatagram, s.handleDecodeError, s.handleUnframed)
 		}
 		if err != nil {
-			parser.End(s.handleDecodeError)
+			parser.EndWithUnframed(s.handleDecodeError, s.handleUnframed)
 			if errors.Is(err, io.EOF) {
 				err = nil
+			} else {
+				s.metrics.transportReadErrors.Add(1)
 			}
 			s.finish(err)
 			return err
@@ -87,7 +129,10 @@ func (s *Session) Run(reader io.Reader) error {
 }
 
 func (s *Session) handleDatagram(datagram Datagram) {
+	s.metrics.datagrams.Add(1)
+	s.metrics.bstFrames[datagram.ID].Add(1)
 	if response, ok, err := DecodeBEMResponse(datagram); ok {
+		s.metrics.bemResponses.Add(1)
 		if err != nil {
 			s.handleDecodeError(DecodeError{Kind: DecodeLength, ID: datagram.ID, Err: err})
 		} else if diagnostic, isDiagnostic, diagnosticErr := DecodeDiagnostic(response); isDiagnostic {
@@ -95,7 +140,7 @@ func (s *Session) handleDatagram(datagram Datagram) {
 				s.handleDecodeError(DecodeError{Kind: DecodeLength, ID: datagram.ID, Err: diagnosticErr})
 			} else {
 				if diagnostic.NegativeAck != nil {
-					s.failNegativeAck(*diagnostic.NegativeAck)
+					s.failNegativeAck(response, *diagnostic.NegativeAck)
 				}
 				if s.onDiagnostic != nil {
 					s.onDiagnostic(diagnostic)
@@ -110,48 +155,85 @@ func (s *Session) handleDatagram(datagram Datagram) {
 	}
 }
 
-func (s *Session) failNegativeAck(nack NegativeAck) {
+func (s *Session) failNegativeAck(response BEMResponse, nack NegativeAck) {
+	s.metrics.bemNegativeAcks.Add(1)
 	rejected := byte(nack.UniqueCommandID)
 	s.mu.Lock()
-	command := rejected
-	ch := s.pending[command]
-	if ch == nil && len(s.pending) == 1 {
-		for soleCommand, sole := range s.pending {
-			command, ch = soleCommand, sole
+	key := responseKey{bstID: response.BSTID, bemID: rejected, origin: response.Origin}
+	pending := s.pending[key]
+	if pending == nil {
+		var candidateCount int
+		for candidateKey, candidate := range s.pending {
+			if candidateKey.bstID == response.BSTID && candidateKey.origin == response.Origin {
+				candidateCount++
+				key, pending = candidateKey, candidate
+			}
+		}
+		if candidateCount != 1 {
+			pending = nil
 		}
 	}
-	if ch != nil {
-		delete(s.pending, command)
+	if pending != nil {
+		delete(s.pending, key)
 	}
 	s.mu.Unlock()
-	if ch != nil {
-		ch <- responseResult{err: &NegativeAckError{
-			Command: command, UniqueCommandID: nack.UniqueCommandID, DeviceCode: nack.ErrorCode,
+	if pending != nil {
+		pending.results <- responseResult{err: &NegativeAckError{
+			Command: key.bemID, UniqueCommandID: nack.UniqueCommandID, DeviceCode: nack.ErrorCode,
 		}}
 	}
 }
 
 func (s *Session) handleDecodeError(err DecodeError) {
+	switch err.Kind {
+	case DecodeFraming:
+		s.metrics.framingErrors.Add(1)
+	case DecodeChecksum:
+		s.metrics.checksumErrors.Add(1)
+	case DecodeLength:
+		s.metrics.lengthErrors.Add(1)
+	case DecodeOversize:
+		s.metrics.oversizeErrors.Add(1)
+	}
 	if s.onDecodeError != nil {
 		s.onDecodeError(err)
 	}
 }
 
+func (s *Session) handleUnframed(data []byte) {
+	s.metrics.unframedBytes.Add(uint64(len(data)))
+	if s.onUnframed != nil {
+		s.onUnframed(data)
+	}
+}
+
 func (s *Session) deliverResponse(response BEMResponse) {
+	key := responseKey{bstID: response.BSTID, bemID: response.BEMID, origin: response.Origin}
 	s.mu.Lock()
-	ch := s.pending[response.BEMID]
-	if ch != nil {
-		delete(s.pending, response.BEMID)
+	pending := s.pending[key]
+	var overflow bool
+	if pending != nil {
+		pending.delivered++
+		overflow = pending.delivered > maxBEMResponseTrain
+		if !pending.multi || overflow {
+			delete(s.pending, key)
+		}
 	}
 	s.mu.Unlock()
-	if ch == nil {
+	if pending == nil {
+		s.metrics.bemCorrelationMisses.Add(1)
 		return
 	}
 	result := responseResult{response: response}
+	if overflow {
+		s.metrics.bemResponseTrainOverflows.Add(1)
+		result = responseResult{err: fmt.Errorf("actisense: BEM 0x%02X response train exceeds %d records", response.BEMID, maxBEMResponseTrain)}
+	}
 	if response.ErrorCode != 0 {
+		s.metrics.bemDeviceErrors.Add(1)
 		result.err = &DeviceError{Command: response.BEMID, Code: response.ErrorCode}
 	}
-	ch <- result
+	pending.results <- result
 }
 
 func (s *Session) finish(err error) {
@@ -162,11 +244,11 @@ func (s *Session) finish(err error) {
 		}
 		s.doneErr = err
 		pending := s.pending
-		s.pending = make(map[byte]chan responseResult)
+		s.pending = make(map[responseKey]*pendingRequest)
 		close(s.done)
 		s.mu.Unlock()
-		for _, ch := range pending {
-			ch <- responseResult{err: err}
+		for _, request := range pending {
+			request.results <- responseResult{err: err}
 		}
 	})
 }
@@ -197,9 +279,20 @@ func (s *Session) Write(buf []byte) error {
 	write := s.write
 	s.mu.Unlock()
 	if write == nil {
+		s.metrics.transportWriteErrors.Add(1)
 		return errors.New("actisense: session has no writer")
 	}
-	return write(buf)
+	s.metrics.transportWriteCalls.Add(1)
+	if s.onWireBytes != nil {
+		s.onWireBytes(WireTransmitted, time.Now(), append([]byte(nil), buf...))
+	}
+	err := write(buf)
+	if err != nil {
+		s.metrics.transportWriteErrors.Add(1)
+	} else {
+		s.metrics.transportWriteBytes.Add(uint64(len(buf)))
+	}
+	return err
 }
 
 // Request sends one local BEM command and waits for its A0 response. The
@@ -207,10 +300,48 @@ func (s *Session) Write(buf []byte) error {
 // firmware uses the response BST group, BEM verb, and origin, and local A1/A0
 // sessions permit one in-flight request per verb.
 func (s *Session) Request(ctx context.Context, command byte, data []byte) (BEMResponse, error) {
+	responses, err := s.request(ctx, command, data, 0, nil)
+	if err != nil {
+		if len(responses) != 0 {
+			return responses[0], err
+		}
+		return BEMResponse{}, err
+	}
+	return responses[0], nil
+}
+
+// RequestMulti sends one local BEM command and collects a bounded response
+// train. complete is evaluated in wire order after every response and must
+// return true for the final response. inactivity bounds the gap between
+// responses; the caller context remains the overall deadline.
+func (s *Session) RequestMulti(ctx context.Context, command byte, data []byte, inactivity time.Duration, complete func([]BEMResponse) (bool, error)) ([]BEMResponse, error) {
+	if complete == nil {
+		return nil, errors.New("actisense: multi-response request requires a completion function")
+	}
+	if inactivity <= 0 {
+		return nil, errors.New("actisense: multi-response inactivity timeout must be positive")
+	}
+	return s.request(ctx, command, data, inactivity, complete)
+}
+
+func (s *Session) request(ctx context.Context, command byte, data []byte, inactivity time.Duration, complete func([]BEMResponse) (bool, error)) (responses []BEMResponse, err error) {
+	started := time.Now()
+	s.metrics.bemRequests.Add(1)
+	defer func() {
+		s.metrics.bemCompleted.Add(1)
+		s.metrics.observeLatency(time.Since(started))
+		if errors.Is(err, context.DeadlineExceeded) {
+			s.metrics.bemTimeouts.Add(1)
+		}
+	}()
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	responseCh := make(chan responseResult, 1)
+	key := responseKey{bstID: BSTBEMResponse, bemID: command, origin: LocalBEMOrigin}
+	request := &pendingRequest{
+		results: make(chan responseResult, maxBEMResponseTrain+1),
+		multi:   complete != nil,
+	}
 	s.mu.Lock()
 	select {
 	case <-s.done:
@@ -219,51 +350,88 @@ func (s *Session) Request(ctx context.Context, command byte, data []byte) (BEMRe
 		if err == nil {
 			err = ErrSessionClosed
 		}
-		return BEMResponse{}, err
+		return nil, err
 	default:
 	}
-	if _, exists := s.pending[command]; exists {
+	if _, exists := s.pending[key]; exists {
 		s.mu.Unlock()
-		return BEMResponse{}, fmt.Errorf("%w for BEM 0x%02X", ErrRequestInFlight, command)
+		s.metrics.bemDuplicateRequests.Add(1)
+		return nil, fmt.Errorf("%w for BST 0x%02X BEM 0x%02X origin %+v", ErrRequestInFlight, key.bstID, command, key.origin)
 	}
 	if len(s.pending) >= maxPendingBEMRequests {
 		s.mu.Unlock()
-		return BEMResponse{}, errors.New("actisense: BEM request table is full")
+		return nil, errors.New("actisense: BEM request table is full")
 	}
-	s.pending[command] = responseCh
+	s.pending[key] = request
 	s.mu.Unlock()
+	s.metrics.incrementInFlight()
+	defer s.metrics.bemInFlight.Add(^uint64(0))
 
 	encoded, err := EncodeBEMRequest(command, data)
 	if err == nil {
 		err = s.Write(encoded)
 	}
 	if err != nil {
-		s.removePending(command, responseCh)
-		return BEMResponse{}, err
+		s.removePending(key, request)
+		return nil, err
 	}
 
-	select {
-	case result := <-responseCh:
-		return result.response, result.err
-	case <-ctx.Done():
-		s.removePending(command, responseCh)
-		return BEMResponse{}, fmt.Errorf("actisense: BEM 0x%02X: %w", command, ctx.Err())
-	case <-s.done:
-		s.removePending(command, responseCh)
-		s.mu.Lock()
-		doneErr := s.doneErr
-		s.mu.Unlock()
-		if doneErr == nil {
-			doneErr = ErrSessionClosed
+	var timer *time.Timer
+	var inactivityC <-chan time.Time
+	if complete != nil {
+		timer = time.NewTimer(inactivity)
+		defer timer.Stop()
+		inactivityC = timer.C
+	}
+	responses = make([]BEMResponse, 0, 4)
+	defer s.removePending(key, request)
+	for {
+		select {
+		case result := <-request.results:
+			if result.err != nil {
+				if result.response.BEMID != 0 {
+					responses = append(responses, result.response)
+				}
+				return responses, result.err
+			}
+			responses = append(responses, result.response)
+			if complete == nil {
+				return responses, nil
+			}
+			done, completionErr := complete(responses)
+			if completionErr != nil {
+				return nil, completionErr
+			}
+			if done {
+				return responses, nil
+			}
+			if !timer.Stop() {
+				select {
+				case <-timer.C:
+				default:
+				}
+			}
+			timer.Reset(inactivity)
+		case <-inactivityC:
+			return responses, fmt.Errorf("actisense: BEM 0x%02X response train: %w", command, context.DeadlineExceeded)
+		case <-ctx.Done():
+			return responses, fmt.Errorf("actisense: BEM 0x%02X: %w", command, ctx.Err())
+		case <-s.done:
+			s.mu.Lock()
+			doneErr := s.doneErr
+			s.mu.Unlock()
+			if doneErr == nil {
+				doneErr = ErrSessionClosed
+			}
+			return responses, doneErr
 		}
-		return BEMResponse{}, doneErr
 	}
 }
 
-func (s *Session) removePending(command byte, expected chan responseResult) {
+func (s *Session) removePending(key responseKey, expected *pendingRequest) {
 	s.mu.Lock()
-	if s.pending[command] == expected {
-		delete(s.pending, command)
+	if s.pending[key] == expected {
+		delete(s.pending, key)
 	}
 	s.mu.Unlock()
 }

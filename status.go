@@ -1,5 +1,7 @@
 package n2k
 
+import "github.com/open-ships/n2k/internal/gateway"
+
 // ClientStatus is a point-in-time operational snapshot suitable for health
 // endpoints and metrics collectors.
 type ClientStatus struct {
@@ -32,6 +34,10 @@ type ClientStatus struct {
 	DecodeErrorsObserved          uint64
 	GatewayEventsObserved         uint64
 	TransportErrorsObserved       uint64
+	// Actisense is populated for source-authoritative Actisense binary or CAN
+	// ASCII buses. Gateway-owned message sessions expose the same counters on
+	// ActisenseGatewaySession.Status instead.
+	Actisense *ActisenseSessionMetrics
 }
 
 // Status returns a concurrency-safe snapshot of the client's lifecycle and
@@ -78,6 +84,17 @@ func (c *Client) Status() ClientStatus {
 		status.ProtocolWritesCompleted = c.protocolTx.completed.Load()
 		status.ProtocolWritesFailed = c.protocolTx.failed.Load()
 		status.ProtocolWritesRejected = c.protocolTx.rejected.Load()
+	}
+	if provider, ok := c.bus.(interface {
+		Metrics() gateway.ActisenseGatewayMetrics
+	}); ok {
+		metrics := provider.Metrics()
+		status.Actisense = &ActisenseSessionMetrics{
+			ConnectionEpochs: metrics.ConnectionEpochs,
+			Reconnects:       metrics.Reconnects,
+			GatewayResets:    metrics.GatewayResets,
+			Protocol:         metrics.Protocol,
+		}
 	}
 	return status
 }

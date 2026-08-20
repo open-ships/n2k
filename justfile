@@ -55,6 +55,10 @@ conformance-local:
     go test -count=1 -v . -run '^(TestConformance|TestHeartbeat_|TestISORequest_|TestGroupFunction_|TestProtocolTransmission|TestRequiredProtocol|TestAdvisoryProtocol|TestTCPClientReconnect|TestObservationHub|TestReplayObservation)'
     go test -count=1 ./internal/actisense ./internal/adapter ./internal/claiming ./internal/ebl ./internal/framer ./internal/gateway ./internal/transport
 
+# run the opt-in NGT/NGX lab matrix from a local configuration file
+actisense-hardware config:
+    N2K_ACTISENSE_HARDWARE_CONFIG="{{config}}" go test -count=1 -v . -run '^TestActisenseHardwareMatrix$'
+
 # compare runtime PGN support against the current upstream schema
 upstream-parity:
     UPSTREAM_PARITY=1 go test ./pgn -run TestUpstreamParity -count=1 -v

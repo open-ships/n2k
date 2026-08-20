@@ -104,7 +104,17 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 			handleDatagram(datagram)
 			return
 		}
-		bstParser.Feed(event.Payload, handleDatagram, handleDecodeError)
+		unframed := make([]byte, 0)
+		bstParser.FeedWithUnframed(event.Payload, handleDatagram, handleDecodeError, func(data []byte) {
+			unframed = append(unframed, data...)
+		})
+		if len(unframed) != 0 {
+			emitWithContext(event, raw.Observation{
+				Kind: raw.KindTransportError, Direction: raw.DirectionUnknown,
+				Protocol: "actisense-bdtp", Payload: unframed,
+				Error: fmt.Sprintf("actisense: %d unframed stream bytes", len(unframed)),
+			})
+		}
 	}, func(warning ebl.Warning) {
 		now := time.Now()
 		handler(raw.Observation{
@@ -119,13 +129,26 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 		})
 	})
 	if ctx.Err() == nil {
-		bstParser.End(func(decodeErr actisense.DecodeError) {
+		var trailingUnframed []byte
+		bstParser.EndWithUnframed(func(decodeErr actisense.DecodeError) {
 			adapter.HandleDecodeError(decodeErr, func(observation raw.Observation) {
 				observation.AdapterID = "ebl:" + s.path
 				observation.NetworkID = s.path
 				handler(observation)
 			})
+		}, func(data []byte) {
+			trailingUnframed = append(trailingUnframed, data...)
 		})
+		if len(trailingUnframed) != 0 {
+			now := time.Now()
+			handler(raw.Observation{
+				Kind: raw.KindTransportError, Timestamp: now, ReceivedAt: now,
+				AdapterID: "ebl:" + s.path, NetworkID: s.path,
+				Direction: raw.DirectionUnknown, Protocol: "actisense-bdtp",
+				Payload: trailingUnframed,
+				Error:   fmt.Sprintf("actisense: %d trailing unframed stream bytes", len(trailingUnframed)),
+			})
+		}
 	}
 	if ctx.Err() != nil {
 		return ctx.Err()

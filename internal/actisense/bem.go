@@ -7,15 +7,54 @@ import (
 )
 
 const (
+	BEMReinitialize       = 0x00
+	BEMCommitEEPROM       = 0x01
+	BEMCommitFlash        = 0x02
 	BEMOperatingMode      = 0x11
+	BEMPortPCode          = 0x13
+	BEMTotalTime          = 0x15
+	BEMPortBaudrate       = 0x17
+	BEMEcho               = 0x18
+	BEMPortInventory      = 0x1B
+	BEMSupportedPGNList   = 0x40
+	BEMProductInfo        = 0x41
+	BEMCANConfig          = 0x42
+	BEMCANInfoField1      = 0x43
+	BEMCANInfoField2      = 0x44
+	BEMCANInfoField3      = 0x45
+	BEMRxPGNEnable        = 0x46
 	BEMTxPGNEnable        = 0x47
+	BEMDeletePGNLists     = 0x4A
 	BEMActivatePGNLists   = 0x4B
+	BEMDefaultPGNLists    = 0x4C
+	BEMPGNListParameters  = 0x4D
+	BEMRxPGNEnableListF2  = 0x4E
+	BEMTxPGNEnableListF2  = 0x4F
 	BEMStartupStatus      = 0xF0
 	BEMErrorReport        = 0xF1
 	BEMSystemStatus       = 0xF2
 	BEMNegativeAck        = 0xF4
 	maxPendingBEMRequests = 16
+	maxBEMResponseTrain   = 256
 )
+
+// BEMPath identifies how a BEM response reached the library.
+type BEMPath uint8
+
+const (
+	BEMPathLocal BEMPath = iota
+	BEMPathRemote
+)
+
+// BEMOrigin distinguishes the locally attached gateway from a remote
+// Actisense device reached through PGN 126720. Source is 255 for local
+// responses and the responding NMEA 2000 source address for remote responses.
+type BEMOrigin struct {
+	Path   BEMPath
+	Source uint8
+}
+
+var LocalBEMOrigin = BEMOrigin{Path: BEMPathLocal, Source: 255}
 
 // OperatingMode is an Actisense gateway operating-mode wire value.
 type OperatingMode uint16
@@ -24,14 +63,39 @@ const (
 	ModeUndefined          OperatingMode = 0
 	ModeTransferNormal     OperatingMode = 1
 	ModeTransferReceiveAll OperatingMode = 2
+	ModeTransferLegacyRaw  OperatingMode = 3
+	ModeConvertNormal      OperatingMode = 4
 	ModeCANPacket          OperatingMode = 5
 	ModeCANPacketASCII     OperatingMode = 6
+	ModeBuffer1            OperatingMode = 16
+	ModeBuffer2            OperatingMode = 17
+	ModeBuffer3            OperatingMode = 18
+	ModeAutoswitchDirect   OperatingMode = 19
+	ModeAutoswitchSmart    OperatingMode = 20
+	ModeCombineSlow        OperatingMode = 21
+	ModeCombineFast        OperatingMode = 22
+	ModeTest1              OperatingMode = 23
+	ModeNSI1               OperatingMode = 24
+	ModeLastStandard       OperatingMode = 253
+	ModeNormal             OperatingMode = 512
+	ModePredefined1        OperatingMode = 40000
+	ModePredefined2        OperatingMode = 40001
+	ModePredefinedEnd      OperatingMode = 40255
+	ModeUserStart          OperatingMode = 50000
+	ModeUser1              OperatingMode = ModeUserStart
+	ModeUser2              OperatingMode = 50001
+	ModeUser3              OperatingMode = 50002
+	ModeUser4              OperatingMode = 50003
+	ModeUser5              OperatingMode = 50004
+	ModeUserEnd            OperatingMode = 59999
+	ModeNull               OperatingMode = 65535
 )
 
 // BEMResponse is the common local gateway response envelope. Data is owned.
 type BEMResponse struct {
 	BSTID        byte
 	BEMID        byte
+	Origin       BEMOrigin
 	Sequence     uint8
 	ModelID      uint16
 	SerialNumber uint32
@@ -61,6 +125,7 @@ func DecodeBEMResponse(d Datagram) (response BEMResponse, ok bool, err error) {
 	return BEMResponse{
 		BSTID:        d.ID,
 		BEMID:        d.Payload[0],
+		Origin:       LocalBEMOrigin,
 		Sequence:     d.Payload[1],
 		ModelID:      binary.LittleEndian.Uint16(d.Payload[2:4]),
 		SerialNumber: binary.LittleEndian.Uint32(d.Payload[4:8]),

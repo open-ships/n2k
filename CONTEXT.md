@@ -31,7 +31,11 @@ explains the runtime design.
 - **Bus**: the extension seam for physical or virtual read/write transports.
 - **Adapter**: converts a transport representation into owned CAN frames.
 - **BST datagram**: one owned Actisense binary record after BDTP framing and checksum validation.
-- **Gateway session**: one Actisense connection epoch that owns BEM correlation, operating-mode readiness, and serialized wire writes.
+- **Gateway session**: an Actisense-owned NMEA 2000 identity with a sole-reader
+  BEM session, operating-mode readiness, serialized writes, and no virtual
+  address claim.
+- **BEM origin**: the local gateway or a remote Actisense source reached through
+  addressed PGN 126720, retained in every typed response and correlation key.
 
 ## Non-negotiable invariants
 
@@ -61,6 +65,15 @@ explains the runtime design.
 12. An Actisense connection is not ready until its operating mode is
     acknowledged; a raw-CAN request never silently falls back to a
     gateway-owned message session.
+13. Gateway-owned Actisense messages are never a `Client` Bus. Only a format
+    that carries the complete CAN identifier may claim source-authoritative
+    node semantics.
+14. Actisense sends never mutate PGN lists implicitly. Persistent and rebooting
+    BEM operations require a direct caller action; transactional volatile list
+    changes are restored when the same connection epoch permits it.
+15. Local BEM correlation includes response group, verb, and origin. Remote
+    correlation also binds both addresses and connection/claim epochs; every
+    pending table and response train is bounded.
 
 ## Where to make changes
 
@@ -71,9 +84,12 @@ explains the runtime design.
 - Connection epochs: `client.go`, `internal/gateway/tcpbus.go`, `registry.go`
 - Hardware/network seams: `bus.go`, `source*.go`, `internal/canbus/`,
   `internal/gateway/`
-- Actisense BDTP/BST/BEM sessions: `internal/actisense/`; TCP and serial
-  transport Adapters remain in `internal/gateway/`
-- Actisense EBL capture parsing: `internal/ebl/`, `source_ebl.go`
+- Actisense public sessions, remote devices, serial configuration, and ASCII
+  formats: `actisense_*.go`, `ebl_writer.go`
+- Actisense BDTP/BST/BEM command Module: `internal/actisense/`; TCP, serial,
+  custom-stream, and ASCII Adapters: `internal/gateway/`
+- Actisense EBL capture parsing/writing: `internal/ebl/`, `source_ebl.go`,
+  `ebl_writer.go`
 - Fast-packet assembly: `internal/adapter/`
 - ISO transport protocol: `internal/transport/`
 - Wire codec and generated messages: `pgn/`

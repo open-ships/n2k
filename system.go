@@ -12,7 +12,7 @@ import (
 
 // systemPGNs are always decoded by the system router: product information
 // (126996), configuration information (126998), and group functions (126208).
-var systemPGNs = []uint32{126996, 126998, 126208}
+var systemPGNs = []uint32{126996, 126998, 126208, 126720}
 
 // systemRouter is the client's protocol-message path. It decodes the PGNs the
 // client itself must react to (product info requests, group functions,
@@ -25,9 +25,10 @@ type systemRouter struct {
 	pipeline *readPipeline
 	ch       chan pgn.Message
 
-	mu       sync.Mutex
-	accept   map[uint32]int // PGN → reference count
-	handlers []func(pgn.Message)
+	mu                  sync.Mutex
+	accept              map[uint32]int // PGN → reference count
+	handlers            []func(pgn.Message)
+	observationHandlers []func(raw.Observation)
 }
 
 // newSystemRouter builds the router and its dedicated pipeline. Call run in a
@@ -55,6 +56,7 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 	for _, n := range systemPGNs {
 		r.accept[n] = 1
 	}
+	p.setObservationOutput(r.dispatchObservation)
 	return r, nil
 }
 
@@ -63,6 +65,11 @@ func (r *systemRouter) handleObservation(observation raw.Observation, pgnNum uin
 	_, ok := r.accept[pgnNum]
 	r.mu.Unlock()
 	if ok {
+		if observation.Kind == raw.KindMessage {
+			// Already-assembled source records bypass readPipeline.Decode, whose
+			// observation hook normally runs between assembly and typed decode.
+			r.dispatchObservation(observation)
+		}
 		r.pipeline.HandleObservation(observation)
 	}
 }
@@ -106,6 +113,31 @@ func (r *systemRouter) addHandler(h func(pgn.Message)) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.handlers = append(r.handlers, h)
+}
+
+// addObservationHandler registers for assembled, owned payloads before typed
+// generated decoding. Manufacturer envelope Adapters use this Seam so decoder
+// candidate ordering cannot hide a proprietary response.
+func (r *systemRouter) addObservationHandler(handler func(raw.Observation)) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.observationHandlers = append(r.observationHandlers, handler)
+}
+
+func (r *systemRouter) dispatchObservation(observation raw.Observation) {
+	r.mu.Lock()
+	handlers := append([]func(raw.Observation){}, r.observationHandlers...)
+	r.mu.Unlock()
+	for _, handler := range handlers {
+		func() {
+			defer func() {
+				if recovered := recover(); recovered != nil {
+					r.log.Error("recovered panic in system observation handler", "panic", recovered, "stack", string(debug.Stack()))
+				}
+			}()
+			handler(observation.Clone())
+		}()
+	}
 }
 
 // run drains the pipeline output and dispatches each message to every
