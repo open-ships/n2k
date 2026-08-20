@@ -4,7 +4,7 @@
 lifecycle and policy; internal packages own wire protocols.
 
 ```text
-CAN / USB / TCP / UDP / capture
+CAN / USB / TCP / UDP / serial / capture
               |
               v
        Bus or read-only source
@@ -44,6 +44,14 @@ falls behind (`ErrObservationOverflow`). This Depth supports faithful capture,
 multi-network diagnostics, and bridging without coupling the codec to a
 specific transport Implementation.
 
+Actisense transports first cross a bounded BDTP/BST Module. BST-95 becomes a
+source-authoritative Frame, BST-93 retains its v1 synthetic-frame Adapter, and
+BST-D0 becomes an assembled Message directly. BEM records stay in a
+gateway-session control path and surface as gateway or transport-error
+Observations. The session is the sole reader and serialized writer for one
+connection epoch, so response correlation, mode readiness, reset handling,
+and disconnect cancellation retain Locality.
+
 The system path receives frames first. It handles protocol traffic regardless
 of a user's CEL filter or whether the application is currently reading. This
 ordering prevents user code from breaking address defense, request correlation,
@@ -71,6 +79,9 @@ Application writes wait through a fresh contention window after the move.
 Message-oriented gateways may implement `MessageWriter` and accept assembled
 payloads up to 223 bytes. Buses that open asynchronously may implement
 `ReadyBus`; the client will not begin address claiming until `Ready` closes.
+The legacy Actisense BST-93/94 route is such a gateway-owned message session;
+its wire source address is not controlled by the client. Actisense BST-95 raw
+mode is the corresponding true `Bus` Adapter.
 
 Automatic protocol writes enter a dedicated protocol-transmission Module.
 Required traffic (heartbeat, claims, ISO and group-function responses) has a
@@ -89,6 +100,11 @@ fresh Address Claim, waits through contention, then reopens writes, enumerates
 the bus, and restarts the heartbeat. The network-session lifecycle Module
 therefore owns both TCP connectivity and NMEA network citizenship instead of
 leaving distributed reconnect checks at call sites.
+
+For Actisense, an epoch is published only after the gateway acknowledges the
+requested operating mode. Raw mode fails closed when BEM is rejected or
+stripped. Volatile mode changes are best-effort restored on clean close and
+are never committed to EEPROM or flash.
 
 ## Failure model
 

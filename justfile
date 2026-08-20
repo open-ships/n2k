@@ -1,5 +1,5 @@
 golangci_lint_version := "v2.12.0"
-secure_go_toolchain := "go1.26.5"
+secure_go_toolchain := "go1.26.6"
 govulncheck_version := "v1.5.0"
 gosec_version := "v2.27.1"
 
@@ -39,13 +39,13 @@ test:
 # run the public, reproducible protocol evidence suite (not NMEA certification)
 conformance-local:
     go test -count=1 -v . -run '^(TestConformance|TestHeartbeat_|TestISORequest_|TestGroupFunction_|TestProtocolTransmission|TestRequiredProtocol|TestAdvisoryProtocol|TestTCPClientReconnect|TestObservationHub|TestReplayObservation)'
-    go test -count=1 ./internal/adapter ./internal/claiming ./internal/framer ./internal/gateway ./internal/transport
+    go test -count=1 ./internal/actisense ./internal/adapter ./internal/claiming ./internal/ebl ./internal/framer ./internal/gateway ./internal/transport
 
 # compare runtime PGN support against the current upstream schema
 upstream-parity:
     UPSTREAM_PARITY=1 go test ./pgn -run TestUpstreamParity -count=1 -v
 
-# regenerate upstream source-derived runtime metadata from upstream master
+# regenerate source metadata from the pinned upstream schema revision
 generate-pgn:
     go run ./cmd/pgngen
 
@@ -59,6 +59,7 @@ test-race:
 
 # short, deterministic smoke run of every fuzz harness
 fuzz-smoke:
+    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime=2s
     go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=2s
     go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=2s
     go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=2s
@@ -76,12 +77,12 @@ fmt:
 pgn-manifest:
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
-# sync generated upstream source metadata and regenerate the runtime PGN manifest
+# sync the pinned upstream source metadata and runtime PGN manifest
 pgn-sync:
     go run ./cmd/pgngen
     UPDATE_PGN_MANIFEST=1 go test ./pgn -run TestPGNManifestMatchesMetadata -count=1
 
-# check whether generated upstream source metadata and runtime PGN manifest are current
+# check generated metadata and the manifest against the pinned schema revision
 pgn-sync-check:
     go run ./cmd/pgngen --check
     go test ./pgn -run TestPGNManifestMatchesMetadata -count=1

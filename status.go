@@ -30,6 +30,8 @@ type ClientStatus struct {
 	FramesTransmitted             uint64
 	MessagesObserved              uint64
 	DecodeErrorsObserved          uint64
+	GatewayEventsObserved         uint64
+	TransportErrorsObserved       uint64
 }
 
 // Status returns a concurrency-safe snapshot of the client's lifecycle and
@@ -57,6 +59,8 @@ func (c *Client) Status() ClientStatus {
 		FramesTransmitted:          c.framesTransmitted.Load(),
 		MessagesObserved:           c.messagesObserved.Load(),
 		DecodeErrorsObserved:       c.decodeErrorsObserved.Load(),
+		GatewayEventsObserved:      c.gatewayEventsObserved.Load(),
+		TransportErrorsObserved:    c.transportErrorsObserved.Load(),
 	}
 	c.mu.Unlock()
 	if c.msgHub != nil {

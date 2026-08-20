@@ -20,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.5
+          go-version: 1.26.6
           check-latest: true
 
       - name: Set up just
@@ -47,7 +47,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.5
+          go-version: 1.26.6
           check-latest: true
 
       - name: Set up just
@@ -69,7 +69,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.5
+          go-version: 1.26.6
           check-latest: true
 
       - name: golangci-lint
@@ -87,19 +87,19 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.5
+          go-version: 1.26.6
           check-latest: true
 
       - name: Run govulncheck
         env:
-          GOTOOLCHAIN: go1.26.5
+          GOTOOLCHAIN: go1.26.6
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
           govulncheck ./...
 
       - name: Run gosec
         env:
-          GOTOOLCHAIN: go1.26.5
+          GOTOOLCHAIN: go1.26.6
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@v2.27.1
           gosec -exclude-generated -exclude-dir=.claude -exclude=G115 ./...

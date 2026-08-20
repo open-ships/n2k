@@ -30,6 +30,8 @@ explains the runtime design.
   readiness cycle. A new epoch must reclaim before ordinary traffic resumes.
 - **Bus**: the extension seam for physical or virtual read/write transports.
 - **Adapter**: converts a transport representation into owned CAN frames.
+- **BST datagram**: one owned Actisense binary record after BDTP framing and checksum validation.
+- **Gateway session**: one Actisense connection epoch that owns BEM correlation, operating-mode readiness, and serialized wire writes.
 
 ## Non-negotiable invariants
 
@@ -56,6 +58,9 @@ explains the runtime design.
     and scheduled transmissions.
 11. Schema-declared conditions, signed widths, ranges, and sentinels are codec
     semantics, not documentation-only metadata.
+12. An Actisense connection is not ready until its operating mode is
+    acknowledged; a raw-CAN request never silently falls back to a
+    gateway-owned message session.
 
 ## Where to make changes
 
@@ -66,6 +71,9 @@ explains the runtime design.
 - Connection epochs: `client.go`, `internal/gateway/tcpbus.go`, `registry.go`
 - Hardware/network seams: `bus.go`, `source*.go`, `internal/canbus/`,
   `internal/gateway/`
+- Actisense BDTP/BST/BEM sessions: `internal/actisense/`; TCP and serial
+  transport Adapters remain in `internal/gateway/`
+- Actisense EBL capture parsing: `internal/ebl/`, `source_ebl.go`
 - Fast-packet assembly: `internal/adapter/`
 - ISO transport protocol: `internal/transport/`
 - Wire codec and generated messages: `pgn/`

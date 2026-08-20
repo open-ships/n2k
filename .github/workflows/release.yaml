@@ -29,4 +29,4 @@ jobs:
       commit-sha: ${{ github.event.workflow_run.head_sha }}
       project-name: n2k
       distribution: source
-      go-version: 1.26.5
+      go-version: 1.26.6

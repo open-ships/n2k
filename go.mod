@@ -1,6 +1,6 @@
 module github.com/open-ships/n2k
 
-go 1.26.5
+go 1.26.6
 
 require (
 	github.com/brutella/can v0.0.2

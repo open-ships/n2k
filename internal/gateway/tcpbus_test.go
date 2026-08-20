@@ -2,7 +2,9 @@ package gateway
 
 import (
 	"bufio"
+	"bytes"
 	"context"
+	"encoding/binary"
 	"errors"
 	"io"
 	"log/slog"
@@ -12,12 +14,51 @@ import (
 	"time"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/actisense"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func testLogger() *slog.Logger { return slog.New(slog.NewTextHandler(io.Discard, nil)) }
+
+func respondToActisenseBEM(t *testing.T, conn net.Conn, parser *actisense.Parser, chunk []byte, mode *actisense.OperatingMode) {
+	t.Helper()
+	parser.Feed(chunk, func(datagram actisense.Datagram) {
+		if datagram.ID != actisense.BSTBEMCommand || len(datagram.Payload) == 0 {
+			return
+		}
+		command := datagram.Payload[0]
+		var data []byte
+		switch command {
+		case actisense.BEMOperatingMode:
+			if len(datagram.Payload) >= 3 {
+				*mode = actisense.OperatingMode(binary.LittleEndian.Uint16(datagram.Payload[1:3]))
+			}
+			data = actisense.OperatingModeSet(*mode)
+		case actisense.BEMTxPGNEnable:
+			data = make([]byte, 14)
+			if len(datagram.Payload) >= 5 {
+				copy(data[:4], datagram.Payload[1:5])
+			}
+			data[4] = 1
+		case actisense.BEMActivatePGNLists:
+		default:
+			return
+		}
+		response := make([]byte, 12, 12+len(data))
+		response[0] = command
+		response = append(response, data...)
+		wire, err := actisense.EncodeDatagram(actisense.BSTBEMResponse, response)
+		if err != nil {
+			t.Errorf("encode fake gateway response: %v", err)
+			return
+		}
+		if _, err = conn.Write(wire); err != nil {
+			t.Errorf("write fake gateway response: %v", err)
+		}
+	}, func(err actisense.DecodeError) { t.Errorf("fake gateway decode: %v", err) })
+}
 
 // startFakeGateway listens on loopback and hands the accepted connection to
 // serve on a goroutine.
@@ -446,6 +487,8 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 		// Feed one assembled message to the client, then capture its writes.
 		payload := n2kPayload(2, 127250, 255, 23, []byte{0xFF, 0x88, 0x4C, 0xFF, 0x7F, 0xFF, 0x7F, 0xFD})
 		_, _ = conn.Write(wrapActisense(cmdN2KReceived, payload))
+		parser := actisense.NewParser()
+		mode := actisense.ModeTransferNormal
 		buf := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buf)
@@ -453,6 +496,7 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 				chunk := make([]byte, n)
 				copy(chunk, buf[:n])
 				received <- chunk
+				respondToActisenseBEM(t, conn, parser, chunk, &mode)
 			}
 			if err != nil {
 				return
@@ -478,7 +522,7 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 		t.Fatal("timed out waiting for re-framed message")
 	}
 
-	// First bytes on the wire must be the startup command.
+	// First bytes on the wire query and then acknowledge the requested mode.
 	collect := func() []byte {
 		select {
 		case chunk := <-received:
@@ -489,9 +533,9 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 		}
 	}
 	wire := collect()
-	require.GreaterOrEqual(t, len(wire), len(EncodeStartup()))
-	assert.Equal(t, EncodeStartup(), wire[:len(EncodeStartup())])
-	wire = wire[len(EncodeStartup()):]
+	for !containsBEMCommand(wire, actisense.BEMOperatingMode, true) {
+		wire = append(wire, collect()...)
+	}
 
 	// A fast-packet-sized payload goes out as one whole send command.
 	data := make([]byte, 20)
@@ -501,15 +545,17 @@ func TestActisenseTCPBus_StartupReadAndWrite(t *testing.T) {
 	require.NoError(t, bus.WriteMessage(126996, 6, 42, 255, data))
 	want, err := EncodeSend(N2KMessage{Priority: 6, PGN: 126996, Destination: 255, Data: data})
 	require.NoError(t, err)
-	for len(wire) < len(want) {
+	for !bytes.Contains(wire, want) {
 		wire = append(wire, collect()...)
 	}
-	assert.Equal(t, want, wire)
+	assert.True(t, bytes.Contains(wire, want))
 }
 
 func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
 	received := make(chan []byte, 4)
 	addr := startFakeGateway(t, func(conn net.Conn) {
+		parser := actisense.NewParser()
+		mode := actisense.ModeTransferNormal
 		buf := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buf)
@@ -517,6 +563,7 @@ func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
 				chunk := make([]byte, n)
 				copy(chunk, buf[:n])
 				received <- chunk
+				respondToActisenseBEM(t, conn, parser, chunk, &mode)
 			}
 			if err != nil {
 				return
@@ -541,7 +588,7 @@ func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
 
 	var wire []byte
 	deadline := time.After(2 * time.Second)
-	for len(wire) < len(EncodeStartup())+len(want) {
+	for !bytes.Contains(wire, want) {
 		select {
 		case chunk := <-received:
 			wire = append(wire, chunk...)
@@ -549,5 +596,15 @@ func TestActisenseTCPBus_WriteFrameAsMessage(t *testing.T) {
 			t.Fatal("timed out waiting for client bytes")
 		}
 	}
-	assert.Equal(t, want, wire[len(EncodeStartup()):])
+	assert.True(t, bytes.Contains(wire, want))
+}
+
+func containsBEMCommand(wire []byte, command byte, withData bool) bool {
+	found := false
+	actisense.NewParser().Feed(wire, func(datagram actisense.Datagram) {
+		if datagram.ID == actisense.BSTBEMCommand && len(datagram.Payload) > 0 && datagram.Payload[0] == command {
+			found = !withData || len(datagram.Payload) > 1
+		}
+	}, nil)
+	return found
 }

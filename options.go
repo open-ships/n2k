@@ -53,6 +53,7 @@ func (c *config) validate() error {
 	if c.writeQueue != nil && *c.writeQueue <= 0 {
 		return errors.New("n2k: write queue must be positive")
 	}
+	hasTCP := false
 	for _, src := range c.sources {
 		switch s := src.(type) {
 		case *socketCANSource:
@@ -63,7 +64,12 @@ func (c *config) validate() error {
 			if s.port == "" {
 				return errors.New("n2k: USB serial port cannot be empty")
 			}
+		case *serialSource:
+			if s.port == "" || (s.format != FormatActisense && s.format != FormatActisenseRaw) {
+				return fmt.Errorf("n2k: invalid serial source port or Actisense stream format %d", s.format)
+			}
 		case *tcpSource:
+			hasTCP = true
 			if s.addr == "" || !s.format.valid() {
 				return fmt.Errorf("n2k: invalid TCP source address or stream format %d", s.format)
 			}
@@ -75,7 +81,14 @@ func (c *config) validate() error {
 			if s.path == "" {
 				return errors.New("n2k: file path cannot be empty")
 			}
+		case *eblSource:
+			if s.path == "" {
+				return errors.New("n2k: EBL path cannot be empty")
+			}
 		}
+	}
+	if c.reconnect != nil && !hasTCP {
+		return errors.New("n2k: WithReconnect requires a TCP source")
 	}
 	return nil
 }
@@ -103,18 +116,29 @@ func USB(port string) Option {
 	})
 }
 
+// Serial adds a directly connected Actisense-format gateway at 115200 8N1.
+// FormatActisense retains the gateway-owned BST-93/94 message session;
+// FormatActisenseRaw performs acknowledged mode-5 setup and provides a true
+// BST-95 raw CAN Bus for NewClient.
+func Serial(port string, format StreamFormat) Option {
+	return optionFunc(func(c *config) {
+		c.sources = append(c.sources, &serialSource{port: port, format: format})
+	})
+}
+
 // File adds a source that replays CAN frames from a candump -L / -l log file.
 // By default frames are delivered as fast as they can be read; pass
 // OriginalTiming() to pace them by the log's timestamps. File sources are
 // read-only: they work with Receive and NewScanner but not NewClient.
 func File(path string, opts ...FileOption) Option {
 	return optionFunc(func(c *config) {
-		src := &fileSource{path: path}
+		capture := captureOptions{}
 		for _, o := range opts {
 			if o != nil {
-				o.applyFile(src)
+				o.applyCapture(&capture)
 			}
 		}
+		src := &fileSource{path: path, originalTiming: capture.originalTiming}
 		c.sources = append(c.sources, src)
 	})
 }
@@ -122,8 +146,9 @@ func File(path string, opts ...FileOption) Option {
 // TCP adds a source that dials a network gateway (e.g. a Yacht Devices
 // YDWG-02 in RAW server mode, or an Actisense gateway) at addr ("host:port").
 // TCP works with Receive/NewScanner and can also back NewClient for writes.
-// RAW gateways provide frame-level read/write access; Actisense-format
-// gateways send assembled messages and stamp their own source address.
+// FormatYDRaw and FormatActisenseRaw provide frame-level access.
+// FormatActisense retains the legacy gateway-owned message session, where the
+// gateway stamps its own source address.
 func TCP(addr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &tcpSource{addr: addr, format: format})
@@ -133,6 +158,8 @@ func TCP(addr string, format StreamFormat) Option {
 // UDP adds a source that listens on listenAddr (e.g. ":1457" or
 // "0.0.0.0:1457") for datagrams broadcast by a network gateway. UDP sources
 // are read-only: they work with Receive and NewScanner but not NewClient.
+// FormatActisenseRaw requires the upstream gateway to already emit BST-95,
+// because UDP has no return channel for BEM mode setup.
 func UDP(listenAddr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &udpSource{addr: listenAddr, format: format})

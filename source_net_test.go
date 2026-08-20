@@ -3,12 +3,15 @@ package n2k
 import (
 	"bufio"
 	"context"
+	"encoding/binary"
 	"net"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/actisense"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
 	"github.com/stretchr/testify/assert"
@@ -23,6 +26,39 @@ const (
 	testETX            = 0x03
 	testCmdN2KReceived = 0x93
 )
+
+func respondToActisenseControl(conn net.Conn, parser *actisense.Parser, chunk []byte, mode *actisense.OperatingMode) {
+	parser.Feed(chunk, func(datagram actisense.Datagram) {
+		if datagram.ID != actisense.BSTBEMCommand || len(datagram.Payload) == 0 {
+			return
+		}
+		command := datagram.Payload[0]
+		var data []byte
+		switch command {
+		case actisense.BEMOperatingMode:
+			if len(datagram.Payload) >= 3 {
+				*mode = actisense.OperatingMode(binary.LittleEndian.Uint16(datagram.Payload[1:3]))
+			}
+			data = actisense.OperatingModeSet(*mode)
+		case actisense.BEMTxPGNEnable:
+			data = make([]byte, 14)
+			if len(datagram.Payload) >= 5 {
+				copy(data[:4], datagram.Payload[1:5])
+			}
+			data[4] = 1
+		case actisense.BEMActivatePGNLists:
+		default:
+			return
+		}
+		response := make([]byte, 12, 12+len(data))
+		response[0] = command
+		response = append(response, data...)
+		wire, err := actisense.EncodeDatagram(actisense.BSTBEMResponse, response)
+		if err == nil {
+			_, _ = conn.Write(wire)
+		}
+	}, nil)
+}
 
 // wrapActisense builds a DLE/STX-framed Actisense message around cmd+payload.
 func wrapActisense(cmd byte, payload []byte) []byte {
@@ -436,6 +472,8 @@ func TestNewClient_TCPActisense_Writes(t *testing.T) {
 			return
 		}
 		defer func() { _ = conn.Close() }()
+		parser := actisense.NewParser()
+		mode := actisense.ModeTransferNormal
 		buf := make([]byte, 4096)
 		for {
 			n, err := conn.Read(buf)
@@ -446,6 +484,7 @@ func TestNewClient_TCPActisense_Writes(t *testing.T) {
 				case sends <- chunk:
 				default:
 				}
+				respondToActisenseControl(conn, parser, chunk, &mode)
 			}
 			if err != nil {
 				return
@@ -483,6 +522,85 @@ func TestNewClient_TCPActisense_Writes(t *testing.T) {
 			t.Fatalf("no Actisense send command for PGN 127250 seen; got %d bytes", len(wire))
 		}
 	}
+}
+
+func TestNewClient_TCPActisenseRawPreservesClientSource(t *testing.T) {
+	frames := make(chan can.Frame, 32)
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = listener.Close() })
+	go func() {
+		connection, acceptErr := listener.Accept()
+		if acceptErr != nil {
+			return
+		}
+		defer func() { _ = connection.Close() }()
+		controlParser := actisense.NewParser()
+		captureParser := actisense.NewParser()
+		mode := actisense.ModeTransferNormal
+		buf := make([]byte, 4096)
+		for {
+			n, readErr := connection.Read(buf)
+			if n > 0 {
+				chunk := append([]byte(nil), buf[:n]...)
+				respondToActisenseControl(connection, controlParser, chunk, &mode)
+				captureParser.Feed(chunk, func(datagram actisense.Datagram) {
+					decoded, ok, decodeErr := actisense.DecodeCANFrame(datagram)
+					if ok && decodeErr == nil {
+						frames <- decoded.Frame
+					}
+				}, nil)
+			}
+			if readErr != nil {
+				return
+			}
+		}
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	client, err := NewClient(ctx,
+		TCP(listener.Addr().String(), FormatActisenseRaw),
+		WithSourceAddress(42),
+		WithClaimTimeout(time.Second),
+		WithHeartbeatInterval(0),
+	)
+	require.NoError(t, err)
+	defer func() { _ = client.Close() }()
+
+	heading := &pgn.VesselHeading{}
+	heading.SetHeadingValue(1.5708)
+	require.NoError(t, client.Write(heading).Wait())
+
+	var sawClaim, sawHeading bool
+	deadline := time.After(2 * time.Second)
+	for !sawClaim || !sawHeading {
+		select {
+		case frame := <-frames:
+			id := framer.ParseCANID(frame.ID)
+			assert.Equal(t, uint8(42), id.Source)
+			switch id.PGN {
+			case 60928:
+				sawClaim = true
+			case 127250:
+				sawHeading = true
+			}
+		case <-deadline:
+			t.Fatalf("raw Actisense traffic missing: claim=%v heading=%v", sawClaim, sawHeading)
+		}
+	}
+}
+
+func TestActisenseRawBusDoesNotExposeGatewayMessageWrites(t *testing.T) {
+	rawBus := (&tcpSource{format: FormatActisenseRaw}).newBus(nil)
+	defer func() { _ = rawBus.Close() }()
+	_, rawIsMessageWriter := rawBus.(MessageWriter)
+	assert.False(t, rawIsMessageWriter)
+
+	legacyBus := (&tcpSource{format: FormatActisense}).newBus(nil)
+	defer func() { _ = legacyBus.Close() }()
+	_, legacyIsMessageWriter := legacyBus.(MessageWriter)
+	assert.True(t, legacyIsMessageWriter)
 }
 
 // containsActisenseSend reports whether buf contains a framed 0x94 send

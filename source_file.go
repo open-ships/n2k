@@ -18,21 +18,25 @@ type fileSource struct {
 	originalTiming bool
 }
 
-// FileOption configures a File source.
-type FileOption interface {
-	applyFile(*fileSource)
+type captureOptions struct {
+	originalTiming bool
 }
 
-type fileOptionFunc func(*fileSource)
+// FileOption configures a candump File or EBL capture source.
+type FileOption interface {
+	applyCapture(*captureOptions)
+}
 
-func (f fileOptionFunc) applyFile(s *fileSource) { f(s) }
+type fileOptionFunc func(*captureOptions)
 
-// OriginalTiming replays frames paced by the log's own timestamps instead of
-// as fast as they can be read. Frames without timestamps are delivered
-// immediately.
+func (f fileOptionFunc) applyCapture(options *captureOptions) { f(options) }
+
+// OriginalTiming replays frames or messages paced by the capture's own
+// timestamps instead of as fast as they can be read. Records without
+// timestamps are delivered immediately.
 func OriginalTiming() FileOption {
-	return fileOptionFunc(func(s *fileSource) {
-		s.originalTiming = true
+	return fileOptionFunc(func(options *captureOptions) {
+		options.originalTiming = true
 	})
 }
 
