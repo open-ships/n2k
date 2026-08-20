@@ -96,14 +96,14 @@ go get github.com/open-ships/n2k
 For command-line capture and diagnostics, install
 [`open-ships/n2k-cli`](https://github.com/open-ships/n2k-cli).
 
-Releases follow semantic versioning. [`VERSION`](VERSION) declares the release
-baseline; v1 provides the stable Go module path that pkg.go.dev and Go tooling
-recognize as production-ready. The project preserves exported v1 behavior
-across minor and patch releases, adds deprecations before removal, and reserves
-breaking changes for a new major module path. Fully green release automation
-publishes an annotated tag, deterministic source archive, checksums, SBOM, and
-separate build-provenance and SBOM attestations through the shared Open Ships
-release policy.
+Releases follow semantic versioning. [`VERSION`](VERSION) declares the exact
+version published by the next successful `main` build; v1 provides the stable
+Go module path that pkg.go.dev and Go tooling recognize as production-ready.
+The project preserves exported v1 behavior across minor and patch releases,
+adds deprecations before removal, and reserves breaking changes for a new major
+module path. Fully green release automation publishes an annotated tag,
+deterministic source archive, checksums, SBOM, and separate build-provenance and
+SBOM attestations through the shared Open Ships release policy.
 
 ## Using `n2k`
 

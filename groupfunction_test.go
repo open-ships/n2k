@@ -16,7 +16,7 @@ import (
 // standard: nil = no change.
 func requestGF(t *testing.T, pgnNum uint32, interval *uint32, source, dest uint8) []can.Frame {
 	t.Helper()
-	payload := []byte{0}                                                     // function code 0 = request
+	payload := []byte{0}                                                       // function code 0 = request
 	payload = append(payload, byte(pgnNum), byte(pgnNum>>8), byte(pgnNum>>16)) // requested PGN
 	iv := uint32(0xFFFFFFFF)
 	if interval != nil {
