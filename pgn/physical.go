@@ -78,12 +78,38 @@ func PhysicalValue(msg PGN, fieldOrder int) (float64, string, bool, error) {
 	if !present {
 		return 0, "", false, nil
 	}
+	if field.kind != fieldKindLookup && !field.measurementAvailable(target.Field(field.fieldIndex), raw) {
+		return 0, desc.Unit, false, nil
+	}
 
 	offset := 0.0
 	if desc.Offset != nil {
 		offset = *desc.Offset
 	}
 	return raw*float64(desc.Resolution) + offset, desc.Unit, true, nil
+}
+
+func (field *planField) measurementAvailable(value reflect.Value, raw float64) bool {
+	if field.signed {
+		ticks := value.Elem().Int()
+		if _, special := field.sentinels[ticks]; special {
+			return false
+		}
+		if field.kind == fieldKindNullableNumber && uint64(ticks) == (uint64(1)<<(field.bitLength-1))-1 {
+			return false
+		}
+	} else {
+		ticks := value.Elem().Uint()
+		if _, special := field.sentinels[int64(ticks)]; ticks <= uint64(^uint64(0)>>1) && special {
+			return false
+		}
+		if field.kind == fieldKindNullableNumber && ticks == ^uint64(0)>>(64-field.bitLength) {
+			return false
+		}
+	}
+	physical := raw*field.resolution + field.offset
+	return (field.rangeMin == nil || physical >= *field.rangeMin || approximatelyEqual(physical, *field.rangeMin)) &&
+		(field.rangeMax == nil || physical <= *field.rangeMax || approximatelyEqual(physical, *field.rangeMax))
 }
 
 // findPlanField locates the top-level planField for a metadata source order.

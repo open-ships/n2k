@@ -28,14 +28,52 @@ func (m *XantrexAcStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *XantrexAcStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *XantrexAcStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *XantrexAcStatus) Clone() Message {
+	if m == nil {
+		return (*XantrexAcStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AcInstance = clonePointer(m.AcInstance)
+	copy.NumberOfLines = clonePointer(m.NumberOfLines)
+	copy.Line = clonePointer(m.Line)
+	copy.Acceptability = clonePointer(m.Acceptability)
+	copy.Waveform = clonePointer(m.Waveform)
+	copy.Voltage = clonePointer(m.Voltage)
+	copy.Current = clonePointer(m.Current)
+	copy.Frequency = clonePointer(m.Frequency)
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	return &copy
+}
+
 // VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
-// The bool is false when Voltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcStatus) VoltageValue() (float64, bool) {
-	if m.Voltage == nil {
+	if m == nil || m.Voltage == nil {
 		return 0, false
 	}
-	return float64(*m.Voltage) * 0.01, true
+	if *m.Voltage == 65535 {
+		return 0, false
+	}
+	if *m.Voltage == 65534 {
+		return 0, false
+	}
+	if *m.Voltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Voltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
@@ -46,13 +84,28 @@ func (m *XantrexAcStatus) SetVoltageValue(v float64) {
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
-// The bool is false when Current is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcStatus) CurrentValue() (float64, bool) {
-	if m.Current == nil {
+	if m == nil || m.Current == nil {
 		return 0, false
 	}
-	return float64(*m.Current) * 0.1, true
+	if *m.Current == 65535 {
+		return 0, false
+	}
+	if *m.Current == 65534 {
+		return 0, false
+	}
+	if *m.Current == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Current) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
@@ -63,13 +116,28 @@ func (m *XantrexAcStatus) SetCurrentValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in % (value = raw).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcStatus) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor), true
+	if *m.PowerFactor == 127 {
+		return 0, false
+	}
+	if *m.PowerFactor == 126 {
+		return 0, false
+	}
+	if *m.PowerFactor == 125 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in %, rounded to the nearest
@@ -102,14 +170,50 @@ func (m *XantrexDcSourceConfigurationStatus) DecodePayload(payload []uint8) erro
 }
 func (m *XantrexDcSourceConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *XantrexDcSourceConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*XantrexDcSourceConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DcSourceInstance = clonePointer(m.DcSourceInstance)
+	copy.DcUvShutdownLevel = clonePointer(m.DcUvShutdownLevel)
+	copy.DcUvWarningLevel = clonePointer(m.DcUvWarningLevel)
+	copy.DcUvShutdownDelay = clonePointer(m.DcUvShutdownDelay)
+	copy.DcUvRecoverLevel = clonePointer(m.DcUvRecoverLevel)
+	copy.DcOvShutdownLevel = clonePointer(m.DcOvShutdownLevel)
+	copy.DcOvWarningLevel = clonePointer(m.DcOvWarningLevel)
+	copy.DcOvShutdownDelay = clonePointer(m.DcOvShutdownDelay)
+	copy.DcOvRecoverLevel = clonePointer(m.DcOvRecoverLevel)
+	return &copy
+}
+
 // DcUvShutdownLevelValue returns DcUvShutdownLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcUvShutdownLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownLevelValue() (float64, bool) {
-	if m.DcUvShutdownLevel == nil {
+	if m == nil || m.DcUvShutdownLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcUvShutdownLevel) * 0.01, true
+	if *m.DcUvShutdownLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcUvShutdownLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcUvShutdownLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcUvShutdownLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcUvShutdownLevelValue sets DcUvShutdownLevel from a physical value in V, rounded to the nearest
@@ -120,13 +224,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownLevelValue(v float64
 }
 
 // DcUvWarningLevelValue returns DcUvWarningLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcUvWarningLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcUvWarningLevelValue() (float64, bool) {
-	if m.DcUvWarningLevel == nil {
+	if m == nil || m.DcUvWarningLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcUvWarningLevel) * 0.01, true
+	if *m.DcUvWarningLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcUvWarningLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcUvWarningLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcUvWarningLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcUvWarningLevelValue sets DcUvWarningLevel from a physical value in V, rounded to the nearest
@@ -137,13 +256,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcUvWarningLevelValue(v float64)
 }
 
 // DcUvShutdownDelayValue returns DcUvShutdownDelay as a physical value in V (value = raw * 0.01).
-// The bool is false when DcUvShutdownDelay is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownDelayValue() (float64, bool) {
-	if m.DcUvShutdownDelay == nil {
+	if m == nil || m.DcUvShutdownDelay == nil {
 		return 0, false
 	}
-	return float64(*m.DcUvShutdownDelay) * 0.01, true
+	if *m.DcUvShutdownDelay == 65535 {
+		return 0, false
+	}
+	if *m.DcUvShutdownDelay == 65534 {
+		return 0, false
+	}
+	if *m.DcUvShutdownDelay == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcUvShutdownDelay) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcUvShutdownDelayValue sets DcUvShutdownDelay from a physical value in V, rounded to the nearest
@@ -154,13 +288,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownDelayValue(v float64
 }
 
 // DcUvRecoverLevelValue returns DcUvRecoverLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcUvRecoverLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcUvRecoverLevelValue() (float64, bool) {
-	if m.DcUvRecoverLevel == nil {
+	if m == nil || m.DcUvRecoverLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcUvRecoverLevel) * 0.01, true
+	if *m.DcUvRecoverLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcUvRecoverLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcUvRecoverLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcUvRecoverLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcUvRecoverLevelValue sets DcUvRecoverLevel from a physical value in V, rounded to the nearest
@@ -171,13 +320,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcUvRecoverLevelValue(v float64)
 }
 
 // DcOvShutdownLevelValue returns DcOvShutdownLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcOvShutdownLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownLevelValue() (float64, bool) {
-	if m.DcOvShutdownLevel == nil {
+	if m == nil || m.DcOvShutdownLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcOvShutdownLevel) * 0.01, true
+	if *m.DcOvShutdownLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcOvShutdownLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcOvShutdownLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcOvShutdownLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcOvShutdownLevelValue sets DcOvShutdownLevel from a physical value in V, rounded to the nearest
@@ -188,13 +352,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownLevelValue(v float64
 }
 
 // DcOvWarningLevelValue returns DcOvWarningLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcOvWarningLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcOvWarningLevelValue() (float64, bool) {
-	if m.DcOvWarningLevel == nil {
+	if m == nil || m.DcOvWarningLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcOvWarningLevel) * 0.01, true
+	if *m.DcOvWarningLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcOvWarningLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcOvWarningLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcOvWarningLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcOvWarningLevelValue sets DcOvWarningLevel from a physical value in V, rounded to the nearest
@@ -205,13 +384,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcOvWarningLevelValue(v float64)
 }
 
 // DcOvShutdownDelayValue returns DcOvShutdownDelay as a physical value in V (value = raw * 0.01).
-// The bool is false when DcOvShutdownDelay is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownDelayValue() (float64, bool) {
-	if m.DcOvShutdownDelay == nil {
+	if m == nil || m.DcOvShutdownDelay == nil {
 		return 0, false
 	}
-	return float64(*m.DcOvShutdownDelay) * 0.01, true
+	if *m.DcOvShutdownDelay == 65535 {
+		return 0, false
+	}
+	if *m.DcOvShutdownDelay == 65534 {
+		return 0, false
+	}
+	if *m.DcOvShutdownDelay == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcOvShutdownDelay) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcOvShutdownDelayValue sets DcOvShutdownDelay from a physical value in V, rounded to the nearest
@@ -222,13 +416,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownDelayValue(v float64
 }
 
 // DcOvRecoverLevelValue returns DcOvRecoverLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when DcOvRecoverLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexDcSourceConfigurationStatus) DcOvRecoverLevelValue() (float64, bool) {
-	if m.DcOvRecoverLevel == nil {
+	if m == nil || m.DcOvRecoverLevel == nil {
 		return 0, false
 	}
-	return float64(*m.DcOvRecoverLevel) * 0.01, true
+	if *m.DcOvRecoverLevel == 65535 {
+		return 0, false
+	}
+	if *m.DcOvRecoverLevel == 65534 {
+		return 0, false
+	}
+	if *m.DcOvRecoverLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcOvRecoverLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcOvRecoverLevelValue sets DcOvRecoverLevel from a physical value in V, rounded to the nearest
@@ -260,14 +469,49 @@ func (m *XantrexAcOutputConfigurationStatus) DecodePayload(payload []uint8) erro
 }
 func (m *XantrexAcOutputConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *XantrexAcOutputConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*XantrexAcOutputConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AcSourceInstance = clonePointer(m.AcSourceInstance)
+	copy.NumberOfLines = clonePointer(m.NumberOfLines)
+	copy.Line = clonePointer(m.Line)
+	copy.Voltage = clonePointer(m.Voltage)
+	copy.Frequency = clonePointer(m.Frequency)
+	copy.PowerLimit = clonePointer(m.PowerLimit)
+	copy.OvFaultLevel = clonePointer(m.OvFaultLevel)
+	copy.UvFaultLevel = clonePointer(m.UvFaultLevel)
+	return &copy
+}
+
 // VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
-// The bool is false when Voltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcOutputConfigurationStatus) VoltageValue() (float64, bool) {
-	if m.Voltage == nil {
+	if m == nil || m.Voltage == nil {
 		return 0, false
 	}
-	return float64(*m.Voltage) * 0.01, true
+	if *m.Voltage == 65535 {
+		return 0, false
+	}
+	if *m.Voltage == 65534 {
+		return 0, false
+	}
+	if *m.Voltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Voltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
@@ -278,13 +522,28 @@ func (m *XantrexAcOutputConfigurationStatus) SetVoltageValue(v float64) {
 }
 
 // OvFaultLevelValue returns OvFaultLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when OvFaultLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcOutputConfigurationStatus) OvFaultLevelValue() (float64, bool) {
-	if m.OvFaultLevel == nil {
+	if m == nil || m.OvFaultLevel == nil {
 		return 0, false
 	}
-	return float64(*m.OvFaultLevel) * 0.01, true
+	if *m.OvFaultLevel == 65535 {
+		return 0, false
+	}
+	if *m.OvFaultLevel == 65534 {
+		return 0, false
+	}
+	if *m.OvFaultLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OvFaultLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOvFaultLevelValue sets OvFaultLevel from a physical value in V, rounded to the nearest
@@ -295,13 +554,28 @@ func (m *XantrexAcOutputConfigurationStatus) SetOvFaultLevelValue(v float64) {
 }
 
 // UvFaultLevelValue returns UvFaultLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when UvFaultLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcOutputConfigurationStatus) UvFaultLevelValue() (float64, bool) {
-	if m.UvFaultLevel == nil {
+	if m == nil || m.UvFaultLevel == nil {
 		return 0, false
 	}
-	return float64(*m.UvFaultLevel) * 0.01, true
+	if *m.UvFaultLevel == 65535 {
+		return 0, false
+	}
+	if *m.UvFaultLevel == 65534 {
+		return 0, false
+	}
+	if *m.UvFaultLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.UvFaultLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetUvFaultLevelValue sets UvFaultLevel from a physical value in V, rounded to the nearest
@@ -336,14 +610,52 @@ func (m *XantrexChargerConfigurationStatus) DecodePayload(payload []uint8) error
 }
 func (m *XantrexChargerConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *XantrexChargerConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*XantrexChargerConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ChargeInstance = clonePointer(m.ChargeInstance)
+	copy.BatteryInstance = clonePointer(m.BatteryInstance)
+	copy.BulkVoltage = clonePointer(m.BulkVoltage)
+	copy.BulkTime = clonePointer(m.BulkTime)
+	copy.AbsorptionVoltage = clonePointer(m.AbsorptionVoltage)
+	copy.AbsorptionTime = clonePointer(m.AbsorptionTime)
+	copy.FloatVoltage = clonePointer(m.FloatVoltage)
+	copy.FloatTime = clonePointer(m.FloatTime)
+	copy.EqualizationVoltage = clonePointer(m.EqualizationVoltage)
+	copy.GenericChargeVoltage = clonePointer(m.GenericChargeVoltage)
+	copy.GenericChargeCurrent = clonePointer(m.GenericChargeCurrent)
+	return &copy
+}
+
 // BulkVoltageValue returns BulkVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when BulkVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexChargerConfigurationStatus) BulkVoltageValue() (float64, bool) {
-	if m.BulkVoltage == nil {
+	if m == nil || m.BulkVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.BulkVoltage) * 0.01, true
+	if *m.BulkVoltage == 65535 {
+		return 0, false
+	}
+	if *m.BulkVoltage == 65534 {
+		return 0, false
+	}
+	if *m.BulkVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BulkVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBulkVoltageValue sets BulkVoltage from a physical value in V, rounded to the nearest
@@ -354,13 +666,28 @@ func (m *XantrexChargerConfigurationStatus) SetBulkVoltageValue(v float64) {
 }
 
 // AbsorptionVoltageValue returns AbsorptionVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when AbsorptionVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexChargerConfigurationStatus) AbsorptionVoltageValue() (float64, bool) {
-	if m.AbsorptionVoltage == nil {
+	if m == nil || m.AbsorptionVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.AbsorptionVoltage) * 0.01, true
+	if *m.AbsorptionVoltage == 65535 {
+		return 0, false
+	}
+	if *m.AbsorptionVoltage == 65534 {
+		return 0, false
+	}
+	if *m.AbsorptionVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AbsorptionVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAbsorptionVoltageValue sets AbsorptionVoltage from a physical value in V, rounded to the nearest
@@ -371,13 +698,28 @@ func (m *XantrexChargerConfigurationStatus) SetAbsorptionVoltageValue(v float64)
 }
 
 // FloatVoltageValue returns FloatVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when FloatVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexChargerConfigurationStatus) FloatVoltageValue() (float64, bool) {
-	if m.FloatVoltage == nil {
+	if m == nil || m.FloatVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.FloatVoltage) * 0.01, true
+	if *m.FloatVoltage == 65535 {
+		return 0, false
+	}
+	if *m.FloatVoltage == 65534 {
+		return 0, false
+	}
+	if *m.FloatVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.FloatVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFloatVoltageValue sets FloatVoltage from a physical value in V, rounded to the nearest
@@ -388,13 +730,28 @@ func (m *XantrexChargerConfigurationStatus) SetFloatVoltageValue(v float64) {
 }
 
 // EqualizationVoltageValue returns EqualizationVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when EqualizationVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexChargerConfigurationStatus) EqualizationVoltageValue() (float64, bool) {
-	if m.EqualizationVoltage == nil {
+	if m == nil || m.EqualizationVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.EqualizationVoltage) * 0.01, true
+	if *m.EqualizationVoltage == 65535 {
+		return 0, false
+	}
+	if *m.EqualizationVoltage == 65534 {
+		return 0, false
+	}
+	if *m.EqualizationVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EqualizationVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEqualizationVoltageValue sets EqualizationVoltage from a physical value in V, rounded to the nearest
@@ -405,13 +762,28 @@ func (m *XantrexChargerConfigurationStatus) SetEqualizationVoltageValue(v float6
 }
 
 // GenericChargeVoltageValue returns GenericChargeVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when GenericChargeVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexChargerConfigurationStatus) GenericChargeVoltageValue() (float64, bool) {
-	if m.GenericChargeVoltage == nil {
+	if m == nil || m.GenericChargeVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.GenericChargeVoltage) * 0.01, true
+	if *m.GenericChargeVoltage == 65535 {
+		return 0, false
+	}
+	if *m.GenericChargeVoltage == 65534 {
+		return 0, false
+	}
+	if *m.GenericChargeVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.GenericChargeVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetGenericChargeVoltageValue sets GenericChargeVoltage from a physical value in V, rounded to the nearest
@@ -448,14 +820,54 @@ func (m *XantrexAcInputConfigurationStatus) DecodePayload(payload []uint8) error
 }
 func (m *XantrexAcInputConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *XantrexAcInputConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*XantrexAcInputConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AcSourceInstance = clonePointer(m.AcSourceInstance)
+	copy.NumberOfLines = clonePointer(m.NumberOfLines)
+	copy.Line = clonePointer(m.Line)
+	copy.BreakerSize = clonePointer(m.BreakerSize)
+	copy.AcLostLevel = clonePointer(m.AcLostLevel)
+	copy.AcUvLevel = clonePointer(m.AcUvLevel)
+	copy.AcUvWarningLevel = clonePointer(m.AcUvWarningLevel)
+	copy.AcUvDelay = clonePointer(m.AcUvDelay)
+	copy.AcOvLevel = clonePointer(m.AcOvLevel)
+	copy.AcOvWarningLevel = clonePointer(m.AcOvWarningLevel)
+	copy.AcOvDelay = clonePointer(m.AcOvDelay)
+	copy.AcUfLevel = clonePointer(m.AcUfLevel)
+	copy.AcOfLevel = clonePointer(m.AcOfLevel)
+	return &copy
+}
+
 // AcUvLevelValue returns AcUvLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when AcUvLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcInputConfigurationStatus) AcUvLevelValue() (float64, bool) {
-	if m.AcUvLevel == nil {
+	if m == nil || m.AcUvLevel == nil {
 		return 0, false
 	}
-	return float64(*m.AcUvLevel) * 0.01, true
+	if *m.AcUvLevel == 65535 {
+		return 0, false
+	}
+	if *m.AcUvLevel == 65534 {
+		return 0, false
+	}
+	if *m.AcUvLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcUvLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcUvLevelValue sets AcUvLevel from a physical value in V, rounded to the nearest
@@ -466,13 +878,28 @@ func (m *XantrexAcInputConfigurationStatus) SetAcUvLevelValue(v float64) {
 }
 
 // AcOvLevelValue returns AcOvLevel as a physical value in V (value = raw * 0.01).
-// The bool is false when AcOvLevel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *XantrexAcInputConfigurationStatus) AcOvLevelValue() (float64, bool) {
-	if m.AcOvLevel == nil {
+	if m == nil || m.AcOvLevel == nil {
 		return 0, false
 	}
-	return float64(*m.AcOvLevel) * 0.01, true
+	if *m.AcOvLevel == 65535 {
+		return 0, false
+	}
+	if *m.AcOvLevel == 65534 {
+		return 0, false
+	}
+	if *m.AcOvLevel == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcOvLevel) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcOvLevelValue sets AcOvLevel from a physical value in V, rounded to the nearest

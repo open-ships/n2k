@@ -19,14 +19,43 @@ func (m *FluidLevel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FluidLevel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FluidLevel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FluidLevel) Clone() Message {
+	if m == nil {
+		return (*FluidLevel)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.Type = clonePointer(m.Type)
+	copy.Level = clonePointer(m.Level)
+	copy.Capacity = clonePointer(m.Capacity)
+	return &copy
+}
+
 // LevelValue returns Level as a physical value in % (value = raw * 0.004).
-// The bool is false when Level is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FluidLevel) LevelValue() (float64, bool) {
-	if m.Level == nil {
+	if m == nil || m.Level == nil {
 		return 0, false
 	}
-	return float64(*m.Level) * 0.004, true
+	if *m.Level == 32767 {
+		return 0, false
+	}
+	if *m.Level == 32766 {
+		return 0, false
+	}
+	if *m.Level == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Level) * 0.004
+	if value < -131.068 && !approximatelyEqual(value, -131.068) {
+		return 0, false
+	}
+	if value > 131.056 && !approximatelyEqual(value, 131.056) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLevelValue sets Level from a physical value in %, rounded to the nearest
@@ -37,13 +66,28 @@ func (m *FluidLevel) SetLevelValue(v float64) {
 }
 
 // CapacityValue returns Capacity as a physical value in L (value = raw * 0.1).
-// The bool is false when Capacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FluidLevel) CapacityValue() (float64, bool) {
-	if m.Capacity == nil {
+	if m == nil || m.Capacity == nil {
 		return 0, false
 	}
-	return float64(*m.Capacity) * 0.1, true
+	if *m.Capacity == 4294967295 {
+		return 0, false
+	}
+	if *m.Capacity == 4294967294 {
+		return 0, false
+	}
+	if *m.Capacity == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Capacity) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+08 && !approximatelyEqual(value, 4.294967292e+08) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
@@ -92,14 +136,68 @@ func (m *ElevatorCarStatus) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *ElevatorCarStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ElevatorCarStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElevatorCarStatus) Clone() Message {
+	if m == nil {
+		return (*ElevatorCarStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ElevatorCarId = clonePointer(m.ElevatorCarId)
+	copy.ElevatorCarUsage = clonePointer(m.ElevatorCarUsage)
+	copy.SmokeSensorStatus = clonePointer(m.SmokeSensorStatus)
+	copy.LimitSwitchSensorStatus = clonePointer(m.LimitSwitchSensorStatus)
+	copy.ProximitySwitchSensorStatus = clonePointer(m.ProximitySwitchSensorStatus)
+	copy.InertialMeasurementUnitImuSensorStatus = clonePointer(m.InertialMeasurementUnitImuSensorStatus)
+	copy.ElevatorLoadLimitStatus = clonePointer(m.ElevatorLoadLimitStatus)
+	copy.ElevatorLoadBalanceStatus = clonePointer(m.ElevatorLoadBalanceStatus)
+	copy.ElevatorLoadSensor1Status = clonePointer(m.ElevatorLoadSensor1Status)
+	copy.ElevatorLoadSensor2Status = clonePointer(m.ElevatorLoadSensor2Status)
+	copy.ElevatorLoadSensor3Status = clonePointer(m.ElevatorLoadSensor3Status)
+	copy.ElevatorLoadSensor4Status = clonePointer(m.ElevatorLoadSensor4Status)
+	copy.ElevatorCarMotionStatus = clonePointer(m.ElevatorCarMotionStatus)
+	copy.ElevatorCarDoorStatus = clonePointer(m.ElevatorCarDoorStatus)
+	copy.ElevatorCarEmergencyButtonStatus = clonePointer(m.ElevatorCarEmergencyButtonStatus)
+	copy.ElevatorCarBuzzerStatus = clonePointer(m.ElevatorCarBuzzerStatus)
+	copy.OpenDoorButtonStatus = clonePointer(m.OpenDoorButtonStatus)
+	copy.CloseDoorButtonStatus = clonePointer(m.CloseDoorButtonStatus)
+	copy.CurrentDeck = clonePointer(m.CurrentDeck)
+	copy.DestinationDeck = clonePointer(m.DestinationDeck)
+	copy.TotalNumberOfDecks = clonePointer(m.TotalNumberOfDecks)
+	copy.WeightOfLoadCell1 = clonePointer(m.WeightOfLoadCell1)
+	copy.WeightOfLoadCell2 = clonePointer(m.WeightOfLoadCell2)
+	copy.WeightOfLoadCell3 = clonePointer(m.WeightOfLoadCell3)
+	copy.WeightOfLoadCell4 = clonePointer(m.WeightOfLoadCell4)
+	copy.SpeedOfElevatorCar = clonePointer(m.SpeedOfElevatorCar)
+	copy.ElevatorBrakeStatus = clonePointer(m.ElevatorBrakeStatus)
+	copy.ElevatorMotorRotationControlStatus = clonePointer(m.ElevatorMotorRotationControlStatus)
+	return &copy
+}
+
 // SpeedOfElevatorCarValue returns SpeedOfElevatorCar as a physical value in m/s (value = raw * 0.01).
-// The bool is false when SpeedOfElevatorCar is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElevatorCarStatus) SpeedOfElevatorCarValue() (float64, bool) {
-	if m.SpeedOfElevatorCar == nil {
+	if m == nil || m.SpeedOfElevatorCar == nil {
 		return 0, false
 	}
-	return float64(*m.SpeedOfElevatorCar) * 0.01, true
+	if *m.SpeedOfElevatorCar == 32767 {
+		return 0, false
+	}
+	if *m.SpeedOfElevatorCar == 32766 {
+		return 0, false
+	}
+	if *m.SpeedOfElevatorCar == 32765 {
+		return 0, false
+	}
+	value := float64(*m.SpeedOfElevatorCar) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedOfElevatorCarValue sets SpeedOfElevatorCar from a physical value in m/s, rounded to the nearest
@@ -124,6 +222,21 @@ func (m *ElevatorMotorControl) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *ElevatorMotorControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ElevatorMotorControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElevatorMotorControl) Clone() Message {
+	if m == nil {
+		return (*ElevatorMotorControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ElevatorCarId = clonePointer(m.ElevatorCarId)
+	copy.ElevatorCarUsage = clonePointer(m.ElevatorCarUsage)
+	copy.MotorAccelerationDecelerationProfileSelection = clonePointer(m.MotorAccelerationDecelerationProfileSelection)
+	copy.MotorRotationalControlStatus = clonePointer(m.MotorRotationalControlStatus)
+	return &copy
+}
+
 type ElevatorDeckPushButton struct {
 	Info                       MessageInfo `json:"info"`
 	Sid                        *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -140,6 +253,21 @@ func (m *ElevatorDeckPushButton) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *ElevatorDeckPushButton) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElevatorDeckPushButton) Clone() Message {
+	if m == nil {
+		return (*ElevatorDeckPushButton)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ElevatorCallButtonId = clonePointer(m.ElevatorCallButtonId)
+	copy.DeckButtonId = clonePointer(m.DeckButtonId)
+	copy.ElevatorCarUsage = clonePointer(m.ElevatorCarUsage)
+	copy.ElevatorCarButtonSelection = clonePointer(m.ElevatorCarButtonSelection)
+	return &copy
+}
 
 type LinearActuatorControlStatus struct {
 	Info                    MessageInfo `json:"info"`
@@ -158,6 +286,21 @@ func (m *LinearActuatorControlStatus) DecodePayload(payload []uint8) error {
 }
 func (m *LinearActuatorControlStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LinearActuatorControlStatus) Clone() Message {
+	if m == nil {
+		return (*LinearActuatorControlStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ActuatorIdentifier = clonePointer(m.ActuatorIdentifier)
+	copy.CommandedDevicePosition = clonePointer(m.CommandedDevicePosition)
+	copy.DevicePosition = clonePointer(m.DevicePosition)
+	copy.MaximumDeviceTravel = clonePointer(m.MaximumDeviceTravel)
+	copy.DirectionOfTravel = clonePointer(m.DirectionOfTravel)
+	return &copy
+}
+
 type PayloadMass struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -171,6 +314,20 @@ func (m *PayloadMass) MessageInfo() MessageInfo            { return m.Info }
 func (m *PayloadMass) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *PayloadMass) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *PayloadMass) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *PayloadMass) Clone() Message {
+	if m == nil {
+		return (*PayloadMass)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.MeasurementStatus = clonePointer(m.MeasurementStatus)
+	copy.MeasurementId = clonePointer(m.MeasurementId)
+	copy.PayloadMass = clonePointer(m.PayloadMass)
+	return &copy
+}
 
 type WatermakerInputSettingAndStatus struct {
 	Info                       MessageInfo `json:"info"`
@@ -206,14 +363,61 @@ func (m *WatermakerInputSettingAndStatus) DecodePayload(payload []uint8) error {
 }
 func (m *WatermakerInputSettingAndStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *WatermakerInputSettingAndStatus) Clone() Message {
+	if m == nil {
+		return (*WatermakerInputSettingAndStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.WatermakerOperatingState = clonePointer(m.WatermakerOperatingState)
+	copy.ProductionStartStop = clonePointer(m.ProductionStartStop)
+	copy.RinseStartStop = clonePointer(m.RinseStartStop)
+	copy.LowPressurePumpStatus = clonePointer(m.LowPressurePumpStatus)
+	copy.HighPressurePumpStatus = clonePointer(m.HighPressurePumpStatus)
+	copy.EmergencyStop = clonePointer(m.EmergencyStop)
+	copy.ProductSolenoidValveStatus = clonePointer(m.ProductSolenoidValveStatus)
+	copy.FlushModeStatus = clonePointer(m.FlushModeStatus)
+	copy.SalinityStatus = clonePointer(m.SalinityStatus)
+	copy.SensorStatus = clonePointer(m.SensorStatus)
+	copy.OilChangeIndicatorStatus = clonePointer(m.OilChangeIndicatorStatus)
+	copy.FilterStatus = clonePointer(m.FilterStatus)
+	copy.SystemStatus = clonePointer(m.SystemStatus)
+	copy.Salinity = clonePointer(m.Salinity)
+	copy.ProductWaterTemperature = clonePointer(m.ProductWaterTemperature)
+	copy.PreFilterPressure = clonePointer(m.PreFilterPressure)
+	copy.PostFilterPressure = clonePointer(m.PostFilterPressure)
+	copy.FeedPressure = clonePointer(m.FeedPressure)
+	copy.SystemHighPressure = clonePointer(m.SystemHighPressure)
+	copy.ProductWaterFlow = clonePointer(m.ProductWaterFlow)
+	copy.BrineWaterFlow = clonePointer(m.BrineWaterFlow)
+	copy.RunTime = clonePointer(m.RunTime)
+	return &copy
+}
+
 // SalinityValue returns Salinity as a physical value in ppm (value = raw).
-// The bool is false when Salinity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) SalinityValue() (float64, bool) {
-	if m.Salinity == nil {
+	if m == nil || m.Salinity == nil {
 		return 0, false
 	}
-	return float64(*m.Salinity), true
+	if *m.Salinity == 65535 {
+		return 0, false
+	}
+	if *m.Salinity == 65534 {
+		return 0, false
+	}
+	if *m.Salinity == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Salinity)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSalinityValue sets Salinity from a physical value in ppm, rounded to the nearest
@@ -224,13 +428,28 @@ func (m *WatermakerInputSettingAndStatus) SetSalinityValue(v float64) {
 }
 
 // ProductWaterTemperatureValue returns ProductWaterTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when ProductWaterTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) ProductWaterTemperatureValue() (float64, bool) {
-	if m.ProductWaterTemperature == nil {
+	if m == nil || m.ProductWaterTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.ProductWaterTemperature) * 0.01, true
+	if *m.ProductWaterTemperature == 65535 {
+		return 0, false
+	}
+	if *m.ProductWaterTemperature == 65534 {
+		return 0, false
+	}
+	if *m.ProductWaterTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ProductWaterTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetProductWaterTemperatureValue sets ProductWaterTemperature from a physical value in K, rounded to the nearest
@@ -241,13 +460,28 @@ func (m *WatermakerInputSettingAndStatus) SetProductWaterTemperatureValue(v floa
 }
 
 // PreFilterPressureValue returns PreFilterPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when PreFilterPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) PreFilterPressureValue() (float64, bool) {
-	if m.PreFilterPressure == nil {
+	if m == nil || m.PreFilterPressure == nil {
 		return 0, false
 	}
-	return float64(*m.PreFilterPressure) * 100, true
+	if *m.PreFilterPressure == 65535 {
+		return 0, false
+	}
+	if *m.PreFilterPressure == 65534 {
+		return 0, false
+	}
+	if *m.PreFilterPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PreFilterPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPreFilterPressureValue sets PreFilterPressure from a physical value in Pa, rounded to the nearest
@@ -258,13 +492,28 @@ func (m *WatermakerInputSettingAndStatus) SetPreFilterPressureValue(v float64) {
 }
 
 // PostFilterPressureValue returns PostFilterPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when PostFilterPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) PostFilterPressureValue() (float64, bool) {
-	if m.PostFilterPressure == nil {
+	if m == nil || m.PostFilterPressure == nil {
 		return 0, false
 	}
-	return float64(*m.PostFilterPressure) * 100, true
+	if *m.PostFilterPressure == 65535 {
+		return 0, false
+	}
+	if *m.PostFilterPressure == 65534 {
+		return 0, false
+	}
+	if *m.PostFilterPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PostFilterPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPostFilterPressureValue sets PostFilterPressure from a physical value in Pa, rounded to the nearest
@@ -275,13 +524,28 @@ func (m *WatermakerInputSettingAndStatus) SetPostFilterPressureValue(v float64) 
 }
 
 // FeedPressureValue returns FeedPressure as a physical value in Pa (value = raw * 1000).
-// The bool is false when FeedPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) FeedPressureValue() (float64, bool) {
-	if m.FeedPressure == nil {
+	if m == nil || m.FeedPressure == nil {
 		return 0, false
 	}
-	return float64(*m.FeedPressure) * 1000, true
+	if *m.FeedPressure == 32767 {
+		return 0, false
+	}
+	if *m.FeedPressure == 32766 {
+		return 0, false
+	}
+	if *m.FeedPressure == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FeedPressure) * 1000
+	if value < -3.2767e+07 && !approximatelyEqual(value, -3.2767e+07) {
+		return 0, false
+	}
+	if value > 3.2764e+07 && !approximatelyEqual(value, 3.2764e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFeedPressureValue sets FeedPressure from a physical value in Pa, rounded to the nearest
@@ -292,13 +556,28 @@ func (m *WatermakerInputSettingAndStatus) SetFeedPressureValue(v float64) {
 }
 
 // SystemHighPressureValue returns SystemHighPressure as a physical value in Pa (value = raw * 1000).
-// The bool is false when SystemHighPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) SystemHighPressureValue() (float64, bool) {
-	if m.SystemHighPressure == nil {
+	if m == nil || m.SystemHighPressure == nil {
 		return 0, false
 	}
-	return float64(*m.SystemHighPressure) * 1000, true
+	if *m.SystemHighPressure == 65535 {
+		return 0, false
+	}
+	if *m.SystemHighPressure == 65534 {
+		return 0, false
+	}
+	if *m.SystemHighPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SystemHighPressure) * 1000
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+07 && !approximatelyEqual(value, 6.5532e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSystemHighPressureValue sets SystemHighPressure from a physical value in Pa, rounded to the nearest
@@ -309,13 +588,28 @@ func (m *WatermakerInputSettingAndStatus) SetSystemHighPressureValue(v float64) 
 }
 
 // ProductWaterFlowValue returns ProductWaterFlow as a physical value in L/h (value = raw * 0.1).
-// The bool is false when ProductWaterFlow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) ProductWaterFlowValue() (float64, bool) {
-	if m.ProductWaterFlow == nil {
+	if m == nil || m.ProductWaterFlow == nil {
 		return 0, false
 	}
-	return float64(*m.ProductWaterFlow) * 0.1, true
+	if *m.ProductWaterFlow == 32767 {
+		return 0, false
+	}
+	if *m.ProductWaterFlow == 32766 {
+		return 0, false
+	}
+	if *m.ProductWaterFlow == 32765 {
+		return 0, false
+	}
+	value := float64(*m.ProductWaterFlow) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetProductWaterFlowValue sets ProductWaterFlow from a physical value in L/h, rounded to the nearest
@@ -326,13 +620,28 @@ func (m *WatermakerInputSettingAndStatus) SetProductWaterFlowValue(v float64) {
 }
 
 // BrineWaterFlowValue returns BrineWaterFlow as a physical value in L/h (value = raw * 0.1).
-// The bool is false when BrineWaterFlow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) BrineWaterFlowValue() (float64, bool) {
-	if m.BrineWaterFlow == nil {
+	if m == nil || m.BrineWaterFlow == nil {
 		return 0, false
 	}
-	return float64(*m.BrineWaterFlow) * 0.1, true
+	if *m.BrineWaterFlow == 32767 {
+		return 0, false
+	}
+	if *m.BrineWaterFlow == 32766 {
+		return 0, false
+	}
+	if *m.BrineWaterFlow == 32765 {
+		return 0, false
+	}
+	value := float64(*m.BrineWaterFlow) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBrineWaterFlowValue sets BrineWaterFlow from a physical value in L/h, rounded to the nearest
@@ -343,13 +652,28 @@ func (m *WatermakerInputSettingAndStatus) SetBrineWaterFlowValue(v float64) {
 }
 
 // RunTimeValue returns RunTime as a physical value in s (value = raw).
-// The bool is false when RunTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WatermakerInputSettingAndStatus) RunTimeValue() (float64, bool) {
-	if m.RunTime == nil {
+	if m == nil || m.RunTime == nil {
 		return 0, false
 	}
-	return float64(*m.RunTime), true
+	if *m.RunTime == 4294967295 {
+		return 0, false
+	}
+	if *m.RunTime == 4294967294 {
+		return 0, false
+	}
+	if *m.RunTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.RunTime)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRunTimeValue sets RunTime from a physical value in s, rounded to the nearest

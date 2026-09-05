@@ -48,7 +48,7 @@ func (c *Client) handleISORequest(info pgn.MessageInfo, frame can.Frame) {
 // an unsupported PGN. Acknowledgements are broadcast per ISO 11783-3; the
 // requester is identifiable from the refused PGN.
 func nakFor(requested uint32) *pgn.IsoAcknowledgement {
-	control := uint64(pgn.NAK)
+	control := uint64(pgn.IsoControlNAK)
 	groupFunction := uint64(0xFF) // not a group-function response
 	refused := uint64(requested)
 	return &pgn.IsoAcknowledgement{

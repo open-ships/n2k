@@ -159,6 +159,8 @@ func messageInfoForObservation(observation raw.Observation) pgn.MessageInfo {
 	info.AdapterID = observation.AdapterID
 	info.NetworkID = observation.NetworkID
 	info.Direction = observation.Direction
+	info.ConnectionEpoch = observation.ConnectionEpoch
+	info.ClaimEpoch = observation.ClaimEpoch
 	return info
 }
 
@@ -173,6 +175,8 @@ func observationFromPacket(kind raw.Kind, packet decoder.Packet, reason string) 
 		AdapterID:             info.AdapterID,
 		NetworkID:             info.NetworkID,
 		Direction:             info.Direction,
+		ConnectionEpoch:       info.ConnectionEpoch,
+		ClaimEpoch:            info.ClaimEpoch,
 		PGN:                   info.PGN,
 		Source:                info.SourceId,
 		Payload:               append([]byte(nil), packet.Data...),

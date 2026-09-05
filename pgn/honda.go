@@ -16,6 +16,19 @@ func (m *HondaEngineData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *HondaEngineData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *HondaEngineData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *HondaEngineData) Clone() Message {
+	if m == nil {
+		return (*HondaEngineData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type HondaEngineAlerts struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -29,6 +42,19 @@ func (m *HondaEngineAlerts) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *HondaEngineAlerts) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *HondaEngineAlerts) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *HondaEngineAlerts) Clone() Message {
+	if m == nil {
+		return (*HondaEngineAlerts)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type HondaEngineStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -40,3 +66,15 @@ func (m *HondaEngineStatus) MessageInfo() MessageInfo            { return m.Info
 func (m *HondaEngineStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *HondaEngineStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *HondaEngineStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *HondaEngineStatus) Clone() Message {
+	if m == nil {
+		return (*HondaEngineStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}

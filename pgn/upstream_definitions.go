@@ -3,6 +3,10 @@
 
 package pgn
 
+// SourceRevision and SourceSHA256 identify the exact offline generation input.
+const SourceRevision = "8f737e93ba2a1dd8684d4bc267126c55173c3ee5"
+const SourceSHA256 = "7cfd3dee4f68b50a4c5d49b1240e9760c7067254e53d8c6d562b24efbc2ed5cb"
+
 var sourceDefinitions = buildSourceDefinitions()
 
 func buildSourceDefinitions() []SourceDefinition {

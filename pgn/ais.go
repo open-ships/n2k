@@ -34,14 +34,56 @@ func (m *AisClassAPositionReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassAPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassAPositionReport) Clone() Message {
+	if m == nil {
+		return (*AisClassAPositionReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.TimeStamp = clonePointer(m.TimeStamp)
+	copy.Cog = clonePointer(m.Cog)
+	copy.Sog = clonePointer(m.Sog)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Heading = clonePointer(m.Heading)
+	copy.RateOfTurn = clonePointer(m.RateOfTurn)
+	copy.NavStatus = clonePointer(m.NavStatus)
+	copy.SpecialManeuverIndicator = clonePointer(m.SpecialManeuverIndicator)
+	copy.SequenceId = clonePointer(m.SequenceId)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -52,13 +94,28 @@ func (m *AisClassAPositionReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -69,13 +126,28 @@ func (m *AisClassAPositionReport) SetLatitudeValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -86,13 +158,28 @@ func (m *AisClassAPositionReport) SetCogValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.01, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -103,13 +190,28 @@ func (m *AisClassAPositionReport) SetSogValue(v float64) {
 }
 
 // HeadingValue returns Heading as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Heading is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) HeadingValue() (float64, bool) {
-	if m.Heading == nil {
+	if m == nil || m.Heading == nil {
 		return 0, false
 	}
-	return float64(*m.Heading) * 0.0001, true
+	if *m.Heading == 65535 {
+		return 0, false
+	}
+	if *m.Heading == 65534 {
+		return 0, false
+	}
+	if *m.Heading == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Heading) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeadingValue sets Heading from a physical value in rad, rounded to the nearest
@@ -120,13 +222,28 @@ func (m *AisClassAPositionReport) SetHeadingValue(v float64) {
 }
 
 // RateOfTurnValue returns RateOfTurn as a physical value in rad/s (value = raw * 3.125e-05).
-// The bool is false when RateOfTurn is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAPositionReport) RateOfTurnValue() (float64, bool) {
-	if m.RateOfTurn == nil {
+	if m == nil || m.RateOfTurn == nil {
 		return 0, false
 	}
-	return float64(*m.RateOfTurn) * 3.125e-05, true
+	if *m.RateOfTurn == 32767 {
+		return 0, false
+	}
+	if *m.RateOfTurn == 32766 {
+		return 0, false
+	}
+	if *m.RateOfTurn == 32765 {
+		return 0, false
+	}
+	value := float64(*m.RateOfTurn) * 3.125e-05
+	if value < -1.02396875 && !approximatelyEqual(value, -1.02396875) {
+		return 0, false
+	}
+	if value > 1.023875 && !approximatelyEqual(value, 1.023875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRateOfTurnValue sets RateOfTurn from a physical value in rad/s, rounded to the nearest
@@ -168,14 +285,59 @@ func (m *AisClassBPositionReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassBPositionReport) Clone() Message {
+	if m == nil {
+		return (*AisClassBPositionReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.TimeStamp = clonePointer(m.TimeStamp)
+	copy.Cog = clonePointer(m.Cog)
+	copy.Sog = clonePointer(m.Sog)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Heading = clonePointer(m.Heading)
+	copy.UnitType = clonePointer(m.UnitType)
+	copy.IntegratedDisplay = clonePointer(m.IntegratedDisplay)
+	copy.Dsc = clonePointer(m.Dsc)
+	copy.Band = clonePointer(m.Band)
+	copy.CanHandleMsg22 = clonePointer(m.CanHandleMsg22)
+	copy.AisMode = clonePointer(m.AisMode)
+	copy.AisCommunicationState = clonePointer(m.AisCommunicationState)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBPositionReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -186,13 +348,28 @@ func (m *AisClassBPositionReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBPositionReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -203,13 +380,28 @@ func (m *AisClassBPositionReport) SetLatitudeValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBPositionReport) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -220,13 +412,28 @@ func (m *AisClassBPositionReport) SetCogValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBPositionReport) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.01, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -237,13 +444,28 @@ func (m *AisClassBPositionReport) SetSogValue(v float64) {
 }
 
 // HeadingValue returns Heading as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Heading is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBPositionReport) HeadingValue() (float64, bool) {
-	if m.Heading == nil {
+	if m == nil || m.Heading == nil {
 		return 0, false
 	}
-	return float64(*m.Heading) * 0.0001, true
+	if *m.Heading == 65535 {
+		return 0, false
+	}
+	if *m.Heading == 65534 {
+		return 0, false
+	}
+	if *m.Heading == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Heading) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeadingValue sets Heading from a physical value in rad, rounded to the nearest
@@ -286,14 +508,59 @@ func (m *AisClassBExtendedPositionReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBExtendedPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassBExtendedPositionReport) Clone() Message {
+	if m == nil {
+		return (*AisClassBExtendedPositionReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.TimeStamp = clonePointer(m.TimeStamp)
+	copy.Cog = clonePointer(m.Cog)
+	copy.Sog = clonePointer(m.Sog)
+	copy.TypeOfShip = clonePointer(m.TypeOfShip)
+	copy.TrueHeading = clonePointer(m.TrueHeading)
+	copy.GnssType = clonePointer(m.GnssType)
+	copy.Length = clonePointer(m.Length)
+	copy.Beam = clonePointer(m.Beam)
+	copy.PositionReferenceFromStarboard = clonePointer(m.PositionReferenceFromStarboard)
+	copy.PositionReferenceFromBow = clonePointer(m.PositionReferenceFromBow)
+	copy.Dte = clonePointer(m.Dte)
+	copy.AisMode = clonePointer(m.AisMode)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -304,13 +571,28 @@ func (m *AisClassBExtendedPositionReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -321,13 +603,28 @@ func (m *AisClassBExtendedPositionReport) SetLatitudeValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -338,13 +635,28 @@ func (m *AisClassBExtendedPositionReport) SetCogValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.01, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -355,13 +667,28 @@ func (m *AisClassBExtendedPositionReport) SetSogValue(v float64) {
 }
 
 // TrueHeadingValue returns TrueHeading as a physical value in rad (value = raw * 0.0001).
-// The bool is false when TrueHeading is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) TrueHeadingValue() (float64, bool) {
-	if m.TrueHeading == nil {
+	if m == nil || m.TrueHeading == nil {
 		return 0, false
 	}
-	return float64(*m.TrueHeading) * 0.0001, true
+	if *m.TrueHeading == 65535 {
+		return 0, false
+	}
+	if *m.TrueHeading == 65534 {
+		return 0, false
+	}
+	if *m.TrueHeading == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TrueHeading) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTrueHeadingValue sets TrueHeading from a physical value in rad, rounded to the nearest
@@ -372,13 +699,28 @@ func (m *AisClassBExtendedPositionReport) SetTrueHeadingValue(v float64) {
 }
 
 // LengthValue returns Length as a physical value in m (value = raw * 0.1).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.1, true
+	if *m.Length == 65535 {
+		return 0, false
+	}
+	if *m.Length == 65534 {
+		return 0, false
+	}
+	if *m.Length == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in m, rounded to the nearest
@@ -389,13 +731,28 @@ func (m *AisClassBExtendedPositionReport) SetLengthValue(v float64) {
 }
 
 // BeamValue returns Beam as a physical value in m (value = raw * 0.1).
-// The bool is false when Beam is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) BeamValue() (float64, bool) {
-	if m.Beam == nil {
+	if m == nil || m.Beam == nil {
 		return 0, false
 	}
-	return float64(*m.Beam) * 0.1, true
+	if *m.Beam == 65535 {
+		return 0, false
+	}
+	if *m.Beam == 65534 {
+		return 0, false
+	}
+	if *m.Beam == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Beam) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBeamValue sets Beam from a physical value in m, rounded to the nearest
@@ -406,13 +763,28 @@ func (m *AisClassBExtendedPositionReport) SetBeamValue(v float64) {
 }
 
 // PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) PositionReferenceFromStarboardValue() (float64, bool) {
-	if m.PositionReferenceFromStarboard == nil {
+	if m == nil || m.PositionReferenceFromStarboard == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+	if *m.PositionReferenceFromStarboard == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromStarboard) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
@@ -423,13 +795,28 @@ func (m *AisClassBExtendedPositionReport) SetPositionReferenceFromStarboardValue
 }
 
 // PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBExtendedPositionReport) PositionReferenceFromBowValue() (float64, bool) {
-	if m.PositionReferenceFromBow == nil {
+	if m == nil || m.PositionReferenceFromBow == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromBow) * 0.1, true
+	if *m.PositionReferenceFromBow == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromBow) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
@@ -471,14 +858,58 @@ func (m *AisAidsToNavigationAtonReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisAidsToNavigationAtonReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAidsToNavigationAtonReport) Clone() Message {
+	if m == nil {
+		return (*AisAidsToNavigationAtonReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.TimeStamp = clonePointer(m.TimeStamp)
+	copy.LengthDiameter = clonePointer(m.LengthDiameter)
+	copy.BeamDiameter = clonePointer(m.BeamDiameter)
+	copy.PositionReferenceFromStarboardEdge = clonePointer(m.PositionReferenceFromStarboardEdge)
+	copy.PositionReferenceFromTrueNorthFacingEdge = clonePointer(m.PositionReferenceFromTrueNorthFacingEdge)
+	copy.AtonType = clonePointer(m.AtonType)
+	copy.OffPositionIndicator = clonePointer(m.OffPositionIndicator)
+	copy.VirtualAtonFlag = clonePointer(m.VirtualAtonFlag)
+	copy.AssignedModeFlag = clonePointer(m.AssignedModeFlag)
+	copy.PositionFixingDeviceType = clonePointer(m.PositionFixingDeviceType)
+	copy.AtonStatus = cloneSlice(m.AtonStatus)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -489,13 +920,28 @@ func (m *AisAidsToNavigationAtonReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -506,13 +952,28 @@ func (m *AisAidsToNavigationAtonReport) SetLatitudeValue(v float64) {
 }
 
 // LengthDiameterValue returns LengthDiameter as a physical value in m (value = raw * 0.1).
-// The bool is false when LengthDiameter is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) LengthDiameterValue() (float64, bool) {
-	if m.LengthDiameter == nil {
+	if m == nil || m.LengthDiameter == nil {
 		return 0, false
 	}
-	return float64(*m.LengthDiameter) * 0.1, true
+	if *m.LengthDiameter == 65535 {
+		return 0, false
+	}
+	if *m.LengthDiameter == 65534 {
+		return 0, false
+	}
+	if *m.LengthDiameter == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LengthDiameter) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthDiameterValue sets LengthDiameter from a physical value in m, rounded to the nearest
@@ -523,13 +984,28 @@ func (m *AisAidsToNavigationAtonReport) SetLengthDiameterValue(v float64) {
 }
 
 // BeamDiameterValue returns BeamDiameter as a physical value in m (value = raw * 0.1).
-// The bool is false when BeamDiameter is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) BeamDiameterValue() (float64, bool) {
-	if m.BeamDiameter == nil {
+	if m == nil || m.BeamDiameter == nil {
 		return 0, false
 	}
-	return float64(*m.BeamDiameter) * 0.1, true
+	if *m.BeamDiameter == 65535 {
+		return 0, false
+	}
+	if *m.BeamDiameter == 65534 {
+		return 0, false
+	}
+	if *m.BeamDiameter == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BeamDiameter) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBeamDiameterValue sets BeamDiameter from a physical value in m, rounded to the nearest
@@ -540,13 +1016,28 @@ func (m *AisAidsToNavigationAtonReport) SetBeamDiameterValue(v float64) {
 }
 
 // PositionReferenceFromStarboardEdgeValue returns PositionReferenceFromStarboardEdge as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromStarboardEdge is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) PositionReferenceFromStarboardEdgeValue() (float64, bool) {
-	if m.PositionReferenceFromStarboardEdge == nil {
+	if m == nil || m.PositionReferenceFromStarboardEdge == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromStarboardEdge) * 0.1, true
+	if *m.PositionReferenceFromStarboardEdge == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboardEdge == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboardEdge == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromStarboardEdge) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromStarboardEdgeValue sets PositionReferenceFromStarboardEdge from a physical value in m, rounded to the nearest
@@ -557,13 +1048,28 @@ func (m *AisAidsToNavigationAtonReport) SetPositionReferenceFromStarboardEdgeVal
 }
 
 // PositionReferenceFromTrueNorthFacingEdgeValue returns PositionReferenceFromTrueNorthFacingEdge as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromTrueNorthFacingEdge is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisAidsToNavigationAtonReport) PositionReferenceFromTrueNorthFacingEdgeValue() (float64, bool) {
-	if m.PositionReferenceFromTrueNorthFacingEdge == nil {
+	if m == nil || m.PositionReferenceFromTrueNorthFacingEdge == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromTrueNorthFacingEdge) * 0.1, true
+	if *m.PositionReferenceFromTrueNorthFacingEdge == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromTrueNorthFacingEdge == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromTrueNorthFacingEdge == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromTrueNorthFacingEdge) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromTrueNorthFacingEdgeValue sets PositionReferenceFromTrueNorthFacingEdge from a physical value in m, rounded to the nearest
@@ -593,14 +1099,47 @@ func (m *AisDgnssBroadcastBinaryMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisDgnssBroadcastBinaryMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisDgnssBroadcastBinaryMessage) Clone() Message {
+	if m == nil {
+		return (*AisDgnssBroadcastBinaryMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisDgnssBroadcastBinaryMessage) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -611,13 +1150,28 @@ func (m *AisDgnssBroadcastBinaryMessage) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisDgnssBroadcastBinaryMessage) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -649,14 +1203,51 @@ func (m *AisUtcAndDateReport) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *AisUtcAndDateReport) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisUtcAndDateReport) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisUtcAndDateReport) Clone() Message {
+	if m == nil {
+		return (*AisUtcAndDateReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.PositionTime = clonePointer(m.PositionTime)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.PositionDate = clonePointer(m.PositionDate)
+	copy.GnssType = clonePointer(m.GnssType)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisUtcAndDateReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -667,13 +1258,28 @@ func (m *AisUtcAndDateReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisUtcAndDateReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -684,13 +1290,28 @@ func (m *AisUtcAndDateReport) SetLatitudeValue(v float64) {
 }
 
 // PositionTimeValue returns PositionTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when PositionTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisUtcAndDateReport) PositionTimeValue() (float64, bool) {
-	if m.PositionTime == nil {
+	if m == nil || m.PositionTime == nil {
 		return 0, false
 	}
-	return float64(*m.PositionTime) * 0.0001, true
+	if *m.PositionTime == 4294967295 {
+		return 0, false
+	}
+	if *m.PositionTime == 4294967294 {
+		return 0, false
+	}
+	if *m.PositionTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.PositionTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionTimeValue sets PositionTime from a physical value in s, rounded to the nearest
@@ -701,13 +1322,28 @@ func (m *AisUtcAndDateReport) SetPositionTimeValue(v float64) {
 }
 
 // PositionDateValue returns PositionDate as a physical value in d (value = raw).
-// The bool is false when PositionDate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisUtcAndDateReport) PositionDateValue() (float64, bool) {
-	if m.PositionDate == nil {
+	if m == nil || m.PositionDate == nil {
 		return 0, false
 	}
-	return float64(*m.PositionDate), true
+	if *m.PositionDate == 65535 {
+		return 0, false
+	}
+	if *m.PositionDate == 65534 {
+		return 0, false
+	}
+	if *m.PositionDate == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionDate)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionDateValue sets PositionDate from a physical value in d, rounded to the nearest
@@ -750,14 +1386,55 @@ func (m *AisClassAStaticAndVoyageRelatedData) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassAStaticAndVoyageRelatedData) Clone() Message {
+	if m == nil {
+		return (*AisClassAStaticAndVoyageRelatedData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.ImoNumber = clonePointer(m.ImoNumber)
+	copy.TypeOfShip = clonePointer(m.TypeOfShip)
+	copy.Length = clonePointer(m.Length)
+	copy.Beam = clonePointer(m.Beam)
+	copy.PositionReferenceFromStarboard = clonePointer(m.PositionReferenceFromStarboard)
+	copy.PositionReferenceFromBow = clonePointer(m.PositionReferenceFromBow)
+	copy.EtaDate = clonePointer(m.EtaDate)
+	copy.EtaTime = clonePointer(m.EtaTime)
+	copy.Draft = clonePointer(m.Draft)
+	copy.AisVersionIndicator = clonePointer(m.AisVersionIndicator)
+	copy.GnssType = clonePointer(m.GnssType)
+	copy.Dte = clonePointer(m.Dte)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	return &copy
+}
+
 // LengthValue returns Length as a physical value in m (value = raw * 0.1).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.1, true
+	if *m.Length == 65535 {
+		return 0, false
+	}
+	if *m.Length == 65534 {
+		return 0, false
+	}
+	if *m.Length == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in m, rounded to the nearest
@@ -768,13 +1445,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetLengthValue(v float64) {
 }
 
 // BeamValue returns Beam as a physical value in m (value = raw * 0.1).
-// The bool is false when Beam is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) BeamValue() (float64, bool) {
-	if m.Beam == nil {
+	if m == nil || m.Beam == nil {
 		return 0, false
 	}
-	return float64(*m.Beam) * 0.1, true
+	if *m.Beam == 65535 {
+		return 0, false
+	}
+	if *m.Beam == 65534 {
+		return 0, false
+	}
+	if *m.Beam == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Beam) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBeamValue sets Beam from a physical value in m, rounded to the nearest
@@ -785,13 +1477,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetBeamValue(v float64) {
 }
 
 // PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) PositionReferenceFromStarboardValue() (float64, bool) {
-	if m.PositionReferenceFromStarboard == nil {
+	if m == nil || m.PositionReferenceFromStarboard == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+	if *m.PositionReferenceFromStarboard == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromStarboard) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
@@ -802,13 +1509,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetPositionReferenceFromStarboardV
 }
 
 // PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) PositionReferenceFromBowValue() (float64, bool) {
-	if m.PositionReferenceFromBow == nil {
+	if m == nil || m.PositionReferenceFromBow == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromBow) * 0.1, true
+	if *m.PositionReferenceFromBow == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromBow) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
@@ -819,13 +1541,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetPositionReferenceFromBowValue(v
 }
 
 // EtaDateValue returns EtaDate as a physical value in d (value = raw).
-// The bool is false when EtaDate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) EtaDateValue() (float64, bool) {
-	if m.EtaDate == nil {
+	if m == nil || m.EtaDate == nil {
 		return 0, false
 	}
-	return float64(*m.EtaDate), true
+	if *m.EtaDate == 65535 {
+		return 0, false
+	}
+	if *m.EtaDate == 65534 {
+		return 0, false
+	}
+	if *m.EtaDate == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EtaDate)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEtaDateValue sets EtaDate from a physical value in d, rounded to the nearest
@@ -836,13 +1573,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetEtaDateValue(v float64) {
 }
 
 // EtaTimeValue returns EtaTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when EtaTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) EtaTimeValue() (float64, bool) {
-	if m.EtaTime == nil {
+	if m == nil || m.EtaTime == nil {
 		return 0, false
 	}
-	return float64(*m.EtaTime) * 0.0001, true
+	if *m.EtaTime == 4294967295 {
+		return 0, false
+	}
+	if *m.EtaTime == 4294967294 {
+		return 0, false
+	}
+	if *m.EtaTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.EtaTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEtaTimeValue sets EtaTime from a physical value in s, rounded to the nearest
@@ -853,13 +1605,28 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetEtaTimeValue(v float64) {
 }
 
 // DraftValue returns Draft as a physical value in m (value = raw * 0.01).
-// The bool is false when Draft is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassAStaticAndVoyageRelatedData) DraftValue() (float64, bool) {
-	if m.Draft == nil {
+	if m == nil || m.Draft == nil {
 		return 0, false
 	}
-	return float64(*m.Draft) * 0.01, true
+	if *m.Draft == 65535 {
+		return 0, false
+	}
+	if *m.Draft == 65534 {
+		return 0, false
+	}
+	if *m.Draft == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Draft) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDraftValue sets Draft from a physical value in m, rounded to the nearest
@@ -890,6 +1657,25 @@ func (m *AisAddressedBinaryMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisAddressedBinaryMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAddressedBinaryMessage) Clone() Message {
+	if m == nil {
+		return (*AisAddressedBinaryMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.SequenceNumber = clonePointer(m.SequenceNumber)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.RetransmitFlag = clonePointer(m.RetransmitFlag)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
+
 type AisAcknowledge struct {
 	Info                      MessageInfo                `json:"info"`
 	MessageId                 *uint64                    `json:"messageId,omitempty" n2k:"1"`
@@ -910,6 +1696,25 @@ func (m *AisAcknowledge) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AisAcknowledge) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisAcknowledge) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAcknowledge) Clone() Message {
+	if m == nil {
+		return (*AisAcknowledge)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].DestinationId = clonePointer(m.Repeating1[i].DestinationId)
+		copy.Repeating1[i].SequenceNumber = clonePointer(m.Repeating1[i].SequenceNumber)
+	}
+	return &copy
+}
+
 type AisBinaryBroadcastMessage struct {
 	Info                          MessageInfo `json:"info"`
 	MessageId                     *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -927,6 +1732,22 @@ func (m *AisBinaryBroadcastMessage) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisBinaryBroadcastMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisBinaryBroadcastMessage) Clone() Message {
+	if m == nil {
+		return (*AisBinaryBroadcastMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
 
 type AisSarAircraftPositionReport struct {
 	Info                            MessageInfo `json:"info"`
@@ -955,14 +1776,54 @@ func (m *AisSarAircraftPositionReport) DecodePayload(payload []uint8) error {
 }
 func (m *AisSarAircraftPositionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisSarAircraftPositionReport) Clone() Message {
+	if m == nil {
+		return (*AisSarAircraftPositionReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.TimeStamp = clonePointer(m.TimeStamp)
+	copy.Cog = clonePointer(m.Cog)
+	copy.Sog = clonePointer(m.Sog)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Altitude = clonePointer(m.Altitude)
+	copy.ReservedForRegionalApplications = cloneSlice(m.ReservedForRegionalApplications)
+	copy.Dte = clonePointer(m.Dte)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisSarAircraftPositionReport) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -973,13 +1834,28 @@ func (m *AisSarAircraftPositionReport) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisSarAircraftPositionReport) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -990,13 +1866,28 @@ func (m *AisSarAircraftPositionReport) SetLatitudeValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisSarAircraftPositionReport) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -1007,13 +1898,28 @@ func (m *AisSarAircraftPositionReport) SetCogValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.1).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisSarAircraftPositionReport) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.1, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -1024,13 +1930,28 @@ func (m *AisSarAircraftPositionReport) SetSogValue(v float64) {
 }
 
 // AltitudeValue returns Altitude as a physical value in m (value = raw * 0.01).
-// The bool is false when Altitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisSarAircraftPositionReport) AltitudeValue() (float64, bool) {
-	if m.Altitude == nil {
+	if m == nil || m.Altitude == nil {
 		return 0, false
 	}
-	return float64(*m.Altitude) * 0.01, true
+	if *m.Altitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Altitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Altitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Altitude) * 0.01
+	if value < -2.147483647e+07 && !approximatelyEqual(value, -2.147483647e+07) {
+		return 0, false
+	}
+	if value > 2.147483644e+07 && !approximatelyEqual(value, 2.147483644e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAltitudeValue sets Altitude from a physical value in m, rounded to the nearest
@@ -1055,6 +1976,21 @@ func (m *AisUtcDateInquiry) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *AisUtcDateInquiry) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisUtcDateInquiry) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisUtcDateInquiry) Clone() Message {
+	if m == nil {
+		return (*AisUtcDateInquiry)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	return &copy
+}
+
 type AisAddressedSafetyRelatedMessage struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1075,6 +2011,23 @@ func (m *AisAddressedSafetyRelatedMessage) DecodePayload(payload []uint8) error 
 }
 func (m *AisAddressedSafetyRelatedMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAddressedSafetyRelatedMessage) Clone() Message {
+	if m == nil {
+		return (*AisAddressedSafetyRelatedMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.SequenceNumber = clonePointer(m.SequenceNumber)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.RetransmitFlag = clonePointer(m.RetransmitFlag)
+	return &copy
+}
+
 type AisSafetyRelatedBroadcastMessage struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1091,6 +2044,20 @@ func (m *AisSafetyRelatedBroadcastMessage) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *AisSafetyRelatedBroadcastMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisSafetyRelatedBroadcastMessage) Clone() Message {
+	if m == nil {
+		return (*AisSafetyRelatedBroadcastMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	return &copy
+}
 
 type AisInterrogation struct {
 	Info                      MessageInfo `json:"info"`
@@ -1115,6 +2082,29 @@ func (m *AisInterrogation) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *AisInterrogation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisInterrogation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisInterrogation) Clone() Message {
+	if m == nil {
+		return (*AisInterrogation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationId1 = clonePointer(m.DestinationId1)
+	copy.MessageId11 = clonePointer(m.MessageId11)
+	copy.SlotOffset11 = clonePointer(m.SlotOffset11)
+	copy.MessageId12 = clonePointer(m.MessageId12)
+	copy.SlotOffset12 = clonePointer(m.SlotOffset12)
+	copy.DestinationId2 = clonePointer(m.DestinationId2)
+	copy.MessageId21 = clonePointer(m.MessageId21)
+	copy.SlotOffset21 = clonePointer(m.SlotOffset21)
+	copy.Sid = clonePointer(m.Sid)
+	return &copy
+}
+
 type AisAssignmentModeCommand struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1136,6 +2126,26 @@ func (m *AisAssignmentModeCommand) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AisAssignmentModeCommand) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAssignmentModeCommand) Clone() Message {
+	if m == nil {
+		return (*AisAssignmentModeCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationIdA = clonePointer(m.DestinationIdA)
+	copy.OffsetA = clonePointer(m.OffsetA)
+	copy.IncrementA = clonePointer(m.IncrementA)
+	copy.DestinationIdB = clonePointer(m.DestinationIdB)
+	copy.OffsetB = clonePointer(m.OffsetB)
+	copy.IncrementB = clonePointer(m.IncrementB)
+	return &copy
+}
 
 type AisDataLinkManagementMessage struct {
 	Info                      MessageInfo                              `json:"info"`
@@ -1161,14 +2171,50 @@ func (m *AisDataLinkManagementMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisDataLinkManagementMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisDataLinkManagementMessage) Clone() Message {
+	if m == nil {
+		return (*AisDataLinkManagementMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Offset = clonePointer(m.Repeating1[i].Offset)
+		copy.Repeating1[i].NumberOfSlots = clonePointer(m.Repeating1[i].NumberOfSlots)
+		copy.Repeating1[i].Timeout = clonePointer(m.Repeating1[i].Timeout)
+		copy.Repeating1[i].Increment = clonePointer(m.Repeating1[i].Increment)
+	}
+	return &copy
+}
+
 // TimeoutValue returns Timeout as a physical value in s (value = raw * 60).
-// The bool is false when Timeout is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisDataLinkManagementMessageRepeating1) TimeoutValue() (float64, bool) {
-	if m.Timeout == nil {
+	if m == nil || m.Timeout == nil {
 		return 0, false
 	}
-	return float64(*m.Timeout) * 60, true
+	if *m.Timeout == 255 {
+		return 0, false
+	}
+	if *m.Timeout == 254 {
+		return 0, false
+	}
+	if *m.Timeout == 253 {
+		return 0, false
+	}
+	value := float64(*m.Timeout) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 15120 && !approximatelyEqual(value, 15120) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeoutValue sets Timeout from a physical value in s, rounded to the nearest
@@ -1204,14 +2250,55 @@ func (m *AisChannelManagement) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AisChannelManagement) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisChannelManagement) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisChannelManagement) Clone() Message {
+	if m == nil {
+		return (*AisChannelManagement)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.ChannelA = clonePointer(m.ChannelA)
+	copy.ChannelB = clonePointer(m.ChannelB)
+	copy.Power = clonePointer(m.Power)
+	copy.TxRxMode = clonePointer(m.TxRxMode)
+	copy.NorthEastLongitudeCorner1 = clonePointer(m.NorthEastLongitudeCorner1)
+	copy.NorthEastLatitudeCorner1 = clonePointer(m.NorthEastLatitudeCorner1)
+	copy.SouthWestLongitudeCorner2 = clonePointer(m.SouthWestLongitudeCorner2)
+	copy.SouthWestLatitudeCorner2 = clonePointer(m.SouthWestLatitudeCorner2)
+	copy.AddressedOrBroadcastMessageIndicator = clonePointer(m.AddressedOrBroadcastMessageIndicator)
+	copy.ChannelABandwidth = clonePointer(m.ChannelABandwidth)
+	copy.ChannelBBandwidth = clonePointer(m.ChannelBBandwidth)
+	copy.TransitionalZoneSize = clonePointer(m.TransitionalZoneSize)
+	return &copy
+}
+
 // NorthEastLongitudeCorner1Value returns NorthEastLongitudeCorner1 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when NorthEastLongitudeCorner1 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisChannelManagement) NorthEastLongitudeCorner1Value() (float64, bool) {
-	if m.NorthEastLongitudeCorner1 == nil {
+	if m == nil || m.NorthEastLongitudeCorner1 == nil {
 		return 0, false
 	}
-	return float64(*m.NorthEastLongitudeCorner1) * 1e-07, true
+	if *m.NorthEastLongitudeCorner1 == 2147483647 {
+		return 0, false
+	}
+	if *m.NorthEastLongitudeCorner1 == 2147483646 {
+		return 0, false
+	}
+	if *m.NorthEastLongitudeCorner1 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.NorthEastLongitudeCorner1) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNorthEastLongitudeCorner1Value sets NorthEastLongitudeCorner1 from a physical value in deg, rounded to the nearest
@@ -1222,13 +2309,28 @@ func (m *AisChannelManagement) SetNorthEastLongitudeCorner1Value(v float64) {
 }
 
 // NorthEastLatitudeCorner1Value returns NorthEastLatitudeCorner1 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when NorthEastLatitudeCorner1 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisChannelManagement) NorthEastLatitudeCorner1Value() (float64, bool) {
-	if m.NorthEastLatitudeCorner1 == nil {
+	if m == nil || m.NorthEastLatitudeCorner1 == nil {
 		return 0, false
 	}
-	return float64(*m.NorthEastLatitudeCorner1) * 1e-07, true
+	if *m.NorthEastLatitudeCorner1 == 2147483647 {
+		return 0, false
+	}
+	if *m.NorthEastLatitudeCorner1 == 2147483646 {
+		return 0, false
+	}
+	if *m.NorthEastLatitudeCorner1 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.NorthEastLatitudeCorner1) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNorthEastLatitudeCorner1Value sets NorthEastLatitudeCorner1 from a physical value in deg, rounded to the nearest
@@ -1239,13 +2341,28 @@ func (m *AisChannelManagement) SetNorthEastLatitudeCorner1Value(v float64) {
 }
 
 // SouthWestLongitudeCorner2Value returns SouthWestLongitudeCorner2 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when SouthWestLongitudeCorner2 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisChannelManagement) SouthWestLongitudeCorner2Value() (float64, bool) {
-	if m.SouthWestLongitudeCorner2 == nil {
+	if m == nil || m.SouthWestLongitudeCorner2 == nil {
 		return 0, false
 	}
-	return float64(*m.SouthWestLongitudeCorner2) * 1e-07, true
+	if *m.SouthWestLongitudeCorner2 == 2147483647 {
+		return 0, false
+	}
+	if *m.SouthWestLongitudeCorner2 == 2147483646 {
+		return 0, false
+	}
+	if *m.SouthWestLongitudeCorner2 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.SouthWestLongitudeCorner2) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSouthWestLongitudeCorner2Value sets SouthWestLongitudeCorner2 from a physical value in deg, rounded to the nearest
@@ -1256,13 +2373,28 @@ func (m *AisChannelManagement) SetSouthWestLongitudeCorner2Value(v float64) {
 }
 
 // SouthWestLatitudeCorner2Value returns SouthWestLatitudeCorner2 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when SouthWestLatitudeCorner2 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisChannelManagement) SouthWestLatitudeCorner2Value() (float64, bool) {
-	if m.SouthWestLatitudeCorner2 == nil {
+	if m == nil || m.SouthWestLatitudeCorner2 == nil {
 		return 0, false
 	}
-	return float64(*m.SouthWestLatitudeCorner2) * 1e-07, true
+	if *m.SouthWestLatitudeCorner2 == 2147483647 {
+		return 0, false
+	}
+	if *m.SouthWestLatitudeCorner2 == 2147483646 {
+		return 0, false
+	}
+	if *m.SouthWestLatitudeCorner2 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.SouthWestLatitudeCorner2) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSouthWestLatitudeCorner2Value sets SouthWestLatitudeCorner2 from a physical value in deg, rounded to the nearest
@@ -1296,14 +2428,51 @@ func (m *AisClassBGroupAssignment) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBGroupAssignment) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassBGroupAssignment) Clone() Message {
+	if m == nil {
+		return (*AisClassBGroupAssignment)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.TxRxMode = clonePointer(m.TxRxMode)
+	copy.NorthEastLongitudeCorner1 = clonePointer(m.NorthEastLongitudeCorner1)
+	copy.NorthEastLatitudeCorner1 = clonePointer(m.NorthEastLatitudeCorner1)
+	copy.SouthWestLongitudeCorner2 = clonePointer(m.SouthWestLongitudeCorner2)
+	copy.SouthWestLatitudeCorner2 = clonePointer(m.SouthWestLatitudeCorner2)
+	copy.StationType = clonePointer(m.StationType)
+	copy.ShipAndCargoFilter = clonePointer(m.ShipAndCargoFilter)
+	copy.ReportingInterval = clonePointer(m.ReportingInterval)
+	copy.QuietTime = clonePointer(m.QuietTime)
+	return &copy
+}
+
 // NorthEastLongitudeCorner1Value returns NorthEastLongitudeCorner1 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when NorthEastLongitudeCorner1 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBGroupAssignment) NorthEastLongitudeCorner1Value() (float64, bool) {
-	if m.NorthEastLongitudeCorner1 == nil {
+	if m == nil || m.NorthEastLongitudeCorner1 == nil {
 		return 0, false
 	}
-	return float64(*m.NorthEastLongitudeCorner1) * 1e-07, true
+	if *m.NorthEastLongitudeCorner1 == 2147483647 {
+		return 0, false
+	}
+	if *m.NorthEastLongitudeCorner1 == 2147483646 {
+		return 0, false
+	}
+	if *m.NorthEastLongitudeCorner1 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.NorthEastLongitudeCorner1) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNorthEastLongitudeCorner1Value sets NorthEastLongitudeCorner1 from a physical value in deg, rounded to the nearest
@@ -1314,13 +2483,28 @@ func (m *AisClassBGroupAssignment) SetNorthEastLongitudeCorner1Value(v float64) 
 }
 
 // NorthEastLatitudeCorner1Value returns NorthEastLatitudeCorner1 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when NorthEastLatitudeCorner1 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBGroupAssignment) NorthEastLatitudeCorner1Value() (float64, bool) {
-	if m.NorthEastLatitudeCorner1 == nil {
+	if m == nil || m.NorthEastLatitudeCorner1 == nil {
 		return 0, false
 	}
-	return float64(*m.NorthEastLatitudeCorner1) * 1e-07, true
+	if *m.NorthEastLatitudeCorner1 == 2147483647 {
+		return 0, false
+	}
+	if *m.NorthEastLatitudeCorner1 == 2147483646 {
+		return 0, false
+	}
+	if *m.NorthEastLatitudeCorner1 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.NorthEastLatitudeCorner1) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNorthEastLatitudeCorner1Value sets NorthEastLatitudeCorner1 from a physical value in deg, rounded to the nearest
@@ -1331,13 +2515,28 @@ func (m *AisClassBGroupAssignment) SetNorthEastLatitudeCorner1Value(v float64) {
 }
 
 // SouthWestLongitudeCorner2Value returns SouthWestLongitudeCorner2 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when SouthWestLongitudeCorner2 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBGroupAssignment) SouthWestLongitudeCorner2Value() (float64, bool) {
-	if m.SouthWestLongitudeCorner2 == nil {
+	if m == nil || m.SouthWestLongitudeCorner2 == nil {
 		return 0, false
 	}
-	return float64(*m.SouthWestLongitudeCorner2) * 1e-07, true
+	if *m.SouthWestLongitudeCorner2 == 2147483647 {
+		return 0, false
+	}
+	if *m.SouthWestLongitudeCorner2 == 2147483646 {
+		return 0, false
+	}
+	if *m.SouthWestLongitudeCorner2 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.SouthWestLongitudeCorner2) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSouthWestLongitudeCorner2Value sets SouthWestLongitudeCorner2 from a physical value in deg, rounded to the nearest
@@ -1348,13 +2547,28 @@ func (m *AisClassBGroupAssignment) SetSouthWestLongitudeCorner2Value(v float64) 
 }
 
 // SouthWestLatitudeCorner2Value returns SouthWestLatitudeCorner2 as a physical value in deg (value = raw * 1e-07).
-// The bool is false when SouthWestLatitudeCorner2 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBGroupAssignment) SouthWestLatitudeCorner2Value() (float64, bool) {
-	if m.SouthWestLatitudeCorner2 == nil {
+	if m == nil || m.SouthWestLatitudeCorner2 == nil {
 		return 0, false
 	}
-	return float64(*m.SouthWestLatitudeCorner2) * 1e-07, true
+	if *m.SouthWestLatitudeCorner2 == 2147483647 {
+		return 0, false
+	}
+	if *m.SouthWestLatitudeCorner2 == 2147483646 {
+		return 0, false
+	}
+	if *m.SouthWestLatitudeCorner2 == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.SouthWestLatitudeCorner2) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSouthWestLatitudeCorner2Value sets SouthWestLatitudeCorner2 from a physical value in deg, rounded to the nearest
@@ -1365,13 +2579,25 @@ func (m *AisClassBGroupAssignment) SetSouthWestLatitudeCorner2Value(v float64) {
 }
 
 // QuietTimeValue returns QuietTime as a physical value in s (value = raw * 60).
-// The bool is false when QuietTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBGroupAssignment) QuietTimeValue() (float64, bool) {
-	if m.QuietTime == nil {
+	if m == nil || m.QuietTime == nil {
 		return 0, false
 	}
-	return float64(*m.QuietTime) * 60, true
+	if *m.QuietTime == 15 {
+		return 0, false
+	}
+	if *m.QuietTime == 14 {
+		return 0, false
+	}
+	value := float64(*m.QuietTime) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 780 && !approximatelyEqual(value, 780) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetQuietTimeValue sets QuietTime from a physical value in s, rounded to the nearest
@@ -1399,6 +2625,21 @@ func (m *AisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassBStaticDataMsg24PartA) Clone() Message {
+	if m == nil {
+		return (*AisClassBStaticDataMsg24PartA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.SequenceId = clonePointer(m.SequenceId)
+	return &copy
+}
+
 type AisClassBStaticDataMsg24PartB struct {
 	Info                           MessageInfo `json:"info"`
 	MessageId                      *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1425,14 +2666,51 @@ func (m *AisClassBStaticDataMsg24PartB) DecodePayload(payload []uint8) error {
 }
 func (m *AisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisClassBStaticDataMsg24PartB) Clone() Message {
+	if m == nil {
+		return (*AisClassBStaticDataMsg24PartB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.TypeOfShip = clonePointer(m.TypeOfShip)
+	copy.Length = clonePointer(m.Length)
+	copy.Beam = clonePointer(m.Beam)
+	copy.PositionReferenceFromStarboard = clonePointer(m.PositionReferenceFromStarboard)
+	copy.PositionReferenceFromBow = clonePointer(m.PositionReferenceFromBow)
+	copy.MothershipUserId = clonePointer(m.MothershipUserId)
+	copy.GnssType = clonePointer(m.GnssType)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.SequenceId = clonePointer(m.SequenceId)
+	return &copy
+}
+
 // LengthValue returns Length as a physical value in m (value = raw * 0.1).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBStaticDataMsg24PartB) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.1, true
+	if *m.Length == 65535 {
+		return 0, false
+	}
+	if *m.Length == 65534 {
+		return 0, false
+	}
+	if *m.Length == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in m, rounded to the nearest
@@ -1443,13 +2721,28 @@ func (m *AisClassBStaticDataMsg24PartB) SetLengthValue(v float64) {
 }
 
 // BeamValue returns Beam as a physical value in m (value = raw * 0.1).
-// The bool is false when Beam is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBStaticDataMsg24PartB) BeamValue() (float64, bool) {
-	if m.Beam == nil {
+	if m == nil || m.Beam == nil {
 		return 0, false
 	}
-	return float64(*m.Beam) * 0.1, true
+	if *m.Beam == 65535 {
+		return 0, false
+	}
+	if *m.Beam == 65534 {
+		return 0, false
+	}
+	if *m.Beam == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Beam) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBeamValue sets Beam from a physical value in m, rounded to the nearest
@@ -1460,13 +2753,28 @@ func (m *AisClassBStaticDataMsg24PartB) SetBeamValue(v float64) {
 }
 
 // PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBStaticDataMsg24PartB) PositionReferenceFromStarboardValue() (float64, bool) {
-	if m.PositionReferenceFromStarboard == nil {
+	if m == nil || m.PositionReferenceFromStarboard == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+	if *m.PositionReferenceFromStarboard == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromStarboard) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
@@ -1477,13 +2785,28 @@ func (m *AisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardValue(v
 }
 
 // PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisClassBStaticDataMsg24PartB) PositionReferenceFromBowValue() (float64, bool) {
-	if m.PositionReferenceFromBow == nil {
+	if m == nil || m.PositionReferenceFromBow == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromBow) * 0.1, true
+	if *m.PositionReferenceFromBow == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromBow) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
@@ -1517,6 +2840,26 @@ func (m *AisSingleSlotBinaryMessageDeprecated) EncodePayload() ([]uint8, error) 
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisSingleSlotBinaryMessageDeprecated) Clone() Message {
+	if m == nil {
+		return (*AisSingleSlotBinaryMessageDeprecated)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.DestinationIndicator = clonePointer(m.DestinationIndicator)
+	copy.BinaryDataFlag = clonePointer(m.BinaryDataFlag)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
+
 type AisMultiSlotBinaryMessageDeprecated struct {
 	Info                           MessageInfo                                     `json:"info"`
 	SequenceId                     *uint64                                         `json:"sequenceId,omitempty" n2k:"1"`
@@ -1547,6 +2890,31 @@ func (m *AisMultiSlotBinaryMessageDeprecated) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisMultiSlotBinaryMessageDeprecated) Clone() Message {
+	if m == nil {
+		return (*AisMultiSlotBinaryMessageDeprecated)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.DestinationIndicator = clonePointer(m.DestinationIndicator)
+	copy.BinaryDataFlag = clonePointer(m.BinaryDataFlag)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.CommunicationStateSelectorFlag = clonePointer(m.CommunicationStateSelectorFlag)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].NumberOfBitsInBinaryDataField = clonePointer(m.Repeating1[i].NumberOfBitsInBinaryDataField)
+		copy.Repeating1[i].BinaryData = cloneSlice(m.Repeating1[i].BinaryData)
+	}
+	return &copy
+}
+
 type AisLongRangeBroadcastMessage struct {
 	Info                      MessageInfo `json:"info"`
 	SequenceId                *uint64     `json:"sequenceId,omitempty" n2k:"1"`
@@ -1572,14 +2940,52 @@ func (m *AisLongRangeBroadcastMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisLongRangeBroadcastMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisLongRangeBroadcastMessage) Clone() Message {
+	if m == nil {
+		return (*AisLongRangeBroadcastMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.UserId = clonePointer(m.UserId)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.PositionAccuracy = clonePointer(m.PositionAccuracy)
+	copy.Raim = clonePointer(m.Raim)
+	copy.NavStatus = clonePointer(m.NavStatus)
+	copy.PositionLatency = clonePointer(m.PositionLatency)
+	copy.Sog = clonePointer(m.Sog)
+	copy.Cog = clonePointer(m.Cog)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	return &copy
+}
+
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisLongRangeBroadcastMessage) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -1590,13 +2996,28 @@ func (m *AisLongRangeBroadcastMessage) SetLongitudeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisLongRangeBroadcastMessage) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -1607,13 +3028,28 @@ func (m *AisLongRangeBroadcastMessage) SetLatitudeValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisLongRangeBroadcastMessage) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.01, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -1624,13 +3060,28 @@ func (m *AisLongRangeBroadcastMessage) SetSogValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AisLongRangeBroadcastMessage) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -1662,6 +3113,26 @@ func (m *AisSingleSlotBinaryMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisSingleSlotBinaryMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisSingleSlotBinaryMessage) Clone() Message {
+	if m == nil {
+		return (*AisSingleSlotBinaryMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.DestinationIndicator = clonePointer(m.DestinationIndicator)
+	copy.BinaryDataFlag = clonePointer(m.BinaryDataFlag)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
+
 type AisMultiSlotBinaryMessage struct {
 	Info                           MessageInfo `json:"info"`
 	SequenceId                     *uint64     `json:"sequenceId,omitempty" n2k:"1"`
@@ -1686,6 +3157,28 @@ func (m *AisMultiSlotBinaryMessage) DecodePayload(payload []uint8) error {
 }
 func (m *AisMultiSlotBinaryMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisMultiSlotBinaryMessage) Clone() Message {
+	if m == nil {
+		return (*AisMultiSlotBinaryMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.DestinationIndicator = clonePointer(m.DestinationIndicator)
+	copy.BinaryDataFlag = clonePointer(m.BinaryDataFlag)
+	copy.DestinationId = clonePointer(m.DestinationId)
+	copy.CommunicationStateSelectorFlag = clonePointer(m.CommunicationStateSelectorFlag)
+	copy.CommunicationState = cloneSlice(m.CommunicationState)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.NumberOfBitsInBinaryDataField = clonePointer(m.NumberOfBitsInBinaryDataField)
+	copy.BinaryData = cloneSlice(m.BinaryData)
+	return &copy
+}
+
 type AisAcknowledgeBinary struct {
 	Info                      MessageInfo                      `json:"info"`
 	SequenceId                *uint64                          `json:"sequenceId,omitempty" n2k:"1"`
@@ -1707,3 +3200,24 @@ func (m *AisAcknowledgeBinary) MessageInfo() MessageInfo            { return m.I
 func (m *AisAcknowledgeBinary) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AisAcknowledgeBinary) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AisAcknowledgeBinary) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AisAcknowledgeBinary) Clone() Message {
+	if m == nil {
+		return (*AisAcknowledgeBinary)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.AisTransceiverInformation = clonePointer(m.AisTransceiverInformation)
+	copy.NumberOfAcknowledgments = clonePointer(m.NumberOfAcknowledgments)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].DestinationId = clonePointer(m.Repeating1[i].DestinationId)
+		copy.Repeating1[i].SequenceNumber = clonePointer(m.Repeating1[i].SequenceNumber)
+	}
+	return &copy
+}

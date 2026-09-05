@@ -1,5 +1,37 @@
 ## Change Log for open-ships/n2k
 
+### v1.3.0 — 2026-09-05 — bounded, cancellable, epoch-safe reliability
+
+- Made application writes immutable snapshots at admission, with `WriteContext`,
+  bounded physical write deadlines, and `WriteError` reporting partial-transfer
+  uncertainty. Protocol frames can proceed during application ISO transfers.
+- Bound requests, queued writes, reassembly, discovery, and reconnect work to
+  connection and claim epochs. Close and terminal failures invalidate pending
+  operations immediately; old work is never replayed after reconnect.
+- Added owned deep message cloning for subscribers and registry snapshots, a
+  bounded replay capture with loss counters, and readiness/queue status.
+- Fixed ISO transport timer races, echoed announcement collisions, indefinite
+  CTS holds, and shutdown/reset cancellation of BAM and RTS/CTS transfers.
+- Made Actisense startup, writes, and restoration cancellable on their exact
+  connection. Shared pollable serial I/O and Linux SocketCAN descriptors make
+  physical shutdown interruptible, including serial backpressure.
+- Corrected string boundaries, physical precision and sentinel availability,
+  transactional decode, specific-before-fallback dispatch, and unresolved field
+  diagnostics. All typed variants now participate in value roundtrip tests.
+- Made PGN and enum generation offline and checksum-pinned. Published separate
+  decode/encode completeness, limitations, provenance, and hardware-verification
+  metadata; typed coverage is not a completeness or certification claim.
+- Preserve the exact pinned schema bytes under Windows-style Git checkouts.
+- Use count-bounded PR fuzz smoke runs with hard timeouts to avoid timed fuzz
+  coordinator cancellation failures, and retain failure corpora in CI.
+- Added executable conformance evidence, scheduled long fuzzing/resource soaks,
+  and independent reliability regressions. Missing/skipped required software
+  evidence fails the gate; hardware and licensed certification stay separate.
+- Intentionally refined the still-evolving v1 API: physical metadata uses
+  `float64`, enum constants are type-prefixed, and broadcast providers accept
+  context. `Broadcast`/`BroadcastPGN` return `(stop, error)`, cap active workers
+  at 64, and require providers to honor cancellation. No v2 module path is used.
+
 ### v1.2.0 — 2026-08-20 — complete Actisense NMEA 2000 control plane
 
 - Replaced gateway-owned Actisense `Client` writes with the honest

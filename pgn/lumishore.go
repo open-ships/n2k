@@ -21,6 +21,24 @@ func (m *LumishoreLightStatus) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *LumishoreLightStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LumishoreLightStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LumishoreLightStatus) Clone() Message {
+	if m == nil {
+		return (*LumishoreLightStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ZoneIndex = clonePointer(m.ZoneIndex)
+	copy.Red = clonePointer(m.Red)
+	copy.Green = clonePointer(m.Green)
+	copy.Blue = clonePointer(m.Blue)
+	copy.ColdWhite = clonePointer(m.ColdWhite)
+	copy.WarmWhite = clonePointer(m.WarmWhite)
+	return &copy
+}
+
 type LumishoreProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -33,6 +51,19 @@ func (m *LumishoreProprietary) MessageInfo() MessageInfo            { return m.I
 func (m *LumishoreProprietary) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LumishoreProprietary) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LumishoreProprietary) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LumishoreProprietary) Clone() Message {
+	if m == nil {
+		return (*LumishoreProprietary)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type LumishoreLightControl struct {
 	Info             MessageInfo `json:"info"`
@@ -54,3 +85,24 @@ func (m *LumishoreLightControl) MessageInfo() MessageInfo            { return m.
 func (m *LumishoreLightControl) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LumishoreLightControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LumishoreLightControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LumishoreLightControl) Clone() Message {
+	if m == nil {
+		return (*LumishoreLightControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ZoneIndex = clonePointer(m.ZoneIndex)
+	copy.Red = clonePointer(m.Red)
+	copy.Green = clonePointer(m.Green)
+	copy.Blue = clonePointer(m.Blue)
+	copy.ColdWhite = clonePointer(m.ColdWhite)
+	copy.WarmWhite = clonePointer(m.WarmWhite)
+	copy.Intensity = clonePointer(m.Intensity)
+	copy.OnOff = clonePointer(m.OnOff)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}

@@ -20,6 +20,21 @@ func (m *FusionMediaControl) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *FusionMediaControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMediaControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMediaControl) Clone() Message {
+	if m == nil {
+		return (*FusionMediaControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Command = clonePointer(m.Command)
+	return &copy
+}
+
 type FusionRequestStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -32,6 +47,19 @@ func (m *FusionRequestStatus) MessageInfo() MessageInfo            { return m.In
 func (m *FusionRequestStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionRequestStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionRequestStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionRequestStatus) Clone() Message {
+	if m == nil {
+		return (*FusionRequestStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	return &copy
+}
 
 type FusionSetAllVolumes struct {
 	Info             MessageInfo `json:"info"`
@@ -50,6 +78,23 @@ func (m *FusionSetAllVolumes) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *FusionSetAllVolumes) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetAllVolumes) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetAllVolumes) Clone() Message {
+	if m == nil {
+		return (*FusionSetAllVolumes)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Zone1 = clonePointer(m.Zone1)
+	copy.Zone2 = clonePointer(m.Zone2)
+	copy.Zone3 = clonePointer(m.Zone3)
+	copy.Zone4 = clonePointer(m.Zone4)
+	return &copy
+}
+
 type FusionSetMute struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -63,6 +108,20 @@ func (m *FusionSetMute) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionSetMute) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSetMute) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetMute) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetMute) Clone() Message {
+	if m == nil {
+		return (*FusionSetMute)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	return &copy
+}
 
 type FusionSetPower struct {
 	Info             MessageInfo `json:"info"`
@@ -78,6 +137,20 @@ func (m *FusionSetPower) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSetPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetPower) Clone() Message {
+	if m == nil {
+		return (*FusionSetPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Power = clonePointer(m.Power)
+	return &copy
+}
+
 type FusionSetSource struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -91,6 +164,20 @@ func (m *FusionSetSource) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionSetSource) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSetSource) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetSource) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetSource) Clone() Message {
+	if m == nil {
+		return (*FusionSetSource)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.SourceId = clonePointer(m.SourceId)
+	return &copy
+}
 
 type FusionSetZoneVolume struct {
 	Info             MessageInfo `json:"info"`
@@ -106,6 +193,21 @@ func (m *FusionSetZoneVolume) MessageInfo() MessageInfo            { return m.In
 func (m *FusionSetZoneVolume) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSetZoneVolume) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetZoneVolume) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetZoneVolume) Clone() Message {
+	if m == nil {
+		return (*FusionSetZoneVolume)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Volume = clonePointer(m.Volume)
+	return &copy
+}
 
 type FusionSiriusControl struct {
 	Info             MessageInfo `json:"info"`
@@ -123,6 +225,22 @@ func (m *FusionSiriusControl) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *FusionSiriusControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusControl) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Command = clonePointer(m.Command)
+	copy.Data = clonePointer(m.Data)
+	return &copy
+}
+
 type FusionAlbumName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -138,6 +256,21 @@ func (m *FusionAlbumName) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionAlbumName) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionAlbumName) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionAlbumName) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionAlbumName) Clone() Message {
+	if m == nil {
+		return (*FusionAlbumName)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Index = clonePointer(m.Index)
+	return &copy
+}
 
 type FusionArtistName struct {
 	Info             MessageInfo `json:"info"`
@@ -155,6 +288,21 @@ func (m *FusionArtistName) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *FusionArtistName) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionArtistName) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionArtistName) Clone() Message {
+	if m == nil {
+		return (*FusionArtistName)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Index = clonePointer(m.Index)
+	return &copy
+}
+
 type FusionAuxGain struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -170,6 +318,21 @@ func (m *FusionAuxGain) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionAuxGain) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionAuxGain) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionAuxGain) Clone() Message {
+	if m == nil {
+		return (*FusionAuxGain)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Gain = clonePointer(m.Gain)
+	return &copy
+}
+
 type FusionBalance struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -184,6 +347,21 @@ func (m *FusionBalance) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionBalance) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionBalance) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionBalance) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionBalance) Clone() Message {
+	if m == nil {
+		return (*FusionBalance)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
 
 type FusionCapabilities struct {
 	Info             MessageInfo `json:"info"`
@@ -203,6 +381,24 @@ func (m *FusionCapabilities) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *FusionCapabilities) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionCapabilities) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionCapabilities) Clone() Message {
+	if m == nil {
+		return (*FusionCapabilities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone1 = clonePointer(m.Zone1)
+	copy.Zone2 = clonePointer(m.Zone2)
+	copy.Zone3 = clonePointer(m.Zone3)
+	copy.Zone4 = clonePointer(m.Zone4)
+	copy.Global = clonePointer(m.Global)
+	return &copy
+}
+
 type FusionDeviceName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -216,6 +412,19 @@ func (m *FusionDeviceName) MessageInfo() MessageInfo            { return m.Info 
 func (m *FusionDeviceName) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionDeviceName) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionDeviceName) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionDeviceName) Clone() Message {
+	if m == nil {
+		return (*FusionDeviceName)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	return &copy
+}
 
 type FusionEq struct {
 	Info             MessageInfo `json:"info"`
@@ -234,6 +443,23 @@ func (m *FusionEq) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionEq) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionEq) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionEq) Clone() Message {
+	if m == nil {
+		return (*FusionEq)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Bass = clonePointer(m.Bass)
+	copy.Mid = clonePointer(m.Mid)
+	copy.Treble = clonePointer(m.Treble)
+	return &copy
+}
+
 type FusionIgnitionSwitchState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -249,6 +475,20 @@ func (m *FusionIgnitionSwitchState) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *FusionIgnitionSwitchState) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionIgnitionSwitchState) Clone() Message {
+	if m == nil {
+		return (*FusionIgnitionSwitchState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.State = clonePointer(m.State)
+	return &copy
+}
 
 type FusionLineLevelControl struct {
 	Info             MessageInfo `json:"info"`
@@ -267,6 +507,21 @@ func (m *FusionLineLevelControl) DecodePayload(payload []uint8) error {
 }
 func (m *FusionLineLevelControl) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionLineLevelControl) Clone() Message {
+	if m == nil {
+		return (*FusionLineLevelControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Control = clonePointer(m.Control)
+	return &copy
+}
+
 type FusionLowPassFilter struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -281,6 +536,21 @@ func (m *FusionLowPassFilter) MessageInfo() MessageInfo            { return m.In
 func (m *FusionLowPassFilter) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionLowPassFilter) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionLowPassFilter) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionLowPassFilter) Clone() Message {
+	if m == nil {
+		return (*FusionLowPassFilter)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Filter = clonePointer(m.Filter)
+	return &copy
+}
 
 type FusionMarineTuner struct {
 	Info             MessageInfo `json:"info"`
@@ -299,6 +569,22 @@ func (m *FusionMarineTuner) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *FusionMarineTuner) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMarineTuner) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMarineTuner) Clone() Message {
+	if m == nil {
+		return (*FusionMarineTuner)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Channel = clonePointer(m.Channel)
+	copy.SignalStrength = clonePointer(m.SignalStrength)
+	return &copy
+}
+
 type FusionMarineScanMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -314,6 +600,21 @@ func (m *FusionMarineScanMode) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *FusionMarineScanMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMarineScanMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMarineScanMode) Clone() Message {
+	if m == nil {
+		return (*FusionMarineScanMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Scan = clonePointer(m.Scan)
+	return &copy
+}
+
 type FusionMarineSquelch struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -328,6 +629,21 @@ func (m *FusionMarineSquelch) MessageInfo() MessageInfo            { return m.In
 func (m *FusionMarineSquelch) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMarineSquelch) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMarineSquelch) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMarineSquelch) Clone() Message {
+	if m == nil {
+		return (*FusionMarineSquelch)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Squelch = clonePointer(m.Squelch)
+	return &copy
+}
 
 type FusionMedia struct {
 	Info             MessageInfo `json:"info"`
@@ -348,14 +664,48 @@ func (m *FusionMedia) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMedia) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMedia) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMedia) Clone() Message {
+	if m == nil {
+		return (*FusionMedia)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Flags = clonePointer(m.Flags)
+	copy.Track = clonePointer(m.Track)
+	copy.TrackCount = clonePointer(m.TrackCount)
+	copy.Length = clonePointer(m.Length)
+	copy.PositionInTrack = clonePointer(m.PositionInTrack)
+	return &copy
+}
+
 // LengthValue returns Length as a physical value in s (value = raw * 0.001).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FusionMedia) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.001, true
+	if *m.Length == 4294967295 {
+		return 0, false
+	}
+	if *m.Length == 4294967294 {
+		return 0, false
+	}
+	if *m.Length == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in s, rounded to the nearest
@@ -366,13 +716,28 @@ func (m *FusionMedia) SetLengthValue(v float64) {
 }
 
 // PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
-// The bool is false when PositionInTrack is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FusionMedia) PositionInTrackValue() (float64, bool) {
-	if m.PositionInTrack == nil {
+	if m == nil || m.PositionInTrack == nil {
 		return 0, false
 	}
-	return float64(*m.PositionInTrack) * 0.001, true
+	if *m.PositionInTrack == 4294967295 {
+		return 0, false
+	}
+	if *m.PositionInTrack == 4294967294 {
+		return 0, false
+	}
+	if *m.PositionInTrack == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.PositionInTrack) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
@@ -400,6 +765,23 @@ func (m *FusionMenuItem) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMenuItem) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMenuItem) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMenuItem) Clone() Message {
+	if m == nil {
+		return (*FusionMenuItem)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.ItemIndex = clonePointer(m.ItemIndex)
+	copy.Flags = clonePointer(m.Flags)
+	copy.LockId = clonePointer(m.LockId)
+	return &copy
+}
+
 type FusionMenuLockId struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -415,6 +797,21 @@ func (m *FusionMenuLockId) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *FusionMenuLockId) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMenuLockId) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMenuLockId) Clone() Message {
+	if m == nil {
+		return (*FusionMenuLockId)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.LockId = clonePointer(m.LockId)
+	copy.Flags = clonePointer(m.Flags)
+	return &copy
+}
+
 type FusionMono struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -429,6 +826,21 @@ func (m *FusionMono) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionMono) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMono) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMono) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMono) Clone() Message {
+	if m == nil {
+		return (*FusionMono)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Enabled = clonePointer(m.Enabled)
+	return &copy
+}
 
 type FusionMultiroom struct {
 	Info             MessageInfo `json:"info"`
@@ -448,6 +860,24 @@ func (m *FusionMultiroom) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMultiroom) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMultiroom) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMultiroom) Clone() Message {
+	if m == nil {
+		return (*FusionMultiroom)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Enabled = clonePointer(m.Enabled)
+	copy.IpAddress1 = clonePointer(m.IpAddress1)
+	copy.IpAddress2 = clonePointer(m.IpAddress2)
+	copy.IpAddress3 = clonePointer(m.IpAddress3)
+	copy.IpAddress4 = clonePointer(m.IpAddress4)
+	return &copy
+}
+
 type FusionMultiroomStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -461,6 +891,20 @@ func (m *FusionMultiroomStatus) MessageInfo() MessageInfo            { return m.
 func (m *FusionMultiroomStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMultiroomStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMultiroomStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMultiroomStatus) Clone() Message {
+	if m == nil {
+		return (*FusionMultiroomStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Available = clonePointer(m.Available)
+	return &copy
+}
 
 type FusionMute struct {
 	Info             MessageInfo `json:"info"`
@@ -476,6 +920,20 @@ func (m *FusionMute) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionMute) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionMute) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionMute) Clone() Message {
+	if m == nil {
+		return (*FusionMute)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Mute = clonePointer(m.Mute)
+	return &copy
+}
+
 type FusionPowerState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -489,6 +947,20 @@ func (m *FusionPowerState) MessageInfo() MessageInfo            { return m.Info 
 func (m *FusionPowerState) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionPowerState) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionPowerState) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionPowerState) Clone() Message {
+	if m == nil {
+		return (*FusionPowerState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.State = clonePointer(m.State)
+	return &copy
+}
 
 type FusionProcessingBypass struct {
 	Info             MessageInfo `json:"info"`
@@ -505,6 +977,20 @@ func (m *FusionProcessingBypass) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *FusionProcessingBypass) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionProcessingBypass) Clone() Message {
+	if m == nil {
+		return (*FusionProcessingBypass)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Bypass = clonePointer(m.Bypass)
+	return &copy
+}
 
 type FusionRdsData struct {
 	Info             MessageInfo `json:"info"`
@@ -523,6 +1009,22 @@ func (m *FusionRdsData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionRdsData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionRdsData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionRdsData) Clone() Message {
+	if m == nil {
+		return (*FusionRdsData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.RdsType = clonePointer(m.RdsType)
+	copy.ProgrammeType = clonePointer(m.ProgrammeType)
+	return &copy
+}
+
 type FusionSetting struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -537,6 +1039,21 @@ func (m *FusionSetting) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionSetting) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSetting) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSetting) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSetting) Clone() Message {
+	if m == nil {
+		return (*FusionSetting)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Id = clonePointer(m.Id)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
 
 type FusionSettings struct {
 	Info             MessageInfo                `json:"info"`
@@ -558,6 +1075,25 @@ func (m *FusionSettings) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSettings) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSettings) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSettings) Clone() Message {
+	if m == nil {
+		return (*FusionSettings)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Count = clonePointer(m.Count)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Id = clonePointer(m.Repeating1[i].Id)
+		copy.Repeating1[i].Value = clonePointer(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 type FusionSiriusxm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -576,6 +1112,24 @@ func (m *FusionSiriusxm) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSiriusxm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxm) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.ComState = clonePointer(m.ComState)
+	copy.Alert = clonePointer(m.Alert)
+	copy.AdvisoryChannel = clonePointer(m.AdvisoryChannel)
+	copy.TuningMode = clonePointer(m.TuningMode)
+	return &copy
+}
+
 type FusionSiriusxmArtist struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -591,6 +1145,21 @@ func (m *FusionSiriusxmArtist) MessageInfo() MessageInfo            { return m.I
 func (m *FusionSiriusxmArtist) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSiriusxmArtist) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxmArtist) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmArtist) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmArtist)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Channel = clonePointer(m.Channel)
+	return &copy
+}
 
 type FusionSiriusxmCategory struct {
 	Info             MessageInfo `json:"info"`
@@ -610,6 +1179,21 @@ func (m *FusionSiriusxmCategory) DecodePayload(payload []uint8) error {
 }
 func (m *FusionSiriusxmCategory) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmCategory) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmCategory)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Channel = clonePointer(m.Channel)
+	return &copy
+}
+
 type FusionSiriusxmChannel struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -625,6 +1209,21 @@ func (m *FusionSiriusxmChannel) MessageInfo() MessageInfo            { return m.
 func (m *FusionSiriusxmChannel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSiriusxmChannel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxmChannel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmChannel) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmChannel)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.ChannelNumber = clonePointer(m.ChannelNumber)
+	return &copy
+}
 
 type FusionSiriusxmContentInfo struct {
 	Info             MessageInfo `json:"info"`
@@ -644,6 +1243,21 @@ func (m *FusionSiriusxmContentInfo) DecodePayload(payload []uint8) error {
 }
 func (m *FusionSiriusxmContentInfo) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmContentInfo) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmContentInfo)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Channel = clonePointer(m.Channel)
+	return &copy
+}
+
 type FusionSiriusxmPresets struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -660,6 +1274,22 @@ func (m *FusionSiriusxmPresets) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *FusionSiriusxmPresets) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxmPresets) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmPresets) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmPresets)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Count = clonePointer(m.Count)
+	copy.Values = cloneSlice(m.Values)
+	return &copy
+}
+
 type FusionSiriusxmSignal struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -674,6 +1304,21 @@ func (m *FusionSiriusxmSignal) MessageInfo() MessageInfo            { return m.I
 func (m *FusionSiriusxmSignal) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSiriusxmSignal) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxmSignal) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmSignal) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmSignal)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Signal = clonePointer(m.Signal)
+	return &copy
+}
 
 type FusionSiriusxmTitle struct {
 	Info             MessageInfo `json:"info"`
@@ -690,6 +1335,21 @@ func (m *FusionSiriusxmTitle) MessageInfo() MessageInfo            { return m.In
 func (m *FusionSiriusxmTitle) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSiriusxmTitle) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSiriusxmTitle) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSiriusxmTitle) Clone() Message {
+	if m == nil {
+		return (*FusionSiriusxmTitle)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Channel = clonePointer(m.Channel)
+	return &copy
+}
 
 type FusionSource struct {
 	Info             MessageInfo `json:"info"`
@@ -709,6 +1369,23 @@ func (m *FusionSource) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSource) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSource) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSource) Clone() Message {
+	if m == nil {
+		return (*FusionSource)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.CurrentSourceId = clonePointer(m.CurrentSourceId)
+	copy.SourceType = clonePointer(m.SourceType)
+	copy.Flags = clonePointer(m.Flags)
+	return &copy
+}
+
 type FusionSourceCount struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -722,6 +1399,20 @@ func (m *FusionSourceCount) MessageInfo() MessageInfo            { return m.Info
 func (m *FusionSourceCount) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSourceCount) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSourceCount) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSourceCount) Clone() Message {
+	if m == nil {
+		return (*FusionSourceCount)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceCount = clonePointer(m.SourceCount)
+	return &copy
+}
 
 type FusionSpeedVolumeCurrentSpeed struct {
 	Info             MessageInfo `json:"info"`
@@ -741,6 +1432,22 @@ func (m *FusionSpeedVolumeCurrentSpeed) DecodePayload(payload []uint8) error {
 }
 func (m *FusionSpeedVolumeCurrentSpeed) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSpeedVolumeCurrentSpeed) Clone() Message {
+	if m == nil {
+		return (*FusionSpeedVolumeCurrentSpeed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Speed = clonePointer(m.Speed)
+	copy.Enabled = clonePointer(m.Enabled)
+	return &copy
+}
+
 type FusionSublevels struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -758,6 +1465,23 @@ func (m *FusionSublevels) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionSublevels) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionSublevels) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionSublevels) Clone() Message {
+	if m == nil {
+		return (*FusionSublevels)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone1 = clonePointer(m.Zone1)
+	copy.Zone2 = clonePointer(m.Zone2)
+	copy.Zone3 = clonePointer(m.Zone3)
+	copy.Zone4 = clonePointer(m.Zone4)
+	return &copy
+}
+
 type FusionTrackName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -774,6 +1498,21 @@ func (m *FusionTrackName) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionTrackName) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionTrackName) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionTrackName) Clone() Message {
+	if m == nil {
+		return (*FusionTrackName)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Index = clonePointer(m.Index)
+	return &copy
+}
+
 type FusionTrackPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -789,14 +1528,44 @@ func (m *FusionTrackPosition) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *FusionTrackPosition) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionTrackPosition) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionTrackPosition) Clone() Message {
+	if m == nil {
+		return (*FusionTrackPosition)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Progress = clonePointer(m.Progress)
+	return &copy
+}
+
 // ProgressValue returns Progress as a physical value in s (value = raw * 0.001).
-// The bool is false when Progress is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FusionTrackPosition) ProgressValue() (float64, bool) {
-	if m.Progress == nil {
+	if m == nil || m.Progress == nil {
 		return 0, false
 	}
-	return float64(*m.Progress) * 0.001, true
+	if *m.Progress == 16777215 {
+		return 0, false
+	}
+	if *m.Progress == 16777214 {
+		return 0, false
+	}
+	if *m.Progress == 16777213 {
+		return 0, false
+	}
+	value := float64(*m.Progress) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16777.212 && !approximatelyEqual(value, 16777.212) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetProgressValue sets Progress from a physical value in s, rounded to the nearest
@@ -824,14 +1593,46 @@ func (m *FusionTuner) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionTuner) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionTuner) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionTuner) Clone() Message {
+	if m == nil {
+		return (*FusionTuner)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.Scanning = clonePointer(m.Scanning)
+	copy.Frequency = clonePointer(m.Frequency)
+	copy.SignalStrength = clonePointer(m.SignalStrength)
+	return &copy
+}
+
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FusionTuner) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency), true
+	if *m.Frequency == 4294967295 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967294 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Frequency)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -856,6 +1657,21 @@ func (m *FusionUsbRepeatStatus) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *FusionUsbRepeatStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionUsbRepeatStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionUsbRepeatStatus) Clone() Message {
+	if m == nil {
+		return (*FusionUsbRepeatStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Id = clonePointer(m.Id)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}
+
 type FusionVersions struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -874,6 +1690,24 @@ func (m *FusionVersions) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionVersions) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionVersions) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionVersions) Clone() Message {
+	if m == nil {
+		return (*FusionVersions)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.HwVersionMajor = clonePointer(m.HwVersionMajor)
+	copy.HwVersionMinor = clonePointer(m.HwVersionMinor)
+	copy.SwVersionMajor = clonePointer(m.SwVersionMajor)
+	copy.SwVersionMinor = clonePointer(m.SwVersionMinor)
+	copy.BuildNumber = clonePointer(m.BuildNumber)
+	return &copy
+}
+
 type FusionVolumeLimits struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -890,6 +1724,23 @@ func (m *FusionVolumeLimits) MessageInfo() MessageInfo            { return m.Inf
 func (m *FusionVolumeLimits) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionVolumeLimits) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionVolumeLimits) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionVolumeLimits) Clone() Message {
+	if m == nil {
+		return (*FusionVolumeLimits)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone1VolumeLimit = clonePointer(m.Zone1VolumeLimit)
+	copy.Zone2VolumeLimit = clonePointer(m.Zone2VolumeLimit)
+	copy.Zone3VolumeLimit = clonePointer(m.Zone3VolumeLimit)
+	copy.Zone4VolumeLimit = clonePointer(m.Zone4VolumeLimit)
+	return &copy
+}
 
 type FusionVolumes struct {
 	Info             MessageInfo `json:"info"`
@@ -908,6 +1759,23 @@ func (m *FusionVolumes) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionVolumes) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionVolumes) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionVolumes) Clone() Message {
+	if m == nil {
+		return (*FusionVolumes)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Zone1 = clonePointer(m.Zone1)
+	copy.Zone2 = clonePointer(m.Zone2)
+	copy.Zone3 = clonePointer(m.Zone3)
+	copy.Zone4 = clonePointer(m.Zone4)
+	return &copy
+}
+
 type FusionZoneName struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -922,3 +1790,17 @@ func (m *FusionZoneName) MessageInfo() MessageInfo            { return m.Info }
 func (m *FusionZoneName) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FusionZoneName) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FusionZoneName) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FusionZoneName) Clone() Message {
+	if m == nil {
+		return (*FusionZoneName)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Number = clonePointer(m.Number)
+	return &copy
+}

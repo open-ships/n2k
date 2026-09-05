@@ -25,7 +25,8 @@ any Go program that needs to understand or participate on an N2K bus.
   [canboat](https://github.com/canboat/canboat) schema — the reference
   database for open NMEA 2000 decoding. Every numeric field with a physical
   interpretation gets a generated SI-unit accessor (`heading.HeadingValue()` →
-  radians) over raw wire ticks.
+  radians) over raw wire ticks. Generated coverage is not completeness: the
+  manifest separately reports decode/encode limitations and hardware evidence.
 - **Wire-faithful re-encode.** An unchanged decoded message retains its exact
   original payload, including reserved and trailing bytes. Mutating a field
   switches encoding to the current struct values, so edits are never silently
@@ -485,14 +486,18 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.WithHeartbeatInterval(d)` | Heartbeat (PGN 126993) cadence; default 60s, 0 disables |
 | `n2k.WithReceiveBuffer(n)` | Per-subscription live receive buffer; default 64 |
 | `n2k.WithWriteQueue(n)` | Pending asynchronous write capacity; default 64 |
+| `n2k.WithWriteTimeout(d)` | Deadline for each physical write; default 1s |
 | `n2k.WithReconnect(policy)` | Auto-reconnect dropped TCP gateway connections with exponential backoff (`ReconnectPolicy{InitialBackoff, MaxBackoff}`; zero values default to 500ms/30s) |
 | `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
 
 ### Errors, backpressure, and health
 
-Runtime failure is surfaced through the API. A bus disconnect ends live
+Runtime failure is surfaced through the API. An unrecoverable bus failure ends live
 iterators/scanners with that error, causes later writes to fail, and appears in
 `Client.Err()` and `Client.Status()`.
+With automatic reconnect, a temporary disconnect invalidates old requests and
+writes with `ErrEpochChanged`. New writes fail with `ErrNotReady` until address
+claiming completes; they are never carried into the next connection silently.
 
 An Actisense operating-mode failure is available to `errors.As` without losing
 the underlying timeout or device error. This lets an application deliberately
@@ -508,8 +513,9 @@ if errors.As(err, &modeErr) && modeErr.RequestedMode == 5 {
 
 Queues are deliberately bounded:
 
-- `Write` never blocks on admission. When its queue is full, the returned
-  result is already complete with `ErrWriteQueueFull`.
+- `Write` snapshots the payload and header before returning, then admits without
+  waiting for queue space. When full, the result reports `ErrWriteQueueFull`.
+  You can reuse the message after return; do not mutate it during the call.
 - Each live `Receive` or `Scanner` call has an independent subscription. A
   slow subscription ends with `ErrReceiveOverflow`; it cannot stall address
   claiming, transport handling, or another reader.
@@ -517,15 +523,26 @@ Queues are deliberately bounded:
   `ErrObservationOverflow` when slow.
 - Required automatic protocol traffic uses a dedicated priority queue. Queue,
   encoding, and transport failures become terminal state instead of logs.
+- ISO request correlation is capped at 64 (`ErrRequestQueueFull`). Close,
+  terminal failure, disconnect, and address change promptly invalidate waiters.
+- Replay `WrittenFrames()` retains the newest 4096 frames; status exposes
+  retained capacity and evictions. Each typed subscriber and registry snapshot
+  owns independent message fields and metadata.
 
-Use `WaitContext` when a caller has a deadline, tune bounds with
+Use `WriteContext(ctx, msg)` to cancel queued or in-progress transmission.
+`WaitContext` cancels only the wait, not the write. Errors after a physical
+attempt may describe a partial transfer: inspect `*WriteError`'s
+`CompletedRecords` and `TransmissionUncertain` before choosing whether to retry.
+Successful transmission is not proof of remote application acceptance.
+
+Tune bounds with
 `WithWriteQueue` / `WithReceiveBuffer`, and expose `Status()` from health or
 metrics endpoints:
 
 ```go
 status := client.Status()
 fmt.Println(status.Address, status.AddressClaimed, status.Connected,
-    status.ConnectionEpoch, status.WriteQueueDepth,
+    status.Ready, status.ConnectionEpoch, status.ClaimEpoch, status.WriteQueueDepth,
     status.ProtocolRequiredQueueDepth, status.ReceiveSubscribers,
     status.ObservationSubscribers, status.TerminalError)
 ```
@@ -536,9 +553,11 @@ fmt.Println(status.Address, status.AddressClaimed, status.Connected,
 Implement `Bus` for frame-level read/write access. Optionally implement
 `ObservationBus` to retain transport context, `ReadyBus` when opening is
 asynchronous, `ConnectionLifecycleBus` for reconnect epochs, and
-`MessageWriter` when the gateway accepts assembled PGN payloads instead of CAN
-frames. The client still owns claiming, protocol routing, scheduling, and
-shutdown.
+`MessageWriter` when a transport accepts assembled PGN payloads while honoring
+the exact source identity. Gateway-owned source substitution is not a Bus.
+Expose `ContextBus`/`ContextMessageWriter` for cancellable writes; otherwise
+Client closes the bus to interrupt canceled I/O. `Bus.Close` must interrupt
+blocked reads/writes and return promptly. The client waits for its workers.
 
 ### A Complete Bus Node
 
@@ -581,18 +600,28 @@ every tick (return nil to skip a tick). Prefer `BroadcastPGN`, which registers
 the PGN immediately for deterministic replacement and group-function retiming:
 
 ```go
-stop := client.BroadcastPGN(127250, time.Second, func() pgn.Message {
+stop, err := client.BroadcastPGN(127250, time.Second, func(ctx context.Context) pgn.Message {
     heading := &pgn.VesselHeading{}
     heading.SetHeadingValue(currentHeadingRadians())
     return heading
 })
+if err != nil {
+    log.Fatal(err)
+}
 defer stop()
 ```
 
 Other devices can retime or pause the broadcast with a request group function
-naming its PGN. Providers run outside the scheduler goroutine; panic is
-contained and `Close` is not held hostage by a blocked provider. Providers
-should still return promptly because Go cannot forcibly terminate a callback.
+naming its PGN. Each provider runs on one owned schedule worker and must
+return promptly when its context is canceled. Pass that context through to
+sensor reads and other blocking work. Stop and `Close` cancel providers and
+wait for them to exit, so a provider must not call its own stop function or
+`Close`. Periodic provider panics are contained.
+
+At most 64 schedule workers may be alive; admission returns
+`ErrBroadcastLimit` when full. Required group-function responses use a bounded
+queue on the same worker. Saturation is observable through `Client.Err` as
+`ErrBroadcastQueueFull`.
 
 ### Device Registry
 

@@ -52,8 +52,11 @@ release-check:
 
 # run the public, reproducible protocol evidence suite (not NMEA certification)
 conformance-local:
-    go test -count=1 -v . -run '^(TestConformance|TestHeartbeat_|TestISORequest_|TestGroupFunction_|TestProtocolTransmission|TestRequiredProtocol|TestAdvisoryProtocol|TestTCPClientReconnect|TestObservationHub|TestReplayObservation)'
-    go test -count=1 ./internal/actisense ./internal/adapter ./internal/claiming ./internal/ebl ./internal/framer ./internal/gateway ./internal/transport
+    go run ./cmd/conformance
+
+# prove every package-qualified evidence pattern selects compiled tests
+conformance-check:
+    go run ./cmd/conformance -check
 
 # run the opt-in NGT/NGX lab matrix from a local configuration file
 actisense-hardware config:
@@ -75,13 +78,30 @@ test-v:
 test-race:
     go test -race ./...
 
-# short, deterministic smoke run of every fuzz harness
+# Fixed input budgets avoid the timed coordinator cancellation race (golang/go#75804).
+# Each harness still fails on any error and has a hard timeout for hangs.
 fuzz-smoke:
-    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime=2s
-    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=2s
-    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=2s
-    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=2s
-    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=2s
+    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime=10000x -timeout=2m
+    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=10000x -timeout=2m
+    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=10000x -timeout=2m
+    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=10000x -timeout=2m
+    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=10000x -timeout=2m
+
+# longer bounded exploration of every fuzz harness; never requires hardware
+fuzz-long $duration="2m":
+    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime="$duration" -timeout=15m
+    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime="$duration" -timeout=15m
+    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime="$duration" -timeout=15m
+    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime="$duration" -timeout=15m
+    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime="$duration" -timeout=15m
+
+# software lifecycle/resource soak; duration and hard process timeout are explicit
+reliability-soak $duration="1h" $timeout="70m":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    artifact_dir="${N2K_SOAK_ARTIFACT_DIR:-conformance-artifacts}"
+    mkdir -p "$artifact_dir"
+    N2K_SOAK_DURATION="$duration" go test -json -count=1 -timeout="$timeout" -run '^TestReliabilitySoak$' . | tee "$artifact_dir/soak-test-events.jsonl"
 
 # run tests with coverage
 test-cover:

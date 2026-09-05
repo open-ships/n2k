@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"sync"
@@ -15,6 +17,14 @@ import (
 type ManagerConfig struct {
 	// WriteFrame sends a CAN frame onto the bus.
 	WriteFrame func(can.Frame) error
+	// WriteFrameContext, when provided, replaces WriteFrame and must respect
+	// cancellation while waiting for write admission or transport I/O.
+	WriteFrameContext func(context.Context, can.Frame) error
+	// TransferTimeout bounds the entire transmit operation, including repeated
+	// receiver holds. Zero selects DefaultTransferTimeout.
+	TransferTimeout time.Duration
+	// MaxSessions bounds combined receive and transmit state. Zero selects 512.
+	MaxSessions int
 
 	// LocalAddress returns the client's currently claimed address. When set,
 	// addressed TP traffic for other nodes is ignored. A function is used
@@ -37,7 +47,8 @@ type ManagerConfig struct {
 	// Tests inject a fake to drive timeouts deterministically.
 	AfterFunc func(d time.Duration, f func()) Timer
 
-	// Sleep pauses between BAM DT frames; nil means time.Sleep.
+	// Sleep overrides BAM pacing for deterministic tests. Production callers
+	// should leave it nil to use interruptible context-aware pacing.
 	Sleep func(d time.Duration)
 }
 
@@ -55,9 +66,11 @@ type sessionKey struct {
 type sessionState int
 
 const (
-	stateReceivingDT   sessionState = iota // accumulating DT frames
-	stateWaitingForCTS                     // transmitter waiting for CTS
-	stateSendingDT                         // transmitter sending DT frames
+	stateReceivingDT       sessionState = iota // accumulating DT frames
+	stateWaitingForCTS                         // transmitter waiting for CTS
+	stateSendingDT                             // transmitter sending DT frames
+	stateSendingBAM                            // transmitter sending broadcast DT frames
+	stateCompletingReceive                     // receiver sending its final acknowledgment
 )
 
 // session holds all state for a single transport protocol exchange.
@@ -74,7 +87,12 @@ type session struct {
 	maxPerCTS uint8 // max DT frames per CTS cycle (from RTS byte 4)
 
 	// Timeout management
-	timer Timer
+	timer           Timer
+	timerGeneration uint64
+	deadlineTimer   Timer
+	stopContext     func() bool
+	ctx             context.Context
+	cancel          context.CancelCauseFunc
 
 	// Transmit-side fields for RTS/CTS
 	txPayload   []byte        // full payload to transmit
@@ -111,16 +129,18 @@ func NewManager(cfg ManagerConfig) *Manager {
 	if afterFunc == nil {
 		afterFunc = func(d time.Duration, f func()) Timer { return time.AfterFunc(d, f) }
 	}
-	sleep := cfg.Sleep
-	if sleep == nil {
-		sleep = time.Sleep
+	if cfg.TransferTimeout <= 0 {
+		cfg.TransferTimeout = DefaultTransferTimeout
+	}
+	if cfg.MaxSessions <= 0 {
+		cfg.MaxSessions = 512
 	}
 	return &Manager{
 		config:    cfg,
 		sessions:  make(map[sessionKey]*session),
 		logger:    logger,
 		afterFunc: afterFunc,
-		sleep:     sleep,
+		sleep:     cfg.Sleep,
 	}
 }
 
@@ -212,7 +232,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 		m.logger.Warn("unexpected DT sequence number",
 			"expected", expectedSeq, "got", seqNum,
 			"source", source, "pgn", sess.key.pgn)
-		m.removeSession(sess.key)
+		m.finishSessionLocked(sess, errors.New("unexpected DT sequence number"))
 		m.mu.Unlock()
 		return
 	}
@@ -222,7 +242,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	remaining := int(sess.totalSize) - offset
 	if remaining <= 0 || offset < 0 || offset >= len(sess.data) {
 		m.logger.Warn("DT frame exceeds announced payload", "sequence", seqNum, "size", sess.totalSize)
-		m.removeSession(sess.key)
+		m.finishSessionLocked(sess, errors.New("DT frame exceeds announced payload"))
 		m.mu.Unlock()
 		return
 	}
@@ -234,9 +254,7 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	sess.received++
 
 	// Reset the DT timeout timer.
-	if sess.timer != nil {
-		sess.timer.Stop()
-	}
+	m.stopTimerLocked(sess)
 
 	if sess.received < int(sess.numFrames) {
 		// Addressed transfers are flow-controlled in blocks. Once the block
@@ -260,20 +278,12 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 		}
 
 		// More frames expected; set a DT timeout.
-		sess.timer = m.afterFunc(DTTimeout, func() {
-			m.mu.Lock()
-			defer m.mu.Unlock()
-			m.logger.Warn("DT timeout", "source", source, "pgn", sess.key.pgn,
-				"received", sess.received, "expected", sess.numFrames)
-			m.removeSession(sess.key)
-		})
+		m.armTimerLocked(sess, DTTimeout, errors.New("DT timeout"))
 		key := sess.key
 		m.mu.Unlock()
 		if nextCTS != nil {
-			if err := m.config.WriteFrame(*nextCTS); err != nil {
-				m.mu.Lock()
-				m.removeSession(key)
-				m.mu.Unlock()
+			if err := m.writeSessionFrame(sess, *nextCTS); err != nil {
+				_ = m.finishSession(sess, err)
 				m.logger.Warn("failed to send next CTS", "error", err, "pgn", key.pgn)
 			}
 		}
@@ -296,13 +306,21 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 		ackFrame = &f
 	}
 
-	m.removeSession(key)
+	sess.state = stateCompletingReceive
 	m.mu.Unlock()
 
 	if ackFrame != nil {
-		if err := m.config.WriteFrame(*ackFrame); err != nil {
+		if err := m.writeSessionFrame(sess, *ackFrame); err != nil {
+			_ = m.finishSession(sess, err)
 			m.logger.Warn("failed to send EndOfMsgAck", "error", err)
+			return
 		}
+	}
+	m.mu.Lock()
+	completed := m.finishSessionLocked(sess, nil)
+	m.mu.Unlock()
+	if !completed {
+		return
 	}
 	if m.config.OnComplete != nil {
 		m.config.OnComplete(key.pgn, key.source, dst, data)
@@ -312,21 +330,12 @@ func (m *Manager) handleDT(frame can.Frame, source uint8, destination uint8) {
 	}
 }
 
-// findSession looks up a session by source and destination. It tries an exact match
-// first, then falls back to broadcast destination for BAM sessions.
+// findSession looks up only receiving sessions by source and destination.
 func (m *Manager) findSession(source uint8, destination uint8) *session {
 	// Try each PGN — we iterate sessions since PGN is part of the key.
 	for k, s := range m.sessions {
 		if k.source == source && k.destination == destination && s.state == stateReceivingDT {
 			return s
-		}
-	}
-	// For DT frames with broadcast destination, try BAM sessions.
-	if destination == BroadcastAddr {
-		for k, s := range m.sessions {
-			if k.source == source && k.destination == BroadcastAddr {
-				return s
-			}
 		}
 	}
 	return nil
@@ -373,222 +382,160 @@ func validateTransportPGN(pgn uint32) error {
 	return nil
 }
 
-// removeReceiveSessions removes the one active receive transfer for a source
-// and destination. DT packets carry no PGN, so allowing multiple such
-// sessions would make packet ownership ambiguous.
+func (m *Manager) admitReceiveLocked(key sessionKey) bool {
+	if m.closed {
+		return false
+	}
+	for activeKey, sess := range m.sessions {
+		if activeKey.source == key.source && activeKey.destination == key.destination && sess.txDone != nil {
+			// A transport echo must not replace an outgoing transfer.
+			return false
+		}
+	}
+	m.removeReceiveSessions(key.source, key.destination)
+	if len(m.sessions) >= m.config.MaxSessions {
+		m.logger.Warn("transport receive session table is full", "source", key.source, "destination", key.destination)
+		return false
+	}
+	return true
+}
+
+// removeReceiveSessions replaces the one receive transfer for these addresses.
 func (m *Manager) removeReceiveSessions(source, destination uint8) {
 	for key, sess := range m.sessions {
-		if key.source == source && key.destination == destination && sess.state == stateReceivingDT {
-			m.removeSession(key)
+		if key.source == source && key.destination == destination && sess.txDone == nil {
+			m.finishSessionLocked(sess, errors.New("receive transfer superseded"))
 		}
 	}
 }
 
-// removeSession stops timers and deletes a session from the map.
-func (m *Manager) removeSession(key sessionKey) {
-	if s, ok := m.sessions[key]; ok {
-		if s.timer != nil {
-			s.timer.Stop()
-		}
-		delete(m.sessions, key)
+// stopTimerLocked invalidates callbacks which have already started and cannot
+// be stopped by Timer.Stop. The caller holds m.mu.
+func (m *Manager) stopTimerLocked(sess *session) {
+	sess.timerGeneration++
+	if sess.timer != nil {
+		sess.timer.Stop()
+		sess.timer = nil
 	}
 }
 
-// SendBAM transmits a multi-frame message using BAM (Broadcast Announce Message).
-// This blocks the caller for the duration of the transmission due to the required
-// inter-frame delays.
-func (m *Manager) SendBAM(pgn uint32, source uint8, payload []byte) error {
-	if err := validateTransportPGN(pgn); err != nil {
-		return fmt.Errorf("send BAM: %w", err)
-	}
-	if err := validatePayload(payload); err != nil {
-		return fmt.Errorf("send BAM: %w", err)
-	}
-	m.mu.Lock()
-	closed := m.closed
-	m.mu.Unlock()
-	if closed {
-		return fmt.Errorf("send BAM: manager closed")
-	}
-	payload = append([]byte(nil), payload...)
-	totalSize := uint16(len(payload))
-	numFrames := uint8((len(payload) + MaxDTDataBytes - 1) / MaxDTDataBytes)
-
-	// Build and send CM_BAM announcement.
-	cmFrame := buildCMBAMFrame(totalSize, numFrames, pgn, source)
-	if err := m.config.WriteFrame(cmFrame); err != nil {
-		return fmt.Errorf("send CM_BAM: %w", err)
-	}
-
-	// Send DT frames with inter-frame delay.
-	dtFrames := buildDTFrameRange(payload, 1, int(numFrames), source, BroadcastAddr)
-	for i, f := range dtFrames {
-		if i > 0 {
-			m.sleep(BAMInterFrameDelay)
-		}
-		m.mu.Lock()
-		closed := m.closed
-		m.mu.Unlock()
-		if closed {
-			return fmt.Errorf("send BAM: manager closed")
-		}
-		if err := m.config.WriteFrame(f); err != nil {
-			return fmt.Errorf("send DT frame %d: %w", i+1, err)
-		}
-	}
-
-	return nil
-}
-
-// SendRTSCTS transmits a multi-frame message using RTS/CTS flow control.
-// This blocks until the transfer completes or a timeout/error occurs.
-func (m *Manager) SendRTSCTS(pgn uint32, source uint8, destination uint8, payload []byte) error {
-	if destination == BroadcastAddr {
-		return fmt.Errorf("send RTS/CTS: broadcast destination is invalid")
-	}
-	if err := validatePayload(payload); err != nil {
-		return fmt.Errorf("send RTS/CTS: %w", err)
-	}
-	if err := validateTransportPGN(pgn); err != nil {
-		return fmt.Errorf("send RTS/CTS: %w", err)
-	}
-	totalSize := uint16(len(payload))
-	numFrames := uint8((len(payload) + MaxDTDataBytes - 1) / MaxDTDataBytes)
-
-	key := sessionKey{source: source, destination: destination, pgn: pgn}
-
-	sess := &session{
-		key:       key,
-		state:     stateWaitingForCTS,
-		totalSize: totalSize,
-		numFrames: numFrames,
-		txPayload: append([]byte(nil), payload...),
-		txDone:    make(chan struct{}),
-	}
-
-	m.mu.Lock()
-	if m.closed {
-		m.mu.Unlock()
-		return fmt.Errorf("manager closed")
-	}
-	for activeKey, active := range m.sessions {
-		if active.txDone != nil && activeKey.source == source && activeKey.destination == destination {
-			m.mu.Unlock()
-			return fmt.Errorf("transport session already active for source %d destination %d", source, destination)
-		}
-	}
-	m.sessions[key] = sess
-
-	// Set CTS timeout.
-	sess.timer = m.afterFunc(CTSTimeout, func() {
+func (m *Manager) armTimerLocked(sess *session, duration time.Duration, err error) {
+	m.stopTimerLocked(sess)
+	generation := sess.timerGeneration
+	sess.timer = m.afterFunc(duration, func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
-		if _, ok := m.sessions[key]; ok {
-			sess.txErr = fmt.Errorf("CTS timeout waiting for response")
-			m.removeSession(key)
-			close(sess.txDone)
+		if m.sessions[sess.key] != sess || sess.timerGeneration != generation {
+			return
 		}
+		m.finishSessionLocked(sess, err)
 	})
-	m.mu.Unlock()
+}
 
-	// Send RTS.
-	rtsFrame := buildRTSFrame(totalSize, numFrames, pgn, source, destination)
-	if err := m.config.WriteFrame(rtsFrame); err != nil {
-		// The CTS timeout may have fired (removing the session and closing
-		// txDone) while WriteFrame blocked; only close txDone if we removed
-		// the session ourselves.
-		m.mu.Lock()
-		_, active := m.sessions[key]
-		if active {
-			m.removeSession(key)
-		}
-		m.mu.Unlock()
-		if active {
-			close(sess.txDone)
-		}
-		return fmt.Errorf("send RTS: %w", err)
+// finishSessionLocked owns every terminal transition and completion signal.
+// Pointer identity protects a replacement transfer with an identical wire key.
+func (m *Manager) finishSessionLocked(sess *session, err error) bool {
+	if m.sessions[sess.key] != sess {
+		return false
 	}
+	delete(m.sessions, sess.key)
+	m.stopTimerLocked(sess)
+	if sess.deadlineTimer != nil {
+		sess.deadlineTimer.Stop()
+	}
+	if sess.stopContext != nil {
+		sess.stopContext()
+	}
+	sess.txErr = err
+	if sess.cancel != nil {
+		sess.cancel(err)
+	}
+	if sess.txDone != nil {
+		close(sess.txDone)
+	}
+	return true
+}
 
-	// Wait for completion.
-	<-sess.txDone
+func (m *Manager) finishSession(sess *session, err error) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.finishSessionLocked(sess, err)
 	return sess.txErr
 }
 
-// handleCTSReceive processes an incoming CTS frame for a transmit-side RTS/CTS session.
+// writeSessionFrame rejects obsolete work both before and after transport I/O.
+// The context-aware writer is responsible for cancellation during the I/O.
+func (m *Manager) writeSessionFrame(sess *session, frame can.Frame) error {
+	m.mu.Lock()
+	active := m.sessions[sess.key] == sess
+	err := sess.txErr
+	m.mu.Unlock()
+	if !active {
+		if err == nil {
+			err = errors.New("transport session is no longer active")
+		}
+		return err
+	}
+	if err := context.Cause(sess.ctx); err != nil {
+		return err
+	}
+	var writeErr error
+	if m.config.WriteFrameContext != nil {
+		writeErr = m.config.WriteFrameContext(sess.ctx, frame)
+	} else {
+		writeErr = m.config.WriteFrame(frame)
+	}
+	m.mu.Lock()
+	active = m.sessions[sess.key] == sess
+	err = sess.txErr
+	m.mu.Unlock()
+	if !active {
+		return err
+	}
+	if err := context.Cause(sess.ctx); err != nil {
+		return err
+	}
+	return writeErr
+}
+
+// handleCTSReceive sends a validated receiver-granted packet window.
 func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination uint8) {
 	numFrames := frame.Data[1]
 	nextSeqNum := frame.Data[2]
-	pgnBytes := extractPGN(frame.Data)
-
-	// For a transmit session, the CTS comes FROM the receiver (source of CTS) TO us (destination of CTS).
-	// Our session key has our address as source and the CTS sender as destination.
-	key := sessionKey{source: destination, destination: source, pgn: pgnBytes}
+	key := sessionKey{source: destination, destination: source, pgn: extractPGN(frame.Data)}
 
 	m.mu.Lock()
-	sess, ok := m.sessions[key]
-	if !ok || sess.state != stateWaitingForCTS {
+	sess := m.sessions[key]
+	if sess == nil || sess.state != stateWaitingForCTS {
 		m.mu.Unlock()
 		return
 	}
 	if numFrames == 0 {
-		// A zero-packet CTS asks the transmitter to keep waiting. Re-arm the
-		// timeout so a peer can apply backpressure without corrupting state.
-		if sess.timer != nil {
-			sess.timer.Stop()
-		}
-		sess.timer = m.afterFunc(CTSTimeout, func() {
-			m.mu.Lock()
-			defer m.mu.Unlock()
-			if _, active := m.sessions[key]; active {
-				sess.txErr = fmt.Errorf("CTS timeout while receiver paused transfer")
-				m.removeSession(key)
-				close(sess.txDone)
-			}
-		})
+		m.armTimerLocked(sess, CTSTimeout, errors.New("CTS timeout while receiver paused transfer"))
 		m.mu.Unlock()
 		return
 	}
 	lastSeqNum := int(nextSeqNum) + int(numFrames) - 1
 	if nextSeqNum == 0 || int(nextSeqNum) > int(sess.numFrames) || lastSeqNum > int(sess.numFrames) {
-		sess.txErr = fmt.Errorf(
-			"invalid CTS range: first=%d count=%d total=%d",
-			nextSeqNum,
-			numFrames,
-			sess.numFrames,
-		)
-		m.removeSession(key)
+		m.finishSessionLocked(sess, fmt.Errorf("invalid CTS range: first=%d count=%d total=%d", nextSeqNum, numFrames, sess.numFrames))
 		m.mu.Unlock()
-		close(sess.txDone)
 		return
 	}
-
-	// Stop the CTS timeout timer.
-	if sess.timer != nil {
-		sess.timer.Stop()
-	}
-
+	m.stopTimerLocked(sess)
 	sess.state = stateSendingDT
-	payload := sess.txPayload // immutable after session creation; safe to read unlocked
+	payload := sess.txPayload
 	m.mu.Unlock()
 
-	// Send the requested DT frames without holding the manager lock.
 	for _, dtFrame := range buildDTFrameRange(payload, nextSeqNum, int(numFrames), destination, source) {
-		if err := m.config.WriteFrame(dtFrame); err != nil {
-			// The session may have been removed (abort/close) while writing;
-			// only mutate and signal completion if we still own it.
-			m.mu.Lock()
-			_, active := m.sessions[key]
-			if active {
-				sess.txErr = fmt.Errorf("send DT frame %d: %w", dtFrame.Data[0], err)
-				m.removeSession(key)
-			}
-			m.mu.Unlock()
-			if active {
-				close(sess.txDone)
-			}
+		if err := m.writeSessionFrame(sess, dtFrame); err != nil {
+			_ = m.finishSession(sess, fmt.Errorf("send DT frame %d: %w", dtFrame.Data[0], err))
 			return
 		}
 		m.mu.Lock()
+		if m.sessions[key] != sess {
+			m.mu.Unlock()
+			return
+		}
 		seq := dtFrame.Data[0]
 		if !sess.txSent[seq] {
 			sess.txSent[seq] = true
@@ -597,95 +544,46 @@ func (m *Manager) handleCTSReceive(frame can.Frame, source uint8, destination ui
 		m.mu.Unlock()
 	}
 
-	// After sending DT frames, set a CTS timeout for the next CTS or EndOfMsgAck.
-	// The session may have been removed (abort/close) while frames were being
-	// written; only re-arm if it still exists.
 	m.mu.Lock()
-	if _, ok := m.sessions[key]; ok {
+	if m.sessions[key] == sess {
 		sess.state = stateWaitingForCTS
-		sess.timer = m.afterFunc(CTSTimeout, func() {
-			m.mu.Lock()
-			defer m.mu.Unlock()
-			if _, ok := m.sessions[key]; ok {
-				sess.txErr = fmt.Errorf("CTS timeout after sending DT frames")
-				m.removeSession(key)
-				close(sess.txDone)
-			}
-		})
+		m.armTimerLocked(sess, CTSTimeout, errors.New("CTS timeout after sending DT frames"))
 	}
 	m.mu.Unlock()
 }
 
-// handleEndOfMsgAckReceive processes an EndOfMsgAck for a transmit-side session.
+// handleEndOfMsgAckReceive validates and completes a transmit-side session.
 func (m *Manager) handleEndOfMsgAckReceive(frame can.Frame, source uint8, destination uint8) {
-	pgnBytes := extractPGN(frame.Data)
-
-	// Our session key: we are the transmitter (destination of EndOfMsgAck), receiver is source.
-	key := sessionKey{source: destination, destination: source, pgn: pgnBytes}
-
+	key := sessionKey{source: destination, destination: source, pgn: extractPGN(frame.Data)}
 	m.mu.Lock()
-	sess, ok := m.sessions[key]
-	if !ok || sess.state != stateWaitingForCTS {
-		m.mu.Unlock()
+	defer m.mu.Unlock()
+	sess := m.sessions[key]
+	if sess == nil || sess.state != stateWaitingForCTS {
 		return
 	}
 	totalSize := uint16(frame.Data[1]) | uint16(frame.Data[2])<<8
 	numFrames := frame.Data[3]
 	if totalSize != sess.totalSize || numFrames != sess.numFrames || sess.txSentCount != int(sess.numFrames) {
-		sess.txErr = fmt.Errorf(
+		m.finishSessionLocked(sess, fmt.Errorf(
 			"invalid EndOfMsgAck: size=%d frames=%d packets sent=%d; want size=%d frames=%d",
-			totalSize,
-			numFrames,
-			sess.txSentCount,
-			sess.totalSize,
-			sess.numFrames,
-		)
-		m.removeSession(key)
-		m.mu.Unlock()
-		close(sess.txDone)
+			totalSize, numFrames, sess.txSentCount, sess.totalSize, sess.numFrames))
 		return
 	}
-
-	if sess.timer != nil {
-		sess.timer.Stop()
-	}
-	m.removeSession(key)
-	m.mu.Unlock()
-
-	// Signal completion.
-	close(sess.txDone)
+	m.finishSessionLocked(sess, nil)
 }
 
-// handleAbortReceive processes an Abort frame.
 func (m *Manager) handleAbortReceive(frame can.Frame, source uint8, destination uint8) {
-	pgnBytes := extractPGN(frame.Data)
-	reason := frame.Data[1]
-
-	m.logger.Warn("TP abort received", "source", source, "pgn", pgnBytes, "reason", reason)
-
-	// Try both session key orientations.
-	key1 := sessionKey{source: destination, destination: source, pgn: pgnBytes}
-	key2 := sessionKey{source: source, destination: destination, pgn: pgnBytes}
-
+	pgnNumber := extractPGN(frame.Data)
+	err := fmt.Errorf("remote abort, reason=%d", frame.Data[1])
+	keys := [2]sessionKey{
+		{source: destination, destination: source, pgn: pgnNumber},
+		{source: source, destination: destination, pgn: pgnNumber},
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
-	if sess, ok := m.sessions[key1]; ok {
-		if sess.txDone != nil {
-			sess.txErr = fmt.Errorf("remote abort, reason=%d", reason)
-			m.removeSession(key1)
-			close(sess.txDone)
-		} else {
-			m.removeSession(key1)
-		}
-	}
-	if sess, ok := m.sessions[key2]; ok {
-		if sess.txDone != nil {
-			sess.txErr = fmt.Errorf("remote abort, reason=%d", reason)
-			m.removeSession(key2)
-			close(sess.txDone)
-		} else {
-			m.removeSession(key2)
+	for _, key := range keys {
+		if sess := m.sessions[key]; sess != nil {
+			m.finishSessionLocked(sess, err)
 		}
 	}
 }
@@ -709,25 +607,27 @@ func buildEndOfMsgAckFrame(sess *session) can.Frame {
 	}
 }
 
-// Close stops all active sessions and prevents new ones from being created.
+// Reset invalidates every active transfer without closing the manager. The
+// supplied cause reaches blocked transmitters and context-aware frame writes.
+// Call this whenever the network connection or local claimed address changes.
+func (m *Manager) Reset(err error) {
+	if err == nil {
+		err = errors.New("transport manager reset")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for _, sess := range m.sessions {
+		m.finishSessionLocked(sess, err)
+	}
+}
+
+// Close stops active transfers and permanently prevents new sessions.
 func (m *Manager) Close() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
 	m.closed = true
-	for key, sess := range m.sessions {
-		if sess.timer != nil {
-			sess.timer.Stop()
-		}
-		if sess.txDone != nil {
-			sess.txErr = fmt.Errorf("manager closed")
-			select {
-			case <-sess.txDone:
-			default:
-				close(sess.txDone)
-			}
-		}
-		delete(m.sessions, key)
+	for _, sess := range m.sessions {
+		m.finishSessionLocked(sess, errors.New("manager closed"))
 	}
 }
 

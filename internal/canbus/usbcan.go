@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/serialio"
 	"go.bug.st/serial"
 )
 
@@ -111,7 +112,7 @@ func (c *usbCANChannel) Run(ctx context.Context, handler func(can.Frame)) error 
 	}
 	openPort := c.options.openPort
 	if openPort == nil {
-		openPort = serial.Open
+		openPort = serialio.Open
 	}
 	port, err := openPort(c.options.SerialPortName, mode)
 	if err != nil {

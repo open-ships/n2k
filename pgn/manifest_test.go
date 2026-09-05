@@ -16,13 +16,15 @@ import (
 )
 
 type pgnManifest struct {
-	SchemaVersion int                   `json:"schemaVersion"`
-	Package       string                `json:"package"`
-	Source        string                `json:"source"`
-	Description   string                `json:"description"`
-	Notes         []string              `json:"notes"`
-	Counts        pgnManifestCounts     `json:"counts"`
-	Categories    []pgnManifestCategory `json:"categories"`
+	SchemaVersion  int                   `json:"schemaVersion"`
+	Package        string                `json:"package"`
+	Source         string                `json:"source"`
+	SourceRevision string                `json:"sourceRevision"`
+	SourceSHA256   string                `json:"sourceSHA256"`
+	Description    string                `json:"description"`
+	Notes          []string              `json:"notes"`
+	Counts         pgnManifestCounts     `json:"counts"`
+	Categories     []pgnManifestCategory `json:"categories"`
 }
 
 type pgnManifestCounts struct {
@@ -40,20 +42,24 @@ type pgnManifestCategory struct {
 }
 
 type pgnManifestEntry struct {
-	ID             string                  `json:"id"`
-	SourceID       string                  `json:"sourceId,omitempty"`
-	PGN            uint32                  `json:"pgn"`
-	Description    string                  `json:"description"`
-	Implementation string                  `json:"implementation"`
-	Complete       bool                    `json:"complete"`
-	Fallback       bool                    `json:"fallback,omitempty"`
-	Missing        []string                `json:"missing,omitempty"`
-	FastPacket     bool                    `json:"fastPacket"`
-	ManufacturerID int                     `json:"manufacturerId"`
-	Proprietary    bool                    `json:"proprietary"`
-	SourceFile     string                  `json:"sourceFile"`
-	PayloadShape   pgnManifestPayloadShape `json:"payloadShape"`
-	Example        map[string]any          `json:"example"`
+	ID               string                  `json:"id"`
+	SourceID         string                  `json:"sourceId,omitempty"`
+	PGN              uint32                  `json:"pgn"`
+	Description      string                  `json:"description"`
+	Implementation   string                  `json:"implementation"`
+	Complete         bool                    `json:"complete"`
+	DecodeComplete   bool                    `json:"decodeComplete"`
+	EncodeComplete   bool                    `json:"encodeComplete"`
+	CodecLimitations []string                `json:"codecLimitations,omitempty"`
+	HardwareVerified bool                    `json:"hardwareVerified"`
+	Fallback         bool                    `json:"fallback,omitempty"`
+	Missing          []string                `json:"missing,omitempty"`
+	FastPacket       bool                    `json:"fastPacket"`
+	ManufacturerID   int                     `json:"manufacturerId"`
+	Proprietary      bool                    `json:"proprietary"`
+	SourceFile       string                  `json:"sourceFile"`
+	PayloadShape     pgnManifestPayloadShape `json:"payloadShape"`
+	Example          map[string]any          `json:"example"`
 }
 
 type pgnManifestPayloadShape struct {
@@ -69,7 +75,7 @@ type pgnManifestField struct {
 	VariableLength bool    `json:"variableLength"`
 	FieldType      string  `json:"fieldType"`
 	GoType         string  `json:"goType"`
-	Resolution     float32 `json:"resolution"`
+	Resolution     float64 `json:"resolution"`
 	Signed         bool    `json:"signed"`
 	Unit           string  `json:"unit,omitempty"`
 	BitLookupName  string  `json:"bitLookupName,omitempty"`
@@ -189,10 +195,12 @@ func buildExpectedManifest(t *testing.T) pgnManifest {
 	}
 
 	return pgnManifest{
-		SchemaVersion: 4,
-		Package:       "github.com/open-ships/n2k/pgn",
-		Source:        "PGN structs and PgnInfoLookup metadata",
-		Description:   "NMEA 2000 PGN variants decoded and encoded by this package.",
+		SchemaVersion:  4,
+		Package:        "github.com/open-ships/n2k/pgn",
+		Source:         "PGN structs and PgnInfoLookup metadata",
+		SourceRevision: SourceRevision,
+		SourceSHA256:   SourceSHA256,
+		Description:    "NMEA 2000 PGN variants decoded and encoded by this package.",
 		Notes: []string{
 			"Each entry corresponds to one PGN struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
 			"Categories are grouped by the pgn package source file that owns each PGN struct.",
@@ -237,20 +245,24 @@ func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 		t.Fatalf("missing source file for %s", info.Id)
 	}
 	return pgnManifestEntry{
-		ID:             info.Id,
-		SourceID:       info.SourceID,
-		PGN:            info.PGN,
-		Description:    info.Description,
-		Implementation: "typed",
-		Complete:       info.Complete,
-		Fallback:       info.Fallback,
-		Missing:        append([]string(nil), info.Missing...),
-		FastPacket:     info.Fast,
-		ManufacturerID: int(info.ManId),
-		Proprietary:    IsProprietaryPGN(info.PGN),
-		SourceFile:     sourceFile,
-		PayloadShape:   manifestPayloadShape(info.Fields),
-		Example:        manifestExample(t, info),
+		ID:               info.Id,
+		SourceID:         info.SourceID,
+		PGN:              info.PGN,
+		Description:      info.Description,
+		Implementation:   "typed",
+		Complete:         info.Complete,
+		DecodeComplete:   info.DecodeComplete,
+		EncodeComplete:   info.EncodeComplete,
+		CodecLimitations: append([]string(nil), info.CodecLimitations...),
+		HardwareVerified: info.HardwareVerified,
+		Fallback:         info.Fallback,
+		Missing:          append([]string(nil), info.Missing...),
+		FastPacket:       info.Fast,
+		ManufacturerID:   int(info.ManId),
+		Proprietary:      IsProprietaryPGN(info.PGN),
+		SourceFile:       sourceFile,
+		PayloadShape:     manifestPayloadShape(info.Fields),
+		Example:          manifestExample(t, info),
 	}
 }
 

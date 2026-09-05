@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"context"
+	"errors"
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
@@ -37,7 +39,11 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 
 	m.mu.Lock()
 
-	m.removeReceiveSessions(source, destination)
+	if !m.admitReceiveLocked(key) {
+		m.mu.Unlock()
+		return
+	}
+	ctx, cancel := context.WithCancelCause(context.Background())
 
 	sess := &session{
 		key:       key,
@@ -48,18 +54,12 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 		received:  0,
 		data:      make([]byte, totalSize),
 		info:      info,
+		ctx:       ctx,
+		cancel:    cancel,
 	}
 
-	// Set a DT timeout.
-	sess.timer = m.afterFunc(DTTimeout, func() {
-		m.mu.Lock()
-		defer m.mu.Unlock()
-		m.logger.Warn("RTS/CTS DT timeout", "source", source, "pgn", pgn,
-			"received", sess.received, "expected", numFrames)
-		m.removeSession(key)
-	})
-
 	m.sessions[key] = sess
+	m.armTimerLocked(sess, DTTimeout, errors.New("RTS/CTS DT timeout"))
 	m.mu.Unlock()
 
 	m.logger.Debug("RTS/CTS receive session started",
@@ -71,10 +71,8 @@ func (m *Manager) handleRTSReceive(frame can.Frame, source uint8, destination ui
 	if maxPerCTS < requested {
 		requested = maxPerCTS
 	}
-	if err := m.config.WriteFrame(buildCTSFrame(requested, 1, pgn, destination, source)); err != nil {
-		m.mu.Lock()
-		m.removeSession(key)
-		m.mu.Unlock()
+	if err := m.writeSessionFrame(sess, buildCTSFrame(requested, 1, pgn, destination, source)); err != nil {
+		_ = m.finishSession(sess, err)
 		m.logger.Warn("failed to send CTS", "error", err, "pgn", pgn)
 	}
 }

@@ -36,7 +36,8 @@ type actisenseConnection interface {
 }
 
 // ActisenseConnection is the public package's byte-stream seam for a custom
-// gateway transport.
+// gateway transport. Close must promptly unblock Read and Write and may run
+// concurrently with either operation.
 type ActisenseConnection interface {
 	io.Reader
 	io.Writer
@@ -83,6 +84,7 @@ type actisenseStreamBus struct {
 
 	mu                 sync.Mutex
 	epoch              *actisenseEpoch
+	active             *actisenseEpoch // includes an opened, not-yet-ready connection
 	closed             bool
 	stopped            bool
 	stopErr            error
@@ -255,7 +257,9 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 		}
 	}
 	epoch.session = actisense.NewSession(actisense.SessionConfig{
-		Write: func(buf []byte) error { return writeActisenseUnit(connection, buf) },
+		Write: func(writeCtx context.Context, buf []byte) error {
+			return writeActisenseUnitContext(writeCtx, connection, buf)
+		},
 		OnDatagram: func(datagram actisense.Datagram) {
 			adapter.observeDatagram(datagram, emitObservation)
 		},
@@ -292,6 +296,22 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 			}
 		},
 	})
+	b.mu.Lock()
+	if b.closed {
+		b.mu.Unlock()
+		_ = connection.Close()
+		epoch.session.Close(errBusClosed)
+		return errBusClosed, false
+	}
+	b.active = epoch
+	b.mu.Unlock()
+	defer func() {
+		b.mu.Lock()
+		if b.active == epoch {
+			b.active = nil
+		}
+		b.mu.Unlock()
+	}()
 	readErr := make(chan error, 1)
 	go func() { readErr <- epoch.session.Run(connection) }()
 
@@ -354,6 +374,30 @@ func writeActisenseUnit(writer io.Writer, buf []byte) error {
 	return nil
 }
 
+// Cancellation closes only this connection epoch. A canceled or partial
+// frame cannot safely share its stream with a subsequent write.
+func writeActisenseUnitContext(ctx context.Context, connection actisenseConnection, buf []byte) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	interrupted := make(chan struct{})
+	stop := context.AfterFunc(ctx, func() {
+		_ = connection.Close()
+		close(interrupted)
+	})
+	err := writeActisenseUnit(connection, buf)
+	if !stop() {
+		<-interrupted
+	}
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	if err != nil {
+		_ = connection.Close()
+	}
+	return err
+}
+
 func (b *actisenseStreamBus) publishEpoch(epoch *actisenseEpoch) bool {
 	b.mu.Lock()
 	if b.closed {
@@ -396,15 +440,14 @@ func (b *actisenseStreamBus) clearEpoch(epoch *actisenseEpoch) {
 	}
 }
 
-func (b *actisenseStreamBus) awaitEpoch() (*actisenseEpoch, error) {
-	return b.awaitEpochContext(context.Background())
-}
-
 func (b *actisenseStreamBus) awaitEpochContext(ctx context.Context) (*actisenseEpoch, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	for {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		b.mu.Lock()
 		switch {
 		case b.closed:
@@ -433,13 +476,17 @@ func (b *actisenseStreamBus) awaitEpochContext(ctx context.Context) (*actisenseE
 }
 
 func (b *actisenseStreamBus) writeFrame(frame can.Frame) error {
+	return b.writeFrameContext(context.Background(), frame)
+}
+
+func (b *actisenseStreamBus) writeFrameContext(ctx context.Context, frame can.Frame) error {
 	if frame.Length > 8 {
 		return fmt.Errorf("actisense: invalid CAN frame length %d", frame.Length)
 	}
 	if !b.rawCAN {
 		return errors.New("actisense: a gateway-owned message session cannot write source-authoritative CAN frames")
 	}
-	epoch, err := b.awaitEpoch()
+	epoch, err := b.awaitEpochContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -448,13 +495,13 @@ func (b *actisenseStreamBus) writeFrame(frame can.Frame) error {
 		if encodeErr != nil {
 			return encodeErr
 		}
-		return epoch.session.Write(buf)
+		return epoch.session.WriteContext(ctx, buf)
 	}
 	buf, encodeErr := actisense.EncodeCANFrame(frame, actisense.DirectionTransmitted, 0, 0)
 	if encodeErr != nil {
 		return encodeErr
 	}
-	return epoch.session.Write(buf)
+	return epoch.session.WriteContext(ctx, buf)
 }
 
 func (b *actisenseStreamBus) writeMessage(pgnNumber uint32, priority, destination uint8, payload []byte) error {
@@ -475,7 +522,7 @@ func (b *actisenseStreamBus) writeMessageContext(ctx context.Context, pgnNumber 
 	if err != nil {
 		return err
 	}
-	return epoch.session.Write(buf)
+	return epoch.session.WriteContext(ctx, buf)
 }
 
 func (b *actisenseStreamBus) Request(ctx context.Context, command byte, data []byte) (actisense.BEMResponse, error) {
@@ -604,13 +651,19 @@ func (b *actisenseStreamBus) Close() error {
 	}
 	b.closed = true
 	epoch := b.epoch
+	active := b.active
 	close(b.done)
 	b.broadcastLocked()
 	b.mu.Unlock()
 	if epoch == nil {
+		if active != nil {
+			active.session.Close(errBusClosed)
+			return active.connection.Close()
+		}
 		return nil
 	}
 	b.restoreEpoch(epoch)
+	epoch.session.Close(errBusClosed)
 	return epoch.connection.Close()
 }
 
@@ -628,6 +681,9 @@ func (b *ActisenseRawTCPBus) RunObservations(ctx context.Context, handler func(r
 	return b.stream.RunObservations(ctx, handler)
 }
 func (b *ActisenseRawTCPBus) WriteFrame(frame can.Frame) error { return b.stream.writeFrame(frame) }
+func (b *ActisenseRawTCPBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	return b.stream.writeFrameContext(ctx, frame)
+}
 func (b *ActisenseRawTCPBus) SetConnectionObserver(observer func(bool, uint64)) {
 	b.stream.SetConnectionObserver(observer)
 }
@@ -653,6 +709,9 @@ func (b *ActisenseCANASCIITCPBus) RunObservations(ctx context.Context, handler f
 }
 func (b *ActisenseCANASCIITCPBus) WriteFrame(frame can.Frame) error {
 	return b.stream.writeFrame(frame)
+}
+func (b *ActisenseCANASCIITCPBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	return b.stream.writeFrameContext(ctx, frame)
 }
 func (b *ActisenseCANASCIITCPBus) SetConnectionObserver(observer func(bool, uint64)) {
 	b.stream.SetConnectionObserver(observer)

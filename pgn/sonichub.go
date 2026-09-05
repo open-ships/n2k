@@ -24,14 +24,47 @@ func (m *SonichubAmRadio) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubAmRadio) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubAmRadio) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubAmRadio) Clone() Message {
+	if m == nil {
+		return (*SonichubAmRadio)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	copy.Frequency = clonePointer(m.Frequency)
+	copy.NoiseLevel = clonePointer(m.NoiseLevel)
+	copy.SignalLevel = clonePointer(m.SignalLevel)
+	return &copy
+}
+
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SonichubAmRadio) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency), true
+	if *m.Frequency == 4294967295 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967294 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Frequency)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -57,6 +90,21 @@ func (m *SonichubAlbum) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubAlbum) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubAlbum) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubAlbum) Clone() Message {
+	if m == nil {
+		return (*SonichubAlbum)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	return &copy
+}
+
 type SonichubArtist struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -73,6 +121,21 @@ func (m *SonichubArtist) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubArtist) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubArtist) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubArtist) Clone() Message {
+	if m == nil {
+		return (*SonichubArtist)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	return &copy
+}
+
 type SonichubControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -87,6 +150,21 @@ func (m *SonichubControl) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubControl) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubControl) Clone() Message {
+	if m == nil {
+		return (*SonichubControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	return &copy
+}
 
 type SonichubFmRadio struct {
 	Info             MessageInfo `json:"info"`
@@ -107,14 +185,47 @@ func (m *SonichubFmRadio) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubFmRadio) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubFmRadio) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubFmRadio) Clone() Message {
+	if m == nil {
+		return (*SonichubFmRadio)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	copy.Frequency = clonePointer(m.Frequency)
+	copy.NoiseLevel = clonePointer(m.NoiseLevel)
+	copy.SignalLevel = clonePointer(m.SignalLevel)
+	return &copy
+}
+
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SonichubFmRadio) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency), true
+	if *m.Frequency == 4294967295 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967294 {
+		return 0, false
+	}
+	if *m.Frequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Frequency)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -138,6 +249,20 @@ func (m *SonichubInit1) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubInit1) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubInit1) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubInit1) Clone() Message {
+	if m == nil {
+		return (*SonichubInit1)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	return &copy
+}
+
 type SonichubInit2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -153,6 +278,22 @@ func (m *SonichubInit2) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubInit2) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubInit2) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubInit2) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubInit2) Clone() Message {
+	if m == nil {
+		return (*SonichubInit2)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	return &copy
+}
 
 type SonichubInit3 struct {
 	Info             MessageInfo `json:"info"`
@@ -170,6 +311,22 @@ func (m *SonichubInit3) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubInit3) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubInit3) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubInit3) Clone() Message {
+	if m == nil {
+		return (*SonichubInit3)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	return &copy
+}
+
 type SonichubMaxVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -185,6 +342,22 @@ func (m *SonichubMaxVolume) MessageInfo() MessageInfo            { return m.Info
 func (m *SonichubMaxVolume) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubMaxVolume) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubMaxVolume) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubMaxVolume) Clone() Message {
+	if m == nil {
+		return (*SonichubMaxVolume)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Level = clonePointer(m.Level)
+	return &copy
+}
 
 type SonichubMenuItem struct {
 	Info             MessageInfo `json:"info"`
@@ -204,6 +377,24 @@ func (m *SonichubMenuItem) MessageInfo() MessageInfo            { return m.Info 
 func (m *SonichubMenuItem) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubMenuItem) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubMenuItem) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubMenuItem) Clone() Message {
+	if m == nil {
+		return (*SonichubMenuItem)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	return &copy
+}
 
 type SonichubPlaylist struct {
 	Info             MessageInfo `json:"info"`
@@ -225,14 +416,49 @@ func (m *SonichubPlaylist) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *SonichubPlaylist) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubPlaylist) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubPlaylist) Clone() Message {
+	if m == nil {
+		return (*SonichubPlaylist)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	copy.A = clonePointer(m.A)
+	copy.CurrentTrack = clonePointer(m.CurrentTrack)
+	copy.Tracks = clonePointer(m.Tracks)
+	copy.Length = clonePointer(m.Length)
+	copy.PositionInTrack = clonePointer(m.PositionInTrack)
+	return &copy
+}
+
 // LengthValue returns Length as a physical value in s (value = raw * 0.001).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SonichubPlaylist) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.001, true
+	if *m.Length == 4294967295 {
+		return 0, false
+	}
+	if *m.Length == 4294967294 {
+		return 0, false
+	}
+	if *m.Length == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in s, rounded to the nearest
@@ -243,13 +469,28 @@ func (m *SonichubPlaylist) SetLengthValue(v float64) {
 }
 
 // PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
-// The bool is false when PositionInTrack is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SonichubPlaylist) PositionInTrackValue() (float64, bool) {
-	if m.PositionInTrack == nil {
+	if m == nil || m.PositionInTrack == nil {
 		return 0, false
 	}
-	return float64(*m.PositionInTrack) * 0.001, true
+	if *m.PositionInTrack == 4294967295 {
+		return 0, false
+	}
+	if *m.PositionInTrack == 4294967294 {
+		return 0, false
+	}
+	if *m.PositionInTrack == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.PositionInTrack) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
@@ -274,14 +515,44 @@ func (m *SonichubPosition) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *SonichubPosition) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubPosition) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubPosition) Clone() Message {
+	if m == nil {
+		return (*SonichubPosition)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Position = clonePointer(m.Position)
+	return &copy
+}
+
 // PositionValue returns Position as a physical value in s (value = raw * 0.001).
-// The bool is false when Position is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SonichubPosition) PositionValue() (float64, bool) {
-	if m.Position == nil {
+	if m == nil || m.Position == nil {
 		return 0, false
 	}
-	return float64(*m.Position) * 0.001, true
+	if *m.Position == 4294967295 {
+		return 0, false
+	}
+	if *m.Position == 4294967294 {
+		return 0, false
+	}
+	if *m.Position == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Position) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionValue sets Position from a physical value in s, rounded to the nearest
@@ -306,6 +577,21 @@ func (m *SonichubSource) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubSource) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubSource) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubSource) Clone() Message {
+	if m == nil {
+		return (*SonichubSource)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Source = clonePointer(m.Source)
+	return &copy
+}
+
 type SonichubSourceList struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -323,6 +609,22 @@ func (m *SonichubSourceList) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *SonichubSourceList) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubSourceList) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubSourceList) Clone() Message {
+	if m == nil {
+		return (*SonichubSourceList)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.SourceId = clonePointer(m.SourceId)
+	copy.A = clonePointer(m.A)
+	return &copy
+}
+
 type SonichubTrack struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -338,6 +640,21 @@ func (m *SonichubTrack) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubTrack) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubTrack) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubTrack) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubTrack) Clone() Message {
+	if m == nil {
+		return (*SonichubTrack)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Item = clonePointer(m.Item)
+	return &copy
+}
 
 type SonichubVolume struct {
 	Info             MessageInfo `json:"info"`
@@ -355,6 +672,22 @@ func (m *SonichubVolume) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubVolume) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubVolume) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubVolume) Clone() Message {
+	if m == nil {
+		return (*SonichubVolume)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Zone = clonePointer(m.Zone)
+	copy.Level = clonePointer(m.Level)
+	return &copy
+}
+
 type SonichubZoneInfo struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -370,6 +703,21 @@ func (m *SonichubZoneInfo) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *SonichubZoneInfo) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubZoneInfo) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubZoneInfo) Clone() Message {
+	if m == nil {
+		return (*SonichubZoneInfo)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Zone = clonePointer(m.Zone)
+	return &copy
+}
+
 type SonichubZones struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -384,3 +732,18 @@ func (m *SonichubZones) MessageInfo() MessageInfo            { return m.Info }
 func (m *SonichubZones) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SonichubZones) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SonichubZones) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SonichubZones) Clone() Message {
+	if m == nil {
+		return (*SonichubZones)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Control = clonePointer(m.Control)
+	copy.Zones = clonePointer(m.Zones)
+	return &copy
+}

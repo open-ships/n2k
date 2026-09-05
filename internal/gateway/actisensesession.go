@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -63,6 +64,17 @@ func (s *ActisenseGatewaySession) Metrics() ActisenseGatewayMetrics {
 
 func (s *ActisenseGatewaySession) Request(ctx context.Context, command byte, data []byte) (actisense.BEMResponse, error) {
 	return s.stream.Request(ctx, command, data)
+}
+
+// EpochRequester binds a transaction to one acknowledged connection. Its
+// requests fail with that session rather than moving onto a reconnect.
+func (s *ActisenseGatewaySession) EpochRequester(epoch uint64) (actisense.Requester, error) {
+	s.stream.mu.Lock()
+	defer s.stream.mu.Unlock()
+	if s.stream.closed || s.stream.epoch == nil || s.stream.epochNum != epoch {
+		return nil, fmt.Errorf("actisense: connection epoch %d is no longer ready", epoch)
+	}
+	return s.stream.epoch.session, nil
 }
 
 func (s *ActisenseGatewaySession) RequestMulti(ctx context.Context, command byte, data []byte, inactivity time.Duration, complete func([]actisense.BEMResponse) (bool, error)) ([]actisense.BEMResponse, error) {

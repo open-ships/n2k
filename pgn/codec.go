@@ -117,7 +117,16 @@ type planField struct {
 	// dynLenOrder is the order of the preceding DYNAMIC_FIELD_LENGTH field
 	// holding this binary field's width in bytes, or 0.
 	dynLenOrder int
+	// commandedParameter resolves a group-function value from the commanded
+	// PGN's field immediately preceding this value. trailingBinary consumes a
+	// final opaque field whose extent is fixed by the payload boundary.
+	commandedParameter bool
+	trailingBinary     bool
 }
+
+// ErrUnsupportedField means metadata cannot determine a field's wire extent.
+// DecodePayload retains the partial message and records this in DecodeIssues.
+var ErrUnsupportedField = errors.New("unsupported dynamic field")
 
 // planGroup is a compiled repeating field set.
 type planGroup struct {
@@ -159,33 +168,47 @@ var codecPlanCache sync.Map // reflect.Type -> *codecPlan
 // detection, expands repeating field sets into slice fields, and resolves
 // variable-length binary fields via their length-field references.
 func decodeFields(m PGN, payload []uint8) (err error) {
-	// Stash the wire payload so a later encodeFields call on this same
-	// struct can reproduce it byte-for-bit in RESERVED/STRING_FIX
-	// positions instead of always applying the default fill. This must
-	// happen before any error return below: SetMessageInfo also carries
-	// this decode's info fields (PGN, source, etc.), which dispatch's
-	// decodePGNCandidates already set on the candidate before calling in.
-	info := m.MessageInfo()
+	// Decode into fresh state, committing only on success. Optional fields and
+	// repeating groups absent from this payload must never retain old values.
+	original := reflect.ValueOf(m)
+	if !original.IsValid() || original.Kind() != reflect.Pointer || original.IsNil() || original.Elem().Kind() != reflect.Struct {
+		return fmt.Errorf("PGN message must be a non-nil struct pointer, got %T", m)
+	}
+	fresh := reflect.New(original.Elem().Type())
+	info := m.MessageInfo().Clone()
+	m = fresh.Interface().(PGN)
+	// Retain wire bytes in the tentative decode so successful messages can
+	// replay reserved content without publishing partially updated state.
 	info.rawPayload = append([]uint8(nil), payload...)
 	info.rawCanonical = nil
+	info.DecodeIssues = nil
 	m.SetMessageInfo(info)
 	defer func() {
+		if errors.Is(err, ErrUnsupportedField) {
+			partialInfo := m.MessageInfo()
+			partialInfo.DecodeIssues = append(partialInfo.DecodeIssues, err.Error())
+			m.SetMessageInfo(partialInfo)
+			err = nil
+		}
 		if err != nil {
 			return
 		}
-		canonical, encodeErr := encodeCurrentFields(m)
-		if encodeErr != nil {
-			return
+		canonical, encodeErr := encodeCurrentFieldsMode(m, false)
+		if encodeErr == nil {
+			decodedInfo := m.MessageInfo()
+			decodedInfo.rawCanonical = append([]uint8{}, canonical...)
+			m.SetMessageInfo(decodedInfo)
 		}
-		decodedInfo := m.MessageInfo()
-		decodedInfo.rawCanonical = append([]uint8(nil), canonical...)
-		m.SetMessageInfo(decodedInfo)
+		original.Elem().Set(fresh.Elem())
 	}()
 
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
 		return err
 	}
+	info = m.MessageInfo()
+	info.DecodeIssues = append(info.DecodeIssues, plan.info.CodecLimitations...)
+	m.SetMessageInfo(info)
 	for _, desc := range plan.matches {
 		if desc.BitLength == 0 {
 			return fmt.Errorf("match failed for %s", plan.info.Description)
@@ -243,24 +266,33 @@ func decodeFields(m PGN, payload []uint8) (err error) {
 // wire payload exactly, including reserved bits and trailing filler. If any
 // decoded field changes, the current field values are encoded instead.
 func encodeFields(m PGN) ([]uint8, error) {
+	if isNilMessage(m) {
+		return nil, errors.New("nil PGN message")
+	}
 	info := m.MessageInfo()
-	current, err := encodeCurrentFields(m)
-	if err != nil {
-		return nil, err
+	if info.rawCanonical != nil {
+		current, err := encodeCurrentFieldsMode(m, false)
+		if err == nil && bytes.Equal(current, info.rawCanonical) {
+			return append([]uint8(nil), info.rawPayload...), nil
+		}
 	}
-	if len(info.rawPayload) > 0 && len(info.rawCanonical) > 0 && bytes.Equal(current, info.rawCanonical) {
-		return append([]uint8(nil), info.rawPayload...), nil
-	}
-	return current, nil
+	return encodeCurrentFields(m)
 }
 
 func encodeCurrentFields(m PGN) ([]uint8, error) {
+	return encodeCurrentFieldsMode(m, true)
+}
+
+// Canonicalization observes decoded fields, including invalid physical values.
+// Outbound validation applies only after a mutation or to newly authored data.
+func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 	plan, err := codecPlanForMessage(m)
 	if err != nil {
 		return nil, err
 	}
 	source := reflect.ValueOf(m).Elem()
 	writer := NewPGNDataStreamWriter()
+	writer.canonical = !validate
 
 	// Derived fields (group counts, binary length references) override any
 	// user-set value; collect them before writing so a length field that
@@ -298,7 +330,7 @@ func encodeCurrentFields(m PGN) ([]uint8, error) {
 // codecPlanForMessage resolves the compiled plan for a PGN message value.
 func codecPlanForMessage(m PGN) (*codecPlan, error) {
 	t := reflect.TypeOf(m)
-	if t == nil || t.Kind() != reflect.Pointer || t.Elem().Kind() != reflect.Struct {
+	if t == nil || t.Kind() != reflect.Pointer || reflect.ValueOf(m).IsNil() || t.Elem().Kind() != reflect.Struct {
 		return nil, fmt.Errorf("PGN message must be a struct pointer, got %T", m)
 	}
 	return codecPlanFor(t.Elem())
@@ -364,6 +396,9 @@ func compileCodecPlan(t reflect.Type) (*codecPlan, error) {
 		field, err := compileCodecField(info, order, indexByOrder, &lastDynLen)
 		if err != nil {
 			return nil, fmt.Errorf("PGN struct %s: %w", t.Name(), err)
+		}
+		if i == len(orders)-1 && field.kind == fieldKindBinary && field.bitLength == 0 && field.refOrder == 0 && field.dynLenOrder == 0 {
+			field.trailingBinary = true
 		}
 		plan.steps = append(plan.steps, planStep{field: field})
 		i++
@@ -478,6 +513,7 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		field.kind = fieldKindControlString
 	case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
 		field.kind = fieldKindBinary
+		field.commandedParameter = info.PGN == 126208 && desc.SourceType == "VARIABLE"
 		if desc.BitLengthField != nil {
 			field.refOrder = *desc.BitLengthField
 		} else if desc.SourceType == "DYNAMIC_FIELD_VALUE" && *lastDynLen != 0 {
@@ -501,20 +537,9 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		}
 	}
 	if desc.SourceType == "DYNAMIC_FIELD_LENGTH" {
-		// Navico proprietary PGNs 130822 and 130823 (the record-list
-		// variants, e.g. NavicoUdbDatabaseObjectDump and
-		// NavicoDataTypeSourceDirectory) declare a record length that
-		// includes a 3-byte sub-record header (a class/type byte plus a
-		// 16-bit data-type id) which the schema does not expose as its own
-		// field, so the declared length over-reads the following
-		// DYNAMIC_FIELD_VALUE by about 3 bytes relative to the actual
-		// value data. This is tolerated rather than special-cased: those
-		// records live in an until-EOF repeating group (no count field),
-		// so decodeGroup's blanket "any in-group error ends the group"
-		// handling discards whatever partial/misaligned tail results and
-		// decode still succeeds; encode independently derives the length
-		// field from len(data), so it stays internally symmetric even
-		// though it does not reproduce upstream's header-inclusive count.
+		// Record formats whose length includes a header absent from the schema
+		// are explicitly marked partial by codecSupport; the raw bytes remain
+		// available for unchanged forwarding.
 		*lastDynLen = order
 	}
 	if desc.GolangType != "" {
@@ -627,7 +652,15 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 		}
 		setOptional(target.Field(field.fieldIndex), value)
 	case fieldKindBinary:
-		value, err := stream.readBinaryData(binaryFieldBits(field, raws, stream))
+		bits := binaryFieldBits(field, raws, stream)
+		if field.commandedParameter {
+			var err error
+			bits, err = commandedParameterBits(raws, field.order)
+			if err != nil {
+				return err
+			}
+		}
+		value, err := stream.readBinaryData(bits)
 		if err != nil {
 			return err
 		}
@@ -664,15 +697,9 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 // returned done flag reports that the payload is exhausted (or ended inside a
 // group, whose partial element is discarded) and decoding should stop.
 //
-// Every decodeField error encountered while decoding an element -- not just
-// the "read past end of payload" case -- is treated as end-of-data: the
-// partial element is discarded and decodeGroup reports success. This is
-// sanctioned for the genuine EOF case (payloads legitimately end mid-group),
-// but it also swallows other decode failures (e.g. a malformed length that
-// makes a nested binary field over- or under-read) under the same "stop
-// cleanly" path. That conflation is deliberate for now -- there is no
-// decode-time signal here that distinguishes "ran out of bytes" from "hit
-// something we can't parse" -- pending a finer-grained error distinction.
+// Only a genuine end-of-payload discards a partial final element. Unsupported
+// dynamic widths stop the decode with an explicit partial-result issue; other
+// malformed fields fail the decode.
 func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, raws map[int]uint64) (bool, error) {
 	count := -1
 	if group.countOrder != 0 {
@@ -687,17 +714,22 @@ func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, 
 			break
 		}
 		element := reflect.New(group.elemType).Elem()
+		elementRaws := make(map[int]uint64, len(raws)+len(group.fields))
+		for order, raw := range raws {
+			elementRaws[order] = raw
+		}
 		complete := true
 		for f := range group.fields {
-			included, err := conditionSatisfied(group.fields[f].condition, raws)
+			included, err := conditionSatisfied(group.fields[f].condition, elementRaws)
 			if err != nil {
 				return false, fmt.Errorf("repeating group field %d (%s): %w", group.fields[f].order, group.fields[f].name, err)
 			}
 			if !included {
 				continue
 			}
-			if err := decodeField(stream, &group.fields[f], element, raws); err != nil {
+			if err := decodeField(stream, &group.fields[f], element, elementRaws); err != nil {
 				if !errors.Is(err, ErrUnexpectedPayloadEnd) {
+					setGroupSlice(sliceField, slice)
 					return false, fmt.Errorf("decode repeating group field %d: %w", group.fields[f].order, err)
 				}
 				// Truncated payloads may legitimately end inside a final
@@ -724,7 +756,7 @@ func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, 
 // Variable widths are clamped to the remaining payload, mirroring upstream
 // decoder behavior for truncated or sentinel-valued length fields.
 func binaryFieldBits(field *planField, raws map[int]uint64, stream *PGNDataStream) uint16 {
-	if field.refOrder == 0 && field.dynLenOrder == 0 {
+	if field.refOrder == 0 && field.dynLenOrder == 0 && !field.trailingBinary {
 		return field.bitLength
 	}
 	remaining := uint64(0)
@@ -745,6 +777,32 @@ func binaryFieldBits(field *planField, raws map[int]uint64, stream *PGNDataStrea
 		bits = remaining
 	}
 	return uint16(bits)
+}
+
+func commandedParameterBits(raws map[int]uint64, order int) (uint16, error) {
+	commanded, hasPGN := raws[2]
+	parameter, hasParameter := raws[order-1]
+	if !hasPGN || !hasParameter || commanded > 0x3ffff || parameter > 255 {
+		return 0, fmt.Errorf("%w at field %d: missing commanded PGN or parameter", ErrUnsupportedField, order)
+	}
+	var width uint16
+	for _, info := range PgnInfoLookup[uint32(commanded)] {
+		field := info.Fields[int(parameter)]
+		if info.Fallback || field == nil || field.BitLengthVariable || field.BitLength == 0 || field.Condition != "" {
+			return 0, fmt.Errorf("%w at field %d: PGN %d parameter %d has no fixed width", ErrUnsupportedField, order, commanded, parameter)
+		}
+		// Group-function parameter values occupy whole bytes even when their
+		// source field is a sub-byte value in the commanded PGN.
+		candidate := ((field.BitLength + 7) / 8) * 8
+		if width != 0 && width != candidate {
+			return 0, fmt.Errorf("%w at field %d: PGN %d parameter %d has ambiguous width", ErrUnsupportedField, order, commanded, parameter)
+		}
+		width = candidate
+	}
+	if width == 0 {
+		return 0, fmt.Errorf("%w at field %d: unknown PGN %d parameter %d", ErrUnsupportedField, order, commanded, parameter)
+	}
+	return width, nil
 }
 
 // setOptional stores a typed pointer (or nil) into a pointer-typed struct field.
@@ -812,7 +870,7 @@ func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.V
 // null sentinels for nil values, and Match values for nil match fields.
 func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source reflect.Value, overrides map[int]uint64) {
 	if raw, ok := overrides[field.order]; ok {
-		if err := field.validateUnsigned(raw); err != nil {
+		if err := field.validateUnsigned(raw); !writer.canonical && err != nil {
 			writer.setErr(err)
 			return
 		}
@@ -822,7 +880,7 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 	if field.signed {
 		value, _ := source.Field(field.fieldIndex).Interface().(*int64)
 		if value != nil {
-			if err := field.validateSigned(*value); err != nil {
+			if err := field.validateSigned(*value); !writer.canonical && err != nil {
 				writer.setErr(err)
 				return
 			}
@@ -838,7 +896,7 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 	}
 	value, _ := source.Field(field.fieldIndex).Interface().(*uint64)
 	if value != nil {
-		if err := field.validateUnsigned(*value); err != nil {
+		if err := field.validateUnsigned(*value); !writer.canonical && err != nil {
 			writer.setErr(err)
 			return
 		}
@@ -872,6 +930,17 @@ func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.V
 			}
 			if !included {
 				continue
+			}
+			if group.fields[f].commandedParameter && !writer.canonical {
+				bits, err := commandedParameterBits(raws, group.fields[f].order)
+				if err != nil {
+					writer.setErr(err)
+					continue
+				}
+				if size := element.Field(group.fields[f].fieldIndex).Len(); size != int(bits/8) {
+					writer.setErr(fmt.Errorf("field %d (%s): parameter value has %d bytes, want %d", group.fields[f].order, group.fields[f].name, size, bits/8))
+					continue
+				}
 			}
 			encodeField(writer, &group.fields[f], element, overrides)
 		}

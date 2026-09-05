@@ -18,16 +18,31 @@ type MessageInfo struct {
 	AdapterID             string        `json:"adapterId,omitempty"`
 	NetworkID             string        `json:"networkId,omitempty"`
 	Direction             raw.Direction `json:"direction,omitempty"`
-	Priority              *uint8        `json:"priority"`
-	PGN                   uint32        `json:"pgn"`
-	SourceId              uint8         `json:"sourceId"`
-	TargetId              *uint8        `json:"targetId"`
+	ConnectionEpoch       uint64        `json:"connectionEpoch,omitempty"`
+	ClaimEpoch            uint64        `json:"claimEpoch,omitempty"`
+	// DecodeIssues makes partial decoding explicit while retained wire bytes
+	// continue to support unchanged forwarding.
+	DecodeIssues []string `json:"decodeIssues,omitempty"`
+	Priority     *uint8   `json:"priority"`
+	PGN          uint32   `json:"pgn"`
+	SourceId     uint8    `json:"sourceId"`
+	TargetId     *uint8   `json:"targetId"`
 
 	// rawPayload and rawCanonical are codec bookkeeping. An untouched decoded
 	// message returns rawPayload exactly; once fields differ from rawCanonical,
 	// encoding uses the current field values. Replacing MessageInfo clears both.
 	rawPayload   []uint8
 	rawCanonical []uint8
+}
+
+// Clone returns independently owned metadata, including retained wire bytes.
+func (info MessageInfo) Clone() MessageInfo {
+	info.Priority = clonePointer(info.Priority)
+	info.TargetId = clonePointer(info.TargetId)
+	info.rawPayload = cloneSlice(info.rawPayload)
+	info.rawCanonical = cloneSlice(info.rawCanonical)
+	info.DecodeIssues = cloneSlice(info.DecodeIssues)
+	return info
 }
 
 // Priority returns a pointer to v, for use in MessageInfo literal construction:

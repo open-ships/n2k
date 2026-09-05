@@ -18,3 +18,17 @@ func (m *DiverseYachtServicesLoadCell) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *DiverseYachtServicesLoadCell) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *DiverseYachtServicesLoadCell) Clone() Message {
+	if m == nil {
+		return (*DiverseYachtServicesLoadCell)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.LoadCell = clonePointer(m.LoadCell)
+	return &copy
+}

@@ -1,0 +1,103 @@
+name: Scheduled reliability
+
+on:
+  schedule:
+    - cron: '23 4 * * 0'
+  workflow_dispatch:
+    inputs:
+      soak_duration:
+        description: Software soak duration (maximum 24h; job limit is 90m)
+        default: 1h
+        required: true
+      fuzz_duration:
+        description: Fuzz duration per harness (each has a 15m hard timeout)
+        default: 2m
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scheduled-reliability-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 1.26.6
+          check-latest: true
+      - uses: extractions/setup-just@v4
+      - run: just setup
+      - name: Required local gates
+        run: |
+          go test ./...
+          just pgn-sync-check
+          just format-check
+          just lint
+          just secure
+          just release-check
+          just conformance-local
+      - name: Preserve software conformance evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scheduled-software-conformance
+          path: conformance-artifacts/local-*
+          if-no-files-found: warn
+
+  soak:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SOAK_DURATION: ${{ inputs.soak_duration || '1h' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 1.26.6
+          check-latest: true
+      - uses: extractions/setup-just@v4
+      - name: Software soak (no hardware configured or required)
+        run: just reliability-soak "$SOAK_DURATION" 80m
+      - name: Preserve software soak evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scheduled-software-soak
+          path: conformance-artifacts/soak-*
+          if-no-files-found: warn
+
+  fuzz:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      FUZZ_DURATION: ${{ inputs.fuzz_duration || '2m' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 1.26.6
+          check-latest: true
+      - uses: extractions/setup-just@v4
+      - name: Race detector
+        run: just test-race
+      - name: Bounded longer fuzzing
+        run: just fuzz-long "$FUZZ_DURATION"
+      - name: Preserve failure corpus
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scheduled-fuzz-failure-corpus
+          path: |
+            internal/**/testdata/fuzz/**
+            pgn/testdata/fuzz/**
+          if-no-files-found: warn

@@ -73,25 +73,38 @@ type Client struct {
 	writeCh chan writeJob
 	writeWg sync.WaitGroup
 	// protocolTx owns priority admission for automatic protocol traffic.
-	protocolTx *protocolTransmitter
+	protocolTx   *protocolTransmitter
+	wire         *wireTransmitter
+	epochCtx     context.Context
+	epochCancel  context.CancelCauseFunc
+	dispatchMu   sync.Mutex
+	deviceInfoCh chan deviceInfoRequest
+	rejoinCh     chan rejoinRequest
+	backgroundWg sync.WaitGroup
 
 	// mu guards writtenFrames, closed state, and sourceAddr.
-	mu              sync.Mutex
-	writtenFrames   []can.Frame // captured frames (replay/testing)
-	closed          bool
-	terminalErr     error
-	claimed         bool
-	claimEpoch      uint64
-	txReady         chan struct{}
-	connected       bool
-	connectionEpoch uint64
-	rejoining       bool
-	rejoinMu        sync.Mutex
+	mu                   sync.Mutex
+	writtenFrames        []can.Frame // bounded capture ring (replay/testing)
+	writtenFramesStart   int
+	writtenFramesDropped uint64
+	closed               bool
+	terminalErr          error
+	claimed              bool
+	claimEpoch           uint64
+	txReady              chan struct{}
+	connected            bool
+	connectionEpoch      uint64
+	connectionChanged    chan struct{}
+	rejoining            bool
+	rejoinMu             sync.Mutex
 
-	bus     Bus
-	busDone chan struct{}
-	claimer *claiming.Claimer
-	addrErr error // set by OnFatalError during address claiming
+	bus        Bus
+	busDone    chan struct{}
+	closeDone  chan struct{}
+	closeErr   error
+	busStarted bool
+	claimer    *claiming.Claimer
+	addrErr    error // set by OnFatalError during address claiming
 
 	// addrReady is closed once address claiming completes (or immediately for replay).
 	addrReady chan struct{}
@@ -128,9 +141,10 @@ type Client struct {
 	actisenseRemote *actisenseRemoteManager
 
 	// bMu guards broadcasters, the active periodic transmissions by PGN.
-	bMu          sync.Mutex
-	broadcasters map[uint32]*broadcaster
-	broadcastSeq atomic.Uint64
+	bMu              sync.Mutex
+	broadcasters     map[uint32]*broadcaster
+	broadcastWorkers map[*broadcaster]struct{}
+	broadcastSeq     atomic.Uint64
 
 	// registry tracks devices observed on the bus, keyed by NAME. Only set
 	// for bus clients.
@@ -146,6 +160,7 @@ type Client struct {
 	decodeErrorsObserved       atomic.Uint64
 	gatewayEventsObserved      atomic.Uint64
 	transportErrorsObserved    atomic.Uint64
+	deviceInfoRequestsDropped  atomic.Uint64
 }
 
 type writeJob struct {
@@ -154,6 +169,8 @@ type writeJob struct {
 	protocol      bool
 	protocolClass protocolWriteClass
 	operation     string
+	ctx           context.Context
+	stop          func()
 }
 
 type runtimeBusError struct{ err error }
@@ -299,16 +316,19 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	// else: replay default is 0
 
 	c := &Client{
-		cfg:        cfg,
-		ctx:        ctx,
-		cancel:     cancel,
-		log:        cfg.logger,
-		sourceAddr: sourceAddr,
-		deviceName: deviceName,
-		addrReady:  make(chan struct{}),
-		busDone:    make(chan struct{}),
+		cfg:               cfg,
+		ctx:               ctx,
+		cancel:            cancel,
+		log:               cfg.logger,
+		sourceAddr:        sourceAddr,
+		deviceName:        deviceName,
+		addrReady:         make(chan struct{}),
+		busDone:           make(chan struct{}),
+		closeDone:         make(chan struct{}),
+		connectionChanged: make(chan struct{}),
 	}
 	c.txReady = c.addrReady
+	c.epochCtx, c.epochCancel = context.WithCancelCause(ctx)
 
 	c.productInfo = defaultProductInfo(UnpackDeviceName(deviceName).IdentityNumber)
 	if cfg.productInfo != nil {
@@ -328,8 +348,9 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	}
 	c.writeCh = make(chan writeJob, writeQueue)
 	c.protocolTx = newProtocolTransmitter(c.log)
-	c.writeWg.Add(1)
+	c.writeWg.Add(2)
 	go c.writeLoop()
+	go c.protocolWriteLoop()
 
 	if hasBus {
 		if err := c.initBus(cfg); err != nil {
@@ -351,10 +372,20 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 				c.tp.Close()
 			}
 			c.writeWg.Wait()
+			if c.wire != nil {
+				<-c.wire.done
+			}
+			if c.busStarted {
+				<-c.busDone
+			}
+			if c.system != nil {
+				<-c.system.done
+			}
+			c.backgroundWg.Wait()
 			return nil, err
 		}
 	} else {
-		// Replay path: capture frames in memory.
+		// Replay path: capture a bounded recent frame window in memory.
 		c.claimed = true
 		close(c.addrReady)
 
@@ -364,7 +395,7 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 			if c.closed {
 				return errors.New("n2k: client closed")
 			}
-			c.writtenFrames = append(c.writtenFrames, f)
+			c.captureReplayFrameLocked(f)
 			return nil
 		}
 
@@ -398,30 +429,23 @@ func (c *Client) initBus(cfg config) error {
 	}
 
 	// Set writeFrame to delegate to the bus.
-	c.writeFrame = func(f can.Frame) error {
-		c.mu.Lock()
-		closed := c.closed
-		c.mu.Unlock()
-		if closed {
-			return errors.New("n2k: client closed")
-		}
-		if err := wrapRuntimeBusError(c.bus.WriteFrame(f)); err != nil {
-			return err
-		}
-		c.publishObservation(frameObservation(f, "client", "bus", raw.DirectionTransmitted))
-		return nil
-	}
+	c.wire = newWireTransmitter(c)
+	c.writeFrame = func(f can.Frame) error { return c.writeFrameContext(c.ctx, f) }
 
 	// Create transport manager with OnComplete that feeds decoded TP messages
 	// through the read pipeline.
 	c.tp = transport.NewManager(transport.ManagerConfig{
-		WriteFrame: c.writeFrame,
+		WriteFrame:        c.writeFrame,
+		WriteFrameContext: c.writeFrameContext,
 		LocalAddress: func() uint8 {
 			c.mu.Lock()
 			defer c.mu.Unlock()
 			return c.sourceAddr
 		},
 		OnCompleteInfo: func(info pgn.MessageInfo, data []byte) {
+			if !c.currentMessageEpoch(info) {
+				return
+			}
 			destination := uint8(framer.BroadcastAddr)
 			if info.TargetId != nil {
 				destination = *info.TargetId
@@ -463,7 +487,15 @@ func (c *Client) initBus(cfg config) error {
 	sys.addHandler(c.handleGroupFunction)
 	sys.addHandler(c.registry.observe)
 	sys.addObservationHandler(c.actisenseRemote.observe)
+	sys.dispatchMu = &c.dispatchMu
+	sys.current = c.currentMessageEpoch
+	sys.onError = c.fail
 	go sys.run()
+	c.deviceInfoCh = make(chan deviceInfoRequest, 252)
+	c.rejoinCh = make(chan rejoinRequest, 1)
+	c.backgroundWg.Add(2)
+	go c.deviceInfoLoop()
+	go c.rejoinLoop()
 
 	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
 	// first transmission.
@@ -486,6 +518,7 @@ func (c *Client) initBus(cfg config) error {
 		c.connected = true
 		c.connectionEpoch = 1
 		c.mu.Unlock()
+		c.resetReadEpoch()
 	}
 
 	// Determine claiming mode.
@@ -517,31 +550,53 @@ func (c *Client) initBus(cfg config) error {
 	})
 
 	// Start the bus read loop goroutine.
+	c.busStarted = true
 	go c.busReadLoop()
 
 	claimTimeout := defaultClaimTimeout
 	if cfg.claimTimeout != nil {
 		claimTimeout = *cfg.claimTimeout
 	}
+	readyTimeout := defaultReadyTimeout
+	if cfg.readyTimeout != nil {
+		readyTimeout = *cfg.readyTimeout
+	}
+	readyTimer := time.NewTimer(readyTimeout)
+	defer readyTimer.Stop()
 	if readyBus, ok := c.bus.(ReadyBus); ok {
-		readyTimeout := defaultReadyTimeout
-		if cfg.readyTimeout != nil {
-			readyTimeout = *cfg.readyTimeout
-		}
-		readyTimer := time.NewTimer(readyTimeout)
 		select {
 		case <-readyBus.Ready():
-			readyTimer.Stop()
 		case <-c.busDone:
-			readyTimer.Stop()
 			return c.currentTerminalError("n2k: bus stopped before becoming ready")
 		case <-readyTimer.C:
 			return errors.New("n2k: bus did not become ready within ready timeout")
 		case <-c.ctx.Done():
-			readyTimer.Stop()
 			return c.currentTerminalError(c.ctx.Err().Error())
 		}
 	}
+	// Lifecycle transports must identify the actual connection before any
+	// claim is admitted. Readiness and connection opening share one deadline.
+	var initialConnectionEpoch uint64
+	for {
+		c.mu.Lock()
+		if c.connected {
+			initialConnectionEpoch = c.connectionEpoch
+			c.mu.Unlock()
+			break
+		}
+		changed := c.connectionChanged
+		c.mu.Unlock()
+		select {
+		case <-changed:
+		case <-c.busDone:
+			return c.currentTerminalError("n2k: bus stopped before connecting")
+		case <-readyTimer.C:
+			return errors.New("n2k: bus did not connect within ready timeout")
+		case <-c.ctx.Done():
+			return c.currentTerminalError(c.ctx.Err().Error())
+		}
+	}
+	readyTimer.Stop()
 
 	// Send the initial address claim, bounded by the claim deadline. With an
 	// auto-reconnect policy the first write blocks until the gateway connection
@@ -551,7 +606,9 @@ func (c *Client) initBus(cfg config) error {
 	// otherwise consume a short claim window on a loaded machine.
 	startErr := make(chan error, 1)
 	claimStarted := make(chan struct{})
+	c.backgroundWg.Add(1)
 	go func() {
+		defer c.backgroundWg.Done()
 		// This goroutine is owned by n2k, so a panic from a misbehaving Bus
 		// (e.g. WriteFrame panicking instead of returning an error) would
 		// otherwise be unrecoverable by the caller and crash the whole
@@ -610,6 +667,10 @@ func (c *Client) initBus(cfg config) error {
 
 	// Update sourceAddr with the final claimed address.
 	c.mu.Lock()
+	if !c.connected || c.connectionEpoch != initialConnectionEpoch {
+		c.mu.Unlock()
+		return fmt.Errorf("n2k: connection changed during initial address claim: %w", ErrEpochChanged)
+	}
 	c.sourceAddr = addr
 	c.claimed = true
 	c.mu.Unlock()
@@ -619,7 +680,7 @@ func (c *Client) initBus(cfg config) error {
 	// Enumerate the bus: ask every device to (re-)announce its address claim
 	// so the registry fills without waiting for spontaneous traffic.
 	enumerate := uint64(framer.PGNISOAddressClaim)
-	go c.retryAdvisoryProtocol("bus enumeration", &pgn.IsoRequest{Pgn: &enumerate})
+	c.writeProtocol("bus enumeration", protocolAdvisory, &pgn.IsoRequest{Pgn: &enumerate})
 
 	return nil
 }
@@ -627,20 +688,19 @@ func (c *Client) initBus(cfg config) error {
 // requestDeviceInfo asks a newly seen device for its product and
 // configuration info once the client itself is ready to transmit.
 func (c *Client) requestDeviceInfo(addr uint8) {
-	go func() {
-		select {
-		case <-c.addrReady:
-		case <-c.ctx.Done():
-			return
-		}
-		for _, requested := range []uint32{126996, 126998} {
-			pgnNum := uint64(requested)
-			c.retryAdvisoryProtocol(fmt.Sprintf("device %d information PGN %d", addr, requested), &pgn.IsoRequest{
-				Info: pgn.MessageInfo{TargetId: pgn.Target(addr)},
-				Pgn:  &pgnNum,
-			})
-		}
-	}()
+	device, exists := c.DeviceAt(addr)
+	if !exists {
+		return
+	}
+	c.mu.Lock()
+	request := deviceInfoRequest{address: addr, name: device.RawName, connection: c.connectionEpoch, claim: c.claimEpoch}
+	c.mu.Unlock()
+	select {
+	case c.deviceInfoCh <- request:
+	default:
+		c.deviceInfoRequestsDropped.Add(1)
+		c.log.Warn("device information queue full", "address", addr)
+	}
 }
 
 // handleBusFrame is the central frame router called for every incoming CAN frame.
@@ -652,9 +712,13 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 // is published before synchronous protocol handling.
 func (c *Client) handleBusObservation(observation raw.Observation) {
 	observation = normalizeObservation(observation)
+	c.mu.Lock()
+	observation.ConnectionEpoch, observation.ClaimEpoch = c.connectionEpoch, c.claimEpoch
+	c.mu.Unlock()
 	c.publishObservation(observation)
 	if observation.Frame == nil {
 		if observation.Kind == raw.KindMessage {
+			c.system.handleObservation(observation, observation.PGN)
 			c.pipeline.HandleObservation(observation)
 		}
 		return
@@ -777,6 +841,12 @@ func (c *Client) fail(err error) {
 	}
 	c.connected = false
 	c.rejoining = false
+	if c.epochCancel != nil {
+		c.epochCancel(err)
+	}
+	if c.correlator != nil {
+		c.correlator.invalidate(err)
+	}
 	c.mu.Unlock()
 	if c.actisenseRemote != nil {
 		c.actisenseRemote.close(err)
@@ -794,13 +864,21 @@ func (c *Client) fail(err error) {
 // connection epochs. The gateway calls the connected notification before it
 // publishes the new connection to blocked writers, closing the reconnect race.
 func (c *Client) handleConnectionChange(connected bool, epoch uint64) {
+	c.dispatchMu.Lock()
+	defer c.dispatchMu.Unlock()
 	c.mu.Lock()
 	if c.closed || c.terminalErr != nil || epoch < c.connectionEpoch {
 		c.mu.Unlock()
 		return
 	}
+	previousConnectionEpoch := c.connectionEpoch
+	changed := c.connected != connected || c.connectionEpoch != epoch
 	c.connected = connected
 	c.connectionEpoch = epoch
+	if changed && c.connectionChanged != nil {
+		close(c.connectionChanged)
+		c.connectionChanged = make(chan struct{})
+	}
 	if c.actisenseRemote != nil {
 		// Hold the Client epoch lock through invalidation. Remote request
 		// registration takes the same Client -> manager lock order, so a
@@ -809,28 +887,39 @@ func (c *Client) handleConnectionChange(connected bool, epoch uint64) {
 	}
 	active := c.claimed
 	if !active {
+		if changed && previousConnectionEpoch != 0 {
+			c.invalidateEpochLocked(ErrEpochChanged)
+			if c.registry != nil {
+				c.registry.reset()
+			}
+		}
 		c.mu.Unlock()
+		if changed {
+			c.resetReadEpoch()
+		}
 		return
 	}
 	if !connected {
-		c.claimEpoch++
+		c.invalidateEpochLocked(ErrEpochChanged)
 		c.txReady = make(chan struct{})
 		c.rejoining = true
 		if c.registry != nil {
 			c.registry.reset()
 		}
 		c.mu.Unlock()
+		c.resetReadEpoch()
 		return
 	}
 	if !c.rejoining {
-		c.claimEpoch++
+		c.invalidateEpochLocked(ErrEpochChanged)
 		c.txReady = make(chan struct{})
 	}
 	ready := c.txReady
 	c.rejoining = true
 	c.mu.Unlock()
 
-	go c.rejoinNetwork(epoch, ready)
+	c.resetReadEpoch()
+	c.queueRejoin(rejoinRequest{epoch: epoch, ready: ready})
 }
 
 func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
@@ -842,10 +931,13 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 		c.mu.Unlock()
 		return
 	}
+	epochCtx := c.epochCtx
 	c.mu.Unlock()
 
 	if err := c.claimer.Reclaim(); err != nil {
-		c.fail(fmt.Errorf("n2k: reclaiming address after reconnect: %w", err))
+		if epochCtx.Err() == nil {
+			c.fail(fmt.Errorf("n2k: reclaiming address after reconnect: %w", err))
+		}
 		return
 	}
 
@@ -857,28 +949,42 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 		return
 	}
 
-	c.mu.Lock()
-	if c.closed || c.terminalErr != nil || !c.connected || c.connectionEpoch != epoch {
+	// Contention can replace a readiness gate within this connection. Never
+	// park on an obsolete gate: its epoch cancellation wakes us to recheck.
+	for {
+		c.mu.Lock()
+		if c.closed || c.terminalErr != nil || !c.connected || c.connectionEpoch != epoch {
+			c.mu.Unlock()
+			return
+		}
+		ready := c.txReady
+		epochCtx = c.epochCtx
+		if ready == reconnectReady {
+			select {
+			case <-ready:
+			default:
+				close(ready)
+			}
+		}
 		c.mu.Unlock()
-		return
-	}
-	ready := c.txReady
-	if ready == reconnectReady {
-		close(ready)
-	}
-	c.rejoining = false
-	c.mu.Unlock()
-
-	// A contention response may have installed a later readiness gate. Wait
-	// for it before restarting automatic network activity.
-	select {
-	case <-ready:
-	case <-c.ctx.Done():
-		return
+		select {
+		case <-ready:
+		case <-epochCtx.Done():
+			continue
+		}
+		c.mu.Lock()
+		current := c.connected && c.connectionEpoch == epoch && c.txReady == ready
+		if current {
+			c.rejoining = false
+		}
+		c.mu.Unlock()
+		if current {
+			break
+		}
 	}
 
 	enumerate := uint64(framer.PGNISOAddressClaim)
-	go c.retryAdvisoryProtocol("post-reconnect bus enumeration", &pgn.IsoRequest{Pgn: &enumerate})
+	c.retryAdvisoryProtocolContext(epochCtx, "post-reconnect bus enumeration", &pgn.IsoRequest{Pgn: &enumerate})
 	if c.heartbeat != nil && c.heartbeat.currentInterval() > 0 {
 		c.heartbeat.sendNow()
 	}
@@ -887,6 +993,8 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 // handleAddressChange moves application writes behind a fresh contention
 // window whenever an active auto-claiming client changes address.
 func (c *Client) handleAddressChange(newAddr uint8) {
+	c.dispatchMu.Lock()
+	defer c.dispatchMu.Unlock()
 	c.mu.Lock()
 	c.sourceAddr = newAddr
 	if c.actisenseRemote != nil {
@@ -901,11 +1009,12 @@ func (c *Client) handleAddressChange(newAddr uint8) {
 		c.fail(errors.New("n2k: address claiming failed: no address available"))
 		return
 	}
-	c.claimEpoch++
+	c.invalidateEpochLocked(ErrEpochChanged)
 	epoch := c.claimEpoch
 	ready := make(chan struct{})
 	c.txReady = ready
 	c.mu.Unlock()
+	c.resetReadEpoch()
 
 	time.AfterFunc(250*time.Millisecond, func() {
 		c.mu.Lock()
@@ -936,31 +1045,57 @@ func (c *Client) handleCommandedAddressTransfer(destination uint8, data []byte) 
 	}
 }
 
-// Write asynchronously encodes and transmits a PGN message. The message must
-// be a pointer to a PGN struct (e.g. *pgn.VesselHeading). The returned
-// WriteResult can be used to wait for completion and check for errors.
-// Writes are serialized through a single goroutine to guarantee FIFO ordering.
+// Write snapshots a PGN message and asynchronously transmits it. After Write
+// returns the caller may reuse the message. Application jobs retain FIFO
+// order; protocol traffic can run between their wire frames.
 func (c *Client) Write(msg pgn.Message) *WriteResult {
-	wr := newWriteResult()
+	return c.WriteContext(context.Background(), msg)
+}
 
-	c.mu.Lock()
-	if c.closed {
-		c.mu.Unlock()
-		c.applicationWritesRejected.Add(1)
+// WriteContext cancels queued work and in-progress transmission when ctx ends.
+// Cancellation after a physical write attempt may leave a partial transfer;
+// WriteError reports that uncertainty. Writes are not replayed on reconnect.
+func (c *Client) WriteContext(ctx context.Context, msg pgn.Message) *WriteResult {
+	wr := newWriteResult()
+	if c == nil {
 		wr.complete(ErrClientClosed)
 		return wr
 	}
-	if c.terminalErr != nil {
-		err := c.terminalErr
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	c.mu.Lock()
+	if err := c.readyErrorLocked(); err != nil {
 		c.mu.Unlock()
 		c.applicationWritesRejected.Add(1)
 		wr.complete(err)
 		return wr
 	}
+	jobCtx, stop := c.writeContextLocked(ctx, false)
+	c.mu.Unlock()
+	snapshot, err := snapshotMessage(msg)
+	if err == nil {
+		err = c.checkWriteContext(jobCtx)
+	}
+	if err != nil {
+		stop()
+		c.applicationWritesRejected.Add(1)
+		wr.complete(err)
+		return wr
+	}
+	c.mu.Lock()
+	if err := c.readyErrorLocked(); err != nil {
+		c.mu.Unlock()
+		stop()
+		c.applicationWritesRejected.Add(1)
+		wr.complete(err)
+		return wr
+	}
 	select {
-	case c.writeCh <- writeJob{msg: msg, result: wr}:
+	case c.writeCh <- writeJob{msg: snapshot, result: wr, ctx: jobCtx, stop: stop}:
 		c.applicationWritesAccepted.Add(1)
 	default:
+		stop()
 		c.applicationWritesRejected.Add(1)
 		wr.complete(ErrWriteQueueFull)
 	}
@@ -971,13 +1106,36 @@ func (c *Client) Write(msg pgn.Message) *WriteResult {
 func (c *Client) writeLoop() {
 	defer c.writeWg.Done()
 	for {
-		job, ok := c.waitForWriteJob(c.ctx)
-		if !ok {
-			err := c.currentTerminalError(c.ctx.Err().Error())
-			c.drainWriteQueues(err)
+		select {
+		case <-c.ctx.Done():
+			c.drainWriteQueues(c.operationError())
+			return
+		case job := <-c.writeCh:
+			c.runWriteJob(job)
+		}
+	}
+}
+
+func (c *Client) protocolWriteLoop() {
+	defer c.writeWg.Done()
+	for {
+		if c.ctx.Err() != nil {
+			c.drainWriteQueues(c.operationError())
 			return
 		}
-		c.runWriteJob(job)
+		if job, ok := c.protocolTx.takeReady(); ok {
+			c.runWriteJob(job)
+			continue
+		}
+		select {
+		case <-c.ctx.Done():
+			c.drainWriteQueues(c.operationError())
+			return
+		case job := <-c.protocolTx.required:
+			c.runWriteJob(job)
+		case job := <-c.protocolTx.advisory:
+			c.runWriteJob(job)
+		}
 	}
 }
 
@@ -986,6 +1144,12 @@ func (c *Client) writeLoop() {
 // panic escape would crash the process and, short of that, wedge every future
 // Write blocked on the send to writeCh.
 func (c *Client) runWriteJob(job writeJob) {
+	if job.stop != nil {
+		defer job.stop()
+	}
+	if job.ctx == nil {
+		job.ctx = c.ctx
+	}
 	defer func() {
 		if r := recover(); r != nil {
 			c.log.Error("recovered panic in write loop",
@@ -997,10 +1161,15 @@ func (c *Client) runWriteJob(job writeJob) {
 			}
 		}
 	}()
-	c.finishWriteJob(job, c.doWrite(job.msg))
+	c.finishWriteJob(job, c.doWriteContext(job.ctx, job.msg))
 }
 
 func (c *Client) finishWriteJob(job writeJob, err error) {
+	if err != nil && job.ctx != nil {
+		if stamp, ok := job.ctx.Value(writeStampKey{}).(writeStamp); ok && stamp.progress != nil {
+			err = &WriteError{Err: err, CompletedRecords: stamp.progress.completed.Load(), TransmissionUncertain: stamp.progress.attempted.Load() > 0}
+		}
+	}
 	job.result.complete(err)
 	if job.protocol && c.protocolTx != nil {
 		c.protocolTx.finish(err)
@@ -1009,7 +1178,7 @@ func (c *Client) finishWriteJob(job writeJob, err error) {
 	} else {
 		c.applicationWritesCompleted.Add(1)
 	}
-	if err == nil || c.ctx.Err() != nil {
+	if err == nil || c.ctx.Err() != nil || errors.Is(err, ErrEpochChanged) || errors.Is(err, context.Canceled) {
 		return
 	}
 	var busErr *runtimeBusError
@@ -1023,7 +1192,10 @@ func (c *Client) finishWriteJob(job writeJob, err error) {
 }
 
 // doWrite performs the synchronous work of encoding and framing a PGN message.
-func (c *Client) doWrite(msg pgn.Message) error {
+func (c *Client) doWriteContext(ctx context.Context, msg pgn.Message) error {
+	if err := c.checkWriteContext(ctx); err != nil {
+		return err
+	}
 	if msg == nil {
 		return errors.New("n2k: cannot write a nil message")
 	}
@@ -1042,6 +1214,8 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	}
 	select {
 	case <-ready:
+	case <-ctx.Done():
+		return context.Cause(ctx)
 	case <-c.ctx.Done():
 		return c.currentTerminalError(c.ctx.Err().Error())
 	}
@@ -1054,6 +1228,9 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	}
 	if closed {
 		return ErrClientClosed
+	}
+	if err := c.checkWriteContext(ctx); err != nil {
+		return err
 	}
 
 	pgnNum := msg.PGNNumber()
@@ -1106,23 +1283,37 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	// their own wire framing; anything larger than one message still goes
 	// frame-by-frame below via ISO-TP.
 	if mw, ok := c.bus.(MessageWriter); ok && len(payload) <= 223 {
-		if err := wrapRuntimeBusError(mw.WriteMessage(pgnNum, priority, srcAddr, destination, payload)); err != nil {
+		if err := c.wire.send(ctx, func(ctx context.Context) error {
+			if writer, ok := c.bus.(ContextMessageWriter); ok {
+				return writer.WriteMessageContext(ctx, pgnNum, priority, srcAddr, destination, payload)
+			}
+			done := make(chan struct{})
+			stop := context.AfterFunc(ctx, func() { _ = c.bus.Close(); close(done) })
+			err := mw.WriteMessage(pgnNum, priority, srcAddr, destination, payload)
+			if !stop() {
+				<-done
+			}
+			return err
+		}); err != nil {
 			return err
 		}
 		destinationCopy := destination
 		now := time.Now()
+		stamp, _ := ctx.Value(writeStampKey{}).(writeStamp)
 		c.publishObservation(raw.Observation{
-			Kind:        raw.KindMessage,
-			Timestamp:   now,
-			ReceivedAt:  now,
-			AdapterID:   "client",
-			NetworkID:   "bus",
-			Direction:   raw.DirectionTransmitted,
-			PGN:         pgnNum,
-			Priority:    priority,
-			Source:      srcAddr,
-			Destination: &destinationCopy,
-			Payload:     payload,
+			ConnectionEpoch: stamp.connection,
+			ClaimEpoch:      stamp.claim,
+			Kind:            raw.KindMessage,
+			Timestamp:       now,
+			ReceivedAt:      now,
+			AdapterID:       "client",
+			NetworkID:       "bus",
+			Direction:       raw.DirectionTransmitted,
+			PGN:             pgnNum,
+			Priority:        priority,
+			Source:          srcAddr,
+			Destination:     &destinationCopy,
+			Payload:         payload,
 		})
 		return nil
 	}
@@ -1136,14 +1327,14 @@ func (c *Client) doWrite(msg pgn.Message) error {
 
 	if !isFast && len(payload) <= 8 {
 		frame := framer.FrameSingle(canID, payload)
-		return c.writeFrame(frame)
+		return c.writeFrameContext(ctx, frame)
 	}
 
 	if isFast && len(payload) <= 223 {
 		seqID := uint8(c.fastSeq.Add(1) % 8)
 		frames := framer.FrameFastPacket(canID, payload, seqID)
 		for _, f := range frames {
-			if err := c.writeFrame(f); err != nil {
+			if err := c.writeFrameContext(ctx, f); err != nil {
 				return err
 			}
 		}
@@ -1151,9 +1342,9 @@ func (c *Client) doWrite(msg pgn.Message) error {
 	}
 
 	if destination != framer.BroadcastAddr {
-		return c.tp.SendRTSCTS(pgnNum, srcAddr, destination, payload)
+		return c.tp.SendRTSCTSContext(ctx, pgnNum, srcAddr, destination, payload)
 	}
-	return c.tp.SendBAM(pgnNum, srcAddr, payload)
+	return c.tp.SendBAMContext(ctx, pgnNum, srcAddr, payload)
 }
 
 // Receive returns an iterator of decoded NMEA 2000 messages. For bus clients
@@ -1209,13 +1400,18 @@ func (c *Client) newReplayScanner() *Scanner {
 	return &Scanner{ctx: ctx, cancel: cancel, cfg: c.cfg, ch: make(chan pgn.Message, receiveBuffer)}
 }
 
-// WrittenFrames returns a copy of all CAN frames written through this client.
-// This is primarily useful in replay/testing mode to inspect what was sent.
+// WrittenFrames returns an owned snapshot of the newest ReplayFrameCapacity
+// frames written in replay mode, ordered oldest to newest. Once the capture
+// fills, new writes evict its oldest frame and still succeed. Status exposes
+// ReplayFramesDropped so capture loss is observable. Live clients return no
+// captured frames; use Observe for live traffic.
 func (c *Client) WrittenFrames() []can.Frame {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	out := make([]can.Frame, len(c.writtenFrames))
-	copy(out, c.writtenFrames)
+	for i := range out {
+		out[i] = c.writtenFrames[(c.writtenFramesStart+i)%len(c.writtenFrames)]
+	}
 	return out
 }
 
@@ -1224,12 +1420,25 @@ func (c *Client) WrittenFrames() []can.Frame {
 func (c *Client) Close() error {
 	c.mu.Lock()
 	if c.closed {
+		done := c.closeDone
 		c.mu.Unlock()
-		return nil
+		if done != nil {
+			<-done
+		}
+		c.mu.Lock()
+		err := c.closeErr
+		c.mu.Unlock()
+		return err
 	}
 	c.closed = true
 	c.connected = false
 	c.rejoining = false
+	if c.epochCancel != nil {
+		c.epochCancel(ErrClientClosed)
+	}
+	if c.correlator != nil {
+		c.correlator.invalidate(ErrClientClosed)
+	}
 	c.mu.Unlock()
 	if c.actisenseRemote != nil {
 		c.actisenseRemote.close(ErrClientClosed)
@@ -1252,11 +1461,27 @@ func (c *Client) Close() error {
 		c.tp.Close()
 	}
 	c.writeWg.Wait()
+	if c.wire != nil {
+		<-c.wire.done
+	}
+	if c.busStarted {
+		<-c.busDone
+	}
+	if c.system != nil {
+		<-c.system.done
+	}
+	c.backgroundWg.Wait()
 	if c.msgHub != nil {
 		c.msgHub.close(nil)
 	}
 	if c.observationHub != nil {
 		c.observationHub.close(nil)
 	}
+	c.mu.Lock()
+	c.closeErr = busErr
+	if c.closeDone != nil {
+		close(c.closeDone)
+	}
+	c.mu.Unlock()
 	return busErr
 }

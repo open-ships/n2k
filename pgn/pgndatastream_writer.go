@@ -25,6 +25,9 @@ type PGNDataStreamWriter struct {
 	// err holds the first error encountered. Once set, all subsequent writes
 	// are no-ops. Callers check Err() after all writes are complete.
 	err error
+	// canonical disables physical-range validation for decoded-state comparison.
+	// Bit-width validation remains enabled in the primitive writer.
+	canonical bool
 }
 
 // NewPGNDataStreamWriter creates a PGNDataStreamWriter with an empty payload buffer.

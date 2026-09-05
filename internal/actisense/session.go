@@ -47,14 +47,16 @@ type pendingRequest struct {
 // writer and a bounded BEM correlation table with at most one request per
 // response/BEM key.
 type Session struct {
-	write func([]byte) error
+	write func(context.Context, []byte) error
 
-	writeMu sync.Mutex
-	mu      sync.Mutex
-	pending map[responseKey]*pendingRequest
-	done    chan struct{}
-	doneErr error
-	once    sync.Once
+	writeGate chan struct{}
+	ctx       context.Context
+	cancel    context.CancelFunc
+	mu        sync.Mutex
+	pending   map[responseKey]*pendingRequest
+	done      chan struct{}
+	doneErr   error
+	once      sync.Once
 
 	onDatagram    func(Datagram)
 	onDiagnostic  func(Diagnostic)
@@ -72,7 +74,9 @@ const (
 )
 
 type SessionConfig struct {
-	Write         func([]byte) error
+	// Write must stop physical I/O when ctx ends. A partial failed write must
+	// invalidate the connection so a later frame cannot append to its prefix.
+	Write         func(context.Context, []byte) error
 	OnDatagram    func(Datagram)
 	OnDiagnostic  func(Diagnostic)
 	OnDecodeError func(DecodeError)
@@ -81,8 +85,12 @@ type SessionConfig struct {
 }
 
 func NewSession(config SessionConfig) *Session {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &Session{
 		write:         config.Write,
+		writeGate:     make(chan struct{}, 1),
+		ctx:           ctx,
+		cancel:        cancel,
 		pending:       make(map[responseKey]*pendingRequest),
 		done:          make(chan struct{}),
 		onDatagram:    config.OnDatagram,
@@ -247,6 +255,7 @@ func (s *Session) finish(err error) {
 		s.pending = make(map[responseKey]*pendingRequest)
 		close(s.done)
 		s.mu.Unlock()
+		s.cancel()
 		for _, request := range pending {
 			request.results <- responseResult{err: err}
 		}
@@ -259,11 +268,32 @@ func (s *Session) Close(err error) { s.finish(err) }
 
 // Write serializes one already-framed BDTP unit with all BEM and bus traffic.
 func (s *Session) Write(buf []byte) error {
+	return s.WriteContext(context.Background(), buf)
+}
+
+// WriteContext bounds both admission to the sole writer and physical I/O.
+// Closing the session also cancels its current write and queued writers.
+func (s *Session) WriteContext(ctx context.Context, buf []byte) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if len(buf) == 0 {
 		return nil
 	}
-	s.writeMu.Lock()
-	defer s.writeMu.Unlock()
+	select {
+	case s.writeGate <- struct{}{}:
+		defer func() { <-s.writeGate }()
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-s.done:
+		return s.terminalError()
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 
 	s.mu.Lock()
 	select {
@@ -286,13 +316,33 @@ func (s *Session) Write(buf []byte) error {
 	if s.onWireBytes != nil {
 		s.onWireBytes(WireTransmitted, time.Now(), append([]byte(nil), buf...))
 	}
-	err := write(buf)
+	writeCtx, cancel := context.WithCancel(ctx)
+	stop := context.AfterFunc(s.ctx, cancel)
+	defer func() {
+		stop()
+		cancel()
+	}()
+	err := write(writeCtx, buf)
+	if ctx.Err() != nil {
+		err = ctx.Err()
+	} else if writeCtx.Err() != nil {
+		err = s.terminalError()
+	}
 	if err != nil {
 		s.metrics.transportWriteErrors.Add(1)
 	} else {
 		s.metrics.transportWriteBytes.Add(uint64(len(buf)))
 	}
 	return err
+}
+
+func (s *Session) terminalError() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.doneErr != nil {
+		return s.doneErr
+	}
+	return ErrSessionClosed
 }
 
 // Request sends one local BEM command and waits for its A0 response. The
@@ -337,6 +387,9 @@ func (s *Session) request(ctx context.Context, command byte, data []byte, inacti
 	if ctx == nil {
 		ctx = context.Background()
 	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	key := responseKey{bstID: BSTBEMResponse, bemID: command, origin: LocalBEMOrigin}
 	request := &pendingRequest{
 		results: make(chan responseResult, maxBEMResponseTrain+1),
@@ -369,7 +422,7 @@ func (s *Session) request(ctx context.Context, command byte, data []byte, inacti
 
 	encoded, err := EncodeBEMRequest(command, data)
 	if err == nil {
-		err = s.Write(encoded)
+		err = s.WriteContext(ctx, encoded)
 	}
 	if err != nil {
 		s.removePending(key, request)

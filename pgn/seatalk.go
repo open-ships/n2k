@@ -22,6 +22,21 @@ func (m *SeatalkWirelessKeypadControl) DecodePayload(payload []uint8) error {
 }
 func (m *SeatalkWirelessKeypadControl) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkWirelessKeypadControl) Clone() Message {
+	if m == nil {
+		return (*SeatalkWirelessKeypadControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.PID = clonePointer(m.PID)
+	copy.Variant = clonePointer(m.Variant)
+	copy.BeepControl = clonePointer(m.BeepControl)
+	return &copy
+}
+
 type SeatalkWirelessKeypadLightControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -40,6 +55,22 @@ func (m *SeatalkWirelessKeypadLightControl) DecodePayload(payload []uint8) error
 }
 func (m *SeatalkWirelessKeypadLightControl) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkWirelessKeypadLightControl) Clone() Message {
+	if m == nil {
+		return (*SeatalkWirelessKeypadLightControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Variant = clonePointer(m.Variant)
+	copy.WirelessSetting = clonePointer(m.WirelessSetting)
+	copy.WiredSetting = clonePointer(m.WiredSetting)
+	return &copy
+}
+
 type SeatalkAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -57,6 +88,23 @@ func (m *SeatalkAlarm) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SeatalkAlarm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkAlarm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkAlarm) Clone() Message {
+	if m == nil {
+		return (*SeatalkAlarm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.AlarmStatus = clonePointer(m.AlarmStatus)
+	copy.AlarmId = clonePointer(m.AlarmId)
+	copy.AlarmGroup = clonePointer(m.AlarmGroup)
+	copy.AlarmPriority = cloneSlice(m.AlarmPriority)
+	return &copy
+}
+
 type SeatalkPilotWindDatum struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -71,14 +119,43 @@ func (m *SeatalkPilotWindDatum) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *SeatalkPilotWindDatum) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotWindDatum) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkPilotWindDatum) Clone() Message {
+	if m == nil {
+		return (*SeatalkPilotWindDatum)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.WindDatum = clonePointer(m.WindDatum)
+	copy.RollingAverageWindAngle = clonePointer(m.RollingAverageWindAngle)
+	return &copy
+}
+
 // WindDatumValue returns WindDatum as a physical value in rad (value = raw * 0.0001).
-// The bool is false when WindDatum is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotWindDatum) WindDatumValue() (float64, bool) {
-	if m.WindDatum == nil {
+	if m == nil || m.WindDatum == nil {
 		return 0, false
 	}
-	return float64(*m.WindDatum) * 0.0001, true
+	if *m.WindDatum == 65535 {
+		return 0, false
+	}
+	if *m.WindDatum == 65534 {
+		return 0, false
+	}
+	if *m.WindDatum == 65533 {
+		return 0, false
+	}
+	value := float64(*m.WindDatum) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetWindDatumValue sets WindDatum from a physical value in rad, rounded to the nearest
@@ -89,13 +166,28 @@ func (m *SeatalkPilotWindDatum) SetWindDatumValue(v float64) {
 }
 
 // RollingAverageWindAngleValue returns RollingAverageWindAngle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when RollingAverageWindAngle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotWindDatum) RollingAverageWindAngleValue() (float64, bool) {
-	if m.RollingAverageWindAngle == nil {
+	if m == nil || m.RollingAverageWindAngle == nil {
 		return 0, false
 	}
-	return float64(*m.RollingAverageWindAngle) * 0.0001, true
+	if *m.RollingAverageWindAngle == 65535 {
+		return 0, false
+	}
+	if *m.RollingAverageWindAngle == 65534 {
+		return 0, false
+	}
+	if *m.RollingAverageWindAngle == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RollingAverageWindAngle) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRollingAverageWindAngleValue sets RollingAverageWindAngle from a physical value in rad, rounded to the nearest
@@ -120,14 +212,44 @@ func (m *SeatalkPilotHeading) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SeatalkPilotHeading) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotHeading) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkPilotHeading) Clone() Message {
+	if m == nil {
+		return (*SeatalkPilotHeading)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.HeadingTrue = clonePointer(m.HeadingTrue)
+	copy.HeadingMagnetic = clonePointer(m.HeadingMagnetic)
+	return &copy
+}
+
 // HeadingTrueValue returns HeadingTrue as a physical value in rad (value = raw * 0.0001).
-// The bool is false when HeadingTrue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotHeading) HeadingTrueValue() (float64, bool) {
-	if m.HeadingTrue == nil {
+	if m == nil || m.HeadingTrue == nil {
 		return 0, false
 	}
-	return float64(*m.HeadingTrue) * 0.0001, true
+	if *m.HeadingTrue == 65535 {
+		return 0, false
+	}
+	if *m.HeadingTrue == 65534 {
+		return 0, false
+	}
+	if *m.HeadingTrue == 65533 {
+		return 0, false
+	}
+	value := float64(*m.HeadingTrue) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeadingTrueValue sets HeadingTrue from a physical value in rad, rounded to the nearest
@@ -138,13 +260,28 @@ func (m *SeatalkPilotHeading) SetHeadingTrueValue(v float64) {
 }
 
 // HeadingMagneticValue returns HeadingMagnetic as a physical value in rad (value = raw * 0.0001).
-// The bool is false when HeadingMagnetic is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotHeading) HeadingMagneticValue() (float64, bool) {
-	if m.HeadingMagnetic == nil {
+	if m == nil || m.HeadingMagnetic == nil {
 		return 0, false
 	}
-	return float64(*m.HeadingMagnetic) * 0.0001, true
+	if *m.HeadingMagnetic == 65535 {
+		return 0, false
+	}
+	if *m.HeadingMagnetic == 65534 {
+		return 0, false
+	}
+	if *m.HeadingMagnetic == 65533 {
+		return 0, false
+	}
+	value := float64(*m.HeadingMagnetic) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeadingMagneticValue sets HeadingMagnetic from a physical value in rad, rounded to the nearest
@@ -171,14 +308,44 @@ func (m *SeatalkPilotLockedHeading) DecodePayload(payload []uint8) error {
 }
 func (m *SeatalkPilotLockedHeading) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkPilotLockedHeading) Clone() Message {
+	if m == nil {
+		return (*SeatalkPilotLockedHeading)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.TargetHeadingTrue = clonePointer(m.TargetHeadingTrue)
+	copy.TargetHeadingMagnetic = clonePointer(m.TargetHeadingMagnetic)
+	return &copy
+}
+
 // TargetHeadingTrueValue returns TargetHeadingTrue as a physical value in rad (value = raw * 0.0001).
-// The bool is false when TargetHeadingTrue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotLockedHeading) TargetHeadingTrueValue() (float64, bool) {
-	if m.TargetHeadingTrue == nil {
+	if m == nil || m.TargetHeadingTrue == nil {
 		return 0, false
 	}
-	return float64(*m.TargetHeadingTrue) * 0.0001, true
+	if *m.TargetHeadingTrue == 65535 {
+		return 0, false
+	}
+	if *m.TargetHeadingTrue == 65534 {
+		return 0, false
+	}
+	if *m.TargetHeadingTrue == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TargetHeadingTrue) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTargetHeadingTrueValue sets TargetHeadingTrue from a physical value in rad, rounded to the nearest
@@ -189,13 +356,28 @@ func (m *SeatalkPilotLockedHeading) SetTargetHeadingTrueValue(v float64) {
 }
 
 // TargetHeadingMagneticValue returns TargetHeadingMagnetic as a physical value in rad (value = raw * 0.0001).
-// The bool is false when TargetHeadingMagnetic is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkPilotLockedHeading) TargetHeadingMagneticValue() (float64, bool) {
-	if m.TargetHeadingMagnetic == nil {
+	if m == nil || m.TargetHeadingMagnetic == nil {
 		return 0, false
 	}
-	return float64(*m.TargetHeadingMagnetic) * 0.0001, true
+	if *m.TargetHeadingMagnetic == 65535 {
+		return 0, false
+	}
+	if *m.TargetHeadingMagnetic == 65534 {
+		return 0, false
+	}
+	if *m.TargetHeadingMagnetic == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TargetHeadingMagnetic) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTargetHeadingMagneticValue sets TargetHeadingMagnetic from a physical value in rad, rounded to the nearest
@@ -219,6 +401,20 @@ func (m *SeatalkSilenceAlarm) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SeatalkSilenceAlarm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkSilenceAlarm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkSilenceAlarm) Clone() Message {
+	if m == nil {
+		return (*SeatalkSilenceAlarm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlarmId = clonePointer(m.AlarmId)
+	copy.AlarmGroup = clonePointer(m.AlarmGroup)
+	return &copy
+}
+
 type SeatalkKeypadMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -237,6 +433,24 @@ func (m *SeatalkKeypadMessage) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *SeatalkKeypadMessage) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkKeypadMessage) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkKeypadMessage) Clone() Message {
+	if m == nil {
+		return (*SeatalkKeypadMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.FirstKey = clonePointer(m.FirstKey)
+	copy.SecondKey = clonePointer(m.SecondKey)
+	copy.FirstKeyState = clonePointer(m.FirstKeyState)
+	copy.SecondKeyState = clonePointer(m.SecondKeyState)
+	copy.EncoderPosition = clonePointer(m.EncoderPosition)
+	return &copy
+}
+
 type SeatalkKeypadHeartbeat struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -254,6 +468,21 @@ func (m *SeatalkKeypadHeartbeat) DecodePayload(payload []uint8) error {
 }
 func (m *SeatalkKeypadHeartbeat) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkKeypadHeartbeat) Clone() Message {
+	if m == nil {
+		return (*SeatalkKeypadHeartbeat)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Variant = clonePointer(m.Variant)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}
+
 type SeatalkPilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -268,6 +497,21 @@ func (m *SeatalkPilotMode) MessageInfo() MessageInfo            { return m.Info 
 func (m *SeatalkPilotMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SeatalkPilotMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkPilotMode) Clone() Message {
+	if m == nil {
+		return (*SeatalkPilotMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.PilotMode = clonePointer(m.PilotMode)
+	copy.SubMode = cloneSlice(m.SubMode)
+	copy.PilotModeData = cloneSlice(m.PilotModeData)
+	return &copy
+}
 
 type Seatalk1DeviceIdentification struct {
 	Info             MessageInfo `json:"info"`
@@ -286,6 +530,22 @@ func (m *Seatalk1DeviceIdentification) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *Seatalk1DeviceIdentification) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1DeviceIdentification) Clone() Message {
+	if m == nil {
+		return (*Seatalk1DeviceIdentification)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	copy.Seatalk1Command = clonePointer(m.Seatalk1Command)
+	copy.Device = clonePointer(m.Device)
+	return &copy
+}
 
 type Seatalk1DisplayBrightness struct {
 	Info             MessageInfo `json:"info"`
@@ -308,14 +568,48 @@ func (m *Seatalk1DisplayBrightness) DecodePayload(payload []uint8) error {
 }
 func (m *Seatalk1DisplayBrightness) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1DisplayBrightness) Clone() Message {
+	if m == nil {
+		return (*Seatalk1DisplayBrightness)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command1 = clonePointer(m.Command1)
+	copy.Group = clonePointer(m.Group)
+	copy.Shared = clonePointer(m.Shared)
+	copy.Command = clonePointer(m.Command)
+	copy.Brightness = clonePointer(m.Brightness)
+	copy.Unknown2 = cloneSlice(m.Unknown2)
+	return &copy
+}
+
 // BrightnessValue returns Brightness as a physical value in % (value = raw).
-// The bool is false when Brightness is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Seatalk1DisplayBrightness) BrightnessValue() (float64, bool) {
-	if m.Brightness == nil {
+	if m == nil || m.Brightness == nil {
 		return 0, false
 	}
-	return float64(*m.Brightness), true
+	if *m.Brightness == 255 {
+		return 0, false
+	}
+	if *m.Brightness == 254 {
+		return 0, false
+	}
+	if *m.Brightness == 253 {
+		return 0, false
+	}
+	value := float64(*m.Brightness)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBrightnessValue sets Brightness from a physical value in %, rounded to the nearest
@@ -344,6 +638,25 @@ func (m *Seatalk1DisplayColor) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *Seatalk1DisplayColor) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Seatalk1DisplayColor) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1DisplayColor) Clone() Message {
+	if m == nil {
+		return (*Seatalk1DisplayColor)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command1 = clonePointer(m.Command1)
+	copy.Group = clonePointer(m.Group)
+	copy.Unknown1 = cloneSlice(m.Unknown1)
+	copy.Command = clonePointer(m.Command)
+	copy.Color = clonePointer(m.Color)
+	copy.Unknown2 = cloneSlice(m.Unknown2)
+	return &copy
+}
+
 type Seatalk1Keystroke struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -363,6 +676,25 @@ func (m *Seatalk1Keystroke) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *Seatalk1Keystroke) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Seatalk1Keystroke) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1Keystroke) Clone() Message {
+	if m == nil {
+		return (*Seatalk1Keystroke)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	copy.Seatalk1Command = clonePointer(m.Seatalk1Command)
+	copy.Device = clonePointer(m.Device)
+	copy.Key = clonePointer(m.Key)
+	copy.Keyinverted = clonePointer(m.Keyinverted)
+	copy.UnknownData = cloneSlice(m.UnknownData)
+	return &copy
+}
+
 type Seatalk1PilotHullType struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -379,6 +711,23 @@ func (m *Seatalk1PilotHullType) MessageInfo() MessageInfo            { return m.
 func (m *Seatalk1PilotHullType) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Seatalk1PilotHullType) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Seatalk1PilotHullType) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1PilotHullType) Clone() Message {
+	if m == nil {
+		return (*Seatalk1PilotHullType)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	copy.Unknown = cloneSlice(m.Unknown)
+	copy.HullType = clonePointer(m.HullType)
+	copy.Unknown2 = cloneSlice(m.Unknown2)
+	return &copy
+}
 
 type Seatalk1PilotMode struct {
 	Info             MessageInfo `json:"info"`
@@ -400,6 +749,26 @@ func (m *Seatalk1PilotMode) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *Seatalk1PilotMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Seatalk1PilotMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Seatalk1PilotMode) Clone() Message {
+	if m == nil {
+		return (*Seatalk1PilotMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	copy.Seatalk1Command = clonePointer(m.Seatalk1Command)
+	copy.Unknown1 = cloneSlice(m.Unknown1)
+	copy.PilotMode = clonePointer(m.PilotMode)
+	copy.SubMode = clonePointer(m.SubMode)
+	copy.PilotModeData = cloneSlice(m.PilotModeData)
+	copy.Unknown2 = cloneSlice(m.Unknown2)
+	return &copy
+}
+
 type SeatalkPilotAutoTurn struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -418,6 +787,24 @@ func (m *SeatalkPilotAutoTurn) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *SeatalkPilotAutoTurn) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkPilotAutoTurn) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkPilotAutoTurn) Clone() Message {
+	if m == nil {
+		return (*SeatalkPilotAutoTurn)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.Command = clonePointer(m.Command)
+	copy.Unknown = cloneSlice(m.Unknown)
+	copy.Enabled = clonePointer(m.Enabled)
+	copy.Unknown2 = clonePointer(m.Unknown2)
+	copy.Unknown3 = cloneSlice(m.Unknown3)
+	return &copy
+}
+
 type SeatalkNodeStatistics struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -435,14 +822,46 @@ func (m *SeatalkNodeStatistics) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *SeatalkNodeStatistics) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SeatalkNodeStatistics) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkNodeStatistics) Clone() Message {
+	if m == nil {
+		return (*SeatalkNodeStatistics)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProductCode = clonePointer(m.ProductCode)
+	copy.Year = clonePointer(m.Year)
+	copy.Month = clonePointer(m.Month)
+	copy.DeviceNumber = clonePointer(m.DeviceNumber)
+	copy.NodeVoltage = clonePointer(m.NodeVoltage)
+	return &copy
+}
+
 // NodeVoltageValue returns NodeVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when NodeVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkNodeStatistics) NodeVoltageValue() (float64, bool) {
-	if m.NodeVoltage == nil {
+	if m == nil || m.NodeVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.NodeVoltage) * 0.01, true
+	if *m.NodeVoltage == 65535 {
+		return 0, false
+	}
+	if *m.NodeVoltage == 65534 {
+		return 0, false
+	}
+	if *m.NodeVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.NodeVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNodeVoltageValue sets NodeVoltage from a physical value in V, rounded to the nearest
@@ -472,14 +891,45 @@ func (m *SeatalkWaypointInformation) DecodePayload(payload []uint8) error {
 }
 func (m *SeatalkWaypointInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkWaypointInformation) Clone() Message {
+	if m == nil {
+		return (*SeatalkWaypointInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.BearingToWaypointTrue = clonePointer(m.BearingToWaypointTrue)
+	copy.BearingToWaypointMagnetic = clonePointer(m.BearingToWaypointMagnetic)
+	copy.DistanceToWaypoint = clonePointer(m.DistanceToWaypoint)
+	return &copy
+}
+
 // BearingToWaypointTrueValue returns BearingToWaypointTrue as a physical value in rad (value = raw * 0.0001).
-// The bool is false when BearingToWaypointTrue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkWaypointInformation) BearingToWaypointTrueValue() (float64, bool) {
-	if m.BearingToWaypointTrue == nil {
+	if m == nil || m.BearingToWaypointTrue == nil {
 		return 0, false
 	}
-	return float64(*m.BearingToWaypointTrue) * 0.0001, true
+	if *m.BearingToWaypointTrue == 65535 {
+		return 0, false
+	}
+	if *m.BearingToWaypointTrue == 65534 {
+		return 0, false
+	}
+	if *m.BearingToWaypointTrue == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BearingToWaypointTrue) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBearingToWaypointTrueValue sets BearingToWaypointTrue from a physical value in rad, rounded to the nearest
@@ -490,13 +940,28 @@ func (m *SeatalkWaypointInformation) SetBearingToWaypointTrueValue(v float64) {
 }
 
 // BearingToWaypointMagneticValue returns BearingToWaypointMagnetic as a physical value in rad (value = raw * 0.0001).
-// The bool is false when BearingToWaypointMagnetic is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkWaypointInformation) BearingToWaypointMagneticValue() (float64, bool) {
-	if m.BearingToWaypointMagnetic == nil {
+	if m == nil || m.BearingToWaypointMagnetic == nil {
 		return 0, false
 	}
-	return float64(*m.BearingToWaypointMagnetic) * 0.0001, true
+	if *m.BearingToWaypointMagnetic == 65535 {
+		return 0, false
+	}
+	if *m.BearingToWaypointMagnetic == 65534 {
+		return 0, false
+	}
+	if *m.BearingToWaypointMagnetic == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BearingToWaypointMagnetic) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBearingToWaypointMagneticValue sets BearingToWaypointMagnetic from a physical value in rad, rounded to the nearest
@@ -507,13 +972,28 @@ func (m *SeatalkWaypointInformation) SetBearingToWaypointMagneticValue(v float64
 }
 
 // DistanceToWaypointValue returns DistanceToWaypoint as a physical value in m (value = raw * 0.01).
-// The bool is false when DistanceToWaypoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkWaypointInformation) DistanceToWaypointValue() (float64, bool) {
-	if m.DistanceToWaypoint == nil {
+	if m == nil || m.DistanceToWaypoint == nil {
 		return 0, false
 	}
-	return float64(*m.DistanceToWaypoint) * 0.01, true
+	if *m.DistanceToWaypoint == 4294967295 {
+		return 0, false
+	}
+	if *m.DistanceToWaypoint == 4294967294 {
+		return 0, false
+	}
+	if *m.DistanceToWaypoint == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.DistanceToWaypoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+07 && !approximatelyEqual(value, 4.294967292e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDistanceToWaypointValue sets DistanceToWaypoint from a physical value in m, rounded to the nearest
@@ -545,14 +1025,47 @@ func (m *SeatalkRouteInformation) DecodePayload(payload []uint8) error {
 }
 func (m *SeatalkRouteInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeatalkRouteInformation) Clone() Message {
+	if m == nil {
+		return (*SeatalkRouteInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.CurrentWaypointSequence = clonePointer(m.CurrentWaypointSequence)
+	copy.NextWaypointSequence = clonePointer(m.NextWaypointSequence)
+	copy.Unknown = clonePointer(m.Unknown)
+	copy.DistancePositionToNextWaypoint = clonePointer(m.DistancePositionToNextWaypoint)
+	copy.BearingPositionToNextWaypointTrue = clonePointer(m.BearingPositionToNextWaypointTrue)
+	copy.BearingCurrentWaypointToNextWaypointTrue = clonePointer(m.BearingCurrentWaypointToNextWaypointTrue)
+	return &copy
+}
+
 // DistancePositionToNextWaypointValue returns DistancePositionToNextWaypoint as a physical value in m (value = raw).
-// The bool is false when DistancePositionToNextWaypoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkRouteInformation) DistancePositionToNextWaypointValue() (float64, bool) {
-	if m.DistancePositionToNextWaypoint == nil {
+	if m == nil || m.DistancePositionToNextWaypoint == nil {
 		return 0, false
 	}
-	return float64(*m.DistancePositionToNextWaypoint), true
+	if *m.DistancePositionToNextWaypoint == 4294967295 {
+		return 0, false
+	}
+	if *m.DistancePositionToNextWaypoint == 4294967294 {
+		return 0, false
+	}
+	if *m.DistancePositionToNextWaypoint == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.DistancePositionToNextWaypoint)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDistancePositionToNextWaypointValue sets DistancePositionToNextWaypoint from a physical value in m, rounded to the nearest
@@ -563,13 +1076,28 @@ func (m *SeatalkRouteInformation) SetDistancePositionToNextWaypointValue(v float
 }
 
 // BearingPositionToNextWaypointTrueValue returns BearingPositionToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
-// The bool is false when BearingPositionToNextWaypointTrue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkRouteInformation) BearingPositionToNextWaypointTrueValue() (float64, bool) {
-	if m.BearingPositionToNextWaypointTrue == nil {
+	if m == nil || m.BearingPositionToNextWaypointTrue == nil {
 		return 0, false
 	}
-	return float64(*m.BearingPositionToNextWaypointTrue) * 0.0001, true
+	if *m.BearingPositionToNextWaypointTrue == 65535 {
+		return 0, false
+	}
+	if *m.BearingPositionToNextWaypointTrue == 65534 {
+		return 0, false
+	}
+	if *m.BearingPositionToNextWaypointTrue == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BearingPositionToNextWaypointTrue) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBearingPositionToNextWaypointTrueValue sets BearingPositionToNextWaypointTrue from a physical value in rad, rounded to the nearest
@@ -580,13 +1108,28 @@ func (m *SeatalkRouteInformation) SetBearingPositionToNextWaypointTrueValue(v fl
 }
 
 // BearingCurrentWaypointToNextWaypointTrueValue returns BearingCurrentWaypointToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
-// The bool is false when BearingCurrentWaypointToNextWaypointTrue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SeatalkRouteInformation) BearingCurrentWaypointToNextWaypointTrueValue() (float64, bool) {
-	if m.BearingCurrentWaypointToNextWaypointTrue == nil {
+	if m == nil || m.BearingCurrentWaypointToNextWaypointTrue == nil {
 		return 0, false
 	}
-	return float64(*m.BearingCurrentWaypointToNextWaypointTrue) * 0.0001, true
+	if *m.BearingCurrentWaypointToNextWaypointTrue == 65535 {
+		return 0, false
+	}
+	if *m.BearingCurrentWaypointToNextWaypointTrue == 65534 {
+		return 0, false
+	}
+	if *m.BearingCurrentWaypointToNextWaypointTrue == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BearingCurrentWaypointToNextWaypointTrue) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBearingCurrentWaypointToNextWaypointTrueValue sets BearingCurrentWaypointToNextWaypointTrue from a physical value in rad, rounded to the nearest

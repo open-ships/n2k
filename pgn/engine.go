@@ -25,14 +25,47 @@ func (m *GarminAutopilotEngineRpmA) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotEngineRpmA) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotEngineRpmA) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotEngineRpmA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.EngineSpeed = clonePointer(m.EngineSpeed)
+	return &copy
+}
+
 // EngineSpeedValue returns EngineSpeed as a physical value in rpm (value = raw).
-// The bool is false when EngineSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotEngineRpmA) EngineSpeedValue() (float64, bool) {
-	if m.EngineSpeed == nil {
+	if m == nil || m.EngineSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.EngineSpeed), true
+	if *m.EngineSpeed == 65535 {
+		return 0, false
+	}
+	if *m.EngineSpeed == 65534 {
+		return 0, false
+	}
+	if *m.EngineSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EngineSpeed)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
@@ -62,14 +95,47 @@ func (m *GarminAutopilotEngineRpmB) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotEngineRpmB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotEngineRpmB) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotEngineRpmB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.EngineSpeed = clonePointer(m.EngineSpeed)
+	return &copy
+}
+
 // EngineSpeedValue returns EngineSpeed as a physical value in rpm (value = raw).
-// The bool is false when EngineSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotEngineRpmB) EngineSpeedValue() (float64, bool) {
-	if m.EngineSpeed == nil {
+	if m == nil || m.EngineSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.EngineSpeed), true
+	if *m.EngineSpeed == 65535 {
+		return 0, false
+	}
+	if *m.EngineSpeed == 65534 {
+		return 0, false
+	}
+	if *m.EngineSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EngineSpeed)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
@@ -95,14 +161,43 @@ func (m *EngineParametersRapidUpdate) DecodePayload(payload []uint8) error {
 }
 func (m *EngineParametersRapidUpdate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *EngineParametersRapidUpdate) Clone() Message {
+	if m == nil {
+		return (*EngineParametersRapidUpdate)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.Speed = clonePointer(m.Speed)
+	copy.BoostPressure = clonePointer(m.BoostPressure)
+	copy.TiltTrim = clonePointer(m.TiltTrim)
+	return &copy
+}
+
 // SpeedValue returns Speed as a physical value in rpm (value = raw * 0.25).
-// The bool is false when Speed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersRapidUpdate) SpeedValue() (float64, bool) {
-	if m.Speed == nil {
+	if m == nil || m.Speed == nil {
 		return 0, false
 	}
-	return float64(*m.Speed) * 0.25, true
+	if *m.Speed == 65535 {
+		return 0, false
+	}
+	if *m.Speed == 65534 {
+		return 0, false
+	}
+	if *m.Speed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Speed) * 0.25
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16383 && !approximatelyEqual(value, 16383) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedValue sets Speed from a physical value in rpm, rounded to the nearest
@@ -113,13 +208,28 @@ func (m *EngineParametersRapidUpdate) SetSpeedValue(v float64) {
 }
 
 // BoostPressureValue returns BoostPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when BoostPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersRapidUpdate) BoostPressureValue() (float64, bool) {
-	if m.BoostPressure == nil {
+	if m == nil || m.BoostPressure == nil {
 		return 0, false
 	}
-	return float64(*m.BoostPressure) * 100, true
+	if *m.BoostPressure == 65535 {
+		return 0, false
+	}
+	if *m.BoostPressure == 65534 {
+		return 0, false
+	}
+	if *m.BoostPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BoostPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBoostPressureValue sets BoostPressure from a physical value in Pa, rounded to the nearest
@@ -130,13 +240,28 @@ func (m *EngineParametersRapidUpdate) SetBoostPressureValue(v float64) {
 }
 
 // TiltTrimValue returns TiltTrim as a physical value in % (value = raw).
-// The bool is false when TiltTrim is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersRapidUpdate) TiltTrimValue() (float64, bool) {
-	if m.TiltTrim == nil {
+	if m == nil || m.TiltTrim == nil {
 		return 0, false
 	}
-	return float64(*m.TiltTrim), true
+	if *m.TiltTrim == 127 {
+		return 0, false
+	}
+	if *m.TiltTrim == 126 {
+		return 0, false
+	}
+	if *m.TiltTrim == 125 {
+		return 0, false
+	}
+	value := float64(*m.TiltTrim)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTiltTrimValue sets TiltTrim from a physical value in %, rounded to the nearest
@@ -171,14 +296,52 @@ func (m *EngineParametersDynamic) DecodePayload(payload []uint8) error {
 }
 func (m *EngineParametersDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *EngineParametersDynamic) Clone() Message {
+	if m == nil {
+		return (*EngineParametersDynamic)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.OilPressure = clonePointer(m.OilPressure)
+	copy.OilTemperature = clonePointer(m.OilTemperature)
+	copy.Temperature = clonePointer(m.Temperature)
+	copy.AlternatorPotential = clonePointer(m.AlternatorPotential)
+	copy.FuelRate = clonePointer(m.FuelRate)
+	copy.TotalEngineHours = clonePointer(m.TotalEngineHours)
+	copy.CoolantPressure = clonePointer(m.CoolantPressure)
+	copy.FuelPressure = clonePointer(m.FuelPressure)
+	copy.DiscreteStatus1 = clonePointer(m.DiscreteStatus1)
+	copy.DiscreteStatus2 = clonePointer(m.DiscreteStatus2)
+	copy.EngineLoad = clonePointer(m.EngineLoad)
+	copy.EngineTorque = clonePointer(m.EngineTorque)
+	return &copy
+}
+
 // OilPressureValue returns OilPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when OilPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) OilPressureValue() (float64, bool) {
-	if m.OilPressure == nil {
+	if m == nil || m.OilPressure == nil {
 		return 0, false
 	}
-	return float64(*m.OilPressure) * 100, true
+	if *m.OilPressure == 65535 {
+		return 0, false
+	}
+	if *m.OilPressure == 65534 {
+		return 0, false
+	}
+	if *m.OilPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OilPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
@@ -189,13 +352,28 @@ func (m *EngineParametersDynamic) SetOilPressureValue(v float64) {
 }
 
 // OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
-// The bool is false when OilTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) OilTemperatureValue() (float64, bool) {
-	if m.OilTemperature == nil {
+	if m == nil || m.OilTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.OilTemperature) * 0.1, true
+	if *m.OilTemperature == 65535 {
+		return 0, false
+	}
+	if *m.OilTemperature == 65534 {
+		return 0, false
+	}
+	if *m.OilTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OilTemperature) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
@@ -206,13 +384,28 @@ func (m *EngineParametersDynamic) SetOilTemperatureValue(v float64) {
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
-// The bool is false when Temperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) TemperatureValue() (float64, bool) {
-	if m.Temperature == nil {
+	if m == nil || m.Temperature == nil {
 		return 0, false
 	}
-	return float64(*m.Temperature) * 0.01, true
+	if *m.Temperature == 65535 {
+		return 0, false
+	}
+	if *m.Temperature == 65534 {
+		return 0, false
+	}
+	if *m.Temperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Temperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
@@ -223,13 +416,28 @@ func (m *EngineParametersDynamic) SetTemperatureValue(v float64) {
 }
 
 // AlternatorPotentialValue returns AlternatorPotential as a physical value in V (value = raw * 0.01).
-// The bool is false when AlternatorPotential is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) AlternatorPotentialValue() (float64, bool) {
-	if m.AlternatorPotential == nil {
+	if m == nil || m.AlternatorPotential == nil {
 		return 0, false
 	}
-	return float64(*m.AlternatorPotential) * 0.01, true
+	if *m.AlternatorPotential == 32767 {
+		return 0, false
+	}
+	if *m.AlternatorPotential == 32766 {
+		return 0, false
+	}
+	if *m.AlternatorPotential == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AlternatorPotential) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAlternatorPotentialValue sets AlternatorPotential from a physical value in V, rounded to the nearest
@@ -240,13 +448,28 @@ func (m *EngineParametersDynamic) SetAlternatorPotentialValue(v float64) {
 }
 
 // FuelRateValue returns FuelRate as a physical value in L/h (value = raw * 0.1).
-// The bool is false when FuelRate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) FuelRateValue() (float64, bool) {
-	if m.FuelRate == nil {
+	if m == nil || m.FuelRate == nil {
 		return 0, false
 	}
-	return float64(*m.FuelRate) * 0.1, true
+	if *m.FuelRate == 32767 {
+		return 0, false
+	}
+	if *m.FuelRate == 32766 {
+		return 0, false
+	}
+	if *m.FuelRate == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FuelRate) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFuelRateValue sets FuelRate from a physical value in L/h, rounded to the nearest
@@ -257,13 +480,28 @@ func (m *EngineParametersDynamic) SetFuelRateValue(v float64) {
 }
 
 // TotalEngineHoursValue returns TotalEngineHours as a physical value in s (value = raw).
-// The bool is false when TotalEngineHours is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) TotalEngineHoursValue() (float64, bool) {
-	if m.TotalEngineHours == nil {
+	if m == nil || m.TotalEngineHours == nil {
 		return 0, false
 	}
-	return float64(*m.TotalEngineHours), true
+	if *m.TotalEngineHours == 4294967295 {
+		return 0, false
+	}
+	if *m.TotalEngineHours == 4294967294 {
+		return 0, false
+	}
+	if *m.TotalEngineHours == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TotalEngineHours)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalEngineHoursValue sets TotalEngineHours from a physical value in s, rounded to the nearest
@@ -274,13 +512,28 @@ func (m *EngineParametersDynamic) SetTotalEngineHoursValue(v float64) {
 }
 
 // CoolantPressureValue returns CoolantPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when CoolantPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) CoolantPressureValue() (float64, bool) {
-	if m.CoolantPressure == nil {
+	if m == nil || m.CoolantPressure == nil {
 		return 0, false
 	}
-	return float64(*m.CoolantPressure) * 100, true
+	if *m.CoolantPressure == 65535 {
+		return 0, false
+	}
+	if *m.CoolantPressure == 65534 {
+		return 0, false
+	}
+	if *m.CoolantPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CoolantPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCoolantPressureValue sets CoolantPressure from a physical value in Pa, rounded to the nearest
@@ -291,13 +544,28 @@ func (m *EngineParametersDynamic) SetCoolantPressureValue(v float64) {
 }
 
 // FuelPressureValue returns FuelPressure as a physical value in Pa (value = raw * 1000).
-// The bool is false when FuelPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) FuelPressureValue() (float64, bool) {
-	if m.FuelPressure == nil {
+	if m == nil || m.FuelPressure == nil {
 		return 0, false
 	}
-	return float64(*m.FuelPressure) * 1000, true
+	if *m.FuelPressure == 65535 {
+		return 0, false
+	}
+	if *m.FuelPressure == 65534 {
+		return 0, false
+	}
+	if *m.FuelPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.FuelPressure) * 1000
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+07 && !approximatelyEqual(value, 6.5532e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFuelPressureValue sets FuelPressure from a physical value in Pa, rounded to the nearest
@@ -308,13 +576,28 @@ func (m *EngineParametersDynamic) SetFuelPressureValue(v float64) {
 }
 
 // EngineLoadValue returns EngineLoad as a physical value in % (value = raw).
-// The bool is false when EngineLoad is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) EngineLoadValue() (float64, bool) {
-	if m.EngineLoad == nil {
+	if m == nil || m.EngineLoad == nil {
 		return 0, false
 	}
-	return float64(*m.EngineLoad), true
+	if *m.EngineLoad == 127 {
+		return 0, false
+	}
+	if *m.EngineLoad == 126 {
+		return 0, false
+	}
+	if *m.EngineLoad == 125 {
+		return 0, false
+	}
+	value := float64(*m.EngineLoad)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEngineLoadValue sets EngineLoad from a physical value in %, rounded to the nearest
@@ -325,13 +608,28 @@ func (m *EngineParametersDynamic) SetEngineLoadValue(v float64) {
 }
 
 // EngineTorqueValue returns EngineTorque as a physical value in % (value = raw).
-// The bool is false when EngineTorque is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersDynamic) EngineTorqueValue() (float64, bool) {
-	if m.EngineTorque == nil {
+	if m == nil || m.EngineTorque == nil {
 		return 0, false
 	}
-	return float64(*m.EngineTorque), true
+	if *m.EngineTorque == 127 {
+		return 0, false
+	}
+	if *m.EngineTorque == 126 {
+		return 0, false
+	}
+	if *m.EngineTorque == 125 {
+		return 0, false
+	}
+	value := float64(*m.EngineTorque)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEngineTorqueValue sets EngineTorque from a physical value in %, rounded to the nearest
@@ -358,14 +656,44 @@ func (m *TransmissionParametersDynamic) DecodePayload(payload []uint8) error {
 }
 func (m *TransmissionParametersDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *TransmissionParametersDynamic) Clone() Message {
+	if m == nil {
+		return (*TransmissionParametersDynamic)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.TransmissionGear = clonePointer(m.TransmissionGear)
+	copy.OilPressure = clonePointer(m.OilPressure)
+	copy.OilTemperature = clonePointer(m.OilTemperature)
+	copy.DiscreteStatus1 = clonePointer(m.DiscreteStatus1)
+	return &copy
+}
+
 // OilPressureValue returns OilPressure as a physical value in Pa (value = raw * 100).
-// The bool is false when OilPressure is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TransmissionParametersDynamic) OilPressureValue() (float64, bool) {
-	if m.OilPressure == nil {
+	if m == nil || m.OilPressure == nil {
 		return 0, false
 	}
-	return float64(*m.OilPressure) * 100, true
+	if *m.OilPressure == 65535 {
+		return 0, false
+	}
+	if *m.OilPressure == 65534 {
+		return 0, false
+	}
+	if *m.OilPressure == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OilPressure) * 100
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.5532e+06 && !approximatelyEqual(value, 6.5532e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
@@ -376,13 +704,28 @@ func (m *TransmissionParametersDynamic) SetOilPressureValue(v float64) {
 }
 
 // OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
-// The bool is false when OilTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TransmissionParametersDynamic) OilTemperatureValue() (float64, bool) {
-	if m.OilTemperature == nil {
+	if m == nil || m.OilTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.OilTemperature) * 0.1, true
+	if *m.OilTemperature == 65535 {
+		return 0, false
+	}
+	if *m.OilTemperature == 65534 {
+		return 0, false
+	}
+	if *m.OilTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OilTemperature) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
@@ -407,14 +750,44 @@ func (m *TripParametersEngine) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *TripParametersEngine) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TripParametersEngine) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *TripParametersEngine) Clone() Message {
+	if m == nil {
+		return (*TripParametersEngine)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.TripFuelUsed = clonePointer(m.TripFuelUsed)
+	copy.FuelRateAverage = clonePointer(m.FuelRateAverage)
+	copy.FuelRateEconomy = clonePointer(m.FuelRateEconomy)
+	copy.InstantaneousFuelEconomy = clonePointer(m.InstantaneousFuelEconomy)
+	return &copy
+}
+
 // TripFuelUsedValue returns TripFuelUsed as a physical value in L (value = raw).
-// The bool is false when TripFuelUsed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersEngine) TripFuelUsedValue() (float64, bool) {
-	if m.TripFuelUsed == nil {
+	if m == nil || m.TripFuelUsed == nil {
 		return 0, false
 	}
-	return float64(*m.TripFuelUsed), true
+	if *m.TripFuelUsed == 65535 {
+		return 0, false
+	}
+	if *m.TripFuelUsed == 65534 {
+		return 0, false
+	}
+	if *m.TripFuelUsed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TripFuelUsed)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTripFuelUsedValue sets TripFuelUsed from a physical value in L, rounded to the nearest
@@ -425,13 +798,28 @@ func (m *TripParametersEngine) SetTripFuelUsedValue(v float64) {
 }
 
 // FuelRateAverageValue returns FuelRateAverage as a physical value in L/h (value = raw * 0.1).
-// The bool is false when FuelRateAverage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersEngine) FuelRateAverageValue() (float64, bool) {
-	if m.FuelRateAverage == nil {
+	if m == nil || m.FuelRateAverage == nil {
 		return 0, false
 	}
-	return float64(*m.FuelRateAverage) * 0.1, true
+	if *m.FuelRateAverage == 32767 {
+		return 0, false
+	}
+	if *m.FuelRateAverage == 32766 {
+		return 0, false
+	}
+	if *m.FuelRateAverage == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FuelRateAverage) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFuelRateAverageValue sets FuelRateAverage from a physical value in L/h, rounded to the nearest
@@ -442,13 +830,28 @@ func (m *TripParametersEngine) SetFuelRateAverageValue(v float64) {
 }
 
 // FuelRateEconomyValue returns FuelRateEconomy as a physical value in L/h (value = raw * 0.1).
-// The bool is false when FuelRateEconomy is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersEngine) FuelRateEconomyValue() (float64, bool) {
-	if m.FuelRateEconomy == nil {
+	if m == nil || m.FuelRateEconomy == nil {
 		return 0, false
 	}
-	return float64(*m.FuelRateEconomy) * 0.1, true
+	if *m.FuelRateEconomy == 32767 {
+		return 0, false
+	}
+	if *m.FuelRateEconomy == 32766 {
+		return 0, false
+	}
+	if *m.FuelRateEconomy == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FuelRateEconomy) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFuelRateEconomyValue sets FuelRateEconomy from a physical value in L/h, rounded to the nearest
@@ -459,13 +862,28 @@ func (m *TripParametersEngine) SetFuelRateEconomyValue(v float64) {
 }
 
 // InstantaneousFuelEconomyValue returns InstantaneousFuelEconomy as a physical value in L/h (value = raw * 0.1).
-// The bool is false when InstantaneousFuelEconomy is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersEngine) InstantaneousFuelEconomyValue() (float64, bool) {
-	if m.InstantaneousFuelEconomy == nil {
+	if m == nil || m.InstantaneousFuelEconomy == nil {
 		return 0, false
 	}
-	return float64(*m.InstantaneousFuelEconomy) * 0.1, true
+	if *m.InstantaneousFuelEconomy == 32767 {
+		return 0, false
+	}
+	if *m.InstantaneousFuelEconomy == 32766 {
+		return 0, false
+	}
+	if *m.InstantaneousFuelEconomy == 32765 {
+		return 0, false
+	}
+	value := float64(*m.InstantaneousFuelEconomy) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetInstantaneousFuelEconomyValue sets InstantaneousFuelEconomy from a physical value in L/h, rounded to the nearest
@@ -491,14 +909,41 @@ func (m *EngineParametersStatic) DecodePayload(payload []uint8) error {
 }
 func (m *EngineParametersStatic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *EngineParametersStatic) Clone() Message {
+	if m == nil {
+		return (*EngineParametersStatic)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.RatedEngineSpeed = clonePointer(m.RatedEngineSpeed)
+	return &copy
+}
+
 // RatedEngineSpeedValue returns RatedEngineSpeed as a physical value in rpm (value = raw * 0.25).
-// The bool is false when RatedEngineSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *EngineParametersStatic) RatedEngineSpeedValue() (float64, bool) {
-	if m.RatedEngineSpeed == nil {
+	if m == nil || m.RatedEngineSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.RatedEngineSpeed) * 0.25, true
+	if *m.RatedEngineSpeed == 65535 {
+		return 0, false
+	}
+	if *m.RatedEngineSpeed == 65534 {
+		return 0, false
+	}
+	if *m.RatedEngineSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RatedEngineSpeed) * 0.25
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16383 && !approximatelyEqual(value, 16383) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRatedEngineSpeedValue sets RatedEngineSpeed from a physical value in rpm, rounded to the nearest

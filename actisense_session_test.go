@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"io"
 	"net"
 	"testing"
 	"time"
@@ -106,4 +107,184 @@ func TestGatewaySessionRejectsSourceAuthoritativeMode(t *testing.T) {
 	}, WithActisenseSessionMode(ActisenseModeCANPacket), WithActisenseSessionReadyTimeout(10*time.Millisecond))
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "must be 1 or 2")
+}
+
+func TestGatewaySessionConstructorBoundsStalledHandshake(t *testing.T) {
+	for _, test := range []struct {
+		name           string
+		commandTimeout time.Duration
+		readyTimeout   time.Duration
+	}{
+		{"command deadline", 20 * time.Millisecond, time.Second},
+		{"readiness deadline", time.Second, 20 * time.Millisecond},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			host, peer := net.Pipe()
+			defer func() { _ = peer.Close() }()
+			result := make(chan error, 1)
+			go func() {
+				session, err := NewActisenseGatewaySession(context.Background(), "stalled", func(context.Context) (ActisenseByteStream, error) {
+					return host, nil
+				}, WithActisenseCommandTimeout(test.commandTimeout), WithActisenseSessionReadyTimeout(test.readyTimeout))
+				if session != nil {
+					_ = session.Close()
+				}
+				result <- err
+			}()
+			select {
+			case err := <-result:
+				require.Error(t, err)
+			case <-time.After(500 * time.Millisecond):
+				t.Fatal("constructor ignored its deadline while the peer never read")
+			}
+		})
+	}
+}
+
+// stalledGatewaySession acknowledges exactly the setup exchange, then leaves
+// the peer open without reading any more bytes. net.Pipe makes the ensuing
+// physical write stall deterministic, without relying on a socket buffer size.
+func stalledGatewaySession(t *testing.T, changeMode bool) *ActisenseGatewaySession {
+	t.Helper()
+	host, peer := net.Pipe()
+	t.Cleanup(func() { _ = peer.Close() })
+	deviceErr := make(chan error, 1)
+	go func() {
+		buf := make([]byte, 4096)
+		for _, mode := range []actisense.OperatingMode{actisense.ModeTransferNormal, actisense.ModeTransferReceiveAll} {
+			if _, err := peer.Read(buf); err != nil {
+				deviceErr <- err
+				return
+			}
+			payload := make([]byte, 14)
+			payload[0] = actisense.BEMOperatingMode
+			binary.LittleEndian.PutUint16(payload[12:], uint16(mode))
+			wire, err := actisense.EncodeDatagram(actisense.BSTBEMResponse, payload)
+			if err == nil {
+				_, err = peer.Write(wire)
+			}
+			if err != nil {
+				deviceErr <- err
+				return
+			}
+			if !changeMode {
+				break
+			}
+		}
+		deviceErr <- nil
+	}()
+	mode := ActisenseModeTransferNormal
+	if changeMode {
+		mode = ActisenseModeTransferReceiveAll
+	}
+	session, err := NewActisenseGatewaySession(context.Background(), "stall-after-ready", func(context.Context) (ActisenseByteStream, error) {
+		return host, nil
+	}, WithActisenseSessionMode(mode), WithActisenseCommandTimeout(40*time.Millisecond))
+	require.NoError(t, err)
+	require.NoError(t, <-deviceErr)
+	t.Cleanup(func() { _ = session.Close() })
+	return session
+}
+
+func TestGatewaySessionEstablishedWritesHonorDeadlines(t *testing.T) {
+	for _, operation := range []string{"message", "BEM", "BEM command timeout"} {
+		t.Run(operation, func(t *testing.T) {
+			session := stalledGatewaySession(t, false)
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
+			defer cancel()
+			if operation == "BEM command timeout" {
+				ctx = context.Background()
+			}
+			result := make(chan error, 1)
+			go func() {
+				if operation == "message" {
+					result <- session.SendRawPGN(ctx, 127250, 2, 255, []byte{1, 2, 3})
+				} else {
+					_, err := session.Echo(ctx, []byte{1, 2, 3})
+					result <- err
+				}
+			}()
+			select {
+			case err := <-result:
+				require.ErrorIs(t, err, context.DeadlineExceeded)
+			case <-time.After(500 * time.Millisecond):
+				t.Fatal("established physical write ignored the caller deadline")
+			}
+			select {
+			case <-session.done:
+			case <-time.After(500 * time.Millisecond):
+				t.Fatal("canceled physical write left its connection running")
+			}
+		})
+	}
+}
+
+func TestGatewaySessionCanceledWriteLeavesReadyConnectionIntact(t *testing.T) {
+	session := stalledGatewaySession(t, false)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	err := session.SendRawPGN(ctx, 127250, 2, 255, []byte{1, 2, 3})
+	require.ErrorIs(t, err, context.Canceled)
+	status := session.Status()
+	require.True(t, status.Connected)
+	require.Equal(t, uint64(1), status.Metrics.Protocol.TransportWriteCalls)
+}
+
+func TestGatewaySessionCloseBoundsStalledModeRestoration(t *testing.T) {
+	session := stalledGatewaySession(t, true)
+	result := make(chan error, 1)
+	go func() { result <- session.Close() }()
+	select {
+	case err := <-result:
+		// A restoration deadline closes the pipe to interrupt the write.
+		if err != nil {
+			require.ErrorIs(t, err, io.ErrClosedPipe)
+		}
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Close waited indefinitely for mode restoration")
+	}
+	select {
+	case <-session.done:
+	default:
+		t.Fatal("Close returned before the session reader stopped")
+	}
+}
+
+func TestGatewaySessionCloseReleasesStalledWriterAndRestoration(t *testing.T) {
+	session := stalledGatewaySession(t, true)
+	writeResult := make(chan error, 1)
+	go func() {
+		writeResult <- session.SendRawPGN(context.Background(), 127250, 2, 255, []byte{1, 2, 3})
+	}()
+	require.Eventually(t, func() bool {
+		return session.Status().Metrics.Protocol.TransportWriteCalls == 3
+	}, time.Second, time.Millisecond)
+	closeResult := make(chan error, 1)
+	go func() { closeResult <- session.Close() }()
+	select {
+	case <-closeResult:
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Close could not pass a stalled writer to finish bounded restoration")
+	}
+	select {
+	case err := <-writeResult:
+		require.Error(t, err)
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Close left the active physical write running")
+	}
+}
+
+func TestGatewaySessionCloseBoundsStalledTransmitListRestoration(t *testing.T) {
+	session := stalledGatewaySession(t, false)
+	session.mu.Lock()
+	session.txOriginal[127250] = ActisenseTxPGNState{PGN: 127250, Enabled: 1}
+	session.txEpoch = session.epoch
+	session.mu.Unlock()
+	result := make(chan error, 1)
+	go func() { result <- session.Close() }()
+	select {
+	case <-result:
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Close waited indefinitely for Tx-list restoration")
+	}
 }

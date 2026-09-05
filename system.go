@@ -2,6 +2,7 @@ package n2k
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"runtime/debug"
 	"sync"
@@ -20,10 +21,14 @@ var systemPGNs = []uint32{126996, 126998, 126208, 126720}
 // read pipeline that is independent of any user-configured filter, so user
 // filters can never break protocol behavior.
 type systemRouter struct {
-	ctx      context.Context
-	log      *slog.Logger
-	pipeline *readPipeline
-	ch       chan pgn.Message
+	ctx        context.Context
+	log        *slog.Logger
+	pipeline   *readPipeline
+	ch         chan pgn.Message
+	done       chan struct{}
+	dispatchMu *sync.Mutex
+	current    func(pgn.MessageInfo) bool
+	onError    func(error)
 
 	mu                  sync.Mutex
 	accept              map[uint32]int // PGN → reference count
@@ -47,11 +52,22 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 	}
 
 	r := &systemRouter{
-		ctx:      ctx,
-		log:      cfg.logger,
-		pipeline: p,
-		ch:       ch,
-		accept:   make(map[uint32]int),
+		ctx:        ctx,
+		log:        cfg.logger,
+		pipeline:   p,
+		ch:         ch,
+		accept:     make(map[uint32]int),
+		done:       make(chan struct{}),
+		dispatchMu: &sync.Mutex{},
+	}
+	p.emit = func(msg pgn.Message) {
+		select {
+		case ch <- msg:
+		default:
+			if r.onError != nil {
+				r.onError(errors.New("n2k: system protocol receive queue full"))
+			}
+		}
 	}
 	for _, n := range systemPGNs {
 		r.accept[n] = 1
@@ -143,19 +159,35 @@ func (r *systemRouter) dispatchObservation(observation raw.Observation) {
 // run drains the pipeline output and dispatches each message to every
 // registered handler. It exits when the context is canceled.
 func (r *systemRouter) run() {
+	defer close(r.done)
 	for {
 		select {
 		case msg := <-r.ch:
-			r.mu.Lock()
-			handlers := make([]func(pgn.Message), len(r.handlers))
-			copy(handlers, r.handlers)
-			r.mu.Unlock()
-			for _, h := range handlers {
-				r.dispatch(h, msg)
-			}
+			r.deliver(msg)
 		case <-r.ctx.Done():
 			return
 		}
+	}
+}
+
+func (r *systemRouter) deliver(msg pgn.Message) {
+	r.dispatchMu.Lock()
+	defer r.dispatchMu.Unlock()
+	if carrier, ok := msg.(infoCarrier); ok && r.current != nil && !r.current(carrier.MessageInfo()) {
+		return
+	}
+	r.mu.Lock()
+	handlers := append([]func(pgn.Message){}, r.handlers...)
+	r.mu.Unlock()
+	for _, handler := range handlers {
+		owned, err := pgn.CloneMessage(msg)
+		if err != nil {
+			if r.onError != nil {
+				r.onError(err)
+			}
+			return
+		}
+		r.dispatch(handler, owned)
 	}
 }
 

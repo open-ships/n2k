@@ -1,23 +1,853 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "requirements": [
-    {"id":"AC-01","category":"address-claiming","behavior":"Claim, defend, retry, cannot-claim, and ISO claim-response failures are surfaced.","evidence":["TestClaimer_AutoMode_Contention","TestClaimer_DefendAddress","TestClaimer_RuntimeClaimWriteFailureIsFatal"]},
-    {"id":"HB-01","category":"heartbeat","behavior":"Heartbeat cadence, disabling, retiming, and sequence rollover remain deterministic.","evidence":["TestHeartbeat_PeriodicTransmission","TestHeartbeat_DisabledWithZeroInterval","TestHeartbeat_SequenceCounterWraps"]},
-    {"id":"IR-01","category":"iso-request","behavior":"Addressed and broadcast ISO requests receive the required response or acknowledgement policy.","evidence":["TestISORequest_ProductInfoBroadcast","TestISORequest_UnsupportedAddressedGetsNAK","TestISORequest_UnsupportedBroadcastIgnored"]},
-    {"id":"GF-01","category":"group-function","behavior":"Requests, commands, field operations, and transmission-interval changes receive typed protocol responses.","evidence":["TestGroupFunction_RequestSupportedPGNTransmitsOnce","TestGroupFunction_CommandAcked","TestGroupFunction_HeartbeatStopAndRestoreDefault"]},
-    {"id":"FP-01","category":"fast-packet","behavior":"Fast-packet framing and reassembly cover minimum, maximum, malformed, timeout, ownership, and multi-network isolation cases.","evidence":["TestFrameFastPacket_MaxPayload","TestHandleFastPacketMessage","TestFastPacketOwnsFrameBytes","TestFastPacketSessionsAreIsolatedByNetwork"]},
-    {"id":"BAM-01","category":"iso-transport","behavior":"BAM transmit and receive enforce sizes, order, completion, and timeout.","evidence":["TestBAMReceive_HappyPath","TestBAMTransmit_LargePayload","TestBAMReceiveTimeoutDeterministic"]},
-    {"id":"RTS-01","category":"iso-transport","behavior":"RTS/CTS windows, acknowledgement, routing, and concurrent-session ambiguity are checked.","evidence":["TestRTSCTSReceive_RequestsEachCTSWindow","TestRTSCTSTransmit_RejectsInvalidCTSRange","TestRTSCTSTransmit_RejectsAmbiguousConcurrentSession"]},
-    {"id":"MAL-01","category":"hostile-input","behavior":"Malformed announcements, non-classical frames, bad checksums, and truncated streams are rejected without panic.","evidence":["TestManager_RejectsMalformedAnnouncements","TestManager_IgnoresNonClassicalTPFrames","TestActisenseReader_BadChecksumDropped"]},
-    {"id":"SAT-01","category":"saturation","behavior":"Application and automatic protocol traffic have bounded admission with explicit failure.","evidence":["TestClient_WriteQueueFullIsImmediate","TestRequiredProtocolQueueOverflowIsTerminal","TestMessageHubSubscriptionsAreIndependent"]},
-    {"id":"REC-01","category":"reconnect","behavior":"A new TCP epoch reclaims network citizenship before enumeration or scheduled traffic resumes.","evidence":["TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic","TestTCPLinkConnectionObserverGatesPublicationAndTracksEpochs"]},
-    {"id":"TIM-01","category":"timing","behavior":"Claim, heartbeat, fast-packet, ISO transport, and reconnect timing use bounded deterministic checks.","evidence":["TestHeartbeat_PeriodicTransmission","TestBAMReceiveTimeoutDeterministic","TestMultiBuilderEvictsExpiredAndCapsState"]},
-    {"id":"CODEC-01","category":"schema-codec","behavior":"Conditional fields and signed widths are enforced by the shared codec.","evidence":["TestCodecConditionSkipsProprietaryHeaderForStandardGroupFunction","TestCodecConditionIncludesProprietaryGroupFunctionHeader","TestPutSignedNumberRejectsValuesOutsideSignedWidth"]},
-    {"id":"OBS-01","category":"observation","behavior":"Source identity, timestamps, direction, payload ownership, and slow-subscriber failure are preserved.","evidence":["TestReplayObservationPreservesMessageInfo","TestObservationHubClonesAndFailsOnlySlowSubscriber","TestParseYDRawObservation_PreservesTransportContext"]},
-    {"id":"ACT-01","category":"actisense-session","behavior":"Gateway-owned sessions are separate from source-authoritative Clients; readiness is acknowledged per epoch and sends never mutate Tx lists implicitly.","evidence":["TestGatewaySessionDoesNotMutateTransmitListImplicitly","TestNewClient_TCPActisense_RequiresGatewaySession","TestNewClient_ActisenseTCPPreservesClientSource","TestActisenseRawBusReconnectsWithFreshHandshake"]},
-    {"id":"ACT-02","category":"actisense-bem","behavior":"Every compiled solicited BEM verb has independent local request/reply wire evidence with bounded, origin-aware correlation and typed partial results.","evidence":["TestActisenseGoldenCorpusCoversEveryCompiledSolicitedCommand","TestActisenseGoldenLocalBEMRequests","TestActisenseGoldenLocalBEMResponses","TestSessionResponse257TerminatesWithoutBlockingSoleReader"]},
-    {"id":"ACT-03","category":"actisense-remote","behavior":"Remote BEM uses the exact variable-length PGN-126720 manufacturer envelope and binds correlation to both addresses and connection/claim epochs.","evidence":["TestConformanceActisenseRemoteGoldenEnvelope","TestActisenseRemoteCorrelationRequiresSourceDestinationAndEpoch","TestActisenseRemoteEpochInvalidationCompletesEveryPendingRequest"]},
-    {"id":"ACT-04","category":"actisense-formats","behavior":"CAN ASCII mode 6 and gateway-owned N2K Type-A ASCII preserve documented timestamps, direction, identifiers, addresses, priorities, PGNs, and payload bounds.","evidence":["TestConformanceActisenseASCIIGoldenVectors","TestActisenseMode6DemuxDivertsBinaryBeforeLineBuffering","TestActisenseN2KASCIIEncodeAddressedAndMaximumPayload"]},
-    {"id":"EBL-01","category":"capture-replay","behavior":"EBL read/write and live wire tracing preserve time, direction, valid checksum-stripped BST records, exact invalid/unframed bytes, and Type-2 assembled messages.","evidence":["TestConformanceActisenseEBLGoldenVersionRecord","TestWriterReaderRoundTripRawBSTAndUnframedBytes","TestActisenseEBLTraceClassifiesWireEvidence","TestActisenseEBLTraceRetainsInvalidFrameExactly","TestEBLSourceFeedsLargeD0AsAssembledMessage"]}
+    {
+      "id": "AC-01",
+      "category": "address-claiming",
+      "behavior": "Claim, defend, retry, cannot-claim, and ISO claim-response failures are surfaced.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^TestClaimer_AutoMode_Contention$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^TestClaimer_AutoMode_MultipleRetries$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^TestClaimer_AutoMode_Exhaustion$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^TestClaimer_DefendAddress$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^TestClaimer_RuntimeClaimWriteFailureIsFatal$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "HB-01",
+      "category": "heartbeat",
+      "behavior": "Heartbeat cadence, disabling, retiming, and sequence rollover are checked with bounded waits.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_PeriodicTransmission$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_DisabledWithZeroInterval$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_SetIntervalReenables$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_SequenceCounterWraps$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "IR-01",
+      "category": "iso-request",
+      "behavior": "Addressed and broadcast ISO requests receive the required response or acknowledgement policy.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestISORequest_ProductInfoBroadcast$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestISORequest_UnsupportedAddressedGetsNAK$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestISORequest_UnsupportedBroadcastIgnored$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "GF-01",
+      "category": "group-function",
+      "behavior": "Supported requests, unsupported commands and parameterized requests, and transmission-interval changes receive typed protocol responses.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_RequestSupportedPGNTransmitsOnce$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_CommandAcked$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_RequestWithParametersAcked$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_HeartbeatIntervalChange$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_HeartbeatStopAndRestoreDefault$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "FP-01",
+      "category": "fast-packet",
+      "behavior": "Small and maximum fast-packet payloads, assembly and duplicate handling, expiry, ownership, and multi-network isolation are checked.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/framer",
+          "pattern": "^TestFrameFastPacket_MaxPayload$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestHandleFastPacketMessage$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestHandleFastPacketSingleFrame$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestFastPacket$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestMultiBuilderEvictsExpiredAndCapsState$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestFastPacketOwnsFrameBytes$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestFastPacketSessionsAreIsolatedByNetwork$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "BAM-01",
+      "category": "iso-transport",
+      "behavior": "BAM transmit and receive preserve declared length, packet sequence and payload completion, and receive sessions expire.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestBAMReceive_HappyPath$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestBAMTransmit_LargePayload$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestBAMReceiveTimeoutDeterministic$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "RTS-01",
+      "category": "iso-transport",
+      "behavior": "RTS/CTS windows, acknowledgement, routing, and concurrent-session ambiguity are checked.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestRTSCTSReceive_RequestsEachCTSWindow$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestRTSCTSTransmit_RejectsInvalidCTSRange$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestRTSCTSTransmit_RejectsMismatchedEndAck$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestManager_RoutesCMToCorrectHandler$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestRTSCTSTransmit_RejectsAmbiguousConcurrentSession$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "MAL-01",
+      "category": "hostile-input",
+      "behavior": "Malformed announcements, non-classical frames, bad checksums, and truncated streams are rejected without panic.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestManager_RejectsMalformedAnnouncements$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestManager_IgnoresNonClassicalTPFrames$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseReader_BadChecksumDropped$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseReader_TruncatedPayloadDropped$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "SAT-01",
+      "category": "saturation",
+      "behavior": "Application and automatic protocol traffic have bounded admission with explicit failure.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestClient_WriteQueueFullIsImmediate$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestRequiredProtocolQueueOverflowIsTerminal$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestMessageHubSubscriptionsAreIndependent$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "REC-01",
+      "category": "reconnect",
+      "behavior": "A new TCP epoch reclaims network citizenship before enumeration or scheduled traffic resumes.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestTCPLinkConnectionObserverGatesPublicationAndTracksEpochs$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "TIM-01",
+      "category": "timing",
+      "behavior": "Heartbeat cadence, fast-packet expiry, ISO receive timeout and bounded startup connection waits are checked; deterministic clocks are used where provided by the module.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_PeriodicTransmission$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestBAMReceiveTimeoutDeterministic$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestMultiBuilderEvictsExpiredAndCapsState$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestStartupConnectionWaitIsBounded$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "CODEC-01",
+      "category": "schema-codec",
+      "behavior": "Conditional fields and signed widths are enforced by the shared codec.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestCodecConditionSkipsProprietaryHeaderForStandardGroupFunction$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestCodecConditionIncludesProprietaryGroupFunctionHeader$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestPutSignedNumberRejectsValuesOutsideSignedWidth$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "OBS-01",
+      "category": "observation",
+      "behavior": "Source identity, timestamps, direction, payload ownership, and slow-subscriber failure are preserved.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReplayObservationPreservesMessageInfo$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestObservationHubClonesAndFailsOnlySlowSubscriber$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestParseYDRawObservation_PreservesTransportContext$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "ACT-01",
+      "category": "actisense-session",
+      "behavior": "Gateway-owned sessions are separate from source-authoritative Clients; readiness is acknowledged per epoch and sends never mutate Tx lists implicitly.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionDoesNotMutateTransmitListImplicitly$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestNewClient_TCPActisense_RequiresGatewaySession$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestNewClient_ActisenseTCPPreservesClientSource$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseRawBusReconnectsWithFreshHandshake$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "ACT-02",
+      "category": "actisense-bem",
+      "behavior": "Every compiled solicited BEM verb has independent local request/reply wire evidence with bounded, origin-aware correlation and typed partial results.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^TestActisenseGoldenCorpusCoversEveryCompiledSolicitedCommand$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^TestActisenseGoldenLocalBEMRequests$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^TestActisenseGoldenLocalBEMResponses$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^TestSessionResponse257TerminatesWithoutBlockingSoleReader$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "ACT-03",
+      "category": "actisense-remote",
+      "behavior": "Remote BEM uses the exact variable-length PGN-126720 manufacturer envelope and binds correlation to both addresses and connection/claim epochs.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestConformanceActisenseRemoteGoldenEnvelope$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisenseRemoteCorrelationRequiresSourceDestinationAndEpoch$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisenseRemoteEpochInvalidationCompletesEveryPendingRequest$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "ACT-04",
+      "category": "actisense-formats",
+      "behavior": "CAN ASCII mode 6 and gateway-owned N2K Type-A ASCII preserve documented timestamps, direction, identifiers, addresses, priorities, PGNs, and payload bounds.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestConformanceActisenseASCIIGoldenVectors$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseMode6DemuxDivertsBinaryBeforeLineBuffering$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseN2KASCIIEncodeAddressedAndMaximumPayload$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "EBL-01",
+      "category": "capture-replay",
+      "behavior": "EBL read/write and live wire tracing preserve time, direction, valid checksum-stripped BST records, exact invalid/unframed bytes, and Type-2 assembled messages.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestConformanceActisenseEBLGoldenVersionRecord$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/ebl",
+          "pattern": "^TestWriterReaderRoundTripRawBSTAndUnframedBytes$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisenseEBLTraceClassifiesWireEvidence$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisenseEBLTraceRetainsInvalidFrameExactly$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestEBLSourceFeedsLargeD0AsAssembledMessage$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "TP-LIFE-01",
+      "category": "transport-lifecycle",
+      "behavior": "Expired callbacks cannot terminate replacement transfers; cancellation, reset and absolute deadlines bound active transports.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestObsoleteTransmitTimerCannotCompleteReusedKey$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestObsoleteReceiveTimersPreserveReplacementAndRearmedTransfer$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestReceiverHoldsCannotExtendAbsoluteTransferDeadline$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^TestResetCancelsWritesAndAllowsFreshTransfers$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "HW-ACT-01",
+      "category": "hardware",
+      "behavior": "NGT/NGX hardware parity requires an explicit physical lab run; software CI provides no hardware pass.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisenseHardwareMatrix$",
+          "kind": "hardware"
+        }
+      ]
+    },
+    {
+      "id": "SOAK-01",
+      "category": "reliability-soak",
+      "behavior": "Configurable software soak exercises repeated connection failures, backpressure, corruption and resource stability; ordinary conformance does not execute it.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilitySoak$",
+          "kind": "soak"
+        }
+      ]
+    },
+    {
+      "id": "MOD-01",
+      "category": "protocol-modules",
+      "behavior": "The complete available-platform CAN framing, packet assembly, claiming, ISO transport, Actisense, gateway, serial I/O and EBL module suites execute in the local conformance run; Unix serial cancellation coverage does not imply equivalent Windows device coverage.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/claiming",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/ebl",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/framer",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/serialio",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/transport",
+          "pattern": "^Test.*$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "PUB-01",
+      "category": "public-protocol",
+      "behavior": "The public conformance, heartbeat, request, group-function, protocol-admission, reconnect and observation behavior families execute in the local conformance run.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestConformance.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeat_.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestISORequest_.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGroupFunction_.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestProtocolTransmission.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestRequiredProtocol.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestAdvisoryProtocol.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestTCPClientReconnect.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestObservationHub.*$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReplayObservation.*$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "CLIENT-LIFE-01",
+      "category": "client-lifecycle",
+      "behavior": "Writes own admission snapshots, writes and packet assembly never cross connection epochs, requests are bounded and invalidated promptly, required protocol responses remain serviceable during maximum-size BAM transmission, and superseded contention gates cannot stall reconnection.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityWriteSnapshotsAtAdmission$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityQueuedWriteDoesNotCrossEpoch$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityRequestInvalidatedPromptly$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityRequestTableBoundAndDestinationIsolation$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityFastPacketCannotSpanEpochs$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityRequiredResponseDuringMaximumBAM$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReliabilityReconnectAfterSupersededContentionGate$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "CLIENT-LIFE-02",
+      "category": "client-lifecycle",
+      "behavior": "Startup waits a bounded time for a known connection epoch and claiming cannot cross epochs; canceled write completion joins physical I/O and accounting, caller deadlines are distinguished from terminal physical timeouts, admission cannot outlive the physical writer, and required broadcast responses and inherited write stamps cannot cross epochs.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestStartupClaimCannotCrossConnectionEpoch$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestStartupWaitsForKnownConnectionEpoch$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestStartupConnectionWaitIsBounded$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestCanceledWriteJoinsPhysicalCompletion$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestWireCallerDeadlineVersusPhysicalTimeout$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestBroadcast_RequiredResponseCannotCrossEpoch$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestWriteContextPreservesInheritedEpochStamp$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestWireAdmissionCannotOutliveWorker$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "OWN-01",
+      "category": "ownership",
+      "behavior": "Live subscribers, queued backlogs, registry snapshots and wire-state clones own their mutable nested data.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestMessageHubSubscribersOwnMeasurementsAndMetadata$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestMessageHubBacklogOwnsPublisherData$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestRegistry_OwnsObservedMessagesAndSnapshotMetadata$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestCloneOwnsNestedFieldsAndWireState$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "CODEC-02",
+      "category": "codec-boundaries",
+      "behavior": "Independent vectors enforce exact length boundaries, raw sentinels, physical ranges, atomic reuse and variable payload semantics.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestLengthStringIndependentBoundaries$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestMeasurementSentinelsRemainInspectableButUnavailable$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestCoordinateIndependentBoundaries$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestInvalidPhysicalPayloadReplaysUntilMutation$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestDecodeReuseClearsAbsentFieldsAndCommitsAtomically$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestGroupFunctionResolvesIndependentParameterWidths$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestOpaqueRegisterTailPreservedAsData$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "REPLAY-EPOCH-01",
+      "category": "replay-ownership",
+      "behavior": "Standalone replay preserves independent and historical network epochs; fast packets cannot combine frames across connection or claim epochs.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReplayObservationsIndependentEpochs$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestCANAdapterFastPacketsCannotSpanEpochs$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestReplayObservationsInterleavedFastPacketEpochs$",
+          "kind": "software"
+        }
+      ]
+    },
+    {
+      "id": "ACT-LIFE-01",
+      "category": "actisense-lifecycle",
+      "behavior": "Public gateway startup, queued and established writes, mode restoration and list restoration honor bounded cancellation.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionConstructorBoundsStalledHandshake$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionEstablishedWritesHonorDeadlines$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionCanceledWriteLeavesReadyConnectionIntact$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionCloseBoundsStalledModeRestoration$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionCloseReleasesStalledWriterAndRestoration$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionCloseBoundsStalledTransmitListRestoration$",
+          "kind": "software"
+        }
+      ]
+    }
   ]
 }

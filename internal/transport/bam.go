@@ -1,6 +1,8 @@
 package transport
 
 import (
+	"context"
+	"errors"
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/pgn"
 )
@@ -32,7 +34,10 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8, info pgn.Messa
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	m.removeReceiveSessions(source, BroadcastAddr)
+	if !m.admitReceiveLocked(key) {
+		return
+	}
+	ctx, cancel := context.WithCancelCause(context.Background())
 
 	sess := &session{
 		key:       key,
@@ -42,18 +47,12 @@ func (m *Manager) handleBAMReceive(frame can.Frame, source uint8, info pgn.Messa
 		received:  0,
 		data:      make([]byte, totalSize),
 		info:      info,
+		ctx:       ctx,
+		cancel:    cancel,
 	}
 
-	// Set a DT timeout for the first frame.
-	sess.timer = m.afterFunc(DTTimeout, func() {
-		m.mu.Lock()
-		defer m.mu.Unlock()
-		m.logger.Warn("BAM DT timeout", "source", source, "pgn", pgn,
-			"received", sess.received, "expected", numFrames)
-		m.removeSession(key)
-	})
-
 	m.sessions[key] = sess
+	m.armTimerLocked(sess, DTTimeout, errors.New("BAM DT timeout"))
 	m.logger.Debug("BAM receive session started",
 		"source", source, "pgn", pgn, "totalSize", totalSize, "numFrames", numFrames)
 }

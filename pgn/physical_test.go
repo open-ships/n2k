@@ -10,14 +10,7 @@ import (
 // Resolution 0.0001 and Unit "rad" (see upstream_definitions.go). 15708 raw
 // ticks should scale to ~1.5708 rad.
 //
-// Resolution in FieldDescriptor is float32 (metadata_runtime.go), so
-// float64(raw)*float64(float32(0.0001)) accumulates float32-rounding error on
-// the order of 4e-8 relative to the exact decimal product -- confirmed by
-// direct computation, not just tolerance-widening on faith. The brief's
-// original 1e-9 tolerance is tighter than that rounding error and would flake
-// this test, so the tolerance here is widened to 1e-6 (documented per the
-// task's ambiguity-resolution instructions); FieldDescriptor.Resolution stays
-// float32 as-is.
+// Runtime metadata and generated accessors both retain schema float64 precision.
 func TestPhysicalValueAppliesResolution(t *testing.T) {
 	h := uint64(15708)
 	m := &VesselHeading{Heading: &h}
@@ -28,7 +21,7 @@ func TestPhysicalValueAppliesResolution(t *testing.T) {
 	if unit != "rad" {
 		t.Fatalf("unit = %q, want rad", unit)
 	}
-	if math.Abs(v-1.5708) > 1e-6 {
+	if math.Abs(v-1.5708) > 1e-12 {
 		t.Fatalf("v = %v, want 1.5708", v)
 	}
 }

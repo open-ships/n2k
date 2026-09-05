@@ -19,9 +19,21 @@ type Bus interface {
 	// WriteFrame sends one frame.
 	WriteFrame(frame can.Frame) error
 	// Close releases resources. It must be safe if Run was never called and
-	// safe concurrently with Run or WriteFrame so cancellation can release
-	// blocked device I/O.
+	// safe concurrently with Run or WriteFrame. It must interrupt blocked
+	// device I/O and return promptly; Client waits for the interrupted call.
 	Close() error
+}
+
+// ContextBus supports cancellation of physical writes without waiting for
+// Client.Close. Implementations must not retry a write on a new connection.
+// Client still supports Bus by closing it to interrupt canceled legacy I/O.
+type ContextBus interface {
+	WriteFrameContext(context.Context, can.Frame) error
+}
+
+// ContextMessageWriter is the context-aware assembled-message writing seam.
+type ContextMessageWriter interface {
+	WriteMessageContext(context.Context, uint32, uint8, uint8, uint8, []byte) error
 }
 
 // ReadyBus is optionally implemented by buses that are not writable until
@@ -53,16 +65,15 @@ type ObservationBus interface {
 
 // MessageWriter is optionally implemented by Bus implementations that
 // transmit whole assembled PGN messages rather than raw CAN frames —
-// message-oriented gateways such as Actisense-format streams, where the
-// gateway performs fast-packet fragmentation itself. When a client's bus
+// custom transports that perform fast-packet fragmentation themselves. When a client's bus
 // implements MessageWriter, writes that fit in one message (payloads up to
 // 223 bytes) bypass CAN framing and use WriteMessage; larger ISO-TP
 // transfers and protocol frames (address claims, ISO requests) still go
 // frame-by-frame through WriteFrame.
 //
-// Implementations may not be able to honor the source address (an Actisense
-// gateway stamps its own claimed address); it is provided so implementations
-// that can control it (custom transports) have it.
+// Implementations must honor the exact source address and CAN identifier.
+// Gateway-owned message modes that substitute their own source are not a Bus;
+// use ActisenseGatewaySession for those modes.
 type MessageWriter interface {
 	WriteMessage(pgnNum uint32, priority, source, destination uint8, payload []byte) error
 }

@@ -50,6 +50,10 @@ const (
 // BAM inter-frame delay (minimum 50ms per spec).
 const BAMInterFrameDelay = 50 * time.Millisecond
 
+// DefaultTransferTimeout bounds one complete outgoing transfer, independently
+// of packet inactivity and receiver-requested holds.
+const DefaultTransferTimeout = 30 * time.Second
+
 // MaxDTDataBytes is the number of data bytes carried per DT frame (bytes 1-7).
 const MaxDTDataBytes = 7
 

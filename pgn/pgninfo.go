@@ -34,6 +34,14 @@ type PgnInfo struct {
 	Type string `json:"type"`
 	// Complete mirrors the source schema's confidence flag for fully described PGNs.
 	Complete bool `json:"complete"`
+	// DecodeComplete and EncodeComplete describe implementation support, apart
+	// from the source schema's Complete flag. False means consult CodecLimitations.
+	DecodeComplete   bool     `json:"decodeComplete"`
+	EncodeComplete   bool     `json:"encodeComplete"`
+	CodecLimitations []string `json:"codecLimitations,omitempty"`
+	// HardwareVerified is false until public, variant-specific hardware evidence
+	// is attached. Typed coverage and round trips do not establish this claim.
+	HardwareVerified bool `json:"hardwareVerified"`
 	// Fallback marks range fallback definitions from the source schema.
 	Fallback bool `json:"fallback"`
 	// Missing lists source metadata categories still missing for this PGN.
@@ -119,7 +127,7 @@ type FieldDescriptor struct {
 	GolangType string `json:"golangType"`
 	// Resolution is the scaling factor applied to integer fields to produce physical units
 	// (e.g., 0.0001 for a heading field stored in units of 1/10000 radian).
-	Resolution float32 `json:"resolution"`
+	Resolution float64 `json:"resolution"`
 	// Signed indicates whether this numeric field uses two's-complement signed encoding.
 	Signed bool `json:"signed"`
 	// Unit is the physical unit string from the source schema (e.g., "rad", "m/s", "K").

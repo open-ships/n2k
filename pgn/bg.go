@@ -16,6 +16,19 @@ func (m *BGProprietary) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *BGProprietary) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BGProprietary) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BGProprietary) Clone() Message {
+	if m == nil {
+		return (*BGProprietary)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BGKeyValueData struct {
 	Info             MessageInfo                `json:"info"`
 	ManufacturerCode *uint64                    `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -35,6 +48,24 @@ func (m *BGKeyValueData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *BGKeyValueData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BGKeyValueData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BGKeyValueData) Clone() Message {
+	if m == nil {
+		return (*BGKeyValueData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Key = clonePointer(m.Repeating1[i].Key)
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 type BGUserAndRemoteRename struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -51,3 +82,18 @@ func (m *BGUserAndRemoteRename) MessageInfo() MessageInfo            { return m.
 func (m *BGUserAndRemoteRename) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *BGUserAndRemoteRename) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BGUserAndRemoteRename) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BGUserAndRemoteRename) Clone() Message {
+	if m == nil {
+		return (*BGUserAndRemoteRename)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DataType = clonePointer(m.DataType)
+	copy.Length = clonePointer(m.Length)
+	copy.Decimals = clonePointer(m.Decimals)
+	return &copy
+}

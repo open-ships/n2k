@@ -16,3 +16,17 @@ func (m *VictronVeCanRegister) MessageInfo() MessageInfo            { return m.I
 func (m *VictronVeCanRegister) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *VictronVeCanRegister) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *VictronVeCanRegister) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *VictronVeCanRegister) Clone() Message {
+	if m == nil {
+		return (*VictronVeCanRegister)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.RegisterId = clonePointer(m.RegisterId)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}

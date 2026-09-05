@@ -18,6 +18,19 @@ func (m *MaretronKeelPosition) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *MaretronKeelPosition) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronKeelPosition) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronKeelPosition) Clone() Message {
+	if m == nil {
+		return (*MaretronKeelPosition)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MaretronNumberOfChannels struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -33,6 +46,20 @@ func (m *MaretronNumberOfChannels) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronNumberOfChannels) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronNumberOfChannels) Clone() Message {
+	if m == nil {
+		return (*MaretronNumberOfChannels)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.NumberOfChannels = clonePointer(m.NumberOfChannels)
+	return &copy
+}
 
 type MaretronProprietaryDcBreakerCurrent struct {
 	Info             MessageInfo `json:"info"`
@@ -53,14 +80,44 @@ func (m *MaretronProprietaryDcBreakerCurrent) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronProprietaryDcBreakerCurrent) Clone() Message {
+	if m == nil {
+		return (*MaretronProprietaryDcBreakerCurrent)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.BankInstance = clonePointer(m.BankInstance)
+	copy.IndicatorNumber = clonePointer(m.IndicatorNumber)
+	copy.BreakerCurrent = clonePointer(m.BreakerCurrent)
+	return &copy
+}
+
 // BreakerCurrentValue returns BreakerCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when BreakerCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronProprietaryDcBreakerCurrent) BreakerCurrentValue() (float64, bool) {
-	if m.BreakerCurrent == nil {
+	if m == nil || m.BreakerCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.BreakerCurrent) * 0.1, true
+	if *m.BreakerCurrent == 32767 {
+		return 0, false
+	}
+	if *m.BreakerCurrent == 32766 {
+		return 0, false
+	}
+	if *m.BreakerCurrent == 32765 {
+		return 0, false
+	}
+	value := float64(*m.BreakerCurrent) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBreakerCurrentValue sets BreakerCurrent from a physical value in A, rounded to the nearest
@@ -85,6 +142,19 @@ func (m *MaretronUniversalConfigurationSf) DecodePayload(payload []uint8) error 
 }
 func (m *MaretronUniversalConfigurationSf) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronUniversalConfigurationSf) Clone() Message {
+	if m == nil {
+		return (*MaretronUniversalConfigurationSf)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MaretronFluidFlowRate struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -101,14 +171,45 @@ func (m *MaretronFluidFlowRate) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *MaretronFluidFlowRate) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronFluidFlowRate) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronFluidFlowRate) Clone() Message {
+	if m == nil {
+		return (*MaretronFluidFlowRate)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.FlowRateInstance = clonePointer(m.FlowRateInstance)
+	copy.FluidType = clonePointer(m.FluidType)
+	copy.FluidFlowRate = clonePointer(m.FluidFlowRate)
+	return &copy
+}
+
 // FluidFlowRateValue returns FluidFlowRate as a physical value (value = raw * 0.0001).
-// The bool is false when FluidFlowRate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronFluidFlowRate) FluidFlowRateValue() (float64, bool) {
-	if m.FluidFlowRate == nil {
+	if m == nil || m.FluidFlowRate == nil {
 		return 0, false
 	}
-	return float64(*m.FluidFlowRate) * 0.0001, true
+	if *m.FluidFlowRate == 8388607 {
+		return 0, false
+	}
+	if *m.FluidFlowRate == 8388606 {
+		return 0, false
+	}
+	if *m.FluidFlowRate == 8388605 {
+		return 0, false
+	}
+	value := float64(*m.FluidFlowRate) * 0.0001
+	if value < -838.8607 && !approximatelyEqual(value, -838.8607) {
+		return 0, false
+	}
+	if value > 838.8604 && !approximatelyEqual(value, 838.8604) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFluidFlowRateValue sets FluidFlowRate from a physical value, rounded to the nearest
@@ -134,14 +235,45 @@ func (m *MaretronTripVolume) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *MaretronTripVolume) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronTripVolume) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronTripVolume) Clone() Message {
+	if m == nil {
+		return (*MaretronTripVolume)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.VolumeInstance = clonePointer(m.VolumeInstance)
+	copy.FluidType = clonePointer(m.FluidType)
+	copy.TripVolume = clonePointer(m.TripVolume)
+	return &copy
+}
+
 // TripVolumeValue returns TripVolume as a physical value (value = raw * 0.001).
-// The bool is false when TripVolume is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronTripVolume) TripVolumeValue() (float64, bool) {
-	if m.TripVolume == nil {
+	if m == nil || m.TripVolume == nil {
 		return 0, false
 	}
-	return float64(*m.TripVolume) * 0.001, true
+	if *m.TripVolume == 16777215 {
+		return 0, false
+	}
+	if *m.TripVolume == 16777214 {
+		return 0, false
+	}
+	if *m.TripVolume == 16777213 {
+		return 0, false
+	}
+	value := float64(*m.TripVolume) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16777.212 && !approximatelyEqual(value, 16777.212) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTripVolumeValue sets TripVolume from a physical value, rounded to the nearest
@@ -166,6 +298,21 @@ func (m *Maretron420Ma) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Maretron420Ma) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Maretron420Ma) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Maretron420Ma) Clone() Message {
+	if m == nil {
+		return (*Maretron420Ma)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DataInstance = clonePointer(m.DataInstance)
+	copy.Pgn420MaData = clonePointer(m.Pgn420MaData)
+	return &copy
+}
+
 type Maretron010V struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -181,14 +328,44 @@ func (m *Maretron010V) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Maretron010V) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Maretron010V) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Maretron010V) Clone() Message {
+	if m == nil {
+		return (*Maretron010V)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DataInstance = clonePointer(m.DataInstance)
+	copy.Pgn010VData = clonePointer(m.Pgn010VData)
+	return &copy
+}
+
 // Pgn010VDataValue returns Pgn010VData as a physical value (value = raw * 0.000244141).
-// The bool is false when Pgn010VData is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Maretron010V) Pgn010VDataValue() (float64, bool) {
-	if m.Pgn010VData == nil {
+	if m == nil || m.Pgn010VData == nil {
 		return 0, false
 	}
-	return float64(*m.Pgn010VData) * 0.000244141, true
+	if *m.Pgn010VData == 65535 {
+		return 0, false
+	}
+	if *m.Pgn010VData == 65534 {
+		return 0, false
+	}
+	if *m.Pgn010VData == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Pgn010VData) * 0.000244141
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 15.9990234375 && !approximatelyEqual(value, 15.9990234375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPgn010VDataValue sets Pgn010VData from a physical value, rounded to the nearest
@@ -215,14 +392,44 @@ func (m *MaretronRotationalRate) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronRotationalRate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronRotationalRate) Clone() Message {
+	if m == nil {
+		return (*MaretronRotationalRate)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DataInstance = clonePointer(m.DataInstance)
+	copy.RotationalRate = clonePointer(m.RotationalRate)
+	return &copy
+}
+
 // RotationalRateValue returns RotationalRate as a physical value (value = raw * 0.25).
-// The bool is false when RotationalRate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronRotationalRate) RotationalRateValue() (float64, bool) {
-	if m.RotationalRate == nil {
+	if m == nil || m.RotationalRate == nil {
 		return 0, false
 	}
-	return float64(*m.RotationalRate) * 0.25, true
+	if *m.RotationalRate == 32767 {
+		return 0, false
+	}
+	if *m.RotationalRate == 32766 {
+		return 0, false
+	}
+	if *m.RotationalRate == 32765 {
+		return 0, false
+	}
+	value := float64(*m.RotationalRate) * 0.25
+	if value < -8191.75 && !approximatelyEqual(value, -8191.75) {
+		return 0, false
+	}
+	if value > 8191 && !approximatelyEqual(value, 8191) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRotationalRateValue sets RotationalRate from a physical value, rounded to the nearest
@@ -247,14 +454,44 @@ func (m *MaretronResistance) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *MaretronResistance) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronResistance) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronResistance) Clone() Message {
+	if m == nil {
+		return (*MaretronResistance)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DataInstance = clonePointer(m.DataInstance)
+	copy.Resistance = clonePointer(m.Resistance)
+	return &copy
+}
+
 // ResistanceValue returns Resistance as a physical value (value = raw * 0.01).
-// The bool is false when Resistance is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronResistance) ResistanceValue() (float64, bool) {
-	if m.Resistance == nil {
+	if m == nil || m.Resistance == nil {
 		return 0, false
 	}
-	return float64(*m.Resistance) * 0.01, true
+	if *m.Resistance == 65535 {
+		return 0, false
+	}
+	if *m.Resistance == 65534 {
+		return 0, false
+	}
+	if *m.Resistance == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Resistance) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetResistanceValue sets Resistance from a physical value, rounded to the nearest
@@ -279,6 +516,19 @@ func (m *MaretronAutomationFunctionMaster) DecodePayload(payload []uint8) error 
 }
 func (m *MaretronAutomationFunctionMaster) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAutomationFunctionMaster) Clone() Message {
+	if m == nil {
+		return (*MaretronAutomationFunctionMaster)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MaretronDeviationCalibrationResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -299,6 +549,22 @@ func (m *MaretronDeviationCalibrationResponse) EncodePayload() ([]uint8, error) 
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronDeviationCalibrationResponse) Clone() Message {
+	if m == nil {
+		return (*MaretronDeviationCalibrationResponse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProductCode = clonePointer(m.ProductCode)
+	copy.SoftwareCode = clonePointer(m.SoftwareCode)
+	copy.Command = clonePointer(m.Command)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}
+
 type MaretronProprietaryConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -316,6 +582,22 @@ func (m *MaretronProprietaryConfiguration) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *MaretronProprietaryConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronProprietaryConfiguration) Clone() Message {
+	if m == nil {
+		return (*MaretronProprietaryConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProductCode = clonePointer(m.ProductCode)
+	copy.SoftwareCode = clonePointer(m.SoftwareCode)
+	copy.Opcode = clonePointer(m.Opcode)
+	copy.Payload = cloneSlice(m.Payload)
+	return &copy
+}
 
 type MaretronAnnunciatorCapabilities struct {
 	Info                MessageInfo                                 `json:"info"`
@@ -338,6 +620,24 @@ func (m *MaretronAnnunciatorCapabilities) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronAnnunciatorCapabilities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAnnunciatorCapabilities) Clone() Message {
+	if m == nil {
+		return (*MaretronAnnunciatorCapabilities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AnnunciatorInstance = clonePointer(m.AnnunciatorInstance)
+	copy.NumberOfTones = clonePointer(m.NumberOfTones)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Tone = clonePointer(m.Repeating1[i].Tone)
+	}
+	return &copy
+}
+
 type MaretronLabel struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -354,6 +654,22 @@ func (m *MaretronLabel) MessageInfo() MessageInfo            { return m.Info }
 func (m *MaretronLabel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronLabel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronLabel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronLabel) Clone() Message {
+	if m == nil {
+		return (*MaretronLabel)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.DataSource = clonePointer(m.DataSource)
+	copy.DataIndicator = clonePointer(m.DataIndicator)
+	copy.HardwareChannel = clonePointer(m.HardwareChannel)
+	return &copy
+}
 
 type MaretronAlertTransmission struct {
 	Info                    MessageInfo `json:"info"`
@@ -379,6 +695,28 @@ func (m *MaretronAlertTransmission) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronAlertTransmission) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAlertTransmission) Clone() Message {
+	if m == nil {
+		return (*MaretronAlertTransmission)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.MaretronExtension = cloneSlice(m.MaretronExtension)
+	return &copy
+}
+
 type MaretronAlertResponse struct {
 	Info                           MessageInfo `json:"info"`
 	ManufacturerCode               *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -401,6 +739,29 @@ func (m *MaretronAlertResponse) MessageInfo() MessageInfo            { return m.
 func (m *MaretronAlertResponse) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronAlertResponse) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronAlertResponse) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAlertResponse) Clone() Message {
+	if m == nil {
+		return (*MaretronAlertResponse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.AcknowledgeSourceNetworkIdName = clonePointer(m.AcknowledgeSourceNetworkIdName)
+	copy.ResponseCommand = clonePointer(m.ResponseCommand)
+	return &copy
+}
 
 type MaretronAlertText struct {
 	Info                         MessageInfo `json:"info"`
@@ -426,6 +787,28 @@ func (m *MaretronAlertText) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *MaretronAlertText) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronAlertText) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAlertText) Clone() Message {
+	if m == nil {
+		return (*MaretronAlertText)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.LanguageId = clonePointer(m.LanguageId)
+	return &copy
+}
+
 type MaretronAlertControl struct {
 	Info                    MessageInfo `json:"info"`
 	ManufacturerCode        *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -448,6 +831,28 @@ func (m *MaretronAlertControl) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *MaretronAlertControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronAlertControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAlertControl) Clone() Message {
+	if m == nil {
+		return (*MaretronAlertControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.MaretronExtension = cloneSlice(m.MaretronExtension)
+	return &copy
+}
+
 type MaretronProprietaryTemperatureHighRange struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -469,14 +874,46 @@ func (m *MaretronProprietaryTemperatureHighRange) EncodePayload() ([]uint8, erro
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronProprietaryTemperatureHighRange) Clone() Message {
+	if m == nil {
+		return (*MaretronProprietaryTemperatureHighRange)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.Instance = clonePointer(m.Instance)
+	copy.Source = clonePointer(m.Source)
+	copy.ActualTemperature = clonePointer(m.ActualTemperature)
+	copy.SetTemperature = clonePointer(m.SetTemperature)
+	return &copy
+}
+
 // ActualTemperatureValue returns ActualTemperature as a physical value in K (value = raw * 0.1).
-// The bool is false when ActualTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronProprietaryTemperatureHighRange) ActualTemperatureValue() (float64, bool) {
-	if m.ActualTemperature == nil {
+	if m == nil || m.ActualTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.ActualTemperature) * 0.1, true
+	if *m.ActualTemperature == 65535 {
+		return 0, false
+	}
+	if *m.ActualTemperature == 65534 {
+		return 0, false
+	}
+	if *m.ActualTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ActualTemperature) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
@@ -487,13 +924,28 @@ func (m *MaretronProprietaryTemperatureHighRange) SetActualTemperatureValue(v fl
 }
 
 // SetTemperatureValue returns SetTemperature as a physical value in K (value = raw * 0.1).
-// The bool is false when SetTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronProprietaryTemperatureHighRange) SetTemperatureValue() (float64, bool) {
-	if m.SetTemperature == nil {
+	if m == nil || m.SetTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.SetTemperature) * 0.1, true
+	if *m.SetTemperature == 65535 {
+		return 0, false
+	}
+	if *m.SetTemperature == 65534 {
+		return 0, false
+	}
+	if *m.SetTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SetTemperature) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest
@@ -520,6 +972,23 @@ func (m *MaretronAnnunciator) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *MaretronAnnunciator) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronAnnunciator) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronAnnunciator) Clone() Message {
+	if m == nil {
+		return (*MaretronAnnunciator)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Field4 = clonePointer(m.Field4)
+	copy.Field5 = clonePointer(m.Field5)
+	copy.Field6 = clonePointer(m.Field6)
+	copy.Field7 = clonePointer(m.Field7)
+	copy.Field8 = clonePointer(m.Field8)
+	return &copy
+}
+
 type MaretronDataInstanceChannelCorrelation struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -539,6 +1008,23 @@ func (m *MaretronDataInstanceChannelCorrelation) DecodePayload(payload []uint8) 
 }
 func (m *MaretronDataInstanceChannelCorrelation) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronDataInstanceChannelCorrelation) Clone() Message {
+	if m == nil {
+		return (*MaretronDataInstanceChannelCorrelation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.HardwareChannel = clonePointer(m.HardwareChannel)
+	copy.Instance = clonePointer(m.Instance)
+	copy.DataSource = clonePointer(m.DataSource)
+	copy.DataIndicator = clonePointer(m.DataIndicator)
+	return &copy
 }
 
 type MaretronSwitchIndicatorStatus struct {
@@ -561,6 +1047,24 @@ func (m *MaretronSwitchIndicatorStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronSwitchIndicatorStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronSwitchIndicatorStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronSwitchIndicatorStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.IndicatorBankInstance = clonePointer(m.IndicatorBankInstance)
+	copy.NumberOfStatusFields = clonePointer(m.NumberOfStatusFields)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].IndicatorStatus = clonePointer(m.Repeating1[i].IndicatorStatus)
+	}
+	return &copy
+}
 
 type MaretronDometicHvacControlStatus struct {
 	Info                        MessageInfo `json:"info"`
@@ -585,6 +1089,27 @@ func (m *MaretronDometicHvacControlStatus) DecodePayload(payload []uint8) error 
 }
 func (m *MaretronDometicHvacControlStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronDometicHvacControlStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronDometicHvacControlStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.CanId = clonePointer(m.CanId)
+	copy.ConfigurationMode = clonePointer(m.ConfigurationMode)
+	copy.Status = clonePointer(m.Status)
+	copy.FanModeSpeed = clonePointer(m.FanModeSpeed)
+	copy.SetpointTemperature = clonePointer(m.SetpointTemperature)
+	copy.AmbientTemperature = clonePointer(m.AmbientTemperature)
+	copy.OutdoorTemperature = clonePointer(m.OutdoorTemperature)
+	copy.FaultStatus = clonePointer(m.FaultStatus)
+	copy.AdditionalSensorTemperature = clonePointer(m.AdditionalSensorTemperature)
+	return &copy
+}
+
 type MaretronDometicHvacStatus struct {
 	Info                        MessageInfo `json:"info"`
 	ManufacturerCode            *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -606,6 +1131,25 @@ func (m *MaretronDometicHvacStatus) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronDometicHvacStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronDometicHvacStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronDometicHvacStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AdditionalSensorTemperature = clonePointer(m.AdditionalSensorTemperature)
+	copy.CanId = clonePointer(m.CanId)
+	copy.State = clonePointer(m.State)
+	copy.HardwareStatus = clonePointer(m.HardwareStatus)
+	copy.Faults = clonePointer(m.Faults)
+	copy.LineVoltage = clonePointer(m.LineVoltage)
+	copy.CompressorCurrent = clonePointer(m.CompressorCurrent)
+	return &copy
+}
+
 type MaretronUniversalConfigurationFp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -620,6 +1164,19 @@ func (m *MaretronUniversalConfigurationFp) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *MaretronUniversalConfigurationFp) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronUniversalConfigurationFp) Clone() Message {
+	if m == nil {
+		return (*MaretronUniversalConfigurationFp)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type MaretronVesselOperatingMode struct {
 	Info                   MessageInfo `json:"info"`
@@ -642,6 +1199,25 @@ func (m *MaretronVesselOperatingMode) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronVesselOperatingMode) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronVesselOperatingMode) Clone() Message {
+	if m == nil {
+		return (*MaretronVesselOperatingMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertSystemInstance = clonePointer(m.AlertSystemInstance)
+	copy.OperatingMode = clonePointer(m.OperatingMode)
+	copy.GeneratingGlobalAlerts = clonePointer(m.GeneratingGlobalAlerts)
+	copy.UserChanged = clonePointer(m.UserChanged)
+	copy.InIndependentMode = clonePointer(m.InIndependentMode)
+	return &copy
+}
+
 type MaretronVesselDataRecorderStatus struct {
 	Info               MessageInfo `json:"info"`
 	ManufacturerCode   *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -658,6 +1234,21 @@ func (m *MaretronVesselDataRecorderStatus) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *MaretronVesselDataRecorderStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronVesselDataRecorderStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronVesselDataRecorderStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.VdrRecordingStatus = clonePointer(m.VdrRecordingStatus)
+	copy.MemoryCapacity = clonePointer(m.MemoryCapacity)
+	copy.MemoryUsed = clonePointer(m.MemoryUsed)
+	return &copy
+}
 
 type MaretronSmsStatus struct {
 	Info                MessageInfo `json:"info"`
@@ -677,6 +1268,22 @@ func (m *MaretronSmsStatus) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *MaretronSmsStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronSmsStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronSmsStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronSmsStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SimCardStatus = clonePointer(m.SimCardStatus)
+	copy.GsmBand = clonePointer(m.GsmBand)
+	copy.SignalStrength = clonePointer(m.SignalStrength)
+	copy.BitErrorRate = clonePointer(m.BitErrorRate)
+	return &copy
+}
+
 type MaretronSmsTextMessage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -693,6 +1300,19 @@ func (m *MaretronSmsTextMessage) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronSmsTextMessage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronSmsTextMessage) Clone() Message {
+	if m == nil {
+		return (*MaretronSmsTextMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageType = clonePointer(m.MessageType)
+	return &copy
+}
 
 type MaretronSwitchStatusCounter struct {
 	Info             MessageInfo `json:"info"`
@@ -716,14 +1336,49 @@ func (m *MaretronSwitchStatusCounter) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronSwitchStatusCounter) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronSwitchStatusCounter) Clone() Message {
+	if m == nil {
+		return (*MaretronSwitchStatusCounter)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.IndicatorNumber = clonePointer(m.IndicatorNumber)
+	copy.StartDate = clonePointer(m.StartDate)
+	copy.StartTime = clonePointer(m.StartTime)
+	copy.OffCounter = clonePointer(m.OffCounter)
+	copy.OnCounter = clonePointer(m.OnCounter)
+	copy.ErrorCounter = clonePointer(m.ErrorCounter)
+	copy.SwitchStatus = clonePointer(m.SwitchStatus)
+	return &copy
+}
+
 // StartDateValue returns StartDate as a physical value in d (value = raw).
-// The bool is false when StartDate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusCounter) StartDateValue() (float64, bool) {
-	if m.StartDate == nil {
+	if m == nil || m.StartDate == nil {
 		return 0, false
 	}
-	return float64(*m.StartDate), true
+	if *m.StartDate == 65535 {
+		return 0, false
+	}
+	if *m.StartDate == 65534 {
+		return 0, false
+	}
+	if *m.StartDate == 65533 {
+		return 0, false
+	}
+	value := float64(*m.StartDate)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
@@ -734,13 +1389,28 @@ func (m *MaretronSwitchStatusCounter) SetStartDateValue(v float64) {
 }
 
 // StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when StartTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusCounter) StartTimeValue() (float64, bool) {
-	if m.StartTime == nil {
+	if m == nil || m.StartTime == nil {
 		return 0, false
 	}
-	return float64(*m.StartTime) * 0.0001, true
+	if *m.StartTime == 4294967295 {
+		return 0, false
+	}
+	if *m.StartTime == 4294967294 {
+		return 0, false
+	}
+	if *m.StartTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.StartTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
@@ -772,14 +1442,49 @@ func (m *MaretronSwitchStatusTimer) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronSwitchStatusTimer) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronSwitchStatusTimer) Clone() Message {
+	if m == nil {
+		return (*MaretronSwitchStatusTimer)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.IndicatorNumber = clonePointer(m.IndicatorNumber)
+	copy.StartDate = clonePointer(m.StartDate)
+	copy.StartTime = clonePointer(m.StartTime)
+	copy.AccumulatedOffPeriod = clonePointer(m.AccumulatedOffPeriod)
+	copy.AccumulatedOnPeriod = clonePointer(m.AccumulatedOnPeriod)
+	copy.AccumulatedErrorPeriod = clonePointer(m.AccumulatedErrorPeriod)
+	copy.SwitchStatus = clonePointer(m.SwitchStatus)
+	return &copy
+}
+
 // StartDateValue returns StartDate as a physical value in d (value = raw).
-// The bool is false when StartDate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusTimer) StartDateValue() (float64, bool) {
-	if m.StartDate == nil {
+	if m == nil || m.StartDate == nil {
 		return 0, false
 	}
-	return float64(*m.StartDate), true
+	if *m.StartDate == 65535 {
+		return 0, false
+	}
+	if *m.StartDate == 65534 {
+		return 0, false
+	}
+	if *m.StartDate == 65533 {
+		return 0, false
+	}
+	value := float64(*m.StartDate)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
@@ -790,13 +1495,28 @@ func (m *MaretronSwitchStatusTimer) SetStartDateValue(v float64) {
 }
 
 // StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when StartTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusTimer) StartTimeValue() (float64, bool) {
-	if m.StartTime == nil {
+	if m == nil || m.StartTime == nil {
 		return 0, false
 	}
-	return float64(*m.StartTime) * 0.0001, true
+	if *m.StartTime == 4294967295 {
+		return 0, false
+	}
+	if *m.StartTime == 4294967294 {
+		return 0, false
+	}
+	if *m.StartTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.StartTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
@@ -807,13 +1527,28 @@ func (m *MaretronSwitchStatusTimer) SetStartTimeValue(v float64) {
 }
 
 // AccumulatedOffPeriodValue returns AccumulatedOffPeriod as a physical value in s (value = raw).
-// The bool is false when AccumulatedOffPeriod is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusTimer) AccumulatedOffPeriodValue() (float64, bool) {
-	if m.AccumulatedOffPeriod == nil {
+	if m == nil || m.AccumulatedOffPeriod == nil {
 		return 0, false
 	}
-	return float64(*m.AccumulatedOffPeriod), true
+	if *m.AccumulatedOffPeriod == 4294967295 {
+		return 0, false
+	}
+	if *m.AccumulatedOffPeriod == 4294967294 {
+		return 0, false
+	}
+	if *m.AccumulatedOffPeriod == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.AccumulatedOffPeriod)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAccumulatedOffPeriodValue sets AccumulatedOffPeriod from a physical value in s, rounded to the nearest
@@ -824,13 +1559,28 @@ func (m *MaretronSwitchStatusTimer) SetAccumulatedOffPeriodValue(v float64) {
 }
 
 // AccumulatedOnPeriodValue returns AccumulatedOnPeriod as a physical value in s (value = raw).
-// The bool is false when AccumulatedOnPeriod is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusTimer) AccumulatedOnPeriodValue() (float64, bool) {
-	if m.AccumulatedOnPeriod == nil {
+	if m == nil || m.AccumulatedOnPeriod == nil {
 		return 0, false
 	}
-	return float64(*m.AccumulatedOnPeriod), true
+	if *m.AccumulatedOnPeriod == 4294967295 {
+		return 0, false
+	}
+	if *m.AccumulatedOnPeriod == 4294967294 {
+		return 0, false
+	}
+	if *m.AccumulatedOnPeriod == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.AccumulatedOnPeriod)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAccumulatedOnPeriodValue sets AccumulatedOnPeriod from a physical value in s, rounded to the nearest
@@ -841,13 +1591,28 @@ func (m *MaretronSwitchStatusTimer) SetAccumulatedOnPeriodValue(v float64) {
 }
 
 // AccumulatedErrorPeriodValue returns AccumulatedErrorPeriod as a physical value in s (value = raw).
-// The bool is false when AccumulatedErrorPeriod is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MaretronSwitchStatusTimer) AccumulatedErrorPeriodValue() (float64, bool) {
-	if m.AccumulatedErrorPeriod == nil {
+	if m == nil || m.AccumulatedErrorPeriod == nil {
 		return 0, false
 	}
-	return float64(*m.AccumulatedErrorPeriod), true
+	if *m.AccumulatedErrorPeriod == 4294967295 {
+		return 0, false
+	}
+	if *m.AccumulatedErrorPeriod == 4294967294 {
+		return 0, false
+	}
+	if *m.AccumulatedErrorPeriod == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.AccumulatedErrorPeriod)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAccumulatedErrorPeriodValue sets AccumulatedErrorPeriod from a physical value in s, rounded to the nearest
@@ -870,6 +1635,19 @@ func (m *MaretronBnwas) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronBnwas) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronBnwas) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronBnwas) Clone() Message {
+	if m == nil {
+		return (*MaretronBnwas)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MaretronGenericSensor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -885,6 +1663,21 @@ func (m *MaretronGenericSensor) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *MaretronGenericSensor) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronGenericSensor) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronGenericSensor) Clone() Message {
+	if m == nil {
+		return (*MaretronGenericSensor)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DataInstance = clonePointer(m.DataInstance)
+	copy.DataFormat = clonePointer(m.DataFormat)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}
+
 type MaretronCanFrameForwarding struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -899,6 +1692,19 @@ func (m *MaretronCanFrameForwarding) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronCanFrameForwarding) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronCanFrameForwarding) Clone() Message {
+	if m == nil {
+		return (*MaretronCanFrameForwarding)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type MaretronWindlassOperatingStatus struct {
 	Info                     MessageInfo `json:"info"`
@@ -927,6 +1733,31 @@ func (m *MaretronWindlassOperatingStatus) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronWindlassOperatingStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronWindlassOperatingStatus) Clone() Message {
+	if m == nil {
+		return (*MaretronWindlassOperatingStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.WindlassOperatingEvents = clonePointer(m.WindlassOperatingEvents)
+	copy.WindlassInstance = clonePointer(m.WindlassInstance)
+	copy.WindlassDirectionControl = clonePointer(m.WindlassDirectionControl)
+	copy.SpeedControl = clonePointer(m.SpeedControl)
+	copy.PowerEnable = clonePointer(m.PowerEnable)
+	copy.MechanicalEnable = clonePointer(m.MechanicalEnable)
+	copy.AnchorDockingControl = clonePointer(m.AnchorDockingControl)
+	copy.DeckAndAnchorWash = clonePointer(m.DeckAndAnchorWash)
+	copy.AnchorLight = clonePointer(m.AnchorLight)
+	copy.AuxiliaryAControl = clonePointer(m.AuxiliaryAControl)
+	copy.AuxiliaryBControl = clonePointer(m.AuxiliaryBControl)
+	copy.AuxiliaryCControl = clonePointer(m.AuxiliaryCControl)
+	copy.AuxiliaryDControl = clonePointer(m.AuxiliaryDControl)
+	return &copy
+}
+
 type MaretronWindlassControlCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -942,6 +1773,19 @@ func (m *MaretronWindlassControlCommand) DecodePayload(payload []uint8) error {
 }
 func (m *MaretronWindlassControlCommand) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronWindlassControlCommand) Clone() Message {
+	if m == nil {
+		return (*MaretronWindlassControlCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MaretronDcEnergy struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -954,6 +1798,19 @@ func (m *MaretronDcEnergy) MessageInfo() MessageInfo            { return m.Info 
 func (m *MaretronDcEnergy) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MaretronDcEnergy) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MaretronDcEnergy) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronDcEnergy) Clone() Message {
+	if m == nil {
+		return (*MaretronDcEnergy)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type MaretronBatteryAmpHourRecord struct {
 	Info             MessageInfo `json:"info"`
@@ -969,3 +1826,16 @@ func (m *MaretronBatteryAmpHourRecord) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MaretronBatteryAmpHourRecord) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MaretronBatteryAmpHourRecord) Clone() Message {
+	if m == nil {
+		return (*MaretronBatteryAmpHourRecord)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}

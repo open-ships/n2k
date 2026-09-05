@@ -34,6 +34,14 @@ jobs:
         if: runner.os == 'Linux'
         run: just conformance-local
 
+      - name: Preserve executable conformance evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: software-conformance
+          path: conformance-artifacts/local-*
+          if-no-files-found: warn
+
       - name: Test
         run: go test ./...
 
@@ -58,6 +66,27 @@ jobs:
 
       - name: Fuzz smoke tests
         run: just fuzz-smoke
+
+      - name: Preserve fuzz failure corpus
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-failure-corpus
+          path: |
+            internal/**/testdata/fuzz/**
+            pgn/testdata/fuzz/**
+          if-no-files-found: ignore
+
+      - name: Software reliability smoke
+        run: just reliability-soak 10s 2m
+
+      - name: Preserve software reliability evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: software-reliability-smoke
+          path: conformance-artifacts/soak-*
+          if-no-files-found: warn
 
   lint:
     runs-on: ubuntu-latest

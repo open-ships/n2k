@@ -34,34 +34,6 @@ import (
 // and exercises the per-element encode/decode loop at least once.
 const valueRoundTripGroupElements = 2
 
-// valueRoundTripSkip lists PGN struct names excluded from
-// TestAllPGNsValueRoundTrip, each with the specific reason value
-// round-tripping cannot hold for that struct at the codec level. Every entry
-// here is a variable-length binary field (DYNAMIC_FIELD_VALUE or VARIABLE)
-// with no BitLengthField reference and no directly-preceding
-// DYNAMIC_FIELD_LENGTH field, so binaryFieldBits (codec.go) has no way to
-// learn the field's width and decodeField always reads it as zero bits
-// (readBinaryData(0)): encodeFields happily writes the populated bytes
-// (bits==0 makes encodeField fall back to len(data)*8), but decodeFields
-// always reads them back empty. In every case here the real width is
-// resolved from information outside this PGN's own field descriptors (the
-// Commanded PGN's metadata for the NMEA group-function fields, external
-// register/key documentation for the two proprietary ones) -- there is
-// nothing in structInfoLookup for this PGN that the codec could use instead,
-// so this is a genuine decode limitation, not a harness gap. These are the
-// same 8 failures 6b's preflight run identified; the reasons below were
-// verified against upstream_definitions.go for this commit.
-var valueRoundTripSkip = map[string]string{
-	"NmeaCommandGroupFunction":          `repeating group field "Value" (order 7) is VARIABLE with no length reference; its width is resolved from the Commanded PGN's own metadata, so decodeFields always reads 0 bits for it`,
-	"NmeaReadFieldsGroupFunction":       `repeating group field "Selection Value" (order 10) is VARIABLE with no length reference, same empty-decode gap as NmeaCommandGroupFunction`,
-	"NmeaReadFieldsReplyGroupFunction":  `repeating group fields "Selection Value" (order 10) and "Value" (order 12) are VARIABLE with no length reference, same empty-decode gap as NmeaCommandGroupFunction`,
-	"NmeaRequestGroupFunction":          `repeating group field "Value" (order 7) is VARIABLE with no length reference, same empty-decode gap as NmeaCommandGroupFunction`,
-	"NmeaWriteFieldsGroupFunction":      `repeating group fields "Selection Value" (order 10) and "Value" (order 12) are VARIABLE with no length reference, same empty-decode gap as NmeaCommandGroupFunction`,
-	"NmeaWriteFieldsReplyGroupFunction": `repeating group fields "Selection Value" (order 10) and "Value" (order 12) are VARIABLE with no length reference, same empty-decode gap as NmeaCommandGroupFunction`,
-	"SimnetKeyValue":                    `field "Value" (order 10) is DYNAMIC_FIELD_VALUE with no length field at all -- its description says the width is "always 4 bytes on the bus" per the resolved key, a fact this PGN's own metadata does not expose as a BitLengthField`,
-	"VictronVeCanRegister":              `field "Value" (order 5) is DYNAMIC_FIELD_VALUE with no length field -- its width is resolved from the VE.Can register id's external documentation, not from PGN metadata`,
-}
-
 // TestAllPGNsNullRoundTrip proves the byte fixpoint contract for every
 // registered PGN struct: encode(zero) -> decode -> encode must reproduce the
 // exact same bytes.
@@ -93,7 +65,7 @@ func TestAllPGNsNullRoundTrip(t *testing.T) {
 }
 
 // TestAllPGNsValueRoundTrip proves value fidelity for every registered PGN
-// struct not in valueRoundTripSkip: populate every field with a
+// struct: populate every field with a
 // representative in-range value, encode, decode into a fresh instance, and
 // compare against the values encode/decode's own derivation rules (repeating
 // group counts and length-reference fields are overridden from the data,
@@ -102,10 +74,6 @@ func TestAllPGNsValueRoundTrip(t *testing.T) {
 	for _, name := range sortedRegistryNames() {
 		factory := structTypeRegistry[name]
 		t.Run(name, func(t *testing.T) {
-			if reason, skip := valueRoundTripSkip[name]; skip {
-				t.Skipf("known limitation: %s", reason)
-			}
-
 			input := factory()
 			populateMessage(t, input, false)
 			encoded, err := input.EncodePayload()
@@ -177,6 +145,31 @@ func populateMessage(t *testing.T, m PGN, wantDerived bool) {
 			continue
 		}
 		populateField(step.field, target, wantDerived, overrides)
+	}
+	if m.PGNNumber() == 126208 && target.FieldByName("Pgn").IsValid() {
+		// The dynamic value width comes from a real commanded parameter, not
+		// an arbitrary numeric placeholder: Heading in Vessel Heading is 16 bits.
+		commanded := uint64(127250)
+		target.FieldByName("Pgn").Set(reflect.ValueOf(&commanded))
+		for _, step := range plan.steps {
+			if step.field != nil {
+				if step.field.condition != conditionAlways && step.field.fieldIndex >= 0 {
+					target.Field(step.field.fieldIndex).SetZero()
+				}
+				continue
+			}
+			slice := target.Field(step.group.sliceIndex)
+			for i := 0; i < slice.Len(); i++ {
+				for _, field := range step.group.fields {
+					if !field.commandedParameter {
+						continue
+					}
+					parameter := uint64(2)
+					slice.Index(i).Field(field.fieldIndex - 1).Set(reflect.ValueOf(&parameter))
+					slice.Index(i).Field(field.fieldIndex).SetBytes([]byte{0x5c, 0x3d})
+				}
+			}
+		}
 	}
 }
 

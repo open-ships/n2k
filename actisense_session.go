@@ -30,7 +30,8 @@ type ActisenseByteStream interface {
 }
 
 // ActisenseOpenFunc opens one custom Actisense byte-stream connection epoch.
-// It may be called again when reconnection is configured.
+// It must return promptly when its context ends. It may be called again when
+// reconnection is configured.
 type ActisenseOpenFunc func(context.Context) (ActisenseByteStream, error)
 
 type actisenseSessionConfig struct {
@@ -406,6 +407,12 @@ func (s *ActisenseGatewaySession) SendPGN(ctx context.Context, message pgn.Messa
 }
 
 func (s *ActisenseGatewaySession) SendRawPGN(ctx context.Context, pgnNumber uint32, priority, destination uint8, payload []byte) error {
+	s.mu.Lock()
+	closed := s.closed
+	s.mu.Unlock()
+	if closed {
+		return actisense.ErrSessionClosed
+	}
 	if err := actisenseValidateMessage(pgnNumber, priority, destination, payload); err != nil {
 		return err
 	}
@@ -435,6 +442,9 @@ func actisenseValidateMessage(pgnNumber uint32, priority, destination uint8, pay
 // changes, then activates once. Any failure restores the staged entries. The
 // first snapshot for an epoch is best-effort restored by Close.
 func (s *ActisenseGatewaySession) ConfigureTransmitPGNs(ctx context.Context, configurations []ActisenseTxPGNConfiguration) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	if len(configurations) == 0 {
 		return nil
 	}
@@ -445,26 +455,31 @@ func (s *ActisenseGatewaySession) ConfigureTransmitPGNs(ctx context.Context, con
 	}
 	epoch := s.epoch
 	s.mu.Unlock()
+	requester, err := s.transport.EpochRequester(epoch)
+	if err != nil {
+		return err
+	}
+	commands := actisense.NewCommandSet(requester, actisense.CommandSetConfig{Timeout: s.commandTimeout})
 
 	originals := make(map[uint32]ActisenseTxPGNState, len(configurations))
 	for _, configuration := range configurations {
 		if _, duplicate := originals[configuration.PGN]; duplicate {
 			return fmt.Errorf("n2k: duplicate Tx PGN %d in one Actisense transaction", configuration.PGN)
 		}
-		state, err := s.GetTxPGN(ctx, configuration.PGN)
+		state, err := commands.GetTxPGN(ctx, configuration.PGN)
 		if err != nil {
 			return fmt.Errorf("n2k: snapshot Actisense Tx PGN %d: %w", configuration.PGN, err)
 		}
 		originals[configuration.PGN] = state
 	}
 	for _, configuration := range configurations {
-		if _, err := s.SetTxPGN(ctx, configuration.PGN, configuration.Flag, configuration.Rate); err != nil {
-			s.rollbackTransmitPGNs(ctx, originals)
+		if _, err := commands.SetTxPGN(ctx, configuration.PGN, configuration.Flag, configuration.Rate); err != nil {
+			s.rollbackTransmitPGNs(ctx, commands, originals)
 			return fmt.Errorf("n2k: stage Actisense Tx PGN %d: %w", configuration.PGN, err)
 		}
 	}
-	if err := s.ActivatePGNLists(ctx); err != nil {
-		s.rollbackTransmitPGNs(ctx, originals)
+	if err := commands.ActivatePGNLists(ctx); err != nil {
+		s.rollbackTransmitPGNs(ctx, commands, originals)
 		return fmt.Errorf("n2k: activate Actisense Tx PGN transaction: %w", err)
 	}
 	s.mu.Lock()
@@ -484,12 +499,15 @@ func (s *ActisenseGatewaySession) ConfigureTransmitPGNs(ctx context.Context, con
 	return nil
 }
 
-func (s *ActisenseGatewaySession) rollbackTransmitPGNs(ctx context.Context, originals map[uint32]ActisenseTxPGNState) {
+func (s *ActisenseGatewaySession) rollbackTransmitPGNs(ctx context.Context, commands *actisense.CommandSet, originals map[uint32]ActisenseTxPGNState) {
 	for pgnNumber, state := range originals {
+		if ctx.Err() != nil {
+			return
+		}
 		rate := state.Rate
-		_, _ = s.SetTxPGN(ctx, pgnNumber, ActisensePGNEnableFlag(state.Enabled), &rate)
+		_, _ = commands.SetTxPGN(ctx, pgnNumber, ActisensePGNEnableFlag(state.Enabled), &rate)
 	}
-	_ = s.ActivatePGNLists(ctx)
+	_ = commands.ActivatePGNLists(ctx)
 }
 
 func (s *ActisenseGatewaySession) restoreTransmitPGNs() {
@@ -502,10 +520,16 @@ func (s *ActisenseGatewaySession) restoreTransmitPGNs() {
 	for pgnNumber, state := range s.txOriginal {
 		originals[pgnNumber] = state
 	}
+	epoch := s.txEpoch
 	s.mu.Unlock()
+	requester, err := s.transport.EpochRequester(epoch)
+	if err != nil {
+		return
+	}
+	commands := actisense.NewCommandSet(requester, actisense.CommandSetConfig{Timeout: s.commandTimeout})
 	restoreCtx, cancel := context.WithTimeout(context.Background(), s.commandTimeout)
 	defer cancel()
-	s.rollbackTransmitPGNs(restoreCtx, originals)
+	s.rollbackTransmitPGNs(restoreCtx, commands, originals)
 }
 
 func (s *ActisenseGatewaySession) Close() error {
@@ -513,10 +537,10 @@ func (s *ActisenseGatewaySession) Close() error {
 		return nil
 	}
 	s.closeOnce.Do(func() {
-		s.restoreTransmitPGNs()
 		s.mu.Lock()
 		s.closed = true
 		s.mu.Unlock()
+		s.restoreTransmitPGNs()
 		closeErr := s.transport.Close()
 		s.cancel()
 		<-s.done

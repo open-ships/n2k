@@ -20,6 +20,19 @@ func (m *AirmarBootStateAcknowledgment) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarBootStateAcknowledgment) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarBootStateAcknowledgment) Clone() Message {
+	if m == nil {
+		return (*AirmarBootStateAcknowledgment)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.BootState = clonePointer(m.BootState)
+	return &copy
+}
+
 type AirmarBootStateRequest struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -33,6 +46,18 @@ func (m *AirmarBootStateRequest) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *AirmarBootStateRequest) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarBootStateRequest) Clone() Message {
+	if m == nil {
+		return (*AirmarBootStateRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type AirmarAccessLevel struct {
 	Info             MessageInfo `json:"info"`
@@ -48,6 +73,21 @@ func (m *AirmarAccessLevel) MessageInfo() MessageInfo            { return m.Info
 func (m *AirmarAccessLevel) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarAccessLevel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarAccessLevel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarAccessLevel) Clone() Message {
+	if m == nil {
+		return (*AirmarAccessLevel)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.FormatCode = clonePointer(m.FormatCode)
+	copy.AccessLevel = clonePointer(m.AccessLevel)
+	copy.AccessSeedKey = clonePointer(m.AccessSeedKey)
+	return &copy
+}
 
 type AirmarDepthQualityFactor struct {
 	Info               MessageInfo `json:"info"`
@@ -65,6 +105,20 @@ func (m *AirmarDepthQualityFactor) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarDepthQualityFactor) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarDepthQualityFactor) Clone() Message {
+	if m == nil {
+		return (*AirmarDepthQualityFactor)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DepthQualityFactor = clonePointer(m.DepthQualityFactor)
+	return &copy
+}
+
 type AirmarSpeedPulseCount struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -80,14 +134,44 @@ func (m *AirmarSpeedPulseCount) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *AirmarSpeedPulseCount) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedPulseCount) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarSpeedPulseCount) Clone() Message {
+	if m == nil {
+		return (*AirmarSpeedPulseCount)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.DurationOfInterval = clonePointer(m.DurationOfInterval)
+	copy.NumberOfPulsesReceived = clonePointer(m.NumberOfPulsesReceived)
+	return &copy
+}
+
 // DurationOfIntervalValue returns DurationOfInterval as a physical value in s (value = raw * 0.001).
-// The bool is false when DurationOfInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarSpeedPulseCount) DurationOfIntervalValue() (float64, bool) {
-	if m.DurationOfInterval == nil {
+	if m == nil || m.DurationOfInterval == nil {
 		return 0, false
 	}
-	return float64(*m.DurationOfInterval) * 0.001, true
+	if *m.DurationOfInterval == 65535 {
+		return 0, false
+	}
+	if *m.DurationOfInterval == 65534 {
+		return 0, false
+	}
+	if *m.DurationOfInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DurationOfInterval) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65.532 && !approximatelyEqual(value, 65.532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDurationOfIntervalValue sets DurationOfInterval from a physical value in s, rounded to the nearest
@@ -114,14 +198,44 @@ func (m *AirmarDeviceInformation) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarDeviceInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarDeviceInformation) Clone() Message {
+	if m == nil {
+		return (*AirmarDeviceInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.InternalDeviceTemperature = clonePointer(m.InternalDeviceTemperature)
+	copy.SupplyVoltage = clonePointer(m.SupplyVoltage)
+	return &copy
+}
+
 // InternalDeviceTemperatureValue returns InternalDeviceTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when InternalDeviceTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarDeviceInformation) InternalDeviceTemperatureValue() (float64, bool) {
-	if m.InternalDeviceTemperature == nil {
+	if m == nil || m.InternalDeviceTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.InternalDeviceTemperature) * 0.01, true
+	if *m.InternalDeviceTemperature == 65535 {
+		return 0, false
+	}
+	if *m.InternalDeviceTemperature == 65534 {
+		return 0, false
+	}
+	if *m.InternalDeviceTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.InternalDeviceTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetInternalDeviceTemperatureValue sets InternalDeviceTemperature from a physical value in K, rounded to the nearest
@@ -132,13 +246,28 @@ func (m *AirmarDeviceInformation) SetInternalDeviceTemperatureValue(v float64) {
 }
 
 // SupplyVoltageValue returns SupplyVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when SupplyVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarDeviceInformation) SupplyVoltageValue() (float64, bool) {
-	if m.SupplyVoltage == nil {
+	if m == nil || m.SupplyVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.SupplyVoltage) * 0.01, true
+	if *m.SupplyVoltage == 65535 {
+		return 0, false
+	}
+	if *m.SupplyVoltage == 65534 {
+		return 0, false
+	}
+	if *m.SupplyVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SupplyVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSupplyVoltageValue sets SupplyVoltage from a physical value in V, rounded to the nearest
@@ -163,6 +292,19 @@ func (m *AirmarAddressableMultiFrame) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarAddressableMultiFrame) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarAddressableMultiFrame) Clone() Message {
+	if m == nil {
+		return (*AirmarAddressableMultiFrame)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	return &copy
+}
+
 type AirmarAttitudeOffset struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -179,14 +321,45 @@ func (m *AirmarAttitudeOffset) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarAttitudeOffset) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarAttitudeOffset) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarAttitudeOffset) Clone() Message {
+	if m == nil {
+		return (*AirmarAttitudeOffset)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.AzimuthOffset = clonePointer(m.AzimuthOffset)
+	copy.PitchOffset = clonePointer(m.PitchOffset)
+	copy.RollOffset = clonePointer(m.RollOffset)
+	return &copy
+}
+
 // AzimuthOffsetValue returns AzimuthOffset as a physical value in rad (value = raw * 0.0001).
-// The bool is false when AzimuthOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAttitudeOffset) AzimuthOffsetValue() (float64, bool) {
-	if m.AzimuthOffset == nil {
+	if m == nil || m.AzimuthOffset == nil {
 		return 0, false
 	}
-	return float64(*m.AzimuthOffset) * 0.0001, true
+	if *m.AzimuthOffset == 32767 {
+		return 0, false
+	}
+	if *m.AzimuthOffset == 32766 {
+		return 0, false
+	}
+	if *m.AzimuthOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AzimuthOffset) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAzimuthOffsetValue sets AzimuthOffset from a physical value in rad, rounded to the nearest
@@ -197,13 +370,28 @@ func (m *AirmarAttitudeOffset) SetAzimuthOffsetValue(v float64) {
 }
 
 // PitchOffsetValue returns PitchOffset as a physical value in rad (value = raw * 0.0001).
-// The bool is false when PitchOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAttitudeOffset) PitchOffsetValue() (float64, bool) {
-	if m.PitchOffset == nil {
+	if m == nil || m.PitchOffset == nil {
 		return 0, false
 	}
-	return float64(*m.PitchOffset) * 0.0001, true
+	if *m.PitchOffset == 32767 {
+		return 0, false
+	}
+	if *m.PitchOffset == 32766 {
+		return 0, false
+	}
+	if *m.PitchOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.PitchOffset) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPitchOffsetValue sets PitchOffset from a physical value in rad, rounded to the nearest
@@ -214,13 +402,28 @@ func (m *AirmarAttitudeOffset) SetPitchOffsetValue(v float64) {
 }
 
 // RollOffsetValue returns RollOffset as a physical value in rad (value = raw * 0.0001).
-// The bool is false when RollOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAttitudeOffset) RollOffsetValue() (float64, bool) {
-	if m.RollOffset == nil {
+	if m == nil || m.RollOffset == nil {
 		return 0, false
 	}
-	return float64(*m.RollOffset) * 0.0001, true
+	if *m.RollOffset == 32767 {
+		return 0, false
+	}
+	if *m.RollOffset == 32766 {
+		return 0, false
+	}
+	if *m.RollOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.RollOffset) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRollOffsetValue sets RollOffset from a physical value in rad, rounded to the nearest
@@ -257,14 +460,54 @@ func (m *AirmarCalibrateCompass) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarCalibrateCompass) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarCalibrateCompass) Clone() Message {
+	if m == nil {
+		return (*AirmarCalibrateCompass)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.CalibrateFunction = clonePointer(m.CalibrateFunction)
+	copy.CalibrationStatus = clonePointer(m.CalibrationStatus)
+	copy.VerifyScore = clonePointer(m.VerifyScore)
+	copy.XAxisGainValue = clonePointer(m.XAxisGainValue)
+	copy.YAxisGainValue = clonePointer(m.YAxisGainValue)
+	copy.ZAxisGainValue = clonePointer(m.ZAxisGainValue)
+	copy.XAxisLinearOffset = clonePointer(m.XAxisLinearOffset)
+	copy.YAxisLinearOffset = clonePointer(m.YAxisLinearOffset)
+	copy.ZAxisLinearOffset = clonePointer(m.ZAxisLinearOffset)
+	copy.XAxisAngularOffset = clonePointer(m.XAxisAngularOffset)
+	copy.PitchAndRollDamping = clonePointer(m.PitchAndRollDamping)
+	copy.CompassRateGyroDamping = clonePointer(m.CompassRateGyroDamping)
+	return &copy
+}
+
 // XAxisGainValueValue returns XAxisGainValue as a physical value (value = raw * 0.01).
-// The bool is false when XAxisGainValue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) XAxisGainValueValue() (float64, bool) {
-	if m.XAxisGainValue == nil {
+	if m == nil || m.XAxisGainValue == nil {
 		return 0, false
 	}
-	return float64(*m.XAxisGainValue) * 0.01, true
+	if *m.XAxisGainValue == 32767 {
+		return 0, false
+	}
+	if *m.XAxisGainValue == 32766 {
+		return 0, false
+	}
+	if *m.XAxisGainValue == 32765 {
+		return 0, false
+	}
+	value := float64(*m.XAxisGainValue) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetXAxisGainValueValue sets XAxisGainValue from a physical value, rounded to the nearest
@@ -275,13 +518,28 @@ func (m *AirmarCalibrateCompass) SetXAxisGainValueValue(v float64) {
 }
 
 // YAxisGainValueValue returns YAxisGainValue as a physical value (value = raw * 0.01).
-// The bool is false when YAxisGainValue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) YAxisGainValueValue() (float64, bool) {
-	if m.YAxisGainValue == nil {
+	if m == nil || m.YAxisGainValue == nil {
 		return 0, false
 	}
-	return float64(*m.YAxisGainValue) * 0.01, true
+	if *m.YAxisGainValue == 32767 {
+		return 0, false
+	}
+	if *m.YAxisGainValue == 32766 {
+		return 0, false
+	}
+	if *m.YAxisGainValue == 32765 {
+		return 0, false
+	}
+	value := float64(*m.YAxisGainValue) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetYAxisGainValueValue sets YAxisGainValue from a physical value, rounded to the nearest
@@ -292,13 +550,28 @@ func (m *AirmarCalibrateCompass) SetYAxisGainValueValue(v float64) {
 }
 
 // ZAxisGainValueValue returns ZAxisGainValue as a physical value (value = raw * 0.01).
-// The bool is false when ZAxisGainValue is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) ZAxisGainValueValue() (float64, bool) {
-	if m.ZAxisGainValue == nil {
+	if m == nil || m.ZAxisGainValue == nil {
 		return 0, false
 	}
-	return float64(*m.ZAxisGainValue) * 0.01, true
+	if *m.ZAxisGainValue == 32767 {
+		return 0, false
+	}
+	if *m.ZAxisGainValue == 32766 {
+		return 0, false
+	}
+	if *m.ZAxisGainValue == 32765 {
+		return 0, false
+	}
+	value := float64(*m.ZAxisGainValue) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetZAxisGainValueValue sets ZAxisGainValue from a physical value, rounded to the nearest
@@ -309,13 +582,28 @@ func (m *AirmarCalibrateCompass) SetZAxisGainValueValue(v float64) {
 }
 
 // XAxisLinearOffsetValue returns XAxisLinearOffset as a physical value in T (value = raw * 0.01).
-// The bool is false when XAxisLinearOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) XAxisLinearOffsetValue() (float64, bool) {
-	if m.XAxisLinearOffset == nil {
+	if m == nil || m.XAxisLinearOffset == nil {
 		return 0, false
 	}
-	return float64(*m.XAxisLinearOffset) * 0.01, true
+	if *m.XAxisLinearOffset == 32767 {
+		return 0, false
+	}
+	if *m.XAxisLinearOffset == 32766 {
+		return 0, false
+	}
+	if *m.XAxisLinearOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.XAxisLinearOffset) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetXAxisLinearOffsetValue sets XAxisLinearOffset from a physical value in T, rounded to the nearest
@@ -326,13 +614,28 @@ func (m *AirmarCalibrateCompass) SetXAxisLinearOffsetValue(v float64) {
 }
 
 // YAxisLinearOffsetValue returns YAxisLinearOffset as a physical value in T (value = raw * 0.01).
-// The bool is false when YAxisLinearOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) YAxisLinearOffsetValue() (float64, bool) {
-	if m.YAxisLinearOffset == nil {
+	if m == nil || m.YAxisLinearOffset == nil {
 		return 0, false
 	}
-	return float64(*m.YAxisLinearOffset) * 0.01, true
+	if *m.YAxisLinearOffset == 32767 {
+		return 0, false
+	}
+	if *m.YAxisLinearOffset == 32766 {
+		return 0, false
+	}
+	if *m.YAxisLinearOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.YAxisLinearOffset) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetYAxisLinearOffsetValue sets YAxisLinearOffset from a physical value in T, rounded to the nearest
@@ -343,13 +646,28 @@ func (m *AirmarCalibrateCompass) SetYAxisLinearOffsetValue(v float64) {
 }
 
 // ZAxisLinearOffsetValue returns ZAxisLinearOffset as a physical value in T (value = raw * 0.01).
-// The bool is false when ZAxisLinearOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) ZAxisLinearOffsetValue() (float64, bool) {
-	if m.ZAxisLinearOffset == nil {
+	if m == nil || m.ZAxisLinearOffset == nil {
 		return 0, false
 	}
-	return float64(*m.ZAxisLinearOffset) * 0.01, true
+	if *m.ZAxisLinearOffset == 32767 {
+		return 0, false
+	}
+	if *m.ZAxisLinearOffset == 32766 {
+		return 0, false
+	}
+	if *m.ZAxisLinearOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.ZAxisLinearOffset) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetZAxisLinearOffsetValue sets ZAxisLinearOffset from a physical value in T, rounded to the nearest
@@ -360,13 +678,28 @@ func (m *AirmarCalibrateCompass) SetZAxisLinearOffsetValue(v float64) {
 }
 
 // XAxisAngularOffsetValue returns XAxisAngularOffset as a physical value in deg (value = raw * 0.1).
-// The bool is false when XAxisAngularOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) XAxisAngularOffsetValue() (float64, bool) {
-	if m.XAxisAngularOffset == nil {
+	if m == nil || m.XAxisAngularOffset == nil {
 		return 0, false
 	}
-	return float64(*m.XAxisAngularOffset) * 0.1, true
+	if *m.XAxisAngularOffset == 32767 {
+		return 0, false
+	}
+	if *m.XAxisAngularOffset == 32766 {
+		return 0, false
+	}
+	if *m.XAxisAngularOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.XAxisAngularOffset) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetXAxisAngularOffsetValue sets XAxisAngularOffset from a physical value in deg, rounded to the nearest
@@ -377,13 +710,28 @@ func (m *AirmarCalibrateCompass) SetXAxisAngularOffsetValue(v float64) {
 }
 
 // PitchAndRollDampingValue returns PitchAndRollDamping as a physical value in s (value = raw * 0.05).
-// The bool is false when PitchAndRollDamping is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) PitchAndRollDampingValue() (float64, bool) {
-	if m.PitchAndRollDamping == nil {
+	if m == nil || m.PitchAndRollDamping == nil {
 		return 0, false
 	}
-	return float64(*m.PitchAndRollDamping) * 0.05, true
+	if *m.PitchAndRollDamping == 32767 {
+		return 0, false
+	}
+	if *m.PitchAndRollDamping == 32766 {
+		return 0, false
+	}
+	if *m.PitchAndRollDamping == 32765 {
+		return 0, false
+	}
+	value := float64(*m.PitchAndRollDamping) * 0.05
+	if value < -1638.35 && !approximatelyEqual(value, -1638.35) {
+		return 0, false
+	}
+	if value > 1638.2 && !approximatelyEqual(value, 1638.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPitchAndRollDampingValue sets PitchAndRollDamping from a physical value in s, rounded to the nearest
@@ -394,13 +742,28 @@ func (m *AirmarCalibrateCompass) SetPitchAndRollDampingValue(v float64) {
 }
 
 // CompassRateGyroDampingValue returns CompassRateGyroDamping as a physical value in s (value = raw * 0.05).
-// The bool is false when CompassRateGyroDamping is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateCompass) CompassRateGyroDampingValue() (float64, bool) {
-	if m.CompassRateGyroDamping == nil {
+	if m == nil || m.CompassRateGyroDamping == nil {
 		return 0, false
 	}
-	return float64(*m.CompassRateGyroDamping) * 0.05, true
+	if *m.CompassRateGyroDamping == 32767 {
+		return 0, false
+	}
+	if *m.CompassRateGyroDamping == 32766 {
+		return 0, false
+	}
+	if *m.CompassRateGyroDamping == 32765 {
+		return 0, false
+	}
+	value := float64(*m.CompassRateGyroDamping) * 0.05
+	if value < -1638.35 && !approximatelyEqual(value, -1638.35) {
+		return 0, false
+	}
+	if value > 1638.2 && !approximatelyEqual(value, 1638.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCompassRateGyroDampingValue sets CompassRateGyroDamping from a physical value in s, rounded to the nearest
@@ -424,14 +787,43 @@ func (m *AirmarCalibrateDepth) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarCalibrateDepth) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarCalibrateDepth) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarCalibrateDepth) Clone() Message {
+	if m == nil {
+		return (*AirmarCalibrateDepth)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.SpeedOfSoundMode = clonePointer(m.SpeedOfSoundMode)
+	return &copy
+}
+
 // SpeedOfSoundModeValue returns SpeedOfSoundMode as a physical value in m/s (value = raw * 0.1).
-// The bool is false when SpeedOfSoundMode is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateDepth) SpeedOfSoundModeValue() (float64, bool) {
-	if m.SpeedOfSoundMode == nil {
+	if m == nil || m.SpeedOfSoundMode == nil {
 		return 0, false
 	}
-	return float64(*m.SpeedOfSoundMode) * 0.1, true
+	if *m.SpeedOfSoundMode == 65535 {
+		return 0, false
+	}
+	if *m.SpeedOfSoundMode == 65534 {
+		return 0, false
+	}
+	if *m.SpeedOfSoundMode == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SpeedOfSoundMode) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedOfSoundModeValue sets SpeedOfSoundMode from a physical value in m/s, rounded to the nearest
@@ -461,14 +853,48 @@ func (m *AirmarCalibrateSpeed) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarCalibrateSpeed) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarCalibrateSpeed) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarCalibrateSpeed) Clone() Message {
+	if m == nil {
+		return (*AirmarCalibrateSpeed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.NumberOfPairsOfDataPoints = clonePointer(m.NumberOfPairsOfDataPoints)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].InputFrequency = clonePointer(m.Repeating1[i].InputFrequency)
+		copy.Repeating1[i].OutputSpeed = clonePointer(m.Repeating1[i].OutputSpeed)
+	}
+	return &copy
+}
+
 // InputFrequencyValue returns InputFrequency as a physical value in Hz (value = raw * 0.1).
-// The bool is false when InputFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateSpeedRepeating1) InputFrequencyValue() (float64, bool) {
-	if m.InputFrequency == nil {
+	if m == nil || m.InputFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.InputFrequency) * 0.1, true
+	if *m.InputFrequency == 65535 {
+		return 0, false
+	}
+	if *m.InputFrequency == 65534 {
+		return 0, false
+	}
+	if *m.InputFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.InputFrequency) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetInputFrequencyValue sets InputFrequency from a physical value in Hz, rounded to the nearest
@@ -479,13 +905,28 @@ func (m *AirmarCalibrateSpeedRepeating1) SetInputFrequencyValue(v float64) {
 }
 
 // OutputSpeedValue returns OutputSpeed as a physical value in m/s (value = raw * 0.01).
-// The bool is false when OutputSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateSpeedRepeating1) OutputSpeedValue() (float64, bool) {
-	if m.OutputSpeed == nil {
+	if m == nil || m.OutputSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.OutputSpeed) * 0.01, true
+	if *m.OutputSpeed == 65535 {
+		return 0, false
+	}
+	if *m.OutputSpeed == 65534 {
+		return 0, false
+	}
+	if *m.OutputSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OutputSpeed) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOutputSpeedValue sets OutputSpeed from a physical value in m/s, rounded to the nearest
@@ -512,14 +953,44 @@ func (m *AirmarCalibrateTemperature) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarCalibrateTemperature) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarCalibrateTemperature) Clone() Message {
+	if m == nil {
+		return (*AirmarCalibrateTemperature)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.TemperatureInstance = clonePointer(m.TemperatureInstance)
+	copy.TemperatureOffset = clonePointer(m.TemperatureOffset)
+	return &copy
+}
+
 // TemperatureOffsetValue returns TemperatureOffset as a physical value in K (value = raw * 0.001).
-// The bool is false when TemperatureOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarCalibrateTemperature) TemperatureOffsetValue() (float64, bool) {
-	if m.TemperatureOffset == nil {
+	if m == nil || m.TemperatureOffset == nil {
 		return 0, false
 	}
-	return float64(*m.TemperatureOffset) * 0.001, true
+	if *m.TemperatureOffset == 32767 {
+		return 0, false
+	}
+	if *m.TemperatureOffset == 32766 {
+		return 0, false
+	}
+	if *m.TemperatureOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.TemperatureOffset) * 0.001
+	if value < -9.999 && !approximatelyEqual(value, -9.999) {
+		return 0, false
+	}
+	if value > 9.999 && !approximatelyEqual(value, 9.999) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTemperatureOffsetValue sets TemperatureOffset from a physical value in K, rounded to the nearest
@@ -543,6 +1014,20 @@ func (m *AirmarNmea2000Options) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *AirmarNmea2000Options) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarNmea2000Options) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarNmea2000Options) Clone() Message {
+	if m == nil {
+		return (*AirmarNmea2000Options)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.TransmissionInterval = clonePointer(m.TransmissionInterval)
+	return &copy
+}
+
 type AirmarSimulateMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -556,6 +1041,20 @@ func (m *AirmarSimulateMode) MessageInfo() MessageInfo            { return m.Inf
 func (m *AirmarSimulateMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarSimulateMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSimulateMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarSimulateMode) Clone() Message {
+	if m == nil {
+		return (*AirmarSimulateMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.SimulateMode = clonePointer(m.SimulateMode)
+	return &copy
+}
 
 type AirmarSpeedFilterIir struct {
 	Info             MessageInfo `json:"info"`
@@ -573,14 +1072,45 @@ func (m *AirmarSpeedFilterIir) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AirmarSpeedFilterIir) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedFilterIir) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarSpeedFilterIir) Clone() Message {
+	if m == nil {
+		return (*AirmarSpeedFilterIir)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.FilterType = clonePointer(m.FilterType)
+	copy.SampleInterval = clonePointer(m.SampleInterval)
+	copy.FilterDuration = clonePointer(m.FilterDuration)
+	return &copy
+}
+
 // SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
-// The bool is false when SampleInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarSpeedFilterIir) SampleIntervalValue() (float64, bool) {
-	if m.SampleInterval == nil {
+	if m == nil || m.SampleInterval == nil {
 		return 0, false
 	}
-	return float64(*m.SampleInterval) * 0.01, true
+	if *m.SampleInterval == 65535 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65534 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SampleInterval) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
@@ -591,13 +1121,28 @@ func (m *AirmarSpeedFilterIir) SetSampleIntervalValue(v float64) {
 }
 
 // FilterDurationValue returns FilterDuration as a physical value in s (value = raw * 0.01).
-// The bool is false when FilterDuration is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarSpeedFilterIir) FilterDurationValue() (float64, bool) {
-	if m.FilterDuration == nil {
+	if m == nil || m.FilterDuration == nil {
 		return 0, false
 	}
-	return float64(*m.FilterDuration) * 0.01, true
+	if *m.FilterDuration == 65535 {
+		return 0, false
+	}
+	if *m.FilterDuration == 65534 {
+		return 0, false
+	}
+	if *m.FilterDuration == 65533 {
+		return 0, false
+	}
+	value := float64(*m.FilterDuration) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFilterDurationValue sets FilterDuration from a physical value in s, rounded to the nearest
@@ -622,14 +1167,44 @@ func (m *AirmarSpeedFilterNone) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *AirmarSpeedFilterNone) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarSpeedFilterNone) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarSpeedFilterNone) Clone() Message {
+	if m == nil {
+		return (*AirmarSpeedFilterNone)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.FilterType = clonePointer(m.FilterType)
+	copy.SampleInterval = clonePointer(m.SampleInterval)
+	return &copy
+}
+
 // SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
-// The bool is false when SampleInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarSpeedFilterNone) SampleIntervalValue() (float64, bool) {
-	if m.SampleInterval == nil {
+	if m == nil || m.SampleInterval == nil {
 		return 0, false
 	}
-	return float64(*m.SampleInterval) * 0.01, true
+	if *m.SampleInterval == 65535 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65534 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SampleInterval) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
@@ -657,14 +1232,45 @@ func (m *AirmarTemperatureFilterIir) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarTemperatureFilterIir) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarTemperatureFilterIir) Clone() Message {
+	if m == nil {
+		return (*AirmarTemperatureFilterIir)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.FilterType = clonePointer(m.FilterType)
+	copy.SampleInterval = clonePointer(m.SampleInterval)
+	copy.FilterDuration = clonePointer(m.FilterDuration)
+	return &copy
+}
+
 // SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
-// The bool is false when SampleInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarTemperatureFilterIir) SampleIntervalValue() (float64, bool) {
-	if m.SampleInterval == nil {
+	if m == nil || m.SampleInterval == nil {
 		return 0, false
 	}
-	return float64(*m.SampleInterval) * 0.01, true
+	if *m.SampleInterval == 65535 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65534 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SampleInterval) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
@@ -675,13 +1281,28 @@ func (m *AirmarTemperatureFilterIir) SetSampleIntervalValue(v float64) {
 }
 
 // FilterDurationValue returns FilterDuration as a physical value in s (value = raw * 0.01).
-// The bool is false when FilterDuration is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarTemperatureFilterIir) FilterDurationValue() (float64, bool) {
-	if m.FilterDuration == nil {
+	if m == nil || m.FilterDuration == nil {
 		return 0, false
 	}
-	return float64(*m.FilterDuration) * 0.01, true
+	if *m.FilterDuration == 65535 {
+		return 0, false
+	}
+	if *m.FilterDuration == 65534 {
+		return 0, false
+	}
+	if *m.FilterDuration == 65533 {
+		return 0, false
+	}
+	value := float64(*m.FilterDuration) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFilterDurationValue sets FilterDuration from a physical value in s, rounded to the nearest
@@ -708,14 +1329,44 @@ func (m *AirmarTemperatureFilterNone) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarTemperatureFilterNone) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarTemperatureFilterNone) Clone() Message {
+	if m == nil {
+		return (*AirmarTemperatureFilterNone)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.FilterType = clonePointer(m.FilterType)
+	copy.SampleInterval = clonePointer(m.SampleInterval)
+	return &copy
+}
+
 // SampleIntervalValue returns SampleInterval as a physical value in s (value = raw * 0.01).
-// The bool is false when SampleInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarTemperatureFilterNone) SampleIntervalValue() (float64, bool) {
-	if m.SampleInterval == nil {
+	if m == nil || m.SampleInterval == nil {
 		return 0, false
 	}
-	return float64(*m.SampleInterval) * 0.01, true
+	if *m.SampleInterval == 65535 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65534 {
+		return 0, false
+	}
+	if *m.SampleInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SampleInterval) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSampleIntervalValue sets SampleInterval from a physical value in s, rounded to the nearest
@@ -739,6 +1390,20 @@ func (m *AirmarTrueWindOptions) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *AirmarTrueWindOptions) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarTrueWindOptions) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarTrueWindOptions) Clone() Message {
+	if m == nil {
+		return (*AirmarTrueWindOptions)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.CogSubstitutionForHdg = clonePointer(m.CogSubstitutionForHdg)
+	return &copy
+}
+
 type AirmarAdditionalWeatherData struct {
 	Info                         MessageInfo `json:"info"`
 	ManufacturerCode             *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -757,14 +1422,45 @@ func (m *AirmarAdditionalWeatherData) DecodePayload(payload []uint8) error {
 }
 func (m *AirmarAdditionalWeatherData) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarAdditionalWeatherData) Clone() Message {
+	if m == nil {
+		return (*AirmarAdditionalWeatherData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.C = clonePointer(m.C)
+	copy.ApparentWindchillTemperature = clonePointer(m.ApparentWindchillTemperature)
+	copy.TrueWindchillTemperature = clonePointer(m.TrueWindchillTemperature)
+	copy.Dewpoint = clonePointer(m.Dewpoint)
+	return &copy
+}
+
 // ApparentWindchillTemperatureValue returns ApparentWindchillTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when ApparentWindchillTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAdditionalWeatherData) ApparentWindchillTemperatureValue() (float64, bool) {
-	if m.ApparentWindchillTemperature == nil {
+	if m == nil || m.ApparentWindchillTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentWindchillTemperature) * 0.01, true
+	if *m.ApparentWindchillTemperature == 65535 {
+		return 0, false
+	}
+	if *m.ApparentWindchillTemperature == 65534 {
+		return 0, false
+	}
+	if *m.ApparentWindchillTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ApparentWindchillTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentWindchillTemperatureValue sets ApparentWindchillTemperature from a physical value in K, rounded to the nearest
@@ -775,13 +1471,28 @@ func (m *AirmarAdditionalWeatherData) SetApparentWindchillTemperatureValue(v flo
 }
 
 // TrueWindchillTemperatureValue returns TrueWindchillTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when TrueWindchillTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAdditionalWeatherData) TrueWindchillTemperatureValue() (float64, bool) {
-	if m.TrueWindchillTemperature == nil {
+	if m == nil || m.TrueWindchillTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.TrueWindchillTemperature) * 0.01, true
+	if *m.TrueWindchillTemperature == 65535 {
+		return 0, false
+	}
+	if *m.TrueWindchillTemperature == 65534 {
+		return 0, false
+	}
+	if *m.TrueWindchillTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TrueWindchillTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTrueWindchillTemperatureValue sets TrueWindchillTemperature from a physical value in K, rounded to the nearest
@@ -792,13 +1503,28 @@ func (m *AirmarAdditionalWeatherData) SetTrueWindchillTemperatureValue(v float64
 }
 
 // DewpointValue returns Dewpoint as a physical value in K (value = raw * 0.01).
-// The bool is false when Dewpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarAdditionalWeatherData) DewpointValue() (float64, bool) {
-	if m.Dewpoint == nil {
+	if m == nil || m.Dewpoint == nil {
 		return 0, false
 	}
-	return float64(*m.Dewpoint) * 0.01, true
+	if *m.Dewpoint == 65535 {
+		return 0, false
+	}
+	if *m.Dewpoint == 65534 {
+		return 0, false
+	}
+	if *m.Dewpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Dewpoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDewpointValue sets Dewpoint from a physical value in K, rounded to the nearest
@@ -824,14 +1550,45 @@ func (m *AirmarHeaterControl) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *AirmarHeaterControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarHeaterControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarHeaterControl) Clone() Message {
+	if m == nil {
+		return (*AirmarHeaterControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.C = clonePointer(m.C)
+	copy.PlateTemperature = clonePointer(m.PlateTemperature)
+	copy.AirTemperature = clonePointer(m.AirTemperature)
+	copy.Dewpoint = clonePointer(m.Dewpoint)
+	return &copy
+}
+
 // PlateTemperatureValue returns PlateTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when PlateTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarHeaterControl) PlateTemperatureValue() (float64, bool) {
-	if m.PlateTemperature == nil {
+	if m == nil || m.PlateTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.PlateTemperature) * 0.01, true
+	if *m.PlateTemperature == 65535 {
+		return 0, false
+	}
+	if *m.PlateTemperature == 65534 {
+		return 0, false
+	}
+	if *m.PlateTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PlateTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPlateTemperatureValue sets PlateTemperature from a physical value in K, rounded to the nearest
@@ -842,13 +1599,28 @@ func (m *AirmarHeaterControl) SetPlateTemperatureValue(v float64) {
 }
 
 // AirTemperatureValue returns AirTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when AirTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarHeaterControl) AirTemperatureValue() (float64, bool) {
-	if m.AirTemperature == nil {
+	if m == nil || m.AirTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.AirTemperature) * 0.01, true
+	if *m.AirTemperature == 65535 {
+		return 0, false
+	}
+	if *m.AirTemperature == 65534 {
+		return 0, false
+	}
+	if *m.AirTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AirTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAirTemperatureValue sets AirTemperature from a physical value in K, rounded to the nearest
@@ -859,13 +1631,28 @@ func (m *AirmarHeaterControl) SetAirTemperatureValue(v float64) {
 }
 
 // DewpointValue returns Dewpoint as a physical value in K (value = raw * 0.01).
-// The bool is false when Dewpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AirmarHeaterControl) DewpointValue() (float64, bool) {
-	if m.Dewpoint == nil {
+	if m == nil || m.Dewpoint == nil {
 		return 0, false
 	}
-	return float64(*m.Dewpoint) * 0.01, true
+	if *m.Dewpoint == 65535 {
+		return 0, false
+	}
+	if *m.Dewpoint == 65534 {
+		return 0, false
+	}
+	if *m.Dewpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Dewpoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDewpointValue sets Dewpoint from a physical value in K, rounded to the nearest
@@ -890,3 +1677,19 @@ func (m *AirmarPost) MessageInfo() MessageInfo            { return m.Info }
 func (m *AirmarPost) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AirmarPost) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AirmarPost) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AirmarPost) Clone() Message {
+	if m == nil {
+		return (*AirmarPost)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Control = clonePointer(m.Control)
+	copy.NumberOfIdTestResultPairsToFollow = clonePointer(m.NumberOfIdTestResultPairsToFollow)
+	copy.TestId = clonePointer(m.TestId)
+	copy.TestResult = clonePointer(m.TestResult)
+	return &copy
+}

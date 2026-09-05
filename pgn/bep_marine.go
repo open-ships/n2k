@@ -27,6 +27,28 @@ func (m *BepMarineCzoneCircuitControl) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineCzoneCircuitControl) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneCircuitControl) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneCircuitControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.CircuitId = clonePointer(m.CircuitId)
+	copy.FieldB = clonePointer(m.FieldB)
+	copy.LevelOrValue = clonePointer(m.LevelOrValue)
+	copy.UnknownA = clonePointer(m.UnknownA)
+	copy.CommandActive = clonePointer(m.CommandActive)
+	copy.UnknownB = clonePointer(m.UnknownB)
+	copy.UnknownC = clonePointer(m.UnknownC)
+	copy.UnknownD = clonePointer(m.UnknownD)
+	copy.UnknownE = clonePointer(m.UnknownE)
+	copy.UnknownF = clonePointer(m.UnknownF)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65281 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -42,6 +64,19 @@ func (m *BepMarineProprietaryPgn65281) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65281) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65281) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65281)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineCzoneAlarmEvent struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -56,6 +91,19 @@ func (m *BepMarineCzoneAlarmEvent) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineCzoneAlarmEvent) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneAlarmEvent) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneAlarmEvent)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Dipswitch = clonePointer(m.Dipswitch)
+	return &copy
+}
 
 type BepMarineCzoneChannelState struct {
 	Info             MessageInfo `json:"info"`
@@ -85,6 +133,32 @@ func (m *BepMarineCzoneChannelState) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineCzoneChannelState) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneChannelState) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneChannelState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Dipswitch = clonePointer(m.Dipswitch)
+	copy.Channel0Mode = clonePointer(m.Channel0Mode)
+	copy.Channel1Mode = clonePointer(m.Channel1Mode)
+	copy.Channel2Mode = clonePointer(m.Channel2Mode)
+	copy.Channel3Mode = clonePointer(m.Channel3Mode)
+	copy.Channel4Mode = clonePointer(m.Channel4Mode)
+	copy.Channel5Mode = clonePointer(m.Channel5Mode)
+	copy.Channel0Value = clonePointer(m.Channel0Value)
+	copy.Channel1Value = clonePointer(m.Channel1Value)
+	copy.Channel2Value = clonePointer(m.Channel2Value)
+	copy.Channel3Value = clonePointer(m.Channel3Value)
+	copy.Channel4Value = clonePointer(m.Channel4Value)
+	copy.Channel5Value = clonePointer(m.Channel5Value)
+	copy.Flag = clonePointer(m.Flag)
+	return &copy
+}
+
 type BepMarineCzoneCircuitStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -101,6 +175,21 @@ func (m *BepMarineCzoneCircuitStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineCzoneCircuitStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneCircuitStatus) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneCircuitStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Dipswitch = clonePointer(m.Dipswitch)
+	copy.Type = clonePointer(m.Type)
+	copy.Bitmap = cloneSlice(m.Bitmap)
+	return &copy
+}
 
 type BepMarineCzoneModuleAnnounce struct {
 	Info             MessageInfo `json:"info"`
@@ -120,6 +209,22 @@ func (m *BepMarineCzoneModuleAnnounce) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineCzoneModuleAnnounce) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneModuleAnnounce) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneModuleAnnounce)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Unique = clonePointer(m.Unique)
+	copy.FieldB = clonePointer(m.FieldB)
+	copy.FieldC = clonePointer(m.FieldC)
+	copy.Dipswitch = clonePointer(m.Dipswitch)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65294 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -134,6 +239,19 @@ func (m *BepMarineProprietaryPgn65294) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65294) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65294) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65294)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineCzoneAlarm struct {
 	Info             MessageInfo `json:"info"`
@@ -153,6 +271,24 @@ func (m *BepMarineCzoneAlarm) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *BepMarineCzoneAlarm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BepMarineCzoneAlarm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneAlarm) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneAlarm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DeviceId = clonePointer(m.DeviceId)
+	copy.Channel = clonePointer(m.Channel)
+	copy.AlarmType = clonePointer(m.AlarmType)
+	copy.SeverityCode = clonePointer(m.SeverityCode)
+	copy.StateFlag = clonePointer(m.StateFlag)
+	copy.AckFlag = clonePointer(m.AckFlag)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65296 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -168,6 +304,19 @@ func (m *BepMarineProprietaryPgn65296) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65296) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65296) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65296)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65297 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -182,6 +331,19 @@ func (m *BepMarineProprietaryPgn65297) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65297) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65297) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65297)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineCzoneAlarmStringRequest struct {
 	Info             MessageInfo `json:"info"`
@@ -200,6 +362,21 @@ func (m *BepMarineCzoneAlarmStringRequest) DecodePayload(payload []uint8) error 
 }
 func (m *BepMarineCzoneAlarmStringRequest) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneAlarmStringRequest) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneAlarmStringRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DeviceId = clonePointer(m.DeviceId)
+	copy.Channel = clonePointer(m.Channel)
+	copy.Padding = cloneSlice(m.Padding)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65300 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -214,6 +391,19 @@ func (m *BepMarineProprietaryPgn65300) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65300) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65300) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65300)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineCzone65301 struct {
 	Info             MessageInfo `json:"info"`
@@ -231,6 +421,22 @@ func (m *BepMarineCzone65301) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *BepMarineCzone65301) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BepMarineCzone65301) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzone65301) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzone65301)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Field1 = clonePointer(m.Field1)
+	copy.Field2 = clonePointer(m.Field2)
+	copy.Field3 = clonePointer(m.Field3)
+	copy.StatusBitmap = cloneSlice(m.StatusBitmap)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65304 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -245,6 +451,19 @@ func (m *BepMarineProprietaryPgn65304) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65304) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65304) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65304)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineProprietaryPgn65306 struct {
 	Info             MessageInfo `json:"info"`
@@ -261,6 +480,19 @@ func (m *BepMarineProprietaryPgn65306) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65306) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65306) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65306)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65308 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -275,6 +507,19 @@ func (m *BepMarineProprietaryPgn65308) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65308) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65308) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65308)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineProprietaryPgn65310 struct {
 	Info             MessageInfo `json:"info"`
@@ -291,6 +536,19 @@ func (m *BepMarineProprietaryPgn65310) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65310) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65310) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65310)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65311 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -305,6 +563,19 @@ func (m *BepMarineProprietaryPgn65311) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65311) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65311) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65311)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineProprietaryPgn65314 struct {
 	Info             MessageInfo `json:"info"`
@@ -321,6 +592,19 @@ func (m *BepMarineProprietaryPgn65314) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65314) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65314) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65314)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65316 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -336,6 +620,19 @@ func (m *BepMarineProprietaryPgn65316) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn65316) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65316) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65316)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn65325 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -350,6 +647,19 @@ func (m *BepMarineProprietaryPgn65325) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn65325) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn65325) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn65325)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineCzoneZcfBusDistribution struct {
 	Info             MessageInfo `json:"info"`
@@ -368,6 +678,21 @@ func (m *BepMarineCzoneZcfBusDistribution) DecodePayload(payload []uint8) error 
 }
 func (m *BepMarineCzoneZcfBusDistribution) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneZcfBusDistribution) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneZcfBusDistribution)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ChunkIndex = clonePointer(m.ChunkIndex)
+	copy.Flag = clonePointer(m.Flag)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineCzoneStatusExtended struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -385,6 +710,21 @@ func (m *BepMarineCzoneStatusExtended) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineCzoneStatusExtended) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneStatusExtended) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneStatusExtended)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Page = clonePointer(m.Page)
+	copy.Dipswitch = clonePointer(m.Dipswitch)
+	copy.Records = cloneSlice(m.Records)
+	return &copy
+}
+
 type BepMarineProprietaryPgn130818 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -399,6 +739,19 @@ func (m *BepMarineProprietaryPgn130818) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn130818) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn130818) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn130818)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineCzone130819 struct {
 	Info             MessageInfo `json:"info"`
@@ -420,6 +773,26 @@ func (m *BepMarineCzone130819) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *BepMarineCzone130819) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BepMarineCzone130819) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzone130819) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzone130819)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.FieldA = clonePointer(m.FieldA)
+	copy.FieldB = clonePointer(m.FieldB)
+	copy.FieldC = clonePointer(m.FieldC)
+	copy.FieldD = clonePointer(m.FieldD)
+	copy.FieldE = clonePointer(m.FieldE)
+	copy.FieldF = clonePointer(m.FieldF)
+	copy.FieldG = clonePointer(m.FieldG)
+	copy.Flag = clonePointer(m.Flag)
+	return &copy
+}
+
 type BepMarineCzoneAlarmStringResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -437,6 +810,21 @@ func (m *BepMarineCzoneAlarmStringResponse) DecodePayload(payload []uint8) error
 }
 func (m *BepMarineCzoneAlarmStringResponse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineCzoneAlarmStringResponse) Clone() Message {
+	if m == nil {
+		return (*BepMarineCzoneAlarmStringResponse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DeviceId = clonePointer(m.DeviceId)
+	copy.Channel = clonePointer(m.Channel)
+	copy.String = cloneSlice(m.String)
+	return &copy
+}
+
 type BepMarineProprietaryPgn130821 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -451,6 +839,19 @@ func (m *BepMarineProprietaryPgn130821) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn130821) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn130821) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn130821)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type BepMarineProprietaryPgn130822 struct {
 	Info             MessageInfo `json:"info"`
@@ -467,6 +868,19 @@ func (m *BepMarineProprietaryPgn130822) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn130822) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn130822) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn130822)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn130825 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -482,6 +896,19 @@ func (m *BepMarineProprietaryPgn130825) DecodePayload(payload []uint8) error {
 }
 func (m *BepMarineProprietaryPgn130825) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn130825) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn130825)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type BepMarineProprietaryPgn130826 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -496,3 +923,16 @@ func (m *BepMarineProprietaryPgn130826) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *BepMarineProprietaryPgn130826) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BepMarineProprietaryPgn130826) Clone() Message {
+	if m == nil {
+		return (*BepMarineProprietaryPgn130826)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}

@@ -71,8 +71,7 @@ func TestRepeatingElementValueAccessor(t *testing.T) {
 
 // TestValueAccessorsMatchPhysicalValue cross-checks every generated
 // <Field>Value accessor on every registered PGN struct against the
-// metadata-driven PhysicalValue lookup. The two paths must agree (within
-// float32 metadata precision) on the same raw tick count.
+// metadata-driven PhysicalValue lookup, including availability.
 func TestValueAccessorsMatchPhysicalValue(t *testing.T) {
 	checked := 0
 	for name, newMessage := range structTypeRegistry {
@@ -112,24 +111,16 @@ func TestValueAccessorsMatchPhysicalValue(t *testing.T) {
 
 			out := method.Call(nil)
 			got, ok := out[0].Float(), out[1].Bool()
-			if !ok {
-				t.Errorf("%s.%sValue() ok = false with field set", name, structField.Name)
-				continue
-			}
-
 			want, _, wantOk, err := PhysicalValue(msg, order)
 			if err != nil {
 				t.Errorf("%s field %d: PhysicalValue error: %v", name, order, err)
 				continue
 			}
-			if !wantOk {
-				t.Errorf("%s field %d: PhysicalValue ok = false with field set", name, order)
+			if ok != wantOk {
+				t.Errorf("%s field %d: accessor availability %t != PhysicalValue availability %t", name, order, ok, wantOk)
 				continue
 			}
-
-			// PhysicalValue scales by float32 metadata resolution; the
-			// generated accessors use the full float64 schema value.
-			tolerance := math.Max(math.Abs(want)*1e-6, 1e-9)
+			tolerance := math.Max(math.Abs(want)*1e-12, 1e-12)
 			if math.Abs(got-want) > tolerance {
 				t.Errorf("%s.%sValue() = %g, PhysicalValue = %g", name, structField.Name, got, want)
 			}

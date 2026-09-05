@@ -16,6 +16,19 @@ func (m *YamahaGearStatus) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *YamahaGearStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaGearStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaGearStatus) Clone() Message {
+	if m == nil {
+		return (*YamahaGearStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Neutral = clonePointer(m.Neutral)
+	return &copy
+}
+
 type YamahaEngineDataA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -28,6 +41,19 @@ func (m *YamahaEngineDataA) MessageInfo() MessageInfo            { return m.Info
 func (m *YamahaEngineDataA) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineDataA) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineDataA) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineDataA) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineDataA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type YamahaEngineDataB struct {
 	Info             MessageInfo `json:"info"`
@@ -42,6 +68,19 @@ func (m *YamahaEngineDataB) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *YamahaEngineDataB) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineDataB) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineDataB) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineDataB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type YamahaEngineDataC struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -54,6 +93,19 @@ func (m *YamahaEngineDataC) MessageInfo() MessageInfo            { return m.Info
 func (m *YamahaEngineDataC) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineDataC) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineDataC) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineDataC) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineDataC)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type YamahaEngineDataD struct {
 	Info             MessageInfo `json:"info"`
@@ -68,6 +120,19 @@ func (m *YamahaEngineDataD) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *YamahaEngineDataD) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineDataD) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineDataD) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineDataD)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type YamahaEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -79,6 +144,18 @@ func (m *YamahaEngineData) MessageInfo() MessageInfo            { return m.Info 
 func (m *YamahaEngineData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type YamahaEngineData2 struct {
 	Info             MessageInfo `json:"info"`
@@ -92,6 +169,18 @@ func (m *YamahaEngineData2) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *YamahaEngineData2) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData2) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData2) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData2)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type YamahaEngineData3 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -103,6 +192,18 @@ func (m *YamahaEngineData3) MessageInfo() MessageInfo            { return m.Info
 func (m *YamahaEngineData3) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineData3) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData3) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData3) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData3)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type YamahaEngineData4 struct {
 	Info             MessageInfo `json:"info"`
@@ -116,6 +217,18 @@ func (m *YamahaEngineData4) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *YamahaEngineData4) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData4) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData4) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData4)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type YamahaEngineData5 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -127,6 +240,18 @@ func (m *YamahaEngineData5) MessageInfo() MessageInfo            { return m.Info
 func (m *YamahaEngineData5) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineData5) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData5) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData5) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData5)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type YamahaEngineData6 struct {
 	Info             MessageInfo `json:"info"`
@@ -140,6 +265,18 @@ func (m *YamahaEngineData6) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *YamahaEngineData6) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData6) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData6) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData6)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type YamahaEngineData7 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -151,3 +288,15 @@ func (m *YamahaEngineData7) MessageInfo() MessageInfo            { return m.Info
 func (m *YamahaEngineData7) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *YamahaEngineData7) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *YamahaEngineData7) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *YamahaEngineData7) Clone() Message {
+	if m == nil {
+		return (*YamahaEngineData7)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}

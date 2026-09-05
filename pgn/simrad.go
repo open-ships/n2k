@@ -21,3 +21,21 @@ func (m *SimradTextMessage) MessageInfo() MessageInfo            { return m.Info
 func (m *SimradTextMessage) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimradTextMessage) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimradTextMessage) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimradTextMessage) Clone() Message {
+	if m == nil {
+		return (*SimradTextMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.Sid = clonePointer(m.Sid)
+	copy.Prio = clonePointer(m.Prio)
+	return &copy
+}
