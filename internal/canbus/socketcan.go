@@ -71,7 +71,7 @@ func (c *socketCANChannel) Run(ctx context.Context, handler func(can.Frame)) err
 	// bound to the specified network interface and provides a higher-level pub/sub API.
 	newBus := c.options.newBus
 	if newBus == nil {
-		newBus = can.NewBusForInterfaceWithName
+		newBus = newSocketCANBus
 	}
 	bus, err := newBus(c.options.InterfaceName)
 	if err != nil {

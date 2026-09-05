@@ -27,6 +27,74 @@ func writeBEMResponse(t *testing.T, connection net.Conn, command byte, data []by
 	require.NoError(t, err)
 }
 
+func TestActisenseHandshakeTimeoutAndCloseInterruptInitialWrite(t *testing.T) {
+	for _, closeDuringHandshake := range []bool{false, true} {
+		name := "deadline"
+		if closeDuringHandshake {
+			name = "close"
+		}
+		t.Run(name, func(t *testing.T) {
+			host, peer := net.Pipe()
+			defer func() { _ = peer.Close() }()
+			opened := make(chan struct{})
+			bus := newActisenseStreamBus(testLogger(), "stalled", "stalled", func(context.Context) (actisenseConnection, error) {
+				close(opened)
+				return host, nil
+			}, nil, actisense.ModeCANPacket, true)
+			t.Cleanup(func() { _ = bus.Close() })
+			timeout := 20 * time.Millisecond
+			if closeDuringHandshake {
+				timeout = time.Second
+			}
+			require.NoError(t, bus.SetCommandTimeout(timeout))
+			result := make(chan error, 1)
+			go func() { result <- bus.Run(context.Background(), nil) }()
+			<-opened
+			if closeDuringHandshake {
+				require.NoError(t, bus.Close())
+			}
+			select {
+			case err := <-result:
+				if closeDuringHandshake {
+					require.NoError(t, err)
+				} else {
+					require.ErrorIs(t, err, context.DeadlineExceeded)
+				}
+			case <-time.After(500 * time.Millisecond):
+				t.Fatal("initial write ignored handshake timeout or Close")
+			}
+			select {
+			case <-bus.Ready():
+				t.Fatal("unacknowledged connection became ready")
+			default:
+			}
+		})
+	}
+}
+
+func TestActisenseEpochRequesterNeverFollowsReconnect(t *testing.T) {
+	gateway := NewActisenseCustomGatewaySession(testLogger(), "epoch", "epoch", nil, nil, actisense.ModeTransferNormal)
+	first := actisense.NewSession(actisense.SessionConfig{})
+	gateway.stream.epoch = &actisenseEpoch{session: first}
+	gateway.stream.epochNum = 1
+	requester, err := gateway.EpochRequester(1)
+	require.NoError(t, err)
+	first.Close(actisense.ErrSessionClosed)
+
+	second := actisense.NewSession(actisense.SessionConfig{Write: func(context.Context, []byte) error {
+		t.Error("old epoch cleanup reached the new connection")
+		return nil
+	}})
+	defer second.Close(nil)
+	gateway.stream.epoch = &actisenseEpoch{session: second}
+	gateway.stream.epochNum = 2
+	_, err = requester.Request(context.Background(), actisense.BEMTxPGNEnable, nil)
+	require.ErrorIs(t, err, actisense.ErrSessionClosed)
+	_, err = gateway.EpochRequester(1)
+	require.Error(t, err)
+	require.Zero(t, second.Metrics().BEMRequests)
+}
+
 func TestActisenseRawSerialBusReadinessFramesAndRestore(t *testing.T) {
 	clientConnection, gatewayConnection := net.Pipe()
 	defer func() { _ = gatewayConnection.Close() }()

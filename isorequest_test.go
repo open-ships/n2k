@@ -140,7 +140,7 @@ func TestISORequest_UnsupportedAddressedGetsNAK(t *testing.T) {
 	nakFrame := framesWithPGN(mb.getWritten(), 59392)[0]
 	// Wire layout: control (1B), group function (1B), reserved (3B),
 	// refused PGN (3B little-endian).
-	assert.Equal(t, uint8(pgn.NAK), nakFrame.Data[0], "control must be NAK")
+	assert.Equal(t, uint8(pgn.IsoControlNAK), nakFrame.Data[0], "control must be NAK")
 	assert.Equal(t, uint8(0xFF), nakFrame.Data[1], "group function must be the null sentinel")
 	refused := uint32(nakFrame.Data[5]) | uint32(nakFrame.Data[6])<<8 | uint32(nakFrame.Data[7])<<16
 	assert.Equal(t, uint32(130306), refused)

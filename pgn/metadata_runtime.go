@@ -1,6 +1,7 @@
 package pgn
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -111,7 +112,7 @@ func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
 		}
 	}
 
-	return &PgnInfo{
+	info := &PgnInfo{
 		SourceID:                     def.SourceID,
 		Id:                           firstNonEmpty(def.StructName, exportedID(def.SourceID, def.Description)),
 		PGN:                          def.PGN,
@@ -136,6 +137,24 @@ func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
 		ManId:                        manID,
 		Fields:                       fields,
 	}
+	info.DecodeComplete, info.EncodeComplete, info.CodecLimitations = codecSupport(def)
+	return info
+}
+
+func codecSupport(def SourceDefinition) (bool, bool, []string) {
+	var limitations []string
+	if !def.Complete {
+		limitations = append(limitations, "source schema is incomplete")
+	}
+	for _, field := range def.Fields {
+		if field.FieldType == "VARIABLE" {
+			limitations = append(limitations, fmt.Sprintf("field %d (%s) requires an unambiguous fixed-width commanded PGN field", field.Order, field.Name))
+		}
+	}
+	if def.StructName == "NavicoUdbDatabaseObjectDump" || def.StructName == "NavicoDataTypeSourceDirectory" {
+		limitations = append(limitations, "record lengths include a sub-record header absent from the source field layout")
+	}
+	return len(limitations) == 0, len(limitations) == 0, limitations
 }
 
 func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
@@ -151,9 +170,9 @@ func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
 	if field.BitStart != nil {
 		bitStart = *field.BitStart
 	}
-	resolution := float32(1)
+	resolution := float64(1)
 	if field.Resolution != nil {
-		resolution = float32(*field.Resolution)
+		resolution = *field.Resolution
 	}
 	return &FieldDescriptor{
 		SourceID:                            field.SourceID,

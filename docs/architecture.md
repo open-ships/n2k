@@ -29,12 +29,17 @@ registry / correlator      field filter
 ## Runtime ownership
 
 One `Client` owns one writable `Bus`, one address claimer, one ISO transport
-manager, one system router, one serialized application-write queue, two
-protocol-transmission queues, and zero or more live typed and observation
+manager, one system router, an application job worker, a protocol job worker,
+and one physical wire writer. Separate bounded application, required, and
+advisory queues preserve admission and priority. It also owns fixed discovery
+and rejoin workers, up to 64 scheduled providers, and live typed and observation
 subscriptions. `Receive`, `Scanner`, and `Observations` subscriptions are
 independent.
 When one subscriber exceeds its configured buffer, only that subscriber ends
 with `ErrReceiveOverflow`.
+Each subscriber receives its own deep message clone, including pointer fields,
+repeating fields, diagnostics, and retained wire bookkeeping. Registry ingress
+and snapshots use the same generated clone implementation.
 
 The observation Module is the ownership Seam between transport Adapters and
 consumers. Its Interface preserves `AdapterID`, `NetworkID`, source time, host
@@ -81,7 +86,9 @@ Application writes wait through a fresh contention window after the move.
 
 ## Write selection
 
-`Client.Write` admits work to a bounded FIFO queue. Encoding then chooses:
+`Client.Write` encodes and owns a snapshot before returning. Bounded FIFO
+admission captures both connection and claim epochs. `WriteContext` also binds
+the job to caller cancellation. Framing chooses:
 
 | Payload and PGN | Wire mechanism |
 |---|---|
@@ -101,9 +108,25 @@ Automatic protocol writes enter a dedicated protocol-transmission Module.
 Required traffic (heartbeat, claims, ISO and group-function responses) has a
 bounded high-priority lane; enumeration and information probes have a bounded
 advisory lane with admission retry. Application writes cannot starve either
-lane. This narrow Interface gives high Leverage: queue saturation, encoding,
-transport failure, retry policy, and metrics have one Implementation and one
-test Seam.
+lane while waiting for ISO pacing, CTS, or acknowledgement. The sole physical
+writer selects protocol records between application frames; a framed gateway
+record itself is indivisible. Every physical write has a deadline (default one
+second, configurable with `WithWriteTimeout`). Queue saturation, encoding,
+transport failure, retry policy, and metrics now share one implementation and
+test seam.
+
+`WriteError.CompletedRecords` counts accepted physical records (frames, or whole
+messages for a custom MessageWriter) and retains transmission uncertainty;
+neither success nor a count asserts that a remote application accepted the data.
+`WaitContext` cancels only waiting. Use `WriteContext` to cancel the operation.
+An interrupted physical record can leave a partial transfer, so the client does
+not resend it. ISO sessions additionally have an absolute 30-second deadline.
+
+Unix serial transports share `internal/serialio`, which combines library line
+configuration with an owned pollable writer. Linux CAN sockets are opened in
+nonblocking mode and owned by Go's poller. Custom legacy buses must make Close
+interrupt blocked I/O; context-aware buses can expose `ContextBus` and
+`ContextMessageWriter` without closing an unrelated connection epoch.
 
 ## Connection epochs
 
@@ -114,6 +137,21 @@ fresh Address Claim, waits through contention, then reopens writes, enumerates
 the bus, and restarts the heartbeat. The network-session lifecycle Module
 therefore owns both TCP connectivity and NMEA network citizenship instead of
 leaving distributed reconnect checks at call sites.
+
+`network_session.go` owns operation invalidation and bounded background work;
+the Client serializes identity transitions with system-message delivery. Each
+address change advances the claim epoch. Disconnect/claim changes immediately
+cancel pending requests and queued/in-progress writes, clear partial fast
+packets and ISO sessions, and reject queued system messages from older epochs.
+Requests are capped at 64 and match source, destination, and both epochs.
+Application admission fails with `ErrNotReady` until the current gate opens.
+Historical user observations retain their epochs for diagnostics.
+
+The stale-epoch gate belongs to a live Client, not to every read pipeline.
+Standalone scanners and replay may combine independent networks or historical
+connection epochs in any order. Their bounded fast-packet table includes the
+network and both epochs in each key, so no network is suppressed by another's
+larger epoch and partial packets cannot cross an epoch boundary.
 
 For Actisense, an epoch is published only after the gateway acknowledges the
 requested operating mode. Raw mode fails closed when BEM is rejected or
@@ -147,6 +185,11 @@ representability, physical ranges, declared sentinel values, and malformed
 versus truncated errors. Unknown condition expressions fail during plan
 compilation instead of silently shifting subsequent fields. Centralizing these
 rules across all generated PGNs is the primary codec Leverage point.
+Decode uses a fresh value and commits only on success; malformed input cannot
+leave partially updated fields or stale variable-length content. Raw
+canonicalization preserves unchanged invalid measurements without describing
+them as valid physical values. Accessors use float64 scale/offset metadata and
+report unavailable for sentinel or out-of-range ticks.
 
 ## Conformance lab
 
@@ -168,3 +211,9 @@ hardware test is never represented as a pass.
 Category files under `pgn/`, `pgn/dispatch.go`, metadata, and the manifest are
 generated from the checked-in schema snapshot. Change generator inputs or the
 generator, then run `just pgn-sync`; never repair generated output by hand.
+Generation verifies the snapshot's pinned checksum and needs no network.
+All lookup families produce enums, with type-prefixed constants. Manifest
+provenance, `DecodeComplete`, `EncodeComplete`, `CodecLimitations`, and
+`HardwareVerified` keep generated coverage separate from verified support.
+Runtime `MessageInfo.DecodeIssues` identifies unresolved conditional widths.
+See [ADR 0005](adr/0005-reliability-boundaries.md) for the v1 contract changes.

@@ -819,7 +819,7 @@ func TestClient_NewClientReturnsErrorOnClaimPanic(t *testing.T) {
 	select {
 	case err := <-done:
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "panic during address claim")
+		assert.Contains(t, err.Error(), "panic writing message")
 	case <-time.After(2 * time.Second):
 		t.Fatal("NewClient hung when the bus panicked on write")
 	}
@@ -936,7 +936,7 @@ func TestClient_ReadPathWritePanicBecomesTerminal(t *testing.T) {
 	b.inbound <- isoRequestFrame(60928, 0x42, addr)
 	ok := waitFor(t, 2*time.Second, func() bool { return c.Err() != nil })
 	require.True(t, ok, "defensive-claim panic should become terminal")
-	assert.Contains(t, c.Err().Error(), "bus frame handler")
+	assert.Contains(t, c.Err().Error(), "panic writing message")
 }
 
 func TestClient_AddressClaim(t *testing.T) {

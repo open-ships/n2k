@@ -188,13 +188,8 @@ func TestUpstreamParity(t *testing.T) {
 // name referenced by a PgnInfoLookup field descriptor has a corresponding
 // <CamelCase>Const type declared in enums.go.
 //
-// This runs under the same opt-in UPSTREAM_PARITY=1 gate as TestUpstreamParity
-// even though it needs no network access: enums.go was generated long ago by
-// an out-of-tree tool and is not refreshed by ongoing metadata sync (see its
-// provenance comment), so real drift already exists between it and the
-// current metadata -- gating keeps `go test ./...` green while still
-// surfacing that drift on demand. This test reports drift; it does not fix
-// enums.go.
+// It always runs offline: enums and metadata share the pinned schema input
+// consumed by just pgn-sync, and missing lookup families are ordinary failures.
 //
 // Mapping rule (derived by checking enums.go's actual type names against the
 // LookupEnumeration names in upstream_definitions.go): split the
@@ -208,24 +203,18 @@ func TestUpstreamParity(t *testing.T) {
 // with zero exceptions, so no alias map is needed today; add one here if a
 // future case needs it.
 //
-// LookupBitEnumeration, LookupIndirectEnumeration, and
-// LookupFieldTypeEnumeration names follow a similar textual convention (e.g.
-// LookupBitEnumeration "ENGINE_STATUS_1" backs EngineStatus1Const) but are
-// out of scope for this check -- only LookupEnumeration is compared, per the
-// task that introduced this test.
+// The same naming rule applies to bit, indirect, and field-type lookups.
 func TestEnumConstantsCoverLookupEnumerations(t *testing.T) {
-	if os.Getenv("UPSTREAM_PARITY") == "" {
-		t.Skip("set UPSTREAM_PARITY=1 to run enum-drift checks")
-	}
-
 	constTypes := enumConstTypeNames(t)
 
 	names := make(map[string]struct{})
 	for _, infos := range PgnInfoLookup {
 		for _, info := range infos {
 			for _, field := range info.Fields {
-				if field.LookupEnumeration != "" {
-					names[field.LookupEnumeration] = struct{}{}
+				for _, name := range []string{field.LookupEnumeration, field.LookupBitEnumeration, field.LookupIndirectEnumeration, field.LookupFieldTypeEnumeration} {
+					if name != "" {
+						names[name] = struct{}{}
+					}
 				}
 			}
 		}

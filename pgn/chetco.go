@@ -20,3 +20,21 @@ func (m *ChetcoDimmer) MessageInfo() MessageInfo            { return m.Info }
 func (m *ChetcoDimmer) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ChetcoDimmer) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ChetcoDimmer) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ChetcoDimmer) Clone() Message {
+	if m == nil {
+		return (*ChetcoDimmer)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.Dimmer1 = clonePointer(m.Dimmer1)
+	copy.Dimmer2 = clonePointer(m.Dimmer2)
+	copy.Dimmer3 = clonePointer(m.Dimmer3)
+	copy.Dimmer4 = clonePointer(m.Dimmer4)
+	copy.Control = clonePointer(m.Control)
+	return &copy
+}

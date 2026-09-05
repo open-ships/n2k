@@ -3,6 +3,7 @@ package n2k
 import (
 	"context"
 	"log/slog"
+	"sync"
 	"time"
 
 	"github.com/brutella/can"
@@ -23,14 +24,18 @@ type infoCarrier interface {
 // Client: raw CAN frame -> pre-filter -> fast-packet assembly -> decode ->
 // unknown-PGN policy -> post-filter -> out channel.
 type readPipeline struct {
-	ctx            context.Context
-	log            *slog.Logger
-	includeUnknown bool
-	filter         *filter
-	adapter        *adapter.CANAdapter
-	decoder        *decoder.Decoder
-	emit           func(pgn.Message)
-	observe        func(raw.Observation)
+	mu              sync.Mutex
+	managedEpoch    bool
+	connectionEpoch uint64
+	claimEpoch      uint64
+	ctx             context.Context
+	log             *slog.Logger
+	includeUnknown  bool
+	filter          *filter
+	adapter         *adapter.CANAdapter
+	decoder         *decoder.Decoder
+	emit            func(pgn.Message)
+	observe         func(raw.Observation)
 }
 
 // newReadPipeline compiles the filter eagerly and wires adapter -> decoder -> output stage.
@@ -77,6 +82,11 @@ func (p *readPipeline) HandleFrame(frame can.Frame) {
 
 // HandleObservation is the source-aware pipeline entry point.
 func (p *readPipeline) HandleObservation(observation raw.Observation) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if !p.acceptEpoch(observation.ConnectionEpoch, observation.ClaimEpoch) {
+		return
+	}
 	observation = normalizeObservation(observation)
 	if observation.Kind == raw.KindMessage {
 		info := messageInfoForObservation(observation)
@@ -119,6 +129,11 @@ func (p *readPipeline) setObservationOutput(observe func(raw.Observation)) {
 // through candidate filtering and decode. Replaces the decoder-internals knowledge
 // that previously lived in Client's transport OnComplete closure.
 func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if !p.acceptEpoch(info.ConnectionEpoch, info.ClaimEpoch) {
+		return
+	}
 	if p.filter != nil && !p.filter.evalPre(info) {
 		return
 	}
@@ -126,6 +141,31 @@ func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
 	packet.Complete = true
 	packet.FilterCandidates()
 	p.Decode(*packet)
+}
+
+// resetEpoch enables Client-owned lifecycle ordering and discards partial fast
+// packets before accepting a new network session. Standalone scanners never
+// call this: their sources may contain independent or historical epochs.
+func (p *readPipeline) resetEpoch(connection, claim uint64) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.managedEpoch = true
+	p.acceptEpoch(connection, claim)
+}
+
+func (p *readPipeline) acceptEpoch(connection, claim uint64) bool {
+	if !p.managedEpoch {
+		return true
+	}
+	if connection < p.connectionEpoch || claim < p.claimEpoch {
+		return false
+	}
+	if connection != p.connectionEpoch || claim != p.claimEpoch {
+		p.connectionEpoch, p.claimEpoch = connection, claim
+		p.adapter = adapter.NewCANAdapter()
+		p.adapter.SetOutput(p)
+	}
+	return true
 }
 
 // HandleStruct implements decoder.Handler: unknown-PGN policy, post-filter,

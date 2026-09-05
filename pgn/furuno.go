@@ -18,14 +18,42 @@ func (m *FurunoHeave) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FurunoHeave) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoHeave) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoHeave) Clone() Message {
+	if m == nil {
+		return (*FurunoHeave)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Heave = clonePointer(m.Heave)
+	return &copy
+}
+
 // HeaveValue returns Heave as a physical value in m (value = raw * 0.001).
-// The bool is false when Heave is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoHeave) HeaveValue() (float64, bool) {
-	if m.Heave == nil {
+	if m == nil || m.Heave == nil {
 		return 0, false
 	}
-	return float64(*m.Heave) * 0.001, true
+	if *m.Heave == 2147483647 {
+		return 0, false
+	}
+	if *m.Heave == 2147483646 {
+		return 0, false
+	}
+	if *m.Heave == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Heave) * 0.001
+	if value < -2.147483647e+06 && !approximatelyEqual(value, -2.147483647e+06) {
+		return 0, false
+	}
+	if value > 2.147483644e+06 && !approximatelyEqual(value, 2.147483644e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
@@ -52,6 +80,20 @@ func (m *FurunoStatusAndVersionReport) DecodePayload(payload []uint8) error {
 }
 func (m *FurunoStatusAndVersionReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoStatusAndVersionReport) Clone() Message {
+	if m == nil {
+		return (*FurunoStatusAndVersionReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProprietaryId = clonePointer(m.ProprietaryId)
+	copy.A = clonePointer(m.A)
+	return &copy
+}
+
 type FurunoSvControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -72,6 +114,27 @@ func (m *FurunoSvControl) MessageInfo() MessageInfo            { return m.Info }
 func (m *FurunoSvControl) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FurunoSvControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoSvControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoSvControl) Clone() Message {
+	if m == nil {
+		return (*FurunoSvControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.F4 = cloneSlice(m.F4)
+	copy.F5 = cloneSlice(m.F5)
+	copy.SbasMode = clonePointer(m.SbasMode)
+	copy.SbasSatellite = clonePointer(m.SbasSatellite)
+	copy.F8 = cloneSlice(m.F8)
+	copy.GpsDisable = clonePointer(m.GpsDisable)
+	copy.GlonassDisable = clonePointer(m.GlonassDisable)
+	copy.GalileoDisable = clonePointer(m.GalileoDisable)
+	copy.QzssDisable = clonePointer(m.QzssDisable)
+	return &copy
+}
 
 type FurunoSensorSetup struct {
 	Info                   MessageInfo `json:"info"`
@@ -97,14 +160,53 @@ func (m *FurunoSensorSetup) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *FurunoSensorSetup) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoSensorSetup) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoSensorSetup) Clone() Message {
+	if m == nil {
+		return (*FurunoSensorSetup)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.RotationSmoothing = clonePointer(m.RotationSmoothing)
+	copy.HeadingOffset = clonePointer(m.HeadingOffset)
+	copy.PitchOffset = clonePointer(m.PitchOffset)
+	copy.RollOffset = clonePointer(m.RollOffset)
+	copy.F8 = clonePointer(m.F8)
+	copy.F9 = clonePointer(m.F9)
+	copy.SogAndCogSmoothing = clonePointer(m.SogAndCogSmoothing)
+	copy.Pgn3AxisSpeedSmoothing = clonePointer(m.Pgn3AxisSpeedSmoothing)
+	copy.Fc = clonePointer(m.Fc)
+	copy.Pgn3AxisOffset = clonePointer(m.Pgn3AxisOffset)
+	copy.AirPressureOffset = clonePointer(m.AirPressureOffset)
+	copy.AirTemperatureOffset = clonePointer(m.AirTemperatureOffset)
+	return &copy
+}
+
 // RotationSmoothingValue returns RotationSmoothing as a physical value in s (value = raw * 0.1).
-// The bool is false when RotationSmoothing is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) RotationSmoothingValue() (float64, bool) {
-	if m.RotationSmoothing == nil {
+	if m == nil || m.RotationSmoothing == nil {
 		return 0, false
 	}
-	return float64(*m.RotationSmoothing) * 0.1, true
+	if *m.RotationSmoothing == 65535 {
+		return 0, false
+	}
+	if *m.RotationSmoothing == 65534 {
+		return 0, false
+	}
+	if *m.RotationSmoothing == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RotationSmoothing) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRotationSmoothingValue sets RotationSmoothing from a physical value in s, rounded to the nearest
@@ -115,13 +217,28 @@ func (m *FurunoSensorSetup) SetRotationSmoothingValue(v float64) {
 }
 
 // HeadingOffsetValue returns HeadingOffset as a physical value in deg (value = raw * 0.1).
-// The bool is false when HeadingOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) HeadingOffsetValue() (float64, bool) {
-	if m.HeadingOffset == nil {
+	if m == nil || m.HeadingOffset == nil {
 		return 0, false
 	}
-	return float64(*m.HeadingOffset) * 0.1, true
+	if *m.HeadingOffset == 32767 {
+		return 0, false
+	}
+	if *m.HeadingOffset == 32766 {
+		return 0, false
+	}
+	if *m.HeadingOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.HeadingOffset) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeadingOffsetValue sets HeadingOffset from a physical value in deg, rounded to the nearest
@@ -132,13 +249,28 @@ func (m *FurunoSensorSetup) SetHeadingOffsetValue(v float64) {
 }
 
 // PitchOffsetValue returns PitchOffset as a physical value in deg (value = raw * 0.1).
-// The bool is false when PitchOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) PitchOffsetValue() (float64, bool) {
-	if m.PitchOffset == nil {
+	if m == nil || m.PitchOffset == nil {
 		return 0, false
 	}
-	return float64(*m.PitchOffset) * 0.1, true
+	if *m.PitchOffset == 32767 {
+		return 0, false
+	}
+	if *m.PitchOffset == 32766 {
+		return 0, false
+	}
+	if *m.PitchOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.PitchOffset) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPitchOffsetValue sets PitchOffset from a physical value in deg, rounded to the nearest
@@ -149,13 +281,28 @@ func (m *FurunoSensorSetup) SetPitchOffsetValue(v float64) {
 }
 
 // RollOffsetValue returns RollOffset as a physical value in deg (value = raw * 0.1).
-// The bool is false when RollOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) RollOffsetValue() (float64, bool) {
-	if m.RollOffset == nil {
+	if m == nil || m.RollOffset == nil {
 		return 0, false
 	}
-	return float64(*m.RollOffset) * 0.1, true
+	if *m.RollOffset == 32767 {
+		return 0, false
+	}
+	if *m.RollOffset == 32766 {
+		return 0, false
+	}
+	if *m.RollOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.RollOffset) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRollOffsetValue sets RollOffset from a physical value in deg, rounded to the nearest
@@ -166,13 +313,28 @@ func (m *FurunoSensorSetup) SetRollOffsetValue(v float64) {
 }
 
 // SogAndCogSmoothingValue returns SogAndCogSmoothing as a physical value in s (value = raw * 0.001).
-// The bool is false when SogAndCogSmoothing is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) SogAndCogSmoothingValue() (float64, bool) {
-	if m.SogAndCogSmoothing == nil {
+	if m == nil || m.SogAndCogSmoothing == nil {
 		return 0, false
 	}
-	return float64(*m.SogAndCogSmoothing) * 0.001, true
+	if *m.SogAndCogSmoothing == 2147483647 {
+		return 0, false
+	}
+	if *m.SogAndCogSmoothing == 2147483646 {
+		return 0, false
+	}
+	if *m.SogAndCogSmoothing == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.SogAndCogSmoothing) * 0.001
+	if value < -2.147483647e+06 && !approximatelyEqual(value, -2.147483647e+06) {
+		return 0, false
+	}
+	if value > 2.147483644e+06 && !approximatelyEqual(value, 2.147483644e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogAndCogSmoothingValue sets SogAndCogSmoothing from a physical value in s, rounded to the nearest
@@ -183,13 +345,28 @@ func (m *FurunoSensorSetup) SetSogAndCogSmoothingValue(v float64) {
 }
 
 // Pgn3AxisSpeedSmoothingValue returns Pgn3AxisSpeedSmoothing as a physical value in s (value = raw * 0.001).
-// The bool is false when Pgn3AxisSpeedSmoothing is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) Pgn3AxisSpeedSmoothingValue() (float64, bool) {
-	if m.Pgn3AxisSpeedSmoothing == nil {
+	if m == nil || m.Pgn3AxisSpeedSmoothing == nil {
 		return 0, false
 	}
-	return float64(*m.Pgn3AxisSpeedSmoothing) * 0.001, true
+	if *m.Pgn3AxisSpeedSmoothing == 2147483647 {
+		return 0, false
+	}
+	if *m.Pgn3AxisSpeedSmoothing == 2147483646 {
+		return 0, false
+	}
+	if *m.Pgn3AxisSpeedSmoothing == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Pgn3AxisSpeedSmoothing) * 0.001
+	if value < -2.147483647e+06 && !approximatelyEqual(value, -2.147483647e+06) {
+		return 0, false
+	}
+	if value > 2.147483644e+06 && !approximatelyEqual(value, 2.147483644e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPgn3AxisSpeedSmoothingValue sets Pgn3AxisSpeedSmoothing from a physical value in s, rounded to the nearest
@@ -200,13 +377,28 @@ func (m *FurunoSensorSetup) SetPgn3AxisSpeedSmoothingValue(v float64) {
 }
 
 // Pgn3AxisOffsetValue returns Pgn3AxisOffset as a physical value in % (value = raw * 0.00032).
-// The bool is false when Pgn3AxisOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) Pgn3AxisOffsetValue() (float64, bool) {
-	if m.Pgn3AxisOffset == nil {
+	if m == nil || m.Pgn3AxisOffset == nil {
 		return 0, false
 	}
-	return float64(*m.Pgn3AxisOffset) * 0.00032, true
+	if *m.Pgn3AxisOffset == 32767 {
+		return 0, false
+	}
+	if *m.Pgn3AxisOffset == 32766 {
+		return 0, false
+	}
+	if *m.Pgn3AxisOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Pgn3AxisOffset) * 0.00032
+	if value < -12.5 && !approximatelyEqual(value, -12.5) {
+		return 0, false
+	}
+	if value > 12.5 && !approximatelyEqual(value, 12.5) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPgn3AxisOffsetValue sets Pgn3AxisOffset from a physical value in %, rounded to the nearest
@@ -217,13 +409,28 @@ func (m *FurunoSensorSetup) SetPgn3AxisOffsetValue(v float64) {
 }
 
 // AirPressureOffsetValue returns AirPressureOffset as a physical value in Pa (value = raw * 10).
-// The bool is false when AirPressureOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) AirPressureOffsetValue() (float64, bool) {
-	if m.AirPressureOffset == nil {
+	if m == nil || m.AirPressureOffset == nil {
 		return 0, false
 	}
-	return float64(*m.AirPressureOffset) * 10, true
+	if *m.AirPressureOffset == 32767 {
+		return 0, false
+	}
+	if *m.AirPressureOffset == 32766 {
+		return 0, false
+	}
+	if *m.AirPressureOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AirPressureOffset) * 10
+	if value < -99.9 && !approximatelyEqual(value, -99.9) {
+		return 0, false
+	}
+	if value > 99.9 && !approximatelyEqual(value, 99.9) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAirPressureOffsetValue sets AirPressureOffset from a physical value in Pa, rounded to the nearest
@@ -234,13 +441,28 @@ func (m *FurunoSensorSetup) SetAirPressureOffsetValue(v float64) {
 }
 
 // AirTemperatureOffsetValue returns AirTemperatureOffset as a physical value in K (value = raw * 0.1).
-// The bool is false when AirTemperatureOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSensorSetup) AirTemperatureOffsetValue() (float64, bool) {
-	if m.AirTemperatureOffset == nil {
+	if m == nil || m.AirTemperatureOffset == nil {
 		return 0, false
 	}
-	return float64(*m.AirTemperatureOffset) * 0.1, true
+	if *m.AirTemperatureOffset == 32767 {
+		return 0, false
+	}
+	if *m.AirTemperatureOffset == 32766 {
+		return 0, false
+	}
+	if *m.AirTemperatureOffset == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AirTemperatureOffset) * 0.1
+	if value < -99.9 && !approximatelyEqual(value, -99.9) {
+		return 0, false
+	}
+	if value > 99.9 && !approximatelyEqual(value, 99.9) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAirTemperatureOffsetValue sets AirTemperatureOffset from a physical value in K, rounded to the nearest
@@ -272,6 +494,26 @@ func (m *FurunoDeadReckoningConfiguration) DecodePayload(payload []uint8) error 
 }
 func (m *FurunoDeadReckoningConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoDeadReckoningConfiguration) Clone() Message {
+	if m == nil {
+		return (*FurunoDeadReckoningConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.F4 = clonePointer(m.F4)
+	copy.F5 = clonePointer(m.F5)
+	copy.F6 = clonePointer(m.F6)
+	copy.F7 = clonePointer(m.F7)
+	copy.F8 = clonePointer(m.F8)
+	copy.DeadReckoningTime = clonePointer(m.DeadReckoningTime)
+	copy.F10 = clonePointer(m.F10)
+	copy.F11 = clonePointer(m.F11)
+	return &copy
+}
+
 type FurunoUnknown130820 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -288,6 +530,23 @@ func (m *FurunoUnknown130820) MessageInfo() MessageInfo            { return m.In
 func (m *FurunoUnknown130820) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *FurunoUnknown130820) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoUnknown130820) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoUnknown130820) Clone() Message {
+	if m == nil {
+		return (*FurunoUnknown130820)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	return &copy
+}
 
 type FurunoUnknown130821 struct {
 	Info             MessageInfo `json:"info"`
@@ -311,6 +570,28 @@ func (m *FurunoUnknown130821) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *FurunoUnknown130821) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoUnknown130821) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoUnknown130821) Clone() Message {
+	if m == nil {
+		return (*FurunoUnknown130821)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Sid = clonePointer(m.Sid)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.F = clonePointer(m.F)
+	copy.G = clonePointer(m.G)
+	copy.H = clonePointer(m.H)
+	copy.I = clonePointer(m.I)
+	return &copy
+}
+
 type FurunoNavpilotStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -330,14 +611,48 @@ func (m *FurunoNavpilotStatus) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *FurunoNavpilotStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *FurunoNavpilotStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoNavpilotStatus) Clone() Message {
+	if m == nil {
+		return (*FurunoNavpilotStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RudderAngle = clonePointer(m.RudderAngle)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.CommandedCourse = clonePointer(m.CommandedCourse)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	return &copy
+}
+
 // RudderAngleValue returns RudderAngle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when RudderAngle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoNavpilotStatus) RudderAngleValue() (float64, bool) {
-	if m.RudderAngle == nil {
+	if m == nil || m.RudderAngle == nil {
 		return 0, false
 	}
-	return float64(*m.RudderAngle) * 0.0001, true
+	if *m.RudderAngle == 65535 {
+		return 0, false
+	}
+	if *m.RudderAngle == 65534 {
+		return 0, false
+	}
+	if *m.RudderAngle == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RudderAngle) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRudderAngleValue sets RudderAngle from a physical value in rad, rounded to the nearest
@@ -348,13 +663,28 @@ func (m *FurunoNavpilotStatus) SetRudderAngleValue(v float64) {
 }
 
 // CommandedCourseValue returns CommandedCourse as a physical value in rad (value = raw * 0.0001).
-// The bool is false when CommandedCourse is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoNavpilotStatus) CommandedCourseValue() (float64, bool) {
-	if m.CommandedCourse == nil {
+	if m == nil || m.CommandedCourse == nil {
 		return 0, false
 	}
-	return float64(*m.CommandedCourse) * 0.0001, true
+	if *m.CommandedCourse == 65535 {
+		return 0, false
+	}
+	if *m.CommandedCourse == 65534 {
+		return 0, false
+	}
+	if *m.CommandedCourse == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CommandedCourse) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCommandedCourseValue sets CommandedCourse from a physical value in rad, rounded to the nearest
@@ -387,14 +717,48 @@ func (m *FurunoShipParametersAndAntennaPosition) EncodePayload() ([]uint8, error
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoShipParametersAndAntennaPosition) Clone() Message {
+	if m == nil {
+		return (*FurunoShipParametersAndAntennaPosition)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.EquipmentIdentification = clonePointer(m.EquipmentIdentification)
+	copy.AntennaPositionX = clonePointer(m.AntennaPositionX)
+	copy.AntennaPositionY = clonePointer(m.AntennaPositionY)
+	copy.AntennaPositionZ = clonePointer(m.AntennaPositionZ)
+	copy.ShipSWidth = clonePointer(m.ShipSWidth)
+	copy.ShipSLength = clonePointer(m.ShipSLength)
+	copy.ShipSHeight = clonePointer(m.ShipSHeight)
+	return &copy
+}
+
 // AntennaPositionXValue returns AntennaPositionX as a physical value in m (value = raw * 0.01).
-// The bool is false when AntennaPositionX is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionXValue() (float64, bool) {
-	if m.AntennaPositionX == nil {
+	if m == nil || m.AntennaPositionX == nil {
 		return 0, false
 	}
-	return float64(*m.AntennaPositionX) * 0.01, true
+	if *m.AntennaPositionX == 32767 {
+		return 0, false
+	}
+	if *m.AntennaPositionX == 32766 {
+		return 0, false
+	}
+	if *m.AntennaPositionX == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AntennaPositionX) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAntennaPositionXValue sets AntennaPositionX from a physical value in m, rounded to the nearest
@@ -405,13 +769,28 @@ func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionXValue(v floa
 }
 
 // AntennaPositionYValue returns AntennaPositionY as a physical value in m (value = raw * 0.1).
-// The bool is false when AntennaPositionY is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionYValue() (float64, bool) {
-	if m.AntennaPositionY == nil {
+	if m == nil || m.AntennaPositionY == nil {
 		return 0, false
 	}
-	return float64(*m.AntennaPositionY) * 0.1, true
+	if *m.AntennaPositionY == 65535 {
+		return 0, false
+	}
+	if *m.AntennaPositionY == 65534 {
+		return 0, false
+	}
+	if *m.AntennaPositionY == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AntennaPositionY) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAntennaPositionYValue sets AntennaPositionY from a physical value in m, rounded to the nearest
@@ -422,13 +801,28 @@ func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionYValue(v floa
 }
 
 // AntennaPositionZValue returns AntennaPositionZ as a physical value in m (value = raw * 0.1).
-// The bool is false when AntennaPositionZ is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionZValue() (float64, bool) {
-	if m.AntennaPositionZ == nil {
+	if m == nil || m.AntennaPositionZ == nil {
 		return 0, false
 	}
-	return float64(*m.AntennaPositionZ) * 0.1, true
+	if *m.AntennaPositionZ == 65535 {
+		return 0, false
+	}
+	if *m.AntennaPositionZ == 65534 {
+		return 0, false
+	}
+	if *m.AntennaPositionZ == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AntennaPositionZ) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAntennaPositionZValue sets AntennaPositionZ from a physical value in m, rounded to the nearest
@@ -439,13 +833,28 @@ func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionZValue(v floa
 }
 
 // ShipSWidthValue returns ShipSWidth as a physical value in m (value = raw * 0.1).
-// The bool is false when ShipSWidth is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) ShipSWidthValue() (float64, bool) {
-	if m.ShipSWidth == nil {
+	if m == nil || m.ShipSWidth == nil {
 		return 0, false
 	}
-	return float64(*m.ShipSWidth) * 0.1, true
+	if *m.ShipSWidth == 65535 {
+		return 0, false
+	}
+	if *m.ShipSWidth == 65534 {
+		return 0, false
+	}
+	if *m.ShipSWidth == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ShipSWidth) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetShipSWidthValue sets ShipSWidth from a physical value in m, rounded to the nearest
@@ -456,13 +865,28 @@ func (m *FurunoShipParametersAndAntennaPosition) SetShipSWidthValue(v float64) {
 }
 
 // ShipSLengthValue returns ShipSLength as a physical value in m (value = raw * 0.1).
-// The bool is false when ShipSLength is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) ShipSLengthValue() (float64, bool) {
-	if m.ShipSLength == nil {
+	if m == nil || m.ShipSLength == nil {
 		return 0, false
 	}
-	return float64(*m.ShipSLength) * 0.1, true
+	if *m.ShipSLength == 65535 {
+		return 0, false
+	}
+	if *m.ShipSLength == 65534 {
+		return 0, false
+	}
+	if *m.ShipSLength == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ShipSLength) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetShipSLengthValue sets ShipSLength from a physical value in m, rounded to the nearest
@@ -473,13 +897,28 @@ func (m *FurunoShipParametersAndAntennaPosition) SetShipSLengthValue(v float64) 
 }
 
 // ShipSHeightValue returns ShipSHeight as a physical value in m (value = raw * 0.1).
-// The bool is false when ShipSHeight is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoShipParametersAndAntennaPosition) ShipSHeightValue() (float64, bool) {
-	if m.ShipSHeight == nil {
+	if m == nil || m.ShipSHeight == nil {
 		return 0, false
 	}
-	return float64(*m.ShipSHeight) * 0.1, true
+	if *m.ShipSHeight == 65535 {
+		return 0, false
+	}
+	if *m.ShipSHeight == 65534 {
+		return 0, false
+	}
+	if *m.ShipSHeight == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ShipSHeight) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetShipSHeightValue sets ShipSHeight from a physical value in m, rounded to the nearest
@@ -506,14 +945,44 @@ func (m *FurunoSpeedCalculationPosition) DecodePayload(payload []uint8) error {
 }
 func (m *FurunoSpeedCalculationPosition) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoSpeedCalculationPosition) Clone() Message {
+	if m == nil {
+		return (*FurunoSpeedCalculationPosition)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.PointIndex = clonePointer(m.PointIndex)
+	copy.PositionY = clonePointer(m.PositionY)
+	copy.PositionZ = clonePointer(m.PositionZ)
+	return &copy
+}
+
 // PositionYValue returns PositionY as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionY is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSpeedCalculationPosition) PositionYValue() (float64, bool) {
-	if m.PositionY == nil {
+	if m == nil || m.PositionY == nil {
 		return 0, false
 	}
-	return float64(*m.PositionY) * 0.1, true
+	if *m.PositionY == 65535 {
+		return 0, false
+	}
+	if *m.PositionY == 65534 {
+		return 0, false
+	}
+	if *m.PositionY == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionY) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionYValue sets PositionY from a physical value in m, rounded to the nearest
@@ -524,13 +993,28 @@ func (m *FurunoSpeedCalculationPosition) SetPositionYValue(v float64) {
 }
 
 // PositionZValue returns PositionZ as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionZ is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoSpeedCalculationPosition) PositionZValue() (float64, bool) {
-	if m.PositionZ == nil {
+	if m == nil || m.PositionZ == nil {
 		return 0, false
 	}
-	return float64(*m.PositionZ) * 0.1, true
+	if *m.PositionZ == 65535 {
+		return 0, false
+	}
+	if *m.PositionZ == 65534 {
+		return 0, false
+	}
+	if *m.PositionZ == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionZ) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionZValue sets PositionZ from a physical value in m, rounded to the nearest
@@ -563,6 +1047,27 @@ func (m *FurunoSixDegreesOfFreedomMovement) DecodePayload(payload []uint8) error
 }
 func (m *FurunoSixDegreesOfFreedomMovement) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoSixDegreesOfFreedomMovement) Clone() Message {
+	if m == nil {
+		return (*FurunoSixDegreesOfFreedomMovement)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.F = clonePointer(m.F)
+	copy.G = clonePointer(m.G)
+	copy.H = clonePointer(m.H)
+	copy.I = clonePointer(m.I)
+	return &copy
+}
+
 type FurunoHeelAngleRollInformation struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -581,14 +1086,45 @@ func (m *FurunoHeelAngleRollInformation) DecodePayload(payload []uint8) error {
 }
 func (m *FurunoHeelAngleRollInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoHeelAngleRollInformation) Clone() Message {
+	if m == nil {
+		return (*FurunoHeelAngleRollInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Heel = clonePointer(m.Heel)
+	copy.Field4 = clonePointer(m.Field4)
+	copy.Field6 = clonePointer(m.Field6)
+	copy.Field8 = clonePointer(m.Field8)
+	return &copy
+}
+
 // HeelValue returns Heel as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Heel is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoHeelAngleRollInformation) HeelValue() (float64, bool) {
-	if m.Heel == nil {
+	if m == nil || m.Heel == nil {
 		return 0, false
 	}
-	return float64(*m.Heel) * 0.0001, true
+	if *m.Heel == 32767 {
+		return 0, false
+	}
+	if *m.Heel == 32766 {
+		return 0, false
+	}
+	if *m.Heel == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Heel) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeelValue sets Heel from a physical value in rad, rounded to the nearest
@@ -599,13 +1135,28 @@ func (m *FurunoHeelAngleRollInformation) SetHeelValue(v float64) {
 }
 
 // Field4Value returns Field4 as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Field4 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoHeelAngleRollInformation) Field4Value() (float64, bool) {
-	if m.Field4 == nil {
+	if m == nil || m.Field4 == nil {
 		return 0, false
 	}
-	return float64(*m.Field4) * 0.0001, true
+	if *m.Field4 == 32767 {
+		return 0, false
+	}
+	if *m.Field4 == 32766 {
+		return 0, false
+	}
+	if *m.Field4 == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Field4) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetField4Value sets Field4 from a physical value in rad, rounded to the nearest
@@ -616,13 +1167,28 @@ func (m *FurunoHeelAngleRollInformation) SetField4Value(v float64) {
 }
 
 // Field6Value returns Field6 as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Field6 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoHeelAngleRollInformation) Field6Value() (float64, bool) {
-	if m.Field6 == nil {
+	if m == nil || m.Field6 == nil {
 		return 0, false
 	}
-	return float64(*m.Field6) * 0.0001, true
+	if *m.Field6 == 32767 {
+		return 0, false
+	}
+	if *m.Field6 == 32766 {
+		return 0, false
+	}
+	if *m.Field6 == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Field6) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetField6Value sets Field6 from a physical value in rad, rounded to the nearest
@@ -633,13 +1199,28 @@ func (m *FurunoHeelAngleRollInformation) SetField6Value(v float64) {
 }
 
 // Field8Value returns Field8 as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Field8 is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoHeelAngleRollInformation) Field8Value() (float64, bool) {
-	if m.Field8 == nil {
+	if m == nil || m.Field8 == nil {
 		return 0, false
 	}
-	return float64(*m.Field8) * 0.0001, true
+	if *m.Field8 == 32767 {
+		return 0, false
+	}
+	if *m.Field8 == 32766 {
+		return 0, false
+	}
+	if *m.Field8 == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Field8) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetField8Value sets Field8 from a physical value in rad, rounded to the nearest
@@ -679,14 +1260,56 @@ func (m *FurunoMultiSatsInViewExtended) DecodePayload(payload []uint8) error {
 }
 func (m *FurunoMultiSatsInViewExtended) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoMultiSatsInViewExtended) Clone() Message {
+	if m == nil {
+		return (*FurunoMultiSatsInViewExtended)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ReportType = clonePointer(m.ReportType)
+	copy.Antenna = clonePointer(m.Antenna)
+	copy.PageType = clonePointer(m.PageType)
+	copy.Page = clonePointer(m.Page)
+	copy.SatsInUse = clonePointer(m.SatsInUse)
+	copy.SatsInView = clonePointer(m.SatsInView)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Prn = clonePointer(m.Repeating1[i].Prn)
+		copy.Repeating1[i].Elevation = clonePointer(m.Repeating1[i].Elevation)
+		copy.Repeating1[i].Azimuth = clonePointer(m.Repeating1[i].Azimuth)
+		copy.Repeating1[i].Snr = clonePointer(m.Repeating1[i].Snr)
+		copy.Repeating1[i].RangeResidual = clonePointer(m.Repeating1[i].RangeResidual)
+		copy.Repeating1[i].BaselineStatus = clonePointer(m.Repeating1[i].BaselineStatus)
+	}
+	return &copy
+}
+
 // ElevationValue returns Elevation as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Elevation is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoMultiSatsInViewExtendedRepeating1) ElevationValue() (float64, bool) {
-	if m.Elevation == nil {
+	if m == nil || m.Elevation == nil {
 		return 0, false
 	}
-	return float64(*m.Elevation) * 0.0001, true
+	if *m.Elevation == 32767 {
+		return 0, false
+	}
+	if *m.Elevation == 32766 {
+		return 0, false
+	}
+	if *m.Elevation == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Elevation) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetElevationValue sets Elevation from a physical value in rad, rounded to the nearest
@@ -697,13 +1320,28 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) SetElevationValue(v float64) {
 }
 
 // AzimuthValue returns Azimuth as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Azimuth is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoMultiSatsInViewExtendedRepeating1) AzimuthValue() (float64, bool) {
-	if m.Azimuth == nil {
+	if m == nil || m.Azimuth == nil {
 		return 0, false
 	}
-	return float64(*m.Azimuth) * 0.0001, true
+	if *m.Azimuth == 32767 {
+		return 0, false
+	}
+	if *m.Azimuth == 32766 {
+		return 0, false
+	}
+	if *m.Azimuth == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Azimuth) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAzimuthValue sets Azimuth from a physical value in rad, rounded to the nearest
@@ -714,13 +1352,28 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) SetAzimuthValue(v float64) {
 }
 
 // SnrValue returns Snr as a physical value in dB (value = raw * 0.01).
-// The bool is false when Snr is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoMultiSatsInViewExtendedRepeating1) SnrValue() (float64, bool) {
-	if m.Snr == nil {
+	if m == nil || m.Snr == nil {
 		return 0, false
 	}
-	return float64(*m.Snr) * 0.01, true
+	if *m.Snr == 32767 {
+		return 0, false
+	}
+	if *m.Snr == 32766 {
+		return 0, false
+	}
+	if *m.Snr == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Snr) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSnrValue sets Snr from a physical value in dB, rounded to the nearest
@@ -731,13 +1384,28 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) SetSnrValue(v float64) {
 }
 
 // RangeResidualValue returns RangeResidual as a physical value in m (value = raw * 1e-05).
-// The bool is false when RangeResidual is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *FurunoMultiSatsInViewExtendedRepeating1) RangeResidualValue() (float64, bool) {
-	if m.RangeResidual == nil {
+	if m == nil || m.RangeResidual == nil {
 		return 0, false
 	}
-	return float64(*m.RangeResidual) * 1e-05, true
+	if *m.RangeResidual == 2147483647 {
+		return 0, false
+	}
+	if *m.RangeResidual == 2147483646 {
+		return 0, false
+	}
+	if *m.RangeResidual == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.RangeResidual) * 1e-05
+	if value < -21474.83647 && !approximatelyEqual(value, -21474.83647) {
+		return 0, false
+	}
+	if value > 21474.83644 && !approximatelyEqual(value, 21474.83644) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRangeResidualValue sets RangeResidual from a physical value in m, rounded to the nearest
@@ -762,3 +1430,17 @@ func (m *FurunoMotionSensorStatusExtended) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *FurunoMotionSensorStatusExtended) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *FurunoMotionSensorStatusExtended) Clone() Message {
+	if m == nil {
+		return (*FurunoMotionSensorStatusExtended)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Status = clonePointer(m.Status)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}

@@ -4,10 +4,12 @@ go 1.26.6
 
 require (
 	github.com/brutella/can v0.0.2
+	github.com/creack/pty v1.1.24
 	github.com/google/cel-go v0.27.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.9.0
 	go.bug.st/serial v1.6.2
+	golang.org/x/sys v0.22.0
 )
 
 require (
@@ -17,7 +19,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
-	golang.org/x/sys v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240826202546-f6391c0de4c7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240826202546-f6391c0de4c7 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect

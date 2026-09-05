@@ -23,6 +23,7 @@ type config struct {
 	heartbeatInterval *time.Duration   // nil = default (60s), 0 = disabled
 	receiveBuffer     *int             // nil = default (64)
 	writeQueue        *int             // nil = default (64)
+	writeTimeout      *time.Duration   // maximum duration of one physical write
 	productInfo       *ProductInfo     // nil = defaults
 	configInfo        *ConfigInfo      // nil = defaults
 	bus               Bus              // pre-constructed bus
@@ -56,6 +57,9 @@ func (c *config) validate() error {
 	}
 	if c.writeQueue != nil && *c.writeQueue <= 0 {
 		return errors.New("n2k: write queue must be positive")
+	}
+	if c.writeTimeout != nil && *c.writeTimeout <= 0 {
+		return errors.New("n2k: write timeout must be positive")
 	}
 	hasTCP := false
 	for _, src := range c.sources {
@@ -350,6 +354,12 @@ func WithWriteQueue(size int) Option {
 	return optionFunc(func(c *config) {
 		c.writeQueue = &size
 	})
+}
+
+// WithWriteTimeout bounds one physical frame or gateway record write. The
+// default is one second. A stalled legacy Bus is closed to interrupt I/O.
+func WithWriteTimeout(timeout time.Duration) Option {
+	return optionFunc(func(c *config) { c.writeTimeout = &timeout })
 }
 
 // WithName sets the ISO 11783 device NAME used for address claiming.

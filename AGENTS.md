@@ -26,8 +26,11 @@
   section or allow already-published notes to accumulate there.
 - Choose the increment according to semantic versioning. Exported compatible
   functionality requires at least a minor increment; compatible fixes and
-  maintenance use a patch increment; breaking changes require a new major
-  module path.
+  maintenance use a patch increment. While the owner-designated v1 API remains
+  in flux, intentional breaking contract refinements may use a minor increment
+  without a new module path; document every affected API and migration in the
+  completed release notes. Once compatibility is promised, breaking changes
+  require a new major module path.
 - Run `just release-check` after fetching current tags. It must prove that the
   proposed version is newer than every published tag, or that the matching
   annotated tag already points at the exact commit being verified. Never rely

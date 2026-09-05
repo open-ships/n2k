@@ -103,7 +103,7 @@ func TestGroupFunction_RequestUnsupportedPGNAcked(t *testing.T) {
 
 	ack := decodeAck(t, mb)
 	require.NotNil(t, ack.PgnErrorCode)
-	assert.Equal(t, uint64(pgn.PGNNotSupported), *ack.PgnErrorCode)
+	assert.Equal(t, uint64(pgn.PgnErrorCodePGNNotSupported), *ack.PgnErrorCode)
 	require.NotNil(t, ack.Pgn)
 	assert.Equal(t, uint64(130306), *ack.Pgn)
 }
@@ -173,7 +173,8 @@ func TestGroupFunction_HeartbeatStopAndRestoreDefault(t *testing.T) {
 func TestGroupFunction_RetimesBroadcaster(t *testing.T) {
 	c, mb, addr := newCitizenClient(t)
 
-	stop := c.Broadcast(time.Hour, headingProvider)
+	stop, err := c.Broadcast(time.Hour, headingProvider)
+	require.NoError(t, err)
 	defer stop()
 
 	// Wait for the initial send, then retime to 20ms via group function.
@@ -198,7 +199,7 @@ func TestGroupFunction_RequestWithParametersAcked(t *testing.T) {
 
 	ack := decodeAck(t, mb)
 	require.NotNil(t, ack.PgnErrorCode)
-	assert.Equal(t, uint64(pgn.NotSupported_3), *ack.PgnErrorCode)
+	assert.Equal(t, uint64(pgn.PgnErrorCodeNotSupported), *ack.PgnErrorCode)
 	assert.Empty(t, framesWithPGN(mb.getWritten(), 126996), "refused requests must not transmit")
 }
 
@@ -212,7 +213,7 @@ func TestGroupFunction_CommandAcked(t *testing.T) {
 
 	ack := decodeAck(t, mb)
 	require.NotNil(t, ack.PgnErrorCode)
-	assert.Equal(t, uint64(pgn.NotSupported_3), *ack.PgnErrorCode)
+	assert.Equal(t, uint64(pgn.PgnErrorCodeNotSupported), *ack.PgnErrorCode)
 
 	require.NotNil(t, ack.FunctionCode)
 	assert.Equal(t, uint64(2), *ack.FunctionCode, "acknowledgements carry function code 2")

@@ -22,6 +22,23 @@ func (m *GarminAhrsAttCogSourceValidFlag) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAhrsAttCogSourceValidFlag) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAhrsAttCogSourceValidFlag) Clone() Message {
+	if m == nil {
+		return (*GarminAhrsAttCogSourceValidFlag)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.AttMessageId = clonePointer(m.AttMessageId)
+	copy.CogSourceFlags = clonePointer(m.CogSourceFlags)
+	return &copy
+}
+
 type GarminAhrsAttDeviceFlags struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -40,6 +57,23 @@ func (m *GarminAhrsAttDeviceFlags) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAhrsAttDeviceFlags) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAhrsAttDeviceFlags) Clone() Message {
+	if m == nil {
+		return (*GarminAhrsAttDeviceFlags)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.AttMessageId = clonePointer(m.AttMessageId)
+	copy.DeviceFlags = clonePointer(m.DeviceFlags)
+	return &copy
+}
 
 type GarminAhrsAttNonDefaultCalibrationMatrixPresent struct {
 	Info                     MessageInfo `json:"info"`
@@ -64,6 +98,23 @@ func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) EncodePayload() ([]uin
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAhrsAttNonDefaultCalibrationMatrixPresent) Clone() Message {
+	if m == nil {
+		return (*GarminAhrsAttNonDefaultCalibrationMatrixPresent)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.AttMessageId = clonePointer(m.AttMessageId)
+	copy.CalibrationMatrixPresent = clonePointer(m.CalibrationMatrixPresent)
+	return &copy
+}
+
 type GarminAhrsAttSetNorthState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -83,6 +134,23 @@ func (m *GarminAhrsAttSetNorthState) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAhrsAttSetNorthState) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAhrsAttSetNorthState) Clone() Message {
+	if m == nil {
+		return (*GarminAhrsAttSetNorthState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.AttMessageId = clonePointer(m.AttMessageId)
+	copy.SetNorthState = clonePointer(m.SetNorthState)
+	return &copy
+}
+
 type GarminColorMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -100,6 +168,24 @@ func (m *GarminColorMode) MessageInfo() MessageInfo            { return m.Info }
 func (m *GarminColorMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *GarminColorMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GarminColorMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminColorMode) Clone() Message {
+	if m == nil {
+		return (*GarminColorMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UnknownId1 = clonePointer(m.UnknownId1)
+	copy.UnknownId2 = clonePointer(m.UnknownId2)
+	copy.UnknownId3 = clonePointer(m.UnknownId3)
+	copy.UnknownId4 = clonePointer(m.UnknownId4)
+	copy.Mode = clonePointer(m.Mode)
+	copy.Color = clonePointer(m.Color)
+	return &copy
+}
 
 type GarminDayMode struct {
 	Info             MessageInfo `json:"info"`
@@ -119,6 +205,24 @@ func (m *GarminDayMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *GarminDayMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GarminDayMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminDayMode) Clone() Message {
+	if m == nil {
+		return (*GarminDayMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UnknownId1 = clonePointer(m.UnknownId1)
+	copy.UnknownId2 = clonePointer(m.UnknownId2)
+	copy.UnknownId3 = clonePointer(m.UnknownId3)
+	copy.UnknownId4 = clonePointer(m.UnknownId4)
+	copy.Mode = clonePointer(m.Mode)
+	copy.Backlight = clonePointer(m.Backlight)
+	return &copy
+}
+
 type GarminNightMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -136,3 +240,21 @@ func (m *GarminNightMode) MessageInfo() MessageInfo            { return m.Info }
 func (m *GarminNightMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *GarminNightMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GarminNightMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminNightMode) Clone() Message {
+	if m == nil {
+		return (*GarminNightMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UnknownId1 = clonePointer(m.UnknownId1)
+	copy.UnknownId2 = clonePointer(m.UnknownId2)
+	copy.UnknownId3 = clonePointer(m.UnknownId3)
+	copy.UnknownId4 = clonePointer(m.UnknownId4)
+	copy.Mode = clonePointer(m.Mode)
+	copy.Backlight = clonePointer(m.Backlight)
+	return &copy
+}

@@ -2,7 +2,7 @@
 
 This repository keeps two claims deliberately separate:
 
-1. **Local protocol evidence** is public, deterministic, and runs in CI with
+1. **Local protocol evidence** is public, executable, and runs in CI with
    `just conformance-local` plus the normal test, race, lint, and security
    gates.
 2. **Formal product certification** requires licensed standards, the official
@@ -39,7 +39,7 @@ just secure
 ```
 
 `conformance-local` gives the externally visible protocol cases a stable,
-verbose test run and reruns the deep protocol Modules for CAN framing,
+executable evidence run and reruns the deep protocol modules for CAN framing,
 fast-packet discrimination, ISO transport, address claiming, gateway parsing,
 reconnect, saturation, and raw observation. The full test suite remains the
 authoritative local regression gate.
@@ -48,6 +48,47 @@ The machine-readable evidence index is
 [`conformance/requirements.json`](../conformance/requirements.json). Its schema,
 unique IDs, and evidence presence are checked by
 `TestConformanceRequirementIndex`.
+Schema v2 references package-qualified, anchored test patterns. Discovery uses
+compiled test names, not source-text searching. `cmd/conformance` then consumes
+`go test -json`: missing matches, failed tests, and skipped required tests
+(including skipped child cases) fail the software evidence gate. It preserves
+`conformance-artifacts/local-test-events.jsonl` and `local-evidence.json`.
+Hardware and soak entries are explicitly `not-run` in this command; ordinary
+unit test success cannot turn either into a pass.
+
+### Sustained reliability
+
+```sh
+just reliability-soak 1h 70m
+just fuzz-long 2m
+```
+
+The software soak cycles bounded subscribers and writes, malformed traffic,
+reconnect/reclaim, terminal failure/recreation, and replay. Its JSON artifact
+records actual duration, cycle counts, overflows, and bounded recent post-GC
+heap/goroutine samples, platform, and the exact executed test binary's SHA-256.
+It tolerates runtime noise but fails sustained growth
+over declared thresholds; it is not a proof of absence of leaks or a hardware
+benchmark. Set `N2K_SOAK_ARTIFACT_DIR` when running concurrent qualification jobs
+so they do not overwrite one another's evidence.
+
+CI runs a short smoke; the scheduled reliability workflow runs the required
+gates, a one-hour software soak, race detection, and longer fuzz campaigns.
+Hardware qualification remains a separate 24-hour lab activity using the
+declared adapter/firmware, nominal and saturated traffic, reconnects, and power
+cycling. Record exact commit, configuration, duration, failures, and capture
+hashes. If hardware is absent, report `not-run`, not pass.
+
+The generated manifest separately records typed coverage, decode/encode
+completeness, known codec limitations, schema revision/checksum, and hardware
+verification. v1.3 includes 599 typed variants over 348 PGNs; 108 variants are
+marked complete for encode and decode, and none are hardware-verified.
+
+`main` requires the aggregate GitHub Actions `release-gate` status with strict
+up-to-date checking. The desired rule is versioned in
+`.github/main-ruleset.json`; changing a workflow file alone does not install or
+update GitHub repository protection. Publishing still follows the exact
+VERSION/tag/release discipline in `AGENTS.md`.
 
 ### Requirement families
 
@@ -56,13 +97,13 @@ unique IDs, and evidence presence are checked by
 | AC-01 | Address claim, defense, retry, cannot-claim, and surfaced failures | `internal/claiming` suite |
 | HB-01 | Heartbeat cadence, retiming, disable, and sequence rollover | `TestHeartbeat_*` |
 | IR-01 | ISO request targeting, responses, and acknowledgements | `TestISORequest_*` |
-| GF-01 | Group-function requests, commands, fields, and scheduling | `TestGroupFunction_*` |
+| GF-01 | Supported group-function requests, explicit unsupported-command/parameter acknowledgements, and scheduling | `TestGroupFunction_*` |
 | FP-01 | Fast-packet limits, assembly, ownership, and malformed input | `internal/adapter`; `internal/framer` suites |
 | BAM-01 / RTS-01 | BAM and RTS/CTS transmit/receive state machines | `internal/transport` suite |
 | MAL-01 | Malformed frames, announcements, checksums, and streams | transport and gateway hostile-input tests |
 | SAT-01 | Bounded application, protocol, subscription, and reassembly state | queue, hub, adapter, and transport tests |
 | REC-01 | Reconnect epoch reclaims before protocol restart | `TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic` |
-| TIM-01 | Claim, heartbeat, assembly, transport, and reconnect timing | deterministic clock and timeout tests |
+| TIM-01 | Heartbeat cadence, assembly expiry, transport timeout, and bounded startup waits | deterministic clock checks where provided, plus bounded real-time waits |
 | CODEC-01 | Conditional fields, signed widths, ranges, and sentinels | codec and data-stream writer tests |
 | OBS-01 | Source/network identity, timestamps, direction, and ownership | observation and gateway tests |
 | ACT-01 | Honest gateway-session versus source-authoritative Client roles, acknowledged readiness, explicit Tx-list mutation | `TestGatewaySessionDoesNotMutateTransmitListImplicitly`; `TestNewClient_TCPActisense_RequiresGatewaySession`; raw reconnect/source tests |

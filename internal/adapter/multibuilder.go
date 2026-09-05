@@ -16,8 +16,8 @@ const (
 // single Packets. NMEA 2000 messages with payloads larger than 8 bytes are transmitted
 // as a series of CAN frames that must be reassembled.
 //
-// MultiBuilder keys in-progress sequences by network identity, source address,
-// PGN, and sequence ID. Network identity is essential when several physical
+// MultiBuilder keys in-progress sequences by network identity, connection and
+// claim epoch, source address, PGN, and sequence ID. Network identity is essential when several physical
 // networks are merged into one read pipeline because their dynamic source
 // addresses and three-bit sequence IDs can overlap.
 //
@@ -34,10 +34,12 @@ type MultiBuilder struct {
 }
 
 type fastPacketKey struct {
-	network string
-	source  uint8
-	pgn     uint32
-	seqID   uint8
+	network         string
+	connectionEpoch uint64
+	claimEpoch      uint64
+	source          uint8
+	pgn             uint32
+	seqID           uint8
 }
 
 // NewMultiBuilder creates and returns a new MultiBuilder with an initialized (empty)
@@ -118,7 +120,10 @@ func keyForPacket(packet *decoder.Packet) fastPacketKey {
 	if network == "" {
 		network = packet.Info.AdapterID
 	}
-	return fastPacketKey{network: network, source: packet.Info.SourceId, pgn: packet.Info.PGN, seqID: packet.SeqId}
+	return fastPacketKey{
+		network: network, connectionEpoch: packet.Info.ConnectionEpoch, claimEpoch: packet.Info.ClaimEpoch,
+		source: packet.Info.SourceId, pgn: packet.Info.PGN, seqID: packet.SeqId,
+	}
 }
 
 func (m *MultiBuilder) deleteSequence(key fastPacketKey) {

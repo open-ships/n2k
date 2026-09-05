@@ -12,8 +12,8 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 	switch info.PGN {
 	case 59392:
 		return decodePGNCandidates(info, payload,
-			&Message0xe8000xee00StandardizedSingleFrameAddressed{Info: info},
 			&IsoAcknowledgement{Info: info},
+			&Message0xe8000xee00StandardizedSingleFrameAddressed{Info: info},
 		)
 	case 59904:
 		return decodePGNCandidates(info, payload,
@@ -37,12 +37,12 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 61184:
 		return decodePGNCandidates(info, payload,
-			&Message0xef00ManufacturerProprietarySingleFrameAddressed{Info: info},
 			&CarlingBreakerCommand{Info: info},
-			&SeatalkWirelessKeypadControl{Info: info},
 			&SeatalkWirelessKeypadLightControl{Info: info},
+			&SeatalkWirelessKeypadControl{Info: info},
 			&SimnetKeepAlive{Info: info},
 			&VictronVeCanRegister{Info: info},
+			&Message0xef00ManufacturerProprietarySingleFrameAddressed{Info: info},
 		)
 	case 61440:
 		return decodePGNCandidates(info, payload,
@@ -174,7 +174,6 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 65280:
 		return decodePGNCandidates(info, payload,
-			&Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed{Info: info},
 			&BepMarineCzoneCircuitControl{Info: info},
 			&FurunoHeave{Info: info},
 			&HondaEngineData{Info: info},
@@ -182,6 +181,7 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&MercuryEngineData{Info: info},
 			&NavicoDeviceStatus{Info: info},
 			&YanmarEngineDataA{Info: info},
+			&Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed{Info: info},
 		)
 	case 65281:
 		return decodePGNCandidates(info, payload,
@@ -477,7 +477,6 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 126208:
 		return decodePGNCandidates(info, payload,
-			&Message0x1ed000x1ee00StandardizedFastPacketAddressed{Info: info},
 			&NmeaAcknowledgeGroupFunction{Info: info},
 			&NmeaCommandGroupFunction{Info: info},
 			&NmeaReadFieldsGroupFunction{Info: info},
@@ -485,6 +484,7 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&NmeaRequestGroupFunction{Info: info},
 			&NmeaWriteFieldsGroupFunction{Info: info},
 			&NmeaWriteFieldsReplyGroupFunction{Info: info},
+			&Message0x1ed000x1ee00StandardizedFastPacketAddressed{Info: info},
 		)
 	case 126464:
 		return decodePGNCandidates(info, payload,
@@ -492,38 +492,10 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 126720:
 		return decodePGNCandidates(info, payload,
-			&Message0x1ef00ManufacturerProprietaryFastPacketAddressed{Info: info},
-			&AirmarAddressableMultiFrame{Info: info},
-			&AirmarAttitudeOffset{Info: info},
-			&AirmarCalibrateCompass{Info: info},
-			&AirmarCalibrateDepth{Info: info},
-			&AirmarCalibrateSpeed{Info: info},
-			&AirmarCalibrateTemperature{Info: info},
-			&AirmarNmea2000Options{Info: info},
-			&AirmarSimulateMode{Info: info},
-			&AirmarSpeedFilterIir{Info: info},
-			&AirmarSpeedFilterNone{Info: info},
-			&AirmarTemperatureFilterIir{Info: info},
-			&AirmarTemperatureFilterNone{Info: info},
-			&AirmarTrueWindOptions{Info: info},
-			&CarlingDcConfigurationCommand{Info: info},
-			&FusionMediaControl{Info: info},
-			&FusionRequestStatus{Info: info},
-			&FusionSetAllVolumes{Info: info},
-			&FusionSetMute{Info: info},
-			&FusionSetPower{Info: info},
-			&FusionSetSource{Info: info},
-			&FusionSetZoneVolume{Info: info},
-			&FusionSiriusControl{Info: info},
-			&GarminAhrsAttCogSourceValidFlag{Info: info},
-			&GarminAhrsAttDeviceFlags{Info: info},
-			&GarminAhrsAttNonDefaultCalibrationMatrixPresent{Info: info},
-			&GarminAhrsAttSetNorthState{Info: info},
 			&GarminAutopilotEngineRpmA{Info: info},
 			&GarminAutopilotEngineRpmB{Info: info},
 			&GarminAutopilotHeadingToSteer{Info: info},
 			&GarminAutopilotHeartbeat{Info: info},
-			&GarminAutopilotManeuver{Info: info},
 			&GarminAutopilotModeState{Info: info},
 			&GarminAutopilotRateOfTurn{Info: info},
 			&GarminAutopilotRateOfTurnOrder{Info: info},
@@ -535,16 +507,44 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&GarminColorMode{Info: info},
 			&GarminDayMode{Info: info},
 			&GarminNightMode{Info: info},
-			&LumishoreProprietary{Info: info},
-			&MaretronDeviationCalibrationResponse{Info: info},
-			&MaretronProprietaryConfiguration{Info: info},
+			&GarminAhrsAttCogSourceValidFlag{Info: info},
+			&GarminAhrsAttDeviceFlags{Info: info},
+			&GarminAhrsAttNonDefaultCalibrationMatrixPresent{Info: info},
+			&GarminAhrsAttSetNorthState{Info: info},
+			&GarminAutopilotManeuver{Info: info},
 			&Seatalk1DeviceIdentification{Info: info},
 			&Seatalk1DisplayBrightness{Info: info},
 			&Seatalk1DisplayColor{Info: info},
 			&Seatalk1Keystroke{Info: info},
-			&Seatalk1PilotHullType{Info: info},
 			&Seatalk1PilotMode{Info: info},
+			&AirmarSpeedFilterIir{Info: info},
+			&AirmarSpeedFilterNone{Info: info},
+			&AirmarTemperatureFilterIir{Info: info},
+			&AirmarTemperatureFilterNone{Info: info},
+			&MaretronDeviationCalibrationResponse{Info: info},
+			&Seatalk1PilotHullType{Info: info},
 			&SeatalkPilotAutoTurn{Info: info},
+			&AirmarAttitudeOffset{Info: info},
+			&AirmarCalibrateCompass{Info: info},
+			&AirmarCalibrateDepth{Info: info},
+			&AirmarCalibrateSpeed{Info: info},
+			&AirmarCalibrateTemperature{Info: info},
+			&AirmarNmea2000Options{Info: info},
+			&AirmarSimulateMode{Info: info},
+			&AirmarTrueWindOptions{Info: info},
+			&FusionMediaControl{Info: info},
+			&FusionRequestStatus{Info: info},
+			&FusionSetAllVolumes{Info: info},
+			&FusionSetMute{Info: info},
+			&FusionSetPower{Info: info},
+			&FusionSetSource{Info: info},
+			&FusionSetZoneVolume{Info: info},
+			&FusionSiriusControl{Info: info},
+			&AirmarAddressableMultiFrame{Info: info},
+			&CarlingDcConfigurationCommand{Info: info},
+			&LumishoreProprietary{Info: info},
+			&MaretronProprietaryConfiguration{Info: info},
+			&Message0x1ef00ManufacturerProprietaryFastPacketAddressed{Info: info},
 		)
 	case 126976:
 		return decodePGNCandidates(info, payload,
@@ -1012,8 +1012,8 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 129808:
 		return decodePGNCandidates(info, payload,
-			&DscCallInformation{Info: info},
 			&DscDistressCallInformation{Info: info},
+			&DscCallInformation{Info: info},
 		)
 	case 129809:
 		return decodePGNCandidates(info, payload,
@@ -1281,11 +1281,7 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130816:
 		return decodePGNCandidates(info, payload,
-			&Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed{Info: info},
-			&BepMarineCzoneZcfBusDistribution{Info: info},
 			&FurunoStatusAndVersionReport{Info: info},
-			&HondaEngineStatus{Info: info},
-			&SeaRecoveryWatermakerStatus{Info: info},
 			&SimradTextMessage{Info: info},
 			&SonichubAmRadio{Info: info},
 			&SonichubAlbum{Info: info},
@@ -1305,6 +1301,10 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&SonichubVolume{Info: info},
 			&SonichubZoneInfo{Info: info},
 			&SonichubZones{Info: info},
+			&BepMarineCzoneZcfBusDistribution{Info: info},
+			&HondaEngineStatus{Info: info},
+			&SeaRecoveryWatermakerStatus{Info: info},
+			&Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed{Info: info},
 		)
 	case 130817:
 		return decodePGNCandidates(info, payload,
@@ -1332,8 +1332,7 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130820:
 		return decodePGNCandidates(info, payload,
-			&BepMarineCzoneAlarmStringResponse{Info: info},
-			&FurunoUnknown130820{Info: info},
+			&FusionUsbRepeatStatus{Info: info},
 			&FusionAlbumName{Info: info},
 			&FusionArtistName{Info: info},
 			&FusionAuxGain{Info: info},
@@ -1374,11 +1373,12 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&FusionTrackName{Info: info},
 			&FusionTrackPosition{Info: info},
 			&FusionTuner{Info: info},
-			&FusionUsbRepeatStatus{Info: info},
 			&FusionVersions{Info: info},
 			&FusionVolumeLimits{Info: info},
 			&FusionVolumes{Info: info},
 			&FusionZoneName{Info: info},
+			&BepMarineCzoneAlarmStringResponse{Info: info},
+			&FurunoUnknown130820{Info: info},
 			&MaretronAlertResponse{Info: info},
 			&SimnetReprogramStatus{Info: info},
 		)
@@ -1391,9 +1391,6 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130822:
 		return decodePGNCandidates(info, payload,
-			&BepMarineProprietaryPgn130822{Info: info},
-			&MaretronAlertControl{Info: info},
-			&MercuryEngineTelemetryLowSpeed{Info: info},
 			&NavicoConfigurationSet{Info: info},
 			&NavicoUdbDatabaseBulkReport2{Info: info},
 			&NavicoUdbDatabaseBulkReport4{Info: info},
@@ -1402,13 +1399,16 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&NavicoUdbDatabaseShortReport5{Info: info},
 			&NavicoUdbDatabaseShortReport7{Info: info},
 			&NavicoUdbDatabaseSourceReport{Info: info},
+			&BepMarineProprietaryPgn130822{Info: info},
+			&MaretronAlertControl{Info: info},
+			&MercuryEngineTelemetryLowSpeed{Info: info},
 		)
 	case 130823:
 		return decodePGNCandidates(info, payload,
-			&MaretronProprietaryTemperatureHighRange{Info: info},
 			&NavicoBoatSpeedPolarTable{Info: info},
 			&NavicoDataTypeSourceDirectory{Info: info},
 			&NavicoDataTypeSourceDirectoryFullReport{Info: info},
+			&MaretronProprietaryTemperatureHighRange{Info: info},
 		)
 	case 130824:
 		return decodePGNCandidates(info, payload,
@@ -1418,10 +1418,10 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130825:
 		return decodePGNCandidates(info, payload,
+			&MercuryCruiseControlData{Info: info},
 			&BepMarineProprietaryPgn130825{Info: info},
 			&MaretronDataInstanceChannelCorrelation{Info: info},
 			&MercuryCommandResponse{Info: info},
-			&MercuryCruiseControlData{Info: info},
 			&NavicoAlarm{Info: info},
 		)
 	case 130826:
@@ -1508,11 +1508,11 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130842:
 		return decodePGNCandidates(info, payload,
-			&FurunoSixDegreesOfFreedomMovement{Info: info},
-			&MaretronWindlassOperatingStatus{Info: info},
 			&SimnetAisClassBStaticDataMsg24PartA{Info: info},
 			&SimnetAisClassBStaticDataMsg24PartB{Info: info},
 			&SimnetAisSilentMode{Info: info},
+			&FurunoSixDegreesOfFreedomMovement{Info: info},
+			&MaretronWindlassOperatingStatus{Info: info},
 		)
 	case 130843:
 		return decodePGNCandidates(info, payload,
@@ -1551,8 +1551,6 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 		)
 	case 130850:
 		return decodePGNCandidates(info, payload,
-			&SimnetApCommand{Info: info},
-			&SimnetAlarm{Info: info},
 			&SimnetCommandApChangeCourse{Info: info},
 			&SimnetCommandApFollowUp{Info: info},
 			&SimnetCommandApHeading{Info: info},
@@ -1561,13 +1559,15 @@ func DecodePayload(info MessageInfo, payload []uint8) (PGN, error) {
 			&SimnetCommandApStandby{Info: info},
 			&SimnetCommandApTack{Info: info},
 			&SimnetCommandApWind{Info: info},
-			&SimnetEvent{Info: info},
+			&SimnetApCommand{Info: info},
+			&SimnetAlarm{Info: info},
 			&SimnetEventCommandTimer{Info: info},
+			&SimnetEvent{Info: info},
 		)
 	case 130851:
 		return decodePGNCandidates(info, payload,
-			&SimnetApCommandReply{Info: info},
 			&SimnetApCommandReplyChangeCourse{Info: info},
+			&SimnetApCommandReply{Info: info},
 		)
 	case 130852:
 		return decodePGNCandidates(info, payload,

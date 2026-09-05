@@ -403,7 +403,7 @@ func (s *PGNDataStream) readStringWithLength() (string, error) {
 	if len == nil {
 		return "", fmt.Errorf("null length in ReadStringWithLength")
 	}
-	arr, err := s.readBinaryData(uint16(*len * 8))
+	arr, err := s.readBinaryData(uint16(*len) * 8)
 	if err != nil {
 		return "", err
 	}

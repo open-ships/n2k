@@ -1,6 +1,9 @@
 package n2k
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/open-ships/n2k/internal/framer"
@@ -69,7 +72,7 @@ func (c *Client) handleRequestGF(gf *pgn.NmeaRequestGroupFunction) {
 
 	if !c.transmitsPGN(requested) {
 		if !broadcast {
-			c.ackGroupFunctionError(requested, uint64(pgn.PGNNotSupported))
+			c.ackGroupFunctionError(requested, uint64(pgn.PgnErrorCodePGNNotSupported))
 		}
 		return
 	}
@@ -77,7 +80,7 @@ func (c *Client) handleRequestGF(gf *pgn.NmeaRequestGroupFunction) {
 	// Parameter-filtered requests are not supported.
 	if len(gf.Repeating1) > 0 {
 		if !broadcast {
-			c.ackGroupFunctionError(requested, uint64(pgn.NotSupported_3))
+			c.ackGroupFunctionError(requested, uint64(pgn.PgnErrorCodeNotSupported))
 		}
 		return
 	}
@@ -131,7 +134,9 @@ func (c *Client) applyRequestedInterval(pgnNum uint32, intervalTicks *uint64) {
 		return // schedule raced away since the transmitsPGN check
 	}
 	if intervalTicks == nil {
-		b.trigger(c.ctx)
+		if err := b.trigger(c.ctx); err != nil && !errors.Is(err, context.Canceled) {
+			c.fail(fmt.Errorf("n2k: required broadcast response admission: %w", err))
+		}
 		return
 	}
 	switch *intervalTicks {
@@ -163,7 +168,7 @@ func (c *Client) ackGroupFunction(pgnPtr *uint64) {
 	if pgnPtr == nil {
 		return
 	}
-	c.ackGroupFunctionError(uint32(*pgnPtr), uint64(pgn.NotSupported_3))
+	c.ackGroupFunctionError(uint32(*pgnPtr), uint64(pgn.PgnErrorCodeNotSupported))
 }
 
 // ackGroupFunctionError broadcasts an acknowledge group function refusing the

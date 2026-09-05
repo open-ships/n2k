@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net"
 	"sync"
+	"time"
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/raw"
@@ -47,11 +48,11 @@ type tcpLink struct {
 
 	// writeMu serializes writes so concurrent callers (address claimer,
 	// heartbeat, user writes) cannot interleave partial frames.
-	writeMu sync.Mutex
+	writeMu chan struct{}
 }
 
 func newTCPLink(log *slog.Logger, addr string, reconnect *ReconnectPolicy) *tcpLink {
-	return &tcpLink{log: log, addr: addr, reconnect: reconnect, ready: make(chan struct{}), done: make(chan struct{})}
+	return &tcpLink{log: log, addr: addr, reconnect: reconnect, ready: make(chan struct{}), done: make(chan struct{}), writeMu: make(chan struct{}, 1)}
 }
 
 func (l *tcpLink) setConnectionObserver(observer func(connected bool, epoch uint64)) {
@@ -263,24 +264,19 @@ func (l *tcpLink) broadcast() {
 	l.ready = make(chan struct{})
 }
 
-// maxWriteRetries bounds how many freshly-reconnected connections a single
-// write will try before giving up, so a persistently flapping gateway cannot
-// stall a writer indefinitely.
-const maxWriteRetries = 4
-
-// await blocks until a live connection is available and returns it. A non-nil
-// stale is a connection the caller has just found dead: await then waits for a
-// different one, so a retry does not spin on the same dead conn before the read
-// loop has observed the drop. It returns an error if the link is closed, run
-// has stopped, or (without reconnection) the dial failed.
-func (l *tcpLink) await(stale net.Conn) (net.Conn, error) {
+// await blocks until a live connection is available. Once selected, that
+// connection owns the write; a failed write is never retried across epochs.
+func (l *tcpLink) await(ctx context.Context) (net.Conn, error) {
 	for {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		l.mu.Lock()
 		switch {
 		case l.closed:
 			l.mu.Unlock()
 			return nil, errBusClosed
-		case l.conn != nil && l.conn != stale:
+		case l.conn != nil:
 			conn := l.conn
 			l.mu.Unlock()
 			return conn, nil
@@ -298,38 +294,58 @@ func (l *tcpLink) await(stale net.Conn) (net.Conn, error) {
 		}
 		ready := l.ready
 		l.mu.Unlock()
-		<-ready
+		select {
+		case <-ready:
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		}
 	}
 }
 
-// write sends one wire-encoded unit (a RAW line or a framed command) whole.
-// If the connection drops before any byte is written and reconnection is
-// enabled, write waits for the reconnect and retries — only ever when nothing
-// was sent (n == 0), so a retry can never duplicate a partially-written frame.
+// write sends one wire-encoded unit on exactly one connection.
 func (l *tcpLink) write(buf []byte) error {
-	l.writeMu.Lock()
-	defer l.writeMu.Unlock()
-	var stale net.Conn
-	for attempt := 0; ; attempt++ {
-		conn, err := l.await(stale)
-		if err != nil {
-			return err
-		}
-		n, werr := conn.Write(buf)
-		if werr == nil {
-			if n != len(buf) {
-				return fmt.Errorf("gateway: wrote %d of %d bytes", n, len(buf))
-			}
-			return nil
-		}
-		// A partial write, a link without reconnection, or an exhausted retry
-		// budget is terminal; otherwise wait for a connection other than this
-		// dead one and try the whole frame again.
-		if n != 0 || l.reconnect == nil || attempt >= maxWriteRetries {
-			return werr
-		}
-		stale = conn
+	return l.writeContext(context.Background(), buf)
+}
+
+func (l *tcpLink) writeContext(ctx context.Context, buf []byte) error {
+	select {
+	case l.writeMu <- struct{}{}:
+		defer func() { <-l.writeMu }()
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-l.done:
+		return errBusClosed
 	}
+	conn, err := l.await(ctx)
+	if err != nil {
+		return err
+	}
+	// The callback holds the exact connection, not the reconnecting link.
+	// Wait for it before resetting a deadline or admitting the next record.
+	if ctx.Done() != nil {
+		interrupted := make(chan struct{})
+		stop := context.AfterFunc(ctx, func() {
+			_ = conn.SetWriteDeadline(time.Now())
+			close(interrupted)
+		})
+		defer func() {
+			if !stop() {
+				<-interrupted
+			}
+			_ = conn.SetWriteDeadline(time.Time{})
+		}()
+	}
+	n, err := conn.Write(buf)
+	if cause := ctx.Err(); cause != nil {
+		return cause
+	}
+	if err != nil {
+		return err
+	}
+	if n != len(buf) {
+		return fmt.Errorf("gateway: wrote %d of %d bytes: %w", n, len(buf), io.ErrShortWrite)
+	}
+	return nil
 }
 
 // isClosed reports whether Close has been called.
@@ -421,6 +437,11 @@ func (b *YDRawTCPBus) RunObservations(ctx context.Context, handler func(raw.Obse
 // WriteFrame transmits one CAN frame as a RAW line.
 func (b *YDRawTCPBus) WriteFrame(frame can.Frame) error {
 	return b.link.write(FormatYDRawTX(frame))
+}
+
+// WriteFrameContext sends one frame without replaying it after reconnect.
+func (b *YDRawTCPBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	return b.link.writeContext(ctx, FormatYDRawTX(frame))
 }
 
 // SetConnectionObserver installs reconnect lifecycle observation for Client.

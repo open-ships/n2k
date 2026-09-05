@@ -23,14 +23,44 @@ func (m *RadioFrequencyModePower) DecodePayload(payload []uint8) error {
 }
 func (m *RadioFrequencyModePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *RadioFrequencyModePower) Clone() Message {
+	if m == nil {
+		return (*RadioFrequencyModePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RxFrequency = clonePointer(m.RxFrequency)
+	copy.TxFrequency = clonePointer(m.TxFrequency)
+	copy.TxPower = clonePointer(m.TxPower)
+	copy.Mode = clonePointer(m.Mode)
+	copy.ChannelBandwidth = clonePointer(m.ChannelBandwidth)
+	return &copy
+}
+
 // RxFrequencyValue returns RxFrequency as a physical value in Hz (value = raw * 10).
-// The bool is false when RxFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *RadioFrequencyModePower) RxFrequencyValue() (float64, bool) {
-	if m.RxFrequency == nil {
+	if m == nil || m.RxFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.RxFrequency) * 10, true
+	if *m.RxFrequency == 4294967295 {
+		return 0, false
+	}
+	if *m.RxFrequency == 4294967294 {
+		return 0, false
+	}
+	if *m.RxFrequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.RxFrequency) * 10
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+10 && !approximatelyEqual(value, 4.294967292e+10) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRxFrequencyValue sets RxFrequency from a physical value in Hz, rounded to the nearest
@@ -41,13 +71,28 @@ func (m *RadioFrequencyModePower) SetRxFrequencyValue(v float64) {
 }
 
 // TxFrequencyValue returns TxFrequency as a physical value in Hz (value = raw * 10).
-// The bool is false when TxFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *RadioFrequencyModePower) TxFrequencyValue() (float64, bool) {
-	if m.TxFrequency == nil {
+	if m == nil || m.TxFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.TxFrequency) * 10, true
+	if *m.TxFrequency == 4294967295 {
+		return 0, false
+	}
+	if *m.TxFrequency == 4294967294 {
+		return 0, false
+	}
+	if *m.TxFrequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TxFrequency) * 10
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+10 && !approximatelyEqual(value, 4.294967292e+10) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTxFrequencyValue sets TxFrequency from a physical value in Hz, rounded to the nearest
@@ -58,13 +103,28 @@ func (m *RadioFrequencyModePower) SetTxFrequencyValue(v float64) {
 }
 
 // TxPowerValue returns TxPower as a physical value in W (value = raw).
-// The bool is false when TxPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *RadioFrequencyModePower) TxPowerValue() (float64, bool) {
-	if m.TxPower == nil {
+	if m == nil || m.TxPower == nil {
 		return 0, false
 	}
-	return float64(*m.TxPower), true
+	if *m.TxPower == 65535 {
+		return 0, false
+	}
+	if *m.TxPower == 65534 {
+		return 0, false
+	}
+	if *m.TxPower == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TxPower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTxPowerValue sets TxPower from a physical value in W, rounded to the nearest
@@ -75,13 +135,28 @@ func (m *RadioFrequencyModePower) SetTxPowerValue(v float64) {
 }
 
 // ChannelBandwidthValue returns ChannelBandwidth as a physical value in Hz (value = raw).
-// The bool is false when ChannelBandwidth is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *RadioFrequencyModePower) ChannelBandwidthValue() (float64, bool) {
-	if m.ChannelBandwidth == nil {
+	if m == nil || m.ChannelBandwidth == nil {
 		return 0, false
 	}
-	return float64(*m.ChannelBandwidth), true
+	if *m.ChannelBandwidth == 65535 {
+		return 0, false
+	}
+	if *m.ChannelBandwidth == 65534 {
+		return 0, false
+	}
+	if *m.ChannelBandwidth == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ChannelBandwidth)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetChannelBandwidthValue sets ChannelBandwidth from a physical value in Hz, rounded to the nearest
@@ -126,14 +201,57 @@ func (m *DscCallInformation) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *DscCallInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DscCallInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *DscCallInformation) Clone() Message {
+	if m == nil {
+		return (*DscCallInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.DscFormatSymbol = clonePointer(m.DscFormatSymbol)
+	copy.DscCategorySymbol = clonePointer(m.DscCategorySymbol)
+	copy.DscMessageAddress = clonePointer(m.DscMessageAddress)
+	copy.Pgn1stTelecommand = clonePointer(m.Pgn1stTelecommand)
+	copy.SubsequentCommunicationModeOr2ndTelecommand = clonePointer(m.SubsequentCommunicationModeOr2ndTelecommand)
+	copy.LatitudeOfVesselReported = clonePointer(m.LatitudeOfVesselReported)
+	copy.LongitudeOfVesselReported = clonePointer(m.LongitudeOfVesselReported)
+	copy.TimeOfPosition = clonePointer(m.TimeOfPosition)
+	copy.MmsiOfShipInDistress = clonePointer(m.MmsiOfShipInDistress)
+	copy.DscEosSymbol = clonePointer(m.DscEosSymbol)
+	copy.ExpansionEnabled = clonePointer(m.ExpansionEnabled)
+	copy.TimeOfReceipt = clonePointer(m.TimeOfReceipt)
+	copy.DateOfReceipt = clonePointer(m.DateOfReceipt)
+	copy.DscEquipmentAssignedMessageId = clonePointer(m.DscEquipmentAssignedMessageId)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].DscExpansionFieldSymbol = clonePointer(m.Repeating1[i].DscExpansionFieldSymbol)
+	}
+	return &copy
+}
+
 // LatitudeOfVesselReportedValue returns LatitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
-// The bool is false when LatitudeOfVesselReported is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscCallInformation) LatitudeOfVesselReportedValue() (float64, bool) {
-	if m.LatitudeOfVesselReported == nil {
+	if m == nil || m.LatitudeOfVesselReported == nil {
 		return 0, false
 	}
-	return float64(*m.LatitudeOfVesselReported) * 1e-07, true
+	if *m.LatitudeOfVesselReported == 2147483647 {
+		return 0, false
+	}
+	if *m.LatitudeOfVesselReported == 2147483646 {
+		return 0, false
+	}
+	if *m.LatitudeOfVesselReported == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.LatitudeOfVesselReported) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeOfVesselReportedValue sets LatitudeOfVesselReported from a physical value in deg, rounded to the nearest
@@ -144,13 +262,28 @@ func (m *DscCallInformation) SetLatitudeOfVesselReportedValue(v float64) {
 }
 
 // LongitudeOfVesselReportedValue returns LongitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
-// The bool is false when LongitudeOfVesselReported is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscCallInformation) LongitudeOfVesselReportedValue() (float64, bool) {
-	if m.LongitudeOfVesselReported == nil {
+	if m == nil || m.LongitudeOfVesselReported == nil {
 		return 0, false
 	}
-	return float64(*m.LongitudeOfVesselReported) * 1e-07, true
+	if *m.LongitudeOfVesselReported == 2147483647 {
+		return 0, false
+	}
+	if *m.LongitudeOfVesselReported == 2147483646 {
+		return 0, false
+	}
+	if *m.LongitudeOfVesselReported == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.LongitudeOfVesselReported) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeOfVesselReportedValue sets LongitudeOfVesselReported from a physical value in deg, rounded to the nearest
@@ -161,13 +294,28 @@ func (m *DscCallInformation) SetLongitudeOfVesselReportedValue(v float64) {
 }
 
 // TimeOfPositionValue returns TimeOfPosition as a physical value in s (value = raw * 0.0001).
-// The bool is false when TimeOfPosition is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscCallInformation) TimeOfPositionValue() (float64, bool) {
-	if m.TimeOfPosition == nil {
+	if m == nil || m.TimeOfPosition == nil {
 		return 0, false
 	}
-	return float64(*m.TimeOfPosition) * 0.0001, true
+	if *m.TimeOfPosition == 4294967295 {
+		return 0, false
+	}
+	if *m.TimeOfPosition == 4294967294 {
+		return 0, false
+	}
+	if *m.TimeOfPosition == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TimeOfPosition) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeOfPositionValue sets TimeOfPosition from a physical value in s, rounded to the nearest
@@ -178,13 +326,28 @@ func (m *DscCallInformation) SetTimeOfPositionValue(v float64) {
 }
 
 // TimeOfReceiptValue returns TimeOfReceipt as a physical value in s (value = raw * 0.0001).
-// The bool is false when TimeOfReceipt is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscCallInformation) TimeOfReceiptValue() (float64, bool) {
-	if m.TimeOfReceipt == nil {
+	if m == nil || m.TimeOfReceipt == nil {
 		return 0, false
 	}
-	return float64(*m.TimeOfReceipt) * 0.0001, true
+	if *m.TimeOfReceipt == 4294967295 {
+		return 0, false
+	}
+	if *m.TimeOfReceipt == 4294967294 {
+		return 0, false
+	}
+	if *m.TimeOfReceipt == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TimeOfReceipt) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeOfReceiptValue sets TimeOfReceipt from a physical value in s, rounded to the nearest
@@ -195,13 +358,28 @@ func (m *DscCallInformation) SetTimeOfReceiptValue(v float64) {
 }
 
 // DateOfReceiptValue returns DateOfReceipt as a physical value in d (value = raw).
-// The bool is false when DateOfReceipt is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscCallInformation) DateOfReceiptValue() (float64, bool) {
-	if m.DateOfReceipt == nil {
+	if m == nil || m.DateOfReceipt == nil {
 		return 0, false
 	}
-	return float64(*m.DateOfReceipt), true
+	if *m.DateOfReceipt == 65535 {
+		return 0, false
+	}
+	if *m.DateOfReceipt == 65534 {
+		return 0, false
+	}
+	if *m.DateOfReceipt == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DateOfReceipt)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDateOfReceiptValue sets DateOfReceipt from a physical value in d, rounded to the nearest
@@ -248,14 +426,57 @@ func (m *DscDistressCallInformation) DecodePayload(payload []uint8) error {
 }
 func (m *DscDistressCallInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *DscDistressCallInformation) Clone() Message {
+	if m == nil {
+		return (*DscDistressCallInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.DscFormat = clonePointer(m.DscFormat)
+	copy.DscCategory = clonePointer(m.DscCategory)
+	copy.DscMessageAddress = clonePointer(m.DscMessageAddress)
+	copy.NatureOfDistress = clonePointer(m.NatureOfDistress)
+	copy.SubsequentCommunicationModeOr2ndTelecommand = clonePointer(m.SubsequentCommunicationModeOr2ndTelecommand)
+	copy.LatitudeOfVesselReported = clonePointer(m.LatitudeOfVesselReported)
+	copy.LongitudeOfVesselReported = clonePointer(m.LongitudeOfVesselReported)
+	copy.TimeOfPosition = clonePointer(m.TimeOfPosition)
+	copy.MmsiOfShipInDistress = clonePointer(m.MmsiOfShipInDistress)
+	copy.DscEosSymbol = clonePointer(m.DscEosSymbol)
+	copy.ExpansionEnabled = clonePointer(m.ExpansionEnabled)
+	copy.TimeOfReceipt = clonePointer(m.TimeOfReceipt)
+	copy.DateOfReceipt = clonePointer(m.DateOfReceipt)
+	copy.DscEquipmentAssignedMessageId = clonePointer(m.DscEquipmentAssignedMessageId)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].DscExpansionFieldSymbol = clonePointer(m.Repeating1[i].DscExpansionFieldSymbol)
+	}
+	return &copy
+}
+
 // LatitudeOfVesselReportedValue returns LatitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
-// The bool is false when LatitudeOfVesselReported is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscDistressCallInformation) LatitudeOfVesselReportedValue() (float64, bool) {
-	if m.LatitudeOfVesselReported == nil {
+	if m == nil || m.LatitudeOfVesselReported == nil {
 		return 0, false
 	}
-	return float64(*m.LatitudeOfVesselReported) * 1e-07, true
+	if *m.LatitudeOfVesselReported == 2147483647 {
+		return 0, false
+	}
+	if *m.LatitudeOfVesselReported == 2147483646 {
+		return 0, false
+	}
+	if *m.LatitudeOfVesselReported == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.LatitudeOfVesselReported) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeOfVesselReportedValue sets LatitudeOfVesselReported from a physical value in deg, rounded to the nearest
@@ -266,13 +487,28 @@ func (m *DscDistressCallInformation) SetLatitudeOfVesselReportedValue(v float64)
 }
 
 // LongitudeOfVesselReportedValue returns LongitudeOfVesselReported as a physical value in deg (value = raw * 1e-07).
-// The bool is false when LongitudeOfVesselReported is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscDistressCallInformation) LongitudeOfVesselReportedValue() (float64, bool) {
-	if m.LongitudeOfVesselReported == nil {
+	if m == nil || m.LongitudeOfVesselReported == nil {
 		return 0, false
 	}
-	return float64(*m.LongitudeOfVesselReported) * 1e-07, true
+	if *m.LongitudeOfVesselReported == 2147483647 {
+		return 0, false
+	}
+	if *m.LongitudeOfVesselReported == 2147483646 {
+		return 0, false
+	}
+	if *m.LongitudeOfVesselReported == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.LongitudeOfVesselReported) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeOfVesselReportedValue sets LongitudeOfVesselReported from a physical value in deg, rounded to the nearest
@@ -283,13 +519,28 @@ func (m *DscDistressCallInformation) SetLongitudeOfVesselReportedValue(v float64
 }
 
 // TimeOfPositionValue returns TimeOfPosition as a physical value in s (value = raw * 0.0001).
-// The bool is false when TimeOfPosition is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscDistressCallInformation) TimeOfPositionValue() (float64, bool) {
-	if m.TimeOfPosition == nil {
+	if m == nil || m.TimeOfPosition == nil {
 		return 0, false
 	}
-	return float64(*m.TimeOfPosition) * 0.0001, true
+	if *m.TimeOfPosition == 4294967295 {
+		return 0, false
+	}
+	if *m.TimeOfPosition == 4294967294 {
+		return 0, false
+	}
+	if *m.TimeOfPosition == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TimeOfPosition) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeOfPositionValue sets TimeOfPosition from a physical value in s, rounded to the nearest
@@ -300,13 +551,28 @@ func (m *DscDistressCallInformation) SetTimeOfPositionValue(v float64) {
 }
 
 // TimeOfReceiptValue returns TimeOfReceipt as a physical value in s (value = raw * 0.0001).
-// The bool is false when TimeOfReceipt is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscDistressCallInformation) TimeOfReceiptValue() (float64, bool) {
-	if m.TimeOfReceipt == nil {
+	if m == nil || m.TimeOfReceipt == nil {
 		return 0, false
 	}
-	return float64(*m.TimeOfReceipt) * 0.0001, true
+	if *m.TimeOfReceipt == 4294967295 {
+		return 0, false
+	}
+	if *m.TimeOfReceipt == 4294967294 {
+		return 0, false
+	}
+	if *m.TimeOfReceipt == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TimeOfReceipt) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeOfReceiptValue sets TimeOfReceipt from a physical value in s, rounded to the nearest
@@ -317,13 +583,28 @@ func (m *DscDistressCallInformation) SetTimeOfReceiptValue(v float64) {
 }
 
 // DateOfReceiptValue returns DateOfReceipt as a physical value in d (value = raw).
-// The bool is false when DateOfReceipt is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DscDistressCallInformation) DateOfReceiptValue() (float64, bool) {
-	if m.DateOfReceipt == nil {
+	if m == nil || m.DateOfReceipt == nil {
 		return 0, false
 	}
-	return float64(*m.DateOfReceipt), true
+	if *m.DateOfReceipt == 65535 {
+		return 0, false
+	}
+	if *m.DateOfReceipt == 65534 {
+		return 0, false
+	}
+	if *m.DateOfReceipt == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DateOfReceipt)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDateOfReceiptValue sets DateOfReceipt from a physical value in d, rounded to the nearest

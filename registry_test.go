@@ -199,3 +199,55 @@ func TestRegistry_AddressCollisionEvictsStaleName(t *testing.T) {
 	assert.Equal(t, second, devices[0].RawName)
 	assert.Equal(t, uint8(0x42), devices[0].Address)
 }
+
+func TestRegistry_OwnsObservedMessagesAndSnapshotMetadata(t *testing.T) {
+	r := newRegistry()
+	r.handleClaim(0x42, testDeviceName.Pack(true), time.Now())
+	code := uint64(42)
+	product := &pgn.ProductInformation{ProductCode: &code, ModelId: "sonar"}
+	payload, err := product.EncodePayload()
+	require.NoError(t, err)
+	// Decode first so the message also carries private raw/canonical bytes;
+	// subsequent owned snapshots must retain their exact replay behavior.
+	require.NoError(t, product.DecodePayload(payload))
+	product.Info.SourceId = 0x42
+	product.Info.Priority = pgn.Priority(6)
+	product.Info.TargetId = pgn.Target(255)
+	product.Info.ConnectionEpoch = 2
+	product.Info.ClaimEpoch = 3
+	product.Info.DecodeIssues = []string{"diagnostic"}
+	config := &pgn.ConfigurationInformation{
+		Info:                     pgn.MessageInfo{SourceId: 0x42, DecodeIssues: []string{"configuration diagnostic"}},
+		InstallationDescription1: "bridge",
+	}
+	r.observe(product)
+	r.observe(config)
+
+	// Ingress ownership: later publisher changes cannot alter stored data.
+	*product.ProductCode = 99
+	product.Info.DecodeIssues[0] = "publisher changed"
+	config.InstallationDescription1 = "publisher changed"
+	config.Info.DecodeIssues[0] = "publisher changed"
+	first := r.snapshot()[0]
+	require.Equal(t, uint64(42), *first.ProductInfo.ProductCode)
+	require.Equal(t, []string{"diagnostic"}, first.ProductInfo.Info.DecodeIssues)
+	require.Equal(t, "bridge", first.ConfigInfo.InstallationDescription1)
+	require.Equal(t, []string{"configuration diagnostic"}, first.ConfigInfo.Info.DecodeIssues)
+
+	// Egress ownership: every DeviceAt and Devices result owns its metadata.
+	*first.ProductInfo.Info.Priority = 1
+	*first.ProductInfo.Info.TargetId = 1
+	first.ProductInfo.Info.DecodeIssues[0] = "subscriber changed"
+	first.ConfigInfo.Info.DecodeIssues[0] = "subscriber changed"
+	second, found := r.deviceAt(0x42)
+	require.True(t, found)
+	assert.Equal(t, uint8(6), *second.ProductInfo.Info.Priority)
+	assert.Equal(t, uint8(255), *second.ProductInfo.Info.TargetId)
+	assert.Equal(t, uint64(2), second.ProductInfo.Info.ConnectionEpoch)
+	assert.Equal(t, uint64(3), second.ProductInfo.Info.ClaimEpoch)
+	assert.Equal(t, []string{"diagnostic"}, second.ProductInfo.Info.DecodeIssues)
+	assert.Equal(t, []string{"configuration diagnostic"}, second.ConfigInfo.Info.DecodeIssues)
+	replayed, err := second.ProductInfo.EncodePayload()
+	require.NoError(t, err)
+	assert.Equal(t, payload, replayed, "snapshot must preserve untouched decoded payload")
+}

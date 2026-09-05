@@ -29,3 +29,28 @@ func (m *SeaRecoveryWatermakerStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SeaRecoveryWatermakerStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SeaRecoveryWatermakerStatus) Clone() Message {
+	if m == nil {
+		return (*SeaRecoveryWatermakerStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.WatermakerInstance = clonePointer(m.WatermakerInstance)
+	copy.OperationState = clonePointer(m.OperationState)
+	copy.PrefilterPressure = clonePointer(m.PrefilterPressure)
+	copy.PostfilterPressure = clonePointer(m.PostfilterPressure)
+	copy.OperationPressure = clonePointer(m.OperationPressure)
+	copy.ProductFlow = clonePointer(m.ProductFlow)
+	copy.PrefilterPressureStatus = clonePointer(m.PrefilterPressureStatus)
+	copy.PostfilterPressureStatus = clonePointer(m.PostfilterPressureStatus)
+	copy.OperationPressureStatus = clonePointer(m.OperationPressureStatus)
+	copy.ProductSalinityStatus = clonePointer(m.ProductSalinityStatus)
+	copy.FilterStatus = clonePointer(m.FilterStatus)
+	copy.SystemStatus = clonePointer(m.SystemStatus)
+	return &copy
+}

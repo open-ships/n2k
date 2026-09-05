@@ -28,6 +28,12 @@ explains the runtime design.
   automatic bus-citizenship traffic. Application writes cannot consume them.
 - **Connection epoch**: one successful gateway connection and its NMEA network
   readiness cycle. A new epoch must reclaim before ordinary traffic resumes.
+- **Claim epoch**: one local address-identity lifetime within a connection.
+  Disconnect or address change cancels work registered to the old lifetime.
+- **Write snapshot**: owned encoded payload and header captured before Write
+  returns. Queued work never reads the caller's mutable message again.
+- **Wire transmitter**: sole physical writer; selects required protocol records
+  between application frames, independently of ISO transfer waits.
 - **Bus**: the extension seam for physical or virtual read/write transports.
 - **Adapter**: converts a transport representation into owned CAN frames.
 - **BST datagram**: one owned Actisense binary record after BDTP framing and checksum validation.
@@ -50,7 +56,8 @@ explains the runtime design.
 5. Runtime bus failure reaches readers, writers, `Client.Err`, and
    `Client.Status`; a client never remains half-alive after `Bus.Run` exits.
 6. Caller-owned frames, payloads, and registry snapshots are copied at
-   ownership boundaries.
+   ownership boundaries. Each typed subscriber and request reply owns a deep
+   message clone; outgoing messages become snapshots at admission.
 7. Generated PGN files and metadata change only through `just pgn-sync`.
 8. Commanded Address changes state only after an exact nine-byte BAM transfer,
    an exact 64-bit NAME match, and a requested address in 0–251; the node then
@@ -74,16 +81,30 @@ explains the runtime design.
 15. Local BEM correlation includes response group, verb, and origin. Remote
     correlation also binds both addresses and connection/claim epochs; every
     pending table and response train is bounded.
+16. Pending operations and partial assemblies cannot cross connection or claim
+    epochs. Not-ready application writes fail immediately; no automatic retry
+    follows an uncertain physical transmission.
+    Client lifecycle rejection is local to that Client. Standalone multi-source
+    readers and replay preserve independent/historical epochs; fast-packet keys
+    include network identity and both epochs.
+17. Cancellation interrupts physical I/O, not merely its caller's wait. Close
+    joins owned workers. Custom buses must interrupt I/O on Close; scheduled
+    providers must honor their context and must not call blocking Close/stop
+    from their own worker.
 
 ## Where to make changes
 
-- Public lifecycle and writes: `client.go`, `status.go`, `writeresult.go`
+- Public lifecycle and writes: `client.go`, `network_session.go`,
+  `message_snapshot.go`, `status.go`, `writeresult.go`
 - Read pipeline and fan-out: `pipeline.go`, `scanner.go`, `messagehub.go`,
   `observation.go`, `observationhub.go`, `raw/`
-- Protocol transmission policy: `protocoltx.go`, `client.go`, protocol writers
-- Connection epochs: `client.go`, `internal/gateway/tcpbus.go`, `registry.go`
+- Protocol transmission policy: `protocoltx.go`, `transmission.go`, protocol writers
+- Connection epochs: `network_session.go`, `client.go`, `pipeline.go`,
+  `request.go`, `internal/gateway/tcpbus.go`, `registry.go`
 - Hardware/network seams: `bus.go`, `source*.go`, `internal/canbus/`,
   `internal/gateway/`
+- Interruptible serial descriptor ownership: `internal/serialio/` (shared by
+  USB-CAN and Actisense); Linux CAN descriptor setup: `internal/canbus/`
 - Actisense public sessions, remote devices, serial configuration, and ASCII
   formats: `actisense_*.go`, `ebl_writer.go`
 - Actisense BDTP/BST/BEM command Module: `internal/actisense/`; TCP, serial,
@@ -98,9 +119,13 @@ explains the runtime design.
 
 ## Required verification
 
-Run `go test ./...`, `just pgn-sync-check`, `just lint`, and `just secure`
-before handoff. Run `just test-race` for concurrency changes and `just
+Run `go test ./...`, `just pgn-sync-check`, `just format-check`, `just lint`,
+`just secure`, and `just release-check` (with current tags) before handoff.
+Run `just test-race` for concurrency changes and `just
 fuzz-smoke` for parser, codec, or framing changes. `just conformance-local`
 produces the reproducible protocol evidence described in
 [docs/conformance.md](docs/conformance.md); it is not a substitute for the
 licensed NMEA certification run.
+Use `just reliability-soak 1h 70m` for sustained software lifecycle/resource
+qualification and `just fuzz-long` for longer parser campaigns. A skipped lab
+test or generated type is never evidence of hardware verification.

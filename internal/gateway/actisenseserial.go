@@ -8,6 +8,7 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/actisense"
+	"github.com/open-ships/n2k/internal/serialio"
 	"github.com/open-ships/n2k/raw"
 	"go.bug.st/serial"
 )
@@ -21,6 +22,10 @@ type ActisenseSerialSettings struct {
 	StopBits uint8
 }
 
+func openActisenseSerialConnection(path string, mode *serial.Mode) (actisenseConnection, error) {
+	return serialio.Open(path, mode)
+}
+
 func normalizeActisenseSerialSettings(settings []ActisenseSerialSettings) ActisenseSerialSettings {
 	if len(settings) == 0 {
 		return ActisenseSerialSettings{BaudRate: 115200, DataBits: 8}
@@ -30,7 +35,7 @@ func normalizeActisenseSerialSettings(settings []ActisenseSerialSettings) Actise
 
 func newActisenseSerialStreamBus(log *slog.Logger, port string, settings ActisenseSerialSettings, mode actisense.OperatingMode, rawCAN bool) *actisenseStreamBus {
 	open := func(context.Context) (actisenseConnection, error) {
-		connection, err := serial.Open(port, &serial.Mode{
+		connection, err := openActisenseSerialConnection(port, &serial.Mode{
 			BaudRate: settings.BaudRate,
 			DataBits: settings.DataBits,
 			Parity:   serial.Parity(settings.Parity),
@@ -45,7 +50,7 @@ func newActisenseSerialStreamBus(log *slog.Logger, port string, settings Actisen
 }
 
 func runPassiveActisenseSerial(ctx context.Context, port string, settings ActisenseSerialSettings, read func(io.Reader, func(raw.Observation)) error, handler func(raw.Observation)) error {
-	connection, err := serial.Open(port, &serial.Mode{
+	connection, err := serialio.Open(port, &serial.Mode{
 		BaudRate: settings.BaudRate,
 		DataBits: settings.DataBits,
 		Parity:   serial.Parity(settings.Parity),
@@ -104,8 +109,11 @@ func (b *ActisenseRawSerialBus) RunObservations(ctx context.Context, handler fun
 	return b.stream.RunObservations(ctx, handler)
 }
 func (b *ActisenseRawSerialBus) WriteFrame(frame can.Frame) error { return b.stream.writeFrame(frame) }
-func (b *ActisenseRawSerialBus) Ready() <-chan struct{}           { return b.stream.Ready() }
-func (b *ActisenseRawSerialBus) Close() error                     { return b.stream.Close() }
+func (b *ActisenseRawSerialBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	return b.stream.writeFrameContext(ctx, frame)
+}
+func (b *ActisenseRawSerialBus) Ready() <-chan struct{} { return b.stream.Ready() }
+func (b *ActisenseRawSerialBus) Close() error           { return b.stream.Close() }
 func (b *ActisenseRawSerialBus) Metrics() ActisenseGatewayMetrics {
 	return b.stream.Metrics()
 }
@@ -125,6 +133,9 @@ func (b *ActisenseCANASCIISerialBus) RunObservations(ctx context.Context, handle
 }
 func (b *ActisenseCANASCIISerialBus) WriteFrame(frame can.Frame) error {
 	return b.stream.writeFrame(frame)
+}
+func (b *ActisenseCANASCIISerialBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	return b.stream.writeFrameContext(ctx, frame)
 }
 func (b *ActisenseCANASCIISerialBus) Ready() <-chan struct{} { return b.stream.Ready() }
 func (b *ActisenseCANASCIISerialBus) Close() error           { return b.stream.Close() }

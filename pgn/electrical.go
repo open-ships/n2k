@@ -20,14 +20,42 @@ func (m *Bus1PhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1PhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Bus1PhaseCBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*Bus1PhaseCBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -38,13 +66,28 @@ func (m *Bus1PhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -55,13 +98,28 @@ func (m *Bus1PhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64)
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -86,14 +144,42 @@ func (m *Bus1PhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1PhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Bus1PhaseBBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*Bus1PhaseBBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -104,13 +190,28 @@ func (m *Bus1PhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -121,13 +222,28 @@ func (m *Bus1PhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64)
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -152,14 +268,42 @@ func (m *Bus1PhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1PhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Bus1PhaseABasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*Bus1PhaseABasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -170,13 +314,28 @@ func (m *Bus1PhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -187,13 +346,28 @@ func (m *Bus1PhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64)
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1PhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -218,14 +392,42 @@ func (m *Bus1AverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *Bus1AverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Bus1AverageBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*Bus1AverageBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1AverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -236,13 +438,28 @@ func (m *Bus1AverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1AverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -253,13 +470,28 @@ func (m *Bus1AverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Bus1AverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -281,14 +513,41 @@ func (m *UtilityTotalAcEnergy) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *UtilityTotalAcEnergy) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityTotalAcEnergy) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityTotalAcEnergy) Clone() Message {
+	if m == nil {
+		return (*UtilityTotalAcEnergy)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.TotalEnergyExport = clonePointer(m.TotalEnergyExport)
+	copy.TotalEnergyImport = clonePointer(m.TotalEnergyImport)
+	return &copy
+}
+
 // TotalEnergyExportValue returns TotalEnergyExport as a physical value in kWh (value = raw).
-// The bool is false when TotalEnergyExport is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
-	if m.TotalEnergyExport == nil {
+	if m == nil || m.TotalEnergyExport == nil {
 		return 0, false
 	}
-	return float64(*m.TotalEnergyExport), true
+	if *m.TotalEnergyExport == 4294967295 {
+		return 0, false
+	}
+	if *m.TotalEnergyExport == 4294967294 {
+		return 0, false
+	}
+	if *m.TotalEnergyExport == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TotalEnergyExport)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
@@ -299,13 +558,28 @@ func (m *UtilityTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
 }
 
 // TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
-// The bool is false when TotalEnergyImport is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
-	if m.TotalEnergyImport == nil {
+	if m == nil || m.TotalEnergyImport == nil {
 		return 0, false
 	}
-	return float64(*m.TotalEnergyImport), true
+	if *m.TotalEnergyImport == 4294967295 {
+		return 0, false
+	}
+	if *m.TotalEnergyImport == 4294967294 {
+		return 0, false
+	}
+	if *m.TotalEnergyImport == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TotalEnergyImport)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
@@ -330,14 +604,42 @@ func (m *UtilityPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseCAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseCAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseCAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower), true
+	if *m.ReactivePower == 65535 {
+		return 0, false
+	}
+	if *m.ReactivePower == 65534 {
+		return 0, false
+	}
+	if *m.ReactivePower == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -348,13 +650,28 @@ func (m *UtilityPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -376,14 +693,44 @@ func (m *UtilityPhaseCAcPower) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *UtilityPhaseCAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseCAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseCAcPower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseCAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -394,13 +741,31 @@ func (m *UtilityPhaseCAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -426,14 +791,43 @@ func (m *UtilityPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseCBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseCBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -444,13 +838,28 @@ func (m *UtilityPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64)
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -461,13 +870,28 @@ func (m *UtilityPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -478,13 +902,28 @@ func (m *UtilityPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -509,14 +948,42 @@ func (m *UtilityPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseBAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseBAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseBAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower), true
+	if *m.ReactivePower == 65535 {
+		return 0, false
+	}
+	if *m.ReactivePower == 65534 {
+		return 0, false
+	}
+	if *m.ReactivePower == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -527,13 +994,28 @@ func (m *UtilityPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -555,14 +1037,44 @@ func (m *UtilityPhaseBAcPower) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *UtilityPhaseBAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseBAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseBAcPower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseBAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -573,13 +1085,31 @@ func (m *UtilityPhaseBAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -605,14 +1135,43 @@ func (m *UtilityPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseBBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseBBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -623,13 +1182,28 @@ func (m *UtilityPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64)
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -640,13 +1214,28 @@ func (m *UtilityPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -657,13 +1246,28 @@ func (m *UtilityPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -688,14 +1292,45 @@ func (m *UtilityPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseAAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseAAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseAAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -706,13 +1341,28 @@ func (m *UtilityPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -734,14 +1384,44 @@ func (m *UtilityPhaseAAcPower) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *UtilityPhaseAAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityPhaseAAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseAAcPower) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseAAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseAAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -752,13 +1432,31 @@ func (m *UtilityPhaseAAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseAAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -784,14 +1482,43 @@ func (m *UtilityPhaseABasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityPhaseABasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*UtilityPhaseABasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -802,13 +1529,28 @@ func (m *UtilityPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64)
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -819,13 +1561,28 @@ func (m *UtilityPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -836,13 +1593,28 @@ func (m *UtilityPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -867,14 +1639,45 @@ func (m *UtilityTotalAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityTotalAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityTotalAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*UtilityTotalAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -885,13 +1688,28 @@ func (m *UtilityTotalAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -913,14 +1731,44 @@ func (m *UtilityTotalAcPower) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *UtilityTotalAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *UtilityTotalAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityTotalAcPower) Clone() Message {
+	if m == nil {
+		return (*UtilityTotalAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -931,13 +1779,31 @@ func (m *UtilityTotalAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityTotalAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -963,14 +1829,43 @@ func (m *UtilityAverageBasicAcQuantities) DecodePayload(payload []uint8) error {
 }
 func (m *UtilityAverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *UtilityAverageBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*UtilityAverageBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -981,13 +1876,28 @@ func (m *UtilityAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -998,13 +1908,28 @@ func (m *UtilityAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v floa
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -1015,13 +1940,28 @@ func (m *UtilityAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *UtilityAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -1045,14 +1985,41 @@ func (m *GeneratorTotalAcEnergy) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorTotalAcEnergy) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorTotalAcEnergy) Clone() Message {
+	if m == nil {
+		return (*GeneratorTotalAcEnergy)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.TotalEnergyExport = clonePointer(m.TotalEnergyExport)
+	copy.TotalEnergyImport = clonePointer(m.TotalEnergyImport)
+	return &copy
+}
+
 // TotalEnergyExportValue returns TotalEnergyExport as a physical value in kWh (value = raw).
-// The bool is false when TotalEnergyExport is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
-	if m.TotalEnergyExport == nil {
+	if m == nil || m.TotalEnergyExport == nil {
 		return 0, false
 	}
-	return float64(*m.TotalEnergyExport), true
+	if *m.TotalEnergyExport == 4294967295 {
+		return 0, false
+	}
+	if *m.TotalEnergyExport == 4294967294 {
+		return 0, false
+	}
+	if *m.TotalEnergyExport == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TotalEnergyExport)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
@@ -1063,13 +2030,28 @@ func (m *GeneratorTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
 }
 
 // TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
-// The bool is false when TotalEnergyImport is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
-	if m.TotalEnergyImport == nil {
+	if m == nil || m.TotalEnergyImport == nil {
 		return 0, false
 	}
-	return float64(*m.TotalEnergyImport), true
+	if *m.TotalEnergyImport == 4294967295 {
+		return 0, false
+	}
+	if *m.TotalEnergyImport == 4294967294 {
+		return 0, false
+	}
+	if *m.TotalEnergyImport == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TotalEnergyImport)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
@@ -1094,14 +2076,45 @@ func (m *GeneratorPhaseCAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseCAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseCAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseCAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -1112,13 +2125,28 @@ func (m *GeneratorPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -1142,14 +2170,44 @@ func (m *GeneratorPhaseCAcPower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseCAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseCAcPower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseCAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -1160,13 +2218,31 @@ func (m *GeneratorPhaseCAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VAR, rounded to the nearest
@@ -1192,14 +2268,43 @@ func (m *GeneratorPhaseCBasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseCBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseCBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseCBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1210,13 +2315,28 @@ func (m *GeneratorPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float6
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1227,13 +2347,28 @@ func (m *GeneratorPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v flo
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -1244,13 +2379,28 @@ func (m *GeneratorPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -1275,14 +2425,45 @@ func (m *GeneratorPhaseBAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseBAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseBAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseBAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -1293,13 +2474,28 @@ func (m *GeneratorPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -1323,14 +2519,44 @@ func (m *GeneratorPhaseBAcPower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseBAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseBAcPower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseBAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -1341,13 +2567,31 @@ func (m *GeneratorPhaseBAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -1373,14 +2617,43 @@ func (m *GeneratorPhaseBBasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseBBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseBBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseBBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1391,13 +2664,28 @@ func (m *GeneratorPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float6
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1408,13 +2696,28 @@ func (m *GeneratorPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v flo
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -1425,13 +2728,28 @@ func (m *GeneratorPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -1456,14 +2774,45 @@ func (m *GeneratorPhaseAAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseAAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseAAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseAAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -1474,13 +2823,28 @@ func (m *GeneratorPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -1504,14 +2868,44 @@ func (m *GeneratorPhaseAAcPower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorPhaseAAcPower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseAAcPower) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseAAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseAAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -1522,13 +2916,31 @@ func (m *GeneratorPhaseAAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseAAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -1554,14 +2966,43 @@ func (m *GeneratorPhaseABasicAcQuantities) DecodePayload(payload []uint8) error 
 }
 func (m *GeneratorPhaseABasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorPhaseABasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*GeneratorPhaseABasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1572,13 +3013,28 @@ func (m *GeneratorPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float6
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1589,13 +3045,28 @@ func (m *GeneratorPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v flo
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -1606,13 +3077,28 @@ func (m *GeneratorPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -1637,14 +3123,45 @@ func (m *GeneratorTotalAcReactivePower) DecodePayload(payload []uint8) error {
 }
 func (m *GeneratorTotalAcReactivePower) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorTotalAcReactivePower) Clone() Message {
+	if m == nil {
+		return (*GeneratorTotalAcReactivePower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ReactivePower = clonePointer(m.ReactivePower)
+	copy.PowerFactor = clonePointer(m.PowerFactor)
+	copy.PowerFactorLagging = clonePointer(m.PowerFactorLagging)
+	return &copy
+}
+
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw - 2e+09).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower) - 2e+09, true
+	if *m.ReactivePower == 2147483647 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -1655,13 +3172,28 @@ func (m *GeneratorTotalAcReactivePower) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcReactivePower) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 6.10352e-05, true
+	if *m.PowerFactor == 65535 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65534 {
+		return 0, false
+	}
+	if *m.PowerFactor == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 6.10352e-05
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.999755859375 && !approximatelyEqual(value, 3.999755859375) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -1683,14 +3215,44 @@ func (m *GeneratorTotalAcPower) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *GeneratorTotalAcPower) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GeneratorTotalAcPower) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorTotalAcPower) Clone() Message {
+	if m == nil {
+		return (*GeneratorTotalAcPower)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.RealPower = clonePointer(m.RealPower)
+	copy.ApparentPower = clonePointer(m.ApparentPower)
+	return &copy
+}
+
 // RealPowerValue returns RealPower as a physical value in W (value = raw - 2e+09).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcPower) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower) - 2e+09, true
+	if *m.RealPower == 2147483647 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.RealPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -1701,13 +3263,31 @@ func (m *GeneratorTotalAcPower) SetRealPowerValue(v float64) {
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
-// The bool is false when ApparentPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorTotalAcPower) ApparentPowerValue() (float64, bool) {
-	if m.ApparentPower == nil {
+	if m == nil || m.ApparentPower == nil {
 		return 0, false
 	}
-	return float64(*m.ApparentPower) - 2e+09, true
+	if *m.ApparentPower == 2147483647 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967294 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967293 {
+		return 0, false
+	}
+	if *m.ApparentPower == 4294967295 {
+		return 0, false
+	}
+	value := float64(*m.ApparentPower) - 2e+09
+	if value < -2e+09 && !approximatelyEqual(value, -2e+09) {
+		return 0, false
+	}
+	if value > 2.294967292e+09 && !approximatelyEqual(value, 2.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
@@ -1733,14 +3313,43 @@ func (m *GeneratorAverageBasicAcQuantities) DecodePayload(payload []uint8) error
 }
 func (m *GeneratorAverageBasicAcQuantities) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GeneratorAverageBasicAcQuantities) Clone() Message {
+	if m == nil {
+		return (*GeneratorAverageBasicAcQuantities)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.LineLineAcRmsVoltage = clonePointer(m.LineLineAcRmsVoltage)
+	copy.LineNeutralAcRmsVoltage = clonePointer(m.LineNeutralAcRmsVoltage)
+	copy.AcFrequency = clonePointer(m.AcFrequency)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	return &copy
+}
+
 // LineLineAcRmsVoltageValue returns LineLineAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineLineAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool) {
-	if m.LineLineAcRmsVoltage == nil {
+	if m == nil || m.LineLineAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineLineAcRmsVoltage), true
+	if *m.LineLineAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineLineAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineLineAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1751,13 +3360,28 @@ func (m *GeneratorAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
-// The bool is false when LineNeutralAcRmsVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, bool) {
-	if m.LineNeutralAcRmsVoltage == nil {
+	if m == nil || m.LineNeutralAcRmsVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.LineNeutralAcRmsVoltage), true
+	if *m.LineNeutralAcRmsVoltage == 65535 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65534 {
+		return 0, false
+	}
+	if *m.LineNeutralAcRmsVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LineNeutralAcRmsVoltage)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
@@ -1768,13 +3392,28 @@ func (m *GeneratorAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v fl
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
-// The bool is false when AcFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
-	if m.AcFrequency == nil {
+	if m == nil || m.AcFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.AcFrequency) * 0.0078125, true
+	if *m.AcFrequency == 65535 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65534 {
+		return 0, false
+	}
+	if *m.AcFrequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcFrequency) * 0.0078125
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 511.96875 && !approximatelyEqual(value, 511.96875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
@@ -1785,13 +3424,28 @@ func (m *GeneratorAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GeneratorAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent), true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -1821,14 +3475,47 @@ func (m *GarminAutopilotSystemVoltage) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotSystemVoltage) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotSystemVoltage) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotSystemVoltage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.SystemVoltage = clonePointer(m.SystemVoltage)
+	return &copy
+}
+
 // SystemVoltageValue returns SystemVoltage as a physical value in V (value = raw * 0.01).
-// The bool is false when SystemVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotSystemVoltage) SystemVoltageValue() (float64, bool) {
-	if m.SystemVoltage == nil {
+	if m == nil || m.SystemVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.SystemVoltage) * 0.01, true
+	if *m.SystemVoltage == 65535 {
+		return 0, false
+	}
+	if *m.SystemVoltage == 65534 {
+		return 0, false
+	}
+	if *m.SystemVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SystemVoltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSystemVoltageValue sets SystemVoltage from a physical value in V, rounded to the nearest
@@ -1860,14 +3547,49 @@ func (m *ElectricEnergyStorageStatusDynamic) DecodePayload(payload []uint8) erro
 }
 func (m *ElectricEnergyStorageStatusDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricEnergyStorageStatusDynamic) Clone() Message {
+	if m == nil {
+		return (*ElectricEnergyStorageStatusDynamic)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.EnergyStorageIdentifier = clonePointer(m.EnergyStorageIdentifier)
+	copy.StateOfCharge = clonePointer(m.StateOfCharge)
+	copy.TimeRemaining = clonePointer(m.TimeRemaining)
+	copy.HighestCellTemperature = clonePointer(m.HighestCellTemperature)
+	copy.LowestCellTemperature = clonePointer(m.LowestCellTemperature)
+	copy.AverageCellTemperature = clonePointer(m.AverageCellTemperature)
+	copy.MaxDischargeCurrent = clonePointer(m.MaxDischargeCurrent)
+	copy.MaxChargeCurrent = clonePointer(m.MaxChargeCurrent)
+	copy.CoolingSystemStatus = clonePointer(m.CoolingSystemStatus)
+	copy.HeatingSystemStatus = clonePointer(m.HeatingSystemStatus)
+	return &copy
+}
+
 // StateOfChargeValue returns StateOfCharge as a physical value in % (value = raw).
-// The bool is false when StateOfCharge is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) StateOfChargeValue() (float64, bool) {
-	if m.StateOfCharge == nil {
+	if m == nil || m.StateOfCharge == nil {
 		return 0, false
 	}
-	return float64(*m.StateOfCharge), true
+	if *m.StateOfCharge == 255 {
+		return 0, false
+	}
+	if *m.StateOfCharge == 254 {
+		return 0, false
+	}
+	if *m.StateOfCharge == 253 {
+		return 0, false
+	}
+	value := float64(*m.StateOfCharge)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
@@ -1878,13 +3600,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetStateOfChargeValue(v float64) {
 }
 
 // TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
-// The bool is false when TimeRemaining is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) TimeRemainingValue() (float64, bool) {
-	if m.TimeRemaining == nil {
+	if m == nil || m.TimeRemaining == nil {
 		return 0, false
 	}
-	return float64(*m.TimeRemaining) * 60, true
+	if *m.TimeRemaining == 65535 {
+		return 0, false
+	}
+	if *m.TimeRemaining == 65534 {
+		return 0, false
+	}
+	if *m.TimeRemaining == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TimeRemaining) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.93192e+06 && !approximatelyEqual(value, 3.93192e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
@@ -1895,13 +3632,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetTimeRemainingValue(v float64) {
 }
 
 // HighestCellTemperatureValue returns HighestCellTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when HighestCellTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) HighestCellTemperatureValue() (float64, bool) {
-	if m.HighestCellTemperature == nil {
+	if m == nil || m.HighestCellTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.HighestCellTemperature) * 0.01, true
+	if *m.HighestCellTemperature == 65535 {
+		return 0, false
+	}
+	if *m.HighestCellTemperature == 65534 {
+		return 0, false
+	}
+	if *m.HighestCellTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.HighestCellTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHighestCellTemperatureValue sets HighestCellTemperature from a physical value in K, rounded to the nearest
@@ -1912,13 +3664,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetHighestCellTemperatureValue(v fl
 }
 
 // LowestCellTemperatureValue returns LowestCellTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when LowestCellTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) LowestCellTemperatureValue() (float64, bool) {
-	if m.LowestCellTemperature == nil {
+	if m == nil || m.LowestCellTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.LowestCellTemperature) * 0.01, true
+	if *m.LowestCellTemperature == 65535 {
+		return 0, false
+	}
+	if *m.LowestCellTemperature == 65534 {
+		return 0, false
+	}
+	if *m.LowestCellTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LowestCellTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLowestCellTemperatureValue sets LowestCellTemperature from a physical value in K, rounded to the nearest
@@ -1929,13 +3696,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetLowestCellTemperatureValue(v flo
 }
 
 // AverageCellTemperatureValue returns AverageCellTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when AverageCellTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) AverageCellTemperatureValue() (float64, bool) {
-	if m.AverageCellTemperature == nil {
+	if m == nil || m.AverageCellTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.AverageCellTemperature) * 0.01, true
+	if *m.AverageCellTemperature == 65535 {
+		return 0, false
+	}
+	if *m.AverageCellTemperature == 65534 {
+		return 0, false
+	}
+	if *m.AverageCellTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AverageCellTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAverageCellTemperatureValue sets AverageCellTemperature from a physical value in K, rounded to the nearest
@@ -1946,13 +3728,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetAverageCellTemperatureValue(v fl
 }
 
 // MaxDischargeCurrentValue returns MaxDischargeCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when MaxDischargeCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) MaxDischargeCurrentValue() (float64, bool) {
-	if m.MaxDischargeCurrent == nil {
+	if m == nil || m.MaxDischargeCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.MaxDischargeCurrent) * 0.1, true
+	if *m.MaxDischargeCurrent == 32767 {
+		return 0, false
+	}
+	if *m.MaxDischargeCurrent == 32766 {
+		return 0, false
+	}
+	if *m.MaxDischargeCurrent == 32765 {
+		return 0, false
+	}
+	value := float64(*m.MaxDischargeCurrent) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaxDischargeCurrentValue sets MaxDischargeCurrent from a physical value in A, rounded to the nearest
@@ -1963,13 +3760,28 @@ func (m *ElectricEnergyStorageStatusDynamic) SetMaxDischargeCurrentValue(v float
 }
 
 // MaxChargeCurrentValue returns MaxChargeCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when MaxChargeCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusDynamic) MaxChargeCurrentValue() (float64, bool) {
-	if m.MaxChargeCurrent == nil {
+	if m == nil || m.MaxChargeCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.MaxChargeCurrent) * 0.1, true
+	if *m.MaxChargeCurrent == 32767 {
+		return 0, false
+	}
+	if *m.MaxChargeCurrent == 32766 {
+		return 0, false
+	}
+	if *m.MaxChargeCurrent == 32765 {
+		return 0, false
+	}
+	value := float64(*m.MaxChargeCurrent) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaxChargeCurrentValue sets MaxChargeCurrent from a physical value in A, rounded to the nearest
@@ -2005,14 +3817,53 @@ func (m *ElectricEnergyStorageInformation) DecodePayload(payload []uint8) error 
 }
 func (m *ElectricEnergyStorageInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricEnergyStorageInformation) Clone() Message {
+	if m == nil {
+		return (*ElectricEnergyStorageInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.EnergyStorageIdentifier = clonePointer(m.EnergyStorageIdentifier)
+	copy.MotorType = clonePointer(m.MotorType)
+	copy.StorageChemistryConversion = clonePointer(m.StorageChemistryConversion)
+	copy.MaximumTemperatureDerating = clonePointer(m.MaximumTemperatureDerating)
+	copy.MaximumTemperatureShutOff = clonePointer(m.MaximumTemperatureShutOff)
+	copy.MinimumTemperatureDerating = clonePointer(m.MinimumTemperatureDerating)
+	copy.MinimumTemperatureShutOff = clonePointer(m.MinimumTemperatureShutOff)
+	copy.UsableBatteryEnergy = clonePointer(m.UsableBatteryEnergy)
+	copy.StateOfHealth = clonePointer(m.StateOfHealth)
+	copy.BatteryCycleCounter = clonePointer(m.BatteryCycleCounter)
+	copy.BatteryFullStatus = clonePointer(m.BatteryFullStatus)
+	copy.BatteryEmptyStatus = clonePointer(m.BatteryEmptyStatus)
+	copy.MaximumChargeSoc = clonePointer(m.MaximumChargeSoc)
+	copy.MinimumChargeSoc = clonePointer(m.MinimumChargeSoc)
+	return &copy
+}
+
 // MaximumTemperatureDeratingValue returns MaximumTemperatureDerating as a physical value in K (value = raw * 0.01).
-// The bool is false when MaximumTemperatureDerating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageInformation) MaximumTemperatureDeratingValue() (float64, bool) {
-	if m.MaximumTemperatureDerating == nil {
+	if m == nil || m.MaximumTemperatureDerating == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumTemperatureDerating) * 0.01, true
+	if *m.MaximumTemperatureDerating == 65535 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureDerating == 65534 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureDerating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumTemperatureDerating) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumTemperatureDeratingValue sets MaximumTemperatureDerating from a physical value in K, rounded to the nearest
@@ -2023,13 +3874,28 @@ func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureDeratingValue(v 
 }
 
 // MaximumTemperatureShutOffValue returns MaximumTemperatureShutOff as a physical value in K (value = raw * 0.01).
-// The bool is false when MaximumTemperatureShutOff is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageInformation) MaximumTemperatureShutOffValue() (float64, bool) {
-	if m.MaximumTemperatureShutOff == nil {
+	if m == nil || m.MaximumTemperatureShutOff == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumTemperatureShutOff) * 0.01, true
+	if *m.MaximumTemperatureShutOff == 65535 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureShutOff == 65534 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureShutOff == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumTemperatureShutOff) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumTemperatureShutOffValue sets MaximumTemperatureShutOff from a physical value in K, rounded to the nearest
@@ -2040,13 +3906,28 @@ func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureShutOffValue(v f
 }
 
 // MinimumTemperatureDeratingValue returns MinimumTemperatureDerating as a physical value in K (value = raw * 0.01).
-// The bool is false when MinimumTemperatureDerating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageInformation) MinimumTemperatureDeratingValue() (float64, bool) {
-	if m.MinimumTemperatureDerating == nil {
+	if m == nil || m.MinimumTemperatureDerating == nil {
 		return 0, false
 	}
-	return float64(*m.MinimumTemperatureDerating) * 0.01, true
+	if *m.MinimumTemperatureDerating == 65535 {
+		return 0, false
+	}
+	if *m.MinimumTemperatureDerating == 65534 {
+		return 0, false
+	}
+	if *m.MinimumTemperatureDerating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MinimumTemperatureDerating) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMinimumTemperatureDeratingValue sets MinimumTemperatureDerating from a physical value in K, rounded to the nearest
@@ -2057,13 +3938,28 @@ func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureDeratingValue(v 
 }
 
 // MinimumTemperatureShutOffValue returns MinimumTemperatureShutOff as a physical value in K (value = raw * 0.01).
-// The bool is false when MinimumTemperatureShutOff is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageInformation) MinimumTemperatureShutOffValue() (float64, bool) {
-	if m.MinimumTemperatureShutOff == nil {
+	if m == nil || m.MinimumTemperatureShutOff == nil {
 		return 0, false
 	}
-	return float64(*m.MinimumTemperatureShutOff) * 0.01, true
+	if *m.MinimumTemperatureShutOff == 65535 {
+		return 0, false
+	}
+	if *m.MinimumTemperatureShutOff == 65534 {
+		return 0, false
+	}
+	if *m.MinimumTemperatureShutOff == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MinimumTemperatureShutOff) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMinimumTemperatureShutOffValue sets MinimumTemperatureShutOff from a physical value in K, rounded to the nearest
@@ -2074,13 +3970,28 @@ func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureShutOffValue(v f
 }
 
 // UsableBatteryEnergyValue returns UsableBatteryEnergy as a physical value in kWh (value = raw).
-// The bool is false when UsableBatteryEnergy is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageInformation) UsableBatteryEnergyValue() (float64, bool) {
-	if m.UsableBatteryEnergy == nil {
+	if m == nil || m.UsableBatteryEnergy == nil {
 		return 0, false
 	}
-	return float64(*m.UsableBatteryEnergy), true
+	if *m.UsableBatteryEnergy == 4294967295 {
+		return 0, false
+	}
+	if *m.UsableBatteryEnergy == 4294967294 {
+		return 0, false
+	}
+	if *m.UsableBatteryEnergy == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.UsableBatteryEnergy)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetUsableBatteryEnergyValue sets UsableBatteryEnergy from a physical value in kWh, rounded to the nearest
@@ -2110,6 +4021,24 @@ func (m *LoadControllerConnectionStateControl) DecodePayload(payload []uint8) er
 }
 func (m *LoadControllerConnectionStateControl) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LoadControllerConnectionStateControl) Clone() Message {
+	if m == nil {
+		return (*LoadControllerConnectionStateControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceId = clonePointer(m.SequenceId)
+	copy.ConnectionId = clonePointer(m.ConnectionId)
+	copy.State = clonePointer(m.State)
+	copy.Status = clonePointer(m.Status)
+	copy.OperationalStatusControl = clonePointer(m.OperationalStatusControl)
+	copy.PwmDutyCycle = clonePointer(m.PwmDutyCycle)
+	copy.Timeon = clonePointer(m.Timeon)
+	copy.Timeoff = clonePointer(m.Timeoff)
+	return &copy
 }
 
 type BinarySwitchBankStatus struct {
@@ -2153,6 +4082,45 @@ func (m *BinarySwitchBankStatus) DecodePayload(payload []uint8) error {
 }
 func (m *BinarySwitchBankStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BinarySwitchBankStatus) Clone() Message {
+	if m == nil {
+		return (*BinarySwitchBankStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.Indicator1 = clonePointer(m.Indicator1)
+	copy.Indicator2 = clonePointer(m.Indicator2)
+	copy.Indicator3 = clonePointer(m.Indicator3)
+	copy.Indicator4 = clonePointer(m.Indicator4)
+	copy.Indicator5 = clonePointer(m.Indicator5)
+	copy.Indicator6 = clonePointer(m.Indicator6)
+	copy.Indicator7 = clonePointer(m.Indicator7)
+	copy.Indicator8 = clonePointer(m.Indicator8)
+	copy.Indicator9 = clonePointer(m.Indicator9)
+	copy.Indicator10 = clonePointer(m.Indicator10)
+	copy.Indicator11 = clonePointer(m.Indicator11)
+	copy.Indicator12 = clonePointer(m.Indicator12)
+	copy.Indicator13 = clonePointer(m.Indicator13)
+	copy.Indicator14 = clonePointer(m.Indicator14)
+	copy.Indicator15 = clonePointer(m.Indicator15)
+	copy.Indicator16 = clonePointer(m.Indicator16)
+	copy.Indicator17 = clonePointer(m.Indicator17)
+	copy.Indicator18 = clonePointer(m.Indicator18)
+	copy.Indicator19 = clonePointer(m.Indicator19)
+	copy.Indicator20 = clonePointer(m.Indicator20)
+	copy.Indicator21 = clonePointer(m.Indicator21)
+	copy.Indicator22 = clonePointer(m.Indicator22)
+	copy.Indicator23 = clonePointer(m.Indicator23)
+	copy.Indicator24 = clonePointer(m.Indicator24)
+	copy.Indicator25 = clonePointer(m.Indicator25)
+	copy.Indicator26 = clonePointer(m.Indicator26)
+	copy.Indicator27 = clonePointer(m.Indicator27)
+	copy.Indicator28 = clonePointer(m.Indicator28)
+	return &copy
+}
+
 type SwitchBankControl struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -2192,6 +4160,45 @@ func (m *SwitchBankControl) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *SwitchBankControl) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SwitchBankControl) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SwitchBankControl) Clone() Message {
+	if m == nil {
+		return (*SwitchBankControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.Switch1 = clonePointer(m.Switch1)
+	copy.Switch2 = clonePointer(m.Switch2)
+	copy.Switch3 = clonePointer(m.Switch3)
+	copy.Switch4 = clonePointer(m.Switch4)
+	copy.Switch5 = clonePointer(m.Switch5)
+	copy.Switch6 = clonePointer(m.Switch6)
+	copy.Switch7 = clonePointer(m.Switch7)
+	copy.Switch8 = clonePointer(m.Switch8)
+	copy.Switch9 = clonePointer(m.Switch9)
+	copy.Switch10 = clonePointer(m.Switch10)
+	copy.Switch11 = clonePointer(m.Switch11)
+	copy.Switch12 = clonePointer(m.Switch12)
+	copy.Switch13 = clonePointer(m.Switch13)
+	copy.Switch14 = clonePointer(m.Switch14)
+	copy.Switch15 = clonePointer(m.Switch15)
+	copy.Switch16 = clonePointer(m.Switch16)
+	copy.Switch17 = clonePointer(m.Switch17)
+	copy.Switch18 = clonePointer(m.Switch18)
+	copy.Switch19 = clonePointer(m.Switch19)
+	copy.Switch20 = clonePointer(m.Switch20)
+	copy.Switch21 = clonePointer(m.Switch21)
+	copy.Switch22 = clonePointer(m.Switch22)
+	copy.Switch23 = clonePointer(m.Switch23)
+	copy.Switch24 = clonePointer(m.Switch24)
+	copy.Switch25 = clonePointer(m.Switch25)
+	copy.Switch26 = clonePointer(m.Switch26)
+	copy.Switch27 = clonePointer(m.Switch27)
+	copy.Switch28 = clonePointer(m.Switch28)
+	return &copy
+}
+
 type AcInputStatus struct {
 	Info          MessageInfo               `json:"info"`
 	Instance      *uint64                   `json:"instance,omitempty" n2k:"1"`
@@ -2217,14 +4224,53 @@ func (m *AcInputStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcInputStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcInputStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcInputStatus) Clone() Message {
+	if m == nil {
+		return (*AcInputStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.NumberOfLines = clonePointer(m.NumberOfLines)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Line = clonePointer(m.Repeating1[i].Line)
+		copy.Repeating1[i].Acceptability = clonePointer(m.Repeating1[i].Acceptability)
+		copy.Repeating1[i].Voltage = clonePointer(m.Repeating1[i].Voltage)
+		copy.Repeating1[i].Current = clonePointer(m.Repeating1[i].Current)
+		copy.Repeating1[i].Frequency = clonePointer(m.Repeating1[i].Frequency)
+		copy.Repeating1[i].BreakerSize = clonePointer(m.Repeating1[i].BreakerSize)
+		copy.Repeating1[i].RealPower = clonePointer(m.Repeating1[i].RealPower)
+		copy.Repeating1[i].ReactivePower = clonePointer(m.Repeating1[i].ReactivePower)
+		copy.Repeating1[i].PowerFactor = clonePointer(m.Repeating1[i].PowerFactor)
+	}
+	return &copy
+}
+
 // VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
-// The bool is false when Voltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) VoltageValue() (float64, bool) {
-	if m.Voltage == nil {
+	if m == nil || m.Voltage == nil {
 		return 0, false
 	}
-	return float64(*m.Voltage) * 0.01, true
+	if *m.Voltage == 65535 {
+		return 0, false
+	}
+	if *m.Voltage == 65534 {
+		return 0, false
+	}
+	if *m.Voltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Voltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
@@ -2235,13 +4281,28 @@ func (m *AcInputStatusRepeating1) SetVoltageValue(v float64) {
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
-// The bool is false when Current is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) CurrentValue() (float64, bool) {
-	if m.Current == nil {
+	if m == nil || m.Current == nil {
 		return 0, false
 	}
-	return float64(*m.Current) * 0.1, true
+	if *m.Current == 65535 {
+		return 0, false
+	}
+	if *m.Current == 65534 {
+		return 0, false
+	}
+	if *m.Current == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Current) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
@@ -2252,13 +4313,28 @@ func (m *AcInputStatusRepeating1) SetCurrentValue(v float64) {
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency) * 0.01, true
+	if *m.Frequency == 65535 {
+		return 0, false
+	}
+	if *m.Frequency == 65534 {
+		return 0, false
+	}
+	if *m.Frequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Frequency) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -2269,13 +4345,28 @@ func (m *AcInputStatusRepeating1) SetFrequencyValue(v float64) {
 }
 
 // BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
-// The bool is false when BreakerSize is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) BreakerSizeValue() (float64, bool) {
-	if m.BreakerSize == nil {
+	if m == nil || m.BreakerSize == nil {
 		return 0, false
 	}
-	return float64(*m.BreakerSize) * 0.1, true
+	if *m.BreakerSize == 65535 {
+		return 0, false
+	}
+	if *m.BreakerSize == 65534 {
+		return 0, false
+	}
+	if *m.BreakerSize == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BreakerSize) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
@@ -2286,13 +4377,28 @@ func (m *AcInputStatusRepeating1) SetBreakerSizeValue(v float64) {
 }
 
 // RealPowerValue returns RealPower as a physical value in W (value = raw).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower), true
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.RealPower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -2303,13 +4409,28 @@ func (m *AcInputStatusRepeating1) SetRealPowerValue(v float64) {
 }
 
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower), true
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -2320,13 +4441,28 @@ func (m *AcInputStatusRepeating1) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcInputStatusRepeating1) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 0.01, true
+	if *m.PowerFactor == 127 {
+		return 0, false
+	}
+	if *m.PowerFactor == 126 {
+		return 0, false
+	}
+	if *m.PowerFactor == 125 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 0.01
+	if value < -1 && !approximatelyEqual(value, -1) {
+		return 0, false
+	}
+	if value > 1 && !approximatelyEqual(value, 1) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -2361,14 +4497,53 @@ func (m *AcOutputStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AcOutputStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcOutputStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcOutputStatus) Clone() Message {
+	if m == nil {
+		return (*AcOutputStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.NumberOfLines = clonePointer(m.NumberOfLines)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Line = clonePointer(m.Repeating1[i].Line)
+		copy.Repeating1[i].Waveform = clonePointer(m.Repeating1[i].Waveform)
+		copy.Repeating1[i].Voltage = clonePointer(m.Repeating1[i].Voltage)
+		copy.Repeating1[i].Current = clonePointer(m.Repeating1[i].Current)
+		copy.Repeating1[i].Frequency = clonePointer(m.Repeating1[i].Frequency)
+		copy.Repeating1[i].BreakerSize = clonePointer(m.Repeating1[i].BreakerSize)
+		copy.Repeating1[i].RealPower = clonePointer(m.Repeating1[i].RealPower)
+		copy.Repeating1[i].ReactivePower = clonePointer(m.Repeating1[i].ReactivePower)
+		copy.Repeating1[i].PowerFactor = clonePointer(m.Repeating1[i].PowerFactor)
+	}
+	return &copy
+}
+
 // VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
-// The bool is false when Voltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) VoltageValue() (float64, bool) {
-	if m.Voltage == nil {
+	if m == nil || m.Voltage == nil {
 		return 0, false
 	}
-	return float64(*m.Voltage) * 0.01, true
+	if *m.Voltage == 65535 {
+		return 0, false
+	}
+	if *m.Voltage == 65534 {
+		return 0, false
+	}
+	if *m.Voltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Voltage) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
@@ -2379,13 +4554,28 @@ func (m *AcOutputStatusRepeating1) SetVoltageValue(v float64) {
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
-// The bool is false when Current is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) CurrentValue() (float64, bool) {
-	if m.Current == nil {
+	if m == nil || m.Current == nil {
 		return 0, false
 	}
-	return float64(*m.Current) * 0.1, true
+	if *m.Current == 65535 {
+		return 0, false
+	}
+	if *m.Current == 65534 {
+		return 0, false
+	}
+	if *m.Current == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Current) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
@@ -2396,13 +4586,28 @@ func (m *AcOutputStatusRepeating1) SetCurrentValue(v float64) {
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency) * 0.01, true
+	if *m.Frequency == 65535 {
+		return 0, false
+	}
+	if *m.Frequency == 65534 {
+		return 0, false
+	}
+	if *m.Frequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Frequency) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -2413,13 +4618,28 @@ func (m *AcOutputStatusRepeating1) SetFrequencyValue(v float64) {
 }
 
 // BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
-// The bool is false when BreakerSize is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) BreakerSizeValue() (float64, bool) {
-	if m.BreakerSize == nil {
+	if m == nil || m.BreakerSize == nil {
 		return 0, false
 	}
-	return float64(*m.BreakerSize) * 0.1, true
+	if *m.BreakerSize == 65535 {
+		return 0, false
+	}
+	if *m.BreakerSize == 65534 {
+		return 0, false
+	}
+	if *m.BreakerSize == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BreakerSize) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
@@ -2430,13 +4650,28 @@ func (m *AcOutputStatusRepeating1) SetBreakerSizeValue(v float64) {
 }
 
 // RealPowerValue returns RealPower as a physical value in W (value = raw).
-// The bool is false when RealPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) RealPowerValue() (float64, bool) {
-	if m.RealPower == nil {
+	if m == nil || m.RealPower == nil {
 		return 0, false
 	}
-	return float64(*m.RealPower), true
+	if *m.RealPower == 4294967295 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967294 {
+		return 0, false
+	}
+	if *m.RealPower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.RealPower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
@@ -2447,13 +4682,28 @@ func (m *AcOutputStatusRepeating1) SetRealPowerValue(v float64) {
 }
 
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
-// The bool is false when ReactivePower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) ReactivePowerValue() (float64, bool) {
-	if m.ReactivePower == nil {
+	if m == nil || m.ReactivePower == nil {
 		return 0, false
 	}
-	return float64(*m.ReactivePower), true
+	if *m.ReactivePower == 4294967295 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967294 {
+		return 0, false
+	}
+	if *m.ReactivePower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.ReactivePower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
@@ -2464,13 +4714,28 @@ func (m *AcOutputStatusRepeating1) SetReactivePowerValue(v float64) {
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
-// The bool is false when PowerFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcOutputStatusRepeating1) PowerFactorValue() (float64, bool) {
-	if m.PowerFactor == nil {
+	if m == nil || m.PowerFactor == nil {
 		return 0, false
 	}
-	return float64(*m.PowerFactor) * 0.01, true
+	if *m.PowerFactor == 127 {
+		return 0, false
+	}
+	if *m.PowerFactor == 126 {
+		return 0, false
+	}
+	if *m.PowerFactor == 125 {
+		return 0, false
+	}
+	value := float64(*m.PowerFactor) * 0.01
+	if value < -1 && !approximatelyEqual(value, -1) {
+		return 0, false
+	}
+	if value > 1 && !approximatelyEqual(value, 1) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
@@ -2498,14 +4763,47 @@ func (m *DcDetailedStatus) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *DcDetailedStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DcDetailedStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *DcDetailedStatus) Clone() Message {
+	if m == nil {
+		return (*DcDetailedStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Instance = clonePointer(m.Instance)
+	copy.DcType = clonePointer(m.DcType)
+	copy.StateOfCharge = clonePointer(m.StateOfCharge)
+	copy.StateOfHealth = clonePointer(m.StateOfHealth)
+	copy.TimeRemaining = clonePointer(m.TimeRemaining)
+	copy.RippleVoltage = clonePointer(m.RippleVoltage)
+	copy.RemainingCapacity = clonePointer(m.RemainingCapacity)
+	return &copy
+}
+
 // StateOfChargeValue returns StateOfCharge as a physical value in % (value = raw).
-// The bool is false when StateOfCharge is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcDetailedStatus) StateOfChargeValue() (float64, bool) {
-	if m.StateOfCharge == nil {
+	if m == nil || m.StateOfCharge == nil {
 		return 0, false
 	}
-	return float64(*m.StateOfCharge), true
+	if *m.StateOfCharge == 255 {
+		return 0, false
+	}
+	if *m.StateOfCharge == 254 {
+		return 0, false
+	}
+	if *m.StateOfCharge == 253 {
+		return 0, false
+	}
+	value := float64(*m.StateOfCharge)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
@@ -2516,13 +4814,28 @@ func (m *DcDetailedStatus) SetStateOfChargeValue(v float64) {
 }
 
 // StateOfHealthValue returns StateOfHealth as a physical value in % (value = raw).
-// The bool is false when StateOfHealth is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcDetailedStatus) StateOfHealthValue() (float64, bool) {
-	if m.StateOfHealth == nil {
+	if m == nil || m.StateOfHealth == nil {
 		return 0, false
 	}
-	return float64(*m.StateOfHealth), true
+	if *m.StateOfHealth == 255 {
+		return 0, false
+	}
+	if *m.StateOfHealth == 254 {
+		return 0, false
+	}
+	if *m.StateOfHealth == 253 {
+		return 0, false
+	}
+	value := float64(*m.StateOfHealth)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetStateOfHealthValue sets StateOfHealth from a physical value in %, rounded to the nearest
@@ -2533,13 +4846,28 @@ func (m *DcDetailedStatus) SetStateOfHealthValue(v float64) {
 }
 
 // TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
-// The bool is false when TimeRemaining is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcDetailedStatus) TimeRemainingValue() (float64, bool) {
-	if m.TimeRemaining == nil {
+	if m == nil || m.TimeRemaining == nil {
 		return 0, false
 	}
-	return float64(*m.TimeRemaining) * 60, true
+	if *m.TimeRemaining == 65535 {
+		return 0, false
+	}
+	if *m.TimeRemaining == 65534 {
+		return 0, false
+	}
+	if *m.TimeRemaining == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TimeRemaining) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.93192e+06 && !approximatelyEqual(value, 3.93192e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
@@ -2550,13 +4878,28 @@ func (m *DcDetailedStatus) SetTimeRemainingValue(v float64) {
 }
 
 // RippleVoltageValue returns RippleVoltage as a physical value in V (value = raw * 0.001).
-// The bool is false when RippleVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcDetailedStatus) RippleVoltageValue() (float64, bool) {
-	if m.RippleVoltage == nil {
+	if m == nil || m.RippleVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.RippleVoltage) * 0.001, true
+	if *m.RippleVoltage == 65535 {
+		return 0, false
+	}
+	if *m.RippleVoltage == 65534 {
+		return 0, false
+	}
+	if *m.RippleVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RippleVoltage) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65.532 && !approximatelyEqual(value, 65.532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRippleVoltageValue sets RippleVoltage from a physical value in V, rounded to the nearest
@@ -2567,13 +4910,28 @@ func (m *DcDetailedStatus) SetRippleVoltageValue(v float64) {
 }
 
 // RemainingCapacityValue returns RemainingCapacity as a physical value in Ah (value = raw).
-// The bool is false when RemainingCapacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcDetailedStatus) RemainingCapacityValue() (float64, bool) {
-	if m.RemainingCapacity == nil {
+	if m == nil || m.RemainingCapacity == nil {
 		return 0, false
 	}
-	return float64(*m.RemainingCapacity), true
+	if *m.RemainingCapacity == 65535 {
+		return 0, false
+	}
+	if *m.RemainingCapacity == 65534 {
+		return 0, false
+	}
+	if *m.RemainingCapacity == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RemainingCapacity)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRemainingCapacityValue sets RemainingCapacity from a physical value in Ah, rounded to the nearest
@@ -2600,14 +4958,46 @@ func (m *ChargerStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ChargerStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ChargerStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ChargerStatus) Clone() Message {
+	if m == nil {
+		return (*ChargerStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.BatteryInstance = clonePointer(m.BatteryInstance)
+	copy.OperatingState = clonePointer(m.OperatingState)
+	copy.ChargeMode = clonePointer(m.ChargeMode)
+	copy.Enabled = clonePointer(m.Enabled)
+	copy.EqualizationPending = clonePointer(m.EqualizationPending)
+	copy.EqualizationTimeRemaining = clonePointer(m.EqualizationTimeRemaining)
+	return &copy
+}
+
 // EqualizationTimeRemainingValue returns EqualizationTimeRemaining as a physical value in s (value = raw * 60).
-// The bool is false when EqualizationTimeRemaining is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ChargerStatus) EqualizationTimeRemainingValue() (float64, bool) {
-	if m.EqualizationTimeRemaining == nil {
+	if m == nil || m.EqualizationTimeRemaining == nil {
 		return 0, false
 	}
-	return float64(*m.EqualizationTimeRemaining) * 60, true
+	if *m.EqualizationTimeRemaining == 65535 {
+		return 0, false
+	}
+	if *m.EqualizationTimeRemaining == 65534 {
+		return 0, false
+	}
+	if *m.EqualizationTimeRemaining == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EqualizationTimeRemaining) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.93192e+06 && !approximatelyEqual(value, 3.93192e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEqualizationTimeRemainingValue sets EqualizationTimeRemaining from a physical value in s, rounded to the nearest
@@ -2632,14 +5022,44 @@ func (m *BatteryStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *BatteryStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *BatteryStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BatteryStatus) Clone() Message {
+	if m == nil {
+		return (*BatteryStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.Voltage = clonePointer(m.Voltage)
+	copy.Current = clonePointer(m.Current)
+	copy.Temperature = clonePointer(m.Temperature)
+	copy.Sid = clonePointer(m.Sid)
+	return &copy
+}
+
 // VoltageValue returns Voltage as a physical value in V (value = raw * 0.01).
-// The bool is false when Voltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryStatus) VoltageValue() (float64, bool) {
-	if m.Voltage == nil {
+	if m == nil || m.Voltage == nil {
 		return 0, false
 	}
-	return float64(*m.Voltage) * 0.01, true
+	if *m.Voltage == 32767 {
+		return 0, false
+	}
+	if *m.Voltage == 32766 {
+		return 0, false
+	}
+	if *m.Voltage == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Voltage) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
@@ -2650,13 +5070,28 @@ func (m *BatteryStatus) SetVoltageValue(v float64) {
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
-// The bool is false when Current is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryStatus) CurrentValue() (float64, bool) {
-	if m.Current == nil {
+	if m == nil || m.Current == nil {
 		return 0, false
 	}
-	return float64(*m.Current) * 0.1, true
+	if *m.Current == 32767 {
+		return 0, false
+	}
+	if *m.Current == 32766 {
+		return 0, false
+	}
+	if *m.Current == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Current) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
@@ -2667,13 +5102,28 @@ func (m *BatteryStatus) SetCurrentValue(v float64) {
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
-// The bool is false when Temperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryStatus) TemperatureValue() (float64, bool) {
-	if m.Temperature == nil {
+	if m == nil || m.Temperature == nil {
 		return 0, false
 	}
-	return float64(*m.Temperature) * 0.01, true
+	if *m.Temperature == 65535 {
+		return 0, false
+	}
+	if *m.Temperature == 65534 {
+		return 0, false
+	}
+	if *m.Temperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Temperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
@@ -2698,6 +5148,21 @@ func (m *InverterStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *InverterStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *InverterStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *InverterStatus) Clone() Message {
+	if m == nil {
+		return (*InverterStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.AcInstance = clonePointer(m.AcInstance)
+	copy.DcInstance = clonePointer(m.DcInstance)
+	copy.OperatingState = clonePointer(m.OperatingState)
+	copy.InverterEnable = clonePointer(m.InverterEnable)
+	return &copy
+}
+
 type ChargerConfigurationStatus struct {
 	Info                         MessageInfo `json:"info"`
 	Instance                     *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -2720,14 +5185,49 @@ func (m *ChargerConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *ChargerConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ChargerConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*ChargerConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.BatteryInstance = clonePointer(m.BatteryInstance)
+	copy.ChargerEnableDisable = clonePointer(m.ChargerEnableDisable)
+	copy.ChargeCurrentLimit = clonePointer(m.ChargeCurrentLimit)
+	copy.ChargingAlgorithm = clonePointer(m.ChargingAlgorithm)
+	copy.ChargerMode = clonePointer(m.ChargerMode)
+	copy.EstimatedTemperature = clonePointer(m.EstimatedTemperature)
+	copy.EqualizeOneTimeEnableDisable = clonePointer(m.EqualizeOneTimeEnableDisable)
+	copy.OverChargeEnableDisable = clonePointer(m.OverChargeEnableDisable)
+	copy.EqualizeTime = clonePointer(m.EqualizeTime)
+	return &copy
+}
+
 // ChargeCurrentLimitValue returns ChargeCurrentLimit as a physical value in % (value = raw).
-// The bool is false when ChargeCurrentLimit is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ChargerConfigurationStatus) ChargeCurrentLimitValue() (float64, bool) {
-	if m.ChargeCurrentLimit == nil {
+	if m == nil || m.ChargeCurrentLimit == nil {
 		return 0, false
 	}
-	return float64(*m.ChargeCurrentLimit), true
+	if *m.ChargeCurrentLimit == 255 {
+		return 0, false
+	}
+	if *m.ChargeCurrentLimit == 254 {
+		return 0, false
+	}
+	if *m.ChargeCurrentLimit == 253 {
+		return 0, false
+	}
+	value := float64(*m.ChargeCurrentLimit)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetChargeCurrentLimitValue sets ChargeCurrentLimit from a physical value in %, rounded to the nearest
@@ -2738,13 +5238,28 @@ func (m *ChargerConfigurationStatus) SetChargeCurrentLimitValue(v float64) {
 }
 
 // EqualizeTimeValue returns EqualizeTime as a physical value in s (value = raw * 60).
-// The bool is false when EqualizeTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ChargerConfigurationStatus) EqualizeTimeValue() (float64, bool) {
-	if m.EqualizeTime == nil {
+	if m == nil || m.EqualizeTime == nil {
 		return 0, false
 	}
-	return float64(*m.EqualizeTime) * 60, true
+	if *m.EqualizeTime == 65535 {
+		return 0, false
+	}
+	if *m.EqualizeTime == 65534 {
+		return 0, false
+	}
+	if *m.EqualizeTime == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EqualizeTime) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.93192e+06 && !approximatelyEqual(value, 3.93192e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEqualizeTimeValue sets EqualizeTime from a physical value in s, rounded to the nearest
@@ -2774,14 +5289,47 @@ func (m *InverterConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *InverterConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *InverterConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*InverterConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.AcInstance = clonePointer(m.AcInstance)
+	copy.DcInstance = clonePointer(m.DcInstance)
+	copy.InverterEnableDisable = clonePointer(m.InverterEnableDisable)
+	copy.InverterMode = clonePointer(m.InverterMode)
+	copy.LoadSenseEnableDisable = clonePointer(m.LoadSenseEnableDisable)
+	copy.LoadSensePowerThreshold = clonePointer(m.LoadSensePowerThreshold)
+	copy.LoadSenseInterval = clonePointer(m.LoadSenseInterval)
+	return &copy
+}
+
 // LoadSensePowerThresholdValue returns LoadSensePowerThreshold as a physical value in W (value = raw).
-// The bool is false when LoadSensePowerThreshold is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *InverterConfigurationStatus) LoadSensePowerThresholdValue() (float64, bool) {
-	if m.LoadSensePowerThreshold == nil {
+	if m == nil || m.LoadSensePowerThreshold == nil {
 		return 0, false
 	}
-	return float64(*m.LoadSensePowerThreshold), true
+	if *m.LoadSensePowerThreshold == 65535 {
+		return 0, false
+	}
+	if *m.LoadSensePowerThreshold == 65534 {
+		return 0, false
+	}
+	if *m.LoadSensePowerThreshold == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LoadSensePowerThreshold)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLoadSensePowerThresholdValue sets LoadSensePowerThreshold from a physical value in W, rounded to the nearest
@@ -2792,13 +5340,28 @@ func (m *InverterConfigurationStatus) SetLoadSensePowerThresholdValue(v float64)
 }
 
 // LoadSenseIntervalValue returns LoadSenseInterval as a physical value in s (value = raw * 0.01).
-// The bool is false when LoadSenseInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *InverterConfigurationStatus) LoadSenseIntervalValue() (float64, bool) {
-	if m.LoadSenseInterval == nil {
+	if m == nil || m.LoadSenseInterval == nil {
 		return 0, false
 	}
-	return float64(*m.LoadSenseInterval) * 0.01, true
+	if *m.LoadSenseInterval == 65535 {
+		return 0, false
+	}
+	if *m.LoadSenseInterval == 65534 {
+		return 0, false
+	}
+	if *m.LoadSenseInterval == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LoadSenseInterval) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLoadSenseIntervalValue sets LoadSenseInterval from a physical value in s, rounded to the nearest
@@ -2829,14 +5392,48 @@ func (m *BatteryConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *BatteryConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *BatteryConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*BatteryConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.BatteryType = clonePointer(m.BatteryType)
+	copy.SupportsEqualization = clonePointer(m.SupportsEqualization)
+	copy.NominalVoltage = clonePointer(m.NominalVoltage)
+	copy.Chemistry = clonePointer(m.Chemistry)
+	copy.Capacity = clonePointer(m.Capacity)
+	copy.TemperatureCoefficient = clonePointer(m.TemperatureCoefficient)
+	copy.PeukertExponent = clonePointer(m.PeukertExponent)
+	copy.ChargeEfficiencyFactor = clonePointer(m.ChargeEfficiencyFactor)
+	return &copy
+}
+
 // CapacityValue returns Capacity as a physical value in Ah (value = raw).
-// The bool is false when Capacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryConfigurationStatus) CapacityValue() (float64, bool) {
-	if m.Capacity == nil {
+	if m == nil || m.Capacity == nil {
 		return 0, false
 	}
-	return float64(*m.Capacity), true
+	if *m.Capacity == 65535 {
+		return 0, false
+	}
+	if *m.Capacity == 65534 {
+		return 0, false
+	}
+	if *m.Capacity == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Capacity)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCapacityValue sets Capacity from a physical value in Ah, rounded to the nearest
@@ -2847,13 +5444,28 @@ func (m *BatteryConfigurationStatus) SetCapacityValue(v float64) {
 }
 
 // TemperatureCoefficientValue returns TemperatureCoefficient as a physical value in % (value = raw).
-// The bool is false when TemperatureCoefficient is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryConfigurationStatus) TemperatureCoefficientValue() (float64, bool) {
-	if m.TemperatureCoefficient == nil {
+	if m == nil || m.TemperatureCoefficient == nil {
 		return 0, false
 	}
-	return float64(*m.TemperatureCoefficient), true
+	if *m.TemperatureCoefficient == 127 {
+		return 0, false
+	}
+	if *m.TemperatureCoefficient == 126 {
+		return 0, false
+	}
+	if *m.TemperatureCoefficient == 125 {
+		return 0, false
+	}
+	value := float64(*m.TemperatureCoefficient)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTemperatureCoefficientValue sets TemperatureCoefficient from a physical value in %, rounded to the nearest
@@ -2864,13 +5476,22 @@ func (m *BatteryConfigurationStatus) SetTemperatureCoefficientValue(v float64) {
 }
 
 // PeukertExponentValue returns PeukertExponent as a physical value (value = raw * 0.002 + 1).
-// The bool is false when PeukertExponent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryConfigurationStatus) PeukertExponentValue() (float64, bool) {
-	if m.PeukertExponent == nil {
+	if m == nil || m.PeukertExponent == nil {
 		return 0, false
 	}
-	return float64(*m.PeukertExponent)*0.002 + 1, true
+	if *m.PeukertExponent == 255 {
+		return 0, false
+	}
+	value := float64(*m.PeukertExponent)*0.002 + 1
+	if value < 1 && !approximatelyEqual(value, 1) {
+		return 0, false
+	}
+	if value > 1.5 && !approximatelyEqual(value, 1.5) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPeukertExponentValue sets PeukertExponent from a physical value, rounded to the nearest
@@ -2881,13 +5502,28 @@ func (m *BatteryConfigurationStatus) SetPeukertExponentValue(v float64) {
 }
 
 // ChargeEfficiencyFactorValue returns ChargeEfficiencyFactor as a physical value in % (value = raw).
-// The bool is false when ChargeEfficiencyFactor is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *BatteryConfigurationStatus) ChargeEfficiencyFactorValue() (float64, bool) {
-	if m.ChargeEfficiencyFactor == nil {
+	if m == nil || m.ChargeEfficiencyFactor == nil {
 		return 0, false
 	}
-	return float64(*m.ChargeEfficiencyFactor), true
+	if *m.ChargeEfficiencyFactor == 127 {
+		return 0, false
+	}
+	if *m.ChargeEfficiencyFactor == 126 {
+		return 0, false
+	}
+	if *m.ChargeEfficiencyFactor == 125 {
+		return 0, false
+	}
+	value := float64(*m.ChargeEfficiencyFactor)
+	if value < -127 && !approximatelyEqual(value, -127) {
+		return 0, false
+	}
+	if value > 124 && !approximatelyEqual(value, 124) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetChargeEfficiencyFactorValue sets ChargeEfficiencyFactor from a physical value in %, rounded to the nearest
@@ -2911,14 +5547,43 @@ func (m *AcPowerCurrentPhaseA) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AcPowerCurrentPhaseA) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseA) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcPowerCurrentPhaseA) Clone() Message {
+	if m == nil {
+		return (*AcPowerCurrentPhaseA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	copy.Power = clonePointer(m.Power)
+	return &copy
+}
+
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseA) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent) * 0.1, true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -2929,13 +5594,28 @@ func (m *AcPowerCurrentPhaseA) SetAcRmsCurrentValue(v float64) {
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
-// The bool is false when Power is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseA) PowerValue() (float64, bool) {
-	if m.Power == nil {
+	if m == nil || m.Power == nil {
 		return 0, false
 	}
-	return float64(*m.Power), true
+	if *m.Power == 2147483647 {
+		return 0, false
+	}
+	if *m.Power == 2147483646 {
+		return 0, false
+	}
+	if *m.Power == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Power)
+	if value < -2.147483647e+09 && !approximatelyEqual(value, -2.147483647e+09) {
+		return 0, false
+	}
+	if value > 2.147483644e+09 && !approximatelyEqual(value, 2.147483644e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
@@ -2959,14 +5639,43 @@ func (m *AcPowerCurrentPhaseB) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AcPowerCurrentPhaseB) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseB) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcPowerCurrentPhaseB) Clone() Message {
+	if m == nil {
+		return (*AcPowerCurrentPhaseB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	copy.Power = clonePointer(m.Power)
+	return &copy
+}
+
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseB) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent) * 0.1, true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -2977,13 +5686,28 @@ func (m *AcPowerCurrentPhaseB) SetAcRmsCurrentValue(v float64) {
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
-// The bool is false when Power is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseB) PowerValue() (float64, bool) {
-	if m.Power == nil {
+	if m == nil || m.Power == nil {
 		return 0, false
 	}
-	return float64(*m.Power), true
+	if *m.Power == 2147483647 {
+		return 0, false
+	}
+	if *m.Power == 2147483646 {
+		return 0, false
+	}
+	if *m.Power == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Power)
+	if value < -2.147483647e+09 && !approximatelyEqual(value, -2.147483647e+09) {
+		return 0, false
+	}
+	if value > 2.147483644e+09 && !approximatelyEqual(value, 2.147483644e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
@@ -3007,14 +5731,43 @@ func (m *AcPowerCurrentPhaseC) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *AcPowerCurrentPhaseC) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AcPowerCurrentPhaseC) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcPowerCurrentPhaseC) Clone() Message {
+	if m == nil {
+		return (*AcPowerCurrentPhaseC)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcRmsCurrent = clonePointer(m.AcRmsCurrent)
+	copy.Power = clonePointer(m.Power)
+	return &copy
+}
+
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when AcRmsCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseC) AcRmsCurrentValue() (float64, bool) {
-	if m.AcRmsCurrent == nil {
+	if m == nil || m.AcRmsCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.AcRmsCurrent) * 0.1, true
+	if *m.AcRmsCurrent == 65535 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65534 {
+		return 0, false
+	}
+	if *m.AcRmsCurrent == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcRmsCurrent) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
@@ -3025,13 +5778,28 @@ func (m *AcPowerCurrentPhaseC) SetAcRmsCurrentValue(v float64) {
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
-// The bool is false when Power is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcPowerCurrentPhaseC) PowerValue() (float64, bool) {
-	if m.Power == nil {
+	if m == nil || m.Power == nil {
 		return 0, false
 	}
-	return float64(*m.Power), true
+	if *m.Power == 2147483647 {
+		return 0, false
+	}
+	if *m.Power == 2147483646 {
+		return 0, false
+	}
+	if *m.Power == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Power)
+	if value < -2.147483647e+09 && !approximatelyEqual(value, -2.147483647e+09) {
+		return 0, false
+	}
+	if value > 2.147483644e+09 && !approximatelyEqual(value, 2.147483644e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
@@ -3058,14 +5826,44 @@ func (m *AcVoltageFrequencyPhaseA) DecodePayload(payload []uint8) error {
 }
 func (m *AcVoltageFrequencyPhaseA) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcVoltageFrequencyPhaseA) Clone() Message {
+	if m == nil {
+		return (*AcVoltageFrequencyPhaseA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcVoltageLineToNeutral = clonePointer(m.AcVoltageLineToNeutral)
+	copy.AcVoltageLineToLine = clonePointer(m.AcVoltageLineToLine)
+	copy.Frequency = clonePointer(m.Frequency)
+	return &copy
+}
+
 // AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToNeutralValue() (float64, bool) {
-	if m.AcVoltageLineToNeutral == nil {
+	if m == nil || m.AcVoltageLineToNeutral == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+	if *m.AcVoltageLineToNeutral == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToNeutral) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
@@ -3076,13 +5874,28 @@ func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToNeutralValue(v float64) {
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToLineValue() (float64, bool) {
-	if m.AcVoltageLineToLine == nil {
+	if m == nil || m.AcVoltageLineToLine == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToLine) * 0.1, true
+	if *m.AcVoltageLineToLine == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToLine) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
@@ -3093,13 +5906,28 @@ func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToLineValue(v float64) {
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseA) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency) * 0.1, true
+	if *m.Frequency == 65535 {
+		return 0, false
+	}
+	if *m.Frequency == 65534 {
+		return 0, false
+	}
+	if *m.Frequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Frequency) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -3126,14 +5954,44 @@ func (m *AcVoltageFrequencyPhaseB) DecodePayload(payload []uint8) error {
 }
 func (m *AcVoltageFrequencyPhaseB) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcVoltageFrequencyPhaseB) Clone() Message {
+	if m == nil {
+		return (*AcVoltageFrequencyPhaseB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcVoltageLineToNeutral = clonePointer(m.AcVoltageLineToNeutral)
+	copy.AcVoltageLineToLine = clonePointer(m.AcVoltageLineToLine)
+	copy.Frequency = clonePointer(m.Frequency)
+	return &copy
+}
+
 // AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToNeutralValue() (float64, bool) {
-	if m.AcVoltageLineToNeutral == nil {
+	if m == nil || m.AcVoltageLineToNeutral == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+	if *m.AcVoltageLineToNeutral == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToNeutral) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
@@ -3144,13 +6002,28 @@ func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToNeutralValue(v float64) {
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToLineValue() (float64, bool) {
-	if m.AcVoltageLineToLine == nil {
+	if m == nil || m.AcVoltageLineToLine == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToLine) * 0.1, true
+	if *m.AcVoltageLineToLine == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToLine) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
@@ -3161,13 +6034,28 @@ func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToLineValue(v float64) {
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseB) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency) * 0.1, true
+	if *m.Frequency == 65535 {
+		return 0, false
+	}
+	if *m.Frequency == 65534 {
+		return 0, false
+	}
+	if *m.Frequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Frequency) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -3194,14 +6082,44 @@ func (m *AcVoltageFrequencyPhaseC) DecodePayload(payload []uint8) error {
 }
 func (m *AcVoltageFrequencyPhaseC) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AcVoltageFrequencyPhaseC) Clone() Message {
+	if m == nil {
+		return (*AcVoltageFrequencyPhaseC)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.AcVoltageLineToNeutral = clonePointer(m.AcVoltageLineToNeutral)
+	copy.AcVoltageLineToLine = clonePointer(m.AcVoltageLineToLine)
+	copy.Frequency = clonePointer(m.Frequency)
+	return &copy
+}
+
 // AcVoltageLineToNeutralValue returns AcVoltageLineToNeutral as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToNeutral is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToNeutralValue() (float64, bool) {
-	if m.AcVoltageLineToNeutral == nil {
+	if m == nil || m.AcVoltageLineToNeutral == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToNeutral) * 0.1, true
+	if *m.AcVoltageLineToNeutral == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToNeutral == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToNeutral) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
@@ -3212,13 +6130,28 @@ func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToNeutralValue(v float64) {
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
-// The bool is false when AcVoltageLineToLine is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToLineValue() (float64, bool) {
-	if m.AcVoltageLineToLine == nil {
+	if m == nil || m.AcVoltageLineToLine == nil {
 		return 0, false
 	}
-	return float64(*m.AcVoltageLineToLine) * 0.1, true
+	if *m.AcVoltageLineToLine == 65535 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65534 {
+		return 0, false
+	}
+	if *m.AcVoltageLineToLine == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AcVoltageLineToLine) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
@@ -3229,13 +6162,28 @@ func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToLineValue(v float64) {
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
-// The bool is false when Frequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *AcVoltageFrequencyPhaseC) FrequencyValue() (float64, bool) {
-	if m.Frequency == nil {
+	if m == nil || m.Frequency == nil {
 		return 0, false
 	}
-	return float64(*m.Frequency) * 0.1, true
+	if *m.Frequency == 65535 {
+		return 0, false
+	}
+	if *m.Frequency == 65534 {
+		return 0, false
+	}
+	if *m.Frequency == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Frequency) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
@@ -3259,14 +6207,43 @@ func (m *DcVoltageCurrent) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *DcVoltageCurrent) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *DcVoltageCurrent) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *DcVoltageCurrent) Clone() Message {
+	if m == nil {
+		return (*DcVoltageCurrent)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.DcVoltage = clonePointer(m.DcVoltage)
+	copy.DcCurrent = clonePointer(m.DcCurrent)
+	return &copy
+}
+
 // DcVoltageValue returns DcVoltage as a physical value in V (value = raw * 0.1).
-// The bool is false when DcVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcVoltageCurrent) DcVoltageValue() (float64, bool) {
-	if m.DcVoltage == nil {
+	if m == nil || m.DcVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.DcVoltage) * 0.1, true
+	if *m.DcVoltage == 65535 {
+		return 0, false
+	}
+	if *m.DcVoltage == 65534 {
+		return 0, false
+	}
+	if *m.DcVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DcVoltage) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcVoltageValue sets DcVoltage from a physical value in V, rounded to the nearest
@@ -3277,13 +6254,28 @@ func (m *DcVoltageCurrent) SetDcVoltageValue(v float64) {
 }
 
 // DcCurrentValue returns DcCurrent as a physical value in A (value = raw * 0.01).
-// The bool is false when DcCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *DcVoltageCurrent) DcCurrentValue() (float64, bool) {
-	if m.DcCurrent == nil {
+	if m == nil || m.DcCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.DcCurrent) * 0.01, true
+	if *m.DcCurrent == 8388607 {
+		return 0, false
+	}
+	if *m.DcCurrent == 8388606 {
+		return 0, false
+	}
+	if *m.DcCurrent == 8388605 {
+		return 0, false
+	}
+	value := float64(*m.DcCurrent) * 0.01
+	if value < -83886.07 && !approximatelyEqual(value, -83886.07) {
+		return 0, false
+	}
+	if value > 83886.04 && !approximatelyEqual(value, 83886.04) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDcCurrentValue sets DcCurrent from a physical value in A, rounded to the nearest
@@ -3313,14 +6305,45 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) EncodePayload() ([]uint8, error
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricEnergyStorageStatusRapidUpdate) Clone() Message {
+	if m == nil {
+		return (*ElectricEnergyStorageStatusRapidUpdate)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.EnergyStorageIdentifier = clonePointer(m.EnergyStorageIdentifier)
+	copy.BatteryStatus = clonePointer(m.BatteryStatus)
+	copy.IsolationStatus = clonePointer(m.IsolationStatus)
+	copy.BatteryError = clonePointer(m.BatteryError)
+	copy.BatteryVoltage = clonePointer(m.BatteryVoltage)
+	copy.BatteryCurrent = clonePointer(m.BatteryCurrent)
+	return &copy
+}
+
 // BatteryVoltageValue returns BatteryVoltage as a physical value in V (value = raw * 0.1).
-// The bool is false when BatteryVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryVoltageValue() (float64, bool) {
-	if m.BatteryVoltage == nil {
+	if m == nil || m.BatteryVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.BatteryVoltage) * 0.1, true
+	if *m.BatteryVoltage == 65535 {
+		return 0, false
+	}
+	if *m.BatteryVoltage == 65534 {
+		return 0, false
+	}
+	if *m.BatteryVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.BatteryVoltage) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBatteryVoltageValue sets BatteryVoltage from a physical value in V, rounded to the nearest
@@ -3331,13 +6354,28 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryVoltageValue(v float6
 }
 
 // BatteryCurrentValue returns BatteryCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when BatteryCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryCurrentValue() (float64, bool) {
-	if m.BatteryCurrent == nil {
+	if m == nil || m.BatteryCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.BatteryCurrent) * 0.1, true
+	if *m.BatteryCurrent == 32767 {
+		return 0, false
+	}
+	if *m.BatteryCurrent == 32766 {
+		return 0, false
+	}
+	if *m.BatteryCurrent == 32765 {
+		return 0, false
+	}
+	value := float64(*m.BatteryCurrent) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBatteryCurrentValue sets BatteryCurrent from a physical value in A, rounded to the nearest
@@ -3383,14 +6421,65 @@ func (m *HvacStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *HvacStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *HvacStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *HvacStatus) Clone() Message {
+	if m == nil {
+		return (*HvacStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.HvacIdentifier = clonePointer(m.HvacIdentifier)
+	copy.Location = clonePointer(m.Location)
+	copy.OperatingMode = clonePointer(m.OperatingMode)
+	copy.ControlOperatingState = clonePointer(m.ControlOperatingState)
+	copy.Power = clonePointer(m.Power)
+	copy.FanSpeedModeChangeable = clonePointer(m.FanSpeedModeChangeable)
+	copy.FanSpeedMode = clonePointer(m.FanSpeedMode)
+	copy.FanOperationMode = clonePointer(m.FanOperationMode)
+	copy.FanSpeedAvailable = clonePointer(m.FanSpeedAvailable)
+	copy.FanSpeed = clonePointer(m.FanSpeed)
+	copy.SetpointType = clonePointer(m.SetpointType)
+	copy.LowerTemperatureSetpoint = clonePointer(m.LowerTemperatureSetpoint)
+	copy.UpperTemperatureSetpoint = clonePointer(m.UpperTemperatureSetpoint)
+	copy.LowerHumiditySetpoint = clonePointer(m.LowerHumiditySetpoint)
+	copy.UpperHumiditySetpoint = clonePointer(m.UpperHumiditySetpoint)
+	copy.AuxiliaryHeatControlSupported = clonePointer(m.AuxiliaryHeatControlSupported)
+	copy.AuxiliaryHeatAutomaticMode = clonePointer(m.AuxiliaryHeatAutomaticMode)
+	copy.AuxiliaryHeatState = clonePointer(m.AuxiliaryHeatState)
+	copy.CurrentTemperature = clonePointer(m.CurrentTemperature)
+	copy.CurrentHumidity = clonePointer(m.CurrentHumidity)
+	copy.SupportedModes = clonePointer(m.SupportedModes)
+	copy.SeaWaterTemperature = clonePointer(m.SeaWaterTemperature)
+	copy.LoopTemperature = clonePointer(m.LoopTemperature)
+	copy.EvaporatorTemperature = clonePointer(m.EvaporatorTemperature)
+	copy.InletTemperature = clonePointer(m.InletTemperature)
+	copy.InletHumidity = clonePointer(m.InletHumidity)
+	return &copy
+}
+
 // LowerTemperatureSetpointValue returns LowerTemperatureSetpoint as a physical value in K (value = raw * 0.01).
-// The bool is false when LowerTemperatureSetpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) LowerTemperatureSetpointValue() (float64, bool) {
-	if m.LowerTemperatureSetpoint == nil {
+	if m == nil || m.LowerTemperatureSetpoint == nil {
 		return 0, false
 	}
-	return float64(*m.LowerTemperatureSetpoint) * 0.01, true
+	if *m.LowerTemperatureSetpoint == 65535 {
+		return 0, false
+	}
+	if *m.LowerTemperatureSetpoint == 65534 {
+		return 0, false
+	}
+	if *m.LowerTemperatureSetpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LowerTemperatureSetpoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLowerTemperatureSetpointValue sets LowerTemperatureSetpoint from a physical value in K, rounded to the nearest
@@ -3401,13 +6490,28 @@ func (m *HvacStatus) SetLowerTemperatureSetpointValue(v float64) {
 }
 
 // UpperTemperatureSetpointValue returns UpperTemperatureSetpoint as a physical value in K (value = raw * 0.01).
-// The bool is false when UpperTemperatureSetpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) UpperTemperatureSetpointValue() (float64, bool) {
-	if m.UpperTemperatureSetpoint == nil {
+	if m == nil || m.UpperTemperatureSetpoint == nil {
 		return 0, false
 	}
-	return float64(*m.UpperTemperatureSetpoint) * 0.01, true
+	if *m.UpperTemperatureSetpoint == 65535 {
+		return 0, false
+	}
+	if *m.UpperTemperatureSetpoint == 65534 {
+		return 0, false
+	}
+	if *m.UpperTemperatureSetpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.UpperTemperatureSetpoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetUpperTemperatureSetpointValue sets UpperTemperatureSetpoint from a physical value in K, rounded to the nearest
@@ -3418,13 +6522,28 @@ func (m *HvacStatus) SetUpperTemperatureSetpointValue(v float64) {
 }
 
 // CurrentTemperatureValue returns CurrentTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when CurrentTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) CurrentTemperatureValue() (float64, bool) {
-	if m.CurrentTemperature == nil {
+	if m == nil || m.CurrentTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.CurrentTemperature) * 0.01, true
+	if *m.CurrentTemperature == 65535 {
+		return 0, false
+	}
+	if *m.CurrentTemperature == 65534 {
+		return 0, false
+	}
+	if *m.CurrentTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CurrentTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentTemperatureValue sets CurrentTemperature from a physical value in K, rounded to the nearest
@@ -3435,13 +6554,28 @@ func (m *HvacStatus) SetCurrentTemperatureValue(v float64) {
 }
 
 // SeaWaterTemperatureValue returns SeaWaterTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when SeaWaterTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) SeaWaterTemperatureValue() (float64, bool) {
-	if m.SeaWaterTemperature == nil {
+	if m == nil || m.SeaWaterTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.SeaWaterTemperature) * 0.01, true
+	if *m.SeaWaterTemperature == 65535 {
+		return 0, false
+	}
+	if *m.SeaWaterTemperature == 65534 {
+		return 0, false
+	}
+	if *m.SeaWaterTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SeaWaterTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSeaWaterTemperatureValue sets SeaWaterTemperature from a physical value in K, rounded to the nearest
@@ -3452,13 +6586,28 @@ func (m *HvacStatus) SetSeaWaterTemperatureValue(v float64) {
 }
 
 // LoopTemperatureValue returns LoopTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when LoopTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) LoopTemperatureValue() (float64, bool) {
-	if m.LoopTemperature == nil {
+	if m == nil || m.LoopTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.LoopTemperature) * 0.01, true
+	if *m.LoopTemperature == 65535 {
+		return 0, false
+	}
+	if *m.LoopTemperature == 65534 {
+		return 0, false
+	}
+	if *m.LoopTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.LoopTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLoopTemperatureValue sets LoopTemperature from a physical value in K, rounded to the nearest
@@ -3469,13 +6618,28 @@ func (m *HvacStatus) SetLoopTemperatureValue(v float64) {
 }
 
 // EvaporatorTemperatureValue returns EvaporatorTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when EvaporatorTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) EvaporatorTemperatureValue() (float64, bool) {
-	if m.EvaporatorTemperature == nil {
+	if m == nil || m.EvaporatorTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.EvaporatorTemperature) * 0.01, true
+	if *m.EvaporatorTemperature == 65535 {
+		return 0, false
+	}
+	if *m.EvaporatorTemperature == 65534 {
+		return 0, false
+	}
+	if *m.EvaporatorTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EvaporatorTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEvaporatorTemperatureValue sets EvaporatorTemperature from a physical value in K, rounded to the nearest
@@ -3486,13 +6650,28 @@ func (m *HvacStatus) SetEvaporatorTemperatureValue(v float64) {
 }
 
 // InletTemperatureValue returns InletTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when InletTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *HvacStatus) InletTemperatureValue() (float64, bool) {
-	if m.InletTemperature == nil {
+	if m == nil || m.InletTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.InletTemperature) * 0.01, true
+	if *m.InletTemperature == 65535 {
+		return 0, false
+	}
+	if *m.InletTemperature == 65534 {
+		return 0, false
+	}
+	if *m.InletTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.InletTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetInletTemperatureValue sets InletTemperature from a physical value in K, rounded to the nearest
@@ -3525,6 +6704,26 @@ func (m *LightingSystemSettings) DecodePayload(payload []uint8) error {
 }
 func (m *LightingSystemSettings) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingSystemSettings) Clone() Message {
+	if m == nil {
+		return (*LightingSystemSettings)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GlobalEnable = clonePointer(m.GlobalEnable)
+	copy.DefaultSettingsCommand = clonePointer(m.DefaultSettingsCommand)
+	copy.MaxScenes = clonePointer(m.MaxScenes)
+	copy.MaxSceneConfigurationCount = clonePointer(m.MaxSceneConfigurationCount)
+	copy.MaxZones = clonePointer(m.MaxZones)
+	copy.MaxColorSequences = clonePointer(m.MaxColorSequences)
+	copy.MaxColorSequenceColorCount = clonePointer(m.MaxColorSequenceColorCount)
+	copy.NumberOfPrograms = clonePointer(m.NumberOfPrograms)
+	copy.ControllerCapabilities = clonePointer(m.ControllerCapabilities)
+	copy.IdentifyDevice = clonePointer(m.IdentifyDevice)
+	return &copy
+}
+
 type LightingZone struct {
 	Info                      MessageInfo `json:"info"`
 	ZoneIndex                 *uint64     `json:"zoneIndex,omitempty" n2k:"1"`
@@ -3547,6 +6746,28 @@ func (m *LightingZone) MessageInfo() MessageInfo            { return m.Info }
 func (m *LightingZone) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LightingZone) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LightingZone) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingZone) Clone() Message {
+	if m == nil {
+		return (*LightingZone)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ZoneIndex = clonePointer(m.ZoneIndex)
+	copy.RedComponent = clonePointer(m.RedComponent)
+	copy.GreenComponent = clonePointer(m.GreenComponent)
+	copy.BlueComponent = clonePointer(m.BlueComponent)
+	copy.ColorTemperature = clonePointer(m.ColorTemperature)
+	copy.Intensity = clonePointer(m.Intensity)
+	copy.ProgramId = clonePointer(m.ProgramId)
+	copy.ProgramColorSequenceIndex = clonePointer(m.ProgramColorSequenceIndex)
+	copy.ProgramIntensity = clonePointer(m.ProgramIntensity)
+	copy.ProgramRate = clonePointer(m.ProgramRate)
+	copy.ProgramColorSequence = clonePointer(m.ProgramColorSequence)
+	copy.ZoneEnabled = clonePointer(m.ZoneEnabled)
+	return &copy
+}
 
 type LightingScene struct {
 	Info               MessageInfo               `json:"info"`
@@ -3573,6 +6794,30 @@ func (m *LightingScene) MessageInfo() MessageInfo            { return m.Info }
 func (m *LightingScene) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LightingScene) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LightingScene) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingScene) Clone() Message {
+	if m == nil {
+		return (*LightingScene)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SceneIndex = clonePointer(m.SceneIndex)
+	copy.Control = clonePointer(m.Control)
+	copy.ConfigurationCount = clonePointer(m.ConfigurationCount)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].ConfigurationIndex = clonePointer(m.Repeating1[i].ConfigurationIndex)
+		copy.Repeating1[i].ZoneIndex = clonePointer(m.Repeating1[i].ZoneIndex)
+		copy.Repeating1[i].DevicesId = clonePointer(m.Repeating1[i].DevicesId)
+		copy.Repeating1[i].ProgramIndex = clonePointer(m.Repeating1[i].ProgramIndex)
+		copy.Repeating1[i].ProgramColorSequenceIndex = clonePointer(m.Repeating1[i].ProgramColorSequenceIndex)
+		copy.Repeating1[i].ProgramIntensity = clonePointer(m.Repeating1[i].ProgramIntensity)
+		copy.Repeating1[i].ProgramRate = clonePointer(m.Repeating1[i].ProgramRate)
+		copy.Repeating1[i].ProgramColorSequenceRate = clonePointer(m.Repeating1[i].ProgramColorSequenceRate)
+	}
+	return &copy
+}
 
 type LightingDevice struct {
 	Info                      MessageInfo `json:"info"`
@@ -3601,6 +6846,32 @@ func (m *LightingDevice) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LightingDevice) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LightingDevice) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingDevice) Clone() Message {
+	if m == nil {
+		return (*LightingDevice)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.DeviceId = clonePointer(m.DeviceId)
+	copy.DeviceCapabilities = clonePointer(m.DeviceCapabilities)
+	copy.ColorCapabilities = clonePointer(m.ColorCapabilities)
+	copy.ZoneIndex = clonePointer(m.ZoneIndex)
+	copy.Status = clonePointer(m.Status)
+	copy.RedComponent = clonePointer(m.RedComponent)
+	copy.GreenComponent = clonePointer(m.GreenComponent)
+	copy.BlueComponent = clonePointer(m.BlueComponent)
+	copy.ColorTemperature = clonePointer(m.ColorTemperature)
+	copy.Intensity = clonePointer(m.Intensity)
+	copy.ProgramId = clonePointer(m.ProgramId)
+	copy.ProgramColorSequenceIndex = clonePointer(m.ProgramColorSequenceIndex)
+	copy.ProgramIntensity = clonePointer(m.ProgramIntensity)
+	copy.ProgramRate = clonePointer(m.ProgramRate)
+	copy.ProgramColorSequenceRate = clonePointer(m.ProgramColorSequenceRate)
+	copy.Enabled = clonePointer(m.Enabled)
+	return &copy
+}
+
 type LightingDeviceEnumeration struct {
 	Info                 MessageInfo                           `json:"info"`
 	IndexOfFirstDevice   *uint64                               `json:"indexOfFirstDevice,omitempty" n2k:"1"`
@@ -3621,6 +6892,24 @@ func (m *LightingDeviceEnumeration) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *LightingDeviceEnumeration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingDeviceEnumeration) Clone() Message {
+	if m == nil {
+		return (*LightingDeviceEnumeration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.IndexOfFirstDevice = clonePointer(m.IndexOfFirstDevice)
+	copy.TotalNumberOfDevices = clonePointer(m.TotalNumberOfDevices)
+	copy.NumberOfDevices = clonePointer(m.NumberOfDevices)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].DeviceId = clonePointer(m.Repeating1[i].DeviceId)
+		copy.Repeating1[i].Status = clonePointer(m.Repeating1[i].Status)
+	}
+	return &copy
+}
 
 type LightingColorSequence struct {
 	Info          MessageInfo                       `json:"info"`
@@ -3644,6 +6933,27 @@ func (m *LightingColorSequence) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *LightingColorSequence) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LightingColorSequence) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingColorSequence) Clone() Message {
+	if m == nil {
+		return (*LightingColorSequence)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.SequenceIndex = clonePointer(m.SequenceIndex)
+	copy.ColorCount = clonePointer(m.ColorCount)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].ColorIndex = clonePointer(m.Repeating1[i].ColorIndex)
+		copy.Repeating1[i].RedComponent = clonePointer(m.Repeating1[i].RedComponent)
+		copy.Repeating1[i].GreenComponent = clonePointer(m.Repeating1[i].GreenComponent)
+		copy.Repeating1[i].BlueComponent = clonePointer(m.Repeating1[i].BlueComponent)
+		copy.Repeating1[i].ColorTemperature = clonePointer(m.Repeating1[i].ColorTemperature)
+		copy.Repeating1[i].Intensity = clonePointer(m.Repeating1[i].Intensity)
+	}
+	return &copy
+}
+
 type LightingProgram struct {
 	Info                MessageInfo `json:"info"`
 	ProgramId           *uint64     `json:"programId,omitempty" n2k:"1"`
@@ -3657,6 +6967,18 @@ func (m *LightingProgram) MessageInfo() MessageInfo            { return m.Info }
 func (m *LightingProgram) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LightingProgram) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LightingProgram) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LightingProgram) Clone() Message {
+	if m == nil {
+		return (*LightingProgram)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ProgramId = clonePointer(m.ProgramId)
+	copy.ProgramCapabilities = clonePointer(m.ProgramCapabilities)
+	return &copy
+}
 
 type CurrentStatusAndFile struct {
 	Info                 MessageInfo `json:"info"`
@@ -3685,14 +7007,56 @@ func (m *CurrentStatusAndFile) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *CurrentStatusAndFile) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *CurrentStatusAndFile) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CurrentStatusAndFile) Clone() Message {
+	if m == nil {
+		return (*CurrentStatusAndFile)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Zone = clonePointer(m.Zone)
+	copy.Source = clonePointer(m.Source)
+	copy.Number = clonePointer(m.Number)
+	copy.Id = clonePointer(m.Id)
+	copy.PlayStatus = clonePointer(m.PlayStatus)
+	copy.ElapsedTrackTime = clonePointer(m.ElapsedTrackTime)
+	copy.TrackTime = clonePointer(m.TrackTime)
+	copy.RepeatStatus = clonePointer(m.RepeatStatus)
+	copy.ShuffleStatus = clonePointer(m.ShuffleStatus)
+	copy.SaveFavoriteNumber = clonePointer(m.SaveFavoriteNumber)
+	copy.PlayFavoriteNumber = clonePointer(m.PlayFavoriteNumber)
+	copy.ThumbsUpDown = clonePointer(m.ThumbsUpDown)
+	copy.SignalStrength = clonePointer(m.SignalStrength)
+	copy.RadioFrequency = clonePointer(m.RadioFrequency)
+	copy.HdFrequencyMulticast = clonePointer(m.HdFrequencyMulticast)
+	copy.DeleteFavoriteNumber = clonePointer(m.DeleteFavoriteNumber)
+	copy.TotalNumberOfTracks = clonePointer(m.TotalNumberOfTracks)
+	return &copy
+}
+
 // ElapsedTrackTimeValue returns ElapsedTrackTime as a physical value in s (value = raw).
-// The bool is false when ElapsedTrackTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *CurrentStatusAndFile) ElapsedTrackTimeValue() (float64, bool) {
-	if m.ElapsedTrackTime == nil {
+	if m == nil || m.ElapsedTrackTime == nil {
 		return 0, false
 	}
-	return float64(*m.ElapsedTrackTime), true
+	if *m.ElapsedTrackTime == 65535 {
+		return 0, false
+	}
+	if *m.ElapsedTrackTime == 65534 {
+		return 0, false
+	}
+	if *m.ElapsedTrackTime == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ElapsedTrackTime)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetElapsedTrackTimeValue sets ElapsedTrackTime from a physical value in s, rounded to the nearest
@@ -3703,13 +7067,28 @@ func (m *CurrentStatusAndFile) SetElapsedTrackTimeValue(v float64) {
 }
 
 // TrackTimeValue returns TrackTime as a physical value in s (value = raw).
-// The bool is false when TrackTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *CurrentStatusAndFile) TrackTimeValue() (float64, bool) {
-	if m.TrackTime == nil {
+	if m == nil || m.TrackTime == nil {
 		return 0, false
 	}
-	return float64(*m.TrackTime), true
+	if *m.TrackTime == 65535 {
+		return 0, false
+	}
+	if *m.TrackTime == 65534 {
+		return 0, false
+	}
+	if *m.TrackTime == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TrackTime)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTrackTimeValue sets TrackTime from a physical value in s, rounded to the nearest
@@ -3720,13 +7099,28 @@ func (m *CurrentStatusAndFile) SetTrackTimeValue(v float64) {
 }
 
 // SignalStrengthValue returns SignalStrength as a physical value in % (value = raw).
-// The bool is false when SignalStrength is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *CurrentStatusAndFile) SignalStrengthValue() (float64, bool) {
-	if m.SignalStrength == nil {
+	if m == nil || m.SignalStrength == nil {
 		return 0, false
 	}
-	return float64(*m.SignalStrength), true
+	if *m.SignalStrength == 255 {
+		return 0, false
+	}
+	if *m.SignalStrength == 254 {
+		return 0, false
+	}
+	if *m.SignalStrength == 253 {
+		return 0, false
+	}
+	value := float64(*m.SignalStrength)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
@@ -3737,13 +7131,28 @@ func (m *CurrentStatusAndFile) SetSignalStrengthValue(v float64) {
 }
 
 // RadioFrequencyValue returns RadioFrequency as a physical value in Hz (value = raw * 10).
-// The bool is false when RadioFrequency is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *CurrentStatusAndFile) RadioFrequencyValue() (float64, bool) {
-	if m.RadioFrequency == nil {
+	if m == nil || m.RadioFrequency == nil {
 		return 0, false
 	}
-	return float64(*m.RadioFrequency) * 10, true
+	if *m.RadioFrequency == 4294967295 {
+		return 0, false
+	}
+	if *m.RadioFrequency == 4294967294 {
+		return 0, false
+	}
+	if *m.RadioFrequency == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.RadioFrequency) * 10
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+10 && !approximatelyEqual(value, 4.294967292e+10) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRadioFrequencyValue sets RadioFrequency from a physical value in Hz, rounded to the nearest

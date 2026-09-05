@@ -19,14 +19,43 @@ func (m *LowranceTemperature) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *LowranceTemperature) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LowranceTemperature) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceTemperature) Clone() Message {
+	if m == nil {
+		return (*LowranceTemperature)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.TemperatureSource = clonePointer(m.TemperatureSource)
+	copy.ActualTemperature = clonePointer(m.ActualTemperature)
+	return &copy
+}
+
 // ActualTemperatureValue returns ActualTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when ActualTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *LowranceTemperature) ActualTemperatureValue() (float64, bool) {
-	if m.ActualTemperature == nil {
+	if m == nil || m.ActualTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.ActualTemperature) * 0.01, true
+	if *m.ActualTemperature == 65535 {
+		return 0, false
+	}
+	if *m.ActualTemperature == 65534 {
+		return 0, false
+	}
+	if *m.ActualTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.ActualTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
@@ -59,6 +88,27 @@ func (m *LowranceGpsConfiguration) DecodePayload(payload []uint8) error {
 }
 func (m *LowranceGpsConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceGpsConfiguration) Clone() Message {
+	if m == nil {
+		return (*LowranceGpsConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.F = clonePointer(m.F)
+	copy.G = clonePointer(m.G)
+	copy.H = clonePointer(m.H)
+	copy.I = clonePointer(m.I)
+	return &copy
+}
+
 type LowranceVesselSetupEngineAndTankConfiguration struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -80,14 +130,44 @@ func (m *LowranceVesselSetupEngineAndTankConfiguration) EncodePayload() ([]uint8
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceVesselSetupEngineAndTankConfiguration) Clone() Message {
+	if m == nil {
+		return (*LowranceVesselSetupEngineAndTankConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.NumberOfEngines = clonePointer(m.NumberOfEngines)
+	copy.NumberOfFuelTanks = clonePointer(m.NumberOfFuelTanks)
+	copy.TotalFuelCapacity = clonePointer(m.TotalFuelCapacity)
+	return &copy
+}
+
 // TotalFuelCapacityValue returns TotalFuelCapacity as a physical value in L (value = raw * 0.1).
-// The bool is false when TotalFuelCapacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *LowranceVesselSetupEngineAndTankConfiguration) TotalFuelCapacityValue() (float64, bool) {
-	if m.TotalFuelCapacity == nil {
+	if m == nil || m.TotalFuelCapacity == nil {
 		return 0, false
 	}
-	return float64(*m.TotalFuelCapacity) * 0.1, true
+	if *m.TotalFuelCapacity == 65535 {
+		return 0, false
+	}
+	if *m.TotalFuelCapacity == 65534 {
+		return 0, false
+	}
+	if *m.TotalFuelCapacity == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TotalFuelCapacity) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
@@ -120,14 +200,44 @@ func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) EncodePayload()
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) Clone() Message {
+	if m == nil {
+		return (*LowranceVesselSetupEngineAndTankConfigurationBroadcast)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.NumberOfEngines = clonePointer(m.NumberOfEngines)
+	copy.NumberOfFuelTanks = clonePointer(m.NumberOfFuelTanks)
+	copy.TotalFuelCapacity = clonePointer(m.TotalFuelCapacity)
+	return &copy
+}
+
 // TotalFuelCapacityValue returns TotalFuelCapacity as a physical value in L (value = raw * 0.1).
-// The bool is false when TotalFuelCapacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) TotalFuelCapacityValue() (float64, bool) {
-	if m.TotalFuelCapacity == nil {
+	if m == nil || m.TotalFuelCapacity == nil {
 		return 0, false
 	}
-	return float64(*m.TotalFuelCapacity) * 0.1, true
+	if *m.TotalFuelCapacity == 65535 {
+		return 0, false
+	}
+	if *m.TotalFuelCapacity == 65534 {
+		return 0, false
+	}
+	if *m.TotalFuelCapacity == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TotalFuelCapacity) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
@@ -159,6 +269,22 @@ func (m *LowranceProductInformation) DecodePayload(payload []uint8) error {
 }
 func (m *LowranceProductInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceProductInformation) Clone() Message {
+	if m == nil {
+		return (*LowranceProductInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ProductCode = clonePointer(m.ProductCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	return &copy
+}
+
 type LowranceUnknown struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -176,3 +302,21 @@ func (m *LowranceUnknown) MessageInfo() MessageInfo            { return m.Info }
 func (m *LowranceUnknown) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LowranceUnknown) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LowranceUnknown) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LowranceUnknown) Clone() Message {
+	if m == nil {
+		return (*LowranceUnknown)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.F = clonePointer(m.F)
+	return &copy
+}

@@ -19,6 +19,20 @@ func (m *NavicoDeviceStatus) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *NavicoDeviceStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoDeviceStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoDeviceStatus) Clone() Message {
+	if m == nil {
+		return (*NavicoDeviceStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ReportType = clonePointer(m.ReportType)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type NavicoWirelessBatteryStatus struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -37,14 +51,45 @@ func (m *NavicoWirelessBatteryStatus) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoWirelessBatteryStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoWirelessBatteryStatus) Clone() Message {
+	if m == nil {
+		return (*NavicoWirelessBatteryStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Status = clonePointer(m.Status)
+	copy.BatteryStatus = clonePointer(m.BatteryStatus)
+	copy.BatteryChargeStatus = clonePointer(m.BatteryChargeStatus)
+	copy.A = clonePointer(m.A)
+	return &copy
+}
+
 // BatteryStatusValue returns BatteryStatus as a physical value in % (value = raw).
-// The bool is false when BatteryStatus is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NavicoWirelessBatteryStatus) BatteryStatusValue() (float64, bool) {
-	if m.BatteryStatus == nil {
+	if m == nil || m.BatteryStatus == nil {
 		return 0, false
 	}
-	return float64(*m.BatteryStatus), true
+	if *m.BatteryStatus == 255 {
+		return 0, false
+	}
+	if *m.BatteryStatus == 254 {
+		return 0, false
+	}
+	if *m.BatteryStatus == 253 {
+		return 0, false
+	}
+	value := float64(*m.BatteryStatus)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBatteryStatusValue sets BatteryStatus from a physical value in %, rounded to the nearest
@@ -55,13 +100,28 @@ func (m *NavicoWirelessBatteryStatus) SetBatteryStatusValue(v float64) {
 }
 
 // BatteryChargeStatusValue returns BatteryChargeStatus as a physical value in % (value = raw).
-// The bool is false when BatteryChargeStatus is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NavicoWirelessBatteryStatus) BatteryChargeStatusValue() (float64, bool) {
-	if m.BatteryChargeStatus == nil {
+	if m == nil || m.BatteryChargeStatus == nil {
 		return 0, false
 	}
-	return float64(*m.BatteryChargeStatus), true
+	if *m.BatteryChargeStatus == 255 {
+		return 0, false
+	}
+	if *m.BatteryChargeStatus == 254 {
+		return 0, false
+	}
+	if *m.BatteryChargeStatus == 253 {
+		return 0, false
+	}
+	value := float64(*m.BatteryChargeStatus)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBatteryChargeStatusValue sets BatteryChargeStatus from a physical value in %, rounded to the nearest
@@ -88,14 +148,44 @@ func (m *NavicoWirelessSignalStatus) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoWirelessSignalStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoWirelessSignalStatus) Clone() Message {
+	if m == nil {
+		return (*NavicoWirelessSignalStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Unknown = clonePointer(m.Unknown)
+	copy.SignalStrength = clonePointer(m.SignalStrength)
+	copy.A = clonePointer(m.A)
+	return &copy
+}
+
 // SignalStrengthValue returns SignalStrength as a physical value in % (value = raw).
-// The bool is false when SignalStrength is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NavicoWirelessSignalStatus) SignalStrengthValue() (float64, bool) {
-	if m.SignalStrength == nil {
+	if m == nil || m.SignalStrength == nil {
 		return 0, false
 	}
-	return float64(*m.SignalStrength), true
+	if *m.SignalStrength == 255 {
+		return 0, false
+	}
+	if *m.SignalStrength == 254 {
+		return 0, false
+	}
+	if *m.SignalStrength == 253 {
+		return 0, false
+	}
+	value := float64(*m.SignalStrength)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
@@ -119,14 +209,43 @@ func (m *NavicoDepthQuality) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *NavicoDepthQuality) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoDepthQuality) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoDepthQuality) Clone() Message {
+	if m == nil {
+		return (*NavicoDepthQuality)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.DepthQuality = clonePointer(m.DepthQuality)
+	return &copy
+}
+
 // DepthQualityValue returns DepthQuality as a physical value (value = raw * 0.01).
-// The bool is false when DepthQuality is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NavicoDepthQuality) DepthQualityValue() (float64, bool) {
-	if m.DepthQuality == nil {
+	if m == nil || m.DepthQuality == nil {
 		return 0, false
 	}
-	return float64(*m.DepthQuality) * 0.01, true
+	if *m.DepthQuality == 127 {
+		return 0, false
+	}
+	if *m.DepthQuality == 126 {
+		return 0, false
+	}
+	if *m.DepthQuality == 125 {
+		return 0, false
+	}
+	value := float64(*m.DepthQuality) * 0.01
+	if value < -1.27 && !approximatelyEqual(value, -1.27) {
+		return 0, false
+	}
+	if value > 1.24 && !approximatelyEqual(value, 1.24) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDepthQualityValue sets DepthQuality from a physical value, rounded to the nearest
@@ -149,6 +268,19 @@ func (m *NavicoProprietary2) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *NavicoProprietary2) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoProprietary2) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoProprietary2) Clone() Message {
+	if m == nil {
+		return (*NavicoProprietary2)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type NavicoNaviopSwitchStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -163,6 +295,19 @@ func (m *NavicoNaviopSwitchStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoNaviopSwitchStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoNaviopSwitchStatus) Clone() Message {
+	if m == nil {
+		return (*NavicoNaviopSwitchStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type NavicoNaviopSwitchControl struct {
 	Info             MessageInfo `json:"info"`
@@ -179,6 +324,19 @@ func (m *NavicoNaviopSwitchControl) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoNaviopSwitchControl) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoNaviopSwitchControl) Clone() Message {
+	if m == nil {
+		return (*NavicoNaviopSwitchControl)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type NavicoFeatureUnlock struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -194,6 +352,21 @@ func (m *NavicoFeatureUnlock) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *NavicoFeatureUnlock) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoFeatureUnlock) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoFeatureUnlock) Clone() Message {
+	if m == nil {
+		return (*NavicoFeatureUnlock)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.FeatureId = clonePointer(m.FeatureId)
+	copy.RecordCount = clonePointer(m.RecordCount)
+	copy.Data = clonePointer(m.Data)
+	return &copy
+}
+
 type NavicoAsciiData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -207,6 +380,19 @@ func (m *NavicoAsciiData) MessageInfo() MessageInfo            { return m.Info }
 func (m *NavicoAsciiData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *NavicoAsciiData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoAsciiData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoAsciiData) Clone() Message {
+	if m == nil {
+		return (*NavicoAsciiData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	return &copy
+}
 
 type NavicoConfigurationSet struct {
 	Info             MessageInfo `json:"info"`
@@ -231,6 +417,27 @@ func (m *NavicoConfigurationSet) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoConfigurationSet) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoConfigurationSet) Clone() Message {
+	if m == nil {
+		return (*NavicoConfigurationSet)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.SourceSettingId = clonePointer(m.SourceSettingId)
+	copy.Token = clonePointer(m.Token)
+	copy.Length = clonePointer(m.Length)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}
+
 type NavicoUdbDatabaseBulkReport2 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -251,6 +458,24 @@ func (m *NavicoUdbDatabaseBulkReport2) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoUdbDatabaseBulkReport2) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseBulkReport2) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseBulkReport2)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type NavicoUdbDatabaseBulkReport4 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -270,6 +495,24 @@ func (m *NavicoUdbDatabaseBulkReport4) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoUdbDatabaseBulkReport4) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseBulkReport4) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseBulkReport4)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type NavicoUdbDatabaseObjectDump struct {
 	Info             MessageInfo                             `json:"info"`
@@ -301,6 +544,33 @@ func (m *NavicoUdbDatabaseObjectDump) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoUdbDatabaseObjectDump) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseObjectDump) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseObjectDump)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.ObjectValue = clonePointer(m.ObjectValue)
+	copy.Sub = cloneSlice(m.Sub)
+	copy.Token = clonePointer(m.Token)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Class = clonePointer(m.Repeating1[i].Class)
+		copy.Repeating1[i].DataType = clonePointer(m.Repeating1[i].DataType)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 type NavicoUdbDatabaseObjectPing struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -319,6 +589,23 @@ func (m *NavicoUdbDatabaseObjectPing) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoUdbDatabaseObjectPing) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseObjectPing) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseObjectPing)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	return &copy
+}
 
 type NavicoUdbDatabaseShortReport5 struct {
 	Info             MessageInfo `json:"info"`
@@ -340,6 +627,24 @@ func (m *NavicoUdbDatabaseShortReport5) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoUdbDatabaseShortReport5) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseShortReport5) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseShortReport5)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type NavicoUdbDatabaseShortReport7 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -359,6 +664,24 @@ func (m *NavicoUdbDatabaseShortReport7) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoUdbDatabaseShortReport7) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseShortReport7) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseShortReport7)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.Section = clonePointer(m.Section)
+	copy.Item = clonePointer(m.Item)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type NavicoUdbDatabaseSourceReport struct {
 	Info                  MessageInfo `json:"info"`
@@ -384,6 +707,28 @@ func (m *NavicoUdbDatabaseSourceReport) DecodePayload(payload []uint8) error {
 }
 func (m *NavicoUdbDatabaseSourceReport) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoUdbDatabaseSourceReport) Clone() Message {
+	if m == nil {
+		return (*NavicoUdbDatabaseSourceReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Marker = clonePointer(m.Marker)
+	copy.Command = clonePointer(m.Command)
+	copy.Address = clonePointer(m.Address)
+	copy.SourceSettingId = clonePointer(m.SourceSettingId)
+	copy.Item = clonePointer(m.Item)
+	copy.ObjectValue = clonePointer(m.ObjectValue)
+	copy.Instance = clonePointer(m.Instance)
+	copy.SourceSelectionMaster = clonePointer(m.SourceSelectionMaster)
+	copy.Sub = cloneSlice(m.Sub)
+	copy.Token = clonePointer(m.Token)
+	return &copy
+}
+
 type NavicoBoatSpeedPolarTable struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -400,6 +745,21 @@ func (m *NavicoBoatSpeedPolarTable) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoBoatSpeedPolarTable) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoBoatSpeedPolarTable) Clone() Message {
+	if m == nil {
+		return (*NavicoBoatSpeedPolarTable)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ReportType = clonePointer(m.ReportType)
+	copy.Part = clonePointer(m.Part)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type NavicoDataTypeSourceDirectory struct {
 	Info             MessageInfo                               `json:"info"`
@@ -424,6 +784,27 @@ func (m *NavicoDataTypeSourceDirectory) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NavicoDataTypeSourceDirectory) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoDataTypeSourceDirectory) Clone() Message {
+	if m == nil {
+		return (*NavicoDataTypeSourceDirectory)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ReportType = clonePointer(m.ReportType)
+	copy.Part = clonePointer(m.Part)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Type = clonePointer(m.Repeating1[i].Type)
+		copy.Repeating1[i].DataType = clonePointer(m.Repeating1[i].DataType)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
 
 type NavicoDataTypeSourceDirectoryFullReport struct {
 	Info             MessageInfo                                         `json:"info"`
@@ -451,6 +832,27 @@ func (m *NavicoDataTypeSourceDirectoryFullReport) EncodePayload() ([]uint8, erro
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoDataTypeSourceDirectoryFullReport) Clone() Message {
+	if m == nil {
+		return (*NavicoDataTypeSourceDirectoryFullReport)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ReportType = clonePointer(m.ReportType)
+	copy.Part = clonePointer(m.Part)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Type = clonePointer(m.Repeating1[i].Type)
+		copy.Repeating1[i].DataType = clonePointer(m.Repeating1[i].DataType)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 type NavicoAlarm struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -471,6 +873,26 @@ func (m *NavicoAlarm) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *NavicoAlarm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoAlarm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoAlarm) Clone() Message {
+	if m == nil {
+		return (*NavicoAlarm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.RecordId = clonePointer(m.RecordId)
+	copy.AlarmType = clonePointer(m.AlarmType)
+	copy.AlarmId = clonePointer(m.AlarmId)
+	copy.AlarmState = clonePointer(m.AlarmState)
+	copy.ActionFlag = clonePointer(m.ActionFlag)
+	copy.AlarmSeverity = clonePointer(m.AlarmSeverity)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
+
 type NavicoAsciiIdentifier struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -484,6 +906,18 @@ func (m *NavicoAsciiIdentifier) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *NavicoAsciiIdentifier) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoAsciiIdentifier) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoAsciiIdentifier) Clone() Message {
+	if m == nil {
+		return (*NavicoAsciiIdentifier)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type NavicoProprietaryFp struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -495,6 +929,18 @@ func (m *NavicoProprietaryFp) MessageInfo() MessageInfo            { return m.In
 func (m *NavicoProprietaryFp) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *NavicoProprietaryFp) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoProprietaryFp) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoProprietaryFp) Clone() Message {
+	if m == nil {
+		return (*NavicoProprietaryFp)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type NavicoDiagnosticData struct {
 	Info             MessageInfo                      `json:"info"`
@@ -515,3 +961,22 @@ func (m *NavicoDiagnosticData) MessageInfo() MessageInfo            { return m.I
 func (m *NavicoDiagnosticData) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *NavicoDiagnosticData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *NavicoDiagnosticData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NavicoDiagnosticData) Clone() Message {
+	if m == nil {
+		return (*NavicoDiagnosticData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Instance = clonePointer(m.Instance)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].FieldId = clonePointer(m.Repeating1[i].FieldId)
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}

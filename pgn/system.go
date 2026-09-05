@@ -24,6 +24,17 @@ func (m *Message0xe8000xee00StandardizedSingleFrameAddressed) EncodePayload() ([
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0xe8000xee00StandardizedSingleFrameAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0xe8000xee00StandardizedSingleFrameAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type IsoAcknowledgement struct {
 	Info          MessageInfo `json:"info"`
 	Control       *uint64     `json:"control,omitempty" n2k:"1"`
@@ -37,6 +48,19 @@ func (m *IsoAcknowledgement) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *IsoAcknowledgement) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *IsoAcknowledgement) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoAcknowledgement) Clone() Message {
+	if m == nil {
+		return (*IsoAcknowledgement)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Control = clonePointer(m.Control)
+	copy.GroupFunction = clonePointer(m.GroupFunction)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
+}
+
 type IsoRequest struct {
 	Info MessageInfo `json:"info"`
 	Pgn  *uint64     `json:"pgn,omitempty" n2k:"1"`
@@ -47,6 +71,17 @@ func (m *IsoRequest) MessageInfo() MessageInfo            { return m.Info }
 func (m *IsoRequest) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *IsoRequest) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *IsoRequest) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoRequest) Clone() Message {
+	if m == nil {
+		return (*IsoRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
+}
 
 type IsoTransportProtocolDataTransfer struct {
 	Info MessageInfo `json:"info"`
@@ -61,6 +96,18 @@ func (m *IsoTransportProtocolDataTransfer) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *IsoTransportProtocolDataTransfer) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolDataTransfer) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolDataTransfer)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type IsoTransportProtocolConnectionManagementAbort struct {
 	Info              MessageInfo `json:"info"`
@@ -79,6 +126,19 @@ func (m *IsoTransportProtocolConnectionManagementAbort) DecodePayload(payload []
 }
 func (m *IsoTransportProtocolConnectionManagementAbort) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolConnectionManagementAbort) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolConnectionManagementAbort)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GroupFunctionCode = clonePointer(m.GroupFunctionCode)
+	copy.Reason = cloneSlice(m.Reason)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
 }
 
 type IsoTransportProtocolConnectionManagementBroadcastAnnounce struct {
@@ -103,6 +163,20 @@ func (m *IsoTransportProtocolConnectionManagementBroadcastAnnounce) EncodePayloa
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolConnectionManagementBroadcastAnnounce) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolConnectionManagementBroadcastAnnounce)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GroupFunctionCode = clonePointer(m.GroupFunctionCode)
+	copy.MessageSize = clonePointer(m.MessageSize)
+	copy.Packets = clonePointer(m.Packets)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
+}
+
 type IsoTransportProtocolConnectionManagementClearToSend struct {
 	Info              MessageInfo `json:"info"`
 	GroupFunctionCode *uint64     `json:"groupFunctionCode,omitempty" n2k:"1"`
@@ -125,6 +199,20 @@ func (m *IsoTransportProtocolConnectionManagementClearToSend) EncodePayload() ([
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolConnectionManagementClearToSend) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolConnectionManagementClearToSend)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GroupFunctionCode = clonePointer(m.GroupFunctionCode)
+	copy.MaxPackets = clonePointer(m.MaxPackets)
+	copy.NextSid = clonePointer(m.NextSid)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
+}
+
 type IsoTransportProtocolConnectionManagementEndOfMessage struct {
 	Info                        MessageInfo `json:"info"`
 	GroupFunctionCode           *uint64     `json:"groupFunctionCode,omitempty" n2k:"1"`
@@ -145,6 +233,20 @@ func (m *IsoTransportProtocolConnectionManagementEndOfMessage) DecodePayload(pay
 }
 func (m *IsoTransportProtocolConnectionManagementEndOfMessage) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolConnectionManagementEndOfMessage) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolConnectionManagementEndOfMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GroupFunctionCode = clonePointer(m.GroupFunctionCode)
+	copy.TotalMessageSize = clonePointer(m.TotalMessageSize)
+	copy.TotalNumberOfFramesReceived = clonePointer(m.TotalNumberOfFramesReceived)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
 }
 
 type IsoTransportProtocolConnectionManagementRequestToSend struct {
@@ -170,6 +272,21 @@ func (m *IsoTransportProtocolConnectionManagementRequestToSend) EncodePayload() 
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoTransportProtocolConnectionManagementRequestToSend) Clone() Message {
+	if m == nil {
+		return (*IsoTransportProtocolConnectionManagementRequestToSend)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.GroupFunctionCode = clonePointer(m.GroupFunctionCode)
+	copy.MessageSize = clonePointer(m.MessageSize)
+	copy.Packets = clonePointer(m.Packets)
+	copy.PacketsReply = clonePointer(m.PacketsReply)
+	copy.Pgn = clonePointer(m.Pgn)
+	return &copy
+}
+
 type IsoAddressClaim struct {
 	Info                    MessageInfo `json:"info"`
 	UniqueNumber            *uint64     `json:"uniqueNumber,omitempty" n2k:"1"`
@@ -188,6 +305,25 @@ func (m *IsoAddressClaim) MessageInfo() MessageInfo            { return m.Info }
 func (m *IsoAddressClaim) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *IsoAddressClaim) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *IsoAddressClaim) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoAddressClaim) Clone() Message {
+	if m == nil {
+		return (*IsoAddressClaim)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.UniqueNumber = clonePointer(m.UniqueNumber)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.DeviceInstanceLower = clonePointer(m.DeviceInstanceLower)
+	copy.DeviceInstanceUpper = clonePointer(m.DeviceInstanceUpper)
+	copy.DeviceFunction = clonePointer(m.DeviceFunction)
+	copy.DeviceClass = clonePointer(m.DeviceClass)
+	copy.SystemInstance = clonePointer(m.SystemInstance)
+	copy.IndustryGroup = clonePointer(m.IndustryGroup)
+	copy.ArbitraryAddressCapable = clonePointer(m.ArbitraryAddressCapable)
+	return &copy
+}
 
 type Message0xef00ManufacturerProprietarySingleFrameAddressed struct {
 	Info             MessageInfo `json:"info"`
@@ -208,6 +344,19 @@ func (m *Message0xef00ManufacturerProprietarySingleFrameAddressed) DecodePayload
 }
 func (m *Message0xef00ManufacturerProprietarySingleFrameAddressed) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0xef00ManufacturerProprietarySingleFrameAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0xef00ManufacturerProprietarySingleFrameAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
 }
 
 type Message0xf0000xfeffStandardizedSingleFrameNonAddressed struct {
@@ -231,6 +380,19 @@ func (m *Message0xf0000xfeffStandardizedSingleFrameNonAddressed) EncodePayload()
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0xf0000xfeffStandardizedSingleFrameNonAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0xf0000xfeffStandardizedSingleFrameNonAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type IsoCommandedAddress struct {
 	Info                MessageInfo `json:"info"`
 	UniqueNumber        []uint8     `json:"uniqueNumber,omitempty" n2k:"1"`
@@ -249,6 +411,25 @@ func (m *IsoCommandedAddress) MessageInfo() MessageInfo            { return m.In
 func (m *IsoCommandedAddress) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *IsoCommandedAddress) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *IsoCommandedAddress) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *IsoCommandedAddress) Clone() Message {
+	if m == nil {
+		return (*IsoCommandedAddress)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.UniqueNumber = cloneSlice(m.UniqueNumber)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.DeviceInstanceLower = clonePointer(m.DeviceInstanceLower)
+	copy.DeviceInstanceUpper = clonePointer(m.DeviceInstanceUpper)
+	copy.DeviceFunction = clonePointer(m.DeviceFunction)
+	copy.DeviceClass = clonePointer(m.DeviceClass)
+	copy.SystemInstance = clonePointer(m.SystemInstance)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.NewSourceAddress = clonePointer(m.NewSourceAddress)
+	return &copy
+}
 
 type Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed struct {
 	Info             MessageInfo `json:"info"`
@@ -273,6 +454,19 @@ func (m *Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed) Enco
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0xff000xffffManufacturerProprietarySingleFrameNonAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type Message0x1ed000x1ee00StandardizedFastPacketAddressed struct {
 	Info MessageInfo `json:"info"`
 	Data []uint8     `json:"data,omitempty" n2k:"1"`
@@ -290,6 +484,17 @@ func (m *Message0x1ed000x1ee00StandardizedFastPacketAddressed) DecodePayload(pay
 }
 func (m *Message0x1ed000x1ee00StandardizedFastPacketAddressed) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0x1ed000x1ee00StandardizedFastPacketAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0x1ed000x1ee00StandardizedFastPacketAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Data = cloneSlice(m.Data)
+	return &copy
 }
 
 type NmeaAcknowledgeGroupFunction struct {
@@ -314,6 +519,25 @@ func (m *NmeaAcknowledgeGroupFunction) DecodePayload(payload []uint8) error {
 }
 func (m *NmeaAcknowledgeGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaAcknowledgeGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaAcknowledgeGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.PgnErrorCode = clonePointer(m.PgnErrorCode)
+	copy.TransmissionIntervalPriorityErrorCode = clonePointer(m.TransmissionIntervalPriorityErrorCode)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Parameter = clonePointer(m.Repeating1[i].Parameter)
+	}
+	return &copy
+}
+
 type NmeaCommandGroupFunction struct {
 	Info               MessageInfo                          `json:"info"`
 	FunctionCode       *uint64                              `json:"functionCode,omitempty" n2k:"1"`
@@ -335,6 +559,25 @@ func (m *NmeaCommandGroupFunction) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NmeaCommandGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaCommandGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaCommandGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.Priority = clonePointer(m.Priority)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Parameter = clonePointer(m.Repeating1[i].Parameter)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
 
 type NmeaReadFieldsGroupFunction struct {
 	Info                   MessageInfo                             `json:"info"`
@@ -365,6 +608,32 @@ func (m *NmeaReadFieldsGroupFunction) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *NmeaReadFieldsGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaReadFieldsGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaReadFieldsGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UniqueId = clonePointer(m.UniqueId)
+	copy.NumberOfSelectionPairs = clonePointer(m.NumberOfSelectionPairs)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].SelectionParameter = clonePointer(m.Repeating1[i].SelectionParameter)
+		copy.Repeating1[i].SelectionValue = cloneSlice(m.Repeating1[i].SelectionValue)
+	}
+	copy.Repeating2 = cloneSlice(m.Repeating2)
+	for i := range copy.Repeating2 {
+		copy.Repeating2[i].Parameter = clonePointer(m.Repeating2[i].Parameter)
+	}
+	return &copy
+}
 
 type NmeaReadFieldsReplyGroupFunction struct {
 	Info                   MessageInfo                                  `json:"info"`
@@ -397,6 +666,33 @@ func (m *NmeaReadFieldsReplyGroupFunction) DecodePayload(payload []uint8) error 
 }
 func (m *NmeaReadFieldsReplyGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaReadFieldsReplyGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaReadFieldsReplyGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UniqueId = clonePointer(m.UniqueId)
+	copy.NumberOfSelectionPairs = clonePointer(m.NumberOfSelectionPairs)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].SelectionParameter = clonePointer(m.Repeating1[i].SelectionParameter)
+		copy.Repeating1[i].SelectionValue = cloneSlice(m.Repeating1[i].SelectionValue)
+	}
+	copy.Repeating2 = cloneSlice(m.Repeating2)
+	for i := range copy.Repeating2 {
+		copy.Repeating2[i].Parameter = clonePointer(m.Repeating2[i].Parameter)
+		copy.Repeating2[i].Value = cloneSlice(m.Repeating2[i].Value)
+	}
+	return &copy
+}
+
 type NmeaRequestGroupFunction struct {
 	Info                       MessageInfo                          `json:"info"`
 	FunctionCode               *uint64                              `json:"functionCode,omitempty" n2k:"1"`
@@ -420,14 +716,49 @@ func (m *NmeaRequestGroupFunction) DecodePayload(payload []uint8) error {
 }
 func (m *NmeaRequestGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaRequestGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaRequestGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.TransmissionInterval = clonePointer(m.TransmissionInterval)
+	copy.TransmissionIntervalOffset = clonePointer(m.TransmissionIntervalOffset)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Parameter = clonePointer(m.Repeating1[i].Parameter)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 // TransmissionIntervalValue returns TransmissionInterval as a physical value in s (value = raw * 0.001).
-// The bool is false when TransmissionInterval is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NmeaRequestGroupFunction) TransmissionIntervalValue() (float64, bool) {
-	if m.TransmissionInterval == nil {
+	if m == nil || m.TransmissionInterval == nil {
 		return 0, false
 	}
-	return float64(*m.TransmissionInterval) * 0.001, true
+	if *m.TransmissionInterval == 4294967295 {
+		return 0, false
+	}
+	if *m.TransmissionInterval == 4294967294 {
+		return 0, false
+	}
+	if *m.TransmissionInterval == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TransmissionInterval) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTransmissionIntervalValue sets TransmissionInterval from a physical value in s, rounded to the nearest
@@ -438,13 +769,28 @@ func (m *NmeaRequestGroupFunction) SetTransmissionIntervalValue(v float64) {
 }
 
 // TransmissionIntervalOffsetValue returns TransmissionIntervalOffset as a physical value in s (value = raw * 0.01).
-// The bool is false when TransmissionIntervalOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *NmeaRequestGroupFunction) TransmissionIntervalOffsetValue() (float64, bool) {
-	if m.TransmissionIntervalOffset == nil {
+	if m == nil || m.TransmissionIntervalOffset == nil {
 		return 0, false
 	}
-	return float64(*m.TransmissionIntervalOffset) * 0.01, true
+	if *m.TransmissionIntervalOffset == 65535 {
+		return 0, false
+	}
+	if *m.TransmissionIntervalOffset == 65534 {
+		return 0, false
+	}
+	if *m.TransmissionIntervalOffset == 65533 {
+		return 0, false
+	}
+	value := float64(*m.TransmissionIntervalOffset) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTransmissionIntervalOffsetValue sets TransmissionIntervalOffset from a physical value in s, rounded to the nearest
@@ -485,6 +831,33 @@ func (m *NmeaWriteFieldsGroupFunction) DecodePayload(payload []uint8) error {
 }
 func (m *NmeaWriteFieldsGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaWriteFieldsGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaWriteFieldsGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UniqueId = clonePointer(m.UniqueId)
+	copy.NumberOfSelectionPairs = clonePointer(m.NumberOfSelectionPairs)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].SelectionParameter = clonePointer(m.Repeating1[i].SelectionParameter)
+		copy.Repeating1[i].SelectionValue = cloneSlice(m.Repeating1[i].SelectionValue)
+	}
+	copy.Repeating2 = cloneSlice(m.Repeating2)
+	for i := range copy.Repeating2 {
+		copy.Repeating2[i].Parameter = clonePointer(m.Repeating2[i].Parameter)
+		copy.Repeating2[i].Value = cloneSlice(m.Repeating2[i].Value)
+	}
+	return &copy
+}
+
 type NmeaWriteFieldsReplyGroupFunction struct {
 	Info                   MessageInfo                                   `json:"info"`
 	FunctionCode           *uint64                                       `json:"functionCode,omitempty" n2k:"1"`
@@ -516,6 +889,33 @@ func (m *NmeaWriteFieldsReplyGroupFunction) DecodePayload(payload []uint8) error
 }
 func (m *NmeaWriteFieldsReplyGroupFunction) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *NmeaWriteFieldsReplyGroupFunction) Clone() Message {
+	if m == nil {
+		return (*NmeaWriteFieldsReplyGroupFunction)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Pgn = clonePointer(m.Pgn)
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.UniqueId = clonePointer(m.UniqueId)
+	copy.NumberOfSelectionPairs = clonePointer(m.NumberOfSelectionPairs)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].SelectionParameter = clonePointer(m.Repeating1[i].SelectionParameter)
+		copy.Repeating1[i].SelectionValue = cloneSlice(m.Repeating1[i].SelectionValue)
+	}
+	copy.Repeating2 = cloneSlice(m.Repeating2)
+	for i := range copy.Repeating2 {
+		copy.Repeating2[i].Parameter = clonePointer(m.Repeating2[i].Parameter)
+		copy.Repeating2[i].Value = cloneSlice(m.Repeating2[i].Value)
+	}
+	return &copy
+}
+
 type ParameterGroupNumberListTransmitAndReceive struct {
 	Info         MessageInfo                                            `json:"info"`
 	FunctionCode *uint64                                                `json:"functionCode,omitempty" n2k:"1"`
@@ -534,6 +934,21 @@ func (m *ParameterGroupNumberListTransmitAndReceive) DecodePayload(payload []uin
 }
 func (m *ParameterGroupNumberListTransmitAndReceive) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ParameterGroupNumberListTransmitAndReceive) Clone() Message {
+	if m == nil {
+		return (*ParameterGroupNumberListTransmitAndReceive)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FunctionCode = clonePointer(m.FunctionCode)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Pgn = clonePointer(m.Repeating1[i].Pgn)
+	}
+	return &copy
 }
 
 type Message0x1ef00ManufacturerProprietaryFastPacketAddressed struct {
@@ -557,6 +972,19 @@ func (m *Message0x1ef00ManufacturerProprietaryFastPacketAddressed) EncodePayload
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0x1ef00ManufacturerProprietaryFastPacketAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0x1ef00ManufacturerProprietaryFastPacketAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type GarminAutopilotHeartbeat struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -576,6 +1004,24 @@ func (m *GarminAutopilotHeartbeat) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotHeartbeat) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotHeartbeat) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotHeartbeat)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.HeartbeatData = cloneSlice(m.HeartbeatData)
+	return &copy
+}
 
 type GarminAutopilotManeuver struct {
 	Info             MessageInfo `json:"info"`
@@ -597,6 +1043,24 @@ func (m *GarminAutopilotManeuver) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotManeuver) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotManeuver) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotManeuver)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.ManeuverCode = clonePointer(m.ManeuverCode)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
+
 type GarminAutopilotModeState struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -616,6 +1080,24 @@ func (m *GarminAutopilotModeState) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotModeState) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotModeState) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotModeState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.ModeState = clonePointer(m.ModeState)
+	return &copy
+}
 
 type GarminAutopilotRateOfTurn struct {
 	Info             MessageInfo `json:"info"`
@@ -637,6 +1119,24 @@ func (m *GarminAutopilotRateOfTurn) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotRateOfTurn) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotRateOfTurn) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotRateOfTurn)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.RateOfTurn = clonePointer(m.RateOfTurn)
+	return &copy
+}
+
 type GarminAutopilotRateOfTurnOrder struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -656,6 +1156,24 @@ func (m *GarminAutopilotRateOfTurnOrder) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *GarminAutopilotRateOfTurnOrder) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotRateOfTurnOrder) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotRateOfTurnOrder)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.RateOfTurnOrder = clonePointer(m.RateOfTurnOrder)
+	return &copy
+}
 
 type GarminAutopilotResponseSetting struct {
 	Info             MessageInfo `json:"info"`
@@ -677,6 +1195,24 @@ func (m *GarminAutopilotResponseSetting) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotResponseSetting) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotResponseSetting) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotResponseSetting)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.ResponseSetting = clonePointer(m.ResponseSetting)
+	return &copy
+}
+
 type GarminAutopilotSpeed struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -694,6 +1230,24 @@ func (m *GarminAutopilotSpeed) MessageInfo() MessageInfo            { return m.I
 func (m *GarminAutopilotSpeed) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *GarminAutopilotSpeed) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *GarminAutopilotSpeed) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotSpeed) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotSpeed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.Speed = clonePointer(m.Speed)
+	return &copy
+}
 
 type GarminAutopilotTurnAngleMeasured struct {
 	Info              MessageInfo `json:"info"`
@@ -715,14 +1269,38 @@ func (m *GarminAutopilotTurnAngleMeasured) DecodePayload(payload []uint8) error 
 }
 func (m *GarminAutopilotTurnAngleMeasured) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotTurnAngleMeasured) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotTurnAngleMeasured)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.TurnAngleMeasured = clonePointer(m.TurnAngleMeasured)
+	return &copy
+}
+
 // TurnAngleMeasuredValue returns TurnAngleMeasured as a physical value in rad (value = raw * 9.58738e-05).
-// The bool is false when TurnAngleMeasured is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotTurnAngleMeasured) TurnAngleMeasuredValue() (float64, bool) {
-	if m.TurnAngleMeasured == nil {
+	if m == nil || m.TurnAngleMeasured == nil {
 		return 0, false
 	}
-	return float64(*m.TurnAngleMeasured) * 9.58738e-05, true
+	if *m.TurnAngleMeasured == 65535 {
+		return 0, false
+	}
+	value := float64(*m.TurnAngleMeasured) * 9.58738e-05
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTurnAngleMeasuredValue sets TurnAngleMeasured from a physical value in rad, rounded to the nearest
@@ -752,14 +1330,38 @@ func (m *GarminAutopilotTurnAngleOrder) DecodePayload(payload []uint8) error {
 }
 func (m *GarminAutopilotTurnAngleOrder) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *GarminAutopilotTurnAngleOrder) Clone() Message {
+	if m == nil {
+		return (*GarminAutopilotTurnAngleOrder)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubProtocolId = clonePointer(m.SubProtocolId)
+	copy.WrapperByte1 = clonePointer(m.WrapperByte1)
+	copy.WrapperByte2 = clonePointer(m.WrapperByte2)
+	copy.FieldGroup = clonePointer(m.FieldGroup)
+	copy.Field = clonePointer(m.Field)
+	copy.TurnAngleOrder = clonePointer(m.TurnAngleOrder)
+	return &copy
+}
+
 // TurnAngleOrderValue returns TurnAngleOrder as a physical value in rad (value = raw * 9.58738e-05).
-// The bool is false when TurnAngleOrder is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotTurnAngleOrder) TurnAngleOrderValue() (float64, bool) {
-	if m.TurnAngleOrder == nil {
+	if m == nil || m.TurnAngleOrder == nil {
 		return 0, false
 	}
-	return float64(*m.TurnAngleOrder) * 9.58738e-05, true
+	if *m.TurnAngleOrder == 65535 {
+		return 0, false
+	}
+	value := float64(*m.TurnAngleOrder) * 9.58738e-05
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTurnAngleOrderValue sets TurnAngleOrder from a physical value in rad, rounded to the nearest
@@ -788,6 +1390,17 @@ func (m *Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed) Dec
 }
 func (m *Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed) Clone() Message {
+	if m == nil {
+		return (*Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Data = cloneSlice(m.Data)
+	return &copy
 }
 
 type Alert struct {
@@ -820,6 +1433,36 @@ func (m *Alert) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Alert) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Alert) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Alert) Clone() Message {
+	if m == nil {
+		return (*Alert)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.TemporarySilenceStatus = clonePointer(m.TemporarySilenceStatus)
+	copy.AcknowledgeStatus = clonePointer(m.AcknowledgeStatus)
+	copy.EscalationStatus = clonePointer(m.EscalationStatus)
+	copy.TemporarySilenceSupport = clonePointer(m.TemporarySilenceSupport)
+	copy.AcknowledgeSupport = clonePointer(m.AcknowledgeSupport)
+	copy.EscalationSupport = clonePointer(m.EscalationSupport)
+	copy.AcknowledgeSourceNetworkIdName = clonePointer(m.AcknowledgeSourceNetworkIdName)
+	copy.TriggerCondition = clonePointer(m.TriggerCondition)
+	copy.ThresholdStatus = clonePointer(m.ThresholdStatus)
+	copy.AlertPriority = clonePointer(m.AlertPriority)
+	copy.AlertState = clonePointer(m.AlertState)
+	return &copy
+}
+
 type AlertResponse struct {
 	Info                           MessageInfo `json:"info"`
 	AlertType                      *uint64     `json:"alertType,omitempty" n2k:"1"`
@@ -840,6 +1483,27 @@ func (m *AlertResponse) MessageInfo() MessageInfo            { return m.Info }
 func (m *AlertResponse) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AlertResponse) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AlertResponse) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AlertResponse) Clone() Message {
+	if m == nil {
+		return (*AlertResponse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.AcknowledgeSourceNetworkIdName = clonePointer(m.AcknowledgeSourceNetworkIdName)
+	copy.ResponseCommand = clonePointer(m.ResponseCommand)
+	return &copy
+}
 
 type AlertText struct {
 	Info                         MessageInfo `json:"info"`
@@ -862,6 +1526,26 @@ func (m *AlertText) MessageInfo() MessageInfo            { return m.Info }
 func (m *AlertText) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AlertText) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AlertText) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AlertText) Clone() Message {
+	if m == nil {
+		return (*AlertText)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.LanguageId = clonePointer(m.LanguageId)
+	return &copy
+}
 
 type AlertConfiguration struct {
 	Info                       MessageInfo `json:"info"`
@@ -886,6 +1570,30 @@ func (m *AlertConfiguration) MessageInfo() MessageInfo            { return m.Inf
 func (m *AlertConfiguration) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AlertConfiguration) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AlertConfiguration) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AlertConfiguration) Clone() Message {
+	if m == nil {
+		return (*AlertConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.AlertControl = clonePointer(m.AlertControl)
+	copy.UserDefinedAlertAssignment = clonePointer(m.UserDefinedAlertAssignment)
+	copy.ReactivationPeriod = clonePointer(m.ReactivationPeriod)
+	copy.TemporarySilencePeriod = clonePointer(m.TemporarySilencePeriod)
+	copy.EscalationPeriod = clonePointer(m.EscalationPeriod)
+	return &copy
+}
 
 type AlertThreshold struct {
 	Info                    MessageInfo                `json:"info"`
@@ -915,6 +1623,33 @@ func (m *AlertThreshold) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AlertThreshold) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AlertThreshold) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AlertThreshold) Clone() Message {
+	if m == nil {
+		return (*AlertThreshold)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].ParameterNumber = clonePointer(m.Repeating1[i].ParameterNumber)
+		copy.Repeating1[i].TriggerMethod = clonePointer(m.Repeating1[i].TriggerMethod)
+		copy.Repeating1[i].ThresholdDataFormat = clonePointer(m.Repeating1[i].ThresholdDataFormat)
+		copy.Repeating1[i].ThresholdLevel = clonePointer(m.Repeating1[i].ThresholdLevel)
+	}
+	return &copy
+}
+
 type AlertValue struct {
 	Info                    MessageInfo            `json:"info"`
 	AlertType               *uint64                `json:"alertType,omitempty" n2k:"1"`
@@ -942,6 +1677,32 @@ func (m *AlertValue) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AlertValue) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AlertValue) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AlertValue) Clone() Message {
+	if m == nil {
+		return (*AlertValue)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.AlertType = clonePointer(m.AlertType)
+	copy.AlertCategory = clonePointer(m.AlertCategory)
+	copy.AlertSystem = clonePointer(m.AlertSystem)
+	copy.AlertSubSystem = clonePointer(m.AlertSubSystem)
+	copy.AlertId = clonePointer(m.AlertId)
+	copy.DataSourceNetworkIdName = clonePointer(m.DataSourceNetworkIdName)
+	copy.DataSourceInstance = clonePointer(m.DataSourceInstance)
+	copy.DataSourceIndexSource = clonePointer(m.DataSourceIndexSource)
+	copy.AlertOccurrenceNumber = clonePointer(m.AlertOccurrenceNumber)
+	copy.NumberOfParameters = clonePointer(m.NumberOfParameters)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].ValueParameterNumber = clonePointer(m.Repeating1[i].ValueParameterNumber)
+		copy.Repeating1[i].ValueDataFormat = clonePointer(m.Repeating1[i].ValueDataFormat)
+		copy.Repeating1[i].ValueData = clonePointer(m.Repeating1[i].ValueData)
+	}
+	return &copy
+}
+
 type SystemTime struct {
 	Info   MessageInfo `json:"info"`
 	Sid    *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -956,14 +1717,43 @@ func (m *SystemTime) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SystemTime) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SystemTime) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SystemTime) Clone() Message {
+	if m == nil {
+		return (*SystemTime)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Source = clonePointer(m.Source)
+	copy.Date = clonePointer(m.Date)
+	copy.Time = clonePointer(m.Time)
+	return &copy
+}
+
 // DateValue returns Date as a physical value in d (value = raw).
-// The bool is false when Date is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SystemTime) DateValue() (float64, bool) {
-	if m.Date == nil {
+	if m == nil || m.Date == nil {
 		return 0, false
 	}
-	return float64(*m.Date), true
+	if *m.Date == 65535 {
+		return 0, false
+	}
+	if *m.Date == 65534 {
+		return 0, false
+	}
+	if *m.Date == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Date)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDateValue sets Date from a physical value in d, rounded to the nearest
@@ -974,13 +1764,28 @@ func (m *SystemTime) SetDateValue(v float64) {
 }
 
 // TimeValue returns Time as a physical value in s (value = raw * 0.0001).
-// The bool is false when Time is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SystemTime) TimeValue() (float64, bool) {
-	if m.Time == nil {
+	if m == nil || m.Time == nil {
 		return 0, false
 	}
-	return float64(*m.Time) * 0.0001, true
+	if *m.Time == 4294967295 {
+		return 0, false
+	}
+	if *m.Time == 4294967294 {
+		return 0, false
+	}
+	if *m.Time == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Time) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeValue sets Time from a physical value in s, rounded to the nearest
@@ -1005,14 +1810,44 @@ func (m *Heartbeat) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Heartbeat) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Heartbeat) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Heartbeat) Clone() Message {
+	if m == nil {
+		return (*Heartbeat)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.DataTransmitOffset = clonePointer(m.DataTransmitOffset)
+	copy.SequenceCounter = clonePointer(m.SequenceCounter)
+	copy.Controller1State = clonePointer(m.Controller1State)
+	copy.Controller2State = clonePointer(m.Controller2State)
+	copy.EquipmentStatus = clonePointer(m.EquipmentStatus)
+	return &copy
+}
+
 // DataTransmitOffsetValue returns DataTransmitOffset as a physical value in s (value = raw * 0.001).
-// The bool is false when DataTransmitOffset is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Heartbeat) DataTransmitOffsetValue() (float64, bool) {
-	if m.DataTransmitOffset == nil {
+	if m == nil || m.DataTransmitOffset == nil {
 		return 0, false
 	}
-	return float64(*m.DataTransmitOffset) * 0.001, true
+	if *m.DataTransmitOffset == 65535 {
+		return 0, false
+	}
+	if *m.DataTransmitOffset == 65534 {
+		return 0, false
+	}
+	if *m.DataTransmitOffset == 65533 {
+		return 0, false
+	}
+	value := float64(*m.DataTransmitOffset) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65.532 && !approximatelyEqual(value, 65.532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDataTransmitOffsetValue sets DataTransmitOffset from a physical value in s, rounded to the nearest
@@ -1040,14 +1875,43 @@ func (m *ProductInformation) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *ProductInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ProductInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ProductInformation) Clone() Message {
+	if m == nil {
+		return (*ProductInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Nmea2000Version = clonePointer(m.Nmea2000Version)
+	copy.ProductCode = clonePointer(m.ProductCode)
+	copy.CertificationLevel = clonePointer(m.CertificationLevel)
+	copy.LoadEquivalency = clonePointer(m.LoadEquivalency)
+	return &copy
+}
+
 // Nmea2000VersionValue returns Nmea2000Version as a physical value (value = raw * 0.001).
-// The bool is false when Nmea2000Version is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ProductInformation) Nmea2000VersionValue() (float64, bool) {
-	if m.Nmea2000Version == nil {
+	if m == nil || m.Nmea2000Version == nil {
 		return 0, false
 	}
-	return float64(*m.Nmea2000Version) * 0.001, true
+	if *m.Nmea2000Version == 65535 {
+		return 0, false
+	}
+	if *m.Nmea2000Version == 65534 {
+		return 0, false
+	}
+	if *m.Nmea2000Version == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Nmea2000Version) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65.532 && !approximatelyEqual(value, 65.532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetNmea2000VersionValue sets Nmea2000Version from a physical value, rounded to the nearest
@@ -1071,6 +1935,16 @@ func (m *ConfigurationInformation) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *ConfigurationInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ConfigurationInformation) Clone() Message {
+	if m == nil {
+		return (*ConfigurationInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	return &copy
+}
 
 type ManOverboardNotification struct {
 	Info                       MessageInfo `json:"info"`
@@ -1098,14 +1972,53 @@ func (m *ManOverboardNotification) DecodePayload(payload []uint8) error {
 }
 func (m *ManOverboardNotification) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ManOverboardNotification) Clone() Message {
+	if m == nil {
+		return (*ManOverboardNotification)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.MobEmitterId = clonePointer(m.MobEmitterId)
+	copy.ManOverboardStatus = clonePointer(m.ManOverboardStatus)
+	copy.ActivationTime = clonePointer(m.ActivationTime)
+	copy.PositionSource = clonePointer(m.PositionSource)
+	copy.PositionDate = clonePointer(m.PositionDate)
+	copy.PositionTime = clonePointer(m.PositionTime)
+	copy.Latitude = clonePointer(m.Latitude)
+	copy.Longitude = clonePointer(m.Longitude)
+	copy.CogReference = clonePointer(m.CogReference)
+	copy.Cog = clonePointer(m.Cog)
+	copy.Sog = clonePointer(m.Sog)
+	copy.MmsiOfVesselOfOrigin = clonePointer(m.MmsiOfVesselOfOrigin)
+	copy.MobEmitterBatteryLowStatus = clonePointer(m.MobEmitterBatteryLowStatus)
+	return &copy
+}
+
 // ActivationTimeValue returns ActivationTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when ActivationTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) ActivationTimeValue() (float64, bool) {
-	if m.ActivationTime == nil {
+	if m == nil || m.ActivationTime == nil {
 		return 0, false
 	}
-	return float64(*m.ActivationTime) * 0.0001, true
+	if *m.ActivationTime == 4294967295 {
+		return 0, false
+	}
+	if *m.ActivationTime == 4294967294 {
+		return 0, false
+	}
+	if *m.ActivationTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.ActivationTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetActivationTimeValue sets ActivationTime from a physical value in s, rounded to the nearest
@@ -1116,13 +2029,28 @@ func (m *ManOverboardNotification) SetActivationTimeValue(v float64) {
 }
 
 // PositionDateValue returns PositionDate as a physical value in d (value = raw).
-// The bool is false when PositionDate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) PositionDateValue() (float64, bool) {
-	if m.PositionDate == nil {
+	if m == nil || m.PositionDate == nil {
 		return 0, false
 	}
-	return float64(*m.PositionDate), true
+	if *m.PositionDate == 65535 {
+		return 0, false
+	}
+	if *m.PositionDate == 65534 {
+		return 0, false
+	}
+	if *m.PositionDate == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionDate)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionDateValue sets PositionDate from a physical value in d, rounded to the nearest
@@ -1133,13 +2061,28 @@ func (m *ManOverboardNotification) SetPositionDateValue(v float64) {
 }
 
 // PositionTimeValue returns PositionTime as a physical value in s (value = raw * 0.0001).
-// The bool is false when PositionTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) PositionTimeValue() (float64, bool) {
-	if m.PositionTime == nil {
+	if m == nil || m.PositionTime == nil {
 		return 0, false
 	}
-	return float64(*m.PositionTime) * 0.0001, true
+	if *m.PositionTime == 4294967295 {
+		return 0, false
+	}
+	if *m.PositionTime == 4294967294 {
+		return 0, false
+	}
+	if *m.PositionTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.PositionTime) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionTimeValue sets PositionTime from a physical value in s, rounded to the nearest
@@ -1150,13 +2093,28 @@ func (m *ManOverboardNotification) SetPositionTimeValue(v float64) {
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Latitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) LatitudeValue() (float64, bool) {
-	if m.Latitude == nil {
+	if m == nil || m.Latitude == nil {
 		return 0, false
 	}
-	return float64(*m.Latitude) * 1e-07, true
+	if *m.Latitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Latitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Latitude) * 1e-07
+	if value < -90 && !approximatelyEqual(value, -90) {
+		return 0, false
+	}
+	if value > 90 && !approximatelyEqual(value, 90) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
@@ -1167,13 +2125,28 @@ func (m *ManOverboardNotification) SetLatitudeValue(v float64) {
 }
 
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
-// The bool is false when Longitude is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) LongitudeValue() (float64, bool) {
-	if m.Longitude == nil {
+	if m == nil || m.Longitude == nil {
 		return 0, false
 	}
-	return float64(*m.Longitude) * 1e-07, true
+	if *m.Longitude == 2147483647 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483646 {
+		return 0, false
+	}
+	if *m.Longitude == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Longitude) * 1e-07
+	if value < -180 && !approximatelyEqual(value, -180) {
+		return 0, false
+	}
+	if value > 180 && !approximatelyEqual(value, 180) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
@@ -1184,13 +2157,28 @@ func (m *ManOverboardNotification) SetLongitudeValue(v float64) {
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Cog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) CogValue() (float64, bool) {
-	if m.Cog == nil {
+	if m == nil || m.Cog == nil {
 		return 0, false
 	}
-	return float64(*m.Cog) * 0.0001, true
+	if *m.Cog == 65535 {
+		return 0, false
+	}
+	if *m.Cog == 65534 {
+		return 0, false
+	}
+	if *m.Cog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Cog) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
@@ -1201,13 +2189,28 @@ func (m *ManOverboardNotification) SetCogValue(v float64) {
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Sog is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ManOverboardNotification) SogValue() (float64, bool) {
-	if m.Sog == nil {
+	if m == nil || m.Sog == nil {
 		return 0, false
 	}
-	return float64(*m.Sog) * 0.01, true
+	if *m.Sog == 65535 {
+		return 0, false
+	}
+	if *m.Sog == 65534 {
+		return 0, false
+	}
+	if *m.Sog == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Sog) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
@@ -1229,14 +2232,41 @@ func (m *RateOfTurn) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *RateOfTurn) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *RateOfTurn) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *RateOfTurn) Clone() Message {
+	if m == nil {
+		return (*RateOfTurn)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Rate = clonePointer(m.Rate)
+	return &copy
+}
+
 // RateValue returns Rate as a physical value in rad/s (value = raw * 3.125e-08).
-// The bool is false when Rate is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *RateOfTurn) RateValue() (float64, bool) {
-	if m.Rate == nil {
+	if m == nil || m.Rate == nil {
 		return 0, false
 	}
-	return float64(*m.Rate) * 3.125e-08, true
+	if *m.Rate == 2147483647 {
+		return 0, false
+	}
+	if *m.Rate == 2147483646 {
+		return 0, false
+	}
+	if *m.Rate == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Rate) * 3.125e-08
+	if value < -67.10886396875 && !approximatelyEqual(value, -67.10886396875) {
+		return 0, false
+	}
+	if value > 67.108863875 && !approximatelyEqual(value, 67.108863875) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRateValue sets Rate from a physical value in rad/s, rounded to the nearest
@@ -1258,14 +2288,41 @@ func (m *Heave) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Heave) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Heave) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Heave) Clone() Message {
+	if m == nil {
+		return (*Heave)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Heave = clonePointer(m.Heave)
+	return &copy
+}
+
 // HeaveValue returns Heave as a physical value in m (value = raw * 0.01).
-// The bool is false when Heave is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Heave) HeaveValue() (float64, bool) {
-	if m.Heave == nil {
+	if m == nil || m.Heave == nil {
 		return 0, false
 	}
-	return float64(*m.Heave) * 0.01, true
+	if *m.Heave == 32767 {
+		return 0, false
+	}
+	if *m.Heave == 32766 {
+		return 0, false
+	}
+	if *m.Heave == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Heave) * 0.01
+	if value < -327.67 && !approximatelyEqual(value, -327.67) {
+		return 0, false
+	}
+	if value > 327.64 && !approximatelyEqual(value, 327.64) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
@@ -1289,14 +2346,43 @@ func (m *Attitude) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Attitude) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Attitude) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Attitude) Clone() Message {
+	if m == nil {
+		return (*Attitude)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Yaw = clonePointer(m.Yaw)
+	copy.Pitch = clonePointer(m.Pitch)
+	copy.Roll = clonePointer(m.Roll)
+	return &copy
+}
+
 // YawValue returns Yaw as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Yaw is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Attitude) YawValue() (float64, bool) {
-	if m.Yaw == nil {
+	if m == nil || m.Yaw == nil {
 		return 0, false
 	}
-	return float64(*m.Yaw) * 0.0001, true
+	if *m.Yaw == 32767 {
+		return 0, false
+	}
+	if *m.Yaw == 32766 {
+		return 0, false
+	}
+	if *m.Yaw == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Yaw) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetYawValue sets Yaw from a physical value in rad, rounded to the nearest
@@ -1307,13 +2393,28 @@ func (m *Attitude) SetYawValue(v float64) {
 }
 
 // PitchValue returns Pitch as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Pitch is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Attitude) PitchValue() (float64, bool) {
-	if m.Pitch == nil {
+	if m == nil || m.Pitch == nil {
 		return 0, false
 	}
-	return float64(*m.Pitch) * 0.0001, true
+	if *m.Pitch == 32767 {
+		return 0, false
+	}
+	if *m.Pitch == 32766 {
+		return 0, false
+	}
+	if *m.Pitch == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Pitch) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPitchValue sets Pitch from a physical value in rad, rounded to the nearest
@@ -1324,13 +2425,28 @@ func (m *Attitude) SetPitchValue(v float64) {
 }
 
 // RollValue returns Roll as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Roll is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Attitude) RollValue() (float64, bool) {
-	if m.Roll == nil {
+	if m == nil || m.Roll == nil {
 		return 0, false
 	}
-	return float64(*m.Roll) * 0.0001, true
+	if *m.Roll == 32767 {
+		return 0, false
+	}
+	if *m.Roll == 32766 {
+		return 0, false
+	}
+	if *m.Roll == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Roll) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRollValue sets Roll from a physical value in rad, rounded to the nearest
@@ -1354,14 +2470,43 @@ func (m *MagneticVariation) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *MagneticVariation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MagneticVariation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MagneticVariation) Clone() Message {
+	if m == nil {
+		return (*MagneticVariation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Source = clonePointer(m.Source)
+	copy.AgeOfService = clonePointer(m.AgeOfService)
+	copy.Variation = clonePointer(m.Variation)
+	return &copy
+}
+
 // AgeOfServiceValue returns AgeOfService as a physical value in d (value = raw).
-// The bool is false when AgeOfService is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MagneticVariation) AgeOfServiceValue() (float64, bool) {
-	if m.AgeOfService == nil {
+	if m == nil || m.AgeOfService == nil {
 		return 0, false
 	}
-	return float64(*m.AgeOfService), true
+	if *m.AgeOfService == 65535 {
+		return 0, false
+	}
+	if *m.AgeOfService == 65534 {
+		return 0, false
+	}
+	if *m.AgeOfService == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AgeOfService)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAgeOfServiceValue sets AgeOfService from a physical value in d, rounded to the nearest
@@ -1372,13 +2517,28 @@ func (m *MagneticVariation) SetAgeOfServiceValue(v float64) {
 }
 
 // VariationValue returns Variation as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Variation is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MagneticVariation) VariationValue() (float64, bool) {
-	if m.Variation == nil {
+	if m == nil || m.Variation == nil {
 		return 0, false
 	}
-	return float64(*m.Variation) * 0.0001, true
+	if *m.Variation == 32767 {
+		return 0, false
+	}
+	if *m.Variation == 32766 {
+		return 0, false
+	}
+	if *m.Variation == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Variation) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetVariationValue sets Variation from a physical value in rad, rounded to the nearest
@@ -1402,14 +2562,43 @@ func (m *TripParametersVessel) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *TripParametersVessel) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TripParametersVessel) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *TripParametersVessel) Clone() Message {
+	if m == nil {
+		return (*TripParametersVessel)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.TimeToEmpty = clonePointer(m.TimeToEmpty)
+	copy.DistanceToEmpty = clonePointer(m.DistanceToEmpty)
+	copy.EstimatedFuelRemaining = clonePointer(m.EstimatedFuelRemaining)
+	copy.TripRunTime = clonePointer(m.TripRunTime)
+	return &copy
+}
+
 // TimeToEmptyValue returns TimeToEmpty as a physical value in s (value = raw * 0.001).
-// The bool is false when TimeToEmpty is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersVessel) TimeToEmptyValue() (float64, bool) {
-	if m.TimeToEmpty == nil {
+	if m == nil || m.TimeToEmpty == nil {
 		return 0, false
 	}
-	return float64(*m.TimeToEmpty) * 0.001, true
+	if *m.TimeToEmpty == 4294967295 {
+		return 0, false
+	}
+	if *m.TimeToEmpty == 4294967294 {
+		return 0, false
+	}
+	if *m.TimeToEmpty == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TimeToEmpty) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTimeToEmptyValue sets TimeToEmpty from a physical value in s, rounded to the nearest
@@ -1420,13 +2609,28 @@ func (m *TripParametersVessel) SetTimeToEmptyValue(v float64) {
 }
 
 // DistanceToEmptyValue returns DistanceToEmpty as a physical value in m (value = raw * 0.01).
-// The bool is false when DistanceToEmpty is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersVessel) DistanceToEmptyValue() (float64, bool) {
-	if m.DistanceToEmpty == nil {
+	if m == nil || m.DistanceToEmpty == nil {
 		return 0, false
 	}
-	return float64(*m.DistanceToEmpty) * 0.01, true
+	if *m.DistanceToEmpty == 4294967295 {
+		return 0, false
+	}
+	if *m.DistanceToEmpty == 4294967294 {
+		return 0, false
+	}
+	if *m.DistanceToEmpty == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.DistanceToEmpty) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+07 && !approximatelyEqual(value, 4.294967292e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDistanceToEmptyValue sets DistanceToEmpty from a physical value in m, rounded to the nearest
@@ -1437,13 +2641,28 @@ func (m *TripParametersVessel) SetDistanceToEmptyValue(v float64) {
 }
 
 // EstimatedFuelRemainingValue returns EstimatedFuelRemaining as a physical value in L (value = raw).
-// The bool is false when EstimatedFuelRemaining is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersVessel) EstimatedFuelRemainingValue() (float64, bool) {
-	if m.EstimatedFuelRemaining == nil {
+	if m == nil || m.EstimatedFuelRemaining == nil {
 		return 0, false
 	}
-	return float64(*m.EstimatedFuelRemaining), true
+	if *m.EstimatedFuelRemaining == 65535 {
+		return 0, false
+	}
+	if *m.EstimatedFuelRemaining == 65534 {
+		return 0, false
+	}
+	if *m.EstimatedFuelRemaining == 65533 {
+		return 0, false
+	}
+	value := float64(*m.EstimatedFuelRemaining)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetEstimatedFuelRemainingValue sets EstimatedFuelRemaining from a physical value in L, rounded to the nearest
@@ -1454,13 +2673,28 @@ func (m *TripParametersVessel) SetEstimatedFuelRemainingValue(v float64) {
 }
 
 // TripRunTimeValue returns TripRunTime as a physical value in s (value = raw * 0.001).
-// The bool is false when TripRunTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TripParametersVessel) TripRunTimeValue() (float64, bool) {
-	if m.TripRunTime == nil {
+	if m == nil || m.TripRunTime == nil {
 		return 0, false
 	}
-	return float64(*m.TripRunTime) * 0.001, true
+	if *m.TripRunTime == 4294967295 {
+		return 0, false
+	}
+	if *m.TripRunTime == 4294967294 {
+		return 0, false
+	}
+	if *m.TripRunTime == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.TripRunTime) * 0.001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+06 && !approximatelyEqual(value, 4.294967292e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTripRunTimeValue sets TripRunTime from a physical value in s, rounded to the nearest
@@ -1485,6 +2719,19 @@ func (m *AgsConfigurationStatus) DecodePayload(payload []uint8) error {
 }
 func (m *AgsConfigurationStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AgsConfigurationStatus) Clone() Message {
+	if m == nil {
+		return (*AgsConfigurationStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.GeneratorInstance = clonePointer(m.GeneratorInstance)
+	copy.AgsMode = clonePointer(m.AgsMode)
+	return &copy
+}
+
 type AgsStatus struct {
 	Info               MessageInfo `json:"info"`
 	Instance           *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -1500,6 +2747,22 @@ func (m *AgsStatus) MessageInfo() MessageInfo            { return m.Info }
 func (m *AgsStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *AgsStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *AgsStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *AgsStatus) Clone() Message {
+	if m == nil {
+		return (*AgsStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.GeneratorInstance = clonePointer(m.GeneratorInstance)
+	copy.AgsOperatingState = clonePointer(m.AgsOperatingState)
+	copy.GeneratorState = clonePointer(m.GeneratorState)
+	copy.GeneratorOnReason = clonePointer(m.GeneratorOnReason)
+	copy.GeneratorOffReason = clonePointer(m.GeneratorOffReason)
+	return &copy
+}
 
 type ConverterStatus struct {
 	Info              MessageInfo `json:"info"`
@@ -1518,6 +2781,23 @@ func (m *ConverterStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *ConverterStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ConverterStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ConverterStatus) Clone() Message {
+	if m == nil {
+		return (*ConverterStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.ConnectionNumber = clonePointer(m.ConnectionNumber)
+	copy.OperatingState = clonePointer(m.OperatingState)
+	copy.TemperatureState = clonePointer(m.TemperatureState)
+	copy.OverloadState = clonePointer(m.OverloadState)
+	copy.LowDcVoltageState = clonePointer(m.LowDcVoltageState)
+	copy.RippleState = clonePointer(m.RippleState)
+	return &copy
+}
+
 type LeewayAngle struct {
 	Info        MessageInfo `json:"info"`
 	Sid         *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1530,14 +2810,41 @@ func (m *LeewayAngle) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *LeewayAngle) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *LeewayAngle) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *LeewayAngle) Clone() Message {
+	if m == nil {
+		return (*LeewayAngle)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.LeewayAngle = clonePointer(m.LeewayAngle)
+	return &copy
+}
+
 // LeewayAngleValue returns LeewayAngle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when LeewayAngle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *LeewayAngle) LeewayAngleValue() (float64, bool) {
-	if m.LeewayAngle == nil {
+	if m == nil || m.LeewayAngle == nil {
 		return 0, false
 	}
-	return float64(*m.LeewayAngle) * 0.0001, true
+	if *m.LeewayAngle == 32767 {
+		return 0, false
+	}
+	if *m.LeewayAngle == 32766 {
+		return 0, false
+	}
+	if *m.LeewayAngle == 32765 {
+		return 0, false
+	}
+	value := float64(*m.LeewayAngle) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLeewayAngleValue sets LeewayAngle from a physical value in rad, rounded to the nearest
@@ -1562,14 +2869,44 @@ func (m *Speed) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Speed) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Speed) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Speed) Clone() Message {
+	if m == nil {
+		return (*Speed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.SpeedWaterReferenced = clonePointer(m.SpeedWaterReferenced)
+	copy.SpeedGroundReferenced = clonePointer(m.SpeedGroundReferenced)
+	copy.SpeedWaterReferencedType = clonePointer(m.SpeedWaterReferencedType)
+	copy.SpeedDirection = clonePointer(m.SpeedDirection)
+	return &copy
+}
+
 // SpeedWaterReferencedValue returns SpeedWaterReferenced as a physical value in m/s (value = raw * 0.01).
-// The bool is false when SpeedWaterReferenced is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Speed) SpeedWaterReferencedValue() (float64, bool) {
-	if m.SpeedWaterReferenced == nil {
+	if m == nil || m.SpeedWaterReferenced == nil {
 		return 0, false
 	}
-	return float64(*m.SpeedWaterReferenced) * 0.01, true
+	if *m.SpeedWaterReferenced == 65535 {
+		return 0, false
+	}
+	if *m.SpeedWaterReferenced == 65534 {
+		return 0, false
+	}
+	if *m.SpeedWaterReferenced == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SpeedWaterReferenced) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedWaterReferencedValue sets SpeedWaterReferenced from a physical value in m/s, rounded to the nearest
@@ -1580,13 +2917,28 @@ func (m *Speed) SetSpeedWaterReferencedValue(v float64) {
 }
 
 // SpeedGroundReferencedValue returns SpeedGroundReferenced as a physical value in m/s (value = raw * 0.01).
-// The bool is false when SpeedGroundReferenced is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Speed) SpeedGroundReferencedValue() (float64, bool) {
-	if m.SpeedGroundReferenced == nil {
+	if m == nil || m.SpeedGroundReferenced == nil {
 		return 0, false
 	}
-	return float64(*m.SpeedGroundReferenced) * 0.01, true
+	if *m.SpeedGroundReferenced == 65535 {
+		return 0, false
+	}
+	if *m.SpeedGroundReferenced == 65534 {
+		return 0, false
+	}
+	if *m.SpeedGroundReferenced == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SpeedGroundReferenced) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedGroundReferencedValue sets SpeedGroundReferenced from a physical value in m/s, rounded to the nearest
@@ -1621,14 +2973,53 @@ func (m *TrackedTargetData) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *TrackedTargetData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *TrackedTargetData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *TrackedTargetData) Clone() Message {
+	if m == nil {
+		return (*TrackedTargetData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.TargetId = clonePointer(m.TargetId)
+	copy.TrackStatus = clonePointer(m.TrackStatus)
+	copy.ReportedTarget = clonePointer(m.ReportedTarget)
+	copy.TargetAcquisition = clonePointer(m.TargetAcquisition)
+	copy.BearingReference = clonePointer(m.BearingReference)
+	copy.Bearing = clonePointer(m.Bearing)
+	copy.Distance = clonePointer(m.Distance)
+	copy.Course = clonePointer(m.Course)
+	copy.Speed = clonePointer(m.Speed)
+	copy.Cpa = clonePointer(m.Cpa)
+	copy.Tcpa = clonePointer(m.Tcpa)
+	copy.UtcOfFix = clonePointer(m.UtcOfFix)
+	copy.ReferenceTarget = clonePointer(m.ReferenceTarget)
+	return &copy
+}
+
 // BearingValue returns Bearing as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Bearing is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) BearingValue() (float64, bool) {
-	if m.Bearing == nil {
+	if m == nil || m.Bearing == nil {
 		return 0, false
 	}
-	return float64(*m.Bearing) * 0.0001, true
+	if *m.Bearing == 65535 {
+		return 0, false
+	}
+	if *m.Bearing == 65534 {
+		return 0, false
+	}
+	if *m.Bearing == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Bearing) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBearingValue sets Bearing from a physical value in rad, rounded to the nearest
@@ -1639,13 +3030,28 @@ func (m *TrackedTargetData) SetBearingValue(v float64) {
 }
 
 // DistanceValue returns Distance as a physical value in m (value = raw * 0.01).
-// The bool is false when Distance is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) DistanceValue() (float64, bool) {
-	if m.Distance == nil {
+	if m == nil || m.Distance == nil {
 		return 0, false
 	}
-	return float64(*m.Distance) * 0.01, true
+	if *m.Distance == 2147483647 {
+		return 0, false
+	}
+	if *m.Distance == 2147483646 {
+		return 0, false
+	}
+	if *m.Distance == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Distance) * 0.01
+	if value < -2.147483647e+07 && !approximatelyEqual(value, -2.147483647e+07) {
+		return 0, false
+	}
+	if value > 2.147483644e+07 && !approximatelyEqual(value, 2.147483644e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDistanceValue sets Distance from a physical value in m, rounded to the nearest
@@ -1656,13 +3062,28 @@ func (m *TrackedTargetData) SetDistanceValue(v float64) {
 }
 
 // CourseValue returns Course as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Course is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) CourseValue() (float64, bool) {
-	if m.Course == nil {
+	if m == nil || m.Course == nil {
 		return 0, false
 	}
-	return float64(*m.Course) * 0.0001, true
+	if *m.Course == 65535 {
+		return 0, false
+	}
+	if *m.Course == 65534 {
+		return 0, false
+	}
+	if *m.Course == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Course) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCourseValue sets Course from a physical value in rad, rounded to the nearest
@@ -1673,13 +3094,28 @@ func (m *TrackedTargetData) SetCourseValue(v float64) {
 }
 
 // SpeedValue returns Speed as a physical value in m/s (value = raw * 0.01).
-// The bool is false when Speed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) SpeedValue() (float64, bool) {
-	if m.Speed == nil {
+	if m == nil || m.Speed == nil {
 		return 0, false
 	}
-	return float64(*m.Speed) * 0.01, true
+	if *m.Speed == 65535 {
+		return 0, false
+	}
+	if *m.Speed == 65534 {
+		return 0, false
+	}
+	if *m.Speed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Speed) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedValue sets Speed from a physical value in m/s, rounded to the nearest
@@ -1690,13 +3126,28 @@ func (m *TrackedTargetData) SetSpeedValue(v float64) {
 }
 
 // CpaValue returns Cpa as a physical value in m (value = raw * 0.01).
-// The bool is false when Cpa is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) CpaValue() (float64, bool) {
-	if m.Cpa == nil {
+	if m == nil || m.Cpa == nil {
 		return 0, false
 	}
-	return float64(*m.Cpa) * 0.01, true
+	if *m.Cpa == 2147483647 {
+		return 0, false
+	}
+	if *m.Cpa == 2147483646 {
+		return 0, false
+	}
+	if *m.Cpa == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Cpa) * 0.01
+	if value < -2.147483647e+07 && !approximatelyEqual(value, -2.147483647e+07) {
+		return 0, false
+	}
+	if value > 2.147483644e+07 && !approximatelyEqual(value, 2.147483644e+07) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCpaValue sets Cpa from a physical value in m, rounded to the nearest
@@ -1707,13 +3158,28 @@ func (m *TrackedTargetData) SetCpaValue(v float64) {
 }
 
 // TcpaValue returns Tcpa as a physical value in s (value = raw * 0.001).
-// The bool is false when Tcpa is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) TcpaValue() (float64, bool) {
-	if m.Tcpa == nil {
+	if m == nil || m.Tcpa == nil {
 		return 0, false
 	}
-	return float64(*m.Tcpa) * 0.001, true
+	if *m.Tcpa == 2147483647 {
+		return 0, false
+	}
+	if *m.Tcpa == 2147483646 {
+		return 0, false
+	}
+	if *m.Tcpa == 2147483645 {
+		return 0, false
+	}
+	value := float64(*m.Tcpa) * 0.001
+	if value < -2.147483647e+06 && !approximatelyEqual(value, -2.147483647e+06) {
+		return 0, false
+	}
+	if value > 2.147483644e+06 && !approximatelyEqual(value, 2.147483644e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTcpaValue sets Tcpa from a physical value in s, rounded to the nearest
@@ -1724,13 +3190,28 @@ func (m *TrackedTargetData) SetTcpaValue(v float64) {
 }
 
 // UtcOfFixValue returns UtcOfFix as a physical value in s (value = raw * 0.0001).
-// The bool is false when UtcOfFix is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *TrackedTargetData) UtcOfFixValue() (float64, bool) {
-	if m.UtcOfFix == nil {
+	if m == nil || m.UtcOfFix == nil {
 		return 0, false
 	}
-	return float64(*m.UtcOfFix) * 0.0001, true
+	if *m.UtcOfFix == 4294967295 {
+		return 0, false
+	}
+	if *m.UtcOfFix == 4294967294 {
+		return 0, false
+	}
+	if *m.UtcOfFix == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.UtcOfFix) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 86401 && !approximatelyEqual(value, 86401) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetUtcOfFixValue sets UtcOfFix from a physical value in s, rounded to the nearest

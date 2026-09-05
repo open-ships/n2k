@@ -18,6 +18,19 @@ func (m *MercuryEngineData) SetMessageInfo(info MessageInfo)     { m.Info = info
 func (m *MercuryEngineData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MercuryEngineData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryEngineData) Clone() Message {
+	if m == nil {
+		return (*MercuryEngineData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MercuryEngineTelemetryLowSpeed struct {
 	Info                  MessageInfo `json:"info"`
 	ManufacturerCode      *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -37,6 +50,24 @@ func (m *MercuryEngineTelemetryLowSpeed) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MercuryEngineTelemetryLowSpeed) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryEngineTelemetryLowSpeed) Clone() Message {
+	if m == nil {
+		return (*MercuryEngineTelemetryLowSpeed)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.EngineInstance = clonePointer(m.EngineInstance)
+	copy.MalfunctionIndicator = clonePointer(m.MalfunctionIndicator)
+	copy.IntakeAirTemperature = clonePointer(m.IntakeAirTemperature)
+	copy.ExhaustGasTemperature = clonePointer(m.ExhaustGasTemperature)
+	copy.Gpl = clonePointer(m.Gpl)
+	copy.EngineState = clonePointer(m.EngineState)
+	return &copy
+}
 
 type MercuryEngineKeyValueData struct {
 	Info             MessageInfo                           `json:"info"`
@@ -59,6 +90,24 @@ func (m *MercuryEngineKeyValueData) DecodePayload(payload []uint8) error {
 }
 func (m *MercuryEngineKeyValueData) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryEngineKeyValueData) Clone() Message {
+	if m == nil {
+		return (*MercuryEngineKeyValueData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Repeating1 = cloneSlice(m.Repeating1)
+	for i := range copy.Repeating1 {
+		copy.Repeating1[i].Key = clonePointer(m.Repeating1[i].Key)
+		copy.Repeating1[i].Length = clonePointer(m.Repeating1[i].Length)
+		copy.Repeating1[i].Value = cloneSlice(m.Repeating1[i].Value)
+	}
+	return &copy
+}
+
 type MercuryCommandResponse struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -74,6 +123,20 @@ func (m *MercuryCommandResponse) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *MercuryCommandResponse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryCommandResponse) Clone() Message {
+	if m == nil {
+		return (*MercuryCommandResponse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Opcode = clonePointer(m.Opcode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type MercuryCruiseControlData struct {
 	Info                MessageInfo `json:"info"`
@@ -94,14 +157,46 @@ func (m *MercuryCruiseControlData) DecodePayload(payload []uint8) error {
 }
 func (m *MercuryCruiseControlData) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryCruiseControlData) Clone() Message {
+	if m == nil {
+		return (*MercuryCruiseControlData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Opcode = clonePointer(m.Opcode)
+	copy.EngineInstance = clonePointer(m.EngineInstance)
+	copy.CruiseState = clonePointer(m.CruiseState)
+	copy.CruiseRpmSetpoint = clonePointer(m.CruiseRpmSetpoint)
+	copy.CruiseSpeedSetpoint = clonePointer(m.CruiseSpeedSetpoint)
+	return &copy
+}
+
 // CruiseRpmSetpointValue returns CruiseRpmSetpoint as a physical value in rpm (value = raw).
-// The bool is false when CruiseRpmSetpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MercuryCruiseControlData) CruiseRpmSetpointValue() (float64, bool) {
-	if m.CruiseRpmSetpoint == nil {
+	if m == nil || m.CruiseRpmSetpoint == nil {
 		return 0, false
 	}
-	return float64(*m.CruiseRpmSetpoint), true
+	if *m.CruiseRpmSetpoint == 65535 {
+		return 0, false
+	}
+	if *m.CruiseRpmSetpoint == 65534 {
+		return 0, false
+	}
+	if *m.CruiseRpmSetpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CruiseRpmSetpoint)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCruiseRpmSetpointValue sets CruiseRpmSetpoint from a physical value in rpm, rounded to the nearest
@@ -112,13 +207,28 @@ func (m *MercuryCruiseControlData) SetCruiseRpmSetpointValue(v float64) {
 }
 
 // CruiseSpeedSetpointValue returns CruiseSpeedSetpoint as a physical value in km/h (value = raw * 0.01).
-// The bool is false when CruiseSpeedSetpoint is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *MercuryCruiseControlData) CruiseSpeedSetpointValue() (float64, bool) {
-	if m.CruiseSpeedSetpoint == nil {
+	if m == nil || m.CruiseSpeedSetpoint == nil {
 		return 0, false
 	}
-	return float64(*m.CruiseSpeedSetpoint) * 0.01, true
+	if *m.CruiseSpeedSetpoint == 65535 {
+		return 0, false
+	}
+	if *m.CruiseSpeedSetpoint == 65534 {
+		return 0, false
+	}
+	if *m.CruiseSpeedSetpoint == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CruiseSpeedSetpoint) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCruiseSpeedSetpointValue sets CruiseSpeedSetpoint from a physical value in km/h, rounded to the nearest
@@ -147,6 +257,23 @@ func (m *MercuryBamDigitalDataProxy) DecodePayload(payload []uint8) error {
 }
 func (m *MercuryBamDigitalDataProxy) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryBamDigitalDataProxy) Clone() Message {
+	if m == nil {
+		return (*MercuryBamDigitalDataProxy)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Type = clonePointer(m.Type)
+	copy.Instance = clonePointer(m.Instance)
+	copy.Field4 = clonePointer(m.Field4)
+	copy.Flag = clonePointer(m.Flag)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type MercuryEngineStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -162,3 +289,19 @@ func (m *MercuryEngineStatus) MessageInfo() MessageInfo            { return m.In
 func (m *MercuryEngineStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *MercuryEngineStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *MercuryEngineStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *MercuryEngineStatus) Clone() Message {
+	if m == nil {
+		return (*MercuryEngineStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.FieldA = cloneSlice(m.FieldA)
+	copy.SubHelm = cloneSlice(m.SubHelm)
+	copy.Helm = cloneSlice(m.Helm)
+	copy.Capabilities = cloneSlice(m.Capabilities)
+	return &copy
+}

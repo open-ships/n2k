@@ -23,6 +23,24 @@ func (m *WebastoStatus2) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *WebastoStatus2) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *WebastoStatus2) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *WebastoStatus2) Clone() Message {
+	if m == nil {
+		return (*WebastoStatus2)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.CanAddress = clonePointer(m.CanAddress)
+	copy.DeviceId = clonePointer(m.DeviceId)
+	copy.SystemError = clonePointer(m.SystemError)
+	copy.SystemStatus = clonePointer(m.SystemStatus)
+	copy.FreshAirBlowerSpeed = clonePointer(m.FreshAirBlowerSpeed)
+	copy.VSeriesOutput = clonePointer(m.VSeriesOutput)
+	return &copy
+}
+
 type WebastoHvacCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -43,14 +61,49 @@ func (m *WebastoHvacCommand) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *WebastoHvacCommand) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *WebastoHvacCommand) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *WebastoHvacCommand) Clone() Message {
+	if m == nil {
+		return (*WebastoHvacCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.CanAddress = clonePointer(m.CanAddress)
+	copy.BlowerSpeed = clonePointer(m.BlowerSpeed)
+	copy.UnitOnOff = clonePointer(m.UnitOnOff)
+	copy.SetTemperature = clonePointer(m.SetTemperature)
+	copy.EcoMode = clonePointer(m.EcoMode)
+	copy.FunctionalMode = clonePointer(m.FunctionalMode)
+	copy.Compressor = clonePointer(m.Compressor)
+	copy.Mask = clonePointer(m.Mask)
+	return &copy
+}
+
 // SetTemperatureValue returns SetTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when SetTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *WebastoHvacCommand) SetTemperatureValue() (float64, bool) {
-	if m.SetTemperature == nil {
+	if m == nil || m.SetTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.SetTemperature) * 0.01, true
+	if *m.SetTemperature == 65535 {
+		return 0, false
+	}
+	if *m.SetTemperature == 65534 {
+		return 0, false
+	}
+	if *m.SetTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.SetTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest

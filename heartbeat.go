@@ -128,7 +128,7 @@ func (h *heartbeater) message() *pgn.Heartbeat {
 	}
 	h.mu.Unlock()
 
-	c1, c2, eq := uint64(pgn.ErrorActive), uint64(pgn.ErrorActive), uint64(pgn.Operational)
+	c1, c2, eq := uint64(pgn.ControllerStateErrorActive), uint64(pgn.ControllerStateErrorActive), uint64(pgn.EquipmentStatusOperational)
 	return &pgn.Heartbeat{
 		Info:               pgn.MessageInfo{Priority: pgn.Priority(7)},
 		DataTransmitOffset: &offset,

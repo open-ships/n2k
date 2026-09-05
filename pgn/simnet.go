@@ -20,6 +20,21 @@ func (m *SimnetKeepAlive) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetKeepAlive) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetKeepAlive) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetKeepAlive) Clone() Message {
+	if m == nil {
+		return (*SimnetKeepAlive)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Command = clonePointer(m.Command)
+	copy.Reply = clonePointer(m.Reply)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}
+
 type SimnetConfigureTemperatureSensor struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -34,6 +49,18 @@ func (m *SimnetConfigureTemperatureSensor) DecodePayload(payload []uint8) error 
 }
 func (m *SimnetConfigureTemperatureSensor) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetConfigureTemperatureSensor) Clone() Message {
+	if m == nil {
+		return (*SimnetConfigureTemperatureSensor)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetTrimTabSensorCalibration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -47,6 +74,18 @@ func (m *SimnetTrimTabSensorCalibration) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SimnetTrimTabSensorCalibration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetTrimTabSensorCalibration) Clone() Message {
+	if m == nil {
+		return (*SimnetTrimTabSensorCalibration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetPaddleWheelSpeedConfiguration struct {
 	Info             MessageInfo `json:"info"`
@@ -64,6 +103,18 @@ func (m *SimnetPaddleWheelSpeedConfiguration) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetPaddleWheelSpeedConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetPaddleWheelSpeedConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetClearFluidLevelWarnings struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -77,6 +128,18 @@ func (m *SimnetClearFluidLevelWarnings) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SimnetClearFluidLevelWarnings) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetClearFluidLevelWarnings) Clone() Message {
+	if m == nil {
+		return (*SimnetClearFluidLevelWarnings)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetLgc2000Configuration struct {
 	Info             MessageInfo `json:"info"`
@@ -92,6 +155,18 @@ func (m *SimnetLgc2000Configuration) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetLgc2000Configuration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetLgc2000Configuration) Clone() Message {
+	if m == nil {
+		return (*SimnetLgc2000Configuration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetApUnknown1 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -105,6 +180,20 @@ func (m *SimnetApUnknown1) MessageInfo() MessageInfo            { return m.Info 
 func (m *SimnetApUnknown1) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetApUnknown1) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetApUnknown1) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApUnknown1) Clone() Message {
+	if m == nil {
+		return (*SimnetApUnknown1)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Type = clonePointer(m.Type)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
 
 type SimnetDeviceModeRequest struct {
 	Info             MessageInfo `json:"info"`
@@ -122,6 +211,20 @@ func (m *SimnetDeviceModeRequest) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetDeviceModeRequest) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetDeviceModeRequest) Clone() Message {
+	if m == nil {
+		return (*SimnetDeviceModeRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Model = clonePointer(m.Model)
+	copy.Report = clonePointer(m.Report)
+	return &copy
+}
+
 type SimnetDeviceStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -136,6 +239,21 @@ func (m *SimnetDeviceStatus) MessageInfo() MessageInfo            { return m.Inf
 func (m *SimnetDeviceStatus) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetDeviceStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetDeviceStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetDeviceStatus) Clone() Message {
+	if m == nil {
+		return (*SimnetDeviceStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Model = clonePointer(m.Model)
+	copy.Report = clonePointer(m.Report)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}
 
 type SimnetDeviceStatusRequest struct {
 	Info             MessageInfo `json:"info"`
@@ -153,6 +271,20 @@ func (m *SimnetDeviceStatusRequest) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetDeviceStatusRequest) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetDeviceStatusRequest) Clone() Message {
+	if m == nil {
+		return (*SimnetDeviceStatusRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Model = clonePointer(m.Model)
+	copy.Report = clonePointer(m.Report)
+	return &copy
+}
+
 type SimnetPilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -167,6 +299,21 @@ func (m *SimnetPilotMode) MessageInfo() MessageInfo            { return m.Info }
 func (m *SimnetPilotMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetPilotMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetPilotMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetPilotMode) Clone() Message {
+	if m == nil {
+		return (*SimnetPilotMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Model = clonePointer(m.Model)
+	copy.Report = clonePointer(m.Report)
+	copy.Mode = clonePointer(m.Mode)
+	return &copy
+}
 
 type SimnetSailingProcessorStatus struct {
 	Info             MessageInfo `json:"info"`
@@ -185,6 +332,21 @@ func (m *SimnetSailingProcessorStatus) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetSailingProcessorStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetSailingProcessorStatus) Clone() Message {
+	if m == nil {
+		return (*SimnetSailingProcessorStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Model = clonePointer(m.Model)
+	copy.Report = clonePointer(m.Report)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type SimnetDataSourceSelectionRequest struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -201,6 +363,20 @@ func (m *SimnetDataSourceSelectionRequest) DecodePayload(payload []uint8) error 
 }
 func (m *SimnetDataSourceSelectionRequest) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetDataSourceSelectionRequest) Clone() Message {
+	if m == nil {
+		return (*SimnetDataSourceSelectionRequest)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DataType = clonePointer(m.DataType)
+	copy.SourceClass = clonePointer(m.SourceClass)
+	return &copy
+}
+
 type SimnetAnalogTelemetry struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -215,6 +391,21 @@ func (m *SimnetAnalogTelemetry) MessageInfo() MessageInfo            { return m.
 func (m *SimnetAnalogTelemetry) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetAnalogTelemetry) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAnalogTelemetry) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAnalogTelemetry) Clone() Message {
+	if m == nil {
+		return (*SimnetAnalogTelemetry)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.SubType = clonePointer(m.SubType)
+	copy.Channel = clonePointer(m.Channel)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
 
 type SimnetAutopilotModeState struct {
 	Info             MessageInfo `json:"info"`
@@ -235,6 +426,23 @@ func (m *SimnetAutopilotModeState) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetAutopilotModeState) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAutopilotModeState) Clone() Message {
+	if m == nil {
+		return (*SimnetAutopilotModeState)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.ModeClass = clonePointer(m.ModeClass)
+	copy.Mode = clonePointer(m.Mode)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.Flags = clonePointer(m.Flags)
+	return &copy
+}
+
 type SimnetAutopilotAngle struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -249,14 +457,43 @@ func (m *SimnetAutopilotAngle) SetMessageInfo(info MessageInfo)     { m.Info = i
 func (m *SimnetAutopilotAngle) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAutopilotAngle) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAutopilotAngle) Clone() Message {
+	if m == nil {
+		return (*SimnetAutopilotAngle)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Mode = clonePointer(m.Mode)
+	copy.Angle = clonePointer(m.Angle)
+	return &copy
+}
+
 // AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Angle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetAutopilotAngle) AngleValue() (float64, bool) {
-	if m.Angle == nil {
+	if m == nil || m.Angle == nil {
 		return 0, false
 	}
-	return float64(*m.Angle) * 0.0001, true
+	if *m.Angle == 65535 {
+		return 0, false
+	}
+	if *m.Angle == 65534 {
+		return 0, false
+	}
+	if *m.Angle == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Angle) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
@@ -280,14 +517,43 @@ func (m *SimnetMagneticField) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SimnetMagneticField) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetMagneticField) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetMagneticField) Clone() Message {
+	if m == nil {
+		return (*SimnetMagneticField)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.FieldX = clonePointer(m.FieldX)
+	copy.FieldY = clonePointer(m.FieldY)
+	copy.FieldZ = clonePointer(m.FieldZ)
+	copy.Marker = clonePointer(m.Marker)
+	return &copy
+}
+
 // FieldXValue returns FieldX as a physical value (value = raw * 0.0001).
-// The bool is false when FieldX is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetMagneticField) FieldXValue() (float64, bool) {
-	if m.FieldX == nil {
+	if m == nil || m.FieldX == nil {
 		return 0, false
 	}
-	return float64(*m.FieldX) * 0.0001, true
+	if *m.FieldX == 32767 {
+		return 0, false
+	}
+	if *m.FieldX == 32766 {
+		return 0, false
+	}
+	if *m.FieldX == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FieldX) * 0.0001
+	if value < -3.2767 && !approximatelyEqual(value, -3.2767) {
+		return 0, false
+	}
+	if value > 3.2764 && !approximatelyEqual(value, 3.2764) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFieldXValue sets FieldX from a physical value, rounded to the nearest
@@ -298,13 +564,28 @@ func (m *SimnetMagneticField) SetFieldXValue(v float64) {
 }
 
 // FieldYValue returns FieldY as a physical value (value = raw * 0.0001).
-// The bool is false when FieldY is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetMagneticField) FieldYValue() (float64, bool) {
-	if m.FieldY == nil {
+	if m == nil || m.FieldY == nil {
 		return 0, false
 	}
-	return float64(*m.FieldY) * 0.0001, true
+	if *m.FieldY == 32767 {
+		return 0, false
+	}
+	if *m.FieldY == 32766 {
+		return 0, false
+	}
+	if *m.FieldY == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FieldY) * 0.0001
+	if value < -3.2767 && !approximatelyEqual(value, -3.2767) {
+		return 0, false
+	}
+	if value > 3.2764 && !approximatelyEqual(value, 3.2764) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFieldYValue sets FieldY from a physical value, rounded to the nearest
@@ -315,13 +596,28 @@ func (m *SimnetMagneticField) SetFieldYValue(v float64) {
 }
 
 // FieldZValue returns FieldZ as a physical value (value = raw * 0.0001).
-// The bool is false when FieldZ is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetMagneticField) FieldZValue() (float64, bool) {
-	if m.FieldZ == nil {
+	if m == nil || m.FieldZ == nil {
 		return 0, false
 	}
-	return float64(*m.FieldZ) * 0.0001, true
+	if *m.FieldZ == 32767 {
+		return 0, false
+	}
+	if *m.FieldZ == 32766 {
+		return 0, false
+	}
+	if *m.FieldZ == 32765 {
+		return 0, false
+	}
+	value := float64(*m.FieldZ) * 0.0001
+	if value < -3.2767 && !approximatelyEqual(value, -3.2767) {
+		return 0, false
+	}
+	if value > 3.2764 && !approximatelyEqual(value, 3.2764) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetFieldZValue sets FieldZ from a physical value, rounded to the nearest
@@ -347,6 +643,22 @@ func (m *SimnetApUnknown3) SetMessageInfo(info MessageInfo)     { m.Info = info 
 func (m *SimnetApUnknown3) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetApUnknown3) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApUnknown3) Clone() Message {
+	if m == nil {
+		return (*SimnetApUnknown3)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Value = clonePointer(m.Value)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.SubIndex = clonePointer(m.SubIndex)
+	return &copy
+}
+
 type SimnetAutopilotMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -358,6 +670,18 @@ func (m *SimnetAutopilotMode) MessageInfo() MessageInfo            { return m.In
 func (m *SimnetAutopilotMode) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetAutopilotMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAutopilotMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAutopilotMode) Clone() Message {
+	if m == nil {
+		return (*SimnetAutopilotMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetReprogramData struct {
 	Info             MessageInfo `json:"info"`
@@ -374,6 +698,21 @@ func (m *SimnetReprogramData) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SimnetReprogramData) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetReprogramData) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetReprogramData) Clone() Message {
+	if m == nil {
+		return (*SimnetReprogramData)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Version = clonePointer(m.Version)
+	copy.Sequence = clonePointer(m.Sequence)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
+
 type SimnetRequestReprogram struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -388,6 +727,18 @@ func (m *SimnetRequestReprogram) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetRequestReprogram) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetRequestReprogram) Clone() Message {
+	if m == nil {
+		return (*SimnetRequestReprogram)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetReprogramStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -401,6 +752,19 @@ func (m *SimnetReprogramStatus) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *SimnetReprogramStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetReprogramStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetReprogramStatus) Clone() Message {
+	if m == nil {
+		return (*SimnetReprogramStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Status = clonePointer(m.Status)
+	return &copy
+}
+
 type SimnetSetSerialNumber struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -412,6 +776,18 @@ func (m *SimnetSetSerialNumber) MessageInfo() MessageInfo            { return m.
 func (m *SimnetSetSerialNumber) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetSetSerialNumber) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetSetSerialNumber) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetSetSerialNumber) Clone() Message {
+	if m == nil {
+		return (*SimnetSetSerialNumber)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetFuelUsedHighResolution struct {
 	Info             MessageInfo `json:"info"`
@@ -427,6 +803,18 @@ func (m *SimnetFuelUsedHighResolution) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetFuelUsedHighResolution) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetFuelUsedHighResolution) Clone() Message {
+	if m == nil {
+		return (*SimnetFuelUsedHighResolution)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetEngineAndTankConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -440,6 +828,18 @@ func (m *SimnetEngineAndTankConfiguration) DecodePayload(payload []uint8) error 
 	return decodeFields(m, payload)
 }
 func (m *SimnetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetEngineAndTankConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetEngineAndTankConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetSetEngineAndTankConfiguration struct {
 	Info             MessageInfo `json:"info"`
@@ -455,6 +855,18 @@ func (m *SimnetSetEngineAndTankConfiguration) DecodePayload(payload []uint8) err
 }
 func (m *SimnetSetEngineAndTankConfiguration) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetSetEngineAndTankConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetSetEngineAndTankConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
 }
 
 type SimnetFluidLevelSensorConfiguration struct {
@@ -482,14 +894,50 @@ func (m *SimnetFluidLevelSensorConfiguration) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetFluidLevelSensorConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetFluidLevelSensorConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.C = clonePointer(m.C)
+	copy.Device = clonePointer(m.Device)
+	copy.Instance = clonePointer(m.Instance)
+	copy.F = clonePointer(m.F)
+	copy.TankType = clonePointer(m.TankType)
+	copy.Capacity = clonePointer(m.Capacity)
+	copy.G = clonePointer(m.G)
+	copy.H = clonePointer(m.H)
+	copy.I = clonePointer(m.I)
+	return &copy
+}
+
 // CapacityValue returns Capacity as a physical value in L (value = raw * 0.1).
-// The bool is false when Capacity is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetFluidLevelSensorConfiguration) CapacityValue() (float64, bool) {
-	if m.Capacity == nil {
+	if m == nil || m.Capacity == nil {
 		return 0, false
 	}
-	return float64(*m.Capacity) * 0.1, true
+	if *m.Capacity == 4294967295 {
+		return 0, false
+	}
+	if *m.Capacity == 4294967294 {
+		return 0, false
+	}
+	if *m.Capacity == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.Capacity) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+08 && !approximatelyEqual(value, 4.294967292e+08) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
@@ -513,6 +961,18 @@ func (m *SimnetFuelFlowTurbineConfiguration) DecodePayload(payload []uint8) erro
 }
 func (m *SimnetFuelFlowTurbineConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetFuelFlowTurbineConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetFuelFlowTurbineConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetFluidLevelWarning struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -527,6 +987,18 @@ func (m *SimnetFluidLevelWarning) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetFluidLevelWarning) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetFluidLevelWarning) Clone() Message {
+	if m == nil {
+		return (*SimnetFluidLevelWarning)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
+
 type SimnetPressureSensorConfiguration struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -540,6 +1012,18 @@ func (m *SimnetPressureSensorConfiguration) DecodePayload(payload []uint8) error
 	return decodeFields(m, payload)
 }
 func (m *SimnetPressureSensorConfiguration) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetPressureSensorConfiguration) Clone() Message {
+	if m == nil {
+		return (*SimnetPressureSensorConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
+}
 
 type SimnetDataSourceSelection struct {
 	Info             MessageInfo `json:"info"`
@@ -559,6 +1043,23 @@ func (m *SimnetDataSourceSelection) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SimnetDataSourceSelection) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetDataSourceSelection) Clone() Message {
+	if m == nil {
+		return (*SimnetDataSourceSelection)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.DataType = clonePointer(m.DataType)
+	copy.SourceClass = clonePointer(m.SourceClass)
+	copy.SourceAddress = clonePointer(m.SourceAddress)
+	copy.ChangeCounter = clonePointer(m.ChangeCounter)
+	copy.Source = clonePointer(m.Source)
+	return &copy
+}
 
 type SimnetAisClassBStaticDataMsg24PartA struct {
 	Info             MessageInfo `json:"info"`
@@ -580,6 +1081,23 @@ func (m *SimnetAisClassBStaticDataMsg24PartA) DecodePayload(payload []uint8) err
 }
 func (m *SimnetAisClassBStaticDataMsg24PartA) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAisClassBStaticDataMsg24PartA) Clone() Message {
+	if m == nil {
+		return (*SimnetAisClassBStaticDataMsg24PartA)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.UserId = clonePointer(m.UserId)
+	return &copy
 }
 
 type SimnetAisClassBStaticDataMsg24PartB struct {
@@ -611,14 +1129,52 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
 }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAisClassBStaticDataMsg24PartB) Clone() Message {
+	if m == nil {
+		return (*SimnetAisClassBStaticDataMsg24PartB)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.RepeatIndicator = clonePointer(m.RepeatIndicator)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.UserId = clonePointer(m.UserId)
+	copy.TypeOfShip = clonePointer(m.TypeOfShip)
+	copy.Length = clonePointer(m.Length)
+	copy.Beam = clonePointer(m.Beam)
+	copy.PositionReferenceFromStarboard = clonePointer(m.PositionReferenceFromStarboard)
+	copy.PositionReferenceFromBow = clonePointer(m.PositionReferenceFromBow)
+	copy.MothershipUserId = clonePointer(m.MothershipUserId)
+	return &copy
+}
+
 // LengthValue returns Length as a physical value in m (value = raw * 0.1).
-// The bool is false when Length is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetAisClassBStaticDataMsg24PartB) LengthValue() (float64, bool) {
-	if m.Length == nil {
+	if m == nil || m.Length == nil {
 		return 0, false
 	}
-	return float64(*m.Length) * 0.1, true
+	if *m.Length == 65535 {
+		return 0, false
+	}
+	if *m.Length == 65534 {
+		return 0, false
+	}
+	if *m.Length == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Length) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetLengthValue sets Length from a physical value in m, rounded to the nearest
@@ -629,13 +1185,28 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) SetLengthValue(v float64) {
 }
 
 // BeamValue returns Beam as a physical value in m (value = raw * 0.1).
-// The bool is false when Beam is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetAisClassBStaticDataMsg24PartB) BeamValue() (float64, bool) {
-	if m.Beam == nil {
+	if m == nil || m.Beam == nil {
 		return 0, false
 	}
-	return float64(*m.Beam) * 0.1, true
+	if *m.Beam == 65535 {
+		return 0, false
+	}
+	if *m.Beam == 65534 {
+		return 0, false
+	}
+	if *m.Beam == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Beam) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetBeamValue sets Beam from a physical value in m, rounded to the nearest
@@ -646,13 +1217,28 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) SetBeamValue(v float64) {
 }
 
 // PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromStarboard is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromStarboardValue() (float64, bool) {
-	if m.PositionReferenceFromStarboard == nil {
+	if m == nil || m.PositionReferenceFromStarboard == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromStarboard) * 0.1, true
+	if *m.PositionReferenceFromStarboard == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromStarboard == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromStarboard) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
@@ -663,13 +1249,28 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardV
 }
 
 // PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
-// The bool is false when PositionReferenceFromBow is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromBowValue() (float64, bool) {
-	if m.PositionReferenceFromBow == nil {
+	if m == nil || m.PositionReferenceFromBow == nil {
 		return 0, false
 	}
-	return float64(*m.PositionReferenceFromBow) * 0.1, true
+	if *m.PositionReferenceFromBow == 65535 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65534 {
+		return 0, false
+	}
+	if *m.PositionReferenceFromBow == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PositionReferenceFromBow) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
@@ -695,6 +1296,22 @@ func (m *SimnetAisSilentMode) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SimnetAisSilentMode) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAisSilentMode) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAisSilentMode) Clone() Message {
+	if m == nil {
+		return (*SimnetAisSilentMode)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageId = clonePointer(m.MessageId)
+	copy.Operation = clonePointer(m.Operation)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	return &copy
+}
+
 type SimnetSonarStatusFrequencyAndDspVoltage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -709,6 +1326,18 @@ func (m *SimnetSonarStatusFrequencyAndDspVoltage) DecodePayload(payload []uint8)
 }
 func (m *SimnetSonarStatusFrequencyAndDspVoltage) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetSonarStatusFrequencyAndDspVoltage) Clone() Message {
+	if m == nil {
+		return (*SimnetSonarStatusFrequencyAndDspVoltage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	return &copy
 }
 
 type SimnetKeyValue struct {
@@ -730,6 +1359,25 @@ func (m *SimnetKeyValue) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetKeyValue) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetKeyValue) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetKeyValue) Clone() Message {
+	if m == nil {
+		return (*SimnetKeyValue)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.Instance = clonePointer(m.Instance)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.Source = clonePointer(m.Source)
+	copy.Key = clonePointer(m.Key)
+	copy.Operation = clonePointer(m.Operation)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}
+
 type SimnetParameterSet struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -750,6 +1398,26 @@ func (m *SimnetParameterSet) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *SimnetParameterSet) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetParameterSet) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetParameterSet) Clone() Message {
+	if m == nil {
+		return (*SimnetParameterSet)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.Instance = clonePointer(m.Instance)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.Source = clonePointer(m.Source)
+	copy.Key = clonePointer(m.Key)
+	copy.Operation = clonePointer(m.Operation)
+	copy.Length = clonePointer(m.Length)
+	copy.Value = cloneSlice(m.Value)
+	return &copy
+}
+
 type SimnetApCommand struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -765,6 +1433,22 @@ func (m *SimnetApCommand) MessageInfo() MessageInfo            { return m.Info }
 func (m *SimnetApCommand) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetApCommand) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetApCommand) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApCommand) Clone() Message {
+	if m == nil {
+		return (*SimnetApCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
 
 type SimnetAlarm struct {
 	Info             MessageInfo `json:"info"`
@@ -784,6 +1468,25 @@ func (m *SimnetAlarm) MessageInfo() MessageInfo            { return m.Info }
 func (m *SimnetAlarm) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetAlarm) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAlarm) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAlarm) Clone() Message {
+	if m == nil {
+		return (*SimnetAlarm)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.EventType = clonePointer(m.EventType)
+	copy.Command = clonePointer(m.Command)
+	copy.AlarmId = clonePointer(m.AlarmId)
+	copy.F = clonePointer(m.F)
+	copy.G = clonePointer(m.G)
+	return &copy
+}
 
 type SimnetCommandApChangeCourse struct {
 	Info             MessageInfo `json:"info"`
@@ -805,14 +1508,47 @@ func (m *SimnetCommandApChangeCourse) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetCommandApChangeCourse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApChangeCourse) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApChangeCourse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	copy.Direction = clonePointer(m.Direction)
+	copy.Angle = clonePointer(m.Angle)
+	return &copy
+}
+
 // AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Angle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetCommandApChangeCourse) AngleValue() (float64, bool) {
-	if m.Angle == nil {
+	if m == nil || m.Angle == nil {
 		return 0, false
 	}
-	return float64(*m.Angle) * 0.0001, true
+	if *m.Angle == 65535 {
+		return 0, false
+	}
+	if *m.Angle == 65534 {
+		return 0, false
+	}
+	if *m.Angle == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Angle) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
@@ -840,6 +1576,22 @@ func (m *SimnetCommandApFollowUp) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetCommandApFollowUp) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApFollowUp) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApFollowUp)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
+
 type SimnetCommandApHeading struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -858,6 +1610,22 @@ func (m *SimnetCommandApHeading) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetCommandApHeading) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApHeading) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApHeading)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
+
 type SimnetCommandApNav struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -873,6 +1641,22 @@ func (m *SimnetCommandApNav) MessageInfo() MessageInfo            { return m.Inf
 func (m *SimnetCommandApNav) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetCommandApNav) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetCommandApNav) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApNav) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApNav)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
 
 type SimnetCommandApNodrift struct {
 	Info             MessageInfo `json:"info"`
@@ -892,6 +1676,22 @@ func (m *SimnetCommandApNodrift) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetCommandApNodrift) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApNodrift) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApNodrift)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
+
 type SimnetCommandApStandby struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -909,6 +1709,22 @@ func (m *SimnetCommandApStandby) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *SimnetCommandApStandby) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApStandby) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApStandby)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
 
 type SimnetCommandApTack struct {
 	Info             MessageInfo `json:"info"`
@@ -928,6 +1744,24 @@ func (m *SimnetCommandApTack) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SimnetCommandApTack) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetCommandApTack) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApTack) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApTack)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	copy.UnknownA = clonePointer(m.UnknownA)
+	copy.UnknownB = clonePointer(m.UnknownB)
+	return &copy
+}
+
 type SimnetCommandApWind struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -944,6 +1778,22 @@ func (m *SimnetCommandApWind) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *SimnetCommandApWind) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetCommandApWind) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetCommandApWind) Clone() Message {
+	if m == nil {
+		return (*SimnetCommandApWind)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	return &copy
+}
+
 type SimnetEvent struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -957,6 +1807,20 @@ func (m *SimnetEvent) MessageInfo() MessageInfo            { return m.Info }
 func (m *SimnetEvent) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetEvent) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetEvent) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetEvent) Clone() Message {
+	if m == nil {
+		return (*SimnetEvent)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	return &copy
+}
 
 type SimnetEventCommandTimer struct {
 	Info             MessageInfo `json:"info"`
@@ -979,6 +1843,25 @@ func (m *SimnetEventCommandTimer) DecodePayload(payload []uint8) error {
 }
 func (m *SimnetEventCommandTimer) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetEventCommandTimer) Clone() Message {
+	if m == nil {
+		return (*SimnetEventCommandTimer)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.EventType = clonePointer(m.EventType)
+	copy.Event = clonePointer(m.Event)
+	copy.Parameter1 = clonePointer(m.Parameter1)
+	copy.Parameter2 = clonePointer(m.Parameter2)
+	copy.Parameter3 = clonePointer(m.Parameter3)
+	return &copy
+}
+
 type SimnetApCommandReply struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -996,6 +1879,24 @@ func (m *SimnetApCommandReply) MessageInfo() MessageInfo            { return m.I
 func (m *SimnetApCommandReply) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetApCommandReply) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetApCommandReply) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApCommandReply) Clone() Message {
+	if m == nil {
+		return (*SimnetApCommandReply)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	copy.D = clonePointer(m.D)
+	copy.Value = clonePointer(m.Value)
+	return &copy
+}
 
 type SimnetApCommandReplyChangeCourse struct {
 	Info             MessageInfo `json:"info"`
@@ -1017,14 +1918,47 @@ func (m *SimnetApCommandReplyChangeCourse) DecodePayload(payload []uint8) error 
 }
 func (m *SimnetApCommandReplyChangeCourse) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApCommandReplyChangeCourse) Clone() Message {
+	if m == nil {
+		return (*SimnetApCommandReplyChangeCourse)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Address = clonePointer(m.Address)
+	copy.NetworkGroup = clonePointer(m.NetworkGroup)
+	copy.CommandType = clonePointer(m.CommandType)
+	copy.Event = clonePointer(m.Event)
+	copy.Direction = clonePointer(m.Direction)
+	copy.Angle = clonePointer(m.Angle)
+	return &copy
+}
+
 // AngleValue returns Angle as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Angle is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *SimnetApCommandReplyChangeCourse) AngleValue() (float64, bool) {
-	if m.Angle == nil {
+	if m == nil || m.Angle == nil {
 		return 0, false
 	}
-	return float64(*m.Angle) * 0.0001, true
+	if *m.Angle == 65535 {
+		return 0, false
+	}
+	if *m.Angle == 65534 {
+		return 0, false
+	}
+	if *m.Angle == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Angle) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
@@ -1050,6 +1984,21 @@ func (m *SimnetAlarmMessage) SetMessageInfo(info MessageInfo)     { m.Info = inf
 func (m *SimnetAlarmMessage) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetAlarmMessage) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetAlarmMessage) Clone() Message {
+	if m == nil {
+		return (*SimnetAlarmMessage)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.AlarmId = clonePointer(m.AlarmId)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	return &copy
+}
+
 type SimnetApUnknown4 struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1067,3 +2016,21 @@ func (m *SimnetApUnknown4) MessageInfo() MessageInfo            { return m.Info 
 func (m *SimnetApUnknown4) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *SimnetApUnknown4) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *SimnetApUnknown4) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *SimnetApUnknown4) Clone() Message {
+	if m == nil {
+		return (*SimnetApUnknown4)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.A = clonePointer(m.A)
+	copy.B = clonePointer(m.B)
+	copy.C = clonePointer(m.C)
+	copy.D = clonePointer(m.D)
+	copy.E = clonePointer(m.E)
+	copy.F = clonePointer(m.F)
+	return &copy
+}

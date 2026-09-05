@@ -19,14 +19,43 @@ func (m *Rudder) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *Rudder) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *Rudder) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *Rudder) Clone() Message {
+	if m == nil {
+		return (*Rudder)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Instance = clonePointer(m.Instance)
+	copy.DirectionOrder = clonePointer(m.DirectionOrder)
+	copy.AngleOrder = clonePointer(m.AngleOrder)
+	copy.Position = clonePointer(m.Position)
+	return &copy
+}
+
 // AngleOrderValue returns AngleOrder as a physical value in rad (value = raw * 0.0001).
-// The bool is false when AngleOrder is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Rudder) AngleOrderValue() (float64, bool) {
-	if m.AngleOrder == nil {
+	if m == nil || m.AngleOrder == nil {
 		return 0, false
 	}
-	return float64(*m.AngleOrder) * 0.0001, true
+	if *m.AngleOrder == 32767 {
+		return 0, false
+	}
+	if *m.AngleOrder == 32766 {
+		return 0, false
+	}
+	if *m.AngleOrder == 32765 {
+		return 0, false
+	}
+	value := float64(*m.AngleOrder) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAngleOrderValue sets AngleOrder from a physical value in rad, rounded to the nearest
@@ -37,13 +66,28 @@ func (m *Rudder) SetAngleOrderValue(v float64) {
 }
 
 // PositionValue returns Position as a physical value in rad (value = raw * 0.0001).
-// The bool is false when Position is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *Rudder) PositionValue() (float64, bool) {
-	if m.Position == nil {
+	if m == nil || m.Position == nil {
 		return 0, false
 	}
-	return float64(*m.Position) * 0.0001, true
+	if *m.Position == 32767 {
+		return 0, false
+	}
+	if *m.Position == 32766 {
+		return 0, false
+	}
+	if *m.Position == 32765 {
+		return 0, false
+	}
+	value := float64(*m.Position) * 0.0001
+	if value < -3.1415926 && !approximatelyEqual(value, -3.1415926) {
+		return 0, false
+	}
+	if value > 3.1415926 && !approximatelyEqual(value, 3.1415926) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPositionValue sets Position from a physical value in rad, rounded to the nearest
@@ -72,14 +116,46 @@ func (m *ElectricDriveStatusDynamic) DecodePayload(payload []uint8) error {
 }
 func (m *ElectricDriveStatusDynamic) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricDriveStatusDynamic) Clone() Message {
+	if m == nil {
+		return (*ElectricDriveStatusDynamic)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.InverterMotorIdentifier = clonePointer(m.InverterMotorIdentifier)
+	copy.OperatingMode = clonePointer(m.OperatingMode)
+	copy.MotorTemperature = clonePointer(m.MotorTemperature)
+	copy.InverterTemperature = clonePointer(m.InverterTemperature)
+	copy.CoolantTemperature = clonePointer(m.CoolantTemperature)
+	copy.GearTemperature = clonePointer(m.GearTemperature)
+	copy.ShaftTorque = clonePointer(m.ShaftTorque)
+	return &copy
+}
+
 // MotorTemperatureValue returns MotorTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when MotorTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusDynamic) MotorTemperatureValue() (float64, bool) {
-	if m.MotorTemperature == nil {
+	if m == nil || m.MotorTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.MotorTemperature) * 0.01, true
+	if *m.MotorTemperature == 65535 {
+		return 0, false
+	}
+	if *m.MotorTemperature == 65534 {
+		return 0, false
+	}
+	if *m.MotorTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MotorTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorTemperatureValue sets MotorTemperature from a physical value in K, rounded to the nearest
@@ -90,13 +166,28 @@ func (m *ElectricDriveStatusDynamic) SetMotorTemperatureValue(v float64) {
 }
 
 // InverterTemperatureValue returns InverterTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when InverterTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusDynamic) InverterTemperatureValue() (float64, bool) {
-	if m.InverterTemperature == nil {
+	if m == nil || m.InverterTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.InverterTemperature) * 0.01, true
+	if *m.InverterTemperature == 65535 {
+		return 0, false
+	}
+	if *m.InverterTemperature == 65534 {
+		return 0, false
+	}
+	if *m.InverterTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.InverterTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetInverterTemperatureValue sets InverterTemperature from a physical value in K, rounded to the nearest
@@ -107,13 +198,28 @@ func (m *ElectricDriveStatusDynamic) SetInverterTemperatureValue(v float64) {
 }
 
 // CoolantTemperatureValue returns CoolantTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when CoolantTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusDynamic) CoolantTemperatureValue() (float64, bool) {
-	if m.CoolantTemperature == nil {
+	if m == nil || m.CoolantTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.CoolantTemperature) * 0.01, true
+	if *m.CoolantTemperature == 65535 {
+		return 0, false
+	}
+	if *m.CoolantTemperature == 65534 {
+		return 0, false
+	}
+	if *m.CoolantTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.CoolantTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCoolantTemperatureValue sets CoolantTemperature from a physical value in K, rounded to the nearest
@@ -124,13 +230,28 @@ func (m *ElectricDriveStatusDynamic) SetCoolantTemperatureValue(v float64) {
 }
 
 // GearTemperatureValue returns GearTemperature as a physical value in K (value = raw * 0.01).
-// The bool is false when GearTemperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusDynamic) GearTemperatureValue() (float64, bool) {
-	if m.GearTemperature == nil {
+	if m == nil || m.GearTemperature == nil {
 		return 0, false
 	}
-	return float64(*m.GearTemperature) * 0.01, true
+	if *m.GearTemperature == 65535 {
+		return 0, false
+	}
+	if *m.GearTemperature == 65534 {
+		return 0, false
+	}
+	if *m.GearTemperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.GearTemperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetGearTemperatureValue sets GearTemperature from a physical value in K, rounded to the nearest
@@ -164,14 +285,51 @@ func (m *ElectricDriveInformation) DecodePayload(payload []uint8) error {
 }
 func (m *ElectricDriveInformation) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricDriveInformation) Clone() Message {
+	if m == nil {
+		return (*ElectricDriveInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.InverterMotorIdentifier = clonePointer(m.InverterMotorIdentifier)
+	copy.MotorType = clonePointer(m.MotorType)
+	copy.MotorVoltageRating = clonePointer(m.MotorVoltageRating)
+	copy.MaximumContinuousMotorPower = clonePointer(m.MaximumContinuousMotorPower)
+	copy.MaximumBoostMotorPower = clonePointer(m.MaximumBoostMotorPower)
+	copy.MaximumMotorTemperatureRating = clonePointer(m.MaximumMotorTemperatureRating)
+	copy.RatedMotorSpeed = clonePointer(m.RatedMotorSpeed)
+	copy.MaximumControllerTemperatureRating = clonePointer(m.MaximumControllerTemperatureRating)
+	copy.MotorShaftTorqueRating = clonePointer(m.MotorShaftTorqueRating)
+	copy.MotorDcVoltageDeratingThreshold = clonePointer(m.MotorDcVoltageDeratingThreshold)
+	copy.MotorDcVoltageCutOffThreshold = clonePointer(m.MotorDcVoltageCutOffThreshold)
+	copy.DriveMotorHours = clonePointer(m.DriveMotorHours)
+	return &copy
+}
+
 // MotorVoltageRatingValue returns MotorVoltageRating as a physical value in V (value = raw * 0.1).
-// The bool is false when MotorVoltageRating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MotorVoltageRatingValue() (float64, bool) {
-	if m.MotorVoltageRating == nil {
+	if m == nil || m.MotorVoltageRating == nil {
 		return 0, false
 	}
-	return float64(*m.MotorVoltageRating) * 0.1, true
+	if *m.MotorVoltageRating == 65535 {
+		return 0, false
+	}
+	if *m.MotorVoltageRating == 65534 {
+		return 0, false
+	}
+	if *m.MotorVoltageRating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MotorVoltageRating) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorVoltageRatingValue sets MotorVoltageRating from a physical value in V, rounded to the nearest
@@ -182,13 +340,28 @@ func (m *ElectricDriveInformation) SetMotorVoltageRatingValue(v float64) {
 }
 
 // MaximumContinuousMotorPowerValue returns MaximumContinuousMotorPower as a physical value in W (value = raw).
-// The bool is false when MaximumContinuousMotorPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MaximumContinuousMotorPowerValue() (float64, bool) {
-	if m.MaximumContinuousMotorPower == nil {
+	if m == nil || m.MaximumContinuousMotorPower == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumContinuousMotorPower), true
+	if *m.MaximumContinuousMotorPower == 4294967295 {
+		return 0, false
+	}
+	if *m.MaximumContinuousMotorPower == 4294967294 {
+		return 0, false
+	}
+	if *m.MaximumContinuousMotorPower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.MaximumContinuousMotorPower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumContinuousMotorPowerValue sets MaximumContinuousMotorPower from a physical value in W, rounded to the nearest
@@ -199,13 +372,28 @@ func (m *ElectricDriveInformation) SetMaximumContinuousMotorPowerValue(v float64
 }
 
 // MaximumBoostMotorPowerValue returns MaximumBoostMotorPower as a physical value in W (value = raw).
-// The bool is false when MaximumBoostMotorPower is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MaximumBoostMotorPowerValue() (float64, bool) {
-	if m.MaximumBoostMotorPower == nil {
+	if m == nil || m.MaximumBoostMotorPower == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumBoostMotorPower), true
+	if *m.MaximumBoostMotorPower == 4294967295 {
+		return 0, false
+	}
+	if *m.MaximumBoostMotorPower == 4294967294 {
+		return 0, false
+	}
+	if *m.MaximumBoostMotorPower == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.MaximumBoostMotorPower)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumBoostMotorPowerValue sets MaximumBoostMotorPower from a physical value in W, rounded to the nearest
@@ -216,13 +404,28 @@ func (m *ElectricDriveInformation) SetMaximumBoostMotorPowerValue(v float64) {
 }
 
 // MaximumMotorTemperatureRatingValue returns MaximumMotorTemperatureRating as a physical value in K (value = raw * 0.01).
-// The bool is false when MaximumMotorTemperatureRating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MaximumMotorTemperatureRatingValue() (float64, bool) {
-	if m.MaximumMotorTemperatureRating == nil {
+	if m == nil || m.MaximumMotorTemperatureRating == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumMotorTemperatureRating) * 0.01, true
+	if *m.MaximumMotorTemperatureRating == 65535 {
+		return 0, false
+	}
+	if *m.MaximumMotorTemperatureRating == 65534 {
+		return 0, false
+	}
+	if *m.MaximumMotorTemperatureRating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumMotorTemperatureRating) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumMotorTemperatureRatingValue sets MaximumMotorTemperatureRating from a physical value in K, rounded to the nearest
@@ -233,13 +436,28 @@ func (m *ElectricDriveInformation) SetMaximumMotorTemperatureRatingValue(v float
 }
 
 // RatedMotorSpeedValue returns RatedMotorSpeed as a physical value in rpm (value = raw * 0.25).
-// The bool is false when RatedMotorSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) RatedMotorSpeedValue() (float64, bool) {
-	if m.RatedMotorSpeed == nil {
+	if m == nil || m.RatedMotorSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.RatedMotorSpeed) * 0.25, true
+	if *m.RatedMotorSpeed == 65535 {
+		return 0, false
+	}
+	if *m.RatedMotorSpeed == 65534 {
+		return 0, false
+	}
+	if *m.RatedMotorSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RatedMotorSpeed) * 0.25
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16383 && !approximatelyEqual(value, 16383) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRatedMotorSpeedValue sets RatedMotorSpeed from a physical value in rpm, rounded to the nearest
@@ -250,13 +468,28 @@ func (m *ElectricDriveInformation) SetRatedMotorSpeedValue(v float64) {
 }
 
 // MaximumControllerTemperatureRatingValue returns MaximumControllerTemperatureRating as a physical value in K (value = raw * 0.01).
-// The bool is false when MaximumControllerTemperatureRating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MaximumControllerTemperatureRatingValue() (float64, bool) {
-	if m.MaximumControllerTemperatureRating == nil {
+	if m == nil || m.MaximumControllerTemperatureRating == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumControllerTemperatureRating) * 0.01, true
+	if *m.MaximumControllerTemperatureRating == 65535 {
+		return 0, false
+	}
+	if *m.MaximumControllerTemperatureRating == 65534 {
+		return 0, false
+	}
+	if *m.MaximumControllerTemperatureRating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumControllerTemperatureRating) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumControllerTemperatureRatingValue sets MaximumControllerTemperatureRating from a physical value in K, rounded to the nearest
@@ -267,13 +500,28 @@ func (m *ElectricDriveInformation) SetMaximumControllerTemperatureRatingValue(v 
 }
 
 // MotorDcVoltageDeratingThresholdValue returns MotorDcVoltageDeratingThreshold as a physical value in V (value = raw * 0.1).
-// The bool is false when MotorDcVoltageDeratingThreshold is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MotorDcVoltageDeratingThresholdValue() (float64, bool) {
-	if m.MotorDcVoltageDeratingThreshold == nil {
+	if m == nil || m.MotorDcVoltageDeratingThreshold == nil {
 		return 0, false
 	}
-	return float64(*m.MotorDcVoltageDeratingThreshold) * 0.1, true
+	if *m.MotorDcVoltageDeratingThreshold == 65535 {
+		return 0, false
+	}
+	if *m.MotorDcVoltageDeratingThreshold == 65534 {
+		return 0, false
+	}
+	if *m.MotorDcVoltageDeratingThreshold == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MotorDcVoltageDeratingThreshold) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorDcVoltageDeratingThresholdValue sets MotorDcVoltageDeratingThreshold from a physical value in V, rounded to the nearest
@@ -284,13 +532,28 @@ func (m *ElectricDriveInformation) SetMotorDcVoltageDeratingThresholdValue(v flo
 }
 
 // MotorDcVoltageCutOffThresholdValue returns MotorDcVoltageCutOffThreshold as a physical value in V (value = raw * 0.1).
-// The bool is false when MotorDcVoltageCutOffThreshold is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) MotorDcVoltageCutOffThresholdValue() (float64, bool) {
-	if m.MotorDcVoltageCutOffThreshold == nil {
+	if m == nil || m.MotorDcVoltageCutOffThreshold == nil {
 		return 0, false
 	}
-	return float64(*m.MotorDcVoltageCutOffThreshold) * 0.1, true
+	if *m.MotorDcVoltageCutOffThreshold == 65535 {
+		return 0, false
+	}
+	if *m.MotorDcVoltageCutOffThreshold == 65534 {
+		return 0, false
+	}
+	if *m.MotorDcVoltageCutOffThreshold == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MotorDcVoltageCutOffThreshold) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorDcVoltageCutOffThresholdValue sets MotorDcVoltageCutOffThreshold from a physical value in V, rounded to the nearest
@@ -301,13 +564,28 @@ func (m *ElectricDriveInformation) SetMotorDcVoltageCutOffThresholdValue(v float
 }
 
 // DriveMotorHoursValue returns DriveMotorHours as a physical value in s (value = raw).
-// The bool is false when DriveMotorHours is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveInformation) DriveMotorHoursValue() (float64, bool) {
-	if m.DriveMotorHours == nil {
+	if m == nil || m.DriveMotorHours == nil {
 		return 0, false
 	}
-	return float64(*m.DriveMotorHours), true
+	if *m.DriveMotorHours == 4294967295 {
+		return 0, false
+	}
+	if *m.DriveMotorHours == 4294967294 {
+		return 0, false
+	}
+	if *m.DriveMotorHours == 4294967293 {
+		return 0, false
+	}
+	value := float64(*m.DriveMotorHours)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 4.294967292e+09 && !approximatelyEqual(value, 4.294967292e+09) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetDriveMotorHoursValue sets DriveMotorHours from a physical value in s, rounded to the nearest
@@ -335,14 +613,45 @@ func (m *ElectricDriveStatusRapidUpdate) DecodePayload(payload []uint8) error {
 }
 func (m *ElectricDriveStatusRapidUpdate) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ElectricDriveStatusRapidUpdate) Clone() Message {
+	if m == nil {
+		return (*ElectricDriveStatusRapidUpdate)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.InverterMotorController = clonePointer(m.InverterMotorController)
+	copy.ActiveMotorMode = clonePointer(m.ActiveMotorMode)
+	copy.BrakeMode = clonePointer(m.BrakeMode)
+	copy.RotationalShaftSpeed = clonePointer(m.RotationalShaftSpeed)
+	copy.MotorDcVoltage = clonePointer(m.MotorDcVoltage)
+	copy.MotorDcCurrent = clonePointer(m.MotorDcCurrent)
+	return &copy
+}
+
 // RotationalShaftSpeedValue returns RotationalShaftSpeed as a physical value in rpm (value = raw * 0.25).
-// The bool is false when RotationalShaftSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusRapidUpdate) RotationalShaftSpeedValue() (float64, bool) {
-	if m.RotationalShaftSpeed == nil {
+	if m == nil || m.RotationalShaftSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.RotationalShaftSpeed) * 0.25, true
+	if *m.RotationalShaftSpeed == 65535 {
+		return 0, false
+	}
+	if *m.RotationalShaftSpeed == 65534 {
+		return 0, false
+	}
+	if *m.RotationalShaftSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.RotationalShaftSpeed) * 0.25
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16383 && !approximatelyEqual(value, 16383) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetRotationalShaftSpeedValue sets RotationalShaftSpeed from a physical value in rpm, rounded to the nearest
@@ -353,13 +662,28 @@ func (m *ElectricDriveStatusRapidUpdate) SetRotationalShaftSpeedValue(v float64)
 }
 
 // MotorDcVoltageValue returns MotorDcVoltage as a physical value in V (value = raw * 0.1).
-// The bool is false when MotorDcVoltage is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusRapidUpdate) MotorDcVoltageValue() (float64, bool) {
-	if m.MotorDcVoltage == nil {
+	if m == nil || m.MotorDcVoltage == nil {
 		return 0, false
 	}
-	return float64(*m.MotorDcVoltage) * 0.1, true
+	if *m.MotorDcVoltage == 65535 {
+		return 0, false
+	}
+	if *m.MotorDcVoltage == 65534 {
+		return 0, false
+	}
+	if *m.MotorDcVoltage == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MotorDcVoltage) * 0.1
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6553.2 && !approximatelyEqual(value, 6553.2) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorDcVoltageValue sets MotorDcVoltage from a physical value in V, rounded to the nearest
@@ -370,13 +694,28 @@ func (m *ElectricDriveStatusRapidUpdate) SetMotorDcVoltageValue(v float64) {
 }
 
 // MotorDcCurrentValue returns MotorDcCurrent as a physical value in A (value = raw * 0.1).
-// The bool is false when MotorDcCurrent is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ElectricDriveStatusRapidUpdate) MotorDcCurrentValue() (float64, bool) {
-	if m.MotorDcCurrent == nil {
+	if m == nil || m.MotorDcCurrent == nil {
 		return 0, false
 	}
-	return float64(*m.MotorDcCurrent) * 0.1, true
+	if *m.MotorDcCurrent == 32767 {
+		return 0, false
+	}
+	if *m.MotorDcCurrent == 32766 {
+		return 0, false
+	}
+	if *m.MotorDcCurrent == 32765 {
+		return 0, false
+	}
+	value := float64(*m.MotorDcCurrent) * 0.1
+	if value < -3276.7 && !approximatelyEqual(value, -3276.7) {
+		return 0, false
+	}
+	if value > 3276.4 && !approximatelyEqual(value, 3276.4) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMotorDcCurrentValue sets MotorDcCurrent from a physical value in A, rounded to the nearest
@@ -405,14 +744,48 @@ func (m *ThrusterControlStatus) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *ThrusterControlStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterControlStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ThrusterControlStatus) Clone() Message {
+	if m == nil {
+		return (*ThrusterControlStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Identifier = clonePointer(m.Identifier)
+	copy.DirectionControl = clonePointer(m.DirectionControl)
+	copy.PowerEnabled = clonePointer(m.PowerEnabled)
+	copy.RetractControl = clonePointer(m.RetractControl)
+	copy.SpeedControl = clonePointer(m.SpeedControl)
+	copy.ControlEvents = clonePointer(m.ControlEvents)
+	copy.CommandTimeout = clonePointer(m.CommandTimeout)
+	copy.AzimuthControl = clonePointer(m.AzimuthControl)
+	return &copy
+}
+
 // SpeedControlValue returns SpeedControl as a physical value in % (value = raw).
-// The bool is false when SpeedControl is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterControlStatus) SpeedControlValue() (float64, bool) {
-	if m.SpeedControl == nil {
+	if m == nil || m.SpeedControl == nil {
 		return 0, false
 	}
-	return float64(*m.SpeedControl), true
+	if *m.SpeedControl == 255 {
+		return 0, false
+	}
+	if *m.SpeedControl == 254 {
+		return 0, false
+	}
+	if *m.SpeedControl == 253 {
+		return 0, false
+	}
+	value := float64(*m.SpeedControl)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetSpeedControlValue sets SpeedControl from a physical value in %, rounded to the nearest
@@ -423,13 +796,28 @@ func (m *ThrusterControlStatus) SetSpeedControlValue(v float64) {
 }
 
 // CommandTimeoutValue returns CommandTimeout as a physical value in s (value = raw * 0.005).
-// The bool is false when CommandTimeout is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterControlStatus) CommandTimeoutValue() (float64, bool) {
-	if m.CommandTimeout == nil {
+	if m == nil || m.CommandTimeout == nil {
 		return 0, false
 	}
-	return float64(*m.CommandTimeout) * 0.005, true
+	if *m.CommandTimeout == 255 {
+		return 0, false
+	}
+	if *m.CommandTimeout == 254 {
+		return 0, false
+	}
+	if *m.CommandTimeout == 253 {
+		return 0, false
+	}
+	value := float64(*m.CommandTimeout) * 0.005
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 1.26 && !approximatelyEqual(value, 1.26) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCommandTimeoutValue sets CommandTimeout from a physical value in s, rounded to the nearest
@@ -440,13 +828,28 @@ func (m *ThrusterControlStatus) SetCommandTimeoutValue(v float64) {
 }
 
 // AzimuthControlValue returns AzimuthControl as a physical value in rad (value = raw * 0.0001).
-// The bool is false when AzimuthControl is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterControlStatus) AzimuthControlValue() (float64, bool) {
-	if m.AzimuthControl == nil {
+	if m == nil || m.AzimuthControl == nil {
 		return 0, false
 	}
-	return float64(*m.AzimuthControl) * 0.0001, true
+	if *m.AzimuthControl == 65535 {
+		return 0, false
+	}
+	if *m.AzimuthControl == 65534 {
+		return 0, false
+	}
+	if *m.AzimuthControl == 65533 {
+		return 0, false
+	}
+	value := float64(*m.AzimuthControl) * 0.0001
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 6.2831852 && !approximatelyEqual(value, 6.2831852) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetAzimuthControlValue sets AzimuthControl from a physical value in rad, rounded to the nearest
@@ -471,14 +874,44 @@ func (m *ThrusterInformation) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *ThrusterInformation) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterInformation) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ThrusterInformation) Clone() Message {
+	if m == nil {
+		return (*ThrusterInformation)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Identifier = clonePointer(m.Identifier)
+	copy.MotorType = clonePointer(m.MotorType)
+	copy.PowerRating = clonePointer(m.PowerRating)
+	copy.MaximumTemperatureRating = clonePointer(m.MaximumTemperatureRating)
+	copy.MaximumRotationalSpeed = clonePointer(m.MaximumRotationalSpeed)
+	return &copy
+}
+
 // PowerRatingValue returns PowerRating as a physical value in W (value = raw).
-// The bool is false when PowerRating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterInformation) PowerRatingValue() (float64, bool) {
-	if m.PowerRating == nil {
+	if m == nil || m.PowerRating == nil {
 		return 0, false
 	}
-	return float64(*m.PowerRating), true
+	if *m.PowerRating == 65535 {
+		return 0, false
+	}
+	if *m.PowerRating == 65534 {
+		return 0, false
+	}
+	if *m.PowerRating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.PowerRating)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 65532 && !approximatelyEqual(value, 65532) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetPowerRatingValue sets PowerRating from a physical value in W, rounded to the nearest
@@ -489,13 +922,28 @@ func (m *ThrusterInformation) SetPowerRatingValue(v float64) {
 }
 
 // MaximumTemperatureRatingValue returns MaximumTemperatureRating as a physical value in K (value = raw * 0.01).
-// The bool is false when MaximumTemperatureRating is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterInformation) MaximumTemperatureRatingValue() (float64, bool) {
-	if m.MaximumTemperatureRating == nil {
+	if m == nil || m.MaximumTemperatureRating == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumTemperatureRating) * 0.01, true
+	if *m.MaximumTemperatureRating == 65535 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureRating == 65534 {
+		return 0, false
+	}
+	if *m.MaximumTemperatureRating == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumTemperatureRating) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumTemperatureRatingValue sets MaximumTemperatureRating from a physical value in K, rounded to the nearest
@@ -506,13 +954,28 @@ func (m *ThrusterInformation) SetMaximumTemperatureRatingValue(v float64) {
 }
 
 // MaximumRotationalSpeedValue returns MaximumRotationalSpeed as a physical value in rpm (value = raw * 0.25).
-// The bool is false when MaximumRotationalSpeed is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterInformation) MaximumRotationalSpeedValue() (float64, bool) {
-	if m.MaximumRotationalSpeed == nil {
+	if m == nil || m.MaximumRotationalSpeed == nil {
 		return 0, false
 	}
-	return float64(*m.MaximumRotationalSpeed) * 0.25, true
+	if *m.MaximumRotationalSpeed == 65535 {
+		return 0, false
+	}
+	if *m.MaximumRotationalSpeed == 65534 {
+		return 0, false
+	}
+	if *m.MaximumRotationalSpeed == 65533 {
+		return 0, false
+	}
+	value := float64(*m.MaximumRotationalSpeed) * 0.25
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 16383 && !approximatelyEqual(value, 16383) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetMaximumRotationalSpeedValue sets MaximumRotationalSpeed from a physical value in rpm, rounded to the nearest
@@ -538,14 +1001,45 @@ func (m *ThrusterMotorStatus) SetMessageInfo(info MessageInfo)     { m.Info = in
 func (m *ThrusterMotorStatus) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *ThrusterMotorStatus) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *ThrusterMotorStatus) Clone() Message {
+	if m == nil {
+		return (*ThrusterMotorStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.Sid = clonePointer(m.Sid)
+	copy.Identifier = clonePointer(m.Identifier)
+	copy.MotorEvents = clonePointer(m.MotorEvents)
+	copy.Current = clonePointer(m.Current)
+	copy.Temperature = clonePointer(m.Temperature)
+	copy.OperatingTime = clonePointer(m.OperatingTime)
+	return &copy
+}
+
 // CurrentValue returns Current as a physical value in A (value = raw).
-// The bool is false when Current is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterMotorStatus) CurrentValue() (float64, bool) {
-	if m.Current == nil {
+	if m == nil || m.Current == nil {
 		return 0, false
 	}
-	return float64(*m.Current), true
+	if *m.Current == 255 {
+		return 0, false
+	}
+	if *m.Current == 254 {
+		return 0, false
+	}
+	if *m.Current == 253 {
+		return 0, false
+	}
+	value := float64(*m.Current)
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 252 && !approximatelyEqual(value, 252) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
@@ -556,13 +1050,28 @@ func (m *ThrusterMotorStatus) SetCurrentValue(v float64) {
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
-// The bool is false when Temperature is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterMotorStatus) TemperatureValue() (float64, bool) {
-	if m.Temperature == nil {
+	if m == nil || m.Temperature == nil {
 		return 0, false
 	}
-	return float64(*m.Temperature) * 0.01, true
+	if *m.Temperature == 65535 {
+		return 0, false
+	}
+	if *m.Temperature == 65534 {
+		return 0, false
+	}
+	if *m.Temperature == 65533 {
+		return 0, false
+	}
+	value := float64(*m.Temperature) * 0.01
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 655.32 && !approximatelyEqual(value, 655.32) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
@@ -573,13 +1082,28 @@ func (m *ThrusterMotorStatus) SetTemperatureValue(v float64) {
 }
 
 // OperatingTimeValue returns OperatingTime as a physical value in s (value = raw * 60).
-// The bool is false when OperatingTime is nil: the wire carried the field's null
-// sentinel or the payload ended before the field.
+// The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *ThrusterMotorStatus) OperatingTimeValue() (float64, bool) {
-	if m.OperatingTime == nil {
+	if m == nil || m.OperatingTime == nil {
 		return 0, false
 	}
-	return float64(*m.OperatingTime) * 60, true
+	if *m.OperatingTime == 65535 {
+		return 0, false
+	}
+	if *m.OperatingTime == 65534 {
+		return 0, false
+	}
+	if *m.OperatingTime == 65533 {
+		return 0, false
+	}
+	value := float64(*m.OperatingTime) * 60
+	if value < 0 && !approximatelyEqual(value, 0) {
+		return 0, false
+	}
+	if value > 3.93192e+06 && !approximatelyEqual(value, 3.93192e+06) {
+		return 0, false
+	}
+	return value, true
 }
 
 // SetOperatingTimeValue sets OperatingTime from a physical value in s, rounded to the nearest

@@ -45,6 +45,10 @@ type Observation struct {
 	AdapterID string    `json:"adapterId"`
 	NetworkID string    `json:"networkId"`
 	Direction Direction `json:"direction"`
+	// ConnectionEpoch and ClaimEpoch identify the live Client session that
+	// observed this record. Capture sources may leave both zero.
+	ConnectionEpoch uint64 `json:"connectionEpoch,omitempty"`
+	ClaimEpoch      uint64 `json:"claimEpoch,omitempty"`
 
 	Frame *can.Frame `json:"frame,omitempty"`
 

@@ -93,6 +93,10 @@ func (tx *protocolTransmitter) finish(err error) {
 }
 
 func (c *Client) writeProtocol(operation string, class protocolWriteClass, msg pgn.Message) *WriteResult {
+	return c.writeProtocolContext(c.ctx, operation, class, msg)
+}
+
+func (c *Client) writeProtocolContext(ctx context.Context, operation string, class protocolWriteClass, msg pgn.Message) *WriteResult {
 	result := newWriteResult()
 	job := writeJob{
 		msg:           msg,
@@ -114,11 +118,29 @@ func (c *Client) writeProtocol(operation string, class protocolWriteClass, msg p
 		result.complete(err)
 		return result
 	}
+	job.ctx, job.stop = c.writeContextLocked(ctx, true)
+	c.mu.Unlock()
+	snapshot, snapshotErr := snapshotMessage(msg)
+	if snapshotErr != nil {
+		job.stop()
+		result.complete(snapshotErr)
+		c.fail(fmt.Errorf("n2k: protocol transmission %s encoding: %w", operation, snapshotErr))
+		return result
+	}
+	job.msg = snapshot
+	c.mu.Lock()
+	if c.closed || c.terminalErr != nil {
+		c.mu.Unlock()
+		job.stop()
+		result.complete(c.operationError())
+		return result
+	}
 	err := c.protocolTx.admit(job)
 	c.mu.Unlock()
 	if err == nil {
 		return result
 	}
+	job.stop()
 	result.complete(err)
 	if class == protocolRequired {
 		c.fail(fmt.Errorf("n2k: required protocol transmission %s rejected: %w", operation, err))
@@ -126,14 +148,17 @@ func (c *Client) writeProtocol(operation string, class protocolWriteClass, msg p
 	return result
 }
 
-// retryAdvisoryProtocol retries only bounded admission failures. Once a job
+// retryAdvisoryProtocolContext retries only bounded admission failures. Once a job
 // reaches the writer, any encoding or bus failure is terminal and must not be
 // duplicated by retrying an uncertain transmission.
-func (c *Client) retryAdvisoryProtocol(operation string, msg pgn.Message) {
+func (c *Client) retryAdvisoryProtocolContext(ctx context.Context, operation string, msg pgn.Message) {
 	backoff := 25 * time.Millisecond
 	for attempt := 1; attempt <= protocolRetryAttempts; attempt++ {
-		err := c.writeProtocol(operation, protocolAdvisory, msg).WaitContext(c.ctx)
-		if err == nil || c.ctx.Err() != nil {
+		if ctx.Err() != nil {
+			return
+		}
+		err := c.writeProtocolContext(ctx, operation, protocolAdvisory, msg).WaitContext(ctx)
+		if err == nil || ctx.Err() != nil {
 			return
 		}
 		if !errors.Is(err, ErrProtocolQueueFull) {
@@ -148,7 +173,7 @@ func (c *Client) retryAdvisoryProtocol(operation string, msg pgn.Message) {
 		select {
 		case <-timer.C:
 			backoff *= 2
-		case <-c.ctx.Done():
+		case <-ctx.Done():
 			timer.Stop()
 			return
 		}
@@ -160,44 +185,24 @@ func (c *Client) drainWriteQueues(err error) {
 		drained := false
 		if c.protocolTx != nil {
 			if job, ok := c.protocolTx.takeReady(); ok {
-				job.result.complete(err)
+				c.finishWriteJob(job, err)
+				if job.stop != nil {
+					job.stop()
+				}
 				drained = true
 			}
 		}
 		select {
 		case job := <-c.writeCh:
-			job.result.complete(err)
+			c.finishWriteJob(job, err)
+			if job.stop != nil {
+				job.stop()
+			}
 			drained = true
 		default:
 		}
 		if !drained {
 			return
 		}
-	}
-}
-
-// waitForWriteJob selects the next job while giving already-queued required
-// and advisory protocol traffic priority over application traffic.
-func (c *Client) waitForWriteJob(ctx context.Context) (writeJob, bool) {
-	if c.protocolTx != nil {
-		if job, ok := c.protocolTx.takeReady(); ok {
-			return job, true
-		}
-		select {
-		case job := <-c.protocolTx.required:
-			return job, true
-		case job := <-c.protocolTx.advisory:
-			return job, true
-		case job := <-c.writeCh:
-			return job, true
-		case <-ctx.Done():
-			return writeJob{}, false
-		}
-	}
-	select {
-	case job := <-c.writeCh:
-		return job, true
-	case <-ctx.Done():
-		return writeJob{}, false
 	}
 }

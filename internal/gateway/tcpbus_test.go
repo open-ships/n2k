@@ -387,10 +387,8 @@ func (c *recordingConn) written() []byte {
 	return append([]byte(nil), c.buf...)
 }
 
-// TestTCPLink_WriteRetriesFreshConnAfterDrop confirms a write whose connection
-// dropped before any byte was sent (n == 0) waits for the reconnect and
-// re-sends the whole frame on the fresh connection.
-func TestTCPLink_WriteRetriesFreshConnAfterDrop(t *testing.T) {
+// Even a zero-byte failure must not carry old identity across reconnect.
+func TestTCPLink_WriteDoesNotRetryFreshConnAfterDrop(t *testing.T) {
 	l := newTCPLink(testLogger(), "127.0.0.1:1", &ReconnectPolicy{
 		InitialBackoff: time.Millisecond,
 		MaxBackoff:     time.Millisecond,
@@ -406,17 +404,14 @@ func TestTCPLink_WriteRetriesFreshConnAfterDrop(t *testing.T) {
 	writeErr := make(chan error, 1)
 	go func() { writeErr <- l.write([]byte("hello")) }()
 
-	// The write fails on dead (n == 0) and waits for a different connection.
-	time.Sleep(20 * time.Millisecond)
-	require.True(t, l.markConnected(good))
-
 	select {
 	case err := <-writeErr:
-		require.NoError(t, err)
+		require.Error(t, err)
 	case <-time.After(2 * time.Second):
-		t.Fatal("write did not complete after reconnect")
+		t.Fatal("write waited for reconnect")
 	}
-	assert.Equal(t, []byte("hello"), good.written())
+	require.True(t, l.markConnected(good))
+	assert.Empty(t, good.written())
 }
 
 // TestTCPLink_WriteNoRetryOnPartialWrite confirms a partial write is never
@@ -450,6 +445,38 @@ func TestTCPLink_WriteNoRetryWithoutReconnect(t *testing.T) {
 	l.mu.Unlock()
 
 	require.Error(t, l.write([]byte("hello")))
+}
+
+func TestTCPLinkWriteContextInterruptsPhysicalIOOnExactConnection(t *testing.T) {
+	link := newTCPLink(testLogger(), "pipe", &ReconnectPolicy{})
+	client, peer := net.Pipe()
+	t.Cleanup(func() { _ = client.Close(); _ = peer.Close() })
+	require.True(t, link.markConnected(client))
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
+	defer cancel()
+	done := make(chan error, 1)
+	go func() { done <- link.writeContext(ctx, []byte("blocked")) }()
+	select {
+	case err := <-done:
+		require.ErrorIs(t, err, context.DeadlineExceeded)
+	case <-time.After(time.Second):
+		t.Fatal("physical TCP write ignored cancellation")
+	}
+	// The old write is finished and the deadline reset. Later admission uses
+	// the new connection without inheriting the old cancellation callback.
+	fresh := &recordingConn{}
+	require.True(t, link.markConnected(fresh))
+	require.NoError(t, link.write([]byte("fresh")))
+	assert.Equal(t, []byte("fresh"), fresh.written())
+}
+
+func TestTCPLinkWriteContextCancelsQueueAdmission(t *testing.T) {
+	link := newTCPLink(testLogger(), "pipe", nil)
+	link.writeMu <- struct{}{}
+	defer func() { <-link.writeMu }()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	require.ErrorIs(t, link.writeContext(ctx, []byte("never sent")), context.Canceled)
 }
 
 func TestTCPLinkConnectionObserverGatesPublicationAndTracksEpochs(t *testing.T) {

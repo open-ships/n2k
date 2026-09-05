@@ -21,6 +21,24 @@ func (m *CarlingBreakerCommand) SetMessageInfo(info MessageInfo)     { m.Info = 
 func (m *CarlingBreakerCommand) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *CarlingBreakerCommand) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CarlingBreakerCommand) Clone() Message {
+	if m == nil {
+		return (*CarlingBreakerCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageType = clonePointer(m.MessageType)
+	copy.BreakerMapping1 = clonePointer(m.BreakerMapping1)
+	copy.BreakerMapping2 = clonePointer(m.BreakerMapping2)
+	copy.BreakerMapping3 = clonePointer(m.BreakerMapping3)
+	copy.BreakerCommand = clonePointer(m.BreakerCommand)
+	copy.DimValue = clonePointer(m.DimValue)
+	return &copy
+}
+
 type CarlingSwitchboardStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -36,6 +54,20 @@ func (m *CarlingSwitchboardStatus) DecodePayload(payload []uint8) error {
 	return decodeFields(m, payload)
 }
 func (m *CarlingSwitchboardStatus) EncodePayload() ([]uint8, error) { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CarlingSwitchboardStatus) Clone() Message {
+	if m == nil {
+		return (*CarlingSwitchboardStatus)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageType = clonePointer(m.MessageType)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type CarlingDcConfigurationCommand struct {
 	Info                      MessageInfo `json:"info"`
@@ -65,6 +97,32 @@ func (m *CarlingDcConfigurationCommand) DecodePayload(payload []uint8) error {
 }
 func (m *CarlingDcConfigurationCommand) EncodePayload() ([]uint8, error) { return encodeFields(m) }
 
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CarlingDcConfigurationCommand) Clone() Message {
+	if m == nil {
+		return (*CarlingDcConfigurationCommand)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageType = clonePointer(m.MessageType)
+	copy.BreakerMapping1 = clonePointer(m.BreakerMapping1)
+	copy.BreakerMapping2 = clonePointer(m.BreakerMapping2)
+	copy.BreakerMapping3 = clonePointer(m.BreakerMapping3)
+	copy.InrushDelay = clonePointer(m.InrushDelay)
+	copy.TripDelay = clonePointer(m.TripDelay)
+	copy.ConfigurationFlags = clonePointer(m.ConfigurationFlags)
+	copy.CurrentRating = clonePointer(m.CurrentRating)
+	copy.FactoryMaxRating = clonePointer(m.FactoryMaxRating)
+	copy.ScheduleBLoadShedPriority = clonePointer(m.ScheduleBLoadShedPriority)
+	copy.ScheduleALoadShedPriority = clonePointer(m.ScheduleALoadShedPriority)
+	copy.DimValue = clonePointer(m.DimValue)
+	copy.BreakerGroup = clonePointer(m.BreakerGroup)
+	copy.FlashMapIndex = clonePointer(m.FlashMapIndex)
+	return &copy
+}
+
 type CarlingProprietary struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -77,6 +135,19 @@ func (m *CarlingProprietary) MessageInfo() MessageInfo            { return m.Inf
 func (m *CarlingProprietary) SetMessageInfo(info MessageInfo)     { m.Info = info }
 func (m *CarlingProprietary) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }
 func (m *CarlingProprietary) EncodePayload() ([]uint8, error)     { return encodeFields(m) }
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CarlingProprietary) Clone() Message {
+	if m == nil {
+		return (*CarlingProprietary)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
+}
 
 type CarlingBreakerStatusAndConfiguration struct {
 	Info             MessageInfo `json:"info"`
@@ -94,4 +165,18 @@ func (m *CarlingBreakerStatusAndConfiguration) DecodePayload(payload []uint8) er
 }
 func (m *CarlingBreakerStatusAndConfiguration) EncodePayload() ([]uint8, error) {
 	return encodeFields(m)
+}
+
+// Clone returns a message owning every mutable field and retained wire byte.
+func (m *CarlingBreakerStatusAndConfiguration) Clone() Message {
+	if m == nil {
+		return (*CarlingBreakerStatusAndConfiguration)(nil)
+	}
+	copy := *m
+	copy.Info = m.Info.Clone()
+	copy.ManufacturerCode = clonePointer(m.ManufacturerCode)
+	copy.IndustryCode = clonePointer(m.IndustryCode)
+	copy.MessageType = clonePointer(m.MessageType)
+	copy.Data = cloneSlice(m.Data)
+	return &copy
 }

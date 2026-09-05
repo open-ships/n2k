@@ -9,6 +9,8 @@ type ClientStatus struct {
 	AddressClaimed                bool
 	Connected                     bool
 	ConnectionEpoch               uint64
+	ClaimEpoch                    uint64
+	Ready                         bool
 	Rejoining                     bool
 	Closed                        bool
 	TerminalError                 error
@@ -34,6 +36,16 @@ type ClientStatus struct {
 	DecodeErrorsObserved          uint64
 	GatewayEventsObserved         uint64
 	TransportErrorsObserved       uint64
+	PendingRequests               int
+	RequestCapacity               int
+	DeviceInfoQueueDepth          int
+	DeviceInfoQueueCapacity       int
+	DeviceInfoRequestsDropped     uint64
+	// Replay capture keeps the newest frames; each eviction increments Dropped.
+	// Capacity is zero for live clients and ReplayFrameCapacity for replay.
+	ReplayFramesRetained int
+	ReplayFrameCapacity  int
+	ReplayFramesDropped  uint64
 	// Actisense is populated for source-authoritative Actisense binary or CAN
 	// ASCII buses. Gateway-owned message sessions expose the same counters on
 	// ActisenseGatewaySession.Status instead.
@@ -52,6 +64,8 @@ func (c *Client) Status() ClientStatus {
 		AddressClaimed:             c.claimed,
 		Connected:                  c.connected,
 		ConnectionEpoch:            c.connectionEpoch,
+		ClaimEpoch:                 c.claimEpoch,
+		Ready:                      c.readyErrorLocked() == nil,
 		Rejoining:                  c.rejoining,
 		Closed:                     c.closed,
 		TerminalError:              c.terminalErr,
@@ -67,8 +81,22 @@ func (c *Client) Status() ClientStatus {
 		DecodeErrorsObserved:       c.decodeErrorsObserved.Load(),
 		GatewayEventsObserved:      c.gatewayEventsObserved.Load(),
 		TransportErrorsObserved:    c.transportErrorsObserved.Load(),
+		DeviceInfoQueueDepth:       len(c.deviceInfoCh),
+		DeviceInfoQueueCapacity:    cap(c.deviceInfoCh),
+		DeviceInfoRequestsDropped:  c.deviceInfoRequestsDropped.Load(),
+		ReplayFramesRetained:       len(c.writtenFrames),
+		ReplayFramesDropped:        c.writtenFramesDropped,
+	}
+	if c.bus == nil {
+		status.ReplayFrameCapacity = ReplayFrameCapacity
 	}
 	c.mu.Unlock()
+	if c.correlator != nil {
+		c.correlator.mu.Lock()
+		status.PendingRequests = len(c.correlator.waiters)
+		status.RequestCapacity = maxPendingRequests
+		c.correlator.mu.Unlock()
+	}
 	if c.msgHub != nil {
 		status.ReceiveSubscribers = c.msgHub.subscriberCount()
 	}

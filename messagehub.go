@@ -50,6 +50,11 @@ func (h *messageHub) publish(msg pgn.Message) {
 	if msg == nil {
 		return
 	}
+	owned, err := pgn.CloneMessage(msg)
+	if err != nil {
+		h.close(err)
+		return
+	}
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.closed {
@@ -58,16 +63,22 @@ func (h *messageHub) publish(msg pgn.Message) {
 	if len(h.subscribers) == 0 {
 		if len(h.backlog) == h.buffer {
 			copy(h.backlog, h.backlog[1:])
-			h.backlog[len(h.backlog)-1] = msg
+			h.backlog[len(h.backlog)-1] = owned
 			h.missed = true
 			return
 		}
-		h.backlog = append(h.backlog, msg)
+		h.backlog = append(h.backlog, owned)
 		return
 	}
 	for sub := range h.subscribers {
+		copy, cloneErr := pgn.CloneMessage(owned)
+		if cloneErr != nil {
+			sub.failLocked(cloneErr)
+			delete(h.subscribers, sub)
+			continue
+		}
 		select {
-		case sub.ch <- msg:
+		case sub.ch <- copy:
 		default:
 			sub.failLocked(ErrReceiveOverflow)
 			delete(h.subscribers, sub)

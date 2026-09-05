@@ -140,9 +140,9 @@ func (r *registry) observe(msg pgn.Message) {
 	}
 	switch m := msg.(type) {
 	case *pgn.ProductInformation:
-		entry.product = m
+		entry.product = m.Clone().(*pgn.ProductInformation)
 	case *pgn.ConfigurationInformation:
-		entry.config = m
+		entry.config = m.Clone().(*pgn.ConfigurationInformation)
 	}
 	entry.lastSeen = info.Timestamp
 }
@@ -189,36 +189,10 @@ func (e *deviceEntry) device() Device {
 		LastSeen: e.lastSeen,
 	}
 	if e.product != nil {
-		productCopy := *e.product
-		productCopy.Info = cloneMessageInfo(e.product.Info)
-		productCopy.Nmea2000Version = cloneUint64(e.product.Nmea2000Version)
-		productCopy.ProductCode = cloneUint64(e.product.ProductCode)
-		productCopy.CertificationLevel = cloneUint64(e.product.CertificationLevel)
-		productCopy.LoadEquivalency = cloneUint64(e.product.LoadEquivalency)
-		d.ProductInfo = &productCopy
+		d.ProductInfo = e.product.Clone().(*pgn.ProductInformation)
 	}
 	if e.config != nil {
-		configCopy := *e.config
-		configCopy.Info = cloneMessageInfo(e.config.Info)
-		d.ConfigInfo = &configCopy
+		d.ConfigInfo = e.config.Clone().(*pgn.ConfigurationInformation)
 	}
 	return d
-}
-
-func cloneUint64(v *uint64) *uint64 {
-	if v == nil {
-		return nil
-	}
-	copy := *v
-	return &copy
-}
-
-func cloneMessageInfo(info pgn.MessageInfo) pgn.MessageInfo {
-	if info.Priority != nil {
-		info.Priority = pgn.Priority(*info.Priority)
-	}
-	if info.TargetId != nil {
-		info.TargetId = pgn.Target(*info.TargetId)
-	}
-	return info
 }
