@@ -21,6 +21,7 @@
 - Made PGN and enum generation offline and checksum-pinned. Published separate
   decode/encode completeness, limitations, provenance, and hardware-verification
   metadata; typed coverage is not a completeness or certification claim.
+- Preserve the exact pinned schema bytes under Windows-style Git checkouts.
 - Added executable conformance evidence, scheduled long fuzzing/resource soaks,
   and independent reliability regressions. Missing/skipped required software
   evidence fails the gate; hardware and licensed certification stay separate.

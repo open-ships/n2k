@@ -1,0 +1,2 @@
+# The pinned schema is checksum-verified; checkout must preserve its exact bytes.
+/cmd/pgngen/schema.json -text

@@ -1,10 +1,67 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestPinnedSchemaPreservesBytesWithWindowsCheckout(t *testing.T) {
+	schema, err := os.ReadFile("schema.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	attributes, err := os.ReadFile("../../.gitattributes")
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		t.Fatal(err)
+	}
+	repository := t.TempDir()
+	path := filepath.Join(repository, schemaPath)
+	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, schema, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(repository, ".gitattributes"), attributes, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	runGit := func(args ...string) {
+		t.Helper()
+		ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+		defer cancel()
+		command := exec.CommandContext(ctx, "git", append([]string{"-c", "core.autocrlf=true", "-c", "core.safecrlf=false"}, args...)...)
+		command.Dir = repository
+		if output, err := command.CombinedOutput(); err != nil {
+			t.Fatalf("git %v: %v\n%s", args, err, output)
+		}
+	}
+	runGit("init", "--quiet")
+	runGit("add", "--", ".gitattributes", schemaPath)
+	if err := os.Remove(path); err != nil {
+		t.Fatal(err)
+	}
+	runGit("checkout-index", "--all")
+	checkedOut, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(checkedOut, schema) {
+		t.Fatal("Windows-style Git checkout changed the pinned schema bytes")
+	}
+	t.Chdir(repository)
+	t.Setenv("PGN_REFRESH_SOURCE", "")
+	if _, err := loadSource(); err != nil {
+		t.Fatalf("checked-out schema failed checksum verification: %v", err)
+	}
+}
 
 func TestPinnedSchemaLoadsOfflineWithOriginalAttribution(t *testing.T) {
 	t.Chdir("../..")
