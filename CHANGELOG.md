@@ -22,6 +22,8 @@
   decode/encode completeness, limitations, provenance, and hardware-verification
   metadata; typed coverage is not a completeness or certification claim.
 - Preserve the exact pinned schema bytes under Windows-style Git checkouts.
+- Use count-bounded PR fuzz smoke runs with hard timeouts to avoid timed fuzz
+  coordinator cancellation failures, and retain failure corpora in CI.
 - Added executable conformance evidence, scheduled long fuzzing/resource soaks,
   and independent reliability regressions. Missing/skipped required software
   evidence fails the gate; hardware and licensed certification stay separate.

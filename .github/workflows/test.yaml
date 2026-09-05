@@ -67,6 +67,16 @@ jobs:
       - name: Fuzz smoke tests
         run: just fuzz-smoke
 
+      - name: Preserve fuzz failure corpus
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-failure-corpus
+          path: |
+            internal/**/testdata/fuzz/**
+            pgn/testdata/fuzz/**
+          if-no-files-found: ignore
+
       - name: Software reliability smoke
         run: just reliability-soak 10s 2m
 

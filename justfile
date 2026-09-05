@@ -78,13 +78,14 @@ test-v:
 test-race:
     go test -race ./...
 
-# short, deterministic smoke run of every fuzz harness
+# Fixed input budgets avoid the timed coordinator cancellation race (golang/go#75804).
+# Each harness still fails on any error and has a hard timeout for hangs.
 fuzz-smoke:
-    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime=2s
-    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=2s
-    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=2s
-    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=2s
-    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=2s
+    go test ./internal/actisense -run=^$ -fuzz=FuzzParser -fuzztime=10000x -timeout=2m
+    go test ./internal/adapter -run=^$ -fuzz=FuzzCANAdapter -fuzztime=10000x -timeout=2m
+    go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=10000x -timeout=2m
+    go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=10000x -timeout=2m
+    go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=10000x -timeout=2m
 
 # longer bounded exploration of every fuzz harness; never requires hardware
 fuzz-long $duration="2m":

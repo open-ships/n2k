@@ -74,6 +74,11 @@ so they do not overwrite one another's evidence.
 
 CI runs a short smoke; the scheduled reliability workflow runs the required
 gates, a one-hour software soak, race detection, and longer fuzz campaigns.
+`just fuzz-smoke` runs each of the five harnesses with a 10,000-execution budget
+and a two-minute hard timeout. Count-based completion avoids the timed fuzz
+coordinator's reported [cancellation race](https://github.com/golang/go/issues/75804).
+All failures still fail CI, and any failing input corpus is uploaded for replay.
+The longer, time-based campaigns remain separate from this PR smoke gate.
 Hardware qualification remains a separate 24-hour lab activity using the
 declared adapter/firmware, nominal and saturated traffic, reconnects, and power
 cycling. Record exact commit, configuration, duration, failures, and capture
