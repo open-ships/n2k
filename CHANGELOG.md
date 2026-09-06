@@ -1,5 +1,12 @@
 ## Change Log for open-ships/n2k
 
+### v1.3.1 — 2026-09-05 — shared CI toolset
+
+- Route platform tests, lint, security, release metadata, and scheduled
+  reliability checks through the versioned Open Ships CI workflows.
+- Use the shared Go and analysis tool versions while retaining PGN sync,
+  conformance evidence, race detection, fuzz corpora, and software soaks.
+
 ### v1.3.0 — 2026-09-05 — bounded, cancellable, epoch-safe reliability
 
 - Made application writes immutable snapshots at admission, with `WriteContext`,
