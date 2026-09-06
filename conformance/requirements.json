@@ -848,6 +848,28 @@
           "kind": "software"
         }
       ]
+    },
+    {
+      "id": "ACT-05",
+      "category": "actisense-sdk-compatibility",
+      "behavior": "The pinned SDK binary control surface supports preserved modes, generic sends, gateway-owned remote BEM, corrected mask/rate sentinels, and documented legacy commands; physical evidence remains separate.",
+      "evidence": [
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestActisense(PreservedModeAndGenericSends|GatewayRemote.*)$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewaySessionEstablishedWritesHonorDeadlines$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^Test(RxPGNMaskAcknowledgements|TxPGNRateAcknowledgements|LegacyF1.*|PortDuplicateDeleteWireContract|ActisenseGoldenDocumentedCommands)$",
+          "kind": "software"
+        }
+      ]
     }
   ]
 }

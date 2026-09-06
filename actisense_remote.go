@@ -57,6 +57,19 @@ func (c *Client) ActisenseRemoteDevice(source uint8, options ...ActisenseRemoteO
 	if c == nil {
 		return nil, ErrClientClosed
 	}
+	c.mu.Lock()
+	manager, closed, terminalErr := c.actisenseRemote, c.closed, c.terminalErr
+	c.mu.Unlock()
+	if terminalErr != nil {
+		return nil, terminalErr
+	}
+	if closed || manager == nil {
+		return nil, ErrClientClosed
+	}
+	return manager.device(source, options)
+}
+
+func (m *actisenseRemoteManager) device(source uint8, options []ActisenseRemoteOption) (*ActisenseRemoteDevice, error) {
 	if source > 251 {
 		return nil, fmt.Errorf("n2k: Actisense remote source address %d is outside 0-251", source)
 	}
@@ -70,24 +83,13 @@ func (c *Client) ActisenseRemoteDevice(source uint8, options ...ActisenseRemoteO
 	if config.timeout <= 0 || config.inactivity <= 0 {
 		return nil, errors.New("n2k: Actisense remote timeouts must be positive")
 	}
-	c.mu.Lock()
-	manager := c.actisenseRemote
-	closed := c.closed
-	terminalErr := c.terminalErr
-	c.mu.Unlock()
-	if terminalErr != nil {
-		return nil, terminalErr
-	}
-	if closed || manager == nil {
-		return nil, ErrClientClosed
-	}
-	requester := &actisenseRemoteRequester{manager: manager, source: source}
+	requester := &actisenseRemoteRequester{manager: m, source: source}
 	return &ActisenseRemoteDevice{
 		ActisenseDevice: &ActisenseDevice{CommandSet: actisense.NewCommandSet(requester, actisense.CommandSetConfig{
 			Timeout: config.timeout, MultiInactivity: config.inactivity, Remote: true,
 		})},
 		SourceAddress: source,
-		manager:       manager,
+		manager:       m,
 	}, nil
 }
 
@@ -114,7 +116,7 @@ func (d *ActisenseRemoteDevice) Diagnostics() iter.Seq2[ActisenseDiagnostic, err
 }
 
 // Metrics returns cumulative BEM correlation and latency counters shared by
-// all remote-device handles on this Client.
+// all remote-device handles on this Client or gateway session.
 func (d *ActisenseRemoteDevice) Metrics() ActisenseProtocolMetrics {
 	if d == nil || d.manager == nil {
 		return ActisenseProtocolMetrics{BSTFrames: make(map[byte]uint64)}
@@ -138,18 +140,45 @@ type actisenseRemoteResult struct {
 
 type actisenseRemotePending struct {
 	results   chan actisenseRemoteResult
+	cancel    context.CancelCauseFunc
 	multi     bool
 	delivered int
 }
 
 type actisenseRemoteManager struct {
-	client *Client
+	client  *Client
+	gateway *ActisenseGatewaySession
 
 	mu          sync.Mutex
 	pending     map[actisenseRemoteKey]*actisenseRemotePending
 	closed      bool
 	diagnostics *actisenseDiagnosticHub
 	metrics     actisenseRemoteMetrics
+}
+
+// lockIdentity holds the identity owner's lock until the caller has registered
+// its pending operation, making admission atomic with epoch invalidation.
+func (m *actisenseRemoteManager) lockIdentity() (key actisenseRemoteKey, unlock func(), err error) {
+	if m.gateway != nil {
+		s := m.gateway
+		s.mu.Lock()
+		key.destination, key.connectionEpoch, key.claimEpoch = s.remoteAddress, s.epoch, s.identityEpoch
+		if s.closed {
+			err = actisense.ErrSessionClosed
+		} else if !s.connected || !s.remoteAddressKnown {
+			err = ErrActisenseNotReady
+		}
+		return key, s.mu.Unlock, err
+	}
+	c := m.client
+	c.mu.Lock()
+	key.destination, key.connectionEpoch, key.claimEpoch = c.sourceAddr, c.connectionEpoch, c.claimEpoch
+	if c.closed {
+		err = ErrClientClosed
+	} else if c.terminalErr != nil {
+		err = c.terminalErr
+	}
+	return key, c.mu.Unlock, err
 }
 
 type actisenseRemoteMetrics struct {
@@ -288,43 +317,52 @@ func (m *actisenseRemoteManager) request(ctx context.Context, source, command by
 	if err != nil {
 		return nil, err
 	}
-	m.client.mu.Lock()
-	if m.client.closed || m.client.terminalErr != nil {
-		err := m.client.terminalErr
-		m.client.mu.Unlock()
-		if err == nil {
-			err = ErrClientClosed
+	if m.gateway != nil {
+		if err := m.gateway.acquireRemoteProbe(ctx); err != nil {
+			return nil, err
 		}
+	}
+	releaseProbe := sync.OnceFunc(func() {
+		if m.gateway != nil {
+			<-m.gateway.probeGate
+		}
+	})
+	defer releaseProbe()
+	if m.gateway != nil {
+		if err := m.gateway.verifyRemoteAddress(ctx, source); err != nil {
+			return nil, err
+		}
+	}
+	key, unlock, err := m.lockIdentity()
+	if err != nil {
+		unlock()
 		return nil, err
 	}
-	local := m.client.sourceAddr
-	connectionEpoch := m.client.connectionEpoch
-	claimEpoch := m.client.claimEpoch
-	key := actisenseRemoteKey{
-		source: source, destination: local, connectionEpoch: connectionEpoch, claimEpoch: claimEpoch,
-		bstID: actisense.BSTBEMResponse, bemID: command,
-	}
-	pending := &actisenseRemotePending{results: make(chan actisenseRemoteResult, 257), multi: complete != nil}
+	key.source, key.bstID, key.bemID = source, actisense.BSTBEMResponse, command
+	requestCtx, cancel := context.WithCancelCause(ctx)
+	defer cancel(context.Canceled)
+	pending := &actisenseRemotePending{results: make(chan actisenseRemoteResult, 257), multi: complete != nil, cancel: cancel}
 	m.mu.Lock()
 	if m.closed {
 		m.mu.Unlock()
-		m.client.mu.Unlock()
+		unlock()
 		return nil, ErrClientClosed
 	}
 	if _, exists := m.pending[key]; exists {
 		m.mu.Unlock()
-		m.client.mu.Unlock()
+		unlock()
 		m.metrics.duplicates.Add(1)
 		return nil, fmt.Errorf("%w for remote source %d BEM 0x%02X", actisense.ErrRequestInFlight, source, command)
 	}
 	if len(m.pending) >= maxRemotePendingRequests {
 		m.mu.Unlock()
-		m.client.mu.Unlock()
+		unlock()
 		return nil, errors.New("n2k: Actisense remote request table is full")
 	}
 	m.pending[key] = pending
 	m.mu.Unlock()
-	m.client.mu.Unlock()
+	unlock()
+	releaseProbe()
 	m.metrics.incrementInFlight()
 	defer m.metrics.inFlight.Add(^uint64(0))
 	remove := func() {
@@ -345,7 +383,16 @@ func (m *actisenseRemoteManager) request(ctx context.Context, source, command by
 		info:    pgn.MessageInfo{PGN: actisenseRemotePGN, Priority: &priority, TargetId: &destination},
 		payload: payload,
 	}
-	if err := m.client.Write(message).WaitContext(ctx); err != nil {
+	if m.gateway != nil {
+		err = m.gateway.sendRemote(requestCtx, key.connectionEpoch, destination, payload)
+	} else {
+		writeCtx := context.WithValue(requestCtx, writeStampKey{}, writeStamp{connection: key.connectionEpoch, claim: key.claimEpoch})
+		err = m.client.WriteContext(writeCtx, message).WaitContext(requestCtx)
+	}
+	if err != nil {
+		if cause := context.Cause(requestCtx); cause != nil {
+			err = cause
+		}
 		return nil, err
 	}
 
@@ -383,24 +430,25 @@ func (m *actisenseRemoteManager) request(ctx context.Context, source, command by
 			timer.Reset(inactivity)
 		case <-inactivityC:
 			return responses, fmt.Errorf("n2k: Actisense remote BEM 0x%02X response train: %w", command, context.DeadlineExceeded)
-		case <-ctx.Done():
-			return responses, fmt.Errorf("n2k: Actisense remote BEM 0x%02X: %w", command, ctx.Err())
+		case <-requestCtx.Done():
+			return responses, fmt.Errorf("n2k: Actisense remote BEM 0x%02X: %w", command, context.Cause(requestCtx))
 		}
 	}
 }
 
 func (m *actisenseRemoteManager) observe(observation raw.Observation) {
-	if observation.Kind != raw.KindMessage || observation.PGN != actisenseRemotePGN || len(observation.Payload) < 5 {
+	if observation.Kind != raw.KindMessage || observation.Direction == raw.DirectionTransmitted || observation.PGN != actisenseRemotePGN || len(observation.Payload) < 5 || len(observation.Payload) > 223 {
 		return
 	}
 	if observation.Payload[0] != 0x11 || observation.Payload[1] != 0x99 || observation.Destination == nil {
 		return
 	}
-	m.client.mu.Lock()
-	local := m.client.sourceAddr
-	connectionEpoch := m.client.connectionEpoch
-	claimEpoch := m.client.claimEpoch
-	m.client.mu.Unlock()
+	identity, unlock, identityErr := m.lockIdentity()
+	unlock()
+	if identityErr != nil {
+		return
+	}
+	local, connectionEpoch, claimEpoch := identity.destination, identity.connectionEpoch, identity.claimEpoch
 	if *observation.Destination != local {
 		return
 	}
@@ -501,6 +549,9 @@ func (m *actisenseRemoteManager) invalidate(err error) {
 	m.pending = make(map[actisenseRemoteKey]*actisenseRemotePending)
 	m.mu.Unlock()
 	for _, request := range pending {
+		if request.cancel != nil {
+			request.cancel(err)
+		}
 		request.results <- actisenseRemoteResult{err: err}
 	}
 }

@@ -40,6 +40,10 @@ explains the runtime design.
 - **Gateway session**: an Actisense-owned NMEA 2000 identity with a sole-reader
   BEM session, operating-mode readiness, serialized writes, and no virtual
   address claim.
+- **Gateway identity epoch**: one verified gateway return-address lifetime.
+  Remote Echo challenges establish the live address; stored CAN configuration
+  never establishes it. Connection, mode, or verified address changes cancel
+  pending remote operations.
 - **BEM origin**: the local gateway or a remote Actisense source reached through
   addressed PGN 126720, retained in every typed response and correlation key.
 
@@ -79,7 +83,7 @@ explains the runtime design.
     BEM operations require a direct caller action; transactional volatile list
     changes are restored when the same connection epoch permits it.
 15. Local BEM correlation includes response group, verb, and origin. Remote
-    correlation also binds both addresses and connection/claim epochs; every
+    correlation also binds both addresses and connection/claim or gateway identity epochs; every
     pending table and response train is bounded.
 16. Pending operations and partial assemblies cannot cross connection or claim
     epochs. Not-ready application writes fail immediately; no automatic retry
@@ -107,6 +111,9 @@ explains the runtime design.
   USB-CAN and Actisense); Linux CAN descriptor setup: `internal/canbus/`
 - Actisense public sessions, remote devices, serial configuration, and ASCII
   formats: `actisense_*.go`, `ebl_writer.go`
+- Gateway remote address verification: `actisense_gateway_remote.go`; shared
+  local-node/gateway remote correlation: `actisense_remote.go`. A single probe
+  precedes registration; no probe or command changes PGN lists implicitly.
 - Actisense BDTP/BST/BEM command Module: `internal/actisense/`; TCP, serial,
   custom-stream, and ASCII Adapters: `internal/gateway/`
 - Actisense EBL capture parsing/writing: `internal/ebl/`, `source_ebl.go`,

@@ -68,6 +68,7 @@ type actisenseEpoch struct {
 	priorMode   actisense.OperatingMode
 	changedMode bool
 	restoreOnce sync.Once
+	mode        atomic.Uint32
 }
 
 // actisenseStreamBus owns reconnect, handshake, and request state for both TCP
@@ -80,6 +81,7 @@ type actisenseStreamBus struct {
 	reconnect      *ReconnectPolicy
 	mode           actisense.OperatingMode
 	rawCAN         bool
+	preserveMode   bool
 	commandTimeout time.Duration
 
 	mu                 sync.Mutex
@@ -94,6 +96,8 @@ type actisenseStreamBus struct {
 	observer           func(bool, uint64)
 	diagnosticObserver func(actisense.Diagnostic)
 	wireObserver       func(actisense.WireDirection, time.Time, []byte)
+	messageObserver    func(actisense.Message)
+	modeObserver       func(actisense.OperatingMode)
 	ready              chan struct{}
 	readyOnce          sync.Once
 	completedMetrics   actisense.SessionMetrics
@@ -261,7 +265,33 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 			return writeActisenseUnitContext(writeCtx, connection, buf)
 		},
 		OnDatagram: func(datagram actisense.Datagram) {
+			b.mu.Lock()
+			observer := b.messageObserver
+			b.mu.Unlock()
+			if observer != nil && published.Load() {
+				if message, ok, err := actisense.DecodeMessage(datagram); ok && err == nil {
+					observer(message)
+				}
+			}
 			adapter.observeDatagram(datagram, emitObservation)
+		},
+		OnResponse: func(response actisense.BEMResponse) {
+			if response.BSTID != actisense.BSTBEMResponse || response.BEMID != actisense.BEMOperatingMode || response.ErrorCode != 0 {
+				return
+			}
+			mode, err := actisense.DecodeOperatingMode(response)
+			if err != nil {
+				return
+			}
+			if epoch.mode.Swap(uint32(mode)) != uint32(mode) {
+				asciiLines = &actisenseCANASCIILines{}
+			}
+			b.mu.Lock()
+			observer := b.modeObserver
+			b.mu.Unlock()
+			if observer != nil {
+				observer(mode)
+			}
 		},
 		OnDiagnostic: func(diagnostic actisense.Diagnostic) {
 			b.mu.Lock()
@@ -291,7 +321,7 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 			}
 		},
 		OnUnframed: func(data []byte) {
-			if b.mode == actisense.ModeCANPacketASCII {
+			if actisense.OperatingMode(epoch.mode.Load()) == actisense.ModeCANPacketASCII {
 				asciiLines.feed(data, emitObservation)
 			}
 		},
@@ -322,7 +352,7 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 	priorMode, err := epoch.session.GetOperatingMode(handshakeCtx)
 	if err == nil {
 		epoch.priorMode = priorMode
-		if priorMode != b.mode {
+		if !b.preserveMode && priorMode != b.mode {
 			err = epoch.session.SetOperatingMode(handshakeCtx, b.mode)
 			epoch.changedMode = err == nil
 		}
@@ -335,14 +365,14 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 		return &ActisenseModeSetupError{RequestedMode: b.mode, Err: err}, false
 	}
 
+	published.Store(true)
 	if !b.publishEpoch(epoch) {
+		published.Store(false)
 		_ = connection.Close()
 		epoch.session.Close(errBusClosed)
 		<-readErr
 		return errBusClosed, false
 	}
-	published.Store(true)
-
 	var readResult error
 	select {
 	case readResult = <-readErr:
@@ -500,27 +530,6 @@ func (b *actisenseStreamBus) writeFrameContext(ctx context.Context, frame can.Fr
 	buf, encodeErr := actisense.EncodeCANFrame(frame, actisense.DirectionTransmitted, 0, 0)
 	if encodeErr != nil {
 		return encodeErr
-	}
-	return epoch.session.WriteContext(ctx, buf)
-}
-
-func (b *actisenseStreamBus) writeMessage(pgnNumber uint32, priority, destination uint8, payload []byte) error {
-	return b.writeMessageContext(context.Background(), pgnNumber, priority, destination, payload)
-}
-
-func (b *actisenseStreamBus) writeMessageContext(ctx context.Context, pgnNumber uint32, priority, destination uint8, payload []byte) error {
-	epoch, err := b.awaitEpochContext(ctx)
-	if err != nil {
-		return err
-	}
-	if b.rawCAN {
-		return errors.New("actisense: assembled-message writes are unavailable in raw CAN mode")
-	}
-	buf, err := actisense.EncodeMessage94(actisense.Message{
-		Priority: priority, PGN: pgnNumber, Destination: destination, Data: payload,
-	})
-	if err != nil {
-		return err
 	}
 	return epoch.session.WriteContext(ctx, buf)
 }

@@ -120,18 +120,40 @@ type ActisenseTxPGNListEntry = actisense.TxPGNListEntry
 type ActisenseProprietaryPGNList = actisense.ProprietaryPGNList
 type ActisenseRxPGNEnableList = actisense.RxPGNEnableList
 type ActisenseTxPGNEnableList = actisense.TxPGNEnableList
+type ActisenseRxPGNListF1Entry = actisense.RxPGNListF1Entry
+type ActisenseTxPGNListF1Entry = actisense.TxPGNListF1Entry
+type ActisenseRxPGNEnableListF1 = actisense.RxPGNEnableListF1
+type ActisenseTxPGNEnableListF1 = actisense.TxPGNEnableListF1
+type ActisensePortDuplicateDelete = actisense.PortDuplicateDelete
+
+const (
+	ActisensePortDuplicateDeleteOff      = actisense.PortDuplicateDeleteOff
+	ActisensePortDuplicateDeleteOn       = actisense.PortDuplicateDeleteOn
+	ActisensePortDuplicateDeleteNoChange = actisense.PortDuplicateDeleteNoChange
+)
 
 const (
 	ActisensePGNDisabled        = actisense.PGNDisabled
 	ActisensePGNEnabled         = actisense.PGNEnabled
 	ActisensePGNRespondMode     = actisense.PGNRespondMode
-	ActisenseRxPGNMaskAcceptAll = actisense.RxPGNMaskAcceptAll
-	ActisenseTxPGNRateDefault   = actisense.TxPGNRateDefault
+	ActisenseRxPGNMaskPGN       = actisense.RxPGNMaskPGN
+	ActisenseRxPGNMaskPDUFormat = actisense.RxPGNMaskPDUFormat
+	ActisenseRxPGNMaskPDUNibble = actisense.RxPGNMaskPDUNibble
+	ActisenseRxPGNMaskDataPage  = actisense.RxPGNMaskDataPage
+	ActisenseRxPGNMaskDefault   = actisense.RxPGNMaskDefault
+	ActisenseRxPGNMaskNoChange  = actisense.RxPGNMaskNoChange
+	ActisenseTxPGNRateNoChange  = actisense.TxPGNRateNoChange
 	ActisenseTxPGNRateEvent     = actisense.TxPGNRateEvent
 	ActisensePGNListRx          = actisense.PGNListRx
 	ActisensePGNListTx          = actisense.PGNListTx
 	ActisensePGNListBoth        = actisense.PGNListBoth
 )
+
+// Deprecated: the wire value means no change, not accept all. Use ActisenseRxPGNMaskNoChange.
+const ActisenseRxPGNMaskAcceptAll = uint32(0xFFFFFFFF)
+
+// Deprecated: the wire value leaves the rate unchanged. Use ActisenseTxPGNRateNoChange.
+const ActisenseTxPGNRateDefault = uint32(0xFFFFFFFF)
 
 type ActisenseDiagnosticKind = actisense.DiagnosticKind
 type ActisenseDiagnostic = actisense.Diagnostic

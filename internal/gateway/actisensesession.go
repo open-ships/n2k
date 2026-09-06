@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -15,6 +16,29 @@ import (
 // session without claiming that it is a source-authoritative CAN Bus.
 type ActisenseGatewaySession struct {
 	stream *actisenseStreamBus
+}
+
+var ErrActisenseNotReady = errors.New("actisense: gateway session is not ready")
+
+// These hooks are installed before Run. They execute on the sole reader.
+func (s *ActisenseGatewaySession) PreserveOperatingMode() {
+	s.stream.preserveMode = true
+}
+
+func (s *ActisenseGatewaySession) SetReconnectPolicy(policy *ReconnectPolicy) {
+	s.stream.reconnect = policy
+}
+
+func (s *ActisenseGatewaySession) SetMessageObserver(observer func(actisense.Message)) {
+	s.stream.mu.Lock()
+	s.stream.messageObserver = observer
+	s.stream.mu.Unlock()
+}
+
+func (s *ActisenseGatewaySession) SetModeObserver(observer func(actisense.OperatingMode)) {
+	s.stream.mu.Lock()
+	s.stream.modeObserver = observer
+	s.stream.mu.Unlock()
 }
 
 func NewActisenseTCPGatewaySession(log *slog.Logger, address string, reconnect *ReconnectPolicy, mode actisense.OperatingMode) *ActisenseGatewaySession {
@@ -63,7 +87,23 @@ func (s *ActisenseGatewaySession) Metrics() ActisenseGatewayMetrics {
 }
 
 func (s *ActisenseGatewaySession) Request(ctx context.Context, command byte, data []byte) (actisense.BEMResponse, error) {
-	return s.stream.Request(ctx, command, data)
+	epoch, err := s.currentEpoch(0)
+	if err != nil {
+		return actisense.BEMResponse{}, err
+	}
+	return epoch.session.Request(ctx, command, data)
+}
+
+func (s *ActisenseGatewaySession) currentEpoch(number uint64) (*actisenseEpoch, error) {
+	s.stream.mu.Lock()
+	defer s.stream.mu.Unlock()
+	if s.stream.closed {
+		return nil, actisense.ErrSessionClosed
+	}
+	if s.stream.epoch == nil || (number != 0 && s.stream.epochNum != number) {
+		return nil, ErrActisenseNotReady
+	}
+	return s.stream.epoch, nil
 }
 
 // EpochRequester binds a transaction to one acknowledged connection. Its
@@ -78,15 +118,45 @@ func (s *ActisenseGatewaySession) EpochRequester(epoch uint64) (actisense.Reques
 }
 
 func (s *ActisenseGatewaySession) RequestMulti(ctx context.Context, command byte, data []byte, inactivity time.Duration, complete func([]actisense.BEMResponse) (bool, error)) ([]actisense.BEMResponse, error) {
-	return s.stream.RequestMulti(ctx, command, data, inactivity, complete)
+	epoch, err := s.currentEpoch(0)
+	if err != nil {
+		return nil, err
+	}
+	return epoch.session.RequestMulti(ctx, command, data, inactivity, complete)
 }
 
 func (s *ActisenseGatewaySession) WriteMessage(pgn uint32, priority, destination uint8, payload []byte) error {
-	return s.stream.writeMessage(pgn, priority, destination, payload)
+	return s.WriteMessageContext(context.Background(), pgn, priority, destination, payload)
 }
 
 func (s *ActisenseGatewaySession) WriteMessageContext(ctx context.Context, pgn uint32, priority, destination uint8, payload []byte) error {
-	return s.stream.writeMessageContext(ctx, pgn, priority, destination, payload)
+	return s.WriteMessageEpoch(ctx, 0, pgn, priority, destination, payload)
+}
+
+func (s *ActisenseGatewaySession) WriteMessageEpoch(ctx context.Context, number uint64, pgn uint32, priority, destination uint8, payload []byte) error {
+	epoch, err := s.currentEpoch(number)
+	if err != nil {
+		return err
+	}
+	mode := actisense.OperatingMode(epoch.mode.Load())
+	if mode != actisense.ModeTransferNormal && mode != actisense.ModeTransferReceiveAll {
+		return fmt.Errorf("actisense: gateway PGN sends require operating mode 1 or 2; current mode is %d", mode)
+	}
+	wire, err := actisense.EncodeMessage94(actisense.Message{PGN: pgn, Priority: priority, Destination: destination, Data: payload})
+	if err != nil {
+		return err
+	}
+	return epoch.session.WriteContext(ctx, wire)
+}
+
+// WriteContext captures the current connection once and never waits for or
+// retries on a reconnect. The public caller owns and bounds the wire snapshot.
+func (s *ActisenseGatewaySession) WriteContext(ctx context.Context, wire []byte) error {
+	epoch, err := s.currentEpoch(0)
+	if err != nil {
+		return err
+	}
+	return epoch.session.WriteContext(ctx, wire)
 }
 
 func (s *ActisenseGatewaySession) Close() error { return s.stream.Close() }

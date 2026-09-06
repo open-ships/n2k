@@ -1,16 +1,21 @@
 {
   "schema": 1,
   "baseline": {
-    "sdk_commit": "9de7343b86736a2df5b71ed2f9365a7e68d8f1d5",
-    "captured_on": "2026-08-20",
+    "sdk_commit": "ed2268a6e8db0645f75e4ef17eed2e937d025040",
+    "reviewed_on": "2026-09-05",
     "sources": [
       "code/cpp/src/protocols/bdtp/bdtp_protocol.cpp",
       "code/cpp/src/protocols/bem/bem_protocol.cpp",
       "code/cpp/src/protocols/bem/bem_commands/",
       "code/cpp/src/protocols/bem/bem_wrap_126720.cpp",
-      "code/cpp/src/ebl/ebl_writer.cpp",
-      "docs/DataFormats/ASCII/can-frame-ascii-A.md",
-      "docs/DataFormats/ASCII/nmea2000-type-A.md"
+      "code/cpp/src/public/ebl_writer.cpp",
+      "docs/DataFormats/Ascii/can-frame-ascii-A.md",
+      "docs/DataFormats/Ascii/nmea2000-type-A.md",
+      "docs/DataFormats/Binary/bem-detail/rx-pgn-enable.md",
+      "docs/DataFormats/Binary/bem-detail/tx-pgn-enable.md",
+      "docs/DataFormats/Binary/bem-detail/port-duplicate-delete.md",
+      "docs/DataFormats/Binary/bem-detail/rx-pgn-enable-list-f1.md",
+      "docs/DataFormats/Binary/bem-detail/tx-pgn-enable-list-f1.md"
     ]
   },
   "local_bem_requests": [
@@ -37,7 +42,7 @@
     {"id":"can-info-2-set","command":68,"data_hex":"04014869","bdtp_hex":"1002a1054404014869601003"},
     {"id":"can-info-3-get","command":69,"data_hex":"","bdtp_hex":"1002a10145191003"},
     {"id":"rx-pgn-get","command":70,"data_hex":"10f00100","bdtp_hex":"1002a105461010f00100131003"},
-    {"id":"rx-pgn-set-mask","command":70,"data_hex":"10f0010001ddccbbaa","bdtp_hex":"1002a10a461010f0010001ddccbbaaff1003"},
+    {"id":"rx-pgn-set-mask","command":70,"data_hex":"10f001000100ffff03","bdtp_hex":"1002a10a461010f001000100ffff030c1003"},
     {"id":"tx-pgn-get","command":71,"data_hex":"10f00100","bdtp_hex":"1002a105471010f00100121003"},
     {"id":"tx-pgn-set-rate","command":71,"data_hex":"10f0010002e8030000","bdtp_hex":"1002a10a471010f0010002e8030000201003"},
     {"id":"delete-pgn-lists","command":74,"data_hex":"02","bdtp_hex":"1002a1024a02111003"},
@@ -63,7 +68,7 @@
     {"id":"can-info-1","command":67,"data_hex":"04014869","bdtp_hex":"1002a0101043010e004433221100000000040148699e1003"},
     {"id":"can-info-2","command":68,"data_hex":"04014869","bdtp_hex":"1002a0101044010e004433221100000000040148699d1003"},
     {"id":"can-info-3","command":69,"data_hex":"04014869","bdtp_hex":"1002a0101045010e004433221100000000040148699c1003"},
-    {"id":"rx-pgn","command":70,"data_hex":"10f0010001ddccbbaa","bdtp_hex":"1002a01546010e0044332211000000001010f0010001ddccbbaa3c1003"},
+    {"id":"rx-pgn","command":70,"data_hex":"10f001000100ffff03","bdtp_hex":"1002a01546010e0044332211000000001010f001000100ffff03491003"},
     {"id":"tx-pgn","command":71,"data_hex":"10f0010002e80300000000000003","bdtp_hex":"1002a01a47010e0044332211000000001010f0010002e80300000000000003551003"},
     {"id":"delete-pgn-lists","command":74,"data_hex":"","bdtp_hex":"1002a00c4a010e004433221100000000511003"},
     {"id":"activate-pgn-lists","command":75,"data_hex":"","bdtp_hex":"1002a00c4b010e004433221100000000501003"},
@@ -71,6 +76,21 @@
     {"id":"pgn-list-parameters","command":77,"data_hex":"0a00020003001400040005000001","bdtp_hex":"1002a01a4d010e0044332211000000000a00020003001400040005000001131003"},
     {"id":"rx-pgn-list-f2","command":78,"data_hex":"08011100000100010301","bdtp_hex":"1002a0164e010e00443322110000000008011100000100010301231003"},
     {"id":"tx-pgn-list-f2","command":79,"data_hex":"08021100000100010706e803","bdtp_hex":"1002a0184f010e00443322110000000008021100000100010706e8032b1003"}
+  ],
+  "documented_bem_requests": [
+    {"id":"duplicate-delete-get","command":20,"data_hex":"","bdtp_hex":"1002a101144a1003"},
+    {"id":"duplicate-delete-set","command":20,"data_hex":"0001ff","bdtp_hex":"1002a104140001ff471003"},
+    {"id":"rx-pgn-list-f1","command":72,"data_hex":"","bdtp_hex":"1002a10148161003"},
+    {"id":"tx-pgn-list-f1","command":73,"data_hex":"","bdtp_hex":"1002a10149151003"}
+  ],
+  "documented_bem_responses": [
+    {"id":"duplicate-delete","command":20,"data_hex":"03000100","bdtp_hex":"1002a0101014000e00443322110000000003000100801003"},
+    {"id":"rx-f1-pgns","command":72,"data_hex":"0212f1010001f80100","bdtp_hex":"1002a01548000e0044332211000000000212f1010001f801004b1003"},
+    {"id":"rx-f1-masks","command":72,"data_hex":"0200ffff0300000003","bdtp_hex":"1002a01548000e0044332211000000000200ffff0300000003451003"},
+    {"id":"tx-f1-pgns","command":73,"data_hex":"0212f1010001f80100","bdtp_hex":"1002a01549000e0044332211000000000212f1010001f801004a1003"},
+    {"id":"tx-f1-rates","command":73,"data_hex":"02e8030000f4010000","bdtp_hex":"1002a01549000e00443322110000000002e8030000f4010000681003"},
+    {"id":"tx-f1-timeouts","command":73,"data_hex":"02d007000000000000","bdtp_hex":"1002a01549000e00443322110000000002d007000000000000711003"},
+    {"id":"tx-f1-priorities","command":73,"data_hex":"020306","bdtp_hex":"1002a00f49000e004433221100000000020306451003"}
   ],
   "remote_bem_requests": [
     {"id":"operating-mode-get","command":17,"data_hex":"","pgn_payload_hex":"1199a10111"}

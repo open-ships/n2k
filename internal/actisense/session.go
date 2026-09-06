@@ -59,6 +59,7 @@ type Session struct {
 	once      sync.Once
 
 	onDatagram    func(Datagram)
+	onResponse    func(BEMResponse)
 	onDiagnostic  func(Diagnostic)
 	onDecodeError func(DecodeError)
 	onWireBytes   func(WireDirection, time.Time, []byte)
@@ -76,8 +77,11 @@ const (
 type SessionConfig struct {
 	// Write must stop physical I/O when ctx ends. A partial failed write must
 	// invalidate the connection so a later frame cannot append to its prefix.
-	Write         func(context.Context, []byte) error
-	OnDatagram    func(Datagram)
+	Write      func(context.Context, []byte) error
+	OnDatagram func(Datagram)
+	// OnResponse runs before correlation releases a caller. It must not block
+	// or issue requests through this session.
+	OnResponse    func(BEMResponse)
 	OnDiagnostic  func(Diagnostic)
 	OnDecodeError func(DecodeError)
 	OnWireBytes   func(WireDirection, time.Time, []byte)
@@ -94,6 +98,7 @@ func NewSession(config SessionConfig) *Session {
 		pending:       make(map[responseKey]*pendingRequest),
 		done:          make(chan struct{}),
 		onDatagram:    config.OnDatagram,
+		onResponse:    config.OnResponse,
 		onDiagnostic:  config.OnDiagnostic,
 		onDecodeError: config.OnDecodeError,
 		onWireBytes:   config.OnWireBytes,
@@ -141,6 +146,9 @@ func (s *Session) handleDatagram(datagram Datagram) {
 	s.metrics.bstFrames[datagram.ID].Add(1)
 	if response, ok, err := DecodeBEMResponse(datagram); ok {
 		s.metrics.bemResponses.Add(1)
+		if err == nil && s.onResponse != nil {
+			s.onResponse(response)
+		}
 		if err != nil {
 			s.handleDecodeError(DecodeError{Kind: DecodeLength, ID: datagram.ID, Err: err})
 		} else if diagnostic, isDiagnostic, diagnosticErr := DecodeDiagnostic(response); isDiagnostic {

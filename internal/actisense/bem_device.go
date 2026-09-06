@@ -397,7 +397,9 @@ func EncodePortPCodes(codes []PortPCode) ([]byte, error) {
 }
 
 type CANConfig struct {
-	NAME          uint64
+	NAME uint64
+	// SourceAddress is the stored preferred/previous address, not the live
+	// ISO-claimed address. Arbitration can assign a different bus address.
 	SourceAddress uint8
 }
 
