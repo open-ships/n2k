@@ -38,6 +38,7 @@ type actisenseSessionConfig struct {
 	logger         *slog.Logger
 	reconnect      *ReconnectPolicy
 	mode           ActisenseOperatingMode
+	preserveMode   bool
 	commandTimeout time.Duration
 	readyTimeout   time.Duration
 	inactivity     time.Duration
@@ -74,7 +75,17 @@ func WithActisenseSessionReconnect(policy ReconnectPolicy) ActisenseSessionOptio
 // Source-authoritative mode 5 belongs to NewClient via ActisenseTCP or
 // ActisenseSerial and is intentionally rejected here.
 func WithActisenseSessionMode(mode ActisenseOperatingMode) ActisenseSessionOption {
-	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.mode = mode })
+	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) {
+		config.mode, config.preserveMode = mode, false
+	})
+}
+
+// WithActisensePreserveOperatingMode opens a control session that reads and
+// preserves the device's mode on every connection. It sends no mode setter
+// during startup or Close. The last mode/preserve option wins. PGN sends still
+// require mode 1 or 2; raw BST and BEM commands remain available in other modes.
+func WithActisensePreserveOperatingMode() ActisenseSessionOption {
+	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.preserveMode = true })
 }
 
 func WithActisenseCommandTimeout(timeout time.Duration) ActisenseSessionOption {
@@ -111,7 +122,7 @@ func applyActisenseSessionOptions(options []ActisenseSessionOption) (actisenseSe
 	if config.logger == nil {
 		config.logger = slog.Default()
 	}
-	if config.mode != ActisenseModeTransferNormal && config.mode != ActisenseModeTransferReceiveAll {
+	if !config.preserveMode && config.mode != ActisenseModeTransferNormal && config.mode != ActisenseModeTransferReceiveAll {
 		return config, fmt.Errorf("n2k: gateway-owned Actisense session mode must be 1 or 2; got %d", config.mode)
 	}
 	if config.commandTimeout <= 0 || config.readyTimeout <= 0 || config.inactivity <= 0 {
@@ -139,6 +150,11 @@ type ActisenseSessionStatus struct {
 	DeviceCapabilities     ActisenseDeviceCapabilities
 	WireTraceError         error
 	Metrics                ActisenseSessionMetrics
+	// GatewaySourceAddress is learned from a nonce-verified remote reply,
+	// never from the stored CAN configuration. It is nil until verified.
+	GatewaySourceAddress *uint8
+	IdentityEpoch        uint64
+	RemoteMetrics        ActisenseProtocolMetrics
 }
 
 type ActisenseTxPGNConfiguration struct {
@@ -163,16 +179,22 @@ type ActisenseGatewaySession struct {
 	diagnostics    *actisenseDiagnosticHub
 	wireTrace      *ActisenseEBLTrace
 	commandTimeout time.Duration
+	remote         *actisenseRemoteManager
+	probeGate      chan struct{}
 
-	mu          sync.Mutex
-	connected   bool
-	epoch       uint64
-	closed      bool
-	terminalErr error
-	closeErr    error
-	txOriginal  map[uint32]ActisenseTxPGNState
-	txEpoch     uint64
-	closeOnce   sync.Once
+	mu                 sync.Mutex
+	connected          bool
+	epoch              uint64
+	closed             bool
+	terminalErr        error
+	closeErr           error
+	txOriginal         map[uint32]ActisenseTxPGNState
+	txEpoch            uint64
+	closeOnce          sync.Once
+	remoteAddress      uint8
+	remoteAddressKnown bool
+	identityEpoch      uint64
+	remoteProbe        *actisenseGatewayProbe
 }
 
 func gatewayReconnectPolicy(policy *ReconnectPolicy) *gateway.ReconnectPolicy {
@@ -240,17 +262,26 @@ func startActisenseGatewaySession(parent context.Context, transport *gateway.Act
 	if err := transport.SetCommandTimeout(config.commandTimeout); err != nil {
 		return nil, err
 	}
+	if config.preserveMode {
+		transport.PreserveOperatingMode()
+	}
+	transport.SetReconnectPolicy(gatewayReconnectPolicy(config.reconnect))
 	runCtx, cancel := context.WithCancel(parent)
 	session := &ActisenseGatewaySession{
 		transport: transport, mode: config.mode, ctx: runCtx, cancel: cancel, done: make(chan struct{}),
 		observations: newObservationHub(config.buffer), diagnostics: newActisenseDiagnosticHub(config.buffer),
 		txOriginal: make(map[uint32]ActisenseTxPGNState), wireTrace: config.wireTrace,
 		commandTimeout: config.commandTimeout,
+		probeGate:      make(chan struct{}, 1),
 	}
+	session.remote = newActisenseRemoteManager(nil)
+	session.remote.gateway = session
 	session.ActisenseDevice = &ActisenseDevice{CommandSet: actisense.NewCommandSet(transport, actisense.CommandSetConfig{
 		Timeout: config.commandTimeout, MultiInactivity: config.inactivity,
 	})}
 	transport.SetConnectionObserver(session.handleConnection)
+	transport.SetModeObserver(session.handleMode)
+	transport.SetMessageObserver(session.handleGatewayMessage)
 	transport.SetDiagnosticObserver(session.diagnostics.publish)
 	if config.wireTrace != nil {
 		transport.SetWireObserver(config.wireTrace.trace)
@@ -290,7 +321,9 @@ func (s *ActisenseGatewaySession) run() {
 	}
 	terminalErr := s.terminalErr
 	s.connected = false
+	s.invalidateRemoteLocked(terminalErr)
 	s.mu.Unlock()
+	s.remote.close(terminalErr)
 	s.observations.close(terminalErr)
 	s.diagnostics.close(terminalErr)
 	close(s.done)
@@ -305,6 +338,16 @@ func (s *ActisenseGatewaySession) handleConnection(connected bool, epoch uint64)
 		s.txEpoch = 0
 	}
 	s.connected, s.epoch = connected, epoch
+	s.invalidateRemoteLocked(ErrActisenseRemoteEpochChanged)
+	s.mu.Unlock()
+}
+
+func (s *ActisenseGatewaySession) handleMode(mode ActisenseOperatingMode) {
+	s.mu.Lock()
+	if s.mode != mode {
+		s.invalidateRemoteLocked(ErrActisenseRemoteEpochChanged)
+	}
+	s.mode = mode
 	s.mu.Unlock()
 }
 
@@ -317,8 +360,14 @@ func (s *ActisenseGatewaySession) Status() ActisenseSessionStatus {
 		Connected: s.connected, ConnectionEpoch: s.epoch, Closed: s.closed, TerminalError: s.terminalErr,
 		OperatingMode: s.mode, ReceiveAll: s.mode == ActisenseModeTransferReceiveAll,
 		DeviceCapabilities: s.DeviceCapabilities(),
+		IdentityEpoch:      s.identityEpoch,
+	}
+	if s.remoteAddressKnown {
+		address := s.remoteAddress
+		status.GatewaySourceAddress = &address
 	}
 	s.mu.Unlock()
+	status.RemoteMetrics = s.remote.metrics.snapshot()
 	status.ISOControlPGNsVisible = !status.ReceiveAll || !status.DeviceCapabilities.ReceiveAllOmitsISOControlPGNs
 	status.ObservationSubscribers = s.observations.subscriberCount()
 	status.DiagnosticSubscribers = s.diagnostics.subscriberCount()
@@ -407,6 +456,9 @@ func (s *ActisenseGatewaySession) SendPGN(ctx context.Context, message pgn.Messa
 }
 
 func (s *ActisenseGatewaySession) SendRawPGN(ctx context.Context, pgnNumber uint32, priority, destination uint8, payload []byte) error {
+	if s == nil {
+		return actisense.ErrSessionClosed
+	}
 	s.mu.Lock()
 	closed := s.closed
 	s.mu.Unlock()
@@ -416,7 +468,16 @@ func (s *ActisenseGatewaySession) SendRawPGN(ctx context.Context, pgnNumber uint
 	if err := actisenseValidateMessage(pgnNumber, priority, destination, payload); err != nil {
 		return err
 	}
-	return s.transport.WriteMessageContext(ctx, pgnNumber, priority, destination, append([]byte(nil), payload...))
+	writeCtx, cancel := s.writeContext(ctx)
+	defer cancel()
+	return s.transport.WriteMessageContext(writeCtx, pgnNumber, priority, destination, append([]byte(nil), payload...))
+}
+
+func (s *ActisenseGatewaySession) writeContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	return context.WithTimeout(ctx, s.commandTimeout)
 }
 
 func actisenseValidateMessage(pgnNumber uint32, priority, destination uint8, payload []byte) error {
@@ -539,6 +600,7 @@ func (s *ActisenseGatewaySession) Close() error {
 	s.closeOnce.Do(func() {
 		s.mu.Lock()
 		s.closed = true
+		s.invalidateRemoteLocked(actisense.ErrSessionClosed)
 		s.mu.Unlock()
 		s.restoreTransmitPGNs()
 		closeErr := s.transport.Close()

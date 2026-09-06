@@ -1289,11 +1289,12 @@ func (c *Client) doWriteContext(ctx context.Context, msg pgn.Message) error {
 			}
 			done := make(chan struct{})
 			stop := context.AfterFunc(ctx, func() { _ = c.bus.Close(); close(done) })
-			err := mw.WriteMessage(pgnNum, priority, srcAddr, destination, payload)
-			if !stop() {
-				<-done
-			}
-			return err
+			defer func() {
+				if !stop() {
+					<-done
+				}
+			}()
+			return mw.WriteMessage(pgnNum, priority, srcAddr, destination, payload)
 		}); err != nil {
 			return err
 		}

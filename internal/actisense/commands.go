@@ -114,6 +114,16 @@ func (c *CommandSet) RawRequest(ctx context.Context, command byte, data []byte) 
 	return c.request(ctx, command, data)
 }
 
+// RawRequestMulti collects a bounded response train for a caller-defined BEM
+// command. complete receives each response in arrival order; returning true
+// ends the train. On failure, all received responses are returned with the error.
+func (c *CommandSet) RawRequestMulti(ctx context.Context, command byte, data []byte, complete func(BEMResponse) (bool, error)) ([]BEMResponse, error) {
+	if complete == nil {
+		return nil, errors.New("actisense: a multi-response request requires a completion function")
+	}
+	return c.requestMulti(ctx, command, data, complete)
+}
+
 func (c *CommandSet) GetOperatingMode(ctx context.Context) (OperatingMode, error) {
 	response, err := c.request(ctx, BEMOperatingMode, nil)
 	if err != nil {
@@ -272,9 +282,14 @@ func (c *CommandSet) GetRxPGN(ctx context.Context, pgn uint32) (RxPGNState, erro
 	return DecodeRxPGNState(response)
 }
 
+// SetRxPGN accepts one of the four documented PGN masks or a default/no-change
+// sentinel. A nil mask selects the device default. Source filtering is not supported.
 func (c *CommandSet) SetRxPGN(ctx context.Context, pgn uint32, flag PGNEnableFlag, mask *uint32) (RxPGNState, error) {
 	if err := validatePGNAndFlag(pgn, flag); err != nil {
 		return RxPGNState{}, err
+	}
+	if mask != nil && !validRxPGNMask(*mask) && *mask != RxPGNMaskDefault && *mask != RxPGNMaskNoChange {
+		return RxPGNState{}, fmt.Errorf("actisense: unsupported Rx PGN mask 0x%08X", *mask)
 	}
 	response, err := c.request(ctx, BEMRxPGNEnable, RxPGNEnableSet(pgn, flag, mask))
 	if err != nil {
@@ -284,7 +299,7 @@ func (c *CommandSet) SetRxPGN(ctx context.Context, pgn uint32, flag PGNEnableFla
 	if err != nil {
 		return RxPGNState{}, err
 	}
-	if state.PGN != pgn || state.Flag != flag || (mask != nil && state.Mask != *mask) {
+	if state.PGN != pgn || state.Flag != flag || !validRxPGNMask(state.Mask) || (mask != nil && validRxPGNMask(*mask) && state.Mask != *mask) {
 		return state, fmt.Errorf("actisense: device acknowledged Rx PGN state %+v; request was PGN %d flag %d", state, pgn, flag)
 	}
 	return state, nil
@@ -301,6 +316,9 @@ func (c *CommandSet) GetTxPGN(ctx context.Context, pgn uint32) (TxPGNState, erro
 	return DecodeTxPGNState(response)
 }
 
+// SetTxPGN uses milliseconds for rates 1-65534 and zero for event-driven data.
+// A nil rate or any value >= 65535 leaves the current rate unchanged. This
+// command has no restore-default rate sentinel.
 func (c *CommandSet) SetTxPGN(ctx context.Context, pgn uint32, flag PGNEnableFlag, rate *uint32) (TxPGNState, error) {
 	if err := validatePGNAndFlag(pgn, flag); err != nil {
 		return TxPGNState{}, err
@@ -313,7 +331,7 @@ func (c *CommandSet) SetTxPGN(ctx context.Context, pgn uint32, flag PGNEnableFla
 	if err != nil {
 		return TxPGNState{}, err
 	}
-	if state.PGN != pgn || state.Enabled != uint8(flag) || (rate != nil && state.Rate != *rate) {
+	if state.PGN != pgn || state.Enabled != uint8(flag) || (rate != nil && *rate < TxPGNRateNoChange && state.Rate != *rate) {
 		return state, fmt.Errorf("actisense: device acknowledged Tx PGN state %+v; request was PGN %d flag %d", state, pgn, flag)
 	}
 	return state, nil

@@ -1,5 +1,30 @@
 ## Change Log for open-ships/n2k
 
+### v1.4.0 — 2026-09-05 — expanded Actisense SDK compatibility
+
+- Added gateway-owned remote BEM over BST-94/PGN 126720, including NGT
+  sessions, with Echo-verified return addresses and cancellation across
+  connection, mode, and gateway identity changes.
+- Added mode-preserving control sessions, generic `SendBST`/`SendRaw`, and
+  `RawRequestMulti`. Gateway sends use bounded physical writes and reject
+  disconnected sessions immediately. Serial session reconnect options now
+  apply consistently with TCP and custom streams.
+- Corrected Rx-mask and Tx-rate semantics against Actisense SDK `ed2268a`.
+  Migrate the deprecated `ActisenseRxPGNMaskAcceptAll` and
+  `ActisenseTxPGNRateDefault` aliases to the corresponding `NoChange` names;
+  both retain their original bytes. Use one of the four documented Rx masks.
+  Invalid arbitrary masks now fail before sending; sentinels accept effective
+  device values instead of requiring the sentinel to be echoed.
+- Added explicit port duplicate-delete control and legacy F1 list readers,
+  including bounded complete/partial response trains. The port setter persists
+  immediately on supporting firmware; current devices should use F2 lists.
+- Updated the independent SDK corpus and executable conformance requirements.
+  Hardware runs retain model/firmware results, runner revision and hashed EBL
+  captures. NMEA 0183 and `!PARLB` remain excluded; undocumented analogue and
+  firmware-upload protocols and vendor approval are not claimed.
+- Fixed cancellation cleanup during a panicking bus write so a secondary bus
+  shutdown cannot replace the original write error during client startup.
+
 ### v1.3.0 — 2026-09-05 — bounded, cancellable, epoch-safe reliability
 
 - Made application writes immutable snapshots at admission, with `WriteContext`,

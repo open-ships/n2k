@@ -183,10 +183,12 @@ func (c *Client) writeFrameContext(ctx context.Context, frame can.Frame) error {
 			// a started cancellation callback before reusing the transport.
 			closed := make(chan struct{})
 			interrupt := context.AfterFunc(ctx, func() { _ = c.bus.Close(); close(closed) })
+			defer func() {
+				if !interrupt() {
+					<-closed
+				}
+			}()
 			err = c.bus.WriteFrame(frame)
-			if !interrupt() {
-				<-closed
-			}
 		}
 		if err == nil {
 			observation := frameObservation(frame, "client", "bus", DirectionTransmitted)

@@ -2,6 +2,7 @@ package actisense
 
 import (
 	"bytes"
+	"context"
 	"encoding/hex"
 	"encoding/json"
 	"os"
@@ -22,8 +23,49 @@ type actisenseGoldenCorpus struct {
 	Baseline struct {
 		SDKCommit string `json:"sdk_commit"`
 	} `json:"baseline"`
-	Requests  []actisenseGoldenVector `json:"local_bem_requests"`
-	Responses []actisenseGoldenVector `json:"local_bem_responses"`
+	Requests            []actisenseGoldenVector `json:"local_bem_requests"`
+	Responses           []actisenseGoldenVector `json:"local_bem_responses"`
+	DocumentedRequests  []actisenseGoldenVector `json:"documented_bem_requests"`
+	DocumentedResponses []actisenseGoldenVector `json:"documented_bem_responses"`
+}
+
+func TestActisenseGoldenDocumentedCommands(t *testing.T) {
+	corpus := loadActisenseGoldenCorpus(t)
+	for _, vector := range corpus.DocumentedRequests {
+		wire, err := EncodeBEMRequest(vector.Command, decodeGoldenHex(t, vector.Data))
+		require.NoError(t, err)
+		assert.Equal(t, decodeGoldenHex(t, vector.BDTP), wire, vector.ID)
+	}
+	responses := make(map[byte][]BEMResponse)
+	for _, vector := range corpus.DocumentedResponses {
+		count := 0
+		NewParser().Feed(decodeGoldenHex(t, vector.BDTP), func(datagram Datagram) {
+			response, ok, err := DecodeBEMResponse(datagram)
+			require.NoError(t, err)
+			require.True(t, ok)
+			assert.Equal(t, vector.Command, response.BEMID)
+			assert.Equal(t, decodeGoldenHex(t, vector.Data), response.Data)
+			responses[response.BEMID] = append(responses[response.BEMID], response)
+			count++
+		}, func(err DecodeError) { t.Error(err) })
+		require.Equal(t, 1, count, vector.ID)
+	}
+	require.Len(t, responses[BEMPortDuplicateDelete], 1)
+	r := &scriptedRequester{response: responses[BEMPortDuplicateDelete][0]}
+	commands := NewCommandSet(r, CommandSetConfig{})
+	ports, err := commands.GetPortDuplicateDelete(context.Background())
+	require.NoError(t, err)
+	assert.Equal(t, []PortDuplicateDelete{0, 1, 0}, ports)
+	r.responses = responses[BEMRxPGNEnableListF1]
+	rx, err := commands.GetRxPGNEnableListF1(context.Background())
+	require.NoError(t, err)
+	assert.Equal(t, 2, rx.PartsReceived)
+	assert.Equal(t, []RxPGNListF1Entry{{127250, RxPGNMaskPGN}, {129025, RxPGNMaskDataPage}}, rx.Entries)
+	r.responses = responses[BEMTxPGNEnableListF1]
+	tx, err := commands.GetTxPGNEnableListF1(context.Background())
+	require.NoError(t, err)
+	assert.Equal(t, 4, tx.PartsReceived)
+	assert.Equal(t, []TxPGNListF1Entry{{127250, 1000, 2000, 3}, {129025, 500, 0, 6}}, tx.Entries)
 }
 
 func loadActisenseGoldenCorpus(t *testing.T) actisenseGoldenCorpus {
@@ -32,7 +74,7 @@ func loadActisenseGoldenCorpus(t *testing.T) actisenseGoldenCorpus {
 	require.NoError(t, err)
 	var corpus actisenseGoldenCorpus
 	require.NoError(t, json.Unmarshal(contents, &corpus))
-	assert.Equal(t, "9de7343b86736a2df5b71ed2f9365a7e68d8f1d5", corpus.Baseline.SDKCommit)
+	assert.Equal(t, "ed2268a6e8db0645f75e4ef17eed2e937d025040", corpus.Baseline.SDKCommit)
 	return corpus
 }
 
@@ -165,7 +207,7 @@ func assertGoldenTypedResponse(t *testing.T, response BEMResponse) {
 		state, err := DecodeRxPGNState(response)
 		require.NoError(t, err)
 		assert.Equal(t, uint32(126992), state.PGN)
-		assert.Equal(t, uint32(0xAABBCCDD), state.Mask)
+		assert.Equal(t, uint32(0x03FFFF00), state.Mask)
 	case BEMTxPGNEnable:
 		state, err := DecodeTxPGNState(response)
 		require.NoError(t, err)

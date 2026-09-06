@@ -564,6 +564,11 @@ func TestActisenseTCPGatewaySessionStartupReadAndWrite(t *testing.T) {
 	}
 
 	// A fast-packet-sized payload goes out as one whole send command.
+	select {
+	case <-session.Ready():
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for acknowledged session readiness")
+	}
 	data := make([]byte, 20)
 	for i := range data {
 		data[i] = byte(i)

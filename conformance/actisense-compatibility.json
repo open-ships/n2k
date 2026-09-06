@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "sdk": {
+    "repository": "https://github.com/Actisense/SDK",
+    "commit": "ed2268a6e8db0645f75e4ef17eed2e937d025040",
+    "reviewed_on": "2026-09-05"
+  },
+  "claim": "Compatibility with the published NMEA 2000 and binary SDK interface, with the bounds and deviations documented in docs/actisense.md.",
+  "compiled_solicited_bem": [
+    "00",
+    "01",
+    "02",
+    "11",
+    "13",
+    "15",
+    "17",
+    "18",
+    "1B",
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45",
+    "46",
+    "47",
+    "4A",
+    "4B",
+    "4C",
+    "4D",
+    "4E",
+    "4F"
+  ],
+  "documented_additional_bem": [
+    "14",
+    "48",
+    "49"
+  ],
+  "unsolicited_bem": [
+    "F0",
+    "F1",
+    "F2",
+    "F4"
+  ],
+  "implemented": [
+    "Bounded BDTP framing, escaping, checksums, Type-1 and Type-2 BST",
+    "BST-93/94 gateway messages, BST-95 raw CAN, BST-D0 assembled messages",
+    "CAN ASCII mode 6 and NMEA 2000 Type-A ASCII parsing and emission",
+    "EBL reading, writing, replay and live wire tracing",
+    "TCP, serial and custom byte streams; serial settings and port enumeration",
+    "Typed local BEM and bounded multi-reply response accumulation",
+    "Typed remote BEM through Client and gateway session PGN 126720",
+    "Mode-preserving control sessions and generic BST/raw sends",
+    "Documented Rx-mask/Tx-rate sentinels and explicit PGN-list transactions",
+    "Legacy F1 lists and port duplicate deletion",
+    "Raw single/multi-response BEM escape hatches, diagnostics and metrics"
+  ],
+  "excluded": [
+    "NMEA 0183",
+    "!PARLB"
+  ],
+  "specification_gaps": [
+    {
+      "commands": [
+        "12",
+        "16"
+      ],
+      "reason": "Deprecated model-specific baud-code layouts are undocumented and absent from the compiled SDK; modern command 17 is supported."
+    },
+    {
+      "commands": [
+        "60",
+        "61",
+        "62",
+        "F3"
+      ],
+      "reason": "Analogue payload layouts remain TBD in the SDK and have no compiled implementation."
+    },
+    {
+      "feature": "Firmware upload and additional EMU/PRO configuration",
+      "reason": "No implementable protocol supplied in this SDK."
+    }
+  ],
+  "specification_conflicts": [
+    {
+      "command": "42",
+      "resolution": "Follow the compiled SDK nine-byte NAME and stored-address layout. The conflicting Markdown layout is not presumed to be a firmware contract."
+    }
+  ],
+  "evidence": {
+    "software_requirements": [
+      "ACT-01",
+      "ACT-02",
+      "ACT-03",
+      "ACT-04",
+      "ACT-05",
+      "EBL-01"
+    ],
+    "vectors": "conformance/actisense-golden.json",
+    "vector_origin": "Independent protocol fixtures; not hardware captures",
+    "hardware_status": "No physical pass recorded by this review",
+    "hardware_runner": "TestActisenseHardwareMatrix",
+    "vendor_approval": "Not established"
+  }
+}
