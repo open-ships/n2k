@@ -199,6 +199,14 @@ func TCP(addr string, format StreamFormat) Option {
 	})
 }
 
+// YachtDevicesTCP adds a Yacht Devices RAW TCP gateway (for example, a
+// YDWG-02 in RAW server mode). Compatible gateways that speak the same
+// protocol are also supported. It provides source-authoritative CAN frames
+// and can back NewClient.
+func YachtDevicesTCP(addr string) Option {
+	return TCP(addr, FormatYDRaw)
+}
+
 // ActisenseTCP adds an Actisense gateway over TCP. Receive, Observe, and
 // NewScanner passively decode all supported BST records without changing the
 // gateway's operating mode. NewClient requires acknowledged mode 5 and uses
@@ -220,6 +228,12 @@ func UDP(listenAddr string, format StreamFormat) Option {
 	return optionFunc(func(c *config) {
 		c.sources = append(c.sources, &udpSource{addr: listenAddr, format: format})
 	})
+}
+
+// YachtDevicesUDP adds a read-only Yacht Devices RAW UDP broadcast source.
+// Compatible gateways that speak the same protocol are also supported.
+func YachtDevicesUDP(listenAddr string) Option {
+	return UDP(listenAddr, FormatYDRaw)
 }
 
 // Replay adds a source that replays the given CAN frames. Useful for testing.
