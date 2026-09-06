@@ -187,7 +187,7 @@ func stalledGatewaySession(t *testing.T, changeMode bool) *ActisenseGatewaySessi
 }
 
 func TestGatewaySessionEstablishedWritesHonorDeadlines(t *testing.T) {
-	for _, operation := range []string{"message", "BEM", "BEM command timeout"} {
+	for _, operation := range []string{"message", "BST", "raw", "BEM", "BEM command timeout"} {
 		t.Run(operation, func(t *testing.T) {
 			session := stalledGatewaySession(t, false)
 			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
@@ -197,9 +197,14 @@ func TestGatewaySessionEstablishedWritesHonorDeadlines(t *testing.T) {
 			}
 			result := make(chan error, 1)
 			go func() {
-				if operation == "message" {
+				switch operation {
+				case "message":
 					result <- session.SendRawPGN(ctx, 127250, 2, 255, []byte{1, 2, 3})
-				} else {
+				case "BST":
+					result <- session.SendBST(ctx, []byte{0xAF, 1, 0x10})
+				case "raw":
+					result <- session.SendRaw(ctx, []byte{1, 2, 3})
+				default:
 					_, err := session.Echo(ctx, []byte{1, 2, 3})
 					result <- err
 				}

@@ -405,13 +405,19 @@ commit/reinitialize methods, EBL wire trace, and cumulative metrics. Sends do
 not mutate Tx lists. `ConfigureTransmitPGNs` provides an explicit batched,
 rollback-capable volatile transaction.
 
-With a source-authoritative raw `Client`, the same typed command Interface can
-target another Actisense device through addressed PGN 126720:
+Both a gateway session and a source-authoritative `Client` expose the same
+typed commands for remote Actisense devices through addressed PGN 126720:
 
 ```go
-remote, err := client.ActisenseRemoteDevice(35)
+remote, err := session.ActisenseRemoteDevice(35) // also available on Client
 product, err := remote.GetProductInfo(ctx)
 ```
+
+`WithActisensePreserveOperatingMode()` opens a control session without changing
+the current mode. `SendBST` and `SendRaw` provide the SDK's generic send paths.
+The supported scope is the published NMEA 2000/binary SDK interface, excluding
+NMEA 0183 and `!PARLB`. This is not an Actisense endorsement or a claim that
+every hardware model and firmware has been verified.
 
 See [Actisense NMEA 2000 support](docs/actisense.md) for the command ledger,
 serial settings, persistence rules, formats, model caveats, and parity

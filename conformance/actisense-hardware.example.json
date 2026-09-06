@@ -27,8 +27,9 @@
       "supported_pgn_list": true,
       "f2_lists": false,
       "port_inventory": false,
-      "raw_client": true,
-      "client_source": 81
+      "raw_client": false,
+      "remote_source": 35,
+      "remote_model_id": 59
     }
   ]
 }

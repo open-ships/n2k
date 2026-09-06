@@ -1,6 +1,12 @@
 # Actisense NMEA 2000 support
 
-The v2 API separates two identities that the wire protocol cannot combine:
+n2k implements the published NMEA 2000 and binary control interface of the
+Actisense SDK at commit `ed2268a6e8db0645f75e4ef17eed2e937d025040`, plus the
+documented port duplicate-delete and legacy F1 commands. NMEA 0183 and `!PARLB`
+are excluded. Software compatibility does not establish Actisense endorsement
+or verification of every hardware model and firmware revision.
+
+The v1 API separates two identities that the wire protocol cannot combine:
 
 - `Client` is a source-authoritative NMEA 2000 node. With Actisense hardware
   it uses BST-95 binary raw CAN or mode-6 CAN ASCII, both of which carry the
@@ -46,10 +52,26 @@ serial := n2k.ActisenseSerialConfig{
 session, err := n2k.NewActisenseSerialSession(ctx, "/dev/ttyUSB0", serial)
 ```
 
-`Observations` emits owned assembled messages and gateway/transport evidence.
+`Observations` emits owned frames, assembled messages, and gateway/transport evidence.
 `Diagnostics` emits typed startup, error, system, and negative-ack records.
 `Status` reports connection epoch, operating/receive role, known model
 capabilities, subscriber counts, trace failure, and cumulative metrics.
+
+For device control without changing the current mode, pass
+`WithActisensePreserveOperatingMode()`. Each connection queries and acknowledges
+the existing mode; startup and Close send no mode setter. An explicit
+`SetOperatingMode` updates `Status().OperatingMode`. The last mode/preserve
+option wins. `SendPGN`, `SendRawPGN`, and gateway remote requests require mode
+1 or 2. A preserved raw-CAN mode still does not make the session a `Client`.
+
+`SendBST(ctx, bytes)` accepts exactly one checksum-free BST record (ID, length,
+payload) and adds its checksum and BDTP framing. `SendRaw(ctx, bytes)` writes
+verbatim bytes. These match the SDK's two generic send modes, share the sole
+writer with BEM, and accept unknown records. BST records are bounded to 1800
+bytes; raw writes to 65536 bytes. The caller chooses bytes appropriate for the
+device's mode. Both copy their inputs and honor the command timeout. No send
+waits for a disconnected session to reconnect or retries a partial write.
+`WithActisenseSessionReconnect` applies to TCP, serial, and custom streams.
 
 ## Source-authoritative Client
 
@@ -87,18 +109,36 @@ reconnect or address change completes old requests with
 `ErrActisenseRemoteEpochChanged`. Pending requests, duplicate keys, and
 multi-reply trains are bounded.
 
+The same handle is available from `session.ActisenseRemoteDevice(35)`, including
+on NGT hardware that cannot support a raw-CAN Client. Before each request the
+session sends a random 16-byte remote Echo challenge to verify the gateway's
+current return address. It then sends the requested command through BST-94.
+Replies must match the remote source, verified destination, response group,
+verb, and connection/identity epochs. Probes are serialized; an outstanding
+Echo to the same device rejects another probe with a request-in-flight error.
+Other distinct commands can remain in flight concurrently.
+
+`Status().GatewaySourceAddress` is nil until verified and clears on disconnect
+or mode change. `IdentityEpoch` changes when this identity is invalidated or a
+probe discovers a different address; pending work is canceled immediately.
+The address is never inferred from `CANConfig.SourceAddress`, which is a stored
+preferred/previous address. Arbitration can move the live address. A change
+that firmware does not report is discovered by the next probe; a reply to an
+unverified destination cannot complete a pending request.
+
 ## Compiled command ledger
 
-Baseline: Actisense SDK commit `9de7343`. “Implemented” means the command is
+Baseline: Actisense SDK commit `ed2268a`. “Implemented” means the command is
 available locally and remotely through the shared typed Module unless noted.
 
-| BEM | Capability | v2 classification |
+| BEM | Capability | Classification |
 |---:|---|---|
 | `00` | Reinitialize main application | Implemented; explicit disruptive call only |
 | `01` | Commit session settings to EEPROM | Implemented; explicit persistence call only |
 | `02` | Commit session settings to flash | Implemented; explicit persistence call only |
 | `11` | Get/set operating mode | Implemented; setup and restore verify acknowledgement |
 | `13` | Get/set port P-Codes | Implemented, including no-change sentinel |
+| `14` | Get/set port duplicate deletion | Implemented from the published wire contract; explicit setter persists immediately |
 | `15` | Get/set total operating time | Implemented, including passkey form |
 | `17` | Get/set port baudrate | Implemented, including session/store rates and all sentinels |
 | `18` | Echo | Implemented; local maximum 222 bytes, remote maximum 206 bytes |
@@ -110,6 +150,7 @@ available locally and remotely through the shared typed Module unless noted.
 | `45` | Get manufacturer CAN information | Implemented read-only |
 | `46` | Get/set Rx PGN state and mask | Implemented |
 | `47` | Get/set Tx PGN state and rate | Implemented; response retains timeout and priority |
+| `48` / `49` | Legacy Format-1 enable lists | Implemented explicit reads; two/four ordered parts, maximum 50 entries, partial results retained |
 | `4A` | Delete session PGN lists | Implemented; explicit mutation |
 | `4B` | Activate session PGN lists | Implemented; explicit mutation |
 | `4C` | Restore default PGN lists | Implemented; explicit disruptive/persistent firmware operation |
@@ -117,15 +158,44 @@ available locally and remotely through the shared typed Module unless noted.
 | `4E` / `4F` | Rx/Tx Format-2 enable lists | Implemented multi-reply reads; NGX completion requires both every standard slot and the proprietary bitmap |
 | `F0` / `F1` / `F2` / `F4` | Startup, error, system status, negative acknowledgement | Implemented typed unsolicited diagnostics |
 
-The following declarations are not parity targets:
+`GetRxPGNEnableListF1` and `GetTxPGNEnableListF1` are opt-in legacy methods.
+Actisense discontinued F1 at firmware 2.500; NGX/W2K firmware never implemented
+it. Current applications should use the F2 methods. F1 results expose
+`PartsReceived` so partial lists cannot be mistaken for complete results.
 
-- `48`/`49` Format-1 lists are deprecated, removed from the compiled SDK, and
-  negatively acknowledged by current firmware.
-- `14` port duplicate delete is documentation-only and absent from the SDK
-  implementation.
+The published SDK does not supply usable contracts for these features:
+
+- Deprecated `12`/`16` baud-code arrays vary by model and have no complete wire
+  definition or compiled implementation. Use modern `17` baudrate control.
 - `60`–`62` and `F3` have incomplete/TBD payload contracts and no usable
   compiled NMEA 2000 operation.
+- Firmware uploading and additional EMU/PRO configuration require vendor
+  specifications beyond this SDK. They are not implemented by this change.
 - NMEA 0183 and `!PARLB` are outside this library's Actisense scope.
+
+`RawRequest` and `RawRequestMulti` expose bounded local/remote BEM access for
+caller-defined commands. They are escape hatches, not typed support for an
+unknown payload. BEM `42` follows the compiled SDK's nine-byte NAME and stored
+address layout; its Markdown page describes a conflicting layout. That
+discrepancy requires device evidence or vendor clarification, not guessing.
+
+## Rx masks and Tx rates
+
+The four accepted 32-bit Rx masks are `ActisenseRxPGNMaskPGN` (`03FFFF00`),
+`ActisenseRxPGNMaskPDUFormat` (`03FF0000`), `ActisenseRxPGNMaskPDUNibble`
+(`03F00000`), and `ActisenseRxPGNMaskDataPage` (`03000000`). They match PGN
+ranges; they cannot filter source addresses. A nil mask or
+`ActisenseRxPGNMaskDefault` selects the firmware default;
+`ActisenseRxPGNMaskNoChange` preserves the existing mask. Replies report the
+effective mask, not a sentinel. Arbitrary masks are rejected before sending.
+
+Tx rates `1..65534` are milliseconds, and `ActisenseTxPGNRateEvent` is zero.
+A nil rate or any value at least `65535` means no change, including
+`FFFFFFFE` and `FFFFFFFF`. Use `ActisenseTxPGNRateNoChange`; this command has
+no restore-default rate sentinel. The old `ActisenseRxPGNMaskAcceptAll` and
+`ActisenseTxPGNRateDefault` names remain deprecated aliases preserving their
+wire values; both actually mean no change. Sentinel acknowledgements are
+validated against their effective semantics.
 
 ## PGN-list lifecycle and persistence
 
@@ -145,7 +215,7 @@ once, rolls back on failure, and best-effort restores the first snapshot on a
 clean close in the same connection epoch. It does not commit persistence.
 
 `CommitEEPROM`, `CommitFlash`, `Reinitialize`, `SetPortBaudrate`,
-`SetCANConfig`, `SetCANInfoField`, and `DefaultPGNLists` may persist state or
+`SetCANConfig`, `SetCANInfoField`, `SetPortDuplicateDelete`, and `DefaultPGNLists` may persist state or
 interrupt the device depending on firmware. They exist for capability parity
 but are never invoked by connection setup, sending, rollback, or close.
 
@@ -175,7 +245,8 @@ minimum/average/maximum. Gateway session totals survive reconnect epochs.
 
 [`conformance/actisense-golden.json`](../conformance/actisense-golden.json)
 contains independent request and reply bytes for every compiled solicited verb,
-remote wrapping, ASCII, and EBL. Local CI exercises the corpus, malformed
+the three additional documented commands, remote wrapping, ASCII, and EBL.
+These are protocol fixtures, not physical captures. Local CI exercises malformed
 replies, timeouts, cross-group traffic, negative-ack scoping, partial results,
 reconnects, and response #257 without blocking the sole reader.
 
@@ -192,3 +263,9 @@ Run `just actisense-hardware <config>` for the opt-in NGT/NGX matrix described
 in [Protocol conformance](conformance.md). The checked-in suite provides local
 compatibility evidence; it does not claim that unavailable physical hardware
 passed.
+
+The machine-readable [compatibility scope](../conformance/actisense-compatibility.json)
+distinguishes implemented software, absent specifications, deliberate exclusions,
+and hardware evidence. The supported claim is compatibility with this published
+NMEA 2000/binary SDK surface. “Officially approved by Actisense” and “all things
+Actisense” require evidence that the codebase and local tests cannot provide.

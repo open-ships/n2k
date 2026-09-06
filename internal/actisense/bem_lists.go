@@ -26,10 +26,28 @@ const (
 )
 
 const (
-	RxPGNMaskAcceptAll = uint32(0xFFFFFFFF)
-	TxPGNRateDefault   = uint32(0xFFFFFFFF)
+	RxPGNMaskPGN       = uint32(0x03FFFF00)
+	RxPGNMaskPDUFormat = uint32(0x03FF0000)
+	RxPGNMaskPDUNibble = uint32(0x03F00000)
+	RxPGNMaskDataPage  = uint32(0x03000000)
+	RxPGNMaskDefault   = uint32(0xFFFFFFFE)
+	RxPGNMaskNoChange  = uint32(0xFFFFFFFF)
+	TxPGNRateNoChange  = uint32(0xFFFF)
 	TxPGNRateEvent     = uint32(0)
+	// Deprecated: this value means no change, not accept all. Use RxPGNMaskNoChange.
+	RxPGNMaskAcceptAll = RxPGNMaskNoChange
+	// Deprecated: this value leaves the rate unchanged. Use TxPGNRateNoChange.
+	TxPGNRateDefault = uint32(0xFFFFFFFF)
 )
+
+func validRxPGNMask(mask uint32) bool {
+	switch mask {
+	case RxPGNMaskPGN, RxPGNMaskPDUFormat, RxPGNMaskPDUNibble, RxPGNMaskDataPage:
+		return true
+	default:
+		return false
+	}
+}
 
 type RxPGNState struct {
 	PGN  uint32

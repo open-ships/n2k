@@ -115,6 +115,7 @@ VERSION/tag/release discipline in `AGENTS.md`.
 | ACT-02 | Complete compiled solicited BEM surface, independent local request/reply bytes, bounded correlation, typed partials | `conformance/actisense-golden.json`; `TestActisenseGolden*`; `internal/actisense` session tests |
 | ACT-03 | Remote BEM PGN-126720 envelope, address/epoch correlation, cancellation, errors, and metrics | `TestConformanceActisenseRemoteGoldenEnvelope`; `TestActisenseRemote*` |
 | ACT-04 | CAN ASCII mode 6 and N2K Type-A ASCII parse/emit fidelity and bounds | `TestConformanceActisenseASCIIGoldenVectors`; `internal/gateway` ASCII tests |
+| ACT-05 | Preserved modes, generic writes, gateway remote identity, sentinel semantics, and documented legacy commands | `TestActisensePreservedModeAndGenericSends`; `TestActisenseGatewayRemote*`; legacy/sentinel/golden tests |
 | EBL-01 | Bounded EBL read/write, live wire trace, timestamps, direction, exact invalid/unframed evidence, Type-2 replay | `TestConformanceActisenseEBLGoldenVersionRecord`; `internal/ebl`; public trace/replay tests |
 
 These IDs are public repository evidence identifiers. They are not licensed
@@ -123,7 +124,7 @@ ISO or NMEA clause numbers, and they do not replace the private crosswalk.
 ### Actisense parity evidence
 
 [`conformance/actisense-golden.json`](../conformance/actisense-golden.json)
-pins the reference implementation at Actisense SDK commit `9de7343` and stores
+pins the reference implementation at Actisense SDK commit `ed2268a` and stores
 independent bytes for every compiled solicited BEM command and response, the
 remote PGN-126720 envelope, CAN/N2K ASCII, and EBL. Tests consume this corpus
 directly. The ledger in [Actisense support](actisense.md) classifies compiled,
@@ -138,9 +139,18 @@ just actisense-hardware conformance/actisense-hardware.local.json
 ```
 
 The runner exercises local product/mode/echo commands, selected supported/F2
-lists and port inventory, live EBL trace, source-authoritative raw Client
-startup, and optional remote BEM. Record hardware model, serial-safe identity,
-firmware, runner commit, result, and capture hash outside git. An absent or
+and legacy F1 lists, port inventory/duplicate-filter reads, preserved modes,
+optional gateway remote BEM, and optional source-authoritative raw Client
+startup. NGT examples use a gateway session because NGT does not support raw
+mode 5. Remote checks send addressed Echo and product-information requests.
+
+Each device writes an EBL capture and JSON result containing the configured
+checks, model, firmware, runner commit/dirty state, outcome, and capture SHA-256.
+The default output is a timestamped directory under `conformance-artifacts`;
+`artifact_directory` overrides it. Run from a clean revision for attributable
+release evidence. `expected_firmware` and `expected_mode` can pin lab expectations.
+These checks do not exercise every persistent setting or arbitrary PGN on the
+CAN bus; further device qualification needs a controlled bench and receiver. An absent or
 skipped lab configuration is not a hardware pass and does not support a 100%
 hardware-parity claim.
 
