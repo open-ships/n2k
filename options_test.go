@@ -160,3 +160,19 @@ func TestActisenseConstructorsCreateRoleAwareSources(t *testing.T) {
 	require.True(t, ok)
 	assert.Equal(t, "/dev/ttyUSB0", serial.port)
 }
+
+func TestYachtDevicesConstructorsCreateYDRawSources(t *testing.T) {
+	var cfg config
+	YachtDevicesTCP("192.168.4.1:1457").apply(&cfg)
+	YachtDevicesUDP(":1457").apply(&cfg)
+
+	require.Len(t, cfg.sources, 2)
+	tcp, ok := cfg.sources[0].(*tcpSource)
+	require.True(t, ok)
+	assert.Equal(t, "192.168.4.1:1457", tcp.addr)
+	assert.Equal(t, FormatYDRaw, tcp.format)
+	udp, ok := cfg.sources[1].(*udpSource)
+	require.True(t, ok)
+	assert.Equal(t, ":1457", udp.addr)
+	assert.Equal(t, FormatYDRaw, udp.format)
+}

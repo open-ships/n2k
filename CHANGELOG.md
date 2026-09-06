@@ -1,5 +1,14 @@
 ## Change Log for open-ships/n2k
 
+### v1.5.0 — 2026-09-05 — device-aware Yacht Devices sources
+
+- Added `YachtDevicesTCP` and `YachtDevicesUDP` source constructors for the
+  common Yacht Devices RAW paths. They are compatibility-preserving wrappers
+  over the existing explicit-format `TCP` and `UDP` APIs.
+- Made the device-aware Yacht Devices and Actisense constructors the recommended
+  source API, while retaining `TCP`, `UDP`, and `Serial` as the advanced layer
+  for explicit wire-format and operating-mode selection.
+
 ### v1.4.0 — 2026-09-05 — expanded Actisense SDK compatibility
 
 - Added gateway-owned remote BEM over BST-94/PGN 126720, including NGT

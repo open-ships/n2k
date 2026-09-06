@@ -76,8 +76,8 @@ On a boat, only the source option changes:
 ```go
 n2k.CAN("can0")                            // SocketCAN (Linux)
 n2k.USB("/dev/ttyUSB0")                    // USB-CAN serial adapter
-n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)  // Yacht Devices WiFi gateway
-n2k.UDP(":1457", n2k.FormatYDRaw)          // same gateway, UDP broadcast
+n2k.YachtDevicesTCP("192.168.4.1:1457")    // Yacht Devices WiFi gateway
+n2k.YachtDevicesUDP(":1457")               // same gateway, UDP broadcast
 n2k.ActisenseTCP("10.0.0.5:2000")          // role-aware Actisense TCP
 n2k.ActisenseSerial("/dev/cu.usbserial-1234") // direct NGT/NGX
 ```
@@ -119,7 +119,7 @@ Everything the library does, mapped to its API:
 | Schedule transmissions | Broadcast PGNs periodically and let other devices retime or pause them through group functions. | `Client.BroadcastPGN`, `Client.Broadcast` |
 | Request data | Send typed ISO requests and await typed replies. | `Request[T]` |
 | Discover devices | Track observed devices by stable 64-bit NAME and current source address. | `Client.Devices`, `Client.DeviceAt` |
-| Read many sources | Use SocketCAN, USB-CAN adapters, direct Actisense serial, TCP/UDP gateways, candump/EBL logs, or in-memory frames. | `CAN`, `USB`, `Serial`, `TCP`, `UDP`, `File`, `EBL`, `Replay` |
+| Read many sources | Use SocketCAN, USB-CAN adapters, device-aware network gateways, explicit-format streams, candump/EBL logs, or in-memory frames. | `CAN`, `USB`, `YachtDevicesTCP`, `YachtDevicesUDP`, `ActisenseTCP`, `ActisenseSerial`, `TCP`, `UDP`, `Serial`, `File`, `EBL`, `Replay` |
 | Gateway formats | Speak Yacht Devices RAW, Actisense binary/ASCII messages, and source-authoritative BST-95 or mode-6 CAN. | `FormatYDRaw`, `FormatActisense*` |
 | Control Actisense devices | Use typed local BEM through an honest gateway session or the same commands remotely over PGN 126720. | `ActisenseGatewaySession`, `ActisenseRemoteDevice` |
 | Record Actisense evidence | Write EBL files or attach an exact session wire trace with per-layer metrics. | `NewEBLWriter`, `NewActisenseEBLTrace`, `WithActisenseWireTrace` |
@@ -329,8 +329,8 @@ for msg, err := range n2k.Receive(ctx, n2k.File("capture.log", n2k.OriginalTimin
 for msg, err := range n2k.Receive(ctx, n2k.EBL("capture.ebl", n2k.OriginalTiming())) { ... }
 
 // Yacht Devices YDWG-02 (RAW server mode) over TCP or UDP.
-for msg, err := range n2k.Receive(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw)) { ... }
-for msg, err := range n2k.Receive(ctx, n2k.UDP(":1457", n2k.FormatYDRaw)) { ... }
+for msg, err := range n2k.Receive(ctx, n2k.YachtDevicesTCP("192.168.4.1:1457")) { ... }
+for msg, err := range n2k.Receive(ctx, n2k.YachtDevicesUDP(":1457")) { ... }
 
 // Actisense-format streams (W2K-1 gateways, or an NGT-1 behind a TCP
 // bridge). Read-only use passively accepts all supported BST records.
@@ -348,7 +348,7 @@ for msg, err := range n2k.Receive(ctx, n2k.ActisenseSerial("/dev/cu.usbserial-12
 // frame-level in both directions, so address claiming, heartbeats, and
 // group functions behave exactly as on CAN hardware. The gateway echoes
 // transmitted frames back, so the client also observes its own traffic.
-client, err := n2k.NewClient(ctx, n2k.TCP("192.168.4.1:1457", n2k.FormatYDRaw))
+client, err := n2k.NewClient(ctx, n2k.YachtDevicesTCP("192.168.4.1:1457"))
 
 // Preferred Actisense Client path. The dedicated constructors query the prior
 // mode, set and acknowledge mode 5, then exchange source-authoritative BST-95
@@ -367,13 +367,19 @@ client, err := n2k.NewClient(ctx,
     n2k.TCP("10.0.0.5:2000", n2k.FormatActisenseRaw))
 ```
 
+`TCP`, `UDP`, and `Serial` remain the explicit-format layer for compatible
+hardware, unusual gateway modes, and callers that need to select a particular
+Actisense representation. The device-aware constructors above are the
+recommended defaults.
+
 #### Source support by platform
 
 | Source | Linux | macOS | Windows | Write access |
 |--------|:-----:|:-----:|:-------:|:------------:|
 | `CAN` (SocketCAN) | ✅ | ❌ | ❌ | ✅ |
 | `USB` (serial CAN adapter) | ✅ | ✅ | ✅ | ✅ |
-| `TCP` (Yacht Devices RAW) | ✅ | ✅ | ✅ | ✅ full frame-level control |
+| `YachtDevicesTCP` | ✅ | ✅ | ✅ | ✅ full frame-level control |
+| `YachtDevicesUDP` | ✅ | ✅ | ✅ | ❌ read-only |
 | `ActisenseTCP` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
 | `ActisenseSerial` | ✅ | ✅ | ✅ | ✅ requires BST-95 raw mode for `NewClient` |
 | Explicit Actisense message/N2K ASCII format | ✅ | ✅ | ✅ | ❌ read-only; use `ActisenseGatewaySession` to send |
@@ -469,6 +475,8 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 |--------|-------------|
 | `n2k.CAN(iface)` | SocketCAN source (e.g., `"can0"`) |
 | `n2k.USB(port)` | USB-CAN serial source (e.g., `"/dev/ttyUSB0"`) |
+| `n2k.YachtDevicesTCP(addr)` | Device-aware Yacht Devices RAW TCP source; writable, source-authoritative CAN frames |
+| `n2k.YachtDevicesUDP(listenAddr)` | Device-aware Yacht Devices RAW UDP broadcast source (read-only) |
 | `n2k.ActisenseSerial(port, ...opts)` | Role-aware Actisense serial source; passive reads, source-authoritative raw `NewClient`; configurable baud/data/parity/stop bits |
 | `n2k.Serial(port, format, ...opts)` | Direct Actisense serial source; binary message, BST-95 raw, CAN ASCII, or N2K ASCII |
 | `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields |
@@ -477,8 +485,8 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.NewEBLWriter(w, ...opts)` | SDK-compatible EBL writer used directly or by an `ActisenseEBLTrace` |
 | `n2k.ActisenseTCP(addr)` | Role-aware Actisense TCP source; passive reads, source-authoritative raw `NewClient` |
 | `n2k.NewActisenseTCPSession(ctx, addr, ...opts)` | Gateway-owned BST-93/94 sends, typed local BEM, diagnostics, metrics, and optional reconnect/trace |
-| `n2k.TCP(addr, format)` | Network gateway over TCP; supports Yacht Devices RAW and Actisense binary/raw/CAN-ASCII/N2K-ASCII formats |
-| `n2k.UDP(listenAddr, format)` | Network gateway datagrams (read-only), same formats; raw Actisense requires an upstream BST-95 configuration |
+| `n2k.TCP(addr, format)` | Explicit-format network gateway over TCP; supports Yacht Devices RAW and Actisense binary/raw/CAN-ASCII/N2K-ASCII formats |
+| `n2k.UDP(listenAddr, format)` | Explicit-format network gateway datagrams (read-only); raw Actisense requires an upstream BST-95 configuration |
 | `n2k.Replay(frames)` | Replay source for testing |
 | `n2k.Filter(expr)` | CEL filter expression |
 | `n2k.IncludeUnknown()` | Include undecodable messages as `*pgn.UnknownPGN` |
