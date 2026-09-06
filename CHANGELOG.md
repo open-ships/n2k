@@ -1,5 +1,12 @@
 ## Change Log for open-ships/n2k
 
+### v1.4.1 — 2026-09-05 — shared CI toolset
+
+- Route platform tests, lint, security, release metadata, and scheduled
+  reliability checks through the versioned Open Ships CI workflows.
+- Use the shared Go and analysis tool versions while retaining PGN sync,
+  conformance evidence, race detection, fuzz corpora, and software soaks.
+
 ### v1.4.0 — 2026-09-05 — expanded Actisense SDK compatibility
 
 - Added gateway-owned remote BEM over BST-94/PGN 126720, including NGT

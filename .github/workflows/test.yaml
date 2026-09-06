@@ -5,174 +5,67 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: 1.26.6
-          check-latest: true
-
-      - name: Set up just
-        uses: extractions/setup-just@v4
-
-      - name: PGN sync check
-        if: runner.os == 'Linux'
-        run: just pgn-sync-check
-
-      - name: Local conformance evidence
-        if: runner.os == 'Linux'
-        run: just conformance-local
-
-      - name: Preserve executable conformance evidence
-        if: always() && runner.os == 'Linux'
-        uses: actions/upload-artifact@v7
-        with:
-          name: software-conformance
-          path: conformance-artifacts/local-*
-          if-no-files-found: warn
-
-      - name: Test
-        run: go test ./...
+    uses: open-ships/ci/.github/workflows/check-go.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      runner: ${{ matrix.os }}
+      setup-just: true
+      artifact-name: software-conformance
+      artifact-path: conformance-artifacts/local-*
+      command: |
+        if [ "$RUNNER_OS" = Linux ]; then
+          just pgn-sync-check
+          just conformance-local
+        fi
+        go test ./...
+      artifact-enabled: ${{ matrix.os == 'ubuntu-latest' }}
 
   race-and-fuzz:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: 1.26.6
-          check-latest: true
-
-      - name: Set up just
-        uses: extractions/setup-just@v4
-
-      - name: Race detector
-        run: just test-race
-
-      - name: Fuzz smoke tests
-        run: just fuzz-smoke
-
-      - name: Preserve fuzz failure corpus
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: fuzz-failure-corpus
-          path: |
-            internal/**/testdata/fuzz/**
-            pgn/testdata/fuzz/**
-          if-no-files-found: ignore
-
-      - name: Software reliability smoke
-        run: just reliability-soak 10s 2m
-
-      - name: Preserve software reliability evidence
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: software-reliability-smoke
-          path: conformance-artifacts/soak-*
-          if-no-files-found: warn
+    uses: open-ships/ci/.github/workflows/check-go.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      setup-just: true
+      artifact-name: software-reliability-smoke
+      artifact-path: conformance-artifacts/soak-*
+      failure-artifact-name: fuzz-failure-corpus
+      failure-artifact-path: |
+        internal/**/testdata/fuzz/**
+        pgn/testdata/fuzz/**
+      command: |
+        just test-race
+        just fuzz-smoke
+        just reliability-soak 10s 2m
 
   lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: 1.26.6
-          check-latest: true
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v9
-        with:
-          version: v2.12.0
+    uses: open-ships/ci/.github/workflows/check-go.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      lint: true
 
   secure:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: 1.26.6
-          check-latest: true
-
-      - name: Run govulncheck
-        env:
-          GOTOOLCHAIN: go1.26.6
-        run: |
-          go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
-          govulncheck ./...
-
-      - name: Run gosec
-        env:
-          GOTOOLCHAIN: go1.26.6
-        run: |
-          go install github.com/securego/gosec/v2/cmd/gosec@v2.27.1
-          gosec -exclude-generated -exclude-dir=.claude -exclude=G115 ./...
+    uses: open-ships/ci/.github/workflows/check-go.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      security: true
+      gosec-excludes: G115
 
   release-metadata:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout with release tags
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
-      - name: Set up Go
-        uses: actions/setup-go@v7
-        with:
-          go-version: 1.26.6
-          check-latest: true
-
-      - name: Set up just
-        uses: extractions/setup-just@v4
-
-      - name: Check tracked formatting
-        run: just format-check
-
-      - name: Check release metadata
-        run: just release-check
+    uses: open-ships/ci/.github/workflows/check-go.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      fetch-depth: 0
+      setup-just: true
+      command: |
+        just format-check
+        just release-check
 
   release-gate:
     if: ${{ always() }}
     needs: [test, race-and-fuzz, lint, secure, release-metadata]
-    runs-on: ubuntu-latest
-    env:
-      TEST_RESULT: ${{ needs.test.result }}
-      RACE_FUZZ_RESULT: ${{ needs.race-and-fuzz.result }}
-      LINT_RESULT: ${{ needs.lint.result }}
-      SECURE_RESULT: ${{ needs.secure.result }}
-      RELEASE_METADATA_RESULT: ${{ needs.release-metadata.result }}
-
-    steps:
-      - name: Require every release gate
-        run: |
-          test "$TEST_RESULT" = success
-          test "$RACE_FUZZ_RESULT" = success
-          test "$LINT_RESULT" = success
-          test "$SECURE_RESULT" = success
-          test "$RELEASE_METADATA_RESULT" = success
+    uses: open-ships/ci/.github/workflows/gate.yaml@95d4b3ed5452a99525c240688de146553e57cee0 # shared CI v1.2.0 candidate
+    with:
+      results: ${{ toJSON(needs) }}
