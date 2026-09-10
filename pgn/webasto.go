@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type WebastoStatus2 struct {
 	Info                MessageInfo `json:"info"`
 	ManufacturerCode    *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -107,8 +105,28 @@ func (m *WebastoHvacCommand) SetTemperatureValue() (float64, bool) {
 }
 
 // SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *WebastoHvacCommand) SetSetTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WebastoHvacCommand) SetSetTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SetTemperature = &raw
+	if _, ok := candidate.SetTemperatureValue(); !ok {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
 	m.SetTemperature = &raw
+	return nil
 }

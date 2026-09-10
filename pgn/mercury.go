@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type MercuryEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -200,10 +198,30 @@ func (m *MercuryCruiseControlData) CruiseRpmSetpointValue() (float64, bool) {
 }
 
 // SetCruiseRpmSetpointValue sets CruiseRpmSetpoint from a physical value in rpm, rounded to the nearest
-// wire tick of 1.
-func (m *MercuryCruiseControlData) SetCruiseRpmSetpointValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MercuryCruiseControlData) SetCruiseRpmSetpointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CruiseRpmSetpoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CruiseRpmSetpoint", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("CruiseRpmSetpoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CruiseRpmSetpoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CruiseRpmSetpoint = &raw
+	if _, ok := candidate.CruiseRpmSetpointValue(); !ok {
+		return invalidPhysicalValue("CruiseRpmSetpoint", v)
+	}
 	m.CruiseRpmSetpoint = &raw
+	return nil
 }
 
 // CruiseSpeedSetpointValue returns CruiseSpeedSetpoint as a physical value in km/h (value = raw * 0.01).
@@ -232,10 +250,30 @@ func (m *MercuryCruiseControlData) CruiseSpeedSetpointValue() (float64, bool) {
 }
 
 // SetCruiseSpeedSetpointValue sets CruiseSpeedSetpoint from a physical value in km/h, rounded to the nearest
-// wire tick of 0.01.
-func (m *MercuryCruiseControlData) SetCruiseSpeedSetpointValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MercuryCruiseControlData) SetCruiseSpeedSetpointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CruiseSpeedSetpoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CruiseSpeedSetpoint", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("CruiseSpeedSetpoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CruiseSpeedSetpoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CruiseSpeedSetpoint = &raw
+	if _, ok := candidate.CruiseSpeedSetpointValue(); !ok {
+		return invalidPhysicalValue("CruiseSpeedSetpoint", v)
+	}
 	m.CruiseSpeedSetpoint = &raw
+	return nil
 }
 
 type MercuryBamDigitalDataProxy struct {

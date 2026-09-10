@@ -79,7 +79,9 @@ func ExampleNewClient() {
 	defer func() { _ = client.Close() }()
 
 	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.5708) // radians in, raw wire ticks underneath
+	if err := heading.SetHeadingValue(1.5708); err != nil { // radians in, raw wire ticks underneath
+		log.Fatal(err)
+	}
 	if err := client.Write(heading).Wait(); err != nil {
 		log.Fatal(err)
 	}

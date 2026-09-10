@@ -86,8 +86,9 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 		backoff = gateway.NewBackoff(*s.reconnect)
 	}
 
+	epoch := uint64(1)
 	for {
-		connected, err := s.dialAndRead(ctx, handler)
+		connected, err := s.dialAndRead(ctx, epoch, handler)
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
@@ -97,6 +98,7 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 		// Reset the backoff after a connection that came up, so a brief drop
 		// reconnects promptly rather than inheriting a long prior backoff.
 		if connected {
+			epoch++
 			backoff.Reset()
 		}
 		if err != nil {
@@ -113,7 +115,7 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 // dialAndRead opens one connection and reads it to completion. The returned
 // bool reports whether the connection was established (used to reset backoff);
 // the error is the dial or read error (nil on a clean EOF).
-func (s *tcpSource) dialAndRead(ctx context.Context, handler func(raw.Observation)) (bool, error) {
+func (s *tcpSource) dialAndRead(ctx context.Context, epoch uint64, handler func(raw.Observation)) (bool, error) {
 	var d net.Dialer
 	conn, err := d.DialContext(ctx, "tcp", s.addr)
 	if err != nil {
@@ -121,20 +123,12 @@ func (s *tcpSource) dialAndRead(ctx context.Context, handler func(raw.Observatio
 	}
 
 	// Closing the connection on cancellation unblocks any pending Read.
-	watchDone := make(chan struct{})
-	defer close(watchDone)
-	go func() {
-		select {
-		case <-ctx.Done():
-			_ = conn.Close()
-		case <-watchDone:
-			_ = conn.Close()
-		}
-	}()
+	defer closeSourceOnCancel(ctx, conn)()
 
 	return true, readStreamObservations(conn, s.format, func(observation raw.Observation) {
 		observation.AdapterID = "tcp:" + s.addr
 		observation.NetworkID = s.addr
+		observation.ConnectionEpoch = epoch
 		handler(observation)
 	})
 }
@@ -211,16 +205,7 @@ func (s *udpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 		return fmt.Errorf("n2k: listening on %s: %w", s.addr, err)
 	}
 
-	watchDone := make(chan struct{})
-	defer close(watchDone)
-	go func() {
-		select {
-		case <-ctx.Done():
-			_ = conn.Close()
-		case <-watchDone:
-			_ = conn.Close()
-		}
-	}()
+	defer closeSourceOnCancel(ctx, conn)()
 
 	buf := make([]byte, 65536)
 	for {

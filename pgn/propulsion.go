@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type Rudder struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -59,10 +57,30 @@ func (m *Rudder) AngleOrderValue() (float64, bool) {
 }
 
 // SetAngleOrderValue sets AngleOrder from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *Rudder) SetAngleOrderValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Rudder) SetAngleOrderValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AngleOrder", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("AngleOrder", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("AngleOrder", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("AngleOrder", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.AngleOrder = &raw
+	if _, ok := candidate.AngleOrderValue(); !ok {
+		return invalidPhysicalValue("AngleOrder", v)
+	}
 	m.AngleOrder = &raw
+	return nil
 }
 
 // PositionValue returns Position as a physical value in rad (value = raw * 0.0001).
@@ -91,10 +109,30 @@ func (m *Rudder) PositionValue() (float64, bool) {
 }
 
 // SetPositionValue sets Position from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *Rudder) SetPositionValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Rudder) SetPositionValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Position", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Position", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Position", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Position", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Position = &raw
+	if _, ok := candidate.PositionValue(); !ok {
+		return invalidPhysicalValue("Position", v)
+	}
 	m.Position = &raw
+	return nil
 }
 
 type ElectricDriveStatusDynamic struct {
@@ -159,10 +197,30 @@ func (m *ElectricDriveStatusDynamic) MotorTemperatureValue() (float64, bool) {
 }
 
 // SetMotorTemperatureValue sets MotorTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveStatusDynamic) SetMotorTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusDynamic) SetMotorTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MotorTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MotorTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MotorTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MotorTemperature = &raw
+	if _, ok := candidate.MotorTemperatureValue(); !ok {
+		return invalidPhysicalValue("MotorTemperature", v)
+	}
 	m.MotorTemperature = &raw
+	return nil
 }
 
 // InverterTemperatureValue returns InverterTemperature as a physical value in K (value = raw * 0.01).
@@ -191,10 +249,30 @@ func (m *ElectricDriveStatusDynamic) InverterTemperatureValue() (float64, bool) 
 }
 
 // SetInverterTemperatureValue sets InverterTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveStatusDynamic) SetInverterTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusDynamic) SetInverterTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("InverterTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("InverterTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("InverterTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("InverterTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.InverterTemperature = &raw
+	if _, ok := candidate.InverterTemperatureValue(); !ok {
+		return invalidPhysicalValue("InverterTemperature", v)
+	}
 	m.InverterTemperature = &raw
+	return nil
 }
 
 // CoolantTemperatureValue returns CoolantTemperature as a physical value in K (value = raw * 0.01).
@@ -223,10 +301,30 @@ func (m *ElectricDriveStatusDynamic) CoolantTemperatureValue() (float64, bool) {
 }
 
 // SetCoolantTemperatureValue sets CoolantTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveStatusDynamic) SetCoolantTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusDynamic) SetCoolantTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CoolantTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CoolantTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("CoolantTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CoolantTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CoolantTemperature = &raw
+	if _, ok := candidate.CoolantTemperatureValue(); !ok {
+		return invalidPhysicalValue("CoolantTemperature", v)
+	}
 	m.CoolantTemperature = &raw
+	return nil
 }
 
 // GearTemperatureValue returns GearTemperature as a physical value in K (value = raw * 0.01).
@@ -255,10 +353,30 @@ func (m *ElectricDriveStatusDynamic) GearTemperatureValue() (float64, bool) {
 }
 
 // SetGearTemperatureValue sets GearTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveStatusDynamic) SetGearTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusDynamic) SetGearTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("GearTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("GearTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("GearTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("GearTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.GearTemperature = &raw
+	if _, ok := candidate.GearTemperatureValue(); !ok {
+		return invalidPhysicalValue("GearTemperature", v)
+	}
 	m.GearTemperature = &raw
+	return nil
 }
 
 type ElectricDriveInformation struct {
@@ -333,10 +451,30 @@ func (m *ElectricDriveInformation) MotorVoltageRatingValue() (float64, bool) {
 }
 
 // SetMotorVoltageRatingValue sets MotorVoltageRating from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricDriveInformation) SetMotorVoltageRatingValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMotorVoltageRatingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorVoltageRating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MotorVoltageRating", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("MotorVoltageRating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MotorVoltageRating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MotorVoltageRating = &raw
+	if _, ok := candidate.MotorVoltageRatingValue(); !ok {
+		return invalidPhysicalValue("MotorVoltageRating", v)
+	}
 	m.MotorVoltageRating = &raw
+	return nil
 }
 
 // MaximumContinuousMotorPowerValue returns MaximumContinuousMotorPower as a physical value in W (value = raw).
@@ -365,10 +503,30 @@ func (m *ElectricDriveInformation) MaximumContinuousMotorPowerValue() (float64, 
 }
 
 // SetMaximumContinuousMotorPowerValue sets MaximumContinuousMotorPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *ElectricDriveInformation) SetMaximumContinuousMotorPowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMaximumContinuousMotorPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumContinuousMotorPower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumContinuousMotorPower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("MaximumContinuousMotorPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumContinuousMotorPower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumContinuousMotorPower = &raw
+	if _, ok := candidate.MaximumContinuousMotorPowerValue(); !ok {
+		return invalidPhysicalValue("MaximumContinuousMotorPower", v)
+	}
 	m.MaximumContinuousMotorPower = &raw
+	return nil
 }
 
 // MaximumBoostMotorPowerValue returns MaximumBoostMotorPower as a physical value in W (value = raw).
@@ -397,10 +555,30 @@ func (m *ElectricDriveInformation) MaximumBoostMotorPowerValue() (float64, bool)
 }
 
 // SetMaximumBoostMotorPowerValue sets MaximumBoostMotorPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *ElectricDriveInformation) SetMaximumBoostMotorPowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMaximumBoostMotorPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumBoostMotorPower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumBoostMotorPower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("MaximumBoostMotorPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumBoostMotorPower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumBoostMotorPower = &raw
+	if _, ok := candidate.MaximumBoostMotorPowerValue(); !ok {
+		return invalidPhysicalValue("MaximumBoostMotorPower", v)
+	}
 	m.MaximumBoostMotorPower = &raw
+	return nil
 }
 
 // MaximumMotorTemperatureRatingValue returns MaximumMotorTemperatureRating as a physical value in K (value = raw * 0.01).
@@ -429,10 +607,30 @@ func (m *ElectricDriveInformation) MaximumMotorTemperatureRatingValue() (float64
 }
 
 // SetMaximumMotorTemperatureRatingValue sets MaximumMotorTemperatureRating from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveInformation) SetMaximumMotorTemperatureRatingValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMaximumMotorTemperatureRatingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumMotorTemperatureRating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumMotorTemperatureRating", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MaximumMotorTemperatureRating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumMotorTemperatureRating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumMotorTemperatureRating = &raw
+	if _, ok := candidate.MaximumMotorTemperatureRatingValue(); !ok {
+		return invalidPhysicalValue("MaximumMotorTemperatureRating", v)
+	}
 	m.MaximumMotorTemperatureRating = &raw
+	return nil
 }
 
 // RatedMotorSpeedValue returns RatedMotorSpeed as a physical value in rpm (value = raw * 0.25).
@@ -461,10 +659,30 @@ func (m *ElectricDriveInformation) RatedMotorSpeedValue() (float64, bool) {
 }
 
 // SetRatedMotorSpeedValue sets RatedMotorSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 0.25.
-func (m *ElectricDriveInformation) SetRatedMotorSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetRatedMotorSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RatedMotorSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RatedMotorSpeed", v)
+	}
+	if v > 16383 && !approximatelyEqual(v, 16383) {
+		return invalidPhysicalValue("RatedMotorSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RatedMotorSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RatedMotorSpeed = &raw
+	if _, ok := candidate.RatedMotorSpeedValue(); !ok {
+		return invalidPhysicalValue("RatedMotorSpeed", v)
+	}
 	m.RatedMotorSpeed = &raw
+	return nil
 }
 
 // MaximumControllerTemperatureRatingValue returns MaximumControllerTemperatureRating as a physical value in K (value = raw * 0.01).
@@ -493,10 +711,30 @@ func (m *ElectricDriveInformation) MaximumControllerTemperatureRatingValue() (fl
 }
 
 // SetMaximumControllerTemperatureRatingValue sets MaximumControllerTemperatureRating from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricDriveInformation) SetMaximumControllerTemperatureRatingValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMaximumControllerTemperatureRatingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumControllerTemperatureRating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumControllerTemperatureRating", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MaximumControllerTemperatureRating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumControllerTemperatureRating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumControllerTemperatureRating = &raw
+	if _, ok := candidate.MaximumControllerTemperatureRatingValue(); !ok {
+		return invalidPhysicalValue("MaximumControllerTemperatureRating", v)
+	}
 	m.MaximumControllerTemperatureRating = &raw
+	return nil
 }
 
 // MotorDcVoltageDeratingThresholdValue returns MotorDcVoltageDeratingThreshold as a physical value in V (value = raw * 0.1).
@@ -525,10 +763,30 @@ func (m *ElectricDriveInformation) MotorDcVoltageDeratingThresholdValue() (float
 }
 
 // SetMotorDcVoltageDeratingThresholdValue sets MotorDcVoltageDeratingThreshold from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricDriveInformation) SetMotorDcVoltageDeratingThresholdValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMotorDcVoltageDeratingThresholdValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorDcVoltageDeratingThreshold", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MotorDcVoltageDeratingThreshold", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("MotorDcVoltageDeratingThreshold", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MotorDcVoltageDeratingThreshold", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MotorDcVoltageDeratingThreshold = &raw
+	if _, ok := candidate.MotorDcVoltageDeratingThresholdValue(); !ok {
+		return invalidPhysicalValue("MotorDcVoltageDeratingThreshold", v)
+	}
 	m.MotorDcVoltageDeratingThreshold = &raw
+	return nil
 }
 
 // MotorDcVoltageCutOffThresholdValue returns MotorDcVoltageCutOffThreshold as a physical value in V (value = raw * 0.1).
@@ -557,10 +815,30 @@ func (m *ElectricDriveInformation) MotorDcVoltageCutOffThresholdValue() (float64
 }
 
 // SetMotorDcVoltageCutOffThresholdValue sets MotorDcVoltageCutOffThreshold from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricDriveInformation) SetMotorDcVoltageCutOffThresholdValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetMotorDcVoltageCutOffThresholdValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorDcVoltageCutOffThreshold", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MotorDcVoltageCutOffThreshold", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("MotorDcVoltageCutOffThreshold", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MotorDcVoltageCutOffThreshold", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MotorDcVoltageCutOffThreshold = &raw
+	if _, ok := candidate.MotorDcVoltageCutOffThresholdValue(); !ok {
+		return invalidPhysicalValue("MotorDcVoltageCutOffThreshold", v)
+	}
 	m.MotorDcVoltageCutOffThreshold = &raw
+	return nil
 }
 
 // DriveMotorHoursValue returns DriveMotorHours as a physical value in s (value = raw).
@@ -589,10 +867,30 @@ func (m *ElectricDriveInformation) DriveMotorHoursValue() (float64, bool) {
 }
 
 // SetDriveMotorHoursValue sets DriveMotorHours from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *ElectricDriveInformation) SetDriveMotorHoursValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveInformation) SetDriveMotorHoursValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DriveMotorHours", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DriveMotorHours", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("DriveMotorHours", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("DriveMotorHours", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DriveMotorHours = &raw
+	if _, ok := candidate.DriveMotorHoursValue(); !ok {
+		return invalidPhysicalValue("DriveMotorHours", v)
+	}
 	m.DriveMotorHours = &raw
+	return nil
 }
 
 type ElectricDriveStatusRapidUpdate struct {
@@ -655,10 +953,30 @@ func (m *ElectricDriveStatusRapidUpdate) RotationalShaftSpeedValue() (float64, b
 }
 
 // SetRotationalShaftSpeedValue sets RotationalShaftSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 0.25.
-func (m *ElectricDriveStatusRapidUpdate) SetRotationalShaftSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusRapidUpdate) SetRotationalShaftSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RotationalShaftSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RotationalShaftSpeed", v)
+	}
+	if v > 16383 && !approximatelyEqual(v, 16383) {
+		return invalidPhysicalValue("RotationalShaftSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RotationalShaftSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RotationalShaftSpeed = &raw
+	if _, ok := candidate.RotationalShaftSpeedValue(); !ok {
+		return invalidPhysicalValue("RotationalShaftSpeed", v)
+	}
 	m.RotationalShaftSpeed = &raw
+	return nil
 }
 
 // MotorDcVoltageValue returns MotorDcVoltage as a physical value in V (value = raw * 0.1).
@@ -687,10 +1005,30 @@ func (m *ElectricDriveStatusRapidUpdate) MotorDcVoltageValue() (float64, bool) {
 }
 
 // SetMotorDcVoltageValue sets MotorDcVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricDriveStatusRapidUpdate) SetMotorDcVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusRapidUpdate) SetMotorDcVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorDcVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MotorDcVoltage", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("MotorDcVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MotorDcVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MotorDcVoltage = &raw
+	if _, ok := candidate.MotorDcVoltageValue(); !ok {
+		return invalidPhysicalValue("MotorDcVoltage", v)
+	}
 	m.MotorDcVoltage = &raw
+	return nil
 }
 
 // MotorDcCurrentValue returns MotorDcCurrent as a physical value in A (value = raw * 0.1).
@@ -719,10 +1057,30 @@ func (m *ElectricDriveStatusRapidUpdate) MotorDcCurrentValue() (float64, bool) {
 }
 
 // SetMotorDcCurrentValue sets MotorDcCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricDriveStatusRapidUpdate) SetMotorDcCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricDriveStatusRapidUpdate) SetMotorDcCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MotorDcCurrent", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("MotorDcCurrent", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("MotorDcCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("MotorDcCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.MotorDcCurrent = &raw
+	if _, ok := candidate.MotorDcCurrentValue(); !ok {
+		return invalidPhysicalValue("MotorDcCurrent", v)
+	}
 	m.MotorDcCurrent = &raw
+	return nil
 }
 
 type ThrusterControlStatus struct {
@@ -789,10 +1147,30 @@ func (m *ThrusterControlStatus) SpeedControlValue() (float64, bool) {
 }
 
 // SetSpeedControlValue sets SpeedControl from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *ThrusterControlStatus) SetSpeedControlValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterControlStatus) SetSpeedControlValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SpeedControl", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SpeedControl", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("SpeedControl", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("SpeedControl", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SpeedControl = &raw
+	if _, ok := candidate.SpeedControlValue(); !ok {
+		return invalidPhysicalValue("SpeedControl", v)
+	}
 	m.SpeedControl = &raw
+	return nil
 }
 
 // CommandTimeoutValue returns CommandTimeout as a physical value in s (value = raw * 0.005).
@@ -821,10 +1199,30 @@ func (m *ThrusterControlStatus) CommandTimeoutValue() (float64, bool) {
 }
 
 // SetCommandTimeoutValue sets CommandTimeout from a physical value in s, rounded to the nearest
-// wire tick of 0.005.
-func (m *ThrusterControlStatus) SetCommandTimeoutValue(v float64) {
-	raw := uint64(math.Round(v / 0.005))
+// wire tick of 0.005. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterControlStatus) SetCommandTimeoutValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CommandTimeout", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CommandTimeout", v)
+	}
+	if v > 1.26 && !approximatelyEqual(v, 1.26) {
+		return invalidPhysicalValue("CommandTimeout", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.005, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("CommandTimeout", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CommandTimeout = &raw
+	if _, ok := candidate.CommandTimeoutValue(); !ok {
+		return invalidPhysicalValue("CommandTimeout", v)
+	}
 	m.CommandTimeout = &raw
+	return nil
 }
 
 // AzimuthControlValue returns AzimuthControl as a physical value in rad (value = raw * 0.0001).
@@ -853,10 +1251,30 @@ func (m *ThrusterControlStatus) AzimuthControlValue() (float64, bool) {
 }
 
 // SetAzimuthControlValue sets AzimuthControl from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *ThrusterControlStatus) SetAzimuthControlValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterControlStatus) SetAzimuthControlValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AzimuthControl", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AzimuthControl", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("AzimuthControl", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AzimuthControl", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AzimuthControl = &raw
+	if _, ok := candidate.AzimuthControlValue(); !ok {
+		return invalidPhysicalValue("AzimuthControl", v)
+	}
 	m.AzimuthControl = &raw
+	return nil
 }
 
 type ThrusterInformation struct {
@@ -915,10 +1333,30 @@ func (m *ThrusterInformation) PowerRatingValue() (float64, bool) {
 }
 
 // SetPowerRatingValue sets PowerRating from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *ThrusterInformation) SetPowerRatingValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterInformation) SetPowerRatingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerRating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerRating", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("PowerRating", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerRating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerRating = &raw
+	if _, ok := candidate.PowerRatingValue(); !ok {
+		return invalidPhysicalValue("PowerRating", v)
+	}
 	m.PowerRating = &raw
+	return nil
 }
 
 // MaximumTemperatureRatingValue returns MaximumTemperatureRating as a physical value in K (value = raw * 0.01).
@@ -947,10 +1385,30 @@ func (m *ThrusterInformation) MaximumTemperatureRatingValue() (float64, bool) {
 }
 
 // SetMaximumTemperatureRatingValue sets MaximumTemperatureRating from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ThrusterInformation) SetMaximumTemperatureRatingValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterInformation) SetMaximumTemperatureRatingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumTemperatureRating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumTemperatureRating", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MaximumTemperatureRating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumTemperatureRating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumTemperatureRating = &raw
+	if _, ok := candidate.MaximumTemperatureRatingValue(); !ok {
+		return invalidPhysicalValue("MaximumTemperatureRating", v)
+	}
 	m.MaximumTemperatureRating = &raw
+	return nil
 }
 
 // MaximumRotationalSpeedValue returns MaximumRotationalSpeed as a physical value in rpm (value = raw * 0.25).
@@ -979,10 +1437,30 @@ func (m *ThrusterInformation) MaximumRotationalSpeedValue() (float64, bool) {
 }
 
 // SetMaximumRotationalSpeedValue sets MaximumRotationalSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 0.25.
-func (m *ThrusterInformation) SetMaximumRotationalSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterInformation) SetMaximumRotationalSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumRotationalSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumRotationalSpeed", v)
+	}
+	if v > 16383 && !approximatelyEqual(v, 16383) {
+		return invalidPhysicalValue("MaximumRotationalSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumRotationalSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumRotationalSpeed = &raw
+	if _, ok := candidate.MaximumRotationalSpeedValue(); !ok {
+		return invalidPhysicalValue("MaximumRotationalSpeed", v)
+	}
 	m.MaximumRotationalSpeed = &raw
+	return nil
 }
 
 type ThrusterMotorStatus struct {
@@ -1043,10 +1521,30 @@ func (m *ThrusterMotorStatus) CurrentValue() (float64, bool) {
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *ThrusterMotorStatus) SetCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterMotorStatus) SetCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("Current", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Current = &raw
+	if _, ok := candidate.CurrentValue(); !ok {
+		return invalidPhysicalValue("Current", v)
+	}
 	m.Current = &raw
+	return nil
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
@@ -1075,10 +1573,30 @@ func (m *ThrusterMotorStatus) TemperatureValue() (float64, bool) {
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ThrusterMotorStatus) SetTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterMotorStatus) SetTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Temperature = &raw
+	if _, ok := candidate.TemperatureValue(); !ok {
+		return invalidPhysicalValue("Temperature", v)
+	}
 	m.Temperature = &raw
+	return nil
 }
 
 // OperatingTimeValue returns OperatingTime as a physical value in s (value = raw * 60).
@@ -1107,8 +1625,28 @@ func (m *ThrusterMotorStatus) OperatingTimeValue() (float64, bool) {
 }
 
 // SetOperatingTimeValue sets OperatingTime from a physical value in s, rounded to the nearest
-// wire tick of 60.
-func (m *ThrusterMotorStatus) SetOperatingTimeValue(v float64) {
-	raw := uint64(math.Round(v / 60))
+// wire tick of 60. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ThrusterMotorStatus) SetOperatingTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OperatingTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OperatingTime", v)
+	}
+	if v > 3.93192e+06 && !approximatelyEqual(v, 3.93192e+06) {
+		return invalidPhysicalValue("OperatingTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 60, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OperatingTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OperatingTime = &raw
+	if _, ok := candidate.OperatingTimeValue(); !ok {
+		return invalidPhysicalValue("OperatingTime", v)
+	}
 	m.OperatingTime = &raw
+	return nil
 }

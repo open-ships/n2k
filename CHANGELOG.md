@@ -1,5 +1,42 @@
 ## Change Log for open-ships/n2k
 
+### v1.6.0 — 2026-09-10 — validated setters and reliable passive readers
+
+- Physical `Set<Field>Value` methods now return `error`, reject non-finite,
+  unrepresentable, sentinel, and out-of-range measurements, and preserve the
+  previous field on failure. Errors wrap `pgn.ErrInvalidPhysicalValue`.
+  **Migration:** check each setter's error before sending the message; change
+  stored method values and interfaces from `func(float64)` to
+  `func(float64) error`. This intentionally refines the evolving v1 contract
+  without a new module path. Regenerated every physical setter from the pinned
+  schema; raw fields and getter signatures remain compatible.
+- Made Actisense Tx-list transactions serialize, retain originals before
+  mutation, and attempt rollback with a separate bounded cleanup context.
+  Configuration errors include restoration failures, and `Close` retries
+  same-epoch restoration and reports its failures. `Close` also cancels and
+  joins an active configuration transaction.
+- Assigned connection epochs to passive TCP reconnects so unrelated
+  fast-packet and ISO transport fragments cannot combine across connections.
+- Added bounded passive BAM and addressed ISO transport reassembly to
+  `Receive` and `NewScanner`, including file and replay sources. Assembly runs
+  before filters on the transported PGN and never sends CTS or acknowledgments.
+  A complete announcement and ordered DT frames are required; peer CTS records
+  are optional in a passive capture.
+- Preserved boolean precedence when partitioning CEL filters and rejected
+  expressions with a statically non-boolean result. Dynamic boolean fields
+  remain supported.
+- Made standalone `Scanner.Close` and early iterator exit wait for owned source
+  cleanup. TCP, UDP, serial, and capture cancellation join resource cleanup.
+  Standalone `Receive`, `NewScanner`, and `Observe` now reject `WithBus` with
+  guidance to use `NewClient` and its reader methods.
+- Documented public message contracts, Actisense options and aliases, EBL
+  capture operations, ownership, defaults, and cancellation behavior. Updated
+  examples to check setter errors and explained passive-reader capabilities.
+- Updated CEL to v0.30.0 and x/sys to v0.44.0 to remove the dependency versions
+  associated with GO-2026-6094 and GO-2026-5024. Added independent regression
+  tests for the reviewed failures, transaction failure injection, all-setter
+  non-finite checks, and physical-setter fuzzing in the standard fuzz recipes.
+
 ### v1.5.0 — 2026-09-05 — device-aware Yacht Devices sources
 
 - Added `YachtDevicesTCP` and `YachtDevicesUDP` source constructors for the

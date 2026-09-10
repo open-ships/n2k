@@ -86,6 +86,8 @@ fuzz-smoke:
     go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime=10000x -timeout=2m
     go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime=10000x -timeout=2m
     go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime=10000x -timeout=2m
+    go test ./pgn -run=^$ -fuzz=FuzzPhysicalHeadingSetter -fuzztime=10000x -timeout=2m
+    go test ./internal/transport -run=^$ -fuzz=FuzzPassiveReceiver -fuzztime=10000x -timeout=2m
 
 # longer bounded exploration of every fuzz harness; never requires hardware
 fuzz-long $duration="2m":
@@ -94,6 +96,8 @@ fuzz-long $duration="2m":
     go test ./internal/canbus -run=^$ -fuzz=FuzzUSBCANParseFrames -fuzztime="$duration" -timeout=15m
     go test ./internal/gateway -run=^$ -fuzz=FuzzActisenseReader -fuzztime="$duration" -timeout=15m
     go test ./pgn -run=^$ -fuzz=FuzzDecodeEncodeMessage -fuzztime="$duration" -timeout=15m
+    go test ./pgn -run=^$ -fuzz=FuzzPhysicalHeadingSetter -fuzztime="$duration" -timeout=15m
+    go test ./internal/transport -run=^$ -fuzz=FuzzPassiveReceiver -fuzztime="$duration" -timeout=15m
 
 # software lifecycle/resource soak; duration and hard process timeout are explicit
 reliability-soak $duration="1h" $timeout="70m":

@@ -10,7 +10,9 @@ import (
 )
 
 // Scanner reads decoded NMEA 2000 messages one at a time.
-// Call Next() to advance, Message() to get the current message, and Err() for errors.
+// Call Next() to advance, Message() to get the current message, and Err() after
+// Next returns false. Use one goroutine for these methods; Close may run
+// concurrently to cancel a blocked Next and wait for source cleanup.
 type Scanner struct {
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -18,11 +20,14 @@ type Scanner struct {
 	msg    pgn.Message
 	err    error
 	ch     chan pgn.Message
+	done   chan struct{}
 	once   sync.Once
 	sub    *messageSubscription
 }
 
-// NewScanner creates a Scanner that reads from the configured sources.
+// NewScanner creates a Scanner that reads from the configured passive sources.
+// Invalid options are reported by Err after the first Next returns false.
+// WithBus requires NewClient; use Client.Scanner for a custom bus.
 func NewScanner(ctx context.Context, opts ...Option) *Scanner {
 	cfg := config{}
 	var optionErr error
@@ -48,12 +53,13 @@ func NewScanner(ctx context.Context, opts ...Option) *Scanner {
 		cancel: cancel,
 		cfg:    cfg,
 		ch:     make(chan pgn.Message, receiveBuffer),
+		done:   make(chan struct{}),
 	}
 	// Validate eagerly so a misconfigured Scanner (e.g. no sources) fails on
 	// the very first Next() call rather than only after the goroutine starts.
 	s.err = optionErr
 	if s.err == nil {
-		s.err = cfg.validate()
+		s.err = cfg.validateRead()
 	}
 	return s
 }
@@ -73,6 +79,7 @@ func (s *Scanner) Next() bool {
 	s.once.Do(func() {
 		if s.err != nil {
 			close(s.ch)
+			close(s.done)
 			return
 		}
 		go s.run()
@@ -97,18 +104,26 @@ func (s *Scanner) Err() error {
 }
 
 // Close stops the scanner and releases its source or live-client
-// subscription. It is safe to call more than once.
+// subscription. It waits for source cleanup, is safe concurrently with Next,
+// and may be called more than once, including before the first Next.
 func (s *Scanner) Close() error {
 	if s.cancel != nil {
 		s.cancel()
 	}
 	if s.sub != nil {
 		s.sub.unsubscribe()
+		return nil
 	}
+	s.once.Do(func() {
+		close(s.ch)
+		close(s.done)
+	})
+	<-s.done
 	return nil
 }
 
 func (s *Scanner) run() {
+	defer close(s.done)
 	defer close(s.ch)
 	p, err := newReadPipeline(s.ctx, s.cfg, channelEmitter(s.ctx, s.ch))
 	if err != nil {

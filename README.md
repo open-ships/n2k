@@ -150,7 +150,9 @@ defer client.Close()
 // Write a message. The struct knows its own PGN number.
 // Priority defaults to 6, destination defaults to broadcast (255).
 heading := &pgn.VesselHeading{}
-heading.SetHeadingValue(1.5708) // radians; stored as raw wire ticks
+if err := heading.SetHeadingValue(1.5708); err != nil { // radians
+    panic(err)
+}
 result := client.Write(heading)
 if err := result.WaitContext(ctx); err != nil {
     log.Printf("write failed: %v", err)
@@ -161,7 +163,7 @@ if err := result.WaitContext(ctx); err != nil {
 heading2 := &pgn.VesselHeading{
     Info: pgn.MessageInfo{Priority: pgn.Priority(2)},
 }
-heading2.SetHeadingValue(1.5708)
+if err := heading2.SetHeadingValue(1.5708); err != nil { ... }
 if err := client.Write(heading2).WaitContext(ctx); err != nil { ... }
 
 // Addressed PGNs use TargetId. ISO Request is a PDU1 PGN.
@@ -180,6 +182,12 @@ for msg, err := range client.Receive() {
     fmt.Printf("Msg: %v\n", msg)
 }
 ```
+
+`Write`, `WriteContext`, `SendPGN`, and `pgn.EncodeMessage` accept
+`pgn.Message` values but require the concrete value to implement `pgn.PGN`.
+Generated message pointers implement both. Nil values and read-only
+`pgn.UnknownPGN` values return errors. Outgoing messages are copied at write
+admission; do not mutate a message during the call.
 
 ### Address Claiming
 
@@ -250,6 +258,20 @@ client, err := n2k.NewClient(ctx,
 ```
 
 ### Read-only
+
+`Receive` and `NewScanner` decode single frames, fast packets, and complete
+ISO transport captures from every frame source. Passive ISO assembly accepts
+BAM and addressed transfers with an announcement and all DT frames in order;
+it does not send CTS or acknowledgments and does not require peer CTS records
+in the capture. Missing or expired transfers are discarded. Assembly precedes
+PGN filtering, so `Filter("pgn == 65240")` can select a transported message.
+Without a filter, the individual TP control/data messages remain visible too.
+
+`WithBus` is for `NewClient`. To read a custom bus, use `client.Receive()`,
+`client.Scanner()`, or `client.Observations()`; standalone readers reject it.
+Standalone scanners and iterators own their sources. `Scanner.Close` and an
+early loop exit wait for source cleanup. Call `Next`, `Message`, and `Err`
+from one goroutine; `Close` may run concurrently to stop a blocked `Next`.
 
 #### Iterator API
 
@@ -409,7 +431,13 @@ The session exposes the complete compiled NMEA 2000 BEM command set, including
 product/CAN/port information, Rx/Tx PGN controls, multi-reply lists, explicit
 commit/reinitialize methods, EBL wire trace, and cumulative metrics. Sends do
 not mutate Tx lists. `ConfigureTransmitPGNs` provides an explicit batched,
-rollback-capable volatile transaction.
+rollback-capable volatile transaction. Transactions serialize and retain the
+original settings before sending changes. Cancellation still permits one
+command-timeout window for same-connection rollback; errors include any
+restoration failure. Check `session.Close()` as well: it cancels active
+configuration and retries restoration on the same connection epoch. A lost
+connection prevents restoration through a later epoch. Direct Tx-list BEM
+commands must not run concurrently with a transaction.
 
 Both a gateway session and a source-authoritative `Client` expose the same
 typed commands for remote Actisense devices through addressed PGN 126720:
@@ -502,7 +530,7 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.WithWriteQueue(n)` | Pending asynchronous write capacity; default 64 |
 | `n2k.WithWriteTimeout(d)` | Deadline for each physical write; default 1s |
 | `n2k.WithReconnect(policy)` | Auto-reconnect dropped TCP gateway connections with exponential backoff (`ReconnectPolicy{InitialBackoff, MaxBackoff}`; zero values default to 500ms/30s) |
-| `n2k.WithBus(bus)` | Inject a pre-constructed `n2k.Bus` (custom transport or test fake) instead of CAN/USB sources |
+| `n2k.WithBus(bus)` | Use a pre-constructed `n2k.Bus` with `NewClient` (custom transport or test fake) instead of CAN/USB sources |
 
 ### Errors, backpressure, and health
 
@@ -563,7 +591,7 @@ fmt.Println(status.Address, status.AddressClaimed, status.Connected,
 
 ### Custom transports
 
-`WithBus` is the extension seam for hardware and gateways not included here.
+`WithBus` is the `NewClient` extension seam for hardware and gateways not included here.
 Implement `Bus` for frame-level read/write access. Optionally implement
 `ObservationBus` to retain transport context, `ReadyBus` when opening is
 asynchronous, `ConnectionLifecycleBus` for reconnect epochs, and
@@ -616,7 +644,10 @@ the PGN immediately for deterministic replacement and group-function retiming:
 ```go
 stop, err := client.BroadcastPGN(127250, time.Second, func(ctx context.Context) pgn.Message {
     heading := &pgn.VesselHeading{}
-    heading.SetHeadingValue(currentHeadingRadians())
+    if err := heading.SetHeadingValue(currentHeadingRadians()); err != nil {
+        log.Printf("invalid heading: %v", err)
+        return nil // skip this tick
+    }
     return heading
 })
 if err != nil {
@@ -718,7 +749,9 @@ unit math — SI units in, SI units out, raw ticks underneath:
 
 ```go
 heading := &pgn.VesselHeading{}
-heading.SetHeadingValue(1.5708)      // radians -> stored as 15708 raw ticks
+if err := heading.SetHeadingValue(1.5708); err != nil { // 15708 raw ticks
+    return err
+}
 
 rad, ok := heading.HeadingValue()    // 1.5708, true
 _ = heading.Heading                  // *uint64 raw ticks, still there
@@ -727,8 +760,12 @@ depth := decoded.(*pgn.WaterDepth)
 meters, ok := depth.DepthValue()     // e.g. 2.70 m from raw 270
 ```
 
-The accessor's `bool` is `false` when the field is nil — the wire sent the
-field's null/out-of-range sentinel, or the payload ended before reaching it.
+The accessor's `bool` is `false` for absent, sentinel, or out-of-range
+measurements. A setter rounds to the nearest wire tick and returns an error
+wrapping `pgn.ErrInvalidPhysicalValue` if the input is NaN, infinite, outside
+the physical or integer range, or rounds to an unavailable measurement. Failed
+setters leave the previous field intact; check the error before transmitting.
+A nil receiver also returns this error.
 Each accessor documents its unit and conversion (`value = raw * resolution +
 offset`); the units are the schema's SI units (`rad`, `m/s`, `K`, `V`, ...).
 

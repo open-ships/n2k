@@ -45,7 +45,7 @@ func (s *fileSource) run(ctx context.Context, log *slog.Logger, handler func(raw
 	if err != nil {
 		return fmt.Errorf("n2k: opening log file: %w", err)
 	}
-	defer func() { _ = f.Close() }()
+	defer closeSourceOnCancel(ctx, f)()
 
 	var lastTS time.Time
 	scanner := bufio.NewScanner(f)

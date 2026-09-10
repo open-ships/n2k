@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type FusionMediaControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -709,10 +707,30 @@ func (m *FusionMedia) LengthValue() (float64, bool) {
 }
 
 // SetLengthValue sets Length from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *FusionMedia) SetLengthValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FusionMedia) SetLengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("Length", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Length = &raw
+	if _, ok := candidate.LengthValue(); !ok {
+		return invalidPhysicalValue("Length", v)
+	}
 	m.Length = &raw
+	return nil
 }
 
 // PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
@@ -741,10 +759,30 @@ func (m *FusionMedia) PositionInTrackValue() (float64, bool) {
 }
 
 // SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *FusionMedia) SetPositionInTrackValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FusionMedia) SetPositionInTrackValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionInTrack = &raw
+	if _, ok := candidate.PositionInTrackValue(); !ok {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
 	m.PositionInTrack = &raw
+	return nil
 }
 
 type FusionMenuItem struct {
@@ -1569,10 +1607,30 @@ func (m *FusionTrackPosition) ProgressValue() (float64, bool) {
 }
 
 // SetProgressValue sets Progress from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *FusionTrackPosition) SetProgressValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FusionTrackPosition) SetProgressValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Progress", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Progress", v)
+	}
+	if v > 16777.212 && !approximatelyEqual(v, 16777.212) {
+		return invalidPhysicalValue("Progress", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 24, false)
+	if err != nil {
+		return invalidPhysicalValue("Progress", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Progress = &raw
+	if _, ok := candidate.ProgressValue(); !ok {
+		return invalidPhysicalValue("Progress", v)
+	}
 	m.Progress = &raw
+	return nil
 }
 
 type FusionTuner struct {
@@ -1636,10 +1694,30 @@ func (m *FusionTuner) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 1.
-func (m *FusionTuner) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FusionTuner) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type FusionUsbRepeatStatus struct {

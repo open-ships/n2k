@@ -2,6 +2,7 @@ package n2k
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"sync"
 
@@ -12,6 +13,23 @@ import (
 
 type source interface {
 	run(ctx context.Context, log *slog.Logger, handler func(raw.Observation)) error
+}
+
+// closeSourceOnCancel interrupts reads and joins the cancellation callback
+// before the source returns, so Scanner.Close also waits for descriptor cleanup.
+func closeSourceOnCancel(ctx context.Context, resource io.Closer) func() {
+	done := make(chan struct{})
+	stop := context.AfterFunc(ctx, func() {
+		defer close(done)
+		_ = resource.Close()
+	})
+	return func() {
+		if stop() {
+			_ = resource.Close()
+		} else {
+			<-done
+		}
+	}
 }
 
 // busBacked is implemented by sources that are backed by real hardware and

@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type SonichubAmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -68,10 +66,30 @@ func (m *SonichubAmRadio) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 1.
-func (m *SonichubAmRadio) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SonichubAmRadio) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type SonichubAlbum struct {
@@ -229,10 +247,30 @@ func (m *SonichubFmRadio) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 1.
-func (m *SonichubFmRadio) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SonichubFmRadio) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type SonichubInit1 struct {
@@ -462,10 +500,30 @@ func (m *SonichubPlaylist) LengthValue() (float64, bool) {
 }
 
 // SetLengthValue sets Length from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *SonichubPlaylist) SetLengthValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SonichubPlaylist) SetLengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("Length", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Length = &raw
+	if _, ok := candidate.LengthValue(); !ok {
+		return invalidPhysicalValue("Length", v)
+	}
 	m.Length = &raw
+	return nil
 }
 
 // PositionInTrackValue returns PositionInTrack as a physical value in s (value = raw * 0.001).
@@ -494,10 +552,30 @@ func (m *SonichubPlaylist) PositionInTrackValue() (float64, bool) {
 }
 
 // SetPositionInTrackValue sets PositionInTrack from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *SonichubPlaylist) SetPositionInTrackValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SonichubPlaylist) SetPositionInTrackValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionInTrack = &raw
+	if _, ok := candidate.PositionInTrackValue(); !ok {
+		return invalidPhysicalValue("PositionInTrack", v)
+	}
 	m.PositionInTrack = &raw
+	return nil
 }
 
 type SonichubPosition struct {
@@ -556,10 +634,30 @@ func (m *SonichubPosition) PositionValue() (float64, bool) {
 }
 
 // SetPositionValue sets Position from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *SonichubPosition) SetPositionValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SonichubPosition) SetPositionValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Position", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Position", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("Position", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Position", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Position = &raw
+	if _, ok := candidate.PositionValue(); !ok {
+		return invalidPhysicalValue("Position", v)
+	}
 	m.Position = &raw
+	return nil
 }
 
 type SonichubSource struct {

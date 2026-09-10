@@ -1,9 +1,39 @@
 package pgn
 
 import (
+	"errors"
 	"fmt"
+	"math"
 	"reflect"
 )
+
+// ErrInvalidPhysicalValue reports a non-finite, unrepresentable, sentinel, or
+// out-of-range physical measurement. Setters leave the previous field intact.
+var ErrInvalidPhysicalValue = errors.New("invalid physical value")
+
+func invalidPhysicalValue(field string, value float64) error {
+	return fmt.Errorf("%w: %s = %g", ErrInvalidPhysicalValue, field, value)
+}
+
+// Check the rounded float before converting it: conversions outside the
+// integer range are implementation dependent, including NaN and infinities.
+func physicalRawTicks(value, resolution, offset float64, bits int, signed bool) (float64, error) {
+	if math.IsNaN(value) || math.IsInf(value, 0) || bits < 1 || bits > 64 {
+		return 0, ErrInvalidPhysicalValue
+	}
+	ticks := math.Round((value - offset) / resolution)
+	min := 0.0
+	if signed {
+		bits--
+		min = -math.Ldexp(1, bits)
+	}
+	// Use an exclusive power-of-two upper bound: float64 cannot distinguish
+	// MaxUint64/MaxInt64 from the first overflowing integer at these widths.
+	if math.IsNaN(ticks) || ticks < min || ticks >= math.Ldexp(1, bits) {
+		return 0, ErrInvalidPhysicalValue
+	}
+	return ticks, nil
+}
 
 // PhysicalValue returns the physical (unit-scaled) value of the numeric field
 // with the given source order on a decoded PGN struct, applying the field's
@@ -11,7 +41,7 @@ import (
 //
 // Most callers should prefer the generated typed accessors instead: every
 // numeric field with a physical interpretation has <Field>Value() (float64,
-// bool) and Set<Field>Value(float64) methods on its struct (for example,
+// bool) and Set<Field>Value(float64) error methods on its struct (for example,
 // VesselHeading.HeadingValue returns radians). PhysicalValue remains for
 // dynamic, metadata-driven access when the field is only known at runtime.
 // The unit string is the metadata Unit label ("rad", "m/s", "K", ...), empty

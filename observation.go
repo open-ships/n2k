@@ -19,7 +19,11 @@ import (
 // allowing transport Adapter implementations to share the cycle-free raw
 // package.
 type Observation = raw.Observation
+
+// ObservationKind identifies the frame, message, gateway, or error layer.
 type ObservationKind = raw.Kind
+
+// Direction identifies received, transmitted, or unknown traffic direction.
 type Direction = raw.Direction
 
 const (
@@ -65,6 +69,8 @@ func normalizeObservation(observation raw.Observation) raw.Observation {
 // the source, which makes file capture and replay lossless without unbounded
 // memory growth. Use Client.Observations for a writable Client; that live
 // protocol path fails only the slow subscriber with ErrObservationOverflow.
+// Early iteration exit cancels and joins all source cleanup. WithBus is only
+// accepted by NewClient; use Client.Observations to observe a custom bus.
 func Observe(ctx context.Context, opts ...Option) iter.Seq2[Observation, error] {
 	return func(yield func(Observation, error) bool) {
 		cfg := config{}
@@ -81,10 +87,7 @@ func Observe(ctx context.Context, opts ...Option) iter.Seq2[Observation, error] 
 			cfg.logger = slog.Default()
 		}
 		if optionErr == nil {
-			optionErr = cfg.validate()
-		}
-		if optionErr == nil && len(cfg.sources) == 0 {
-			optionErr = errors.New("n2k: Observe requires at least one source option")
+			optionErr = cfg.validateRead()
 		}
 		if optionErr != nil {
 			yield(Observation{}, optionErr)
@@ -92,7 +95,11 @@ func Observe(ctx context.Context, opts ...Option) iter.Seq2[Observation, error] 
 		}
 
 		observeCtx, cancel := context.WithCancel(ctx)
-		defer cancel()
+		done := make(chan struct{})
+		defer func() {
+			cancel()
+			<-done
+		}()
 		buffer := defaultReceiveBuffer
 		if cfg.receiveBuffer != nil {
 			buffer = *cfg.receiveBuffer
@@ -110,6 +117,7 @@ func Observe(ctx context.Context, opts ...Option) iter.Seq2[Observation, error] 
 			errMu.Unlock()
 		}
 		go func() {
+			defer close(done)
 			defer close(observations)
 			runErr := runSources(observeCtx, cfg.logger, cfg.sources, func(observation raw.Observation) {
 				select {

@@ -73,8 +73,12 @@ func TestMeasurementSentinelsRemainInspectableButUnavailable(t *testing.T) {
 func TestCoordinateIndependentBoundaries(t *testing.T) {
 	for _, latitude := range []float64{-90, -89.9999999, 89.9999999, 90} {
 		var msg PositionRapidUpdate
-		msg.SetLatitudeValue(latitude)
-		msg.SetLongitudeValue(180)
+		if err := msg.SetLatitudeValue(latitude); err != nil {
+			t.Fatal(err)
+		}
+		if err := msg.SetLongitudeValue(180); err != nil {
+			t.Fatal(err)
+		}
 		payload, err := msg.EncodePayload()
 		if err != nil {
 			t.Fatalf("latitude %g: %v", latitude, err)
@@ -105,11 +109,15 @@ func TestInvalidPhysicalPayloadReplaysUntilMutation(t *testing.T) {
 	if err != nil || !bytes.Equal(encoded, payload) {
 		t.Fatalf("unchanged invalid payload replay = %x, %v", encoded, err)
 	}
-	msg.SetLongitudeValue(1)
+	if err := msg.SetLongitudeValue(1); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := msg.EncodePayload(); err == nil {
 		t.Fatal("mutated message bypassed outbound latitude validation")
 	}
-	msg.SetLatitudeValue(90)
+	if err := msg.SetLatitudeValue(90); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := msg.EncodePayload(); err != nil {
 		t.Fatalf("corrected message did not encode: %v", err)
 	}

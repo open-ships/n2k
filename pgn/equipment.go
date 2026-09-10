@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type FluidLevel struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -59,10 +57,30 @@ func (m *FluidLevel) LevelValue() (float64, bool) {
 }
 
 // SetLevelValue sets Level from a physical value in %, rounded to the nearest
-// wire tick of 0.004.
-func (m *FluidLevel) SetLevelValue(v float64) {
-	raw := int64(math.Round(v / 0.004))
+// wire tick of 0.004. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FluidLevel) SetLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Level", v)
+	}
+	if v < -131.068 && !approximatelyEqual(v, -131.068) {
+		return invalidPhysicalValue("Level", v)
+	}
+	if v > 131.056 && !approximatelyEqual(v, 131.056) {
+		return invalidPhysicalValue("Level", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.004, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Level", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Level = &raw
+	if _, ok := candidate.LevelValue(); !ok {
+		return invalidPhysicalValue("Level", v)
+	}
 	m.Level = &raw
+	return nil
 }
 
 // CapacityValue returns Capacity as a physical value in L (value = raw * 0.1).
@@ -91,10 +109,30 @@ func (m *FluidLevel) CapacityValue() (float64, bool) {
 }
 
 // SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
-// wire tick of 0.1.
-func (m *FluidLevel) SetCapacityValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FluidLevel) SetCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v > 4.294967292e+08 && !approximatelyEqual(v, 4.294967292e+08) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Capacity = &raw
+	if _, ok := candidate.CapacityValue(); !ok {
+		return invalidPhysicalValue("Capacity", v)
+	}
 	m.Capacity = &raw
+	return nil
 }
 
 type ElevatorCarStatus struct {
@@ -201,10 +239,30 @@ func (m *ElevatorCarStatus) SpeedOfElevatorCarValue() (float64, bool) {
 }
 
 // SetSpeedOfElevatorCarValue sets SpeedOfElevatorCar from a physical value in m/s, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElevatorCarStatus) SetSpeedOfElevatorCarValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElevatorCarStatus) SetSpeedOfElevatorCarValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SpeedOfElevatorCar", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("SpeedOfElevatorCar", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("SpeedOfElevatorCar", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("SpeedOfElevatorCar", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.SpeedOfElevatorCar = &raw
+	if _, ok := candidate.SpeedOfElevatorCarValue(); !ok {
+		return invalidPhysicalValue("SpeedOfElevatorCar", v)
+	}
 	m.SpeedOfElevatorCar = &raw
+	return nil
 }
 
 type ElevatorMotorControl struct {
@@ -421,10 +479,30 @@ func (m *WatermakerInputSettingAndStatus) SalinityValue() (float64, bool) {
 }
 
 // SetSalinityValue sets Salinity from a physical value in ppm, rounded to the nearest
-// wire tick of 1.
-func (m *WatermakerInputSettingAndStatus) SetSalinityValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetSalinityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Salinity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Salinity", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("Salinity", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Salinity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Salinity = &raw
+	if _, ok := candidate.SalinityValue(); !ok {
+		return invalidPhysicalValue("Salinity", v)
+	}
 	m.Salinity = &raw
+	return nil
 }
 
 // ProductWaterTemperatureValue returns ProductWaterTemperature as a physical value in K (value = raw * 0.01).
@@ -453,10 +531,30 @@ func (m *WatermakerInputSettingAndStatus) ProductWaterTemperatureValue() (float6
 }
 
 // SetProductWaterTemperatureValue sets ProductWaterTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *WatermakerInputSettingAndStatus) SetProductWaterTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetProductWaterTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ProductWaterTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ProductWaterTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("ProductWaterTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ProductWaterTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ProductWaterTemperature = &raw
+	if _, ok := candidate.ProductWaterTemperatureValue(); !ok {
+		return invalidPhysicalValue("ProductWaterTemperature", v)
+	}
 	m.ProductWaterTemperature = &raw
+	return nil
 }
 
 // PreFilterPressureValue returns PreFilterPressure as a physical value in Pa (value = raw * 100).
@@ -485,10 +583,30 @@ func (m *WatermakerInputSettingAndStatus) PreFilterPressureValue() (float64, boo
 }
 
 // SetPreFilterPressureValue sets PreFilterPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *WatermakerInputSettingAndStatus) SetPreFilterPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetPreFilterPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PreFilterPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PreFilterPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("PreFilterPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PreFilterPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PreFilterPressure = &raw
+	if _, ok := candidate.PreFilterPressureValue(); !ok {
+		return invalidPhysicalValue("PreFilterPressure", v)
+	}
 	m.PreFilterPressure = &raw
+	return nil
 }
 
 // PostFilterPressureValue returns PostFilterPressure as a physical value in Pa (value = raw * 100).
@@ -517,10 +635,30 @@ func (m *WatermakerInputSettingAndStatus) PostFilterPressureValue() (float64, bo
 }
 
 // SetPostFilterPressureValue sets PostFilterPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *WatermakerInputSettingAndStatus) SetPostFilterPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetPostFilterPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PostFilterPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PostFilterPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("PostFilterPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PostFilterPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PostFilterPressure = &raw
+	if _, ok := candidate.PostFilterPressureValue(); !ok {
+		return invalidPhysicalValue("PostFilterPressure", v)
+	}
 	m.PostFilterPressure = &raw
+	return nil
 }
 
 // FeedPressureValue returns FeedPressure as a physical value in Pa (value = raw * 1000).
@@ -549,10 +687,30 @@ func (m *WatermakerInputSettingAndStatus) FeedPressureValue() (float64, bool) {
 }
 
 // SetFeedPressureValue sets FeedPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 1000.
-func (m *WatermakerInputSettingAndStatus) SetFeedPressureValue(v float64) {
-	raw := int64(math.Round(v / 1000))
+// wire tick of 1000. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetFeedPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FeedPressure", v)
+	}
+	if v < -3.2767e+07 && !approximatelyEqual(v, -3.2767e+07) {
+		return invalidPhysicalValue("FeedPressure", v)
+	}
+	if v > 3.2764e+07 && !approximatelyEqual(v, 3.2764e+07) {
+		return invalidPhysicalValue("FeedPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 1000, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FeedPressure", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FeedPressure = &raw
+	if _, ok := candidate.FeedPressureValue(); !ok {
+		return invalidPhysicalValue("FeedPressure", v)
+	}
 	m.FeedPressure = &raw
+	return nil
 }
 
 // SystemHighPressureValue returns SystemHighPressure as a physical value in Pa (value = raw * 1000).
@@ -581,10 +739,30 @@ func (m *WatermakerInputSettingAndStatus) SystemHighPressureValue() (float64, bo
 }
 
 // SetSystemHighPressureValue sets SystemHighPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 1000.
-func (m *WatermakerInputSettingAndStatus) SetSystemHighPressureValue(v float64) {
-	raw := uint64(math.Round(v / 1000))
+// wire tick of 1000. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetSystemHighPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SystemHighPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SystemHighPressure", v)
+	}
+	if v > 6.5532e+07 && !approximatelyEqual(v, 6.5532e+07) {
+		return invalidPhysicalValue("SystemHighPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 1000, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SystemHighPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SystemHighPressure = &raw
+	if _, ok := candidate.SystemHighPressureValue(); !ok {
+		return invalidPhysicalValue("SystemHighPressure", v)
+	}
 	m.SystemHighPressure = &raw
+	return nil
 }
 
 // ProductWaterFlowValue returns ProductWaterFlow as a physical value in L/h (value = raw * 0.1).
@@ -613,10 +791,30 @@ func (m *WatermakerInputSettingAndStatus) ProductWaterFlowValue() (float64, bool
 }
 
 // SetProductWaterFlowValue sets ProductWaterFlow from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *WatermakerInputSettingAndStatus) SetProductWaterFlowValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetProductWaterFlowValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ProductWaterFlow", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("ProductWaterFlow", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("ProductWaterFlow", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("ProductWaterFlow", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ProductWaterFlow = &raw
+	if _, ok := candidate.ProductWaterFlowValue(); !ok {
+		return invalidPhysicalValue("ProductWaterFlow", v)
+	}
 	m.ProductWaterFlow = &raw
+	return nil
 }
 
 // BrineWaterFlowValue returns BrineWaterFlow as a physical value in L/h (value = raw * 0.1).
@@ -645,10 +843,30 @@ func (m *WatermakerInputSettingAndStatus) BrineWaterFlowValue() (float64, bool) 
 }
 
 // SetBrineWaterFlowValue sets BrineWaterFlow from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *WatermakerInputSettingAndStatus) SetBrineWaterFlowValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetBrineWaterFlowValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BrineWaterFlow", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("BrineWaterFlow", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("BrineWaterFlow", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("BrineWaterFlow", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.BrineWaterFlow = &raw
+	if _, ok := candidate.BrineWaterFlowValue(); !ok {
+		return invalidPhysicalValue("BrineWaterFlow", v)
+	}
 	m.BrineWaterFlow = &raw
+	return nil
 }
 
 // RunTimeValue returns RunTime as a physical value in s (value = raw).
@@ -677,8 +895,28 @@ func (m *WatermakerInputSettingAndStatus) RunTimeValue() (float64, bool) {
 }
 
 // SetRunTimeValue sets RunTime from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *WatermakerInputSettingAndStatus) SetRunTimeValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *WatermakerInputSettingAndStatus) SetRunTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RunTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RunTime", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("RunTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("RunTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RunTime = &raw
+	if _, ok := candidate.RunTimeValue(); !ok {
+		return invalidPhysicalValue("RunTime", v)
+	}
 	m.RunTime = &raw
+	return nil
 }

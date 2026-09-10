@@ -17,8 +17,9 @@ explains the runtime design.
 - **NAME**: stable 64-bit ISO 11783 device identity used for address claiming.
 - **Commanded Address**: PGN 65240, a nine-byte broadcast ISO transport
   transfer that assigns a claimable address to the node with an exact NAME.
-- **Pipeline**: frame metadata, fast-packet assembly, decode, filtering, and
-  delivery.
+- **Pipeline**: frame metadata, passive ISO transport and fast-packet assembly,
+  decode, filtering, and delivery. A live Client supplies active ISO transport
+  completions through the same decode seam.
 - **Observation**: an owned record at the frame, assembled-message, or decode-
   error layer carrying source/network identity, capture and receipt time, and
   receive/transmit direction.
@@ -90,7 +91,8 @@ explains the runtime design.
     follows an uncertain physical transmission.
     Client lifecycle rejection is local to that Client. Standalone multi-source
     readers and replay preserve independent/historical epochs; fast-packet keys
-    include network identity and both epochs.
+    include network identity and both epochs, as do passive ISO transport keys.
+    Passive TCP sources stamp a new epoch on each successful reconnect.
 17. Cancellation interrupts physical I/O, not merely its caller's wait. Close
     joins owned workers. Custom buses must interrupt I/O on Close; scheduled
     providers must honor their context and must not call blocking Close/stop
@@ -119,7 +121,8 @@ explains the runtime design.
 - Actisense EBL capture parsing/writing: `internal/ebl/`, `source_ebl.go`,
   `ebl_writer.go`
 - Fast-packet assembly: `internal/adapter/`
-- ISO transport protocol: `internal/transport/`
+- ISO transport protocol: `internal/transport/`; passive capture assembly:
+  `internal/transport/passive.go`, integrated before filters in `pipeline.go`
 - Wire codec and generated messages: `pgn/`
 - Address claiming and Commanded Address: `internal/claiming/`, `client.go`
 - Device discovery: `registry.go`

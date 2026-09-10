@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type SimnetKeepAlive struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -497,10 +495,30 @@ func (m *SimnetAutopilotAngle) AngleValue() (float64, bool) {
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetAutopilotAngle) SetAngleValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetAutopilotAngle) SetAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Angle = &raw
+	if _, ok := candidate.AngleValue(); !ok {
+		return invalidPhysicalValue("Angle", v)
+	}
 	m.Angle = &raw
+	return nil
 }
 
 type SimnetMagneticField struct {
@@ -557,10 +575,30 @@ func (m *SimnetMagneticField) FieldXValue() (float64, bool) {
 }
 
 // SetFieldXValue sets FieldX from a physical value, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetMagneticField) SetFieldXValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetMagneticField) SetFieldXValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FieldX", v)
+	}
+	if v < -3.2767 && !approximatelyEqual(v, -3.2767) {
+		return invalidPhysicalValue("FieldX", v)
+	}
+	if v > 3.2764 && !approximatelyEqual(v, 3.2764) {
+		return invalidPhysicalValue("FieldX", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FieldX", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FieldX = &raw
+	if _, ok := candidate.FieldXValue(); !ok {
+		return invalidPhysicalValue("FieldX", v)
+	}
 	m.FieldX = &raw
+	return nil
 }
 
 // FieldYValue returns FieldY as a physical value (value = raw * 0.0001).
@@ -589,10 +627,30 @@ func (m *SimnetMagneticField) FieldYValue() (float64, bool) {
 }
 
 // SetFieldYValue sets FieldY from a physical value, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetMagneticField) SetFieldYValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetMagneticField) SetFieldYValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FieldY", v)
+	}
+	if v < -3.2767 && !approximatelyEqual(v, -3.2767) {
+		return invalidPhysicalValue("FieldY", v)
+	}
+	if v > 3.2764 && !approximatelyEqual(v, 3.2764) {
+		return invalidPhysicalValue("FieldY", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FieldY", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FieldY = &raw
+	if _, ok := candidate.FieldYValue(); !ok {
+		return invalidPhysicalValue("FieldY", v)
+	}
 	m.FieldY = &raw
+	return nil
 }
 
 // FieldZValue returns FieldZ as a physical value (value = raw * 0.0001).
@@ -621,10 +679,30 @@ func (m *SimnetMagneticField) FieldZValue() (float64, bool) {
 }
 
 // SetFieldZValue sets FieldZ from a physical value, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetMagneticField) SetFieldZValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetMagneticField) SetFieldZValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FieldZ", v)
+	}
+	if v < -3.2767 && !approximatelyEqual(v, -3.2767) {
+		return invalidPhysicalValue("FieldZ", v)
+	}
+	if v > 3.2764 && !approximatelyEqual(v, 3.2764) {
+		return invalidPhysicalValue("FieldZ", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FieldZ", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FieldZ = &raw
+	if _, ok := candidate.FieldZValue(); !ok {
+		return invalidPhysicalValue("FieldZ", v)
+	}
 	m.FieldZ = &raw
+	return nil
 }
 
 type SimnetApUnknown3 struct {
@@ -941,10 +1019,30 @@ func (m *SimnetFluidLevelSensorConfiguration) CapacityValue() (float64, bool) {
 }
 
 // SetCapacityValue sets Capacity from a physical value in L, rounded to the nearest
-// wire tick of 0.1.
-func (m *SimnetFluidLevelSensorConfiguration) SetCapacityValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetFluidLevelSensorConfiguration) SetCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v > 4.294967292e+08 && !approximatelyEqual(v, 4.294967292e+08) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Capacity = &raw
+	if _, ok := candidate.CapacityValue(); !ok {
+		return invalidPhysicalValue("Capacity", v)
+	}
 	m.Capacity = &raw
+	return nil
 }
 
 type SimnetFuelFlowTurbineConfiguration struct {
@@ -1178,10 +1276,30 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) LengthValue() (float64, bool) {
 }
 
 // SetLengthValue sets Length from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *SimnetAisClassBStaticDataMsg24PartB) SetLengthValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetLengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Length", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Length", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Length", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Length = &raw
+	if _, ok := candidate.LengthValue(); !ok {
+		return invalidPhysicalValue("Length", v)
+	}
 	m.Length = &raw
+	return nil
 }
 
 // BeamValue returns Beam as a physical value in m (value = raw * 0.1).
@@ -1210,10 +1328,30 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) BeamValue() (float64, bool) {
 }
 
 // SetBeamValue sets Beam from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *SimnetAisClassBStaticDataMsg24PartB) SetBeamValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetBeamValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Beam", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Beam", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Beam", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Beam", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Beam = &raw
+	if _, ok := candidate.BeamValue(); !ok {
+		return invalidPhysicalValue("Beam", v)
+	}
 	m.Beam = &raw
+	return nil
 }
 
 // PositionReferenceFromStarboardValue returns PositionReferenceFromStarboard as a physical value in m (value = raw * 0.1).
@@ -1242,10 +1380,30 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromStarboardValu
 }
 
 // SetPositionReferenceFromStarboardValue sets PositionReferenceFromStarboard from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromStarboardValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionReferenceFromStarboard", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionReferenceFromStarboard", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("PositionReferenceFromStarboard", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionReferenceFromStarboard", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionReferenceFromStarboard = &raw
+	if _, ok := candidate.PositionReferenceFromStarboardValue(); !ok {
+		return invalidPhysicalValue("PositionReferenceFromStarboard", v)
+	}
 	m.PositionReferenceFromStarboard = &raw
+	return nil
 }
 
 // PositionReferenceFromBowValue returns PositionReferenceFromBow as a physical value in m (value = raw * 0.1).
@@ -1274,10 +1432,30 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) PositionReferenceFromBowValue() (f
 }
 
 // SetPositionReferenceFromBowValue sets PositionReferenceFromBow from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionReferenceFromBow", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionReferenceFromBow", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("PositionReferenceFromBow", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionReferenceFromBow", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionReferenceFromBow = &raw
+	if _, ok := candidate.PositionReferenceFromBowValue(); !ok {
+		return invalidPhysicalValue("PositionReferenceFromBow", v)
+	}
 	m.PositionReferenceFromBow = &raw
+	return nil
 }
 
 type SimnetAisSilentMode struct {
@@ -1552,10 +1730,30 @@ func (m *SimnetCommandApChangeCourse) AngleValue() (float64, bool) {
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetCommandApChangeCourse) SetAngleValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetCommandApChangeCourse) SetAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Angle = &raw
+	if _, ok := candidate.AngleValue(); !ok {
+		return invalidPhysicalValue("Angle", v)
+	}
 	m.Angle = &raw
+	return nil
 }
 
 type SimnetCommandApFollowUp struct {
@@ -1962,10 +2160,30 @@ func (m *SimnetApCommandReplyChangeCourse) AngleValue() (float64, bool) {
 }
 
 // SetAngleValue sets Angle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SimnetApCommandReplyChangeCourse) SetAngleValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SimnetApCommandReplyChangeCourse) SetAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Angle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Angle", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Angle = &raw
+	if _, ok := candidate.AngleValue(); !ok {
+		return invalidPhysicalValue("Angle", v)
+	}
 	m.Angle = &raw
+	return nil
 }
 
 type SimnetAlarmMessage struct {

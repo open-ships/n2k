@@ -38,7 +38,11 @@ type WriteError struct {
 	TransmissionUncertain bool
 }
 
+// Error returns the underlying write failure text. Partial-transmission
+// evidence is available in CompletedRecords and TransmissionUncertain.
 func (e *WriteError) Error() string { return e.Err.Error() }
+
+// Unwrap exposes the underlying failure for errors.Is and errors.As.
 func (e *WriteError) Unwrap() error { return e.Err }
 
 type wireJob struct {

@@ -54,6 +54,11 @@ func compileFilter(expr string) (*filter, error) {
 	if iss != nil && iss.Err() != nil {
 		return nil, fmt.Errorf("compiling filter expression: %w", iss.Err())
 	}
+	// A dynamic msg field may be boolean at runtime. Preserve that API while
+	// rejecting expressions whose static type cannot be used as a predicate.
+	if ast.OutputType() != cel.BoolType && ast.OutputType() != cel.DynType {
+		return nil, fmt.Errorf("filter expression must return bool, got %s", ast.OutputType())
+	}
 
 	// Collect top-level AND conjuncts.
 	conjuncts := flattenAnd(ast.NativeRep().Expr())
@@ -67,7 +72,7 @@ func compileFilter(expr string) (*filter, error) {
 		if referencesMsg(c) {
 			msgExprs = append(msgExprs, s)
 		} else {
-			metaExprs = append(metaExprs, s)
+			metaExprs = append(metaExprs, "("+s+")")
 		}
 	}
 

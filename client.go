@@ -1047,7 +1047,8 @@ func (c *Client) handleCommandedAddressTransfer(destination uint8, data []byte) 
 
 // Write snapshots a PGN message and asynchronously transmits it. After Write
 // returns the caller may reuse the message. Application jobs retain FIFO
-// order; protocol traffic can run between their wire frames.
+// order; protocol traffic can run between their wire frames. The message must
+// implement pgn.PGN; nil and read-only messages return an errored WriteResult.
 func (c *Client) Write(msg pgn.Message) *WriteResult {
 	return c.WriteContext(context.Background(), msg)
 }
@@ -1398,7 +1399,7 @@ func (c *Client) newReplayScanner() *Scanner {
 	if c.cfg.receiveBuffer != nil {
 		receiveBuffer = *c.cfg.receiveBuffer
 	}
-	return &Scanner{ctx: ctx, cancel: cancel, cfg: c.cfg, ch: make(chan pgn.Message, receiveBuffer)}
+	return &Scanner{ctx: ctx, cancel: cancel, cfg: c.cfg, ch: make(chan pgn.Message, receiveBuffer), done: make(chan struct{})}
 }
 
 // WrittenFrames returns an owned snapshot of the newest ReplayFrameCapacity

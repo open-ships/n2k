@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// SourceDefinition is a pinned schema PGN variant used to build runtime
+// metadata. Its field definitions retain source semantics before Go type mapping.
 type SourceDefinition struct {
 	PGN                          uint32
 	StructName                   string
@@ -30,6 +32,8 @@ type SourceDefinition struct {
 	Fields                       []SourceFieldDefinition
 }
 
+// SourceFieldDefinition describes one pinned schema field, including its wire
+// width, physical conversion, sentinels, and conditional/repeating relationships.
 type SourceFieldDefinition struct {
 	Order                               int
 	SourceID                            string
@@ -224,6 +228,9 @@ func pgnFieldGoType(field SourceFieldDefinition) string {
 	}
 }
 
+// MatchesData checks variant-selector fields against data at their wire offsets.
+// It returns false for a nil descriptor, missing selector bytes, or mismatches.
+// It does not validate the complete message payload.
 func (info *PgnInfo) MatchesData(data []uint8) bool {
 	if info == nil {
 		return false
@@ -246,6 +253,9 @@ func (info *PgnInfo) MatchesData(data []uint8) bool {
 	return true
 }
 
+// FilterMatchingPgnInfos returns candidates whose selectors match data. If none
+// match, it returns the original candidates so decoders can report useful errors.
+// Returned descriptors are shared metadata and must not be mutated.
 func FilterMatchingPgnInfos(candidates []*PgnInfo, data []uint8) []*PgnInfo {
 	if len(candidates) == 0 {
 		return nil

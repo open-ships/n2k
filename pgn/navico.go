@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type NavicoDeviceStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -93,10 +91,30 @@ func (m *NavicoWirelessBatteryStatus) BatteryStatusValue() (float64, bool) {
 }
 
 // SetBatteryStatusValue sets BatteryStatus from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *NavicoWirelessBatteryStatus) SetBatteryStatusValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NavicoWirelessBatteryStatus) SetBatteryStatusValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BatteryStatus", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BatteryStatus", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("BatteryStatus", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("BatteryStatus", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BatteryStatus = &raw
+	if _, ok := candidate.BatteryStatusValue(); !ok {
+		return invalidPhysicalValue("BatteryStatus", v)
+	}
 	m.BatteryStatus = &raw
+	return nil
 }
 
 // BatteryChargeStatusValue returns BatteryChargeStatus as a physical value in % (value = raw).
@@ -125,10 +143,30 @@ func (m *NavicoWirelessBatteryStatus) BatteryChargeStatusValue() (float64, bool)
 }
 
 // SetBatteryChargeStatusValue sets BatteryChargeStatus from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *NavicoWirelessBatteryStatus) SetBatteryChargeStatusValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NavicoWirelessBatteryStatus) SetBatteryChargeStatusValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BatteryChargeStatus", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BatteryChargeStatus", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("BatteryChargeStatus", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("BatteryChargeStatus", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BatteryChargeStatus = &raw
+	if _, ok := candidate.BatteryChargeStatusValue(); !ok {
+		return invalidPhysicalValue("BatteryChargeStatus", v)
+	}
 	m.BatteryChargeStatus = &raw
+	return nil
 }
 
 type NavicoWirelessSignalStatus struct {
@@ -189,10 +227,30 @@ func (m *NavicoWirelessSignalStatus) SignalStrengthValue() (float64, bool) {
 }
 
 // SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *NavicoWirelessSignalStatus) SetSignalStrengthValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NavicoWirelessSignalStatus) SetSignalStrengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SignalStrength = &raw
+	if _, ok := candidate.SignalStrengthValue(); !ok {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
 	m.SignalStrength = &raw
+	return nil
 }
 
 type NavicoDepthQuality struct {
@@ -249,10 +307,30 @@ func (m *NavicoDepthQuality) DepthQualityValue() (float64, bool) {
 }
 
 // SetDepthQualityValue sets DepthQuality from a physical value, rounded to the nearest
-// wire tick of 0.01.
-func (m *NavicoDepthQuality) SetDepthQualityValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NavicoDepthQuality) SetDepthQualityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DepthQuality", v)
+	}
+	if v < -1.27 && !approximatelyEqual(v, -1.27) {
+		return invalidPhysicalValue("DepthQuality", v)
+	}
+	if v > 1.24 && !approximatelyEqual(v, 1.24) {
+		return invalidPhysicalValue("DepthQuality", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("DepthQuality", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.DepthQuality = &raw
+	if _, ok := candidate.DepthQualityValue(); !ok {
+		return invalidPhysicalValue("DepthQuality", v)
+	}
 	m.DepthQuality = &raw
+	return nil
 }
 
 type NavicoProprietary2 struct {
