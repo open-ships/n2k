@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type XantrexAcStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -77,10 +75,30 @@ func (m *XantrexAcStatus) VoltageValue() (float64, bool) {
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcStatus) SetVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcStatus) SetVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Voltage = &raw
+	if _, ok := candidate.VoltageValue(); !ok {
+		return invalidPhysicalValue("Voltage", v)
+	}
 	m.Voltage = &raw
+	return nil
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
@@ -109,10 +127,30 @@ func (m *XantrexAcStatus) CurrentValue() (float64, bool) {
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *XantrexAcStatus) SetCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcStatus) SetCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Current", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Current = &raw
+	if _, ok := candidate.CurrentValue(); !ok {
+		return invalidPhysicalValue("Current", v)
+	}
 	m.Current = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in % (value = raw).
@@ -141,10 +179,30 @@ func (m *XantrexAcStatus) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *XantrexAcStatus) SetPowerFactorValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcStatus) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type XantrexDcSourceConfigurationStatus struct {
@@ -217,10 +275,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownLevelValue() (float64, 
 }
 
 // SetDcUvShutdownLevelValue sets DcUvShutdownLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcUvShutdownLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcUvShutdownLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcUvShutdownLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcUvShutdownLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcUvShutdownLevel = &raw
+	if _, ok := candidate.DcUvShutdownLevelValue(); !ok {
+		return invalidPhysicalValue("DcUvShutdownLevel", v)
+	}
 	m.DcUvShutdownLevel = &raw
+	return nil
 }
 
 // DcUvWarningLevelValue returns DcUvWarningLevel as a physical value in V (value = raw * 0.01).
@@ -249,10 +327,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcUvWarningLevelValue() (float64, b
 }
 
 // SetDcUvWarningLevelValue sets DcUvWarningLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcUvWarningLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvWarningLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcUvWarningLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcUvWarningLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcUvWarningLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcUvWarningLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcUvWarningLevel = &raw
+	if _, ok := candidate.DcUvWarningLevelValue(); !ok {
+		return invalidPhysicalValue("DcUvWarningLevel", v)
+	}
 	m.DcUvWarningLevel = &raw
+	return nil
 }
 
 // DcUvShutdownDelayValue returns DcUvShutdownDelay as a physical value in V (value = raw * 0.01).
@@ -281,10 +379,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcUvShutdownDelayValue() (float64, 
 }
 
 // SetDcUvShutdownDelayValue sets DcUvShutdownDelay from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownDelayValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvShutdownDelayValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcUvShutdownDelay", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcUvShutdownDelay", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcUvShutdownDelay", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcUvShutdownDelay", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcUvShutdownDelay = &raw
+	if _, ok := candidate.DcUvShutdownDelayValue(); !ok {
+		return invalidPhysicalValue("DcUvShutdownDelay", v)
+	}
 	m.DcUvShutdownDelay = &raw
+	return nil
 }
 
 // DcUvRecoverLevelValue returns DcUvRecoverLevel as a physical value in V (value = raw * 0.01).
@@ -313,10 +431,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcUvRecoverLevelValue() (float64, b
 }
 
 // SetDcUvRecoverLevelValue sets DcUvRecoverLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcUvRecoverLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcUvRecoverLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcUvRecoverLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcUvRecoverLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcUvRecoverLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcUvRecoverLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcUvRecoverLevel = &raw
+	if _, ok := candidate.DcUvRecoverLevelValue(); !ok {
+		return invalidPhysicalValue("DcUvRecoverLevel", v)
+	}
 	m.DcUvRecoverLevel = &raw
+	return nil
 }
 
 // DcOvShutdownLevelValue returns DcOvShutdownLevel as a physical value in V (value = raw * 0.01).
@@ -345,10 +483,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownLevelValue() (float64, 
 }
 
 // SetDcOvShutdownLevelValue sets DcOvShutdownLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcOvShutdownLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcOvShutdownLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcOvShutdownLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcOvShutdownLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcOvShutdownLevel = &raw
+	if _, ok := candidate.DcOvShutdownLevelValue(); !ok {
+		return invalidPhysicalValue("DcOvShutdownLevel", v)
+	}
 	m.DcOvShutdownLevel = &raw
+	return nil
 }
 
 // DcOvWarningLevelValue returns DcOvWarningLevel as a physical value in V (value = raw * 0.01).
@@ -377,10 +535,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcOvWarningLevelValue() (float64, b
 }
 
 // SetDcOvWarningLevelValue sets DcOvWarningLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcOvWarningLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvWarningLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcOvWarningLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcOvWarningLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcOvWarningLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcOvWarningLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcOvWarningLevel = &raw
+	if _, ok := candidate.DcOvWarningLevelValue(); !ok {
+		return invalidPhysicalValue("DcOvWarningLevel", v)
+	}
 	m.DcOvWarningLevel = &raw
+	return nil
 }
 
 // DcOvShutdownDelayValue returns DcOvShutdownDelay as a physical value in V (value = raw * 0.01).
@@ -409,10 +587,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcOvShutdownDelayValue() (float64, 
 }
 
 // SetDcOvShutdownDelayValue sets DcOvShutdownDelay from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownDelayValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvShutdownDelayValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcOvShutdownDelay", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcOvShutdownDelay", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcOvShutdownDelay", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcOvShutdownDelay", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcOvShutdownDelay = &raw
+	if _, ok := candidate.DcOvShutdownDelayValue(); !ok {
+		return invalidPhysicalValue("DcOvShutdownDelay", v)
+	}
 	m.DcOvShutdownDelay = &raw
+	return nil
 }
 
 // DcOvRecoverLevelValue returns DcOvRecoverLevel as a physical value in V (value = raw * 0.01).
@@ -441,10 +639,30 @@ func (m *XantrexDcSourceConfigurationStatus) DcOvRecoverLevelValue() (float64, b
 }
 
 // SetDcOvRecoverLevelValue sets DcOvRecoverLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexDcSourceConfigurationStatus) SetDcOvRecoverLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexDcSourceConfigurationStatus) SetDcOvRecoverLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcOvRecoverLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcOvRecoverLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("DcOvRecoverLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcOvRecoverLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcOvRecoverLevel = &raw
+	if _, ok := candidate.DcOvRecoverLevelValue(); !ok {
+		return invalidPhysicalValue("DcOvRecoverLevel", v)
+	}
 	m.DcOvRecoverLevel = &raw
+	return nil
 }
 
 type XantrexAcOutputConfigurationStatus struct {
@@ -515,10 +733,30 @@ func (m *XantrexAcOutputConfigurationStatus) VoltageValue() (float64, bool) {
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcOutputConfigurationStatus) SetVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcOutputConfigurationStatus) SetVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Voltage = &raw
+	if _, ok := candidate.VoltageValue(); !ok {
+		return invalidPhysicalValue("Voltage", v)
+	}
 	m.Voltage = &raw
+	return nil
 }
 
 // OvFaultLevelValue returns OvFaultLevel as a physical value in V (value = raw * 0.01).
@@ -547,10 +785,30 @@ func (m *XantrexAcOutputConfigurationStatus) OvFaultLevelValue() (float64, bool)
 }
 
 // SetOvFaultLevelValue sets OvFaultLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcOutputConfigurationStatus) SetOvFaultLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcOutputConfigurationStatus) SetOvFaultLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OvFaultLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OvFaultLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("OvFaultLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OvFaultLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OvFaultLevel = &raw
+	if _, ok := candidate.OvFaultLevelValue(); !ok {
+		return invalidPhysicalValue("OvFaultLevel", v)
+	}
 	m.OvFaultLevel = &raw
+	return nil
 }
 
 // UvFaultLevelValue returns UvFaultLevel as a physical value in V (value = raw * 0.01).
@@ -579,10 +837,30 @@ func (m *XantrexAcOutputConfigurationStatus) UvFaultLevelValue() (float64, bool)
 }
 
 // SetUvFaultLevelValue sets UvFaultLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcOutputConfigurationStatus) SetUvFaultLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcOutputConfigurationStatus) SetUvFaultLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("UvFaultLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("UvFaultLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("UvFaultLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("UvFaultLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.UvFaultLevel = &raw
+	if _, ok := candidate.UvFaultLevelValue(); !ok {
+		return invalidPhysicalValue("UvFaultLevel", v)
+	}
 	m.UvFaultLevel = &raw
+	return nil
 }
 
 type XantrexChargerConfigurationStatus struct {
@@ -659,10 +937,30 @@ func (m *XantrexChargerConfigurationStatus) BulkVoltageValue() (float64, bool) {
 }
 
 // SetBulkVoltageValue sets BulkVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexChargerConfigurationStatus) SetBulkVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexChargerConfigurationStatus) SetBulkVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BulkVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BulkVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("BulkVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BulkVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BulkVoltage = &raw
+	if _, ok := candidate.BulkVoltageValue(); !ok {
+		return invalidPhysicalValue("BulkVoltage", v)
+	}
 	m.BulkVoltage = &raw
+	return nil
 }
 
 // AbsorptionVoltageValue returns AbsorptionVoltage as a physical value in V (value = raw * 0.01).
@@ -691,10 +989,30 @@ func (m *XantrexChargerConfigurationStatus) AbsorptionVoltageValue() (float64, b
 }
 
 // SetAbsorptionVoltageValue sets AbsorptionVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexChargerConfigurationStatus) SetAbsorptionVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexChargerConfigurationStatus) SetAbsorptionVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AbsorptionVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AbsorptionVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("AbsorptionVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AbsorptionVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AbsorptionVoltage = &raw
+	if _, ok := candidate.AbsorptionVoltageValue(); !ok {
+		return invalidPhysicalValue("AbsorptionVoltage", v)
+	}
 	m.AbsorptionVoltage = &raw
+	return nil
 }
 
 // FloatVoltageValue returns FloatVoltage as a physical value in V (value = raw * 0.01).
@@ -723,10 +1041,30 @@ func (m *XantrexChargerConfigurationStatus) FloatVoltageValue() (float64, bool) 
 }
 
 // SetFloatVoltageValue sets FloatVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexChargerConfigurationStatus) SetFloatVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexChargerConfigurationStatus) SetFloatVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FloatVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("FloatVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("FloatVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("FloatVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.FloatVoltage = &raw
+	if _, ok := candidate.FloatVoltageValue(); !ok {
+		return invalidPhysicalValue("FloatVoltage", v)
+	}
 	m.FloatVoltage = &raw
+	return nil
 }
 
 // EqualizationVoltageValue returns EqualizationVoltage as a physical value in V (value = raw * 0.01).
@@ -755,10 +1093,30 @@ func (m *XantrexChargerConfigurationStatus) EqualizationVoltageValue() (float64,
 }
 
 // SetEqualizationVoltageValue sets EqualizationVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexChargerConfigurationStatus) SetEqualizationVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexChargerConfigurationStatus) SetEqualizationVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EqualizationVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EqualizationVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("EqualizationVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EqualizationVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EqualizationVoltage = &raw
+	if _, ok := candidate.EqualizationVoltageValue(); !ok {
+		return invalidPhysicalValue("EqualizationVoltage", v)
+	}
 	m.EqualizationVoltage = &raw
+	return nil
 }
 
 // GenericChargeVoltageValue returns GenericChargeVoltage as a physical value in V (value = raw * 0.01).
@@ -787,10 +1145,30 @@ func (m *XantrexChargerConfigurationStatus) GenericChargeVoltageValue() (float64
 }
 
 // SetGenericChargeVoltageValue sets GenericChargeVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexChargerConfigurationStatus) SetGenericChargeVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexChargerConfigurationStatus) SetGenericChargeVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("GenericChargeVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("GenericChargeVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("GenericChargeVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("GenericChargeVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.GenericChargeVoltage = &raw
+	if _, ok := candidate.GenericChargeVoltageValue(); !ok {
+		return invalidPhysicalValue("GenericChargeVoltage", v)
+	}
 	m.GenericChargeVoltage = &raw
+	return nil
 }
 
 type XantrexAcInputConfigurationStatus struct {
@@ -871,10 +1249,30 @@ func (m *XantrexAcInputConfigurationStatus) AcUvLevelValue() (float64, bool) {
 }
 
 // SetAcUvLevelValue sets AcUvLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcInputConfigurationStatus) SetAcUvLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcInputConfigurationStatus) SetAcUvLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcUvLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcUvLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("AcUvLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcUvLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcUvLevel = &raw
+	if _, ok := candidate.AcUvLevelValue(); !ok {
+		return invalidPhysicalValue("AcUvLevel", v)
+	}
 	m.AcUvLevel = &raw
+	return nil
 }
 
 // AcOvLevelValue returns AcOvLevel as a physical value in V (value = raw * 0.01).
@@ -903,8 +1301,28 @@ func (m *XantrexAcInputConfigurationStatus) AcOvLevelValue() (float64, bool) {
 }
 
 // SetAcOvLevelValue sets AcOvLevel from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *XantrexAcInputConfigurationStatus) SetAcOvLevelValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *XantrexAcInputConfigurationStatus) SetAcOvLevelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcOvLevel", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcOvLevel", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("AcOvLevel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcOvLevel", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcOvLevel = &raw
+	if _, ok := candidate.AcOvLevelValue(); !ok {
+		return invalidPhysicalValue("AcOvLevel", v)
+	}
 	m.AcOvLevel = &raw
+	return nil
 }

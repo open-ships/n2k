@@ -22,6 +22,7 @@ type ActisenseModeError struct {
 	Err           error
 }
 
+// Error describes the requested operating mode and its setup failure.
 func (e *ActisenseModeError) Error() string {
 	return fmt.Sprintf("n2k: Actisense operating mode %d setup failed: %v", e.RequestedMode, e.Err)
 }

@@ -1225,7 +1225,9 @@ func TestClient_MessageWriterBusBypassesFraming(t *testing.T) {
 
 	// A single-frame PGN write becomes one whole message.
 	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.5708)
+	if err := heading.SetHeadingValue(1.5708); err != nil {
+		t.Fatal(err)
+	}
 	require.NoError(t, c.Write(heading).Wait())
 
 	// A fast-packet PGN write also becomes one whole message instead of

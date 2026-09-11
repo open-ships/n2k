@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type Message0xe8000xee00StandardizedSingleFrameAddressed struct {
 	Info MessageInfo `json:"info"`
 	Data []uint8     `json:"data,omitempty" n2k:"1"`
@@ -762,10 +760,30 @@ func (m *NmeaRequestGroupFunction) TransmissionIntervalValue() (float64, bool) {
 }
 
 // SetTransmissionIntervalValue sets TransmissionInterval from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *NmeaRequestGroupFunction) SetTransmissionIntervalValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NmeaRequestGroupFunction) SetTransmissionIntervalValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TransmissionInterval", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TransmissionInterval", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("TransmissionInterval", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TransmissionInterval", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TransmissionInterval = &raw
+	if _, ok := candidate.TransmissionIntervalValue(); !ok {
+		return invalidPhysicalValue("TransmissionInterval", v)
+	}
 	m.TransmissionInterval = &raw
+	return nil
 }
 
 // TransmissionIntervalOffsetValue returns TransmissionIntervalOffset as a physical value in s (value = raw * 0.01).
@@ -794,10 +812,30 @@ func (m *NmeaRequestGroupFunction) TransmissionIntervalOffsetValue() (float64, b
 }
 
 // SetTransmissionIntervalOffsetValue sets TransmissionIntervalOffset from a physical value in s, rounded to the nearest
-// wire tick of 0.01.
-func (m *NmeaRequestGroupFunction) SetTransmissionIntervalOffsetValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *NmeaRequestGroupFunction) SetTransmissionIntervalOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TransmissionIntervalOffset", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TransmissionIntervalOffset", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("TransmissionIntervalOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TransmissionIntervalOffset", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TransmissionIntervalOffset = &raw
+	if _, ok := candidate.TransmissionIntervalOffsetValue(); !ok {
+		return invalidPhysicalValue("TransmissionIntervalOffset", v)
+	}
 	m.TransmissionIntervalOffset = &raw
+	return nil
 }
 
 type NmeaWriteFieldsGroupFunction struct {
@@ -1304,10 +1342,27 @@ func (m *GarminAutopilotTurnAngleMeasured) TurnAngleMeasuredValue() (float64, bo
 }
 
 // SetTurnAngleMeasuredValue sets TurnAngleMeasured from a physical value in rad, rounded to the nearest
-// wire tick of 9.58738e-05.
-func (m *GarminAutopilotTurnAngleMeasured) SetTurnAngleMeasuredValue(v float64) {
-	raw := uint64(math.Round(v / 9.58738e-05))
+// wire tick of 9.58738e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GarminAutopilotTurnAngleMeasured) SetTurnAngleMeasuredValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TurnAngleMeasured", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("TurnAngleMeasured", v)
+	}
+	ticks, err := physicalRawTicks(v, 9.58738e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TurnAngleMeasured", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TurnAngleMeasured = &raw
+	if _, ok := candidate.TurnAngleMeasuredValue(); !ok {
+		return invalidPhysicalValue("TurnAngleMeasured", v)
+	}
 	m.TurnAngleMeasured = &raw
+	return nil
 }
 
 type GarminAutopilotTurnAngleOrder struct {
@@ -1365,10 +1420,27 @@ func (m *GarminAutopilotTurnAngleOrder) TurnAngleOrderValue() (float64, bool) {
 }
 
 // SetTurnAngleOrderValue sets TurnAngleOrder from a physical value in rad, rounded to the nearest
-// wire tick of 9.58738e-05.
-func (m *GarminAutopilotTurnAngleOrder) SetTurnAngleOrderValue(v float64) {
-	raw := uint64(math.Round(v / 9.58738e-05))
+// wire tick of 9.58738e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GarminAutopilotTurnAngleOrder) SetTurnAngleOrderValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TurnAngleOrder", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("TurnAngleOrder", v)
+	}
+	ticks, err := physicalRawTicks(v, 9.58738e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TurnAngleOrder", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TurnAngleOrder = &raw
+	if _, ok := candidate.TurnAngleOrderValue(); !ok {
+		return invalidPhysicalValue("TurnAngleOrder", v)
+	}
 	m.TurnAngleOrder = &raw
+	return nil
 }
 
 type Message0x1f0000x1feffStandardizedMixedSingleFastPacketNonAddressed struct {
@@ -1757,10 +1829,30 @@ func (m *SystemTime) DateValue() (float64, bool) {
 }
 
 // SetDateValue sets Date from a physical value in d, rounded to the nearest
-// wire tick of 1.
-func (m *SystemTime) SetDateValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SystemTime) SetDateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Date", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Date", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("Date", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Date", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Date = &raw
+	if _, ok := candidate.DateValue(); !ok {
+		return invalidPhysicalValue("Date", v)
+	}
 	m.Date = &raw
+	return nil
 }
 
 // TimeValue returns Time as a physical value in s (value = raw * 0.0001).
@@ -1789,10 +1881,30 @@ func (m *SystemTime) TimeValue() (float64, bool) {
 }
 
 // SetTimeValue sets Time from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SystemTime) SetTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SystemTime) SetTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Time", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Time", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("Time", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("Time", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Time = &raw
+	if _, ok := candidate.TimeValue(); !ok {
+		return invalidPhysicalValue("Time", v)
+	}
 	m.Time = &raw
+	return nil
 }
 
 type Heartbeat struct {
@@ -1851,10 +1963,30 @@ func (m *Heartbeat) DataTransmitOffsetValue() (float64, bool) {
 }
 
 // SetDataTransmitOffsetValue sets DataTransmitOffset from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *Heartbeat) SetDataTransmitOffsetValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Heartbeat) SetDataTransmitOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DataTransmitOffset", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DataTransmitOffset", v)
+	}
+	if v > 65.532 && !approximatelyEqual(v, 65.532) {
+		return invalidPhysicalValue("DataTransmitOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DataTransmitOffset", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DataTransmitOffset = &raw
+	if _, ok := candidate.DataTransmitOffsetValue(); !ok {
+		return invalidPhysicalValue("DataTransmitOffset", v)
+	}
 	m.DataTransmitOffset = &raw
+	return nil
 }
 
 type ProductInformation struct {
@@ -1915,10 +2047,30 @@ func (m *ProductInformation) Nmea2000VersionValue() (float64, bool) {
 }
 
 // SetNmea2000VersionValue sets Nmea2000Version from a physical value, rounded to the nearest
-// wire tick of 0.001.
-func (m *ProductInformation) SetNmea2000VersionValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ProductInformation) SetNmea2000VersionValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Nmea2000Version", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Nmea2000Version", v)
+	}
+	if v > 65.532 && !approximatelyEqual(v, 65.532) {
+		return invalidPhysicalValue("Nmea2000Version", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Nmea2000Version", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Nmea2000Version = &raw
+	if _, ok := candidate.Nmea2000VersionValue(); !ok {
+		return invalidPhysicalValue("Nmea2000Version", v)
+	}
 	m.Nmea2000Version = &raw
+	return nil
 }
 
 type ConfigurationInformation struct {
@@ -2022,10 +2174,30 @@ func (m *ManOverboardNotification) ActivationTimeValue() (float64, bool) {
 }
 
 // SetActivationTimeValue sets ActivationTime from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *ManOverboardNotification) SetActivationTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetActivationTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ActivationTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ActivationTime", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("ActivationTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("ActivationTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ActivationTime = &raw
+	if _, ok := candidate.ActivationTimeValue(); !ok {
+		return invalidPhysicalValue("ActivationTime", v)
+	}
 	m.ActivationTime = &raw
+	return nil
 }
 
 // PositionDateValue returns PositionDate as a physical value in d (value = raw).
@@ -2054,10 +2226,30 @@ func (m *ManOverboardNotification) PositionDateValue() (float64, bool) {
 }
 
 // SetPositionDateValue sets PositionDate from a physical value in d, rounded to the nearest
-// wire tick of 1.
-func (m *ManOverboardNotification) SetPositionDateValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetPositionDateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionDate", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionDate", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("PositionDate", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionDate", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionDate = &raw
+	if _, ok := candidate.PositionDateValue(); !ok {
+		return invalidPhysicalValue("PositionDate", v)
+	}
 	m.PositionDate = &raw
+	return nil
 }
 
 // PositionTimeValue returns PositionTime as a physical value in s (value = raw * 0.0001).
@@ -2086,10 +2278,30 @@ func (m *ManOverboardNotification) PositionTimeValue() (float64, bool) {
 }
 
 // SetPositionTimeValue sets PositionTime from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *ManOverboardNotification) SetPositionTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetPositionTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionTime", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("PositionTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionTime = &raw
+	if _, ok := candidate.PositionTimeValue(); !ok {
+		return invalidPhysicalValue("PositionTime", v)
+	}
 	m.PositionTime = &raw
+	return nil
 }
 
 // LatitudeValue returns Latitude as a physical value in deg (value = raw * 1e-07).
@@ -2118,10 +2330,30 @@ func (m *ManOverboardNotification) LatitudeValue() (float64, bool) {
 }
 
 // SetLatitudeValue sets Latitude from a physical value in deg, rounded to the nearest
-// wire tick of 1e-07.
-func (m *ManOverboardNotification) SetLatitudeValue(v float64) {
-	raw := int64(math.Round(v / 1e-07))
+// wire tick of 1e-07. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetLatitudeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Latitude", v)
+	}
+	if v < -90 && !approximatelyEqual(v, -90) {
+		return invalidPhysicalValue("Latitude", v)
+	}
+	if v > 90 && !approximatelyEqual(v, 90) {
+		return invalidPhysicalValue("Latitude", v)
+	}
+	ticks, err := physicalRawTicks(v, 1e-07, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Latitude", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Latitude = &raw
+	if _, ok := candidate.LatitudeValue(); !ok {
+		return invalidPhysicalValue("Latitude", v)
+	}
 	m.Latitude = &raw
+	return nil
 }
 
 // LongitudeValue returns Longitude as a physical value in deg (value = raw * 1e-07).
@@ -2150,10 +2382,30 @@ func (m *ManOverboardNotification) LongitudeValue() (float64, bool) {
 }
 
 // SetLongitudeValue sets Longitude from a physical value in deg, rounded to the nearest
-// wire tick of 1e-07.
-func (m *ManOverboardNotification) SetLongitudeValue(v float64) {
-	raw := int64(math.Round(v / 1e-07))
+// wire tick of 1e-07. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetLongitudeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Longitude", v)
+	}
+	if v < -180 && !approximatelyEqual(v, -180) {
+		return invalidPhysicalValue("Longitude", v)
+	}
+	if v > 180 && !approximatelyEqual(v, 180) {
+		return invalidPhysicalValue("Longitude", v)
+	}
+	ticks, err := physicalRawTicks(v, 1e-07, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Longitude", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Longitude = &raw
+	if _, ok := candidate.LongitudeValue(); !ok {
+		return invalidPhysicalValue("Longitude", v)
+	}
 	m.Longitude = &raw
+	return nil
 }
 
 // CogValue returns Cog as a physical value in rad (value = raw * 0.0001).
@@ -2182,10 +2434,30 @@ func (m *ManOverboardNotification) CogValue() (float64, bool) {
 }
 
 // SetCogValue sets Cog from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *ManOverboardNotification) SetCogValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetCogValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Cog", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Cog", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Cog", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Cog", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Cog = &raw
+	if _, ok := candidate.CogValue(); !ok {
+		return invalidPhysicalValue("Cog", v)
+	}
 	m.Cog = &raw
+	return nil
 }
 
 // SogValue returns Sog as a physical value in m/s (value = raw * 0.01).
@@ -2214,10 +2486,30 @@ func (m *ManOverboardNotification) SogValue() (float64, bool) {
 }
 
 // SetSogValue sets Sog from a physical value in m/s, rounded to the nearest
-// wire tick of 0.01.
-func (m *ManOverboardNotification) SetSogValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ManOverboardNotification) SetSogValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Sog", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Sog", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Sog", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Sog", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Sog = &raw
+	if _, ok := candidate.SogValue(); !ok {
+		return invalidPhysicalValue("Sog", v)
+	}
 	m.Sog = &raw
+	return nil
 }
 
 type RateOfTurn struct {
@@ -2270,10 +2562,30 @@ func (m *RateOfTurn) RateValue() (float64, bool) {
 }
 
 // SetRateValue sets Rate from a physical value in rad/s, rounded to the nearest
-// wire tick of 3.125e-08.
-func (m *RateOfTurn) SetRateValue(v float64) {
-	raw := int64(math.Round(v / 3.125e-08))
+// wire tick of 3.125e-08. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *RateOfTurn) SetRateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Rate", v)
+	}
+	if v < -67.10886396875 && !approximatelyEqual(v, -67.10886396875) {
+		return invalidPhysicalValue("Rate", v)
+	}
+	if v > 67.108863875 && !approximatelyEqual(v, 67.108863875) {
+		return invalidPhysicalValue("Rate", v)
+	}
+	ticks, err := physicalRawTicks(v, 3.125e-08, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Rate", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Rate = &raw
+	if _, ok := candidate.RateValue(); !ok {
+		return invalidPhysicalValue("Rate", v)
+	}
 	m.Rate = &raw
+	return nil
 }
 
 type Heave struct {
@@ -2326,10 +2638,30 @@ func (m *Heave) HeaveValue() (float64, bool) {
 }
 
 // SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *Heave) SetHeaveValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Heave) SetHeaveValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Heave", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("Heave", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("Heave", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Heave", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Heave = &raw
+	if _, ok := candidate.HeaveValue(); !ok {
+		return invalidPhysicalValue("Heave", v)
+	}
 	m.Heave = &raw
+	return nil
 }
 
 type Attitude struct {
@@ -2386,10 +2718,30 @@ func (m *Attitude) YawValue() (float64, bool) {
 }
 
 // SetYawValue sets Yaw from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *Attitude) SetYawValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Attitude) SetYawValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Yaw", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Yaw", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Yaw", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Yaw", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Yaw = &raw
+	if _, ok := candidate.YawValue(); !ok {
+		return invalidPhysicalValue("Yaw", v)
+	}
 	m.Yaw = &raw
+	return nil
 }
 
 // PitchValue returns Pitch as a physical value in rad (value = raw * 0.0001).
@@ -2418,10 +2770,30 @@ func (m *Attitude) PitchValue() (float64, bool) {
 }
 
 // SetPitchValue sets Pitch from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *Attitude) SetPitchValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Attitude) SetPitchValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Pitch", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Pitch", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Pitch", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Pitch", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Pitch = &raw
+	if _, ok := candidate.PitchValue(); !ok {
+		return invalidPhysicalValue("Pitch", v)
+	}
 	m.Pitch = &raw
+	return nil
 }
 
 // RollValue returns Roll as a physical value in rad (value = raw * 0.0001).
@@ -2450,10 +2822,30 @@ func (m *Attitude) RollValue() (float64, bool) {
 }
 
 // SetRollValue sets Roll from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *Attitude) SetRollValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Attitude) SetRollValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Roll", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Roll", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Roll", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Roll", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Roll = &raw
+	if _, ok := candidate.RollValue(); !ok {
+		return invalidPhysicalValue("Roll", v)
+	}
 	m.Roll = &raw
+	return nil
 }
 
 type MagneticVariation struct {
@@ -2510,10 +2902,30 @@ func (m *MagneticVariation) AgeOfServiceValue() (float64, bool) {
 }
 
 // SetAgeOfServiceValue sets AgeOfService from a physical value in d, rounded to the nearest
-// wire tick of 1.
-func (m *MagneticVariation) SetAgeOfServiceValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MagneticVariation) SetAgeOfServiceValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AgeOfService", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AgeOfService", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AgeOfService", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AgeOfService", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AgeOfService = &raw
+	if _, ok := candidate.AgeOfServiceValue(); !ok {
+		return invalidPhysicalValue("AgeOfService", v)
+	}
 	m.AgeOfService = &raw
+	return nil
 }
 
 // VariationValue returns Variation as a physical value in rad (value = raw * 0.0001).
@@ -2542,10 +2954,30 @@ func (m *MagneticVariation) VariationValue() (float64, bool) {
 }
 
 // SetVariationValue sets Variation from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *MagneticVariation) SetVariationValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MagneticVariation) SetVariationValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Variation", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Variation", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Variation", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Variation", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Variation = &raw
+	if _, ok := candidate.VariationValue(); !ok {
+		return invalidPhysicalValue("Variation", v)
+	}
 	m.Variation = &raw
+	return nil
 }
 
 type TripParametersVessel struct {
@@ -2602,10 +3034,30 @@ func (m *TripParametersVessel) TimeToEmptyValue() (float64, bool) {
 }
 
 // SetTimeToEmptyValue sets TimeToEmpty from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *TripParametersVessel) SetTimeToEmptyValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersVessel) SetTimeToEmptyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TimeToEmpty", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TimeToEmpty", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("TimeToEmpty", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TimeToEmpty", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TimeToEmpty = &raw
+	if _, ok := candidate.TimeToEmptyValue(); !ok {
+		return invalidPhysicalValue("TimeToEmpty", v)
+	}
 	m.TimeToEmpty = &raw
+	return nil
 }
 
 // DistanceToEmptyValue returns DistanceToEmpty as a physical value in m (value = raw * 0.01).
@@ -2634,10 +3086,30 @@ func (m *TripParametersVessel) DistanceToEmptyValue() (float64, bool) {
 }
 
 // SetDistanceToEmptyValue sets DistanceToEmpty from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *TripParametersVessel) SetDistanceToEmptyValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersVessel) SetDistanceToEmptyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DistanceToEmpty", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DistanceToEmpty", v)
+	}
+	if v > 4.294967292e+07 && !approximatelyEqual(v, 4.294967292e+07) {
+		return invalidPhysicalValue("DistanceToEmpty", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("DistanceToEmpty", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DistanceToEmpty = &raw
+	if _, ok := candidate.DistanceToEmptyValue(); !ok {
+		return invalidPhysicalValue("DistanceToEmpty", v)
+	}
 	m.DistanceToEmpty = &raw
+	return nil
 }
 
 // EstimatedFuelRemainingValue returns EstimatedFuelRemaining as a physical value in L (value = raw).
@@ -2666,10 +3138,30 @@ func (m *TripParametersVessel) EstimatedFuelRemainingValue() (float64, bool) {
 }
 
 // SetEstimatedFuelRemainingValue sets EstimatedFuelRemaining from a physical value in L, rounded to the nearest
-// wire tick of 1.
-func (m *TripParametersVessel) SetEstimatedFuelRemainingValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersVessel) SetEstimatedFuelRemainingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EstimatedFuelRemaining", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EstimatedFuelRemaining", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("EstimatedFuelRemaining", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EstimatedFuelRemaining", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EstimatedFuelRemaining = &raw
+	if _, ok := candidate.EstimatedFuelRemainingValue(); !ok {
+		return invalidPhysicalValue("EstimatedFuelRemaining", v)
+	}
 	m.EstimatedFuelRemaining = &raw
+	return nil
 }
 
 // TripRunTimeValue returns TripRunTime as a physical value in s (value = raw * 0.001).
@@ -2698,10 +3190,30 @@ func (m *TripParametersVessel) TripRunTimeValue() (float64, bool) {
 }
 
 // SetTripRunTimeValue sets TripRunTime from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *TripParametersVessel) SetTripRunTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersVessel) SetTripRunTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TripRunTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TripRunTime", v)
+	}
+	if v > 4.294967292e+06 && !approximatelyEqual(v, 4.294967292e+06) {
+		return invalidPhysicalValue("TripRunTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TripRunTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TripRunTime = &raw
+	if _, ok := candidate.TripRunTimeValue(); !ok {
+		return invalidPhysicalValue("TripRunTime", v)
+	}
 	m.TripRunTime = &raw
+	return nil
 }
 
 type AgsConfigurationStatus struct {
@@ -2848,10 +3360,30 @@ func (m *LeewayAngle) LeewayAngleValue() (float64, bool) {
 }
 
 // SetLeewayAngleValue sets LeewayAngle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *LeewayAngle) SetLeewayAngleValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *LeewayAngle) SetLeewayAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LeewayAngle", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("LeewayAngle", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("LeewayAngle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("LeewayAngle", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.LeewayAngle = &raw
+	if _, ok := candidate.LeewayAngleValue(); !ok {
+		return invalidPhysicalValue("LeewayAngle", v)
+	}
 	m.LeewayAngle = &raw
+	return nil
 }
 
 type Speed struct {
@@ -2910,10 +3442,30 @@ func (m *Speed) SpeedWaterReferencedValue() (float64, bool) {
 }
 
 // SetSpeedWaterReferencedValue sets SpeedWaterReferenced from a physical value in m/s, rounded to the nearest
-// wire tick of 0.01.
-func (m *Speed) SetSpeedWaterReferencedValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Speed) SetSpeedWaterReferencedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SpeedWaterReferenced", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SpeedWaterReferenced", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("SpeedWaterReferenced", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SpeedWaterReferenced", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SpeedWaterReferenced = &raw
+	if _, ok := candidate.SpeedWaterReferencedValue(); !ok {
+		return invalidPhysicalValue("SpeedWaterReferenced", v)
+	}
 	m.SpeedWaterReferenced = &raw
+	return nil
 }
 
 // SpeedGroundReferencedValue returns SpeedGroundReferenced as a physical value in m/s (value = raw * 0.01).
@@ -2942,10 +3494,30 @@ func (m *Speed) SpeedGroundReferencedValue() (float64, bool) {
 }
 
 // SetSpeedGroundReferencedValue sets SpeedGroundReferenced from a physical value in m/s, rounded to the nearest
-// wire tick of 0.01.
-func (m *Speed) SetSpeedGroundReferencedValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Speed) SetSpeedGroundReferencedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SpeedGroundReferenced", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SpeedGroundReferenced", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("SpeedGroundReferenced", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SpeedGroundReferenced", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SpeedGroundReferenced = &raw
+	if _, ok := candidate.SpeedGroundReferencedValue(); !ok {
+		return invalidPhysicalValue("SpeedGroundReferenced", v)
+	}
 	m.SpeedGroundReferenced = &raw
+	return nil
 }
 
 type TrackedTargetData struct {
@@ -3023,10 +3595,30 @@ func (m *TrackedTargetData) BearingValue() (float64, bool) {
 }
 
 // SetBearingValue sets Bearing from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *TrackedTargetData) SetBearingValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetBearingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Bearing", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Bearing", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Bearing", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Bearing", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Bearing = &raw
+	if _, ok := candidate.BearingValue(); !ok {
+		return invalidPhysicalValue("Bearing", v)
+	}
 	m.Bearing = &raw
+	return nil
 }
 
 // DistanceValue returns Distance as a physical value in m (value = raw * 0.01).
@@ -3055,10 +3647,30 @@ func (m *TrackedTargetData) DistanceValue() (float64, bool) {
 }
 
 // SetDistanceValue sets Distance from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *TrackedTargetData) SetDistanceValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetDistanceValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Distance", v)
+	}
+	if v < -2.147483647e+07 && !approximatelyEqual(v, -2.147483647e+07) {
+		return invalidPhysicalValue("Distance", v)
+	}
+	if v > 2.147483644e+07 && !approximatelyEqual(v, 2.147483644e+07) {
+		return invalidPhysicalValue("Distance", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Distance", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Distance = &raw
+	if _, ok := candidate.DistanceValue(); !ok {
+		return invalidPhysicalValue("Distance", v)
+	}
 	m.Distance = &raw
+	return nil
 }
 
 // CourseValue returns Course as a physical value in rad (value = raw * 0.0001).
@@ -3087,10 +3699,30 @@ func (m *TrackedTargetData) CourseValue() (float64, bool) {
 }
 
 // SetCourseValue sets Course from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *TrackedTargetData) SetCourseValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetCourseValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Course", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Course", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("Course", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Course", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Course = &raw
+	if _, ok := candidate.CourseValue(); !ok {
+		return invalidPhysicalValue("Course", v)
+	}
 	m.Course = &raw
+	return nil
 }
 
 // SpeedValue returns Speed as a physical value in m/s (value = raw * 0.01).
@@ -3119,10 +3751,30 @@ func (m *TrackedTargetData) SpeedValue() (float64, bool) {
 }
 
 // SetSpeedValue sets Speed from a physical value in m/s, rounded to the nearest
-// wire tick of 0.01.
-func (m *TrackedTargetData) SetSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Speed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Speed", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Speed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Speed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Speed = &raw
+	if _, ok := candidate.SpeedValue(); !ok {
+		return invalidPhysicalValue("Speed", v)
+	}
 	m.Speed = &raw
+	return nil
 }
 
 // CpaValue returns Cpa as a physical value in m (value = raw * 0.01).
@@ -3151,10 +3803,30 @@ func (m *TrackedTargetData) CpaValue() (float64, bool) {
 }
 
 // SetCpaValue sets Cpa from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *TrackedTargetData) SetCpaValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetCpaValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Cpa", v)
+	}
+	if v < -2.147483647e+07 && !approximatelyEqual(v, -2.147483647e+07) {
+		return invalidPhysicalValue("Cpa", v)
+	}
+	if v > 2.147483644e+07 && !approximatelyEqual(v, 2.147483644e+07) {
+		return invalidPhysicalValue("Cpa", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Cpa", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Cpa = &raw
+	if _, ok := candidate.CpaValue(); !ok {
+		return invalidPhysicalValue("Cpa", v)
+	}
 	m.Cpa = &raw
+	return nil
 }
 
 // TcpaValue returns Tcpa as a physical value in s (value = raw * 0.001).
@@ -3183,10 +3855,30 @@ func (m *TrackedTargetData) TcpaValue() (float64, bool) {
 }
 
 // SetTcpaValue sets Tcpa from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *TrackedTargetData) SetTcpaValue(v float64) {
-	raw := int64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetTcpaValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Tcpa", v)
+	}
+	if v < -2.147483647e+06 && !approximatelyEqual(v, -2.147483647e+06) {
+		return invalidPhysicalValue("Tcpa", v)
+	}
+	if v > 2.147483644e+06 && !approximatelyEqual(v, 2.147483644e+06) {
+		return invalidPhysicalValue("Tcpa", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Tcpa", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Tcpa = &raw
+	if _, ok := candidate.TcpaValue(); !ok {
+		return invalidPhysicalValue("Tcpa", v)
+	}
 	m.Tcpa = &raw
+	return nil
 }
 
 // UtcOfFixValue returns UtcOfFix as a physical value in s (value = raw * 0.0001).
@@ -3215,8 +3907,28 @@ func (m *TrackedTargetData) UtcOfFixValue() (float64, bool) {
 }
 
 // SetUtcOfFixValue sets UtcOfFix from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *TrackedTargetData) SetUtcOfFixValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TrackedTargetData) SetUtcOfFixValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("UtcOfFix", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("UtcOfFix", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("UtcOfFix", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("UtcOfFix", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.UtcOfFix = &raw
+	if _, ok := candidate.UtcOfFixValue(); !ok {
+		return invalidPhysicalValue("UtcOfFix", v)
+	}
 	m.UtcOfFix = &raw
+	return nil
 }

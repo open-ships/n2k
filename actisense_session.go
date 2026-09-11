@@ -7,6 +7,7 @@ import (
 	"io"
 	"iter"
 	"log/slog"
+	"slices"
 	"sync"
 	"time"
 
@@ -63,10 +64,14 @@ type actisenseSessionOptionFunc func(*actisenseSessionConfig)
 
 func (f actisenseSessionOptionFunc) applyActisenseSession(config *actisenseSessionConfig) { f(config) }
 
+// WithActisenseSessionLogger selects the session logger; nil uses slog.Default.
 func WithActisenseSessionLogger(logger *slog.Logger) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.logger = logger })
 }
 
+// WithActisenseSessionReconnect enables reconnects after a dropped session.
+// Each acknowledged connection starts a new epoch and cancels old requests.
+// Zero backoff fields use the ReconnectPolicy defaults.
 func WithActisenseSessionReconnect(policy ReconnectPolicy) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.reconnect = &policy })
 }
@@ -88,18 +93,29 @@ func WithActisensePreserveOperatingMode() ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.preserveMode = true })
 }
 
+// WithActisenseCommandTimeout bounds each local command, physical send, and
+// configuration restoration attempt. It must be positive; the default is five
+// seconds. An earlier caller deadline also applies to the original operation.
 func WithActisenseCommandTimeout(timeout time.Duration) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.commandTimeout = timeout })
 }
 
+// WithActisenseMultiReplyInactivity bounds the gap between local BEM replies.
+// It must be positive; the default is 500 milliseconds. The command timeout
+// separately bounds the whole response train.
 func WithActisenseMultiReplyInactivity(timeout time.Duration) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.inactivity = timeout })
 }
 
+// WithActisenseSessionReadyTimeout bounds opening and mode negotiation.
+// It must be positive; the default is five seconds.
 func WithActisenseSessionReadyTimeout(timeout time.Duration) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.readyTimeout = timeout })
 }
 
+// WithActisenseSessionBuffer sets the positive per-subscriber observation and
+// diagnostic capacity; the default is 64. Overflow terminates the affected
+// subscription with ErrObservationOverflow without blocking the session reader.
 func WithActisenseSessionBuffer(size int) ActisenseSessionOption {
 	return actisenseSessionOptionFunc(func(config *actisenseSessionConfig) { config.buffer = size })
 }
@@ -157,6 +173,11 @@ type ActisenseSessionStatus struct {
 	RemoteMetrics        ActisenseProtocolMetrics
 }
 
+// ActisenseTxPGNConfiguration is one staged transmit-list change. PGN is the
+// message number and Flag selects enabled, disabled, or respond-only behavior.
+// Rate is milliseconds: zero means event-driven; nil or a value >= 65535 leaves
+// the current rate unchanged. The pointed-to rate must remain stable during
+// ConfigureTransmitPGNs.
 type ActisenseTxPGNConfiguration struct {
 	PGN  uint32
 	Flag ActisensePGNEnableFlag
@@ -181,6 +202,7 @@ type ActisenseGatewaySession struct {
 	commandTimeout time.Duration
 	remote         *actisenseRemoteManager
 	probeGate      chan struct{}
+	txGate         chan struct{}
 
 	mu                 sync.Mutex
 	connected          bool
@@ -190,6 +212,7 @@ type ActisenseGatewaySession struct {
 	closeErr           error
 	txOriginal         map[uint32]ActisenseTxPGNState
 	txEpoch            uint64
+	txCancel           context.CancelFunc
 	closeOnce          sync.Once
 	remoteAddress      uint8
 	remoteAddressKnown bool
@@ -273,6 +296,7 @@ func startActisenseGatewaySession(parent context.Context, transport *gateway.Act
 		txOriginal: make(map[uint32]ActisenseTxPGNState), wireTrace: config.wireTrace,
 		commandTimeout: config.commandTimeout,
 		probeGate:      make(chan struct{}, 1),
+		txGate:         make(chan struct{}, 1),
 	}
 	session.remote = newActisenseRemoteManager(nil)
 	session.remote.gateway = session
@@ -351,6 +375,8 @@ func (s *ActisenseGatewaySession) handleMode(mode ActisenseOperatingMode) {
 	s.mu.Unlock()
 }
 
+// Status returns a concurrency-safe, owned snapshot of connection readiness,
+// identity, subscribers, and cumulative metrics. A nil session is closed.
 func (s *ActisenseGatewaySession) Status() ActisenseSessionStatus {
 	if s == nil {
 		return ActisenseSessionStatus{Closed: true, TerminalError: errors.New("n2k: nil Actisense session")}
@@ -382,6 +408,8 @@ func (s *ActisenseGatewaySession) Status() ActisenseSessionStatus {
 	return status
 }
 
+// Err returns the terminal session error, or nil while healthy or after normal
+// shutdown. It is safe concurrently with other session methods.
 func (s *ActisenseGatewaySession) Err() error {
 	if s == nil {
 		return errors.New("n2k: nil Actisense session")
@@ -391,6 +419,9 @@ func (s *ActisenseGatewaySession) Err() error {
 	return s.terminalErr
 }
 
+// Observations subscribes when iteration starts and yields owned transport
+// records until shutdown, error, or early loop exit. Independent bounded
+// subscriptions fail with ErrObservationOverflow if a consumer falls behind.
 func (s *ActisenseGatewaySession) Observations() iter.Seq2[Observation, error] {
 	return func(yield func(Observation, error) bool) {
 		if s == nil || s.observations == nil {
@@ -410,6 +441,9 @@ func (s *ActisenseGatewaySession) Observations() iter.Seq2[Observation, error] {
 	}
 }
 
+// Diagnostics yields owned local BEM diagnostic events, including retained
+// startup diagnostics. Subscriptions are independent and bounded by the session
+// buffer; slow consumers terminate with ErrObservationOverflow.
 func (s *ActisenseGatewaySession) Diagnostics() iter.Seq2[ActisenseDiagnostic, error] {
 	return func(yield func(ActisenseDiagnostic, error) bool) {
 		if s == nil || s.diagnostics == nil {
@@ -430,7 +464,8 @@ func (s *ActisenseGatewaySession) Diagnostics() iter.Seq2[ActisenseDiagnostic, e
 }
 
 // SendPGN transmits one assembled PGN under the gateway's own claimed source
-// address. It never enables or activates a Tx list implicitly.
+// address. The message must implement pgn.PGN; nil or read-only messages return
+// an error. It never enables or activates a Tx list implicitly.
 func (s *ActisenseGatewaySession) SendPGN(ctx context.Context, message pgn.Message) error {
 	if message == nil {
 		return errors.New("n2k: cannot send a nil PGN through an Actisense session")
@@ -455,6 +490,11 @@ func (s *ActisenseGatewaySession) SendPGN(ctx context.Context, message pgn.Messa
 	return s.SendRawPGN(ctx, message.PGNNumber(), priority, destination, payload)
 }
 
+// SendRawPGN synchronously sends up to 223 payload bytes using the gateway
+// identity. Priority must be 0-7; broadcast PGNs require destination 255. It
+// copies the payload, honors caller and command deadlines, and rejects an
+// unready session. Success confirms the transport write, not remote acceptance.
+// PGN lists are never changed implicitly.
 func (s *ActisenseGatewaySession) SendRawPGN(ctx context.Context, pgnNumber uint32, priority, destination uint8, payload []byte) error {
 	if s == nil {
 		return actisense.ErrSessionClosed
@@ -500,22 +540,47 @@ func actisenseValidateMessage(pgnNumber uint32, priority, destination uint8, pay
 }
 
 // ConfigureTransmitPGNs snapshots every affected session entry, stages all
-// changes, then activates once. Any failure restores the staged entries. The
-// first snapshot for an epoch is best-effort restored by Close.
+// changes, then activates once. Transactions are serialized. On failure, a
+// separate cleanup deadline attempts restoration on the same connection epoch;
+// the returned error includes any restoration failure. The earliest original
+// entries are retained for another restoration attempt by Close. Cancellation
+// may therefore take up to the command timeout to finish cleanup.
+// Direct Tx-list commands must not run concurrently with this transaction.
 func (s *ActisenseGatewaySession) ConfigureTransmitPGNs(ctx context.Context, configurations []ActisenseTxPGNConfiguration) error {
+	if s == nil {
+		return actisense.ErrSessionClosed
+	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
 	if len(configurations) == 0 {
 		return nil
 	}
+	select {
+	case s.txGate <- struct{}{}:
+		defer func() { <-s.txGate }()
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-s.ctx.Done():
+		return actisense.ErrSessionClosed
+	}
 	s.mu.Lock()
 	if s.closed {
 		s.mu.Unlock()
-		return errors.New("n2k: Actisense session is closed")
+		return actisense.ErrSessionClosed
 	}
 	epoch := s.epoch
+	ctx, cancel := context.WithCancel(ctx)
+	s.txCancel = cancel
 	s.mu.Unlock()
+	stop := context.AfterFunc(s.ctx, cancel)
+	defer func() {
+		stop()
+		cancel()
+		s.mu.Lock()
+		s.txCancel = nil
+		s.mu.Unlock()
+	}()
 	requester, err := s.transport.EpochRequester(epoch)
 	if err != nil {
 		return err
@@ -533,66 +598,91 @@ func (s *ActisenseGatewaySession) ConfigureTransmitPGNs(ctx context.Context, con
 		}
 		originals[configuration.PGN] = state
 	}
+	// Retain the original settings before any physical mutation, including
+	// failed transactions whose first rollback might itself fail.
+	s.mu.Lock()
+	if s.closed || !s.connected || s.epoch != epoch {
+		s.mu.Unlock()
+		return actisense.ErrSessionClosed
+	}
+	if s.txEpoch != epoch {
+		clear(s.txOriginal)
+		s.txEpoch = epoch
+	}
+	for number, state := range originals {
+		if _, exists := s.txOriginal[number]; !exists {
+			s.txOriginal[number] = state
+		}
+	}
+	s.mu.Unlock()
 	for _, configuration := range configurations {
 		if _, err := commands.SetTxPGN(ctx, configuration.PGN, configuration.Flag, configuration.Rate); err != nil {
-			s.rollbackTransmitPGNs(ctx, commands, originals)
-			return fmt.Errorf("n2k: stage Actisense Tx PGN %d: %w", configuration.PGN, err)
+			return errors.Join(fmt.Errorf("n2k: stage Actisense Tx PGN %d: %w", configuration.PGN, err), s.rollbackTransmitPGNs(commands, originals))
 		}
 	}
 	if err := commands.ActivatePGNLists(ctx); err != nil {
-		s.rollbackTransmitPGNs(ctx, commands, originals)
-		return fmt.Errorf("n2k: activate Actisense Tx PGN transaction: %w", err)
+		return errors.Join(fmt.Errorf("n2k: activate Actisense Tx PGN transaction: %w", err), s.rollbackTransmitPGNs(commands, originals))
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if !s.connected || s.epoch != epoch {
 		return errors.New("n2k: Actisense connection epoch changed during Tx PGN transaction")
 	}
-	if s.txEpoch != epoch {
-		clear(s.txOriginal)
-		s.txEpoch = epoch
+	return nil
+}
+
+func (s *ActisenseGatewaySession) rollbackTransmitPGNs(commands *actisense.CommandSet, originals map[uint32]ActisenseTxPGNState) error {
+	ctx, cancel := context.WithTimeout(context.Background(), s.commandTimeout)
+	defer cancel()
+	numbers := make([]uint32, 0, len(originals))
+	for number := range originals {
+		numbers = append(numbers, number)
 	}
-	for pgnNumber, state := range originals {
-		if _, exists := s.txOriginal[pgnNumber]; !exists {
-			s.txOriginal[pgnNumber] = state
+	slices.Sort(numbers)
+	var failures []error
+	for _, number := range numbers {
+		state := originals[number]
+		rate := state.Rate
+		if _, err := commands.SetTxPGN(ctx, number, ActisensePGNEnableFlag(state.Enabled), &rate); err != nil {
+			failures = append(failures, fmt.Errorf("restore Tx PGN %d: %w", number, err))
 		}
+		if ctx.Err() != nil {
+			break
+		}
+	}
+	if err := commands.ActivatePGNLists(ctx); err != nil {
+		failures = append(failures, fmt.Errorf("activate restored Tx PGNs: %w", err))
+	}
+	if err := errors.Join(failures...); err != nil {
+		return fmt.Errorf("n2k: Actisense Tx PGN restoration is uncertain: %w", err)
 	}
 	return nil
 }
 
-func (s *ActisenseGatewaySession) rollbackTransmitPGNs(ctx context.Context, commands *actisense.CommandSet, originals map[uint32]ActisenseTxPGNState) {
-	for pgnNumber, state := range originals {
-		if ctx.Err() != nil {
-			return
-		}
-		rate := state.Rate
-		_, _ = commands.SetTxPGN(ctx, pgnNumber, ActisensePGNEnableFlag(state.Enabled), &rate)
-	}
-	_ = commands.ActivatePGNLists(ctx)
-}
-
-func (s *ActisenseGatewaySession) restoreTransmitPGNs() {
+func (s *ActisenseGatewaySession) restoreTransmitPGNs() error {
 	s.mu.Lock()
 	if !s.connected || len(s.txOriginal) == 0 || s.txEpoch != s.epoch {
 		s.mu.Unlock()
-		return
+		return nil
 	}
 	originals := make(map[uint32]ActisenseTxPGNState, len(s.txOriginal))
-	for pgnNumber, state := range s.txOriginal {
-		originals[pgnNumber] = state
+	for number, state := range s.txOriginal {
+		originals[number] = state
 	}
 	epoch := s.txEpoch
 	s.mu.Unlock()
 	requester, err := s.transport.EpochRequester(epoch)
 	if err != nil {
-		return
+		return err
 	}
 	commands := actisense.NewCommandSet(requester, actisense.CommandSetConfig{Timeout: s.commandTimeout})
-	restoreCtx, cancel := context.WithTimeout(context.Background(), s.commandTimeout)
-	defer cancel()
-	s.rollbackTransmitPGNs(restoreCtx, commands, originals)
+	return s.rollbackTransmitPGNs(commands, originals)
 }
 
+// Close cancels an active configuration transaction, waits for its cleanup,
+// attempts same-epoch restoration, closes the transport, and joins the reader.
+// Restoration has its own command timeout; failed restoration is included in
+// the returned error. Close is concurrent-safe, idempotent, and nil-safe.
 func (s *ActisenseGatewaySession) Close() error {
 	if s == nil {
 		return nil
@@ -601,9 +691,14 @@ func (s *ActisenseGatewaySession) Close() error {
 		s.mu.Lock()
 		s.closed = true
 		s.invalidateRemoteLocked(actisense.ErrSessionClosed)
+		if s.txCancel != nil {
+			s.txCancel()
+		}
 		s.mu.Unlock()
-		s.restoreTransmitPGNs()
-		closeErr := s.transport.Close()
+		s.txGate <- struct{}{}
+		restoreErr := s.restoreTransmitPGNs()
+		closeErr := errors.Join(restoreErr, s.transport.Close())
+		<-s.txGate
 		s.cancel()
 		<-s.done
 		if s.wireTrace != nil {

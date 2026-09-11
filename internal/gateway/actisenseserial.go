@@ -61,8 +61,10 @@ func runPassiveActisenseSerial(ctx context.Context, port string, settings Actise
 	}
 	defer func() { _ = connection.Close() }()
 	watchDone := make(chan struct{})
-	defer close(watchDone)
+	watchExited := make(chan struct{})
+	defer func() { close(watchDone); <-watchExited }()
 	go func() {
+		defer close(watchExited)
 		select {
 		case <-ctx.Done():
 			_ = connection.Close()

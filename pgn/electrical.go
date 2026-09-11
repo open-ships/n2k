@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type Bus1PhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
@@ -59,10 +57,30 @@ func (m *Bus1PhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -91,10 +109,30 @@ func (m *Bus1PhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, b
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -123,10 +161,30 @@ func (m *Bus1PhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *Bus1PhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 type Bus1PhaseBBasicAcQuantities struct {
@@ -183,10 +241,30 @@ func (m *Bus1PhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -215,10 +293,30 @@ func (m *Bus1PhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, b
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -247,10 +345,30 @@ func (m *Bus1PhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *Bus1PhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 type Bus1PhaseABasicAcQuantities struct {
@@ -307,10 +425,30 @@ func (m *Bus1PhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, bool
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -339,10 +477,30 @@ func (m *Bus1PhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, b
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1PhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -371,10 +529,30 @@ func (m *Bus1PhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *Bus1PhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1PhaseABasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 type Bus1AverageBasicAcQuantities struct {
@@ -431,10 +609,30 @@ func (m *Bus1AverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, boo
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1AverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1AverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -463,10 +661,30 @@ func (m *Bus1AverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64, 
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *Bus1AverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1AverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -495,10 +713,30 @@ func (m *Bus1AverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *Bus1AverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Bus1AverageBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 type UtilityTotalAcEnergy struct {
@@ -551,10 +789,30 @@ func (m *UtilityTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
 }
 
 // SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcEnergy) SetTotalEnergyExportValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalEnergyExport = &raw
+	if _, ok := candidate.TotalEnergyExportValue(); !ok {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
 	m.TotalEnergyExport = &raw
+	return nil
 }
 
 // TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
@@ -583,10 +841,30 @@ func (m *UtilityTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
 }
 
 // SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityTotalAcEnergy) SetTotalEnergyImportValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcEnergy) SetTotalEnergyImportValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalEnergyImport = &raw
+	if _, ok := candidate.TotalEnergyImportValue(); !ok {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
 	m.TotalEnergyImport = &raw
+	return nil
 }
 
 type UtilityPhaseCAcReactivePower struct {
@@ -643,10 +921,30 @@ func (m *UtilityPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -675,10 +973,30 @@ func (m *UtilityPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *UtilityPhaseCAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type UtilityPhaseCAcPower struct {
@@ -734,10 +1052,30 @@ func (m *UtilityPhaseCAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -769,10 +1107,30 @@ func (m *UtilityPhaseCAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type UtilityPhaseCBasicAcQuantities struct {
@@ -831,10 +1189,30 @@ func (m *UtilityPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, b
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -863,10 +1241,30 @@ func (m *UtilityPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -895,10 +1293,30 @@ func (m *UtilityPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *UtilityPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -927,10 +1345,30 @@ func (m *UtilityPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type UtilityPhaseBAcReactivePower struct {
@@ -987,10 +1425,30 @@ func (m *UtilityPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -1019,10 +1477,30 @@ func (m *UtilityPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *UtilityPhaseBAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type UtilityPhaseBAcPower struct {
@@ -1078,10 +1556,30 @@ func (m *UtilityPhaseBAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -1113,10 +1611,30 @@ func (m *UtilityPhaseBAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type UtilityPhaseBBasicAcQuantities struct {
@@ -1175,10 +1693,30 @@ func (m *UtilityPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, b
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -1207,10 +1745,30 @@ func (m *UtilityPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -1239,10 +1797,30 @@ func (m *UtilityPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *UtilityPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -1271,10 +1849,30 @@ func (m *UtilityPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type UtilityPhaseAAcReactivePower struct {
@@ -1334,10 +1932,30 @@ func (m *UtilityPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseAAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -1366,10 +1984,30 @@ func (m *UtilityPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *UtilityPhaseAAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseAAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type UtilityPhaseAAcPower struct {
@@ -1425,10 +2063,30 @@ func (m *UtilityPhaseAAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseAAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseAAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -1460,10 +2118,30 @@ func (m *UtilityPhaseAAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseAAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseAAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type UtilityPhaseABasicAcQuantities struct {
@@ -1522,10 +2200,30 @@ func (m *UtilityPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64, b
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -1554,10 +2252,30 @@ func (m *UtilityPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float64
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -1586,10 +2304,30 @@ func (m *UtilityPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *UtilityPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -1618,10 +2356,30 @@ func (m *UtilityPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type UtilityTotalAcReactivePower struct {
@@ -1681,10 +2439,30 @@ func (m *UtilityTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityTotalAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -1713,10 +2491,30 @@ func (m *UtilityTotalAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *UtilityTotalAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type UtilityTotalAcPower struct {
@@ -1772,10 +2570,30 @@ func (m *UtilityTotalAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityTotalAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -1807,10 +2625,30 @@ func (m *UtilityTotalAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityTotalAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityTotalAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type UtilityAverageBasicAcQuantities struct {
@@ -1869,10 +2707,30 @@ func (m *UtilityAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64, 
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -1901,10 +2759,30 @@ func (m *UtilityAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float6
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -1933,10 +2811,30 @@ func (m *UtilityAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *UtilityAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityAverageBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -1965,10 +2863,30 @@ func (m *UtilityAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *UtilityAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *UtilityAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type GeneratorTotalAcEnergy struct {
@@ -2023,10 +2941,30 @@ func (m *GeneratorTotalAcEnergy) TotalEnergyExportValue() (float64, bool) {
 }
 
 // SetTotalEnergyExportValue sets TotalEnergyExport from a physical value in kWh, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorTotalAcEnergy) SetTotalEnergyExportValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcEnergy) SetTotalEnergyExportValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalEnergyExport = &raw
+	if _, ok := candidate.TotalEnergyExportValue(); !ok {
+		return invalidPhysicalValue("TotalEnergyExport", v)
+	}
 	m.TotalEnergyExport = &raw
+	return nil
 }
 
 // TotalEnergyImportValue returns TotalEnergyImport as a physical value in kWh (value = raw).
@@ -2055,10 +2993,30 @@ func (m *GeneratorTotalAcEnergy) TotalEnergyImportValue() (float64, bool) {
 }
 
 // SetTotalEnergyImportValue sets TotalEnergyImport from a physical value in kWh, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorTotalAcEnergy) SetTotalEnergyImportValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcEnergy) SetTotalEnergyImportValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalEnergyImport = &raw
+	if _, ok := candidate.TotalEnergyImportValue(); !ok {
+		return invalidPhysicalValue("TotalEnergyImport", v)
+	}
 	m.TotalEnergyImport = &raw
+	return nil
 }
 
 type GeneratorPhaseCAcReactivePower struct {
@@ -2118,10 +3076,30 @@ func (m *GeneratorPhaseCAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -2150,10 +3128,30 @@ func (m *GeneratorPhaseCAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *GeneratorPhaseCAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type GeneratorPhaseCAcPower struct {
@@ -2211,10 +3209,30 @@ func (m *GeneratorPhaseCAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VAR (value = raw - 2e+09).
@@ -2246,10 +3264,30 @@ func (m *GeneratorPhaseCAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type GeneratorPhaseCBasicAcQuantities struct {
@@ -2308,10 +3346,30 @@ func (m *GeneratorPhaseCBasicAcQuantities) LineLineAcRmsVoltageValue() (float64,
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -2340,10 +3398,30 @@ func (m *GeneratorPhaseCBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -2372,10 +3450,30 @@ func (m *GeneratorPhaseCBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *GeneratorPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -2404,10 +3502,30 @@ func (m *GeneratorPhaseCBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type GeneratorPhaseBAcReactivePower struct {
@@ -2467,10 +3585,30 @@ func (m *GeneratorPhaseBAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -2499,10 +3637,30 @@ func (m *GeneratorPhaseBAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *GeneratorPhaseBAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type GeneratorPhaseBAcPower struct {
@@ -2560,10 +3718,30 @@ func (m *GeneratorPhaseBAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -2595,10 +3773,30 @@ func (m *GeneratorPhaseBAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type GeneratorPhaseBBasicAcQuantities struct {
@@ -2657,10 +3855,30 @@ func (m *GeneratorPhaseBBasicAcQuantities) LineLineAcRmsVoltageValue() (float64,
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -2689,10 +3907,30 @@ func (m *GeneratorPhaseBBasicAcQuantities) LineNeutralAcRmsVoltageValue() (float
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -2721,10 +3959,30 @@ func (m *GeneratorPhaseBBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *GeneratorPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -2753,10 +4011,30 @@ func (m *GeneratorPhaseBBasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type GeneratorPhaseAAcReactivePower struct {
@@ -2816,10 +4094,30 @@ func (m *GeneratorPhaseAAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseAAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseAAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -2848,10 +4146,30 @@ func (m *GeneratorPhaseAAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *GeneratorPhaseAAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseAAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type GeneratorPhaseAAcPower struct {
@@ -2909,10 +4227,30 @@ func (m *GeneratorPhaseAAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseAAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseAAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -2944,10 +4282,30 @@ func (m *GeneratorPhaseAAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseAAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseAAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type GeneratorPhaseABasicAcQuantities struct {
@@ -3006,10 +4364,30 @@ func (m *GeneratorPhaseABasicAcQuantities) LineLineAcRmsVoltageValue() (float64,
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseABasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -3038,10 +4416,30 @@ func (m *GeneratorPhaseABasicAcQuantities) LineNeutralAcRmsVoltageValue() (float
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseABasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -3070,10 +4468,30 @@ func (m *GeneratorPhaseABasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *GeneratorPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseABasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -3102,10 +4520,30 @@ func (m *GeneratorPhaseABasicAcQuantities) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type GeneratorTotalAcReactivePower struct {
@@ -3165,10 +4603,30 @@ func (m *GeneratorTotalAcReactivePower) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorTotalAcReactivePower) SetReactivePowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcReactivePower) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 6.10352e-05).
@@ -3197,10 +4655,30 @@ func (m *GeneratorTotalAcReactivePower) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 6.10352e-05.
-func (m *GeneratorTotalAcReactivePower) SetPowerFactorValue(v float64) {
-	raw := uint64(math.Round(v / 6.10352e-05))
+// wire tick of 6.10352e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcReactivePower) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 3.999755859375 && !approximatelyEqual(v, 3.999755859375) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 6.10352e-05, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type GeneratorTotalAcPower struct {
@@ -3256,10 +4734,30 @@ func (m *GeneratorTotalAcPower) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorTotalAcPower) SetRealPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcPower) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ApparentPowerValue returns ApparentPower as a physical value in VA (value = raw - 2e+09).
@@ -3291,10 +4789,30 @@ func (m *GeneratorTotalAcPower) ApparentPowerValue() (float64, bool) {
 }
 
 // SetApparentPowerValue sets ApparentPower from a physical value in VA, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorTotalAcPower) SetApparentPowerValue(v float64) {
-	raw := int64(math.Round((v + 2e+09)))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorTotalAcPower) SetApparentPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v < -2e+09 && !approximatelyEqual(v, -2e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	if v > 2.294967292e+09 && !approximatelyEqual(v, 2.294967292e+09) {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, -2e+09, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ApparentPower = &raw
+	if _, ok := candidate.ApparentPowerValue(); !ok {
+		return invalidPhysicalValue("ApparentPower", v)
+	}
 	m.ApparentPower = &raw
+	return nil
 }
 
 type GeneratorAverageBasicAcQuantities struct {
@@ -3353,10 +4871,30 @@ func (m *GeneratorAverageBasicAcQuantities) LineLineAcRmsVoltageValue() (float64
 }
 
 // SetLineLineAcRmsVoltageValue sets LineLineAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorAverageBasicAcQuantities) SetLineLineAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineLineAcRmsVoltage = &raw
+	if _, ok := candidate.LineLineAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineLineAcRmsVoltage", v)
+	}
 	m.LineLineAcRmsVoltage = &raw
+	return nil
 }
 
 // LineNeutralAcRmsVoltageValue returns LineNeutralAcRmsVoltage as a physical value in V (value = raw).
@@ -3385,10 +4923,30 @@ func (m *GeneratorAverageBasicAcQuantities) LineNeutralAcRmsVoltageValue() (floa
 }
 
 // SetLineNeutralAcRmsVoltageValue sets LineNeutralAcRmsVoltage from a physical value in V, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorAverageBasicAcQuantities) SetLineNeutralAcRmsVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LineNeutralAcRmsVoltage = &raw
+	if _, ok := candidate.LineNeutralAcRmsVoltageValue(); !ok {
+		return invalidPhysicalValue("LineNeutralAcRmsVoltage", v)
+	}
 	m.LineNeutralAcRmsVoltage = &raw
+	return nil
 }
 
 // AcFrequencyValue returns AcFrequency as a physical value in Hz (value = raw * 0.0078125).
@@ -3417,10 +4975,30 @@ func (m *GeneratorAverageBasicAcQuantities) AcFrequencyValue() (float64, bool) {
 }
 
 // SetAcFrequencyValue sets AcFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.0078125.
-func (m *GeneratorAverageBasicAcQuantities) SetAcFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.0078125))
+// wire tick of 0.0078125. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorAverageBasicAcQuantities) SetAcFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	if v > 511.96875 && !approximatelyEqual(v, 511.96875) {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0078125, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcFrequency = &raw
+	if _, ok := candidate.AcFrequencyValue(); !ok {
+		return invalidPhysicalValue("AcFrequency", v)
+	}
 	m.AcFrequency = &raw
+	return nil
 }
 
 // AcRmsCurrentValue returns AcRmsCurrent as a physical value in A (value = raw).
@@ -3449,10 +5027,30 @@ func (m *GeneratorAverageBasicAcQuantities) AcRmsCurrentValue() (float64, bool) 
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 1.
-func (m *GeneratorAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GeneratorAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 type GarminAutopilotSystemVoltage struct {
@@ -3519,10 +5117,30 @@ func (m *GarminAutopilotSystemVoltage) SystemVoltageValue() (float64, bool) {
 }
 
 // SetSystemVoltageValue sets SystemVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *GarminAutopilotSystemVoltage) SetSystemVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GarminAutopilotSystemVoltage) SetSystemVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SystemVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SystemVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("SystemVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SystemVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SystemVoltage = &raw
+	if _, ok := candidate.SystemVoltageValue(); !ok {
+		return invalidPhysicalValue("SystemVoltage", v)
+	}
 	m.SystemVoltage = &raw
+	return nil
 }
 
 type ElectricEnergyStorageStatusDynamic struct {
@@ -3593,10 +5211,30 @@ func (m *ElectricEnergyStorageStatusDynamic) StateOfChargeValue() (float64, bool
 }
 
 // SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *ElectricEnergyStorageStatusDynamic) SetStateOfChargeValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetStateOfChargeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StateOfCharge = &raw
+	if _, ok := candidate.StateOfChargeValue(); !ok {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
 	m.StateOfCharge = &raw
+	return nil
 }
 
 // TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
@@ -3625,10 +5263,30 @@ func (m *ElectricEnergyStorageStatusDynamic) TimeRemainingValue() (float64, bool
 }
 
 // SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
-// wire tick of 60.
-func (m *ElectricEnergyStorageStatusDynamic) SetTimeRemainingValue(v float64) {
-	raw := uint64(math.Round(v / 60))
+// wire tick of 60. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetTimeRemainingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	if v > 3.93192e+06 && !approximatelyEqual(v, 3.93192e+06) {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	ticks, err := physicalRawTicks(v, 60, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TimeRemaining = &raw
+	if _, ok := candidate.TimeRemainingValue(); !ok {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
 	m.TimeRemaining = &raw
+	return nil
 }
 
 // HighestCellTemperatureValue returns HighestCellTemperature as a physical value in K (value = raw * 0.01).
@@ -3657,10 +5315,30 @@ func (m *ElectricEnergyStorageStatusDynamic) HighestCellTemperatureValue() (floa
 }
 
 // SetHighestCellTemperatureValue sets HighestCellTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageStatusDynamic) SetHighestCellTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetHighestCellTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("HighestCellTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("HighestCellTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("HighestCellTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("HighestCellTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.HighestCellTemperature = &raw
+	if _, ok := candidate.HighestCellTemperatureValue(); !ok {
+		return invalidPhysicalValue("HighestCellTemperature", v)
+	}
 	m.HighestCellTemperature = &raw
+	return nil
 }
 
 // LowestCellTemperatureValue returns LowestCellTemperature as a physical value in K (value = raw * 0.01).
@@ -3689,10 +5367,30 @@ func (m *ElectricEnergyStorageStatusDynamic) LowestCellTemperatureValue() (float
 }
 
 // SetLowestCellTemperatureValue sets LowestCellTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageStatusDynamic) SetLowestCellTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetLowestCellTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LowestCellTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LowestCellTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("LowestCellTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LowestCellTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LowestCellTemperature = &raw
+	if _, ok := candidate.LowestCellTemperatureValue(); !ok {
+		return invalidPhysicalValue("LowestCellTemperature", v)
+	}
 	m.LowestCellTemperature = &raw
+	return nil
 }
 
 // AverageCellTemperatureValue returns AverageCellTemperature as a physical value in K (value = raw * 0.01).
@@ -3721,10 +5419,30 @@ func (m *ElectricEnergyStorageStatusDynamic) AverageCellTemperatureValue() (floa
 }
 
 // SetAverageCellTemperatureValue sets AverageCellTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageStatusDynamic) SetAverageCellTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetAverageCellTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AverageCellTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AverageCellTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("AverageCellTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AverageCellTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AverageCellTemperature = &raw
+	if _, ok := candidate.AverageCellTemperatureValue(); !ok {
+		return invalidPhysicalValue("AverageCellTemperature", v)
+	}
 	m.AverageCellTemperature = &raw
+	return nil
 }
 
 // MaxDischargeCurrentValue returns MaxDischargeCurrent as a physical value in A (value = raw * 0.1).
@@ -3753,10 +5471,30 @@ func (m *ElectricEnergyStorageStatusDynamic) MaxDischargeCurrentValue() (float64
 }
 
 // SetMaxDischargeCurrentValue sets MaxDischargeCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricEnergyStorageStatusDynamic) SetMaxDischargeCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetMaxDischargeCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaxDischargeCurrent", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("MaxDischargeCurrent", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("MaxDischargeCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("MaxDischargeCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.MaxDischargeCurrent = &raw
+	if _, ok := candidate.MaxDischargeCurrentValue(); !ok {
+		return invalidPhysicalValue("MaxDischargeCurrent", v)
+	}
 	m.MaxDischargeCurrent = &raw
+	return nil
 }
 
 // MaxChargeCurrentValue returns MaxChargeCurrent as a physical value in A (value = raw * 0.1).
@@ -3785,10 +5523,30 @@ func (m *ElectricEnergyStorageStatusDynamic) MaxChargeCurrentValue() (float64, b
 }
 
 // SetMaxChargeCurrentValue sets MaxChargeCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricEnergyStorageStatusDynamic) SetMaxChargeCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusDynamic) SetMaxChargeCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaxChargeCurrent", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("MaxChargeCurrent", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("MaxChargeCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("MaxChargeCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.MaxChargeCurrent = &raw
+	if _, ok := candidate.MaxChargeCurrentValue(); !ok {
+		return invalidPhysicalValue("MaxChargeCurrent", v)
+	}
 	m.MaxChargeCurrent = &raw
+	return nil
 }
 
 type ElectricEnergyStorageInformation struct {
@@ -3867,10 +5625,30 @@ func (m *ElectricEnergyStorageInformation) MaximumTemperatureDeratingValue() (fl
 }
 
 // SetMaximumTemperatureDeratingValue sets MaximumTemperatureDerating from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureDeratingValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureDeratingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumTemperatureDerating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumTemperatureDerating", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MaximumTemperatureDerating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumTemperatureDerating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumTemperatureDerating = &raw
+	if _, ok := candidate.MaximumTemperatureDeratingValue(); !ok {
+		return invalidPhysicalValue("MaximumTemperatureDerating", v)
+	}
 	m.MaximumTemperatureDerating = &raw
+	return nil
 }
 
 // MaximumTemperatureShutOffValue returns MaximumTemperatureShutOff as a physical value in K (value = raw * 0.01).
@@ -3899,10 +5677,30 @@ func (m *ElectricEnergyStorageInformation) MaximumTemperatureShutOffValue() (flo
 }
 
 // SetMaximumTemperatureShutOffValue sets MaximumTemperatureShutOff from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureShutOffValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageInformation) SetMaximumTemperatureShutOffValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MaximumTemperatureShutOff", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MaximumTemperatureShutOff", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MaximumTemperatureShutOff", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MaximumTemperatureShutOff", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MaximumTemperatureShutOff = &raw
+	if _, ok := candidate.MaximumTemperatureShutOffValue(); !ok {
+		return invalidPhysicalValue("MaximumTemperatureShutOff", v)
+	}
 	m.MaximumTemperatureShutOff = &raw
+	return nil
 }
 
 // MinimumTemperatureDeratingValue returns MinimumTemperatureDerating as a physical value in K (value = raw * 0.01).
@@ -3931,10 +5729,30 @@ func (m *ElectricEnergyStorageInformation) MinimumTemperatureDeratingValue() (fl
 }
 
 // SetMinimumTemperatureDeratingValue sets MinimumTemperatureDerating from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureDeratingValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureDeratingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MinimumTemperatureDerating", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MinimumTemperatureDerating", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MinimumTemperatureDerating", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MinimumTemperatureDerating", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MinimumTemperatureDerating = &raw
+	if _, ok := candidate.MinimumTemperatureDeratingValue(); !ok {
+		return invalidPhysicalValue("MinimumTemperatureDerating", v)
+	}
 	m.MinimumTemperatureDerating = &raw
+	return nil
 }
 
 // MinimumTemperatureShutOffValue returns MinimumTemperatureShutOff as a physical value in K (value = raw * 0.01).
@@ -3963,10 +5781,30 @@ func (m *ElectricEnergyStorageInformation) MinimumTemperatureShutOffValue() (flo
 }
 
 // SetMinimumTemperatureShutOffValue sets MinimumTemperatureShutOff from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureShutOffValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageInformation) SetMinimumTemperatureShutOffValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("MinimumTemperatureShutOff", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("MinimumTemperatureShutOff", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("MinimumTemperatureShutOff", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("MinimumTemperatureShutOff", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.MinimumTemperatureShutOff = &raw
+	if _, ok := candidate.MinimumTemperatureShutOffValue(); !ok {
+		return invalidPhysicalValue("MinimumTemperatureShutOff", v)
+	}
 	m.MinimumTemperatureShutOff = &raw
+	return nil
 }
 
 // UsableBatteryEnergyValue returns UsableBatteryEnergy as a physical value in kWh (value = raw).
@@ -3995,10 +5833,30 @@ func (m *ElectricEnergyStorageInformation) UsableBatteryEnergyValue() (float64, 
 }
 
 // SetUsableBatteryEnergyValue sets UsableBatteryEnergy from a physical value in kWh, rounded to the nearest
-// wire tick of 1.
-func (m *ElectricEnergyStorageInformation) SetUsableBatteryEnergyValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageInformation) SetUsableBatteryEnergyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("UsableBatteryEnergy", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("UsableBatteryEnergy", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("UsableBatteryEnergy", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("UsableBatteryEnergy", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.UsableBatteryEnergy = &raw
+	if _, ok := candidate.UsableBatteryEnergyValue(); !ok {
+		return invalidPhysicalValue("UsableBatteryEnergy", v)
+	}
 	m.UsableBatteryEnergy = &raw
+	return nil
 }
 
 type LoadControllerConnectionStateControl struct {
@@ -4274,10 +6132,30 @@ func (m *AcInputStatusRepeating1) VoltageValue() (float64, bool) {
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcInputStatusRepeating1) SetVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Voltage = &raw
+	if _, ok := candidate.VoltageValue(); !ok {
+		return invalidPhysicalValue("Voltage", v)
+	}
 	m.Voltage = &raw
+	return nil
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
@@ -4306,10 +6184,30 @@ func (m *AcInputStatusRepeating1) CurrentValue() (float64, bool) {
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcInputStatusRepeating1) SetCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Current", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Current = &raw
+	if _, ok := candidate.CurrentValue(); !ok {
+		return invalidPhysicalValue("Current", v)
+	}
 	m.Current = &raw
+	return nil
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
@@ -4338,10 +6236,30 @@ func (m *AcInputStatusRepeating1) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcInputStatusRepeating1) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 // BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
@@ -4370,10 +6288,30 @@ func (m *AcInputStatusRepeating1) BreakerSizeValue() (float64, bool) {
 }
 
 // SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcInputStatusRepeating1) SetBreakerSizeValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetBreakerSizeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BreakerSize = &raw
+	if _, ok := candidate.BreakerSizeValue(); !ok {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
 	m.BreakerSize = &raw
+	return nil
 }
 
 // RealPowerValue returns RealPower as a physical value in W (value = raw).
@@ -4402,10 +6340,30 @@ func (m *AcInputStatusRepeating1) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *AcInputStatusRepeating1) SetRealPowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
@@ -4434,10 +6392,30 @@ func (m *AcInputStatusRepeating1) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *AcInputStatusRepeating1) SetReactivePowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
@@ -4466,10 +6444,30 @@ func (m *AcInputStatusRepeating1) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcInputStatusRepeating1) SetPowerFactorValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcInputStatusRepeating1) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < -1 && !approximatelyEqual(v, -1) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 1 && !approximatelyEqual(v, 1) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type AcOutputStatus struct {
@@ -4547,10 +6545,30 @@ func (m *AcOutputStatusRepeating1) VoltageValue() (float64, bool) {
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcOutputStatusRepeating1) SetVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Voltage = &raw
+	if _, ok := candidate.VoltageValue(); !ok {
+		return invalidPhysicalValue("Voltage", v)
+	}
 	m.Voltage = &raw
+	return nil
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
@@ -4579,10 +6597,30 @@ func (m *AcOutputStatusRepeating1) CurrentValue() (float64, bool) {
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcOutputStatusRepeating1) SetCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Current", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Current = &raw
+	if _, ok := candidate.CurrentValue(); !ok {
+		return invalidPhysicalValue("Current", v)
+	}
 	m.Current = &raw
+	return nil
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.01).
@@ -4611,10 +6649,30 @@ func (m *AcOutputStatusRepeating1) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcOutputStatusRepeating1) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 // BreakerSizeValue returns BreakerSize as a physical value in A (value = raw * 0.1).
@@ -4643,10 +6701,30 @@ func (m *AcOutputStatusRepeating1) BreakerSizeValue() (float64, bool) {
 }
 
 // SetBreakerSizeValue sets BreakerSize from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcOutputStatusRepeating1) SetBreakerSizeValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetBreakerSizeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BreakerSize = &raw
+	if _, ok := candidate.BreakerSizeValue(); !ok {
+		return invalidPhysicalValue("BreakerSize", v)
+	}
 	m.BreakerSize = &raw
+	return nil
 }
 
 // RealPowerValue returns RealPower as a physical value in W (value = raw).
@@ -4675,10 +6753,30 @@ func (m *AcOutputStatusRepeating1) RealPowerValue() (float64, bool) {
 }
 
 // SetRealPowerValue sets RealPower from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *AcOutputStatusRepeating1) SetRealPowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetRealPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("RealPower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RealPower = &raw
+	if _, ok := candidate.RealPowerValue(); !ok {
+		return invalidPhysicalValue("RealPower", v)
+	}
 	m.RealPower = &raw
+	return nil
 }
 
 // ReactivePowerValue returns ReactivePower as a physical value in VAR (value = raw).
@@ -4707,10 +6805,30 @@ func (m *AcOutputStatusRepeating1) ReactivePowerValue() (float64, bool) {
 }
 
 // SetReactivePowerValue sets ReactivePower from a physical value in VAR, rounded to the nearest
-// wire tick of 1.
-func (m *AcOutputStatusRepeating1) SetReactivePowerValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetReactivePowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ReactivePower = &raw
+	if _, ok := candidate.ReactivePowerValue(); !ok {
+		return invalidPhysicalValue("ReactivePower", v)
+	}
 	m.ReactivePower = &raw
+	return nil
 }
 
 // PowerFactorValue returns PowerFactor as a physical value in Cos Phi (value = raw * 0.01).
@@ -4739,10 +6857,30 @@ func (m *AcOutputStatusRepeating1) PowerFactorValue() (float64, bool) {
 }
 
 // SetPowerFactorValue sets PowerFactor from a physical value in Cos Phi, rounded to the nearest
-// wire tick of 0.01.
-func (m *AcOutputStatusRepeating1) SetPowerFactorValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcOutputStatusRepeating1) SetPowerFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v < -1 && !approximatelyEqual(v, -1) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	if v > 1 && !approximatelyEqual(v, 1) {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.PowerFactor = &raw
+	if _, ok := candidate.PowerFactorValue(); !ok {
+		return invalidPhysicalValue("PowerFactor", v)
+	}
 	m.PowerFactor = &raw
+	return nil
 }
 
 type DcDetailedStatus struct {
@@ -4807,10 +6945,30 @@ func (m *DcDetailedStatus) StateOfChargeValue() (float64, bool) {
 }
 
 // SetStateOfChargeValue sets StateOfCharge from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *DcDetailedStatus) SetStateOfChargeValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcDetailedStatus) SetStateOfChargeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StateOfCharge = &raw
+	if _, ok := candidate.StateOfChargeValue(); !ok {
+		return invalidPhysicalValue("StateOfCharge", v)
+	}
 	m.StateOfCharge = &raw
+	return nil
 }
 
 // StateOfHealthValue returns StateOfHealth as a physical value in % (value = raw).
@@ -4839,10 +6997,30 @@ func (m *DcDetailedStatus) StateOfHealthValue() (float64, bool) {
 }
 
 // SetStateOfHealthValue sets StateOfHealth from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *DcDetailedStatus) SetStateOfHealthValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcDetailedStatus) SetStateOfHealthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StateOfHealth", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StateOfHealth", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("StateOfHealth", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("StateOfHealth", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StateOfHealth = &raw
+	if _, ok := candidate.StateOfHealthValue(); !ok {
+		return invalidPhysicalValue("StateOfHealth", v)
+	}
 	m.StateOfHealth = &raw
+	return nil
 }
 
 // TimeRemainingValue returns TimeRemaining as a physical value in s (value = raw * 60).
@@ -4871,10 +7049,30 @@ func (m *DcDetailedStatus) TimeRemainingValue() (float64, bool) {
 }
 
 // SetTimeRemainingValue sets TimeRemaining from a physical value in s, rounded to the nearest
-// wire tick of 60.
-func (m *DcDetailedStatus) SetTimeRemainingValue(v float64) {
-	raw := uint64(math.Round(v / 60))
+// wire tick of 60. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcDetailedStatus) SetTimeRemainingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	if v > 3.93192e+06 && !approximatelyEqual(v, 3.93192e+06) {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	ticks, err := physicalRawTicks(v, 60, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TimeRemaining = &raw
+	if _, ok := candidate.TimeRemainingValue(); !ok {
+		return invalidPhysicalValue("TimeRemaining", v)
+	}
 	m.TimeRemaining = &raw
+	return nil
 }
 
 // RippleVoltageValue returns RippleVoltage as a physical value in V (value = raw * 0.001).
@@ -4903,10 +7101,30 @@ func (m *DcDetailedStatus) RippleVoltageValue() (float64, bool) {
 }
 
 // SetRippleVoltageValue sets RippleVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.001.
-func (m *DcDetailedStatus) SetRippleVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcDetailedStatus) SetRippleVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RippleVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RippleVoltage", v)
+	}
+	if v > 65.532 && !approximatelyEqual(v, 65.532) {
+		return invalidPhysicalValue("RippleVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RippleVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RippleVoltage = &raw
+	if _, ok := candidate.RippleVoltageValue(); !ok {
+		return invalidPhysicalValue("RippleVoltage", v)
+	}
 	m.RippleVoltage = &raw
+	return nil
 }
 
 // RemainingCapacityValue returns RemainingCapacity as a physical value in Ah (value = raw).
@@ -4935,10 +7153,30 @@ func (m *DcDetailedStatus) RemainingCapacityValue() (float64, bool) {
 }
 
 // SetRemainingCapacityValue sets RemainingCapacity from a physical value in Ah, rounded to the nearest
-// wire tick of 1.
-func (m *DcDetailedStatus) SetRemainingCapacityValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcDetailedStatus) SetRemainingCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RemainingCapacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RemainingCapacity", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("RemainingCapacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RemainingCapacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RemainingCapacity = &raw
+	if _, ok := candidate.RemainingCapacityValue(); !ok {
+		return invalidPhysicalValue("RemainingCapacity", v)
+	}
 	m.RemainingCapacity = &raw
+	return nil
 }
 
 type ChargerStatus struct {
@@ -5001,10 +7239,30 @@ func (m *ChargerStatus) EqualizationTimeRemainingValue() (float64, bool) {
 }
 
 // SetEqualizationTimeRemainingValue sets EqualizationTimeRemaining from a physical value in s, rounded to the nearest
-// wire tick of 60.
-func (m *ChargerStatus) SetEqualizationTimeRemainingValue(v float64) {
-	raw := uint64(math.Round(v / 60))
+// wire tick of 60. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ChargerStatus) SetEqualizationTimeRemainingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EqualizationTimeRemaining", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EqualizationTimeRemaining", v)
+	}
+	if v > 3.93192e+06 && !approximatelyEqual(v, 3.93192e+06) {
+		return invalidPhysicalValue("EqualizationTimeRemaining", v)
+	}
+	ticks, err := physicalRawTicks(v, 60, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EqualizationTimeRemaining", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EqualizationTimeRemaining = &raw
+	if _, ok := candidate.EqualizationTimeRemainingValue(); !ok {
+		return invalidPhysicalValue("EqualizationTimeRemaining", v)
+	}
 	m.EqualizationTimeRemaining = &raw
+	return nil
 }
 
 type BatteryStatus struct {
@@ -5063,10 +7321,30 @@ func (m *BatteryStatus) VoltageValue() (float64, bool) {
 }
 
 // SetVoltageValue sets Voltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *BatteryStatus) SetVoltageValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryStatus) SetVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Voltage", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Voltage = &raw
+	if _, ok := candidate.VoltageValue(); !ok {
+		return invalidPhysicalValue("Voltage", v)
+	}
 	m.Voltage = &raw
+	return nil
 }
 
 // CurrentValue returns Current as a physical value in A (value = raw * 0.1).
@@ -5095,10 +7373,30 @@ func (m *BatteryStatus) CurrentValue() (float64, bool) {
 }
 
 // SetCurrentValue sets Current from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *BatteryStatus) SetCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryStatus) SetCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("Current", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("Current", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Current", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Current = &raw
+	if _, ok := candidate.CurrentValue(); !ok {
+		return invalidPhysicalValue("Current", v)
+	}
 	m.Current = &raw
+	return nil
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
@@ -5127,10 +7425,30 @@ func (m *BatteryStatus) TemperatureValue() (float64, bool) {
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *BatteryStatus) SetTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryStatus) SetTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Temperature = &raw
+	if _, ok := candidate.TemperatureValue(); !ok {
+		return invalidPhysicalValue("Temperature", v)
+	}
 	m.Temperature = &raw
+	return nil
 }
 
 type InverterStatus struct {
@@ -5231,10 +7549,30 @@ func (m *ChargerConfigurationStatus) ChargeCurrentLimitValue() (float64, bool) {
 }
 
 // SetChargeCurrentLimitValue sets ChargeCurrentLimit from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *ChargerConfigurationStatus) SetChargeCurrentLimitValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ChargerConfigurationStatus) SetChargeCurrentLimitValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ChargeCurrentLimit", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ChargeCurrentLimit", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("ChargeCurrentLimit", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("ChargeCurrentLimit", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ChargeCurrentLimit = &raw
+	if _, ok := candidate.ChargeCurrentLimitValue(); !ok {
+		return invalidPhysicalValue("ChargeCurrentLimit", v)
+	}
 	m.ChargeCurrentLimit = &raw
+	return nil
 }
 
 // EqualizeTimeValue returns EqualizeTime as a physical value in s (value = raw * 60).
@@ -5263,10 +7601,30 @@ func (m *ChargerConfigurationStatus) EqualizeTimeValue() (float64, bool) {
 }
 
 // SetEqualizeTimeValue sets EqualizeTime from a physical value in s, rounded to the nearest
-// wire tick of 60.
-func (m *ChargerConfigurationStatus) SetEqualizeTimeValue(v float64) {
-	raw := uint64(math.Round(v / 60))
+// wire tick of 60. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ChargerConfigurationStatus) SetEqualizeTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EqualizeTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EqualizeTime", v)
+	}
+	if v > 3.93192e+06 && !approximatelyEqual(v, 3.93192e+06) {
+		return invalidPhysicalValue("EqualizeTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 60, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EqualizeTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EqualizeTime = &raw
+	if _, ok := candidate.EqualizeTimeValue(); !ok {
+		return invalidPhysicalValue("EqualizeTime", v)
+	}
 	m.EqualizeTime = &raw
+	return nil
 }
 
 type InverterConfigurationStatus struct {
@@ -5333,10 +7691,30 @@ func (m *InverterConfigurationStatus) LoadSensePowerThresholdValue() (float64, b
 }
 
 // SetLoadSensePowerThresholdValue sets LoadSensePowerThreshold from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *InverterConfigurationStatus) SetLoadSensePowerThresholdValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *InverterConfigurationStatus) SetLoadSensePowerThresholdValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LoadSensePowerThreshold", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LoadSensePowerThreshold", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("LoadSensePowerThreshold", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LoadSensePowerThreshold", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LoadSensePowerThreshold = &raw
+	if _, ok := candidate.LoadSensePowerThresholdValue(); !ok {
+		return invalidPhysicalValue("LoadSensePowerThreshold", v)
+	}
 	m.LoadSensePowerThreshold = &raw
+	return nil
 }
 
 // LoadSenseIntervalValue returns LoadSenseInterval as a physical value in s (value = raw * 0.01).
@@ -5365,10 +7743,30 @@ func (m *InverterConfigurationStatus) LoadSenseIntervalValue() (float64, bool) {
 }
 
 // SetLoadSenseIntervalValue sets LoadSenseInterval from a physical value in s, rounded to the nearest
-// wire tick of 0.01.
-func (m *InverterConfigurationStatus) SetLoadSenseIntervalValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *InverterConfigurationStatus) SetLoadSenseIntervalValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LoadSenseInterval", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LoadSenseInterval", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("LoadSenseInterval", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LoadSenseInterval", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LoadSenseInterval = &raw
+	if _, ok := candidate.LoadSenseIntervalValue(); !ok {
+		return invalidPhysicalValue("LoadSenseInterval", v)
+	}
 	m.LoadSenseInterval = &raw
+	return nil
 }
 
 type BatteryConfigurationStatus struct {
@@ -5437,10 +7835,30 @@ func (m *BatteryConfigurationStatus) CapacityValue() (float64, bool) {
 }
 
 // SetCapacityValue sets Capacity from a physical value in Ah, rounded to the nearest
-// wire tick of 1.
-func (m *BatteryConfigurationStatus) SetCapacityValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryConfigurationStatus) SetCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Capacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Capacity = &raw
+	if _, ok := candidate.CapacityValue(); !ok {
+		return invalidPhysicalValue("Capacity", v)
+	}
 	m.Capacity = &raw
+	return nil
 }
 
 // TemperatureCoefficientValue returns TemperatureCoefficient as a physical value in % (value = raw).
@@ -5469,10 +7887,30 @@ func (m *BatteryConfigurationStatus) TemperatureCoefficientValue() (float64, boo
 }
 
 // SetTemperatureCoefficientValue sets TemperatureCoefficient from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *BatteryConfigurationStatus) SetTemperatureCoefficientValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryConfigurationStatus) SetTemperatureCoefficientValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TemperatureCoefficient", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("TemperatureCoefficient", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("TemperatureCoefficient", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("TemperatureCoefficient", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.TemperatureCoefficient = &raw
+	if _, ok := candidate.TemperatureCoefficientValue(); !ok {
+		return invalidPhysicalValue("TemperatureCoefficient", v)
+	}
 	m.TemperatureCoefficient = &raw
+	return nil
 }
 
 // PeukertExponentValue returns PeukertExponent as a physical value (value = raw * 0.002 + 1).
@@ -5495,10 +7933,30 @@ func (m *BatteryConfigurationStatus) PeukertExponentValue() (float64, bool) {
 }
 
 // SetPeukertExponentValue sets PeukertExponent from a physical value, rounded to the nearest
-// wire tick of 0.002.
-func (m *BatteryConfigurationStatus) SetPeukertExponentValue(v float64) {
-	raw := uint64(math.Round((v - 1) / 0.002))
+// wire tick of 0.002. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryConfigurationStatus) SetPeukertExponentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PeukertExponent", v)
+	}
+	if v < 1 && !approximatelyEqual(v, 1) {
+		return invalidPhysicalValue("PeukertExponent", v)
+	}
+	if v > 1.5 && !approximatelyEqual(v, 1.5) {
+		return invalidPhysicalValue("PeukertExponent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.002, 1, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("PeukertExponent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PeukertExponent = &raw
+	if _, ok := candidate.PeukertExponentValue(); !ok {
+		return invalidPhysicalValue("PeukertExponent", v)
+	}
 	m.PeukertExponent = &raw
+	return nil
 }
 
 // ChargeEfficiencyFactorValue returns ChargeEfficiencyFactor as a physical value in % (value = raw).
@@ -5527,10 +7985,30 @@ func (m *BatteryConfigurationStatus) ChargeEfficiencyFactorValue() (float64, boo
 }
 
 // SetChargeEfficiencyFactorValue sets ChargeEfficiencyFactor from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *BatteryConfigurationStatus) SetChargeEfficiencyFactorValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *BatteryConfigurationStatus) SetChargeEfficiencyFactorValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ChargeEfficiencyFactor", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("ChargeEfficiencyFactor", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("ChargeEfficiencyFactor", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("ChargeEfficiencyFactor", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.ChargeEfficiencyFactor = &raw
+	if _, ok := candidate.ChargeEfficiencyFactorValue(); !ok {
+		return invalidPhysicalValue("ChargeEfficiencyFactor", v)
+	}
 	m.ChargeEfficiencyFactor = &raw
+	return nil
 }
 
 type AcPowerCurrentPhaseA struct {
@@ -5587,10 +8065,30 @@ func (m *AcPowerCurrentPhaseA) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcPowerCurrentPhaseA) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseA) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
@@ -5619,10 +8117,30 @@ func (m *AcPowerCurrentPhaseA) PowerValue() (float64, bool) {
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *AcPowerCurrentPhaseA) SetPowerValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseA) SetPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v < -2.147483647e+09 && !approximatelyEqual(v, -2.147483647e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v > 2.147483644e+09 && !approximatelyEqual(v, 2.147483644e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Power = &raw
+	if _, ok := candidate.PowerValue(); !ok {
+		return invalidPhysicalValue("Power", v)
+	}
 	m.Power = &raw
+	return nil
 }
 
 type AcPowerCurrentPhaseB struct {
@@ -5679,10 +8197,30 @@ func (m *AcPowerCurrentPhaseB) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcPowerCurrentPhaseB) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseB) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
@@ -5711,10 +8249,30 @@ func (m *AcPowerCurrentPhaseB) PowerValue() (float64, bool) {
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *AcPowerCurrentPhaseB) SetPowerValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseB) SetPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v < -2.147483647e+09 && !approximatelyEqual(v, -2.147483647e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v > 2.147483644e+09 && !approximatelyEqual(v, 2.147483644e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Power = &raw
+	if _, ok := candidate.PowerValue(); !ok {
+		return invalidPhysicalValue("Power", v)
+	}
 	m.Power = &raw
+	return nil
 }
 
 type AcPowerCurrentPhaseC struct {
@@ -5771,10 +8329,30 @@ func (m *AcPowerCurrentPhaseC) AcRmsCurrentValue() (float64, bool) {
 }
 
 // SetAcRmsCurrentValue sets AcRmsCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcPowerCurrentPhaseC) SetAcRmsCurrentValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseC) SetAcRmsCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcRmsCurrent = &raw
+	if _, ok := candidate.AcRmsCurrentValue(); !ok {
+		return invalidPhysicalValue("AcRmsCurrent", v)
+	}
 	m.AcRmsCurrent = &raw
+	return nil
 }
 
 // PowerValue returns Power as a physical value in W (value = raw).
@@ -5803,10 +8381,30 @@ func (m *AcPowerCurrentPhaseC) PowerValue() (float64, bool) {
 }
 
 // SetPowerValue sets Power from a physical value in W, rounded to the nearest
-// wire tick of 1.
-func (m *AcPowerCurrentPhaseC) SetPowerValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcPowerCurrentPhaseC) SetPowerValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v < -2.147483647e+09 && !approximatelyEqual(v, -2.147483647e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	if v > 2.147483644e+09 && !approximatelyEqual(v, 2.147483644e+09) {
+		return invalidPhysicalValue("Power", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Power", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Power = &raw
+	if _, ok := candidate.PowerValue(); !ok {
+		return invalidPhysicalValue("Power", v)
+	}
 	m.Power = &raw
+	return nil
 }
 
 type AcVoltageFrequencyPhaseA struct {
@@ -5867,10 +8465,30 @@ func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToNeutralValue() (float64, bool)
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToNeutralValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToNeutralValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToNeutral = &raw
+	if _, ok := candidate.AcVoltageLineToNeutralValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
 	m.AcVoltageLineToNeutral = &raw
+	return nil
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
@@ -5899,10 +8517,30 @@ func (m *AcVoltageFrequencyPhaseA) AcVoltageLineToLineValue() (float64, bool) {
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToLineValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseA) SetAcVoltageLineToLineValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToLine = &raw
+	if _, ok := candidate.AcVoltageLineToLineValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
 	m.AcVoltageLineToLine = &raw
+	return nil
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
@@ -5931,10 +8569,30 @@ func (m *AcVoltageFrequencyPhaseA) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseA) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseA) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type AcVoltageFrequencyPhaseB struct {
@@ -5995,10 +8653,30 @@ func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToNeutralValue() (float64, bool)
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToNeutralValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToNeutralValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToNeutral = &raw
+	if _, ok := candidate.AcVoltageLineToNeutralValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
 	m.AcVoltageLineToNeutral = &raw
+	return nil
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
@@ -6027,10 +8705,30 @@ func (m *AcVoltageFrequencyPhaseB) AcVoltageLineToLineValue() (float64, bool) {
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToLineValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseB) SetAcVoltageLineToLineValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToLine = &raw
+	if _, ok := candidate.AcVoltageLineToLineValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
 	m.AcVoltageLineToLine = &raw
+	return nil
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
@@ -6059,10 +8757,30 @@ func (m *AcVoltageFrequencyPhaseB) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseB) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseB) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type AcVoltageFrequencyPhaseC struct {
@@ -6123,10 +8841,30 @@ func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToNeutralValue() (float64, bool)
 }
 
 // SetAcVoltageLineToNeutralValue sets AcVoltageLineToNeutral from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToNeutralValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToNeutralValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToNeutral = &raw
+	if _, ok := candidate.AcVoltageLineToNeutralValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToNeutral", v)
+	}
 	m.AcVoltageLineToNeutral = &raw
+	return nil
 }
 
 // AcVoltageLineToLineValue returns AcVoltageLineToLine as a physical value in V (value = raw * 0.1).
@@ -6155,10 +8893,30 @@ func (m *AcVoltageFrequencyPhaseC) AcVoltageLineToLineValue() (float64, bool) {
 }
 
 // SetAcVoltageLineToLineValue sets AcVoltageLineToLine from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToLineValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseC) SetAcVoltageLineToLineValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AcVoltageLineToLine = &raw
+	if _, ok := candidate.AcVoltageLineToLineValue(); !ok {
+		return invalidPhysicalValue("AcVoltageLineToLine", v)
+	}
 	m.AcVoltageLineToLine = &raw
+	return nil
 }
 
 // FrequencyValue returns Frequency as a physical value in Hz (value = raw * 0.1).
@@ -6187,10 +8945,30 @@ func (m *AcVoltageFrequencyPhaseC) FrequencyValue() (float64, bool) {
 }
 
 // SetFrequencyValue sets Frequency from a physical value in Hz, rounded to the nearest
-// wire tick of 0.1.
-func (m *AcVoltageFrequencyPhaseC) SetFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *AcVoltageFrequencyPhaseC) SetFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Frequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Frequency = &raw
+	if _, ok := candidate.FrequencyValue(); !ok {
+		return invalidPhysicalValue("Frequency", v)
+	}
 	m.Frequency = &raw
+	return nil
 }
 
 type DcVoltageCurrent struct {
@@ -6247,10 +9025,30 @@ func (m *DcVoltageCurrent) DcVoltageValue() (float64, bool) {
 }
 
 // SetDcVoltageValue sets DcVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *DcVoltageCurrent) SetDcVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcVoltageCurrent) SetDcVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DcVoltage", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("DcVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("DcVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DcVoltage = &raw
+	if _, ok := candidate.DcVoltageValue(); !ok {
+		return invalidPhysicalValue("DcVoltage", v)
+	}
 	m.DcVoltage = &raw
+	return nil
 }
 
 // DcCurrentValue returns DcCurrent as a physical value in A (value = raw * 0.01).
@@ -6279,10 +9077,30 @@ func (m *DcVoltageCurrent) DcCurrentValue() (float64, bool) {
 }
 
 // SetDcCurrentValue sets DcCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.01.
-func (m *DcVoltageCurrent) SetDcCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *DcVoltageCurrent) SetDcCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DcCurrent", v)
+	}
+	if v < -83886.07 && !approximatelyEqual(v, -83886.07) {
+		return invalidPhysicalValue("DcCurrent", v)
+	}
+	if v > 83886.04 && !approximatelyEqual(v, 83886.04) {
+		return invalidPhysicalValue("DcCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 24, true)
+	if err != nil {
+		return invalidPhysicalValue("DcCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.DcCurrent = &raw
+	if _, ok := candidate.DcCurrentValue(); !ok {
+		return invalidPhysicalValue("DcCurrent", v)
+	}
 	m.DcCurrent = &raw
+	return nil
 }
 
 type ElectricEnergyStorageStatusRapidUpdate struct {
@@ -6347,10 +9165,30 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryVoltageValue() (float64,
 }
 
 // SetBatteryVoltageValue sets BatteryVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BatteryVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BatteryVoltage", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("BatteryVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BatteryVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BatteryVoltage = &raw
+	if _, ok := candidate.BatteryVoltageValue(); !ok {
+		return invalidPhysicalValue("BatteryVoltage", v)
+	}
 	m.BatteryVoltage = &raw
+	return nil
 }
 
 // BatteryCurrentValue returns BatteryCurrent as a physical value in A (value = raw * 0.1).
@@ -6379,10 +9217,30 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) BatteryCurrentValue() (float64,
 }
 
 // SetBatteryCurrentValue sets BatteryCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BatteryCurrent", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("BatteryCurrent", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("BatteryCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("BatteryCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.BatteryCurrent = &raw
+	if _, ok := candidate.BatteryCurrentValue(); !ok {
+		return invalidPhysicalValue("BatteryCurrent", v)
+	}
 	m.BatteryCurrent = &raw
+	return nil
 }
 
 type HvacStatus struct {
@@ -6483,10 +9341,30 @@ func (m *HvacStatus) LowerTemperatureSetpointValue() (float64, bool) {
 }
 
 // SetLowerTemperatureSetpointValue sets LowerTemperatureSetpoint from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetLowerTemperatureSetpointValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetLowerTemperatureSetpointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LowerTemperatureSetpoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LowerTemperatureSetpoint", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("LowerTemperatureSetpoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LowerTemperatureSetpoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LowerTemperatureSetpoint = &raw
+	if _, ok := candidate.LowerTemperatureSetpointValue(); !ok {
+		return invalidPhysicalValue("LowerTemperatureSetpoint", v)
+	}
 	m.LowerTemperatureSetpoint = &raw
+	return nil
 }
 
 // UpperTemperatureSetpointValue returns UpperTemperatureSetpoint as a physical value in K (value = raw * 0.01).
@@ -6515,10 +9393,30 @@ func (m *HvacStatus) UpperTemperatureSetpointValue() (float64, bool) {
 }
 
 // SetUpperTemperatureSetpointValue sets UpperTemperatureSetpoint from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetUpperTemperatureSetpointValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetUpperTemperatureSetpointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("UpperTemperatureSetpoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("UpperTemperatureSetpoint", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("UpperTemperatureSetpoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("UpperTemperatureSetpoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.UpperTemperatureSetpoint = &raw
+	if _, ok := candidate.UpperTemperatureSetpointValue(); !ok {
+		return invalidPhysicalValue("UpperTemperatureSetpoint", v)
+	}
 	m.UpperTemperatureSetpoint = &raw
+	return nil
 }
 
 // CurrentTemperatureValue returns CurrentTemperature as a physical value in K (value = raw * 0.01).
@@ -6547,10 +9445,30 @@ func (m *HvacStatus) CurrentTemperatureValue() (float64, bool) {
 }
 
 // SetCurrentTemperatureValue sets CurrentTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetCurrentTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetCurrentTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CurrentTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CurrentTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("CurrentTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CurrentTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CurrentTemperature = &raw
+	if _, ok := candidate.CurrentTemperatureValue(); !ok {
+		return invalidPhysicalValue("CurrentTemperature", v)
+	}
 	m.CurrentTemperature = &raw
+	return nil
 }
 
 // SeaWaterTemperatureValue returns SeaWaterTemperature as a physical value in K (value = raw * 0.01).
@@ -6579,10 +9497,30 @@ func (m *HvacStatus) SeaWaterTemperatureValue() (float64, bool) {
 }
 
 // SetSeaWaterTemperatureValue sets SeaWaterTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetSeaWaterTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetSeaWaterTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SeaWaterTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SeaWaterTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("SeaWaterTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SeaWaterTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SeaWaterTemperature = &raw
+	if _, ok := candidate.SeaWaterTemperatureValue(); !ok {
+		return invalidPhysicalValue("SeaWaterTemperature", v)
+	}
 	m.SeaWaterTemperature = &raw
+	return nil
 }
 
 // LoopTemperatureValue returns LoopTemperature as a physical value in K (value = raw * 0.01).
@@ -6611,10 +9549,30 @@ func (m *HvacStatus) LoopTemperatureValue() (float64, bool) {
 }
 
 // SetLoopTemperatureValue sets LoopTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetLoopTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetLoopTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("LoopTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("LoopTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("LoopTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("LoopTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.LoopTemperature = &raw
+	if _, ok := candidate.LoopTemperatureValue(); !ok {
+		return invalidPhysicalValue("LoopTemperature", v)
+	}
 	m.LoopTemperature = &raw
+	return nil
 }
 
 // EvaporatorTemperatureValue returns EvaporatorTemperature as a physical value in K (value = raw * 0.01).
@@ -6643,10 +9601,30 @@ func (m *HvacStatus) EvaporatorTemperatureValue() (float64, bool) {
 }
 
 // SetEvaporatorTemperatureValue sets EvaporatorTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetEvaporatorTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetEvaporatorTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EvaporatorTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EvaporatorTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("EvaporatorTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EvaporatorTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EvaporatorTemperature = &raw
+	if _, ok := candidate.EvaporatorTemperatureValue(); !ok {
+		return invalidPhysicalValue("EvaporatorTemperature", v)
+	}
 	m.EvaporatorTemperature = &raw
+	return nil
 }
 
 // InletTemperatureValue returns InletTemperature as a physical value in K (value = raw * 0.01).
@@ -6675,10 +9653,30 @@ func (m *HvacStatus) InletTemperatureValue() (float64, bool) {
 }
 
 // SetInletTemperatureValue sets InletTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *HvacStatus) SetInletTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *HvacStatus) SetInletTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("InletTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("InletTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("InletTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("InletTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.InletTemperature = &raw
+	if _, ok := candidate.InletTemperatureValue(); !ok {
+		return invalidPhysicalValue("InletTemperature", v)
+	}
 	m.InletTemperature = &raw
+	return nil
 }
 
 type LightingSystemSettings struct {
@@ -7060,10 +10058,30 @@ func (m *CurrentStatusAndFile) ElapsedTrackTimeValue() (float64, bool) {
 }
 
 // SetElapsedTrackTimeValue sets ElapsedTrackTime from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *CurrentStatusAndFile) SetElapsedTrackTimeValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *CurrentStatusAndFile) SetElapsedTrackTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ElapsedTrackTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ElapsedTrackTime", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("ElapsedTrackTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ElapsedTrackTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ElapsedTrackTime = &raw
+	if _, ok := candidate.ElapsedTrackTimeValue(); !ok {
+		return invalidPhysicalValue("ElapsedTrackTime", v)
+	}
 	m.ElapsedTrackTime = &raw
+	return nil
 }
 
 // TrackTimeValue returns TrackTime as a physical value in s (value = raw).
@@ -7092,10 +10110,30 @@ func (m *CurrentStatusAndFile) TrackTimeValue() (float64, bool) {
 }
 
 // SetTrackTimeValue sets TrackTime from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *CurrentStatusAndFile) SetTrackTimeValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *CurrentStatusAndFile) SetTrackTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TrackTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TrackTime", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("TrackTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TrackTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TrackTime = &raw
+	if _, ok := candidate.TrackTimeValue(); !ok {
+		return invalidPhysicalValue("TrackTime", v)
+	}
 	m.TrackTime = &raw
+	return nil
 }
 
 // SignalStrengthValue returns SignalStrength as a physical value in % (value = raw).
@@ -7124,10 +10162,30 @@ func (m *CurrentStatusAndFile) SignalStrengthValue() (float64, bool) {
 }
 
 // SetSignalStrengthValue sets SignalStrength from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *CurrentStatusAndFile) SetSignalStrengthValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *CurrentStatusAndFile) SetSignalStrengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SignalStrength = &raw
+	if _, ok := candidate.SignalStrengthValue(); !ok {
+		return invalidPhysicalValue("SignalStrength", v)
+	}
 	m.SignalStrength = &raw
+	return nil
 }
 
 // RadioFrequencyValue returns RadioFrequency as a physical value in Hz (value = raw * 10).
@@ -7156,8 +10214,28 @@ func (m *CurrentStatusAndFile) RadioFrequencyValue() (float64, bool) {
 }
 
 // SetRadioFrequencyValue sets RadioFrequency from a physical value in Hz, rounded to the nearest
-// wire tick of 10.
-func (m *CurrentStatusAndFile) SetRadioFrequencyValue(v float64) {
-	raw := uint64(math.Round(v / 10))
+// wire tick of 10. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *CurrentStatusAndFile) SetRadioFrequencyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RadioFrequency", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RadioFrequency", v)
+	}
+	if v > 4.294967292e+10 && !approximatelyEqual(v, 4.294967292e+10) {
+		return invalidPhysicalValue("RadioFrequency", v)
+	}
+	ticks, err := physicalRawTicks(v, 10, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("RadioFrequency", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RadioFrequency = &raw
+	if _, ok := candidate.RadioFrequencyValue(); !ok {
+		return invalidPhysicalValue("RadioFrequency", v)
+	}
 	m.RadioFrequency = &raw
+	return nil
 }

@@ -30,6 +30,13 @@ type config struct {
 	reconnect         *ReconnectPolicy // nil = no auto-reconnect
 }
 
+func (c *config) validateRead() error {
+	if c.bus != nil {
+		return errors.New("n2k: WithBus requires NewClient; use Client.Receive, Client.Scanner, or Client.Observations to read it")
+	}
+	return c.validate()
+}
+
 func (c *config) validate() error {
 	if len(c.sources) == 0 && c.bus == nil {
 		return errors.New("n2k: at least one source or WithBus is required")
@@ -423,7 +430,8 @@ func WithReconnect(policy ReconnectPolicy) Option {
 // WithBus provides a pre-constructed Bus for the client to use — either a
 // custom transport not shipped by this library, or a fake for testing. When
 // set, the client uses this bus directly instead of constructing one from
-// CAN/USB sources.
+// CAN/USB sources. This option is only accepted by NewClient; use its Receive,
+// Scanner, or Observations methods for reading. Standalone readers reject it.
 func WithBus(bus Bus) Option {
 	return optionFunc(func(c *config) {
 		c.bus = bus

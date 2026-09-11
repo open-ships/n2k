@@ -9,6 +9,7 @@ import (
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/adapter"
 	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/transport"
 	"github.com/open-ships/n2k/pgn"
 	"github.com/open-ships/n2k/raw"
 )
@@ -21,7 +22,8 @@ type infoCarrier interface {
 }
 
 // readPipeline is the single decode path shared by Scanner, Receive, and
-// Client: raw CAN frame -> pre-filter -> fast-packet assembly -> decode ->
+// Client: raw CAN frame -> passive ISO assembly (standalone readers) ->
+// pre-filter -> fast-packet assembly -> decode ->
 // unknown-PGN policy -> post-filter -> out channel.
 type readPipeline struct {
 	mu              sync.Mutex
@@ -34,6 +36,7 @@ type readPipeline struct {
 	filter          *filter
 	adapter         *adapter.CANAdapter
 	decoder         *decoder.Decoder
+	passiveTP       *transport.PassiveReceiver
 	emit            func(pgn.Message)
 	observe         func(raw.Observation)
 }
@@ -61,6 +64,7 @@ func newReadPipeline(ctx context.Context, cfg config, emit func(pgn.Message)) (*
 		filter:         f,
 		adapter:        adapter.NewCANAdapter(),
 		decoder:        decoder.New(),
+		passiveTP:      transport.NewPassiveReceiver(),
 		emit:           emit,
 	}
 	p.decoder.SetOutput(p)
@@ -104,6 +108,17 @@ func (p *readPipeline) HandleObservation(observation raw.Observation) {
 	}
 	frame := *observation.Frame
 	info := messageInfoForObservation(observation)
+	// A live Client owns active ISO transport separately. Standalone readers
+	// assemble before filtering so filters can name the transported PGN.
+	if !p.managedEpoch {
+		assembledInfo, payload, err := p.passiveTP.Handle(frame, info)
+		if err != nil {
+			p.log.Warn("discarding passive ISO transport", "error", err)
+		}
+		if payload != nil {
+			p.decodeAssembled(assembledInfo, payload)
+		}
+	}
 	if p.filter != nil {
 		if !p.filter.evalPre(info) {
 			return
@@ -134,6 +149,10 @@ func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
 	if !p.acceptEpoch(info.ConnectionEpoch, info.ClaimEpoch) {
 		return
 	}
+	p.decodeAssembled(info, data)
+}
+
+func (p *readPipeline) decodeAssembled(info pgn.MessageInfo, data []byte) {
 	if p.filter != nil && !p.filter.evalPre(info) {
 		return
 	}

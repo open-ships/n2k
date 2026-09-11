@@ -41,6 +41,22 @@ Each subscriber receives its own deep message clone, including pointer fields,
 repeating fields, diagnostics, and retained wire bookkeeping. Registry ingress
 and snapshots use the same generated clone implementation.
 
+Standalone `Receive` and `NewScanner` own their read sources and one pipeline.
+`internal/transport/passive.go` reconstructs ISO BAM and addressed transfers
+before metadata filtering. Its 512-session table is keyed by network (falling
+back to adapter), connection and claim epochs, source, and destination. It
+requires an announcement and ordered DT frames, owns at most 1785 payload bytes
+per session, and expires incomplete sessions after 1250 ms inactivity or an
+absolute 30 seconds. Capture timestamps also expire inactive sessions during
+accelerated replay. It never transmits and does not require peer CTS frames.
+The active Client keeps its existing transport manager and injects completed
+messages through the same decoder without duplicate passive assembly.
+
+`Scanner.Close` cancels and joins the source worker, including descriptor
+cleanup. Iterator exit does the same. Live-client scanners instead unsubscribe
+from the Client's independently owned hub. `WithBus` is accepted only by
+`NewClient`; standalone reader constructors return an actionable option error.
+
 The observation Module is the ownership Seam between transport Adapters and
 consumers. Its Interface preserves `AdapterID`, `NetworkID`, source time, host
 receipt time, relative gateway time, and direction. Payloads and frames are
@@ -156,8 +172,12 @@ larger epoch and partial packets cannot cross an epoch boundary.
 For Actisense, an epoch is published only after the gateway acknowledges the
 requested operating mode. Raw mode fails closed when BEM is rejected or
 stripped. Volatile mode changes are best-effort restored on clean close. PGN
-list changes are explicit batched transactions with one activation and a
-same-epoch restore; sends never change the list. EEPROM/flash commits and
+list changes are explicit serialized transactions with one activation and a
+same-epoch restore. Originals are retained before the first mutation. A failed
+transaction uses a separate command-timeout context for rollback and joins
+rollback failures into its error. `Close` cancels any active transaction, waits
+for its rollback, then retries restoration with another bounded cleanup context;
+restoration errors reach the caller. No restore crosses a connection epoch; sends never change the list. EEPROM/flash commits and
 reinitialization exist only as explicit caller methods. The role-aware public
 constructors do not fall back from raw CAN to a gateway-owned message session.
 

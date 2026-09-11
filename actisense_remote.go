@@ -20,6 +20,8 @@ const (
 	maxRemotePendingRequests = 64
 )
 
+// ErrActisenseRemoteEpochChanged identifies an operation invalidated by a
+// connection or local address-identity change. It may be wrapped.
 var ErrActisenseRemoteEpochChanged = errors.New("n2k: Actisense remote request canceled because the local address or connection epoch changed")
 
 type actisenseRemoteConfig struct {
@@ -34,10 +36,15 @@ type actisenseRemoteOptionFunc func(*actisenseRemoteConfig)
 
 func (f actisenseRemoteOptionFunc) applyActisenseRemote(config *actisenseRemoteConfig) { f(config) }
 
+// WithActisenseRemoteTimeout bounds one remote BEM command including its
+// response train. It must be positive; the default is five seconds. An earlier
+// caller deadline takes precedence.
 func WithActisenseRemoteTimeout(timeout time.Duration) ActisenseRemoteOption {
 	return actisenseRemoteOptionFunc(func(config *actisenseRemoteConfig) { config.timeout = timeout })
 }
 
+// WithActisenseRemoteMultiReplyInactivity bounds the gap between remote BEM
+// replies. It must be positive; the default is 500 milliseconds.
 func WithActisenseRemoteMultiReplyInactivity(timeout time.Duration) ActisenseRemoteOption {
 	return actisenseRemoteOptionFunc(func(config *actisenseRemoteConfig) { config.inactivity = timeout })
 }
@@ -93,6 +100,9 @@ func (m *actisenseRemoteManager) device(source uint8, options []ActisenseRemoteO
 	}, nil
 }
 
+// Diagnostics yields owned diagnostic events from this remote source address.
+// The subscription ends on client/session shutdown, overflow, or early loop
+// exit; it does not close the underlying connection.
 func (d *ActisenseRemoteDevice) Diagnostics() iter.Seq2[ActisenseDiagnostic, error] {
 	return func(yield func(ActisenseDiagnostic, error) bool) {
 		if d == nil || d.manager == nil {

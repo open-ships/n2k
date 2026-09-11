@@ -144,7 +144,9 @@ type FieldDescriptor struct {
 // PgnInfoLookup maps PGN numbers to their PgnInfo descriptors. It is the primary
 // lookup table used by callers to find metadata and, when available, decoders for a
 // received message. Multiple entries per PGN are possible (proprietary PGNs with
-// different manufacturers).
+// different manufacturers). Treat the map, descriptors, and their nested fields
+// as read-only shared metadata; mutating them is unsupported and may race with
+// decoding, encoding, or filtering.
 var PgnInfoLookup map[uint32][]*PgnInfo
 
 // UnseenLookup maps PGN numbers that are defined by the source schema but are

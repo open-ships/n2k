@@ -24,20 +24,28 @@ type eblWriterOptionFunc func(*eblWriterConfig)
 
 func (f eblWriterOptionFunc) applyEBLWriter(config *eblWriterConfig) { f(config) }
 
+// WithEBLDescription sets the initial UTF-8 capture description. Empty omits
+// the description; descriptions must fit the EBL tag payload limit.
 func WithEBLDescription(description string) EBLWriterOption {
 	return eblWriterOptionFunc(func(config *eblWriterConfig) { config.description = description })
 }
 
+// WithEBLStartTime sets the initial UTC capture timestamp. Zero uses the
+// current host time.
 func WithEBLStartTime(timestamp time.Time) EBLWriterOption {
 	return eblWriterOptionFunc(func(config *eblWriterConfig) { config.start = timestamp })
 }
 
+// EBLWriterMetrics is an owned snapshot of written records, bytes, and errors.
 type EBLWriterMetrics = ebl.WriterMetrics
 
 // EBLWriter writes interoperable Actisense Enhanced Binary Log records. It is
 // safe for concurrent use and retains the first output error.
 type EBLWriter struct{ writer *ebl.Writer }
 
+// NewEBLWriter writes the EBL header to output and returns a concurrent-safe
+// writer. It returns an error for invalid options or header failures. The caller
+// owns output and is responsible for flushing or closing it.
 func NewEBLWriter(output io.Writer, options ...EBLWriterOption) (*EBLWriter, error) {
 	config := eblWriterConfig{}
 	for _, option := range options {
@@ -53,6 +61,8 @@ func NewEBLWriter(output io.Writer, options ...EBLWriterOption) (*EBLWriter, err
 	return &EBLWriter{writer: writer}, nil
 }
 
+// WriteRawBST synchronously records one checksum-stripped BST record with its
+// capture time and direction. It copies rawBST and retains the first output error.
 func (w *EBLWriter) WriteRawBST(timestamp time.Time, direction Direction, rawBST []byte) error {
 	if w == nil || w.writer == nil {
 		return errors.New("n2k: nil EBL writer")
@@ -60,6 +70,8 @@ func (w *EBLWriter) WriteRawBST(timestamp time.Time, direction Direction, rawBST
 	return w.writer.WriteRawBST(timestamp, eblWriterDirection(direction), append([]byte(nil), rawBST...))
 }
 
+// WriteRawBytes synchronously records wire bytes with EBL escaping and
+// capture-time and direction markers. It copies data.
 func (w *EBLWriter) WriteRawBytes(timestamp time.Time, direction Direction, data []byte) error {
 	if w == nil || w.writer == nil {
 		return errors.New("n2k: nil EBL writer")
@@ -67,6 +79,7 @@ func (w *EBLWriter) WriteRawBytes(timestamp time.Time, direction Direction, data
 	return w.writer.WriteRawBytes(timestamp, eblWriterDirection(direction), append([]byte(nil), data...))
 }
 
+// WriteDescription appends a UTF-8 description tag and retains any output error.
 func (w *EBLWriter) WriteDescription(description string) error {
 	if w == nil || w.writer == nil {
 		return errors.New("n2k: nil EBL writer")
@@ -74,6 +87,7 @@ func (w *EBLWriter) WriteDescription(description string) error {
 	return w.writer.WriteDescription(description)
 }
 
+// Err returns the first output error, or nil while the writer is healthy.
 func (w *EBLWriter) Err() error {
 	if w == nil || w.writer == nil {
 		return errors.New("n2k: nil EBL writer")
@@ -81,6 +95,7 @@ func (w *EBLWriter) Err() error {
 	return w.writer.Err()
 }
 
+// Metrics returns an owned, concurrency-safe snapshot of output counters.
 func (w *EBLWriter) Metrics() EBLWriterMetrics {
 	if w == nil || w.writer == nil {
 		return EBLWriterMetrics{}
@@ -109,6 +124,9 @@ type ActisenseEBLTrace struct {
 	err       error
 }
 
+// NewActisenseEBLTrace creates a concurrent-safe trace using a non-nil EBL
+// writer. Attach it with WithActisenseWireTrace; call Flush after the session
+// ends to retain incomplete trailing input. It does not own the output stream.
 func NewActisenseEBLTrace(writer *EBLWriter) (*ActisenseEBLTrace, error) {
 	if writer == nil || writer.writer == nil {
 		return nil, errors.New("n2k: Actisense EBL trace requires an EBL writer")
@@ -196,6 +214,9 @@ func findActisenseFrameEnd(data []byte) int {
 	return -1
 }
 
+// Flush records any incomplete trailing receive bytes and returns the first
+// trace error. It does not flush or close the caller-owned output stream.
+// A nil trace is a no-op.
 func (t *ActisenseEBLTrace) Flush() error {
 	if t == nil {
 		return nil
@@ -208,6 +229,7 @@ func (t *ActisenseEBLTrace) Flush() error {
 	return t.err
 }
 
+// Err returns the first trace error. It is concurrency-safe and nil-safe.
 func (t *ActisenseEBLTrace) Err() error {
 	if t == nil {
 		return nil

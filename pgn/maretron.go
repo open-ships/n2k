@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type MaretronKeelPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -121,10 +119,30 @@ func (m *MaretronProprietaryDcBreakerCurrent) BreakerCurrentValue() (float64, bo
 }
 
 // SetBreakerCurrentValue sets BreakerCurrent from a physical value in A, rounded to the nearest
-// wire tick of 0.1.
-func (m *MaretronProprietaryDcBreakerCurrent) SetBreakerCurrentValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronProprietaryDcBreakerCurrent) SetBreakerCurrentValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BreakerCurrent", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("BreakerCurrent", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("BreakerCurrent", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("BreakerCurrent", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.BreakerCurrent = &raw
+	if _, ok := candidate.BreakerCurrentValue(); !ok {
+		return invalidPhysicalValue("BreakerCurrent", v)
+	}
 	m.BreakerCurrent = &raw
+	return nil
 }
 
 type MaretronUniversalConfigurationSf struct {
@@ -213,10 +231,30 @@ func (m *MaretronFluidFlowRate) FluidFlowRateValue() (float64, bool) {
 }
 
 // SetFluidFlowRateValue sets FluidFlowRate from a physical value, rounded to the nearest
-// wire tick of 0.0001.
-func (m *MaretronFluidFlowRate) SetFluidFlowRateValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronFluidFlowRate) SetFluidFlowRateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FluidFlowRate", v)
+	}
+	if v < -838.8607 && !approximatelyEqual(v, -838.8607) {
+		return invalidPhysicalValue("FluidFlowRate", v)
+	}
+	if v > 838.8604 && !approximatelyEqual(v, 838.8604) {
+		return invalidPhysicalValue("FluidFlowRate", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 24, true)
+	if err != nil {
+		return invalidPhysicalValue("FluidFlowRate", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FluidFlowRate = &raw
+	if _, ok := candidate.FluidFlowRateValue(); !ok {
+		return invalidPhysicalValue("FluidFlowRate", v)
+	}
 	m.FluidFlowRate = &raw
+	return nil
 }
 
 type MaretronTripVolume struct {
@@ -277,10 +315,30 @@ func (m *MaretronTripVolume) TripVolumeValue() (float64, bool) {
 }
 
 // SetTripVolumeValue sets TripVolume from a physical value, rounded to the nearest
-// wire tick of 0.001.
-func (m *MaretronTripVolume) SetTripVolumeValue(v float64) {
-	raw := uint64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronTripVolume) SetTripVolumeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TripVolume", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TripVolume", v)
+	}
+	if v > 16777.212 && !approximatelyEqual(v, 16777.212) {
+		return invalidPhysicalValue("TripVolume", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 24, false)
+	if err != nil {
+		return invalidPhysicalValue("TripVolume", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TripVolume = &raw
+	if _, ok := candidate.TripVolumeValue(); !ok {
+		return invalidPhysicalValue("TripVolume", v)
+	}
 	m.TripVolume = &raw
+	return nil
 }
 
 type Maretron420Ma struct {
@@ -369,10 +427,30 @@ func (m *Maretron010V) Pgn010VDataValue() (float64, bool) {
 }
 
 // SetPgn010VDataValue sets Pgn010VData from a physical value, rounded to the nearest
-// wire tick of 0.000244141.
-func (m *Maretron010V) SetPgn010VDataValue(v float64) {
-	raw := uint64(math.Round(v / 0.000244141))
+// wire tick of 0.000244141. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Maretron010V) SetPgn010VDataValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Pgn010VData", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Pgn010VData", v)
+	}
+	if v > 15.9990234375 && !approximatelyEqual(v, 15.9990234375) {
+		return invalidPhysicalValue("Pgn010VData", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.000244141, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Pgn010VData", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Pgn010VData = &raw
+	if _, ok := candidate.Pgn010VDataValue(); !ok {
+		return invalidPhysicalValue("Pgn010VData", v)
+	}
 	m.Pgn010VData = &raw
+	return nil
 }
 
 type MaretronRotationalRate struct {
@@ -433,10 +511,30 @@ func (m *MaretronRotationalRate) RotationalRateValue() (float64, bool) {
 }
 
 // SetRotationalRateValue sets RotationalRate from a physical value, rounded to the nearest
-// wire tick of 0.25.
-func (m *MaretronRotationalRate) SetRotationalRateValue(v float64) {
-	raw := int64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronRotationalRate) SetRotationalRateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RotationalRate", v)
+	}
+	if v < -8191.75 && !approximatelyEqual(v, -8191.75) {
+		return invalidPhysicalValue("RotationalRate", v)
+	}
+	if v > 8191 && !approximatelyEqual(v, 8191) {
+		return invalidPhysicalValue("RotationalRate", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("RotationalRate", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RotationalRate = &raw
+	if _, ok := candidate.RotationalRateValue(); !ok {
+		return invalidPhysicalValue("RotationalRate", v)
+	}
 	m.RotationalRate = &raw
+	return nil
 }
 
 type MaretronResistance struct {
@@ -495,10 +593,30 @@ func (m *MaretronResistance) ResistanceValue() (float64, bool) {
 }
 
 // SetResistanceValue sets Resistance from a physical value, rounded to the nearest
-// wire tick of 0.01.
-func (m *MaretronResistance) SetResistanceValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronResistance) SetResistanceValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Resistance", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Resistance", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Resistance", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Resistance", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Resistance = &raw
+	if _, ok := candidate.ResistanceValue(); !ok {
+		return invalidPhysicalValue("Resistance", v)
+	}
 	m.Resistance = &raw
+	return nil
 }
 
 type MaretronAutomationFunctionMaster struct {
@@ -917,10 +1035,30 @@ func (m *MaretronProprietaryTemperatureHighRange) ActualTemperatureValue() (floa
 }
 
 // SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.1.
-func (m *MaretronProprietaryTemperatureHighRange) SetActualTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronProprietaryTemperatureHighRange) SetActualTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ActualTemperature = &raw
+	if _, ok := candidate.ActualTemperatureValue(); !ok {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
 	m.ActualTemperature = &raw
+	return nil
 }
 
 // SetTemperatureValue returns SetTemperature as a physical value in K (value = raw * 0.1).
@@ -949,10 +1087,30 @@ func (m *MaretronProprietaryTemperatureHighRange) SetTemperatureValue() (float64
 }
 
 // SetSetTemperatureValue sets SetTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.1.
-func (m *MaretronProprietaryTemperatureHighRange) SetSetTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronProprietaryTemperatureHighRange) SetSetTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.SetTemperature = &raw
+	if _, ok := candidate.SetTemperatureValue(); !ok {
+		return invalidPhysicalValue("SetTemperature", v)
+	}
 	m.SetTemperature = &raw
+	return nil
 }
 
 type MaretronAnnunciator struct {
@@ -1382,10 +1540,30 @@ func (m *MaretronSwitchStatusCounter) StartDateValue() (float64, bool) {
 }
 
 // SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
-// wire tick of 1.
-func (m *MaretronSwitchStatusCounter) SetStartDateValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusCounter) SetStartDateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StartDate = &raw
+	if _, ok := candidate.StartDateValue(); !ok {
+		return invalidPhysicalValue("StartDate", v)
+	}
 	m.StartDate = &raw
+	return nil
 }
 
 // StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
@@ -1414,10 +1592,30 @@ func (m *MaretronSwitchStatusCounter) StartTimeValue() (float64, bool) {
 }
 
 // SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *MaretronSwitchStatusCounter) SetStartTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusCounter) SetStartTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StartTime = &raw
+	if _, ok := candidate.StartTimeValue(); !ok {
+		return invalidPhysicalValue("StartTime", v)
+	}
 	m.StartTime = &raw
+	return nil
 }
 
 type MaretronSwitchStatusTimer struct {
@@ -1488,10 +1686,30 @@ func (m *MaretronSwitchStatusTimer) StartDateValue() (float64, bool) {
 }
 
 // SetStartDateValue sets StartDate from a physical value in d, rounded to the nearest
-// wire tick of 1.
-func (m *MaretronSwitchStatusTimer) SetStartDateValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusTimer) SetStartDateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("StartDate", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StartDate = &raw
+	if _, ok := candidate.StartDateValue(); !ok {
+		return invalidPhysicalValue("StartDate", v)
+	}
 	m.StartDate = &raw
+	return nil
 }
 
 // StartTimeValue returns StartTime as a physical value in s (value = raw * 0.0001).
@@ -1520,10 +1738,30 @@ func (m *MaretronSwitchStatusTimer) StartTimeValue() (float64, bool) {
 }
 
 // SetStartTimeValue sets StartTime from a physical value in s, rounded to the nearest
-// wire tick of 0.0001.
-func (m *MaretronSwitchStatusTimer) SetStartTimeValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusTimer) SetStartTimeValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	if v > 86401 && !approximatelyEqual(v, 86401) {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("StartTime", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.StartTime = &raw
+	if _, ok := candidate.StartTimeValue(); !ok {
+		return invalidPhysicalValue("StartTime", v)
+	}
 	m.StartTime = &raw
+	return nil
 }
 
 // AccumulatedOffPeriodValue returns AccumulatedOffPeriod as a physical value in s (value = raw).
@@ -1552,10 +1790,30 @@ func (m *MaretronSwitchStatusTimer) AccumulatedOffPeriodValue() (float64, bool) 
 }
 
 // SetAccumulatedOffPeriodValue sets AccumulatedOffPeriod from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *MaretronSwitchStatusTimer) SetAccumulatedOffPeriodValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedOffPeriodValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AccumulatedOffPeriod", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AccumulatedOffPeriod", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("AccumulatedOffPeriod", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("AccumulatedOffPeriod", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AccumulatedOffPeriod = &raw
+	if _, ok := candidate.AccumulatedOffPeriodValue(); !ok {
+		return invalidPhysicalValue("AccumulatedOffPeriod", v)
+	}
 	m.AccumulatedOffPeriod = &raw
+	return nil
 }
 
 // AccumulatedOnPeriodValue returns AccumulatedOnPeriod as a physical value in s (value = raw).
@@ -1584,10 +1842,30 @@ func (m *MaretronSwitchStatusTimer) AccumulatedOnPeriodValue() (float64, bool) {
 }
 
 // SetAccumulatedOnPeriodValue sets AccumulatedOnPeriod from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *MaretronSwitchStatusTimer) SetAccumulatedOnPeriodValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedOnPeriodValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AccumulatedOnPeriod", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AccumulatedOnPeriod", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("AccumulatedOnPeriod", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("AccumulatedOnPeriod", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AccumulatedOnPeriod = &raw
+	if _, ok := candidate.AccumulatedOnPeriodValue(); !ok {
+		return invalidPhysicalValue("AccumulatedOnPeriod", v)
+	}
 	m.AccumulatedOnPeriod = &raw
+	return nil
 }
 
 // AccumulatedErrorPeriodValue returns AccumulatedErrorPeriod as a physical value in s (value = raw).
@@ -1616,10 +1894,30 @@ func (m *MaretronSwitchStatusTimer) AccumulatedErrorPeriodValue() (float64, bool
 }
 
 // SetAccumulatedErrorPeriodValue sets AccumulatedErrorPeriod from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *MaretronSwitchStatusTimer) SetAccumulatedErrorPeriodValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *MaretronSwitchStatusTimer) SetAccumulatedErrorPeriodValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AccumulatedErrorPeriod", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AccumulatedErrorPeriod", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("AccumulatedErrorPeriod", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("AccumulatedErrorPeriod", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AccumulatedErrorPeriod = &raw
+	if _, ok := candidate.AccumulatedErrorPeriodValue(); !ok {
+		return invalidPhysicalValue("AccumulatedErrorPeriod", v)
+	}
 	m.AccumulatedErrorPeriod = &raw
+	return nil
 }
 
 type MaretronBnwas struct {

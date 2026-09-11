@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type SeatalkWirelessKeypadControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -159,10 +157,30 @@ func (m *SeatalkPilotWindDatum) WindDatumValue() (float64, bool) {
 }
 
 // SetWindDatumValue sets WindDatum from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotWindDatum) SetWindDatumValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotWindDatum) SetWindDatumValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("WindDatum", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("WindDatum", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("WindDatum", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("WindDatum", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.WindDatum = &raw
+	if _, ok := candidate.WindDatumValue(); !ok {
+		return invalidPhysicalValue("WindDatum", v)
+	}
 	m.WindDatum = &raw
+	return nil
 }
 
 // RollingAverageWindAngleValue returns RollingAverageWindAngle as a physical value in rad (value = raw * 0.0001).
@@ -191,10 +209,30 @@ func (m *SeatalkPilotWindDatum) RollingAverageWindAngleValue() (float64, bool) {
 }
 
 // SetRollingAverageWindAngleValue sets RollingAverageWindAngle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotWindDatum) SetRollingAverageWindAngleValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotWindDatum) SetRollingAverageWindAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RollingAverageWindAngle", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RollingAverageWindAngle", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("RollingAverageWindAngle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RollingAverageWindAngle", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RollingAverageWindAngle = &raw
+	if _, ok := candidate.RollingAverageWindAngleValue(); !ok {
+		return invalidPhysicalValue("RollingAverageWindAngle", v)
+	}
 	m.RollingAverageWindAngle = &raw
+	return nil
 }
 
 type SeatalkPilotHeading struct {
@@ -253,10 +291,30 @@ func (m *SeatalkPilotHeading) HeadingTrueValue() (float64, bool) {
 }
 
 // SetHeadingTrueValue sets HeadingTrue from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotHeading) SetHeadingTrueValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotHeading) SetHeadingTrueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("HeadingTrue", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("HeadingTrue", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("HeadingTrue", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("HeadingTrue", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.HeadingTrue = &raw
+	if _, ok := candidate.HeadingTrueValue(); !ok {
+		return invalidPhysicalValue("HeadingTrue", v)
+	}
 	m.HeadingTrue = &raw
+	return nil
 }
 
 // HeadingMagneticValue returns HeadingMagnetic as a physical value in rad (value = raw * 0.0001).
@@ -285,10 +343,30 @@ func (m *SeatalkPilotHeading) HeadingMagneticValue() (float64, bool) {
 }
 
 // SetHeadingMagneticValue sets HeadingMagnetic from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotHeading) SetHeadingMagneticValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotHeading) SetHeadingMagneticValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("HeadingMagnetic", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("HeadingMagnetic", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("HeadingMagnetic", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("HeadingMagnetic", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.HeadingMagnetic = &raw
+	if _, ok := candidate.HeadingMagneticValue(); !ok {
+		return invalidPhysicalValue("HeadingMagnetic", v)
+	}
 	m.HeadingMagnetic = &raw
+	return nil
 }
 
 type SeatalkPilotLockedHeading struct {
@@ -349,10 +427,30 @@ func (m *SeatalkPilotLockedHeading) TargetHeadingTrueValue() (float64, bool) {
 }
 
 // SetTargetHeadingTrueValue sets TargetHeadingTrue from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotLockedHeading) SetTargetHeadingTrueValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotLockedHeading) SetTargetHeadingTrueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TargetHeadingTrue", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TargetHeadingTrue", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("TargetHeadingTrue", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TargetHeadingTrue", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TargetHeadingTrue = &raw
+	if _, ok := candidate.TargetHeadingTrueValue(); !ok {
+		return invalidPhysicalValue("TargetHeadingTrue", v)
+	}
 	m.TargetHeadingTrue = &raw
+	return nil
 }
 
 // TargetHeadingMagneticValue returns TargetHeadingMagnetic as a physical value in rad (value = raw * 0.0001).
@@ -381,10 +479,30 @@ func (m *SeatalkPilotLockedHeading) TargetHeadingMagneticValue() (float64, bool)
 }
 
 // SetTargetHeadingMagneticValue sets TargetHeadingMagnetic from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkPilotLockedHeading) SetTargetHeadingMagneticValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkPilotLockedHeading) SetTargetHeadingMagneticValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TargetHeadingMagnetic", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TargetHeadingMagnetic", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("TargetHeadingMagnetic", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TargetHeadingMagnetic", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TargetHeadingMagnetic = &raw
+	if _, ok := candidate.TargetHeadingMagneticValue(); !ok {
+		return invalidPhysicalValue("TargetHeadingMagnetic", v)
+	}
 	m.TargetHeadingMagnetic = &raw
+	return nil
 }
 
 type SeatalkSilenceAlarm struct {
@@ -613,10 +731,30 @@ func (m *Seatalk1DisplayBrightness) BrightnessValue() (float64, bool) {
 }
 
 // SetBrightnessValue sets Brightness from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *Seatalk1DisplayBrightness) SetBrightnessValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *Seatalk1DisplayBrightness) SetBrightnessValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Brightness", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Brightness", v)
+	}
+	if v > 252 && !approximatelyEqual(v, 252) {
+		return invalidPhysicalValue("Brightness", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, false)
+	if err != nil {
+		return invalidPhysicalValue("Brightness", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Brightness = &raw
+	if _, ok := candidate.BrightnessValue(); !ok {
+		return invalidPhysicalValue("Brightness", v)
+	}
 	m.Brightness = &raw
+	return nil
 }
 
 type Seatalk1DisplayColor struct {
@@ -865,10 +1003,30 @@ func (m *SeatalkNodeStatistics) NodeVoltageValue() (float64, bool) {
 }
 
 // SetNodeVoltageValue sets NodeVoltage from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *SeatalkNodeStatistics) SetNodeVoltageValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkNodeStatistics) SetNodeVoltageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("NodeVoltage", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("NodeVoltage", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("NodeVoltage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("NodeVoltage", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.NodeVoltage = &raw
+	if _, ok := candidate.NodeVoltageValue(); !ok {
+		return invalidPhysicalValue("NodeVoltage", v)
+	}
 	m.NodeVoltage = &raw
+	return nil
 }
 
 type SeatalkWaypointInformation struct {
@@ -933,10 +1091,30 @@ func (m *SeatalkWaypointInformation) BearingToWaypointTrueValue() (float64, bool
 }
 
 // SetBearingToWaypointTrueValue sets BearingToWaypointTrue from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkWaypointInformation) SetBearingToWaypointTrueValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkWaypointInformation) SetBearingToWaypointTrueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BearingToWaypointTrue", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BearingToWaypointTrue", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("BearingToWaypointTrue", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BearingToWaypointTrue", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BearingToWaypointTrue = &raw
+	if _, ok := candidate.BearingToWaypointTrueValue(); !ok {
+		return invalidPhysicalValue("BearingToWaypointTrue", v)
+	}
 	m.BearingToWaypointTrue = &raw
+	return nil
 }
 
 // BearingToWaypointMagneticValue returns BearingToWaypointMagnetic as a physical value in rad (value = raw * 0.0001).
@@ -965,10 +1143,30 @@ func (m *SeatalkWaypointInformation) BearingToWaypointMagneticValue() (float64, 
 }
 
 // SetBearingToWaypointMagneticValue sets BearingToWaypointMagnetic from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkWaypointInformation) SetBearingToWaypointMagneticValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkWaypointInformation) SetBearingToWaypointMagneticValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BearingToWaypointMagnetic", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BearingToWaypointMagnetic", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("BearingToWaypointMagnetic", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BearingToWaypointMagnetic", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BearingToWaypointMagnetic = &raw
+	if _, ok := candidate.BearingToWaypointMagneticValue(); !ok {
+		return invalidPhysicalValue("BearingToWaypointMagnetic", v)
+	}
 	m.BearingToWaypointMagnetic = &raw
+	return nil
 }
 
 // DistanceToWaypointValue returns DistanceToWaypoint as a physical value in m (value = raw * 0.01).
@@ -997,10 +1195,30 @@ func (m *SeatalkWaypointInformation) DistanceToWaypointValue() (float64, bool) {
 }
 
 // SetDistanceToWaypointValue sets DistanceToWaypoint from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *SeatalkWaypointInformation) SetDistanceToWaypointValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkWaypointInformation) SetDistanceToWaypointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DistanceToWaypoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DistanceToWaypoint", v)
+	}
+	if v > 4.294967292e+07 && !approximatelyEqual(v, 4.294967292e+07) {
+		return invalidPhysicalValue("DistanceToWaypoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("DistanceToWaypoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DistanceToWaypoint = &raw
+	if _, ok := candidate.DistanceToWaypointValue(); !ok {
+		return invalidPhysicalValue("DistanceToWaypoint", v)
+	}
 	m.DistanceToWaypoint = &raw
+	return nil
 }
 
 type SeatalkRouteInformation struct {
@@ -1069,10 +1287,30 @@ func (m *SeatalkRouteInformation) DistancePositionToNextWaypointValue() (float64
 }
 
 // SetDistancePositionToNextWaypointValue sets DistancePositionToNextWaypoint from a physical value in m, rounded to the nearest
-// wire tick of 1.
-func (m *SeatalkRouteInformation) SetDistancePositionToNextWaypointValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkRouteInformation) SetDistancePositionToNextWaypointValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("DistancePositionToNextWaypoint", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("DistancePositionToNextWaypoint", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("DistancePositionToNextWaypoint", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("DistancePositionToNextWaypoint", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.DistancePositionToNextWaypoint = &raw
+	if _, ok := candidate.DistancePositionToNextWaypointValue(); !ok {
+		return invalidPhysicalValue("DistancePositionToNextWaypoint", v)
+	}
 	m.DistancePositionToNextWaypoint = &raw
+	return nil
 }
 
 // BearingPositionToNextWaypointTrueValue returns BearingPositionToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
@@ -1101,10 +1339,30 @@ func (m *SeatalkRouteInformation) BearingPositionToNextWaypointTrueValue() (floa
 }
 
 // SetBearingPositionToNextWaypointTrueValue sets BearingPositionToNextWaypointTrue from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkRouteInformation) SetBearingPositionToNextWaypointTrueValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkRouteInformation) SetBearingPositionToNextWaypointTrueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BearingPositionToNextWaypointTrue", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BearingPositionToNextWaypointTrue", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("BearingPositionToNextWaypointTrue", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BearingPositionToNextWaypointTrue", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BearingPositionToNextWaypointTrue = &raw
+	if _, ok := candidate.BearingPositionToNextWaypointTrueValue(); !ok {
+		return invalidPhysicalValue("BearingPositionToNextWaypointTrue", v)
+	}
 	m.BearingPositionToNextWaypointTrue = &raw
+	return nil
 }
 
 // BearingCurrentWaypointToNextWaypointTrueValue returns BearingCurrentWaypointToNextWaypointTrue as a physical value in rad (value = raw * 0.0001).
@@ -1133,8 +1391,28 @@ func (m *SeatalkRouteInformation) BearingCurrentWaypointToNextWaypointTrueValue(
 }
 
 // SetBearingCurrentWaypointToNextWaypointTrueValue sets BearingCurrentWaypointToNextWaypointTrue from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *SeatalkRouteInformation) SetBearingCurrentWaypointToNextWaypointTrueValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *SeatalkRouteInformation) SetBearingCurrentWaypointToNextWaypointTrueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BearingCurrentWaypointToNextWaypointTrue", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BearingCurrentWaypointToNextWaypointTrue", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("BearingCurrentWaypointToNextWaypointTrue", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BearingCurrentWaypointToNextWaypointTrue", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BearingCurrentWaypointToNextWaypointTrue = &raw
+	if _, ok := candidate.BearingCurrentWaypointToNextWaypointTrueValue(); !ok {
+		return invalidPhysicalValue("BearingCurrentWaypointToNextWaypointTrue", v)
+	}
 	m.BearingCurrentWaypointToNextWaypointTrue = &raw
+	return nil
 }

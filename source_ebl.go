@@ -38,7 +38,7 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 	if err != nil {
 		return fmt.Errorf("n2k: opening EBL capture: %w", err)
 	}
-	defer func() { _ = file.Close() }()
+	defer closeSourceOnCancel(ctx, file)()
 
 	bstParser := actisense.NewParser()
 	adapter := gateway.NewActisenseObservationAdapter()

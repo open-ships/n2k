@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type GarminAutopilotEngineRpmA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -69,10 +67,30 @@ func (m *GarminAutopilotEngineRpmA) EngineSpeedValue() (float64, bool) {
 }
 
 // SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 1.
-func (m *GarminAutopilotEngineRpmA) SetEngineSpeedValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GarminAutopilotEngineRpmA) SetEngineSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EngineSpeed = &raw
+	if _, ok := candidate.EngineSpeedValue(); !ok {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
 	m.EngineSpeed = &raw
+	return nil
 }
 
 type GarminAutopilotEngineRpmB struct {
@@ -139,10 +157,30 @@ func (m *GarminAutopilotEngineRpmB) EngineSpeedValue() (float64, bool) {
 }
 
 // SetEngineSpeedValue sets EngineSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 1.
-func (m *GarminAutopilotEngineRpmB) SetEngineSpeedValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *GarminAutopilotEngineRpmB) SetEngineSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.EngineSpeed = &raw
+	if _, ok := candidate.EngineSpeedValue(); !ok {
+		return invalidPhysicalValue("EngineSpeed", v)
+	}
 	m.EngineSpeed = &raw
+	return nil
 }
 
 type EngineParametersRapidUpdate struct {
@@ -201,10 +239,30 @@ func (m *EngineParametersRapidUpdate) SpeedValue() (float64, bool) {
 }
 
 // SetSpeedValue sets Speed from a physical value in rpm, rounded to the nearest
-// wire tick of 0.25.
-func (m *EngineParametersRapidUpdate) SetSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersRapidUpdate) SetSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Speed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Speed", v)
+	}
+	if v > 16383 && !approximatelyEqual(v, 16383) {
+		return invalidPhysicalValue("Speed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Speed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Speed = &raw
+	if _, ok := candidate.SpeedValue(); !ok {
+		return invalidPhysicalValue("Speed", v)
+	}
 	m.Speed = &raw
+	return nil
 }
 
 // BoostPressureValue returns BoostPressure as a physical value in Pa (value = raw * 100).
@@ -233,10 +291,30 @@ func (m *EngineParametersRapidUpdate) BoostPressureValue() (float64, bool) {
 }
 
 // SetBoostPressureValue sets BoostPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *EngineParametersRapidUpdate) SetBoostPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersRapidUpdate) SetBoostPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("BoostPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("BoostPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("BoostPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("BoostPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.BoostPressure = &raw
+	if _, ok := candidate.BoostPressureValue(); !ok {
+		return invalidPhysicalValue("BoostPressure", v)
+	}
 	m.BoostPressure = &raw
+	return nil
 }
 
 // TiltTrimValue returns TiltTrim as a physical value in % (value = raw).
@@ -265,10 +343,30 @@ func (m *EngineParametersRapidUpdate) TiltTrimValue() (float64, bool) {
 }
 
 // SetTiltTrimValue sets TiltTrim from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *EngineParametersRapidUpdate) SetTiltTrimValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersRapidUpdate) SetTiltTrimValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TiltTrim", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("TiltTrim", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("TiltTrim", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("TiltTrim", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.TiltTrim = &raw
+	if _, ok := candidate.TiltTrimValue(); !ok {
+		return invalidPhysicalValue("TiltTrim", v)
+	}
 	m.TiltTrim = &raw
+	return nil
 }
 
 type EngineParametersDynamic struct {
@@ -345,10 +443,30 @@ func (m *EngineParametersDynamic) OilPressureValue() (float64, bool) {
 }
 
 // SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *EngineParametersDynamic) SetOilPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetOilPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OilPressure = &raw
+	if _, ok := candidate.OilPressureValue(); !ok {
+		return invalidPhysicalValue("OilPressure", v)
+	}
 	m.OilPressure = &raw
+	return nil
 }
 
 // OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
@@ -377,10 +495,30 @@ func (m *EngineParametersDynamic) OilTemperatureValue() (float64, bool) {
 }
 
 // SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.1.
-func (m *EngineParametersDynamic) SetOilTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetOilTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OilTemperature = &raw
+	if _, ok := candidate.OilTemperatureValue(); !ok {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
 	m.OilTemperature = &raw
+	return nil
 }
 
 // TemperatureValue returns Temperature as a physical value in K (value = raw * 0.01).
@@ -409,10 +547,30 @@ func (m *EngineParametersDynamic) TemperatureValue() (float64, bool) {
 }
 
 // SetTemperatureValue sets Temperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *EngineParametersDynamic) SetTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("Temperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.Temperature = &raw
+	if _, ok := candidate.TemperatureValue(); !ok {
+		return invalidPhysicalValue("Temperature", v)
+	}
 	m.Temperature = &raw
+	return nil
 }
 
 // AlternatorPotentialValue returns AlternatorPotential as a physical value in V (value = raw * 0.01).
@@ -441,10 +599,30 @@ func (m *EngineParametersDynamic) AlternatorPotentialValue() (float64, bool) {
 }
 
 // SetAlternatorPotentialValue sets AlternatorPotential from a physical value in V, rounded to the nearest
-// wire tick of 0.01.
-func (m *EngineParametersDynamic) SetAlternatorPotentialValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetAlternatorPotentialValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AlternatorPotential", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("AlternatorPotential", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("AlternatorPotential", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("AlternatorPotential", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.AlternatorPotential = &raw
+	if _, ok := candidate.AlternatorPotentialValue(); !ok {
+		return invalidPhysicalValue("AlternatorPotential", v)
+	}
 	m.AlternatorPotential = &raw
+	return nil
 }
 
 // FuelRateValue returns FuelRate as a physical value in L/h (value = raw * 0.1).
@@ -473,10 +651,30 @@ func (m *EngineParametersDynamic) FuelRateValue() (float64, bool) {
 }
 
 // SetFuelRateValue sets FuelRate from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *EngineParametersDynamic) SetFuelRateValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetFuelRateValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FuelRate", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("FuelRate", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("FuelRate", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FuelRate", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FuelRate = &raw
+	if _, ok := candidate.FuelRateValue(); !ok {
+		return invalidPhysicalValue("FuelRate", v)
+	}
 	m.FuelRate = &raw
+	return nil
 }
 
 // TotalEngineHoursValue returns TotalEngineHours as a physical value in s (value = raw).
@@ -505,10 +703,30 @@ func (m *EngineParametersDynamic) TotalEngineHoursValue() (float64, bool) {
 }
 
 // SetTotalEngineHoursValue sets TotalEngineHours from a physical value in s, rounded to the nearest
-// wire tick of 1.
-func (m *EngineParametersDynamic) SetTotalEngineHoursValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetTotalEngineHoursValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalEngineHours", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalEngineHours", v)
+	}
+	if v > 4.294967292e+09 && !approximatelyEqual(v, 4.294967292e+09) {
+		return invalidPhysicalValue("TotalEngineHours", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 32, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalEngineHours", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalEngineHours = &raw
+	if _, ok := candidate.TotalEngineHoursValue(); !ok {
+		return invalidPhysicalValue("TotalEngineHours", v)
+	}
 	m.TotalEngineHours = &raw
+	return nil
 }
 
 // CoolantPressureValue returns CoolantPressure as a physical value in Pa (value = raw * 100).
@@ -537,10 +755,30 @@ func (m *EngineParametersDynamic) CoolantPressureValue() (float64, bool) {
 }
 
 // SetCoolantPressureValue sets CoolantPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *EngineParametersDynamic) SetCoolantPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetCoolantPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CoolantPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CoolantPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("CoolantPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CoolantPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CoolantPressure = &raw
+	if _, ok := candidate.CoolantPressureValue(); !ok {
+		return invalidPhysicalValue("CoolantPressure", v)
+	}
 	m.CoolantPressure = &raw
+	return nil
 }
 
 // FuelPressureValue returns FuelPressure as a physical value in Pa (value = raw * 1000).
@@ -569,10 +807,30 @@ func (m *EngineParametersDynamic) FuelPressureValue() (float64, bool) {
 }
 
 // SetFuelPressureValue sets FuelPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 1000.
-func (m *EngineParametersDynamic) SetFuelPressureValue(v float64) {
-	raw := uint64(math.Round(v / 1000))
+// wire tick of 1000. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetFuelPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FuelPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("FuelPressure", v)
+	}
+	if v > 6.5532e+07 && !approximatelyEqual(v, 6.5532e+07) {
+		return invalidPhysicalValue("FuelPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 1000, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("FuelPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.FuelPressure = &raw
+	if _, ok := candidate.FuelPressureValue(); !ok {
+		return invalidPhysicalValue("FuelPressure", v)
+	}
 	m.FuelPressure = &raw
+	return nil
 }
 
 // EngineLoadValue returns EngineLoad as a physical value in % (value = raw).
@@ -601,10 +859,30 @@ func (m *EngineParametersDynamic) EngineLoadValue() (float64, bool) {
 }
 
 // SetEngineLoadValue sets EngineLoad from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *EngineParametersDynamic) SetEngineLoadValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetEngineLoadValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EngineLoad", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("EngineLoad", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("EngineLoad", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("EngineLoad", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.EngineLoad = &raw
+	if _, ok := candidate.EngineLoadValue(); !ok {
+		return invalidPhysicalValue("EngineLoad", v)
+	}
 	m.EngineLoad = &raw
+	return nil
 }
 
 // EngineTorqueValue returns EngineTorque as a physical value in % (value = raw).
@@ -633,10 +911,30 @@ func (m *EngineParametersDynamic) EngineTorqueValue() (float64, bool) {
 }
 
 // SetEngineTorqueValue sets EngineTorque from a physical value in %, rounded to the nearest
-// wire tick of 1.
-func (m *EngineParametersDynamic) SetEngineTorqueValue(v float64) {
-	raw := int64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersDynamic) SetEngineTorqueValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("EngineTorque", v)
+	}
+	if v < -127 && !approximatelyEqual(v, -127) {
+		return invalidPhysicalValue("EngineTorque", v)
+	}
+	if v > 124 && !approximatelyEqual(v, 124) {
+		return invalidPhysicalValue("EngineTorque", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 8, true)
+	if err != nil {
+		return invalidPhysicalValue("EngineTorque", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.EngineTorque = &raw
+	if _, ok := candidate.EngineTorqueValue(); !ok {
+		return invalidPhysicalValue("EngineTorque", v)
+	}
 	m.EngineTorque = &raw
+	return nil
 }
 
 type TransmissionParametersDynamic struct {
@@ -697,10 +995,30 @@ func (m *TransmissionParametersDynamic) OilPressureValue() (float64, bool) {
 }
 
 // SetOilPressureValue sets OilPressure from a physical value in Pa, rounded to the nearest
-// wire tick of 100.
-func (m *TransmissionParametersDynamic) SetOilPressureValue(v float64) {
-	raw := uint64(math.Round(v / 100))
+// wire tick of 100. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TransmissionParametersDynamic) SetOilPressureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	if v > 6.5532e+06 && !approximatelyEqual(v, 6.5532e+06) {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	ticks, err := physicalRawTicks(v, 100, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OilPressure", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OilPressure = &raw
+	if _, ok := candidate.OilPressureValue(); !ok {
+		return invalidPhysicalValue("OilPressure", v)
+	}
 	m.OilPressure = &raw
+	return nil
 }
 
 // OilTemperatureValue returns OilTemperature as a physical value in K (value = raw * 0.1).
@@ -729,10 +1047,30 @@ func (m *TransmissionParametersDynamic) OilTemperatureValue() (float64, bool) {
 }
 
 // SetOilTemperatureValue sets OilTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.1.
-func (m *TransmissionParametersDynamic) SetOilTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TransmissionParametersDynamic) SetOilTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.OilTemperature = &raw
+	if _, ok := candidate.OilTemperatureValue(); !ok {
+		return invalidPhysicalValue("OilTemperature", v)
+	}
 	m.OilTemperature = &raw
+	return nil
 }
 
 type TripParametersEngine struct {
@@ -791,10 +1129,30 @@ func (m *TripParametersEngine) TripFuelUsedValue() (float64, bool) {
 }
 
 // SetTripFuelUsedValue sets TripFuelUsed from a physical value in L, rounded to the nearest
-// wire tick of 1.
-func (m *TripParametersEngine) SetTripFuelUsedValue(v float64) {
-	raw := uint64(math.Round(v))
+// wire tick of 1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersEngine) SetTripFuelUsedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TripFuelUsed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TripFuelUsed", v)
+	}
+	if v > 65532 && !approximatelyEqual(v, 65532) {
+		return invalidPhysicalValue("TripFuelUsed", v)
+	}
+	ticks, err := physicalRawTicks(v, 1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TripFuelUsed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TripFuelUsed = &raw
+	if _, ok := candidate.TripFuelUsedValue(); !ok {
+		return invalidPhysicalValue("TripFuelUsed", v)
+	}
 	m.TripFuelUsed = &raw
+	return nil
 }
 
 // FuelRateAverageValue returns FuelRateAverage as a physical value in L/h (value = raw * 0.1).
@@ -823,10 +1181,30 @@ func (m *TripParametersEngine) FuelRateAverageValue() (float64, bool) {
 }
 
 // SetFuelRateAverageValue sets FuelRateAverage from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *TripParametersEngine) SetFuelRateAverageValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersEngine) SetFuelRateAverageValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FuelRateAverage", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("FuelRateAverage", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("FuelRateAverage", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FuelRateAverage", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FuelRateAverage = &raw
+	if _, ok := candidate.FuelRateAverageValue(); !ok {
+		return invalidPhysicalValue("FuelRateAverage", v)
+	}
 	m.FuelRateAverage = &raw
+	return nil
 }
 
 // FuelRateEconomyValue returns FuelRateEconomy as a physical value in L/h (value = raw * 0.1).
@@ -855,10 +1233,30 @@ func (m *TripParametersEngine) FuelRateEconomyValue() (float64, bool) {
 }
 
 // SetFuelRateEconomyValue sets FuelRateEconomy from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *TripParametersEngine) SetFuelRateEconomyValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersEngine) SetFuelRateEconomyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("FuelRateEconomy", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("FuelRateEconomy", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("FuelRateEconomy", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("FuelRateEconomy", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.FuelRateEconomy = &raw
+	if _, ok := candidate.FuelRateEconomyValue(); !ok {
+		return invalidPhysicalValue("FuelRateEconomy", v)
+	}
 	m.FuelRateEconomy = &raw
+	return nil
 }
 
 // InstantaneousFuelEconomyValue returns InstantaneousFuelEconomy as a physical value in L/h (value = raw * 0.1).
@@ -887,10 +1285,30 @@ func (m *TripParametersEngine) InstantaneousFuelEconomyValue() (float64, bool) {
 }
 
 // SetInstantaneousFuelEconomyValue sets InstantaneousFuelEconomy from a physical value in L/h, rounded to the nearest
-// wire tick of 0.1.
-func (m *TripParametersEngine) SetInstantaneousFuelEconomyValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *TripParametersEngine) SetInstantaneousFuelEconomyValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("InstantaneousFuelEconomy", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("InstantaneousFuelEconomy", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("InstantaneousFuelEconomy", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("InstantaneousFuelEconomy", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.InstantaneousFuelEconomy = &raw
+	if _, ok := candidate.InstantaneousFuelEconomyValue(); !ok {
+		return invalidPhysicalValue("InstantaneousFuelEconomy", v)
+	}
 	m.InstantaneousFuelEconomy = &raw
+	return nil
 }
 
 type EngineParametersStatic struct {
@@ -947,8 +1365,28 @@ func (m *EngineParametersStatic) RatedEngineSpeedValue() (float64, bool) {
 }
 
 // SetRatedEngineSpeedValue sets RatedEngineSpeed from a physical value in rpm, rounded to the nearest
-// wire tick of 0.25.
-func (m *EngineParametersStatic) SetRatedEngineSpeedValue(v float64) {
-	raw := uint64(math.Round(v / 0.25))
+// wire tick of 0.25. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *EngineParametersStatic) SetRatedEngineSpeedValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RatedEngineSpeed", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RatedEngineSpeed", v)
+	}
+	if v > 16383 && !approximatelyEqual(v, 16383) {
+		return invalidPhysicalValue("RatedEngineSpeed", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.25, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RatedEngineSpeed", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RatedEngineSpeed = &raw
+	if _, ok := candidate.RatedEngineSpeedValue(); !ok {
+		return invalidPhysicalValue("RatedEngineSpeed", v)
+	}
 	m.RatedEngineSpeed = &raw
+	return nil
 }

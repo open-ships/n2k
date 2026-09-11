@@ -432,7 +432,9 @@ drainClaim:
 
 	// A user write reaches the gateway as a RAW line for its PGN.
 	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.5708)
+	if err := heading.SetHeadingValue(1.5708); err != nil {
+		t.Fatal(err)
+	}
 	require.NoError(t, c.Write(heading).Wait())
 
 	sawHeading := false
@@ -519,7 +521,9 @@ func TestNewClient_ActisenseTCPPreservesClientSource(t *testing.T) {
 	defer func() { _ = client.Close() }()
 
 	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.5708)
+	if err := heading.SetHeadingValue(1.5708); err != nil {
+		t.Fatal(err)
+	}
 	require.NoError(t, client.Write(heading).Wait())
 
 	var sawClaim, sawHeading bool

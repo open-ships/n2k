@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type LowranceTemperature struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -59,10 +57,30 @@ func (m *LowranceTemperature) ActualTemperatureValue() (float64, bool) {
 }
 
 // SetActualTemperatureValue sets ActualTemperature from a physical value in K, rounded to the nearest
-// wire tick of 0.01.
-func (m *LowranceTemperature) SetActualTemperatureValue(v float64) {
-	raw := uint64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *LowranceTemperature) SetActualTemperatureValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	if v > 655.32 && !approximatelyEqual(v, 655.32) {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ActualTemperature = &raw
+	if _, ok := candidate.ActualTemperatureValue(); !ok {
+		return invalidPhysicalValue("ActualTemperature", v)
+	}
 	m.ActualTemperature = &raw
+	return nil
 }
 
 type LowranceGpsConfiguration struct {
@@ -171,10 +189,30 @@ func (m *LowranceVesselSetupEngineAndTankConfiguration) TotalFuelCapacityValue()
 }
 
 // SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
-// wire tick of 0.1.
-func (m *LowranceVesselSetupEngineAndTankConfiguration) SetTotalFuelCapacityValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *LowranceVesselSetupEngineAndTankConfiguration) SetTotalFuelCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalFuelCapacity = &raw
+	if _, ok := candidate.TotalFuelCapacityValue(); !ok {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
 	m.TotalFuelCapacity = &raw
+	return nil
 }
 
 type LowranceVesselSetupEngineAndTankConfigurationBroadcast struct {
@@ -241,10 +279,30 @@ func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) TotalFuelCapaci
 }
 
 // SetTotalFuelCapacityValue sets TotalFuelCapacity from a physical value in L, rounded to the nearest
-// wire tick of 0.1.
-func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) SetTotalFuelCapacityValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) SetTotalFuelCapacityValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.TotalFuelCapacity = &raw
+	if _, ok := candidate.TotalFuelCapacityValue(); !ok {
+		return invalidPhysicalValue("TotalFuelCapacity", v)
+	}
 	m.TotalFuelCapacity = &raw
+	return nil
 }
 
 type LowranceProductInformation struct {

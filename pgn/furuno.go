@@ -3,8 +3,6 @@
 
 package pgn
 
-import "math"
-
 type FurunoHeave struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -57,10 +55,30 @@ func (m *FurunoHeave) HeaveValue() (float64, bool) {
 }
 
 // SetHeaveValue sets Heave from a physical value in m, rounded to the nearest
-// wire tick of 0.001.
-func (m *FurunoHeave) SetHeaveValue(v float64) {
-	raw := int64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoHeave) SetHeaveValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Heave", v)
+	}
+	if v < -2.147483647e+06 && !approximatelyEqual(v, -2.147483647e+06) {
+		return invalidPhysicalValue("Heave", v)
+	}
+	if v > 2.147483644e+06 && !approximatelyEqual(v, 2.147483644e+06) {
+		return invalidPhysicalValue("Heave", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Heave", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Heave = &raw
+	if _, ok := candidate.HeaveValue(); !ok {
+		return invalidPhysicalValue("Heave", v)
+	}
 	m.Heave = &raw
+	return nil
 }
 
 type FurunoStatusAndVersionReport struct {
@@ -210,10 +228,30 @@ func (m *FurunoSensorSetup) RotationSmoothingValue() (float64, bool) {
 }
 
 // SetRotationSmoothingValue sets RotationSmoothing from a physical value in s, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSensorSetup) SetRotationSmoothingValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetRotationSmoothingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RotationSmoothing", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RotationSmoothing", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("RotationSmoothing", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RotationSmoothing", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RotationSmoothing = &raw
+	if _, ok := candidate.RotationSmoothingValue(); !ok {
+		return invalidPhysicalValue("RotationSmoothing", v)
+	}
 	m.RotationSmoothing = &raw
+	return nil
 }
 
 // HeadingOffsetValue returns HeadingOffset as a physical value in deg (value = raw * 0.1).
@@ -242,10 +280,30 @@ func (m *FurunoSensorSetup) HeadingOffsetValue() (float64, bool) {
 }
 
 // SetHeadingOffsetValue sets HeadingOffset from a physical value in deg, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSensorSetup) SetHeadingOffsetValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetHeadingOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("HeadingOffset", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("HeadingOffset", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("HeadingOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("HeadingOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.HeadingOffset = &raw
+	if _, ok := candidate.HeadingOffsetValue(); !ok {
+		return invalidPhysicalValue("HeadingOffset", v)
+	}
 	m.HeadingOffset = &raw
+	return nil
 }
 
 // PitchOffsetValue returns PitchOffset as a physical value in deg (value = raw * 0.1).
@@ -274,10 +332,30 @@ func (m *FurunoSensorSetup) PitchOffsetValue() (float64, bool) {
 }
 
 // SetPitchOffsetValue sets PitchOffset from a physical value in deg, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSensorSetup) SetPitchOffsetValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetPitchOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PitchOffset", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("PitchOffset", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("PitchOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("PitchOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.PitchOffset = &raw
+	if _, ok := candidate.PitchOffsetValue(); !ok {
+		return invalidPhysicalValue("PitchOffset", v)
+	}
 	m.PitchOffset = &raw
+	return nil
 }
 
 // RollOffsetValue returns RollOffset as a physical value in deg (value = raw * 0.1).
@@ -306,10 +384,30 @@ func (m *FurunoSensorSetup) RollOffsetValue() (float64, bool) {
 }
 
 // SetRollOffsetValue sets RollOffset from a physical value in deg, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSensorSetup) SetRollOffsetValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetRollOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RollOffset", v)
+	}
+	if v < -3276.7 && !approximatelyEqual(v, -3276.7) {
+		return invalidPhysicalValue("RollOffset", v)
+	}
+	if v > 3276.4 && !approximatelyEqual(v, 3276.4) {
+		return invalidPhysicalValue("RollOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("RollOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RollOffset = &raw
+	if _, ok := candidate.RollOffsetValue(); !ok {
+		return invalidPhysicalValue("RollOffset", v)
+	}
 	m.RollOffset = &raw
+	return nil
 }
 
 // SogAndCogSmoothingValue returns SogAndCogSmoothing as a physical value in s (value = raw * 0.001).
@@ -338,10 +436,30 @@ func (m *FurunoSensorSetup) SogAndCogSmoothingValue() (float64, bool) {
 }
 
 // SetSogAndCogSmoothingValue sets SogAndCogSmoothing from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *FurunoSensorSetup) SetSogAndCogSmoothingValue(v float64) {
-	raw := int64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetSogAndCogSmoothingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("SogAndCogSmoothing", v)
+	}
+	if v < -2.147483647e+06 && !approximatelyEqual(v, -2.147483647e+06) {
+		return invalidPhysicalValue("SogAndCogSmoothing", v)
+	}
+	if v > 2.147483644e+06 && !approximatelyEqual(v, 2.147483644e+06) {
+		return invalidPhysicalValue("SogAndCogSmoothing", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("SogAndCogSmoothing", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.SogAndCogSmoothing = &raw
+	if _, ok := candidate.SogAndCogSmoothingValue(); !ok {
+		return invalidPhysicalValue("SogAndCogSmoothing", v)
+	}
 	m.SogAndCogSmoothing = &raw
+	return nil
 }
 
 // Pgn3AxisSpeedSmoothingValue returns Pgn3AxisSpeedSmoothing as a physical value in s (value = raw * 0.001).
@@ -370,10 +488,30 @@ func (m *FurunoSensorSetup) Pgn3AxisSpeedSmoothingValue() (float64, bool) {
 }
 
 // SetPgn3AxisSpeedSmoothingValue sets Pgn3AxisSpeedSmoothing from a physical value in s, rounded to the nearest
-// wire tick of 0.001.
-func (m *FurunoSensorSetup) SetPgn3AxisSpeedSmoothingValue(v float64) {
-	raw := int64(math.Round(v / 0.001))
+// wire tick of 0.001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetPgn3AxisSpeedSmoothingValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Pgn3AxisSpeedSmoothing", v)
+	}
+	if v < -2.147483647e+06 && !approximatelyEqual(v, -2.147483647e+06) {
+		return invalidPhysicalValue("Pgn3AxisSpeedSmoothing", v)
+	}
+	if v > 2.147483644e+06 && !approximatelyEqual(v, 2.147483644e+06) {
+		return invalidPhysicalValue("Pgn3AxisSpeedSmoothing", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.001, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("Pgn3AxisSpeedSmoothing", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Pgn3AxisSpeedSmoothing = &raw
+	if _, ok := candidate.Pgn3AxisSpeedSmoothingValue(); !ok {
+		return invalidPhysicalValue("Pgn3AxisSpeedSmoothing", v)
+	}
 	m.Pgn3AxisSpeedSmoothing = &raw
+	return nil
 }
 
 // Pgn3AxisOffsetValue returns Pgn3AxisOffset as a physical value in % (value = raw * 0.00032).
@@ -402,10 +540,30 @@ func (m *FurunoSensorSetup) Pgn3AxisOffsetValue() (float64, bool) {
 }
 
 // SetPgn3AxisOffsetValue sets Pgn3AxisOffset from a physical value in %, rounded to the nearest
-// wire tick of 0.00032.
-func (m *FurunoSensorSetup) SetPgn3AxisOffsetValue(v float64) {
-	raw := int64(math.Round(v / 0.00032))
+// wire tick of 0.00032. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetPgn3AxisOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Pgn3AxisOffset", v)
+	}
+	if v < -12.5 && !approximatelyEqual(v, -12.5) {
+		return invalidPhysicalValue("Pgn3AxisOffset", v)
+	}
+	if v > 12.5 && !approximatelyEqual(v, 12.5) {
+		return invalidPhysicalValue("Pgn3AxisOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.00032, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Pgn3AxisOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Pgn3AxisOffset = &raw
+	if _, ok := candidate.Pgn3AxisOffsetValue(); !ok {
+		return invalidPhysicalValue("Pgn3AxisOffset", v)
+	}
 	m.Pgn3AxisOffset = &raw
+	return nil
 }
 
 // AirPressureOffsetValue returns AirPressureOffset as a physical value in Pa (value = raw * 10).
@@ -434,10 +592,30 @@ func (m *FurunoSensorSetup) AirPressureOffsetValue() (float64, bool) {
 }
 
 // SetAirPressureOffsetValue sets AirPressureOffset from a physical value in Pa, rounded to the nearest
-// wire tick of 10.
-func (m *FurunoSensorSetup) SetAirPressureOffsetValue(v float64) {
-	raw := int64(math.Round(v / 10))
+// wire tick of 10. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetAirPressureOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AirPressureOffset", v)
+	}
+	if v < -99.9 && !approximatelyEqual(v, -99.9) {
+		return invalidPhysicalValue("AirPressureOffset", v)
+	}
+	if v > 99.9 && !approximatelyEqual(v, 99.9) {
+		return invalidPhysicalValue("AirPressureOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 10, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("AirPressureOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.AirPressureOffset = &raw
+	if _, ok := candidate.AirPressureOffsetValue(); !ok {
+		return invalidPhysicalValue("AirPressureOffset", v)
+	}
 	m.AirPressureOffset = &raw
+	return nil
 }
 
 // AirTemperatureOffsetValue returns AirTemperatureOffset as a physical value in K (value = raw * 0.1).
@@ -466,10 +644,30 @@ func (m *FurunoSensorSetup) AirTemperatureOffsetValue() (float64, bool) {
 }
 
 // SetAirTemperatureOffsetValue sets AirTemperatureOffset from a physical value in K, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSensorSetup) SetAirTemperatureOffsetValue(v float64) {
-	raw := int64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSensorSetup) SetAirTemperatureOffsetValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AirTemperatureOffset", v)
+	}
+	if v < -99.9 && !approximatelyEqual(v, -99.9) {
+		return invalidPhysicalValue("AirTemperatureOffset", v)
+	}
+	if v > 99.9 && !approximatelyEqual(v, 99.9) {
+		return invalidPhysicalValue("AirTemperatureOffset", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("AirTemperatureOffset", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.AirTemperatureOffset = &raw
+	if _, ok := candidate.AirTemperatureOffsetValue(); !ok {
+		return invalidPhysicalValue("AirTemperatureOffset", v)
+	}
 	m.AirTemperatureOffset = &raw
+	return nil
 }
 
 type FurunoDeadReckoningConfiguration struct {
@@ -656,10 +854,30 @@ func (m *FurunoNavpilotStatus) RudderAngleValue() (float64, bool) {
 }
 
 // SetRudderAngleValue sets RudderAngle from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoNavpilotStatus) SetRudderAngleValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoNavpilotStatus) SetRudderAngleValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RudderAngle", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("RudderAngle", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("RudderAngle", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("RudderAngle", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.RudderAngle = &raw
+	if _, ok := candidate.RudderAngleValue(); !ok {
+		return invalidPhysicalValue("RudderAngle", v)
+	}
 	m.RudderAngle = &raw
+	return nil
 }
 
 // CommandedCourseValue returns CommandedCourse as a physical value in rad (value = raw * 0.0001).
@@ -688,10 +906,30 @@ func (m *FurunoNavpilotStatus) CommandedCourseValue() (float64, bool) {
 }
 
 // SetCommandedCourseValue sets CommandedCourse from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoNavpilotStatus) SetCommandedCourseValue(v float64) {
-	raw := uint64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoNavpilotStatus) SetCommandedCourseValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("CommandedCourse", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("CommandedCourse", v)
+	}
+	if v > 6.2831852 && !approximatelyEqual(v, 6.2831852) {
+		return invalidPhysicalValue("CommandedCourse", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("CommandedCourse", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.CommandedCourse = &raw
+	if _, ok := candidate.CommandedCourseValue(); !ok {
+		return invalidPhysicalValue("CommandedCourse", v)
+	}
 	m.CommandedCourse = &raw
+	return nil
 }
 
 type FurunoShipParametersAndAntennaPosition struct {
@@ -762,10 +1000,30 @@ func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionXValue() (float6
 }
 
 // SetAntennaPositionXValue sets AntennaPositionX from a physical value in m, rounded to the nearest
-// wire tick of 0.01.
-func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionXValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionXValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AntennaPositionX", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("AntennaPositionX", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("AntennaPositionX", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("AntennaPositionX", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.AntennaPositionX = &raw
+	if _, ok := candidate.AntennaPositionXValue(); !ok {
+		return invalidPhysicalValue("AntennaPositionX", v)
+	}
 	m.AntennaPositionX = &raw
+	return nil
 }
 
 // AntennaPositionYValue returns AntennaPositionY as a physical value in m (value = raw * 0.1).
@@ -794,10 +1052,30 @@ func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionYValue() (float6
 }
 
 // SetAntennaPositionYValue sets AntennaPositionY from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionYValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionYValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AntennaPositionY", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AntennaPositionY", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AntennaPositionY", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AntennaPositionY", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AntennaPositionY = &raw
+	if _, ok := candidate.AntennaPositionYValue(); !ok {
+		return invalidPhysicalValue("AntennaPositionY", v)
+	}
 	m.AntennaPositionY = &raw
+	return nil
 }
 
 // AntennaPositionZValue returns AntennaPositionZ as a physical value in m (value = raw * 0.1).
@@ -826,10 +1104,30 @@ func (m *FurunoShipParametersAndAntennaPosition) AntennaPositionZValue() (float6
 }
 
 // SetAntennaPositionZValue sets AntennaPositionZ from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionZValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetAntennaPositionZValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("AntennaPositionZ", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("AntennaPositionZ", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("AntennaPositionZ", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("AntennaPositionZ", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.AntennaPositionZ = &raw
+	if _, ok := candidate.AntennaPositionZValue(); !ok {
+		return invalidPhysicalValue("AntennaPositionZ", v)
+	}
 	m.AntennaPositionZ = &raw
+	return nil
 }
 
 // ShipSWidthValue returns ShipSWidth as a physical value in m (value = raw * 0.1).
@@ -858,10 +1156,30 @@ func (m *FurunoShipParametersAndAntennaPosition) ShipSWidthValue() (float64, boo
 }
 
 // SetShipSWidthValue sets ShipSWidth from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoShipParametersAndAntennaPosition) SetShipSWidthValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSWidthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ShipSWidth", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ShipSWidth", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("ShipSWidth", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ShipSWidth", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ShipSWidth = &raw
+	if _, ok := candidate.ShipSWidthValue(); !ok {
+		return invalidPhysicalValue("ShipSWidth", v)
+	}
 	m.ShipSWidth = &raw
+	return nil
 }
 
 // ShipSLengthValue returns ShipSLength as a physical value in m (value = raw * 0.1).
@@ -890,10 +1208,30 @@ func (m *FurunoShipParametersAndAntennaPosition) ShipSLengthValue() (float64, bo
 }
 
 // SetShipSLengthValue sets ShipSLength from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoShipParametersAndAntennaPosition) SetShipSLengthValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSLengthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ShipSLength", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ShipSLength", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("ShipSLength", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ShipSLength", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ShipSLength = &raw
+	if _, ok := candidate.ShipSLengthValue(); !ok {
+		return invalidPhysicalValue("ShipSLength", v)
+	}
 	m.ShipSLength = &raw
+	return nil
 }
 
 // ShipSHeightValue returns ShipSHeight as a physical value in m (value = raw * 0.1).
@@ -922,10 +1260,30 @@ func (m *FurunoShipParametersAndAntennaPosition) ShipSHeightValue() (float64, bo
 }
 
 // SetShipSHeightValue sets ShipSHeight from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoShipParametersAndAntennaPosition) SetShipSHeightValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoShipParametersAndAntennaPosition) SetShipSHeightValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("ShipSHeight", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("ShipSHeight", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("ShipSHeight", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("ShipSHeight", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.ShipSHeight = &raw
+	if _, ok := candidate.ShipSHeightValue(); !ok {
+		return invalidPhysicalValue("ShipSHeight", v)
+	}
 	m.ShipSHeight = &raw
+	return nil
 }
 
 type FurunoSpeedCalculationPosition struct {
@@ -986,10 +1344,30 @@ func (m *FurunoSpeedCalculationPosition) PositionYValue() (float64, bool) {
 }
 
 // SetPositionYValue sets PositionY from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSpeedCalculationPosition) SetPositionYValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSpeedCalculationPosition) SetPositionYValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionY", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionY", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("PositionY", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionY", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionY = &raw
+	if _, ok := candidate.PositionYValue(); !ok {
+		return invalidPhysicalValue("PositionY", v)
+	}
 	m.PositionY = &raw
+	return nil
 }
 
 // PositionZValue returns PositionZ as a physical value in m (value = raw * 0.1).
@@ -1018,10 +1396,30 @@ func (m *FurunoSpeedCalculationPosition) PositionZValue() (float64, bool) {
 }
 
 // SetPositionZValue sets PositionZ from a physical value in m, rounded to the nearest
-// wire tick of 0.1.
-func (m *FurunoSpeedCalculationPosition) SetPositionZValue(v float64) {
-	raw := uint64(math.Round(v / 0.1))
+// wire tick of 0.1. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoSpeedCalculationPosition) SetPositionZValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("PositionZ", v)
+	}
+	if v < 0 && !approximatelyEqual(v, 0) {
+		return invalidPhysicalValue("PositionZ", v)
+	}
+	if v > 6553.2 && !approximatelyEqual(v, 6553.2) {
+		return invalidPhysicalValue("PositionZ", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.1, 0, 16, false)
+	if err != nil {
+		return invalidPhysicalValue("PositionZ", v)
+	}
+	raw := uint64(ticks)
+	candidate := *m
+	candidate.PositionZ = &raw
+	if _, ok := candidate.PositionZValue(); !ok {
+		return invalidPhysicalValue("PositionZ", v)
+	}
 	m.PositionZ = &raw
+	return nil
 }
 
 type FurunoSixDegreesOfFreedomMovement struct {
@@ -1128,10 +1526,30 @@ func (m *FurunoHeelAngleRollInformation) HeelValue() (float64, bool) {
 }
 
 // SetHeelValue sets Heel from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoHeelAngleRollInformation) SetHeelValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoHeelAngleRollInformation) SetHeelValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Heel", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Heel", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Heel", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Heel", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Heel = &raw
+	if _, ok := candidate.HeelValue(); !ok {
+		return invalidPhysicalValue("Heel", v)
+	}
 	m.Heel = &raw
+	return nil
 }
 
 // Field4Value returns Field4 as a physical value in rad (value = raw * 0.0001).
@@ -1160,10 +1578,30 @@ func (m *FurunoHeelAngleRollInformation) Field4Value() (float64, bool) {
 }
 
 // SetField4Value sets Field4 from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoHeelAngleRollInformation) SetField4Value(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoHeelAngleRollInformation) SetField4Value(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Field4", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Field4", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Field4", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Field4", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Field4 = &raw
+	if _, ok := candidate.Field4Value(); !ok {
+		return invalidPhysicalValue("Field4", v)
+	}
 	m.Field4 = &raw
+	return nil
 }
 
 // Field6Value returns Field6 as a physical value in rad (value = raw * 0.0001).
@@ -1192,10 +1630,30 @@ func (m *FurunoHeelAngleRollInformation) Field6Value() (float64, bool) {
 }
 
 // SetField6Value sets Field6 from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoHeelAngleRollInformation) SetField6Value(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoHeelAngleRollInformation) SetField6Value(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Field6", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Field6", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Field6", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Field6", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Field6 = &raw
+	if _, ok := candidate.Field6Value(); !ok {
+		return invalidPhysicalValue("Field6", v)
+	}
 	m.Field6 = &raw
+	return nil
 }
 
 // Field8Value returns Field8 as a physical value in rad (value = raw * 0.0001).
@@ -1224,10 +1682,30 @@ func (m *FurunoHeelAngleRollInformation) Field8Value() (float64, bool) {
 }
 
 // SetField8Value sets Field8 from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoHeelAngleRollInformation) SetField8Value(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoHeelAngleRollInformation) SetField8Value(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Field8", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Field8", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Field8", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Field8", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Field8 = &raw
+	if _, ok := candidate.Field8Value(); !ok {
+		return invalidPhysicalValue("Field8", v)
+	}
 	m.Field8 = &raw
+	return nil
 }
 
 type FurunoMultiSatsInViewExtended struct {
@@ -1313,10 +1791,30 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) ElevationValue() (float64, boo
 }
 
 // SetElevationValue sets Elevation from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoMultiSatsInViewExtendedRepeating1) SetElevationValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetElevationValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Elevation", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Elevation", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Elevation", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Elevation", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Elevation = &raw
+	if _, ok := candidate.ElevationValue(); !ok {
+		return invalidPhysicalValue("Elevation", v)
+	}
 	m.Elevation = &raw
+	return nil
 }
 
 // AzimuthValue returns Azimuth as a physical value in rad (value = raw * 0.0001).
@@ -1345,10 +1843,30 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) AzimuthValue() (float64, bool)
 }
 
 // SetAzimuthValue sets Azimuth from a physical value in rad, rounded to the nearest
-// wire tick of 0.0001.
-func (m *FurunoMultiSatsInViewExtendedRepeating1) SetAzimuthValue(v float64) {
-	raw := int64(math.Round(v / 0.0001))
+// wire tick of 0.0001. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetAzimuthValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Azimuth", v)
+	}
+	if v < -3.1415926 && !approximatelyEqual(v, -3.1415926) {
+		return invalidPhysicalValue("Azimuth", v)
+	}
+	if v > 3.1415926 && !approximatelyEqual(v, 3.1415926) {
+		return invalidPhysicalValue("Azimuth", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.0001, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Azimuth", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Azimuth = &raw
+	if _, ok := candidate.AzimuthValue(); !ok {
+		return invalidPhysicalValue("Azimuth", v)
+	}
 	m.Azimuth = &raw
+	return nil
 }
 
 // SnrValue returns Snr as a physical value in dB (value = raw * 0.01).
@@ -1377,10 +1895,30 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) SnrValue() (float64, bool) {
 }
 
 // SetSnrValue sets Snr from a physical value in dB, rounded to the nearest
-// wire tick of 0.01.
-func (m *FurunoMultiSatsInViewExtendedRepeating1) SetSnrValue(v float64) {
-	raw := int64(math.Round(v / 0.01))
+// wire tick of 0.01. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetSnrValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("Snr", v)
+	}
+	if v < -327.67 && !approximatelyEqual(v, -327.67) {
+		return invalidPhysicalValue("Snr", v)
+	}
+	if v > 327.64 && !approximatelyEqual(v, 327.64) {
+		return invalidPhysicalValue("Snr", v)
+	}
+	ticks, err := physicalRawTicks(v, 0.01, 0, 16, true)
+	if err != nil {
+		return invalidPhysicalValue("Snr", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.Snr = &raw
+	if _, ok := candidate.SnrValue(); !ok {
+		return invalidPhysicalValue("Snr", v)
+	}
 	m.Snr = &raw
+	return nil
 }
 
 // RangeResidualValue returns RangeResidual as a physical value in m (value = raw * 1e-05).
@@ -1409,10 +1947,30 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) RangeResidualValue() (float64,
 }
 
 // SetRangeResidualValue sets RangeResidual from a physical value in m, rounded to the nearest
-// wire tick of 1e-05.
-func (m *FurunoMultiSatsInViewExtendedRepeating1) SetRangeResidualValue(v float64) {
-	raw := int64(math.Round(v / 1e-05))
+// wire tick of 1e-05. Invalid, non-finite, sentinel, or out-of-range values
+// return ErrInvalidPhysicalValue and leave the field unchanged. A nil receiver is invalid.
+func (m *FurunoMultiSatsInViewExtendedRepeating1) SetRangeResidualValue(v float64) error {
+	if m == nil {
+		return invalidPhysicalValue("RangeResidual", v)
+	}
+	if v < -21474.83647 && !approximatelyEqual(v, -21474.83647) {
+		return invalidPhysicalValue("RangeResidual", v)
+	}
+	if v > 21474.83644 && !approximatelyEqual(v, 21474.83644) {
+		return invalidPhysicalValue("RangeResidual", v)
+	}
+	ticks, err := physicalRawTicks(v, 1e-05, 0, 32, true)
+	if err != nil {
+		return invalidPhysicalValue("RangeResidual", v)
+	}
+	raw := int64(ticks)
+	candidate := *m
+	candidate.RangeResidual = &raw
+	if _, ok := candidate.RangeResidualValue(); !ok {
+		return invalidPhysicalValue("RangeResidual", v)
+	}
 	m.RangeResidual = &raw
+	return nil
 }
 
 type FurunoMotionSensorStatusExtended struct {

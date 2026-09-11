@@ -112,7 +112,9 @@ func TestReliabilitySoak(t *testing.T) {
 		}
 	}()
 	heading := &pgn.VesselHeading{}
-	heading.SetHeadingValue(1.25)
+	if err := heading.SetHeadingValue(1.25); err != nil {
+		t.Fatal(err)
+	}
 	payload, err := heading.EncodePayload()
 	if err != nil {
 		t.Fatal(err)

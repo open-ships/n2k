@@ -166,3 +166,49 @@ func TestStructToFilterMapNonStruct(t *testing.T) {
 	m := structToFilterMap(42)
 	assert.Nil(t, m)
 }
+
+// Compare every partition with CEL's original expression, independent of the
+// optimizer's string reconstruction and evaluation paths.
+func TestFilterPartitionPreservesBooleanPrecedence(t *testing.T) {
+	expressions := []string{
+		"(pgn == 127250 || pgn == 129025) && source == 42",
+		"source == 42 && (pgn == 127250 || pgn == 129025)",
+		"(pgn == 127250 ? source == 42 : source == 99) && priority == 3",
+		"(pgn == 127250 || source == 42) && (priority == 3 || destination == 99)",
+	}
+	env, err := newFullEnv()
+	require.NoError(t, err)
+	for _, expr := range expressions {
+		t.Run(expr, func(t *testing.T) {
+			f, err := compileFilter(expr)
+			require.NoError(t, err)
+			ast, issues := env.Compile(expr)
+			require.NoError(t, issues.Err())
+			original, err := env.Program(ast)
+			require.NoError(t, err)
+			for _, number := range []uint32{127250, 129025, 126998} {
+				for _, source := range []uint8{42, 99} {
+					for _, priority := range []uint8{3, 6} {
+						info := pgn.MessageInfo{PGN: number, SourceId: source, Priority: pgn.Priority(priority)}
+						expected, _, err := original.Eval(map[string]any{"pgn": int64(number), "source": int64(source), "priority": int64(priority), "destination": int64(255)})
+						require.NoError(t, err)
+						require.Equal(t, expected.Value(), f.evalPre(info), "info: %+v", info)
+					}
+				}
+			}
+		})
+	}
+	for _, expr := range []string{"pgn", "[1, 2]", "'true'"} {
+		_, err := compileFilter(expr)
+		require.ErrorContains(t, err, "must return bool")
+	}
+}
+
+func TestFilterDynamicBooleanRemainsSupported(t *testing.T) {
+	f, err := compileFilter("msg.Enabled")
+	require.NoError(t, err)
+	info := pgn.MessageInfo{PGN: 127250}
+	require.True(t, f.evalPostWithInfo(info, map[string]any{"Enabled": true}))
+	require.False(t, f.evalPostWithInfo(info, map[string]any{"Enabled": false}))
+	require.False(t, f.evalPostWithInfo(info, map[string]any{"Enabled": 1}))
+}
