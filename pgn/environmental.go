@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type WaterDepth struct {
 	Info   MessageInfo `json:"info"`
 	Sid    *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -187,6 +189,23 @@ func (m *WaterDepth) SetRangeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m WaterDepth) MarshalJSON() ([]byte, error) {
+	type raw WaterDepth
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"depth":  physicalJSONMeasurement("m", m.DepthValue),
+			"offset": physicalJSONMeasurement("m", m.OffsetValue),
+			"range":  physicalJSONMeasurement("m", m.RangeValue),
+		},
+	})
+}
+
 type WindlassControlStatus struct {
 	Info                     MessageInfo `json:"info"`
 	Sid                      *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -281,6 +300,21 @@ func (m *WindlassControlStatus) SetCommandTimeoutValue(v float64) error {
 	}
 	m.CommandTimeout = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m WindlassControlStatus) MarshalJSON() ([]byte, error) {
+	type raw WindlassControlStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"commandTimeout": physicalJSONMeasurement("s", m.CommandTimeoutValue),
+		},
+	})
 }
 
 type AnchorWindlassOperatingStatus struct {
@@ -425,6 +459,22 @@ func (m *AnchorWindlassOperatingStatus) SetWindlassLineSpeedValue(v float64) err
 	}
 	m.WindlassLineSpeed = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AnchorWindlassOperatingStatus) MarshalJSON() ([]byte, error) {
+	type raw AnchorWindlassOperatingStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rodeCounterValue":  physicalJSONMeasurement("m", m.RodeCounterValueValue),
+			"windlassLineSpeed": physicalJSONMeasurement("m/s", m.WindlassLineSpeedValue),
+		},
+	})
 }
 
 type AnchorWindlassMonitoringStatus struct {
@@ -617,6 +667,23 @@ func (m *AnchorWindlassMonitoringStatus) SetTotalMotorTimeValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AnchorWindlassMonitoringStatus) MarshalJSON() ([]byte, error) {
+	type raw AnchorWindlassMonitoringStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"controllerVoltage": physicalJSONMeasurement("V", m.ControllerVoltageValue),
+			"motorCurrent":      physicalJSONMeasurement("A", m.MotorCurrentValue),
+			"totalMotorTime":    physicalJSONMeasurement("s", m.TotalMotorTimeValue),
+		},
+	})
+}
+
 type SetDriftRapidUpdate struct {
 	Info         MessageInfo `json:"info"`
 	Sid          *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -747,6 +814,22 @@ func (m *SetDriftRapidUpdate) SetDriftValue(v float64) error {
 	}
 	m.Drift = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SetDriftRapidUpdate) MarshalJSON() ([]byte, error) {
+	type raw SetDriftRapidUpdate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"set":   physicalJSONMeasurement("rad", m.SetValue),
+			"drift": physicalJSONMeasurement("m/s", m.DriftValue),
+		},
+	})
 }
 
 type Label struct {
@@ -958,6 +1041,22 @@ func (m *WindData) SetWindAngleValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m WindData) MarshalJSON() ([]byte, error) {
+	type raw WindData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"windSpeed": physicalJSONMeasurement("m/s", m.WindSpeedValue),
+			"windAngle": physicalJSONMeasurement("rad", m.WindAngleValue),
+		},
+	})
+}
+
 type EnvironmentalParametersObsolete struct {
 	Info                         MessageInfo `json:"info"`
 	Sid                          *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1142,6 +1241,23 @@ func (m *EnvironmentalParametersObsolete) SetAtmosphericPressureValue(v float64)
 	}
 	m.AtmosphericPressure = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m EnvironmentalParametersObsolete) MarshalJSON() ([]byte, error) {
+	type raw EnvironmentalParametersObsolete
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"waterTemperature":             physicalJSONMeasurement("K", m.WaterTemperatureValue),
+			"outsideAmbientAirTemperature": physicalJSONMeasurement("K", m.OutsideAmbientAirTemperatureValue),
+			"atmosphericPressure":          physicalJSONMeasurement("Pa", m.AtmosphericPressureValue),
+		},
+	})
 }
 
 type EnvironmentalParameters struct {
@@ -1334,6 +1450,23 @@ func (m *EnvironmentalParameters) SetAtmosphericPressureValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m EnvironmentalParameters) MarshalJSON() ([]byte, error) {
+	type raw EnvironmentalParameters
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"temperature":         physicalJSONMeasurement("K", m.TemperatureValue),
+			"humidity":            physicalJSONMeasurement("%", m.HumidityValue),
+			"atmosphericPressure": physicalJSONMeasurement("Pa", m.AtmosphericPressureValue),
+		},
+	})
+}
+
 type Temperature struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1466,6 +1599,22 @@ func (m *Temperature) SetSetTemperatureValue(v float64) error {
 	}
 	m.SetTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Temperature) MarshalJSON() ([]byte, error) {
+	type raw Temperature
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"actualTemperature": physicalJSONMeasurement("K", m.ActualTemperatureValue),
+			"setTemperature":    physicalJSONMeasurement("K", m.SetTemperatureValue),
+		},
+	})
 }
 
 type Humidity struct {
@@ -1602,6 +1751,22 @@ func (m *Humidity) SetSetHumidityValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Humidity) MarshalJSON() ([]byte, error) {
+	type raw Humidity
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"actualHumidity": physicalJSONMeasurement("%", m.ActualHumidityValue),
+			"setHumidity":    physicalJSONMeasurement("%", m.SetHumidityValue),
+		},
+	})
+}
+
 type ActualPressure struct {
 	Info     MessageInfo `json:"info"`
 	Sid      *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1682,6 +1847,21 @@ func (m *ActualPressure) SetPressureValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ActualPressure) MarshalJSON() ([]byte, error) {
+	type raw ActualPressure
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"pressure": physicalJSONMeasurement("Pa", m.PressureValue),
+		},
+	})
+}
+
 type SetPressure struct {
 	Info     MessageInfo `json:"info"`
 	Sid      *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -1760,6 +1940,21 @@ func (m *SetPressure) SetPressureValue(v float64) error {
 	}
 	m.Pressure = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SetPressure) MarshalJSON() ([]byte, error) {
+	type raw SetPressure
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"pressure": physicalJSONMeasurement("Pa", m.PressureValue),
+		},
+	})
 }
 
 type TemperatureExtendedRange struct {
@@ -1844,6 +2039,21 @@ func (m *TemperatureExtendedRange) SetTemperatureValue(v float64) error {
 	}
 	m.Temperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m TemperatureExtendedRange) MarshalJSON() ([]byte, error) {
+	type raw TemperatureExtendedRange
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"temperature": physicalJSONMeasurement("K", m.TemperatureValue),
+		},
+	})
 }
 
 type TideStationData struct {
@@ -2196,6 +2406,26 @@ func (m *TideStationData) SetTideLevelStandardDeviationValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m TideStationData) MarshalJSON() ([]byte, error) {
+	type raw TideStationData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"measurementDate":            physicalJSONMeasurement("d", m.MeasurementDateValue),
+			"measurementTime":            physicalJSONMeasurement("s", m.MeasurementTimeValue),
+			"stationLatitude":            physicalJSONMeasurement("deg", m.StationLatitudeValue),
+			"stationLongitude":           physicalJSONMeasurement("deg", m.StationLongitudeValue),
+			"tideLevel":                  physicalJSONMeasurement("m", m.TideLevelValue),
+			"tideLevelStandardDeviation": physicalJSONMeasurement("m", m.TideLevelStandardDeviationValue),
+		},
+	})
+}
+
 type SalinityStationData struct {
 	Info             MessageInfo `json:"info"`
 	Mode             *uint64     `json:"mode,omitempty" n2k:"1"`
@@ -2490,6 +2720,25 @@ func (m *SalinityStationData) SetWaterTemperatureValue(v float64) error {
 	}
 	m.WaterTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SalinityStationData) MarshalJSON() ([]byte, error) {
+	type raw SalinityStationData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"measurementDate":  physicalJSONMeasurement("d", m.MeasurementDateValue),
+			"measurementTime":  physicalJSONMeasurement("s", m.MeasurementTimeValue),
+			"stationLatitude":  physicalJSONMeasurement("deg", m.StationLatitudeValue),
+			"stationLongitude": physicalJSONMeasurement("deg", m.StationLongitudeValue),
+			"waterTemperature": physicalJSONMeasurement("K", m.WaterTemperatureValue),
+		},
+	})
 }
 
 type CurrentStationData struct {
@@ -2948,6 +3197,28 @@ func (m *CurrentStationData) SetWaterTemperatureValue(v float64) error {
 	}
 	m.WaterTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m CurrentStationData) MarshalJSON() ([]byte, error) {
+	type raw CurrentStationData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"measurementDate":      physicalJSONMeasurement("d", m.MeasurementDateValue),
+			"measurementTime":      physicalJSONMeasurement("s", m.MeasurementTimeValue),
+			"stationLatitude":      physicalJSONMeasurement("deg", m.StationLatitudeValue),
+			"stationLongitude":     physicalJSONMeasurement("deg", m.StationLongitudeValue),
+			"measurementDepth":     physicalJSONMeasurement("m", m.MeasurementDepthValue),
+			"currentSpeed":         physicalJSONMeasurement("m/s", m.CurrentSpeedValue),
+			"currentFlowDirection": physicalJSONMeasurement("rad", m.CurrentFlowDirectionValue),
+			"waterTemperature":     physicalJSONMeasurement("K", m.WaterTemperatureValue),
+		},
+	})
 }
 
 type MeteorologicalStationData struct {
@@ -3462,6 +3733,29 @@ func (m *MeteorologicalStationData) SetAmbientTemperatureValue(v float64) error 
 	}
 	m.AmbientTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MeteorologicalStationData) MarshalJSON() ([]byte, error) {
+	type raw MeteorologicalStationData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"measurementDate":     physicalJSONMeasurement("d", m.MeasurementDateValue),
+			"measurementTime":     physicalJSONMeasurement("s", m.MeasurementTimeValue),
+			"stationLatitude":     physicalJSONMeasurement("deg", m.StationLatitudeValue),
+			"stationLongitude":    physicalJSONMeasurement("deg", m.StationLongitudeValue),
+			"windSpeed":           physicalJSONMeasurement("m/s", m.WindSpeedValue),
+			"windDirection":       physicalJSONMeasurement("rad", m.WindDirectionValue),
+			"windGusts":           physicalJSONMeasurement("m/s", m.WindGustsValue),
+			"atmosphericPressure": physicalJSONMeasurement("Pa", m.AtmosphericPressureValue),
+			"ambientTemperature":  physicalJSONMeasurement("K", m.AmbientTemperatureValue),
+		},
+	})
 }
 
 type MooredBuoyStationData struct {
@@ -4191,6 +4485,33 @@ func (m *MooredBuoyStationData) SetWaterTemperatureValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MooredBuoyStationData) MarshalJSON() ([]byte, error) {
+	type raw MooredBuoyStationData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"measurementDate":      physicalJSONMeasurement("d", m.MeasurementDateValue),
+			"measurementTime":      physicalJSONMeasurement("s", m.MeasurementTimeValue),
+			"stationLatitude":      physicalJSONMeasurement("deg", m.StationLatitudeValue),
+			"stationLongitude":     physicalJSONMeasurement("deg", m.StationLongitudeValue),
+			"windSpeed":            physicalJSONMeasurement("m/s", m.WindSpeedValue),
+			"windDirection":        physicalJSONMeasurement("rad", m.WindDirectionValue),
+			"windGusts":            physicalJSONMeasurement("m/s", m.WindGustsValue),
+			"waveHeight":           physicalJSONMeasurement("m", m.WaveHeightValue),
+			"dominantWavePeriod":   physicalJSONMeasurement("s", m.DominantWavePeriodValue),
+			"atmosphericPressure":  physicalJSONMeasurement("Pa", m.AtmosphericPressureValue),
+			"pressureTendencyRate": physicalJSONMeasurement("Pa/hr", m.PressureTendencyRateValue),
+			"airTemperature":       physicalJSONMeasurement("K", m.AirTemperatureValue),
+			"waterTemperature":     physicalJSONMeasurement("K", m.WaterTemperatureValue),
+		},
+	})
+}
+
 type EntertainmentDiagnosticStatus struct {
 	Info           MessageInfo `json:"info"`
 	Source         *uint64     `json:"source,omitempty" n2k:"1"`
@@ -4318,6 +4639,21 @@ func (m *LibraryDataFile) SetRadioFrequencyValue(v float64) error {
 	}
 	m.RadioFrequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m LibraryDataFile) MarshalJSON() ([]byte, error) {
+	type raw LibraryDataFile
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"radioFrequency": physicalJSONMeasurement("Hz", m.RadioFrequencyValue),
+		},
+	})
 }
 
 type LibraryDataGroup struct {
@@ -4652,6 +4988,22 @@ func (m *SmallCraftStatus) SetStarboardTrimTabValue(v float64) error {
 	}
 	m.StarboardTrimTab = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SmallCraftStatus) MarshalJSON() ([]byte, error) {
+	type raw SmallCraftStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"portTrimTab":      physicalJSONMeasurement("%", m.PortTrimTabValue),
+			"starboardTrimTab": physicalJSONMeasurement("%", m.StarboardTrimTabValue),
+		},
+	})
 }
 
 type VesselSpeedComponents struct {
@@ -4998,6 +5350,26 @@ func (m *VesselSpeedComponents) SetSternSpeedGroundReferencedValue(v float64) er
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m VesselSpeedComponents) MarshalJSON() ([]byte, error) {
+	type raw VesselSpeedComponents
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitudinalSpeedWaterReferenced":  physicalJSONMeasurement("m/s", m.LongitudinalSpeedWaterReferencedValue),
+			"transverseSpeedWaterReferenced":    physicalJSONMeasurement("m/s", m.TransverseSpeedWaterReferencedValue),
+			"longitudinalSpeedGroundReferenced": physicalJSONMeasurement("m/s", m.LongitudinalSpeedGroundReferencedValue),
+			"transverseSpeedGroundReferenced":   physicalJSONMeasurement("m/s", m.TransverseSpeedGroundReferencedValue),
+			"sternSpeedWaterReferenced":         physicalJSONMeasurement("m/s", m.SternSpeedWaterReferencedValue),
+			"sternSpeedGroundReferenced":        physicalJSONMeasurement("m/s", m.SternSpeedGroundReferencedValue),
+		},
+	})
+}
+
 type SystemConfiguration struct {
 	Info            MessageInfo `json:"info"`
 	Power           *uint64     `json:"power,omitempty" n2k:"1"`
@@ -5178,6 +5550,21 @@ func (m *ZoneVolume) SetVolumeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ZoneVolume) MarshalJSON() ([]byte, error) {
+	type raw ZoneVolume
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"volume": physicalJSONMeasurement("%", m.VolumeValue),
+		},
+	})
+}
+
 type AvailableAudioEqPresets struct {
 	Info             MessageInfo                         `json:"info"`
 	FirstPreset      *uint64                             `json:"firstPreset,omitempty" n2k:"1"`
@@ -5308,6 +5695,21 @@ func (m *AvailableBluetoothAddressesRepeating1) SetSignalStrengthValue(v float64
 	}
 	m.SignalStrength = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AvailableBluetoothAddressesRepeating1) MarshalJSON() ([]byte, error) {
+	type raw AvailableBluetoothAddressesRepeating1
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"signalStrength": physicalJSONMeasurement("%", m.SignalStrengthValue),
+		},
+	})
 }
 
 type BluetoothSourceStatus struct {
@@ -5852,6 +6254,29 @@ func (m *ZoneConfiguration) SetLowPassFilterFrequencyValue(v float64) error {
 	}
 	m.LowPassFilterFrequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ZoneConfiguration) MarshalJSON() ([]byte, error) {
+	type raw ZoneConfiguration
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"volumeLimit":             physicalJSONMeasurement("%", m.VolumeLimitValue),
+			"fade":                    physicalJSONMeasurement("%", m.FadeValue),
+			"balance":                 physicalJSONMeasurement("%", m.BalanceValue),
+			"subVolume":               physicalJSONMeasurement("%", m.SubVolumeValue),
+			"eqTreble":                physicalJSONMeasurement("%", m.EqTrebleValue),
+			"eqMidRange":              physicalJSONMeasurement("%", m.EqMidRangeValue),
+			"eqBass":                  physicalJSONMeasurement("%", m.EqBassValue),
+			"highPassFilterFrequency": physicalJSONMeasurement("Hz", m.HighPassFilterFrequencyValue),
+			"lowPassFilterFrequency":  physicalJSONMeasurement("Hz", m.LowPassFilterFrequencyValue),
+		},
+	})
 }
 
 type Message0x1ff000x1ffffManufacturerSpecificFastPacketNonAddressed struct {

@@ -745,7 +745,7 @@ Numeric struct fields hold **raw wire ticks** (`*uint64`/`*int64`). Exact
 round trips are preserved by an owned original-payload snapshot; raw ticks
 make field edits precise and predictable. Every numeric field with a
 physical interpretation also gets **generated typed accessors** that do the
-unit math — SI units in, SI units out, raw ticks underneath:
+unit math — schema units in and out, raw ticks underneath:
 
 ```go
 heading := &pgn.VesselHeading{}
@@ -767,7 +767,8 @@ the physical or integer range, or rounds to an unavailable measurement. Failed
 setters leave the previous field intact; check the error before transmitting.
 A nil receiver also returns this error.
 Each accessor documents its unit and conversion (`value = raw * resolution +
-offset`); the units are the schema's SI units (`rad`, `m/s`, `K`, `V`, ...).
+offset`); the units are the schema's native units (`rad`, `m/s`, `K`, `V`,
+...). Latitude and longitude use degrees (`deg`).
 
 For dynamic, metadata-driven access — when the field is only known at
 runtime — `pgn.PhysicalValue(msg, fieldOrder)` performs the same conversion
@@ -782,6 +783,47 @@ v, unit, ok, err := pgn.PhysicalValue(heading, 2) // field order 2 = Heading
 (strings, binary, `FLOAT`, match selectors), and fields inside repeating
 groups — for those, decode the group slice and use the element structs'
 accessors instead (they're generated too).
+
+### JSON output
+
+Standard `json.Marshal`, `json.MarshalIndent`, and `json.Encoder` include
+physical values by default, for both PGN struct values and pointers:
+
+```go
+data, err := json.Marshal(heading)
+```
+
+For example, a heading of 15708 ticks produces these fields (other fields
+omitted here):
+
+```json
+{
+  "heading": 15708,
+  "physical": {
+    "heading": { "value": 1.5708, "unit": "rad" },
+    "deviation": null,
+    "variation": null
+  }
+}
+```
+
+The `physical` object uses the same JSON field names as the raw fields. Each
+field with a physical-value accessor appears there; absent, sentinel, and
+out-of-range measurements are `null`. Values and schema unit labels are
+computed from the current raw fields at serialization time. A dimensionless
+scaled quantity has an empty unit label. Identifiers, enums, and other fields
+without physical-value accessors are not included in `physical`.
+
+Repeating entries have their own `physical` objects alongside their raw fields.
+Structs without physical-value accessors keep their existing JSON shape.
+Raw integers retain their full precision in the JSON text; consumers must use
+an appropriate integer representation when parsing them.
+
+Physical values are output-only: ordinary `json.Unmarshal` ignores the
+`physical` object and reads the raw fields. A decoder using
+`DisallowUnknownFields` rejects it. To set a measurement in physical units,
+use the Go `Set<Field>Value` methods. Strict JSON consumers and snapshots must
+accept the added object, including inside repeating entries.
 
 ## Unit Types
 

@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type AisClassAPositionReport struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -371,6 +373,26 @@ func (m *AisClassAPositionReport) SetRateOfTurnValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassAPositionReport) MarshalJSON() ([]byte, error) {
+	type raw AisClassAPositionReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude":  physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":   physicalJSONMeasurement("deg", m.LatitudeValue),
+			"cog":        physicalJSONMeasurement("rad", m.CogValue),
+			"sog":        physicalJSONMeasurement("m/s", m.SogValue),
+			"heading":    physicalJSONMeasurement("rad", m.HeadingValue),
+			"rateOfTurn": physicalJSONMeasurement("rad/s", m.RateOfTurnValue),
+		},
+	})
+}
+
 type AisClassBPositionReport struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -691,6 +713,25 @@ func (m *AisClassBPositionReport) SetHeadingValue(v float64) error {
 	}
 	m.Heading = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassBPositionReport) MarshalJSON() ([]byte, error) {
+	type raw AisClassBPositionReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude": physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":  physicalJSONMeasurement("deg", m.LatitudeValue),
+			"cog":       physicalJSONMeasurement("rad", m.CogValue),
+			"sog":       physicalJSONMeasurement("m/s", m.SogValue),
+			"heading":   physicalJSONMeasurement("rad", m.HeadingValue),
+		},
+	})
 }
 
 type AisClassBExtendedPositionReport struct {
@@ -1224,6 +1265,29 @@ func (m *AisClassBExtendedPositionReport) SetPositionReferenceFromBowValue(v flo
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassBExtendedPositionReport) MarshalJSON() ([]byte, error) {
+	type raw AisClassBExtendedPositionReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude":                      physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":                       physicalJSONMeasurement("deg", m.LatitudeValue),
+			"cog":                            physicalJSONMeasurement("rad", m.CogValue),
+			"sog":                            physicalJSONMeasurement("m/s", m.SogValue),
+			"trueHeading":                    physicalJSONMeasurement("rad", m.TrueHeadingValue),
+			"length":                         physicalJSONMeasurement("m", m.LengthValue),
+			"beam":                           physicalJSONMeasurement("m", m.BeamValue),
+			"positionReferenceFromStarboard": physicalJSONMeasurement("m", m.PositionReferenceFromStarboardValue),
+			"positionReferenceFromBow":       physicalJSONMeasurement("m", m.PositionReferenceFromBowValue),
+		},
+	})
+}
+
 type AisAidsToNavigationAtonReport struct {
 	Info                                     MessageInfo `json:"info"`
 	MessageId                                *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1597,6 +1661,26 @@ func (m *AisAidsToNavigationAtonReport) SetPositionReferenceFromTrueNorthFacingE
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisAidsToNavigationAtonReport) MarshalJSON() ([]byte, error) {
+	type raw AisAidsToNavigationAtonReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude":                          physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":                           physicalJSONMeasurement("deg", m.LatitudeValue),
+			"lengthDiameter":                     physicalJSONMeasurement("m", m.LengthDiameterValue),
+			"beamDiameter":                       physicalJSONMeasurement("m", m.BeamDiameterValue),
+			"positionReferenceFromStarboardEdge": physicalJSONMeasurement("m", m.PositionReferenceFromStarboardEdgeValue),
+			"positionReferenceFromTrueNorthFacingEdge": physicalJSONMeasurement("m", m.PositionReferenceFromTrueNorthFacingEdgeValue),
+		},
+	})
+}
+
 type AisDgnssBroadcastBinaryMessage struct {
 	Info                          MessageInfo `json:"info"`
 	MessageId                     *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -1737,6 +1821,22 @@ func (m *AisDgnssBroadcastBinaryMessage) SetLatitudeValue(v float64) error {
 	}
 	m.Latitude = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisDgnssBroadcastBinaryMessage) MarshalJSON() ([]byte, error) {
+	type raw AisDgnssBroadcastBinaryMessage
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude": physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":  physicalJSONMeasurement("deg", m.LatitudeValue),
+		},
+	})
 }
 
 type AisUtcAndDateReport struct {
@@ -1989,6 +2089,24 @@ func (m *AisUtcAndDateReport) SetPositionDateValue(v float64) error {
 	}
 	m.PositionDate = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisUtcAndDateReport) MarshalJSON() ([]byte, error) {
+	type raw AisUtcAndDateReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude":    physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":     physicalJSONMeasurement("deg", m.LatitudeValue),
+			"positionTime": physicalJSONMeasurement("s", m.PositionTimeValue),
+			"positionDate": physicalJSONMeasurement("d", m.PositionDateValue),
+		},
+	})
 }
 
 type AisClassAStaticAndVoyageRelatedData struct {
@@ -2412,6 +2530,27 @@ func (m *AisClassAStaticAndVoyageRelatedData) SetDraftValue(v float64) error {
 	}
 	m.Draft = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassAStaticAndVoyageRelatedData) MarshalJSON() ([]byte, error) {
+	type raw AisClassAStaticAndVoyageRelatedData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"length":                         physicalJSONMeasurement("m", m.LengthValue),
+			"beam":                           physicalJSONMeasurement("m", m.BeamValue),
+			"positionReferenceFromStarboard": physicalJSONMeasurement("m", m.PositionReferenceFromStarboardValue),
+			"positionReferenceFromBow":       physicalJSONMeasurement("m", m.PositionReferenceFromBowValue),
+			"etaDate":                        physicalJSONMeasurement("d", m.EtaDateValue),
+			"etaTime":                        physicalJSONMeasurement("s", m.EtaTimeValue),
+			"draft":                          physicalJSONMeasurement("m", m.DraftValue),
+		},
+	})
 }
 
 type AisAddressedBinaryMessage struct {
@@ -2839,6 +2978,25 @@ func (m *AisSarAircraftPositionReport) SetAltitudeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisSarAircraftPositionReport) MarshalJSON() ([]byte, error) {
+	type raw AisSarAircraftPositionReport
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude": physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":  physicalJSONMeasurement("deg", m.LatitudeValue),
+			"cog":       physicalJSONMeasurement("rad", m.CogValue),
+			"sog":       physicalJSONMeasurement("m/s", m.SogValue),
+			"altitude":  physicalJSONMeasurement("m", m.AltitudeValue),
+		},
+	})
+}
+
 type AisUtcDateInquiry struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -3122,6 +3280,21 @@ func (m *AisDataLinkManagementMessageRepeating1) SetTimeoutValue(v float64) erro
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisDataLinkManagementMessageRepeating1) MarshalJSON() ([]byte, error) {
+	type raw AisDataLinkManagementMessageRepeating1
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"timeout": physicalJSONMeasurement("s", m.TimeoutValue),
+		},
+	})
+}
+
 type AisChannelManagement struct {
 	Info                                 MessageInfo `json:"info"`
 	MessageId                            *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -3380,6 +3553,24 @@ func (m *AisChannelManagement) SetSouthWestLatitudeCorner2Value(v float64) error
 	}
 	m.SouthWestLatitudeCorner2 = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisChannelManagement) MarshalJSON() ([]byte, error) {
+	type raw AisChannelManagement
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"northEastLongitudeCorner1": physicalJSONMeasurement("deg", m.NorthEastLongitudeCorner1Value),
+			"northEastLatitudeCorner1":  physicalJSONMeasurement("deg", m.NorthEastLatitudeCorner1Value),
+			"southWestLongitudeCorner2": physicalJSONMeasurement("deg", m.SouthWestLongitudeCorner2Value),
+			"southWestLatitudeCorner2":  physicalJSONMeasurement("deg", m.SouthWestLatitudeCorner2Value),
+		},
+	})
 }
 
 type AisClassBGroupAssignment struct {
@@ -3685,6 +3876,25 @@ func (m *AisClassBGroupAssignment) SetQuietTimeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassBGroupAssignment) MarshalJSON() ([]byte, error) {
+	type raw AisClassBGroupAssignment
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"northEastLongitudeCorner1": physicalJSONMeasurement("deg", m.NorthEastLongitudeCorner1Value),
+			"northEastLatitudeCorner1":  physicalJSONMeasurement("deg", m.NorthEastLatitudeCorner1Value),
+			"southWestLongitudeCorner2": physicalJSONMeasurement("deg", m.SouthWestLongitudeCorner2Value),
+			"southWestLatitudeCorner2":  physicalJSONMeasurement("deg", m.SouthWestLatitudeCorner2Value),
+			"quietTime":                 physicalJSONMeasurement("s", m.QuietTimeValue),
+		},
+	})
+}
+
 type AisClassBStaticDataMsg24PartA struct {
 	Info                      MessageInfo `json:"info"`
 	MessageId                 *uint64     `json:"messageId,omitempty" n2k:"1"`
@@ -3972,6 +4182,24 @@ func (m *AisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v float
 	}
 	m.PositionReferenceFromBow = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisClassBStaticDataMsg24PartB) MarshalJSON() ([]byte, error) {
+	type raw AisClassBStaticDataMsg24PartB
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"length":                         physicalJSONMeasurement("m", m.LengthValue),
+			"beam":                           physicalJSONMeasurement("m", m.BeamValue),
+			"positionReferenceFromStarboard": physicalJSONMeasurement("m", m.PositionReferenceFromStarboardValue),
+			"positionReferenceFromBow":       physicalJSONMeasurement("m", m.PositionReferenceFromBowValue),
+		},
+	})
 }
 
 type AisSingleSlotBinaryMessageDeprecated struct {
@@ -4327,6 +4555,24 @@ func (m *AisLongRangeBroadcastMessage) SetCogValue(v float64) error {
 	}
 	m.Cog = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AisLongRangeBroadcastMessage) MarshalJSON() ([]byte, error) {
+	type raw AisLongRangeBroadcastMessage
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"longitude": physicalJSONMeasurement("deg", m.LongitudeValue),
+			"latitude":  physicalJSONMeasurement("deg", m.LatitudeValue),
+			"sog":       physicalJSONMeasurement("m/s", m.SogValue),
+			"cog":       physicalJSONMeasurement("rad", m.CogValue),
+		},
+	})
 }
 
 type AisSingleSlotBinaryMessage struct {

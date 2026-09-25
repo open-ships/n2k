@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type SimnetKeepAlive struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -521,6 +523,21 @@ func (m *SimnetAutopilotAngle) SetAngleValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetAutopilotAngle) MarshalJSON() ([]byte, error) {
+	type raw SimnetAutopilotAngle
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"angle": physicalJSONMeasurement("rad", m.AngleValue),
+		},
+	})
+}
+
 type SimnetMagneticField struct {
 	Info   MessageInfo `json:"info"`
 	FieldX *int64      `json:"fieldX,omitempty" n2k:"1"`
@@ -703,6 +720,23 @@ func (m *SimnetMagneticField) SetFieldZValue(v float64) error {
 	}
 	m.FieldZ = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetMagneticField) MarshalJSON() ([]byte, error) {
+	type raw SimnetMagneticField
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"fieldX": physicalJSONMeasurement("", m.FieldXValue),
+			"fieldY": physicalJSONMeasurement("", m.FieldYValue),
+			"fieldZ": physicalJSONMeasurement("", m.FieldZValue),
+		},
+	})
 }
 
 type SimnetApUnknown3 struct {
@@ -1043,6 +1077,21 @@ func (m *SimnetFluidLevelSensorConfiguration) SetCapacityValue(v float64) error 
 	}
 	m.Capacity = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetFluidLevelSensorConfiguration) MarshalJSON() ([]byte, error) {
+	type raw SimnetFluidLevelSensorConfiguration
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"capacity": physicalJSONMeasurement("L", m.CapacityValue),
+		},
+	})
 }
 
 type SimnetFuelFlowTurbineConfiguration struct {
@@ -1458,6 +1507,24 @@ func (m *SimnetAisClassBStaticDataMsg24PartB) SetPositionReferenceFromBowValue(v
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetAisClassBStaticDataMsg24PartB) MarshalJSON() ([]byte, error) {
+	type raw SimnetAisClassBStaticDataMsg24PartB
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"length":                         physicalJSONMeasurement("m", m.LengthValue),
+			"beam":                           physicalJSONMeasurement("m", m.BeamValue),
+			"positionReferenceFromStarboard": physicalJSONMeasurement("m", m.PositionReferenceFromStarboardValue),
+			"positionReferenceFromBow":       physicalJSONMeasurement("m", m.PositionReferenceFromBowValue),
+		},
+	})
+}
+
 type SimnetAisSilentMode struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1754,6 +1821,21 @@ func (m *SimnetCommandApChangeCourse) SetAngleValue(v float64) error {
 	}
 	m.Angle = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetCommandApChangeCourse) MarshalJSON() ([]byte, error) {
+	type raw SimnetCommandApChangeCourse
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"angle": physicalJSONMeasurement("rad", m.AngleValue),
+		},
+	})
 }
 
 type SimnetCommandApFollowUp struct {
@@ -2184,6 +2266,21 @@ func (m *SimnetApCommandReplyChangeCourse) SetAngleValue(v float64) error {
 	}
 	m.Angle = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SimnetApCommandReplyChangeCourse) MarshalJSON() ([]byte, error) {
+	type raw SimnetApCommandReplyChangeCourse
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"angle": physicalJSONMeasurement("rad", m.AngleValue),
+		},
+	})
 }
 
 type SimnetAlarmMessage struct {

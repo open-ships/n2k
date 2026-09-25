@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type RadioFrequencyModePower struct {
 	Info             MessageInfo `json:"info"`
 	RxFrequency      *uint64     `json:"rxFrequency,omitempty" n2k:"1"`
@@ -242,6 +244,24 @@ func (m *RadioFrequencyModePower) SetChannelBandwidthValue(v float64) error {
 	}
 	m.ChannelBandwidth = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m RadioFrequencyModePower) MarshalJSON() ([]byte, error) {
+	type raw RadioFrequencyModePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rxFrequency":      physicalJSONMeasurement("Hz", m.RxFrequencyValue),
+			"txFrequency":      physicalJSONMeasurement("Hz", m.TxFrequencyValue),
+			"txPower":          physicalJSONMeasurement("W", m.TxPowerValue),
+			"channelBandwidth": physicalJSONMeasurement("Hz", m.ChannelBandwidthValue),
+		},
+	})
 }
 
 type DscCallInformation struct {
@@ -567,6 +587,25 @@ func (m *DscCallInformation) SetDateOfReceiptValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m DscCallInformation) MarshalJSON() ([]byte, error) {
+	type raw DscCallInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"latitudeOfVesselReported":  physicalJSONMeasurement("deg", m.LatitudeOfVesselReportedValue),
+			"longitudeOfVesselReported": physicalJSONMeasurement("deg", m.LongitudeOfVesselReportedValue),
+			"timeOfPosition":            physicalJSONMeasurement("s", m.TimeOfPositionValue),
+			"timeOfReceipt":             physicalJSONMeasurement("s", m.TimeOfReceiptValue),
+			"dateOfReceipt":             physicalJSONMeasurement("d", m.DateOfReceiptValue),
+		},
+	})
+}
+
 type DscDistressCallInformation struct {
 	Info                                        MessageInfo                            `json:"info"`
 	DscFormat                                   *uint64                                `json:"dscFormat,omitempty" n2k:"1"`
@@ -890,4 +929,23 @@ func (m *DscDistressCallInformation) SetDateOfReceiptValue(v float64) error {
 	}
 	m.DateOfReceipt = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m DscDistressCallInformation) MarshalJSON() ([]byte, error) {
+	type raw DscDistressCallInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"latitudeOfVesselReported":  physicalJSONMeasurement("deg", m.LatitudeOfVesselReportedValue),
+			"longitudeOfVesselReported": physicalJSONMeasurement("deg", m.LongitudeOfVesselReportedValue),
+			"timeOfPosition":            physicalJSONMeasurement("s", m.TimeOfPositionValue),
+			"timeOfReceipt":             physicalJSONMeasurement("s", m.TimeOfReceiptValue),
+			"dateOfReceipt":             physicalJSONMeasurement("d", m.DateOfReceiptValue),
+		},
+	})
 }
