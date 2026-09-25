@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type MaretronKeelPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -145,6 +147,21 @@ func (m *MaretronProprietaryDcBreakerCurrent) SetBreakerCurrentValue(v float64) 
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronProprietaryDcBreakerCurrent) MarshalJSON() ([]byte, error) {
+	type raw MaretronProprietaryDcBreakerCurrent
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"breakerCurrent": physicalJSONMeasurement("A", m.BreakerCurrentValue),
+		},
+	})
+}
+
 type MaretronUniversalConfigurationSf struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -257,6 +274,21 @@ func (m *MaretronFluidFlowRate) SetFluidFlowRateValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronFluidFlowRate) MarshalJSON() ([]byte, error) {
+	type raw MaretronFluidFlowRate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"fluidFlowRate": physicalJSONMeasurement("", m.FluidFlowRateValue),
+		},
+	})
+}
+
 type MaretronTripVolume struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -339,6 +371,21 @@ func (m *MaretronTripVolume) SetTripVolumeValue(v float64) error {
 	}
 	m.TripVolume = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronTripVolume) MarshalJSON() ([]byte, error) {
+	type raw MaretronTripVolume
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"tripVolume": physicalJSONMeasurement("", m.TripVolumeValue),
+		},
+	})
 }
 
 type Maretron420Ma struct {
@@ -453,6 +500,21 @@ func (m *Maretron010V) SetPgn010VDataValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Maretron010V) MarshalJSON() ([]byte, error) {
+	type raw Maretron010V
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"010VData": physicalJSONMeasurement("", m.Pgn010VDataValue),
+		},
+	})
+}
+
 type MaretronRotationalRate struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -537,6 +599,21 @@ func (m *MaretronRotationalRate) SetRotationalRateValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronRotationalRate) MarshalJSON() ([]byte, error) {
+	type raw MaretronRotationalRate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rotationalRate": physicalJSONMeasurement("", m.RotationalRateValue),
+		},
+	})
+}
+
 type MaretronResistance struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -617,6 +694,21 @@ func (m *MaretronResistance) SetResistanceValue(v float64) error {
 	}
 	m.Resistance = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronResistance) MarshalJSON() ([]byte, error) {
+	type raw MaretronResistance
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"resistance": physicalJSONMeasurement("", m.ResistanceValue),
+		},
+	})
 }
 
 type MaretronAutomationFunctionMaster struct {
@@ -1111,6 +1203,22 @@ func (m *MaretronProprietaryTemperatureHighRange) SetSetTemperatureValue(v float
 	}
 	m.SetTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronProprietaryTemperatureHighRange) MarshalJSON() ([]byte, error) {
+	type raw MaretronProprietaryTemperatureHighRange
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"actualTemperature": physicalJSONMeasurement("K", m.ActualTemperatureValue),
+			"setTemperature":    physicalJSONMeasurement("K", m.SetTemperatureValue),
+		},
+	})
 }
 
 type MaretronAnnunciator struct {
@@ -1618,6 +1726,22 @@ func (m *MaretronSwitchStatusCounter) SetStartTimeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronSwitchStatusCounter) MarshalJSON() ([]byte, error) {
+	type raw MaretronSwitchStatusCounter
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"startDate": physicalJSONMeasurement("d", m.StartDateValue),
+			"startTime": physicalJSONMeasurement("s", m.StartTimeValue),
+		},
+	})
+}
+
 type MaretronSwitchStatusTimer struct {
 	Info                   MessageInfo `json:"info"`
 	ManufacturerCode       *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1918,6 +2042,25 @@ func (m *MaretronSwitchStatusTimer) SetAccumulatedErrorPeriodValue(v float64) er
 	}
 	m.AccumulatedErrorPeriod = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MaretronSwitchStatusTimer) MarshalJSON() ([]byte, error) {
+	type raw MaretronSwitchStatusTimer
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"startDate":              physicalJSONMeasurement("d", m.StartDateValue),
+			"startTime":              physicalJSONMeasurement("s", m.StartTimeValue),
+			"accumulatedOffPeriod":   physicalJSONMeasurement("s", m.AccumulatedOffPeriodValue),
+			"accumulatedOnPeriod":    physicalJSONMeasurement("s", m.AccumulatedOnPeriodValue),
+			"accumulatedErrorPeriod": physicalJSONMeasurement("s", m.AccumulatedErrorPeriodValue),
+		},
+	})
 }
 
 type MaretronBnwas struct {

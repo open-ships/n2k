@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type Bus1PhaseCBasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
@@ -185,6 +187,23 @@ func (m *Bus1PhaseCBasicAcQuantities) SetAcFrequencyValue(v float64) error {
 	}
 	m.AcFrequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Bus1PhaseCBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw Bus1PhaseCBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+		},
+	})
 }
 
 type Bus1PhaseBBasicAcQuantities struct {
@@ -371,6 +390,23 @@ func (m *Bus1PhaseBBasicAcQuantities) SetAcFrequencyValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Bus1PhaseBBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw Bus1PhaseBBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+		},
+	})
+}
+
 type Bus1PhaseABasicAcQuantities struct {
 	Info                    MessageInfo `json:"info"`
 	LineLineAcRmsVoltage    *uint64     `json:"lineLineAcRmsVoltage,omitempty" n2k:"1"`
@@ -553,6 +589,23 @@ func (m *Bus1PhaseABasicAcQuantities) SetAcFrequencyValue(v float64) error {
 	}
 	m.AcFrequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Bus1PhaseABasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw Bus1PhaseABasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+		},
+	})
 }
 
 type Bus1AverageBasicAcQuantities struct {
@@ -739,6 +792,23 @@ func (m *Bus1AverageBasicAcQuantities) SetAcFrequencyValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Bus1AverageBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw Bus1AverageBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+		},
+	})
+}
+
 type UtilityTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
@@ -865,6 +935,22 @@ func (m *UtilityTotalAcEnergy) SetTotalEnergyImportValue(v float64) error {
 	}
 	m.TotalEnergyImport = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityTotalAcEnergy) MarshalJSON() ([]byte, error) {
+	type raw UtilityTotalAcEnergy
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"totalEnergyExport": physicalJSONMeasurement("kWh", m.TotalEnergyExportValue),
+			"totalEnergyImport": physicalJSONMeasurement("kWh", m.TotalEnergyImportValue),
+		},
+	})
 }
 
 type UtilityPhaseCAcReactivePower struct {
@@ -999,6 +1085,22 @@ func (m *UtilityPhaseCAcReactivePower) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseCAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseCAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type UtilityPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -1131,6 +1233,22 @@ func (m *UtilityPhaseCAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseCAcPower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseCAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type UtilityPhaseCBasicAcQuantities struct {
@@ -1371,6 +1489,24 @@ func (m *UtilityPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseCBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseCBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type UtilityPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *uint64     `json:"reactivePower,omitempty" n2k:"1"`
@@ -1501,6 +1637,22 @@ func (m *UtilityPhaseBAcReactivePower) SetPowerFactorValue(v float64) error {
 	}
 	m.PowerFactor = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseBAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseBAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
 }
 
 type UtilityPhaseBAcPower struct {
@@ -1635,6 +1787,22 @@ func (m *UtilityPhaseBAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseBAcPower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseBAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type UtilityPhaseBBasicAcQuantities struct {
@@ -1875,6 +2043,24 @@ func (m *UtilityPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseBBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseBBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type UtilityPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -2010,6 +2196,22 @@ func (m *UtilityPhaseAAcReactivePower) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseAAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseAAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type UtilityPhaseAAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -2142,6 +2344,22 @@ func (m *UtilityPhaseAAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseAAcPower) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseAAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type UtilityPhaseABasicAcQuantities struct {
@@ -2382,6 +2600,24 @@ func (m *UtilityPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityPhaseABasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw UtilityPhaseABasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type UtilityTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -2517,6 +2753,22 @@ func (m *UtilityTotalAcReactivePower) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityTotalAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw UtilityTotalAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type UtilityTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -2649,6 +2901,22 @@ func (m *UtilityTotalAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityTotalAcPower) MarshalJSON() ([]byte, error) {
+	type raw UtilityTotalAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type UtilityAverageBasicAcQuantities struct {
@@ -2889,6 +3157,24 @@ func (m *UtilityAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) error 
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m UtilityAverageBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw UtilityAverageBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type GeneratorTotalAcEnergy struct {
 	Info              MessageInfo `json:"info"`
 	TotalEnergyExport *uint64     `json:"totalEnergyExport,omitempty" n2k:"1"`
@@ -3017,6 +3303,22 @@ func (m *GeneratorTotalAcEnergy) SetTotalEnergyImportValue(v float64) error {
 	}
 	m.TotalEnergyImport = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorTotalAcEnergy) MarshalJSON() ([]byte, error) {
+	type raw GeneratorTotalAcEnergy
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"totalEnergyExport": physicalJSONMeasurement("kWh", m.TotalEnergyExportValue),
+			"totalEnergyImport": physicalJSONMeasurement("kWh", m.TotalEnergyImportValue),
+		},
+	})
 }
 
 type GeneratorPhaseCAcReactivePower struct {
@@ -3154,6 +3456,22 @@ func (m *GeneratorPhaseCAcReactivePower) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseCAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseCAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type GeneratorPhaseCAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -3288,6 +3606,22 @@ func (m *GeneratorPhaseCAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseCAcPower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseCAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VAR", m.ApparentPowerValue),
+		},
+	})
 }
 
 type GeneratorPhaseCBasicAcQuantities struct {
@@ -3528,6 +3862,24 @@ func (m *GeneratorPhaseCBasicAcQuantities) SetAcRmsCurrentValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseCBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseCBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type GeneratorPhaseBAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -3661,6 +4013,22 @@ func (m *GeneratorPhaseBAcReactivePower) SetPowerFactorValue(v float64) error {
 	}
 	m.PowerFactor = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseBAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseBAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
 }
 
 type GeneratorPhaseBAcPower struct {
@@ -3797,6 +4165,22 @@ func (m *GeneratorPhaseBAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseBAcPower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseBAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type GeneratorPhaseBBasicAcQuantities struct {
@@ -4037,6 +4421,24 @@ func (m *GeneratorPhaseBBasicAcQuantities) SetAcRmsCurrentValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseBBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseBBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type GeneratorPhaseAAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -4170,6 +4572,22 @@ func (m *GeneratorPhaseAAcReactivePower) SetPowerFactorValue(v float64) error {
 	}
 	m.PowerFactor = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseAAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseAAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
 }
 
 type GeneratorPhaseAAcPower struct {
@@ -4306,6 +4724,22 @@ func (m *GeneratorPhaseAAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseAAcPower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseAAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type GeneratorPhaseABasicAcQuantities struct {
@@ -4546,6 +4980,24 @@ func (m *GeneratorPhaseABasicAcQuantities) SetAcRmsCurrentValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorPhaseABasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw GeneratorPhaseABasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type GeneratorTotalAcReactivePower struct {
 	Info               MessageInfo `json:"info"`
 	ReactivePower      *int64      `json:"reactivePower,omitempty" n2k:"1"`
@@ -4681,6 +5133,22 @@ func (m *GeneratorTotalAcReactivePower) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorTotalAcReactivePower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorTotalAcReactivePower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type GeneratorTotalAcPower struct {
 	Info          MessageInfo `json:"info"`
 	RealPower     *int64      `json:"realPower,omitempty" n2k:"1"`
@@ -4813,6 +5281,22 @@ func (m *GeneratorTotalAcPower) SetApparentPowerValue(v float64) error {
 	}
 	m.ApparentPower = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorTotalAcPower) MarshalJSON() ([]byte, error) {
+	type raw GeneratorTotalAcPower
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"apparentPower": physicalJSONMeasurement("VA", m.ApparentPowerValue),
+		},
+	})
 }
 
 type GeneratorAverageBasicAcQuantities struct {
@@ -5053,6 +5537,24 @@ func (m *GeneratorAverageBasicAcQuantities) SetAcRmsCurrentValue(v float64) erro
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GeneratorAverageBasicAcQuantities) MarshalJSON() ([]byte, error) {
+	type raw GeneratorAverageBasicAcQuantities
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lineLineAcRmsVoltage":    physicalJSONMeasurement("V", m.LineLineAcRmsVoltageValue),
+			"lineNeutralAcRmsVoltage": physicalJSONMeasurement("V", m.LineNeutralAcRmsVoltageValue),
+			"acFrequency":             physicalJSONMeasurement("Hz", m.AcFrequencyValue),
+			"acRmsCurrent":            physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+		},
+	})
+}
+
 type GarminAutopilotSystemVoltage struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -5141,6 +5643,21 @@ func (m *GarminAutopilotSystemVoltage) SetSystemVoltageValue(v float64) error {
 	}
 	m.SystemVoltage = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GarminAutopilotSystemVoltage) MarshalJSON() ([]byte, error) {
+	type raw GarminAutopilotSystemVoltage
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"systemVoltage": physicalJSONMeasurement("V", m.SystemVoltageValue),
+		},
+	})
 }
 
 type ElectricEnergyStorageStatusDynamic struct {
@@ -5549,6 +6066,27 @@ func (m *ElectricEnergyStorageStatusDynamic) SetMaxChargeCurrentValue(v float64)
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricEnergyStorageStatusDynamic) MarshalJSON() ([]byte, error) {
+	type raw ElectricEnergyStorageStatusDynamic
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"stateOfCharge":          physicalJSONMeasurement("%", m.StateOfChargeValue),
+			"timeRemaining":          physicalJSONMeasurement("s", m.TimeRemainingValue),
+			"highestCellTemperature": physicalJSONMeasurement("K", m.HighestCellTemperatureValue),
+			"lowestCellTemperature":  physicalJSONMeasurement("K", m.LowestCellTemperatureValue),
+			"averageCellTemperature": physicalJSONMeasurement("K", m.AverageCellTemperatureValue),
+			"maxDischargeCurrent":    physicalJSONMeasurement("A", m.MaxDischargeCurrentValue),
+			"maxChargeCurrent":       physicalJSONMeasurement("A", m.MaxChargeCurrentValue),
+		},
+	})
+}
+
 type ElectricEnergyStorageInformation struct {
 	Info                       MessageInfo `json:"info"`
 	EnergyStorageIdentifier    *uint64     `json:"energyStorageIdentifier,omitempty" n2k:"1"`
@@ -5857,6 +6395,25 @@ func (m *ElectricEnergyStorageInformation) SetUsableBatteryEnergyValue(v float64
 	}
 	m.UsableBatteryEnergy = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricEnergyStorageInformation) MarshalJSON() ([]byte, error) {
+	type raw ElectricEnergyStorageInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"maximumTemperatureDerating": physicalJSONMeasurement("K", m.MaximumTemperatureDeratingValue),
+			"maximumTemperatureShutOff":  physicalJSONMeasurement("K", m.MaximumTemperatureShutOffValue),
+			"minimumTemperatureDerating": physicalJSONMeasurement("K", m.MinimumTemperatureDeratingValue),
+			"minimumTemperatureShutOff":  physicalJSONMeasurement("K", m.MinimumTemperatureShutOffValue),
+			"usableBatteryEnergy":        physicalJSONMeasurement("kWh", m.UsableBatteryEnergyValue),
+		},
+	})
 }
 
 type LoadControllerConnectionStateControl struct {
@@ -6470,6 +7027,27 @@ func (m *AcInputStatusRepeating1) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcInputStatusRepeating1) MarshalJSON() ([]byte, error) {
+	type raw AcInputStatusRepeating1
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"voltage":       physicalJSONMeasurement("V", m.VoltageValue),
+			"current":       physicalJSONMeasurement("A", m.CurrentValue),
+			"frequency":     physicalJSONMeasurement("Hz", m.FrequencyValue),
+			"breakerSize":   physicalJSONMeasurement("A", m.BreakerSizeValue),
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type AcOutputStatus struct {
 	Info          MessageInfo                `json:"info"`
 	Instance      *uint64                    `json:"instance,omitempty" n2k:"1"`
@@ -6883,6 +7461,27 @@ func (m *AcOutputStatusRepeating1) SetPowerFactorValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcOutputStatusRepeating1) MarshalJSON() ([]byte, error) {
+	type raw AcOutputStatusRepeating1
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"voltage":       physicalJSONMeasurement("V", m.VoltageValue),
+			"current":       physicalJSONMeasurement("A", m.CurrentValue),
+			"frequency":     physicalJSONMeasurement("Hz", m.FrequencyValue),
+			"breakerSize":   physicalJSONMeasurement("A", m.BreakerSizeValue),
+			"realPower":     physicalJSONMeasurement("W", m.RealPowerValue),
+			"reactivePower": physicalJSONMeasurement("VAR", m.ReactivePowerValue),
+			"powerFactor":   physicalJSONMeasurement("Cos Phi", m.PowerFactorValue),
+		},
+	})
+}
+
 type DcDetailedStatus struct {
 	Info              MessageInfo `json:"info"`
 	Sid               *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -7179,6 +7778,25 @@ func (m *DcDetailedStatus) SetRemainingCapacityValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m DcDetailedStatus) MarshalJSON() ([]byte, error) {
+	type raw DcDetailedStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"stateOfCharge":     physicalJSONMeasurement("%", m.StateOfChargeValue),
+			"stateOfHealth":     physicalJSONMeasurement("%", m.StateOfHealthValue),
+			"timeRemaining":     physicalJSONMeasurement("s", m.TimeRemainingValue),
+			"rippleVoltage":     physicalJSONMeasurement("V", m.RippleVoltageValue),
+			"remainingCapacity": physicalJSONMeasurement("Ah", m.RemainingCapacityValue),
+		},
+	})
+}
+
 type ChargerStatus struct {
 	Info                      MessageInfo `json:"info"`
 	Instance                  *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -7263,6 +7881,21 @@ func (m *ChargerStatus) SetEqualizationTimeRemainingValue(v float64) error {
 	}
 	m.EqualizationTimeRemaining = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ChargerStatus) MarshalJSON() ([]byte, error) {
+	type raw ChargerStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"equalizationTimeRemaining": physicalJSONMeasurement("s", m.EqualizationTimeRemainingValue),
+		},
+	})
 }
 
 type BatteryStatus struct {
@@ -7451,6 +8084,23 @@ func (m *BatteryStatus) SetTemperatureValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m BatteryStatus) MarshalJSON() ([]byte, error) {
+	type raw BatteryStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"voltage":     physicalJSONMeasurement("V", m.VoltageValue),
+			"current":     physicalJSONMeasurement("A", m.CurrentValue),
+			"temperature": physicalJSONMeasurement("K", m.TemperatureValue),
+		},
+	})
+}
+
 type InverterStatus struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -7627,6 +8277,22 @@ func (m *ChargerConfigurationStatus) SetEqualizeTimeValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ChargerConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw ChargerConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"chargeCurrentLimit": physicalJSONMeasurement("%", m.ChargeCurrentLimitValue),
+			"equalizeTime":       physicalJSONMeasurement("s", m.EqualizeTimeValue),
+		},
+	})
+}
+
 type InverterConfigurationStatus struct {
 	Info                    MessageInfo `json:"info"`
 	Instance                *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -7767,6 +8433,22 @@ func (m *InverterConfigurationStatus) SetLoadSenseIntervalValue(v float64) error
 	}
 	m.LoadSenseInterval = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m InverterConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw InverterConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"loadSensePowerThreshold": physicalJSONMeasurement("W", m.LoadSensePowerThresholdValue),
+			"loadSenseInterval":       physicalJSONMeasurement("s", m.LoadSenseIntervalValue),
+		},
+	})
 }
 
 type BatteryConfigurationStatus struct {
@@ -8011,6 +8693,24 @@ func (m *BatteryConfigurationStatus) SetChargeEfficiencyFactorValue(v float64) e
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m BatteryConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw BatteryConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"capacity":               physicalJSONMeasurement("Ah", m.CapacityValue),
+			"temperatureCoefficient": physicalJSONMeasurement("%", m.TemperatureCoefficientValue),
+			"peukertExponent":        physicalJSONMeasurement("", m.PeukertExponentValue),
+			"chargeEfficiencyFactor": physicalJSONMeasurement("%", m.ChargeEfficiencyFactorValue),
+		},
+	})
+}
+
 type AcPowerCurrentPhaseA struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -8141,6 +8841,22 @@ func (m *AcPowerCurrentPhaseA) SetPowerValue(v float64) error {
 	}
 	m.Power = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcPowerCurrentPhaseA) MarshalJSON() ([]byte, error) {
+	type raw AcPowerCurrentPhaseA
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acRmsCurrent": physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+			"power":        physicalJSONMeasurement("W", m.PowerValue),
+		},
+	})
 }
 
 type AcPowerCurrentPhaseB struct {
@@ -8275,6 +8991,22 @@ func (m *AcPowerCurrentPhaseB) SetPowerValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcPowerCurrentPhaseB) MarshalJSON() ([]byte, error) {
+	type raw AcPowerCurrentPhaseB
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acRmsCurrent": physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+			"power":        physicalJSONMeasurement("W", m.PowerValue),
+		},
+	})
+}
+
 type AcPowerCurrentPhaseC struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -8405,6 +9137,22 @@ func (m *AcPowerCurrentPhaseC) SetPowerValue(v float64) error {
 	}
 	m.Power = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcPowerCurrentPhaseC) MarshalJSON() ([]byte, error) {
+	type raw AcPowerCurrentPhaseC
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acRmsCurrent": physicalJSONMeasurement("A", m.AcRmsCurrentValue),
+			"power":        physicalJSONMeasurement("W", m.PowerValue),
+		},
+	})
 }
 
 type AcVoltageFrequencyPhaseA struct {
@@ -8595,6 +9343,23 @@ func (m *AcVoltageFrequencyPhaseA) SetFrequencyValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcVoltageFrequencyPhaseA) MarshalJSON() ([]byte, error) {
+	type raw AcVoltageFrequencyPhaseA
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acVoltageLineToNeutral": physicalJSONMeasurement("V", m.AcVoltageLineToNeutralValue),
+			"acVoltageLineToLine":    physicalJSONMeasurement("V", m.AcVoltageLineToLineValue),
+			"frequency":              physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
+}
+
 type AcVoltageFrequencyPhaseB struct {
 	Info                   MessageInfo `json:"info"`
 	Sid                    *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -8781,6 +9546,23 @@ func (m *AcVoltageFrequencyPhaseB) SetFrequencyValue(v float64) error {
 	}
 	m.Frequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcVoltageFrequencyPhaseB) MarshalJSON() ([]byte, error) {
+	type raw AcVoltageFrequencyPhaseB
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acVoltageLineToNeutral": physicalJSONMeasurement("V", m.AcVoltageLineToNeutralValue),
+			"acVoltageLineToLine":    physicalJSONMeasurement("V", m.AcVoltageLineToLineValue),
+			"frequency":              physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
 }
 
 type AcVoltageFrequencyPhaseC struct {
@@ -8971,6 +9753,23 @@ func (m *AcVoltageFrequencyPhaseC) SetFrequencyValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m AcVoltageFrequencyPhaseC) MarshalJSON() ([]byte, error) {
+	type raw AcVoltageFrequencyPhaseC
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acVoltageLineToNeutral": physicalJSONMeasurement("V", m.AcVoltageLineToNeutralValue),
+			"acVoltageLineToLine":    physicalJSONMeasurement("V", m.AcVoltageLineToLineValue),
+			"frequency":              physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
+}
+
 type DcVoltageCurrent struct {
 	Info             MessageInfo `json:"info"`
 	Sid              *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -9101,6 +9900,22 @@ func (m *DcVoltageCurrent) SetDcCurrentValue(v float64) error {
 	}
 	m.DcCurrent = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m DcVoltageCurrent) MarshalJSON() ([]byte, error) {
+	type raw DcVoltageCurrent
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"dcVoltage": physicalJSONMeasurement("V", m.DcVoltageValue),
+			"dcCurrent": physicalJSONMeasurement("A", m.DcCurrentValue),
+		},
+	})
 }
 
 type ElectricEnergyStorageStatusRapidUpdate struct {
@@ -9241,6 +10056,22 @@ func (m *ElectricEnergyStorageStatusRapidUpdate) SetBatteryCurrentValue(v float6
 	}
 	m.BatteryCurrent = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricEnergyStorageStatusRapidUpdate) MarshalJSON() ([]byte, error) {
+	type raw ElectricEnergyStorageStatusRapidUpdate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"batteryVoltage": physicalJSONMeasurement("V", m.BatteryVoltageValue),
+			"batteryCurrent": physicalJSONMeasurement("A", m.BatteryCurrentValue),
+		},
+	})
 }
 
 type HvacStatus struct {
@@ -9677,6 +10508,27 @@ func (m *HvacStatus) SetInletTemperatureValue(v float64) error {
 	}
 	m.InletTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m HvacStatus) MarshalJSON() ([]byte, error) {
+	type raw HvacStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"lowerTemperatureSetpoint": physicalJSONMeasurement("K", m.LowerTemperatureSetpointValue),
+			"upperTemperatureSetpoint": physicalJSONMeasurement("K", m.UpperTemperatureSetpointValue),
+			"currentTemperature":       physicalJSONMeasurement("K", m.CurrentTemperatureValue),
+			"seaWaterTemperature":      physicalJSONMeasurement("K", m.SeaWaterTemperatureValue),
+			"loopTemperature":          physicalJSONMeasurement("K", m.LoopTemperatureValue),
+			"evaporatorTemperature":    physicalJSONMeasurement("K", m.EvaporatorTemperatureValue),
+			"inletTemperature":         physicalJSONMeasurement("K", m.InletTemperatureValue),
+		},
+	})
 }
 
 type LightingSystemSettings struct {
@@ -10238,4 +11090,22 @@ func (m *CurrentStatusAndFile) SetRadioFrequencyValue(v float64) error {
 	}
 	m.RadioFrequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m CurrentStatusAndFile) MarshalJSON() ([]byte, error) {
+	type raw CurrentStatusAndFile
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"elapsedTrackTime": physicalJSONMeasurement("s", m.ElapsedTrackTimeValue),
+			"trackTime":        physicalJSONMeasurement("s", m.TrackTimeValue),
+			"signalStrength":   physicalJSONMeasurement("%", m.SignalStrengthValue),
+			"radioFrequency":   physicalJSONMeasurement("Hz", m.RadioFrequencyValue),
+		},
+	})
 }

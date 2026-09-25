@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type GarminAutopilotEngineRpmA struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -93,6 +95,21 @@ func (m *GarminAutopilotEngineRpmA) SetEngineSpeedValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GarminAutopilotEngineRpmA) MarshalJSON() ([]byte, error) {
+	type raw GarminAutopilotEngineRpmA
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"engineSpeed": physicalJSONMeasurement("rpm", m.EngineSpeedValue),
+		},
+	})
+}
+
 type GarminAutopilotEngineRpmB struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -181,6 +198,21 @@ func (m *GarminAutopilotEngineRpmB) SetEngineSpeedValue(v float64) error {
 	}
 	m.EngineSpeed = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m GarminAutopilotEngineRpmB) MarshalJSON() ([]byte, error) {
+	type raw GarminAutopilotEngineRpmB
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"engineSpeed": physicalJSONMeasurement("rpm", m.EngineSpeedValue),
+		},
+	})
 }
 
 type EngineParametersRapidUpdate struct {
@@ -367,6 +399,23 @@ func (m *EngineParametersRapidUpdate) SetTiltTrimValue(v float64) error {
 	}
 	m.TiltTrim = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m EngineParametersRapidUpdate) MarshalJSON() ([]byte, error) {
+	type raw EngineParametersRapidUpdate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"speed":         physicalJSONMeasurement("rpm", m.SpeedValue),
+			"boostPressure": physicalJSONMeasurement("Pa", m.BoostPressureValue),
+			"tiltTrim":      physicalJSONMeasurement("%", m.TiltTrimValue),
+		},
+	})
 }
 
 type EngineParametersDynamic struct {
@@ -937,6 +986,30 @@ func (m *EngineParametersDynamic) SetEngineTorqueValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m EngineParametersDynamic) MarshalJSON() ([]byte, error) {
+	type raw EngineParametersDynamic
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"oilPressure":         physicalJSONMeasurement("Pa", m.OilPressureValue),
+			"oilTemperature":      physicalJSONMeasurement("K", m.OilTemperatureValue),
+			"temperature":         physicalJSONMeasurement("K", m.TemperatureValue),
+			"alternatorPotential": physicalJSONMeasurement("V", m.AlternatorPotentialValue),
+			"fuelRate":            physicalJSONMeasurement("L/h", m.FuelRateValue),
+			"totalEngineHours":    physicalJSONMeasurement("s", m.TotalEngineHoursValue),
+			"coolantPressure":     physicalJSONMeasurement("Pa", m.CoolantPressureValue),
+			"fuelPressure":        physicalJSONMeasurement("Pa", m.FuelPressureValue),
+			"engineLoad":          physicalJSONMeasurement("%", m.EngineLoadValue),
+			"engineTorque":        physicalJSONMeasurement("%", m.EngineTorqueValue),
+		},
+	})
+}
+
 type TransmissionParametersDynamic struct {
 	Info             MessageInfo `json:"info"`
 	Instance         *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -1071,6 +1144,22 @@ func (m *TransmissionParametersDynamic) SetOilTemperatureValue(v float64) error 
 	}
 	m.OilTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m TransmissionParametersDynamic) MarshalJSON() ([]byte, error) {
+	type raw TransmissionParametersDynamic
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"oilPressure":    physicalJSONMeasurement("Pa", m.OilPressureValue),
+			"oilTemperature": physicalJSONMeasurement("K", m.OilTemperatureValue),
+		},
+	})
 }
 
 type TripParametersEngine struct {
@@ -1311,6 +1400,24 @@ func (m *TripParametersEngine) SetInstantaneousFuelEconomyValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m TripParametersEngine) MarshalJSON() ([]byte, error) {
+	type raw TripParametersEngine
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"tripFuelUsed":             physicalJSONMeasurement("L", m.TripFuelUsedValue),
+			"fuelRateAverage":          physicalJSONMeasurement("L/h", m.FuelRateAverageValue),
+			"fuelRateEconomy":          physicalJSONMeasurement("L/h", m.FuelRateEconomyValue),
+			"instantaneousFuelEconomy": physicalJSONMeasurement("L/h", m.InstantaneousFuelEconomyValue),
+		},
+	})
+}
+
 type EngineParametersStatic struct {
 	Info             MessageInfo `json:"info"`
 	Instance         *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -1389,4 +1496,19 @@ func (m *EngineParametersStatic) SetRatedEngineSpeedValue(v float64) error {
 	}
 	m.RatedEngineSpeed = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m EngineParametersStatic) MarshalJSON() ([]byte, error) {
+	type raw EngineParametersStatic
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"ratedEngineSpeed": physicalJSONMeasurement("rpm", m.RatedEngineSpeedValue),
+		},
+	})
 }

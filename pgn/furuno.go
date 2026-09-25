@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type FurunoHeave struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -79,6 +81,21 @@ func (m *FurunoHeave) SetHeaveValue(v float64) error {
 	}
 	m.Heave = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoHeave) MarshalJSON() ([]byte, error) {
+	type raw FurunoHeave
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"heave": physicalJSONMeasurement("m", m.HeaveValue),
+		},
+	})
 }
 
 type FurunoStatusAndVersionReport struct {
@@ -670,6 +687,29 @@ func (m *FurunoSensorSetup) SetAirTemperatureOffsetValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoSensorSetup) MarshalJSON() ([]byte, error) {
+	type raw FurunoSensorSetup
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rotationSmoothing":    physicalJSONMeasurement("s", m.RotationSmoothingValue),
+			"headingOffset":        physicalJSONMeasurement("deg", m.HeadingOffsetValue),
+			"pitchOffset":          physicalJSONMeasurement("deg", m.PitchOffsetValue),
+			"rollOffset":           physicalJSONMeasurement("deg", m.RollOffsetValue),
+			"sogAndCogSmoothing":   physicalJSONMeasurement("s", m.SogAndCogSmoothingValue),
+			"3AxisSpeedSmoothing":  physicalJSONMeasurement("s", m.Pgn3AxisSpeedSmoothingValue),
+			"3AxisOffset":          physicalJSONMeasurement("%", m.Pgn3AxisOffsetValue),
+			"airPressureOffset":    physicalJSONMeasurement("Pa", m.AirPressureOffsetValue),
+			"airTemperatureOffset": physicalJSONMeasurement("K", m.AirTemperatureOffsetValue),
+		},
+	})
+}
+
 type FurunoDeadReckoningConfiguration struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -930,6 +970,22 @@ func (m *FurunoNavpilotStatus) SetCommandedCourseValue(v float64) error {
 	}
 	m.CommandedCourse = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoNavpilotStatus) MarshalJSON() ([]byte, error) {
+	type raw FurunoNavpilotStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rudderAngle":     physicalJSONMeasurement("rad", m.RudderAngleValue),
+			"commandedCourse": physicalJSONMeasurement("rad", m.CommandedCourseValue),
+		},
+	})
 }
 
 type FurunoShipParametersAndAntennaPosition struct {
@@ -1286,6 +1342,26 @@ func (m *FurunoShipParametersAndAntennaPosition) SetShipSHeightValue(v float64) 
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoShipParametersAndAntennaPosition) MarshalJSON() ([]byte, error) {
+	type raw FurunoShipParametersAndAntennaPosition
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"antennaPositionX": physicalJSONMeasurement("m", m.AntennaPositionXValue),
+			"antennaPositionY": physicalJSONMeasurement("m", m.AntennaPositionYValue),
+			"antennaPositionZ": physicalJSONMeasurement("m", m.AntennaPositionZValue),
+			"shipSWidth":       physicalJSONMeasurement("m", m.ShipSWidthValue),
+			"shipSLength":      physicalJSONMeasurement("m", m.ShipSLengthValue),
+			"shipSHeight":      physicalJSONMeasurement("m", m.ShipSHeightValue),
+		},
+	})
+}
+
 type FurunoSpeedCalculationPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1420,6 +1496,22 @@ func (m *FurunoSpeedCalculationPosition) SetPositionZValue(v float64) error {
 	}
 	m.PositionZ = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoSpeedCalculationPosition) MarshalJSON() ([]byte, error) {
+	type raw FurunoSpeedCalculationPosition
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"positionY": physicalJSONMeasurement("m", m.PositionYValue),
+			"positionZ": physicalJSONMeasurement("m", m.PositionZValue),
+		},
+	})
 }
 
 type FurunoSixDegreesOfFreedomMovement struct {
@@ -1708,6 +1800,24 @@ func (m *FurunoHeelAngleRollInformation) SetField8Value(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoHeelAngleRollInformation) MarshalJSON() ([]byte, error) {
+	type raw FurunoHeelAngleRollInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"heel":   physicalJSONMeasurement("rad", m.HeelValue),
+			"field4": physicalJSONMeasurement("rad", m.Field4Value),
+			"field6": physicalJSONMeasurement("rad", m.Field6Value),
+			"field8": physicalJSONMeasurement("rad", m.Field8Value),
+		},
+	})
+}
+
 type FurunoMultiSatsInViewExtended struct {
 	Info             MessageInfo                               `json:"info"`
 	ManufacturerCode *uint64                                   `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1971,6 +2081,24 @@ func (m *FurunoMultiSatsInViewExtendedRepeating1) SetRangeResidualValue(v float6
 	}
 	m.RangeResidual = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FurunoMultiSatsInViewExtendedRepeating1) MarshalJSON() ([]byte, error) {
+	type raw FurunoMultiSatsInViewExtendedRepeating1
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"elevation":     physicalJSONMeasurement("rad", m.ElevationValue),
+			"azimuth":       physicalJSONMeasurement("rad", m.AzimuthValue),
+			"snr":           physicalJSONMeasurement("dB", m.SnrValue),
+			"rangeResidual": physicalJSONMeasurement("m", m.RangeResidualValue),
+		},
+	})
 }
 
 type FurunoMotionSensorStatusExtended struct {

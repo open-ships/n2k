@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type SonichubAmRadio struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -90,6 +92,21 @@ func (m *SonichubAmRadio) SetFrequencyValue(v float64) error {
 	}
 	m.Frequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SonichubAmRadio) MarshalJSON() ([]byte, error) {
+	type raw SonichubAmRadio
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"frequency": physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
 }
 
 type SonichubAlbum struct {
@@ -271,6 +288,21 @@ func (m *SonichubFmRadio) SetFrequencyValue(v float64) error {
 	}
 	m.Frequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SonichubFmRadio) MarshalJSON() ([]byte, error) {
+	type raw SonichubFmRadio
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"frequency": physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
 }
 
 type SonichubInit1 struct {
@@ -578,6 +610,22 @@ func (m *SonichubPlaylist) SetPositionInTrackValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SonichubPlaylist) MarshalJSON() ([]byte, error) {
+	type raw SonichubPlaylist
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"length":          physicalJSONMeasurement("s", m.LengthValue),
+			"positionInTrack": physicalJSONMeasurement("s", m.PositionInTrackValue),
+		},
+	})
+}
+
 type SonichubPosition struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -658,6 +706,21 @@ func (m *SonichubPosition) SetPositionValue(v float64) error {
 	}
 	m.Position = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SonichubPosition) MarshalJSON() ([]byte, error) {
+	type raw SonichubPosition
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"position": physicalJSONMeasurement("s", m.PositionValue),
+		},
+	})
 }
 
 type SonichubSource struct {

@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type MercuryEngineData struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -274,6 +276,22 @@ func (m *MercuryCruiseControlData) SetCruiseSpeedSetpointValue(v float64) error 
 	}
 	m.CruiseSpeedSetpoint = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m MercuryCruiseControlData) MarshalJSON() ([]byte, error) {
+	type raw MercuryCruiseControlData
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"cruiseRpmSetpoint":   physicalJSONMeasurement("rpm", m.CruiseRpmSetpointValue),
+			"cruiseSpeedSetpoint": physicalJSONMeasurement("km/h", m.CruiseSpeedSetpointValue),
+		},
+	})
 }
 
 type MercuryBamDigitalDataProxy struct {

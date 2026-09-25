@@ -11,6 +11,10 @@ explains the runtime design.
 - **PGN**: an NMEA 2000 message type identified by its Parameter Group Number.
 - **Message**: a typed `pgn.Message`; a message may occupy one frame, a fast
   packet, or an ISO transport transfer.
+- **Physical JSON**: default JSON for generated PGN structs and repeating
+  entries supplements raw fields with a derived `physical` object wherever
+  physical-value accessors exist. Accessors determine schema units and validity;
+  unavailable measurements are null. JSON input and wire encoding use raw fields.
 - **Source / destination**: dynamic 8-bit bus addresses. Addresses 0–251 are
   claimable; 252–253 are reserved, 254 means unable to claim, and 255 is
   broadcast/global.

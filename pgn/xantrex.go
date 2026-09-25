@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type XantrexAcStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -203,6 +205,23 @@ func (m *XantrexAcStatus) SetPowerFactorValue(v float64) error {
 	}
 	m.PowerFactor = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m XantrexAcStatus) MarshalJSON() ([]byte, error) {
+	type raw XantrexAcStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"voltage":     physicalJSONMeasurement("V", m.VoltageValue),
+			"current":     physicalJSONMeasurement("A", m.CurrentValue),
+			"powerFactor": physicalJSONMeasurement("%", m.PowerFactorValue),
+		},
+	})
 }
 
 type XantrexDcSourceConfigurationStatus struct {
@@ -665,6 +684,28 @@ func (m *XantrexDcSourceConfigurationStatus) SetDcOvRecoverLevelValue(v float64)
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m XantrexDcSourceConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw XantrexDcSourceConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"dcUvShutdownLevel": physicalJSONMeasurement("V", m.DcUvShutdownLevelValue),
+			"dcUvWarningLevel":  physicalJSONMeasurement("V", m.DcUvWarningLevelValue),
+			"dcUvShutdownDelay": physicalJSONMeasurement("V", m.DcUvShutdownDelayValue),
+			"dcUvRecoverLevel":  physicalJSONMeasurement("V", m.DcUvRecoverLevelValue),
+			"dcOvShutdownLevel": physicalJSONMeasurement("V", m.DcOvShutdownLevelValue),
+			"dcOvWarningLevel":  physicalJSONMeasurement("V", m.DcOvWarningLevelValue),
+			"dcOvShutdownDelay": physicalJSONMeasurement("V", m.DcOvShutdownDelayValue),
+			"dcOvRecoverLevel":  physicalJSONMeasurement("V", m.DcOvRecoverLevelValue),
+		},
+	})
+}
+
 type XantrexAcOutputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -861,6 +902,23 @@ func (m *XantrexAcOutputConfigurationStatus) SetUvFaultLevelValue(v float64) err
 	}
 	m.UvFaultLevel = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m XantrexAcOutputConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw XantrexAcOutputConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"voltage":      physicalJSONMeasurement("V", m.VoltageValue),
+			"ovFaultLevel": physicalJSONMeasurement("V", m.OvFaultLevelValue),
+			"uvFaultLevel": physicalJSONMeasurement("V", m.UvFaultLevelValue),
+		},
+	})
 }
 
 type XantrexChargerConfigurationStatus struct {
@@ -1171,6 +1229,25 @@ func (m *XantrexChargerConfigurationStatus) SetGenericChargeVoltageValue(v float
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m XantrexChargerConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw XantrexChargerConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"bulkVoltage":          physicalJSONMeasurement("V", m.BulkVoltageValue),
+			"absorptionVoltage":    physicalJSONMeasurement("V", m.AbsorptionVoltageValue),
+			"floatVoltage":         physicalJSONMeasurement("V", m.FloatVoltageValue),
+			"equalizationVoltage":  physicalJSONMeasurement("V", m.EqualizationVoltageValue),
+			"genericChargeVoltage": physicalJSONMeasurement("V", m.GenericChargeVoltageValue),
+		},
+	})
+}
+
 type XantrexAcInputConfigurationStatus struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1325,4 +1402,20 @@ func (m *XantrexAcInputConfigurationStatus) SetAcOvLevelValue(v float64) error {
 	}
 	m.AcOvLevel = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m XantrexAcInputConfigurationStatus) MarshalJSON() ([]byte, error) {
+	type raw XantrexAcInputConfigurationStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"acUvLevel": physicalJSONMeasurement("V", m.AcUvLevelValue),
+			"acOvLevel": physicalJSONMeasurement("V", m.AcOvLevelValue),
+		},
+	})
 }

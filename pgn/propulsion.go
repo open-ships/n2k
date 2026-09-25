@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type Rudder struct {
 	Info           MessageInfo `json:"info"`
 	Instance       *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -133,6 +135,22 @@ func (m *Rudder) SetPositionValue(v float64) error {
 	}
 	m.Position = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Rudder) MarshalJSON() ([]byte, error) {
+	type raw Rudder
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"angleOrder": physicalJSONMeasurement("rad", m.AngleOrderValue),
+			"position":   physicalJSONMeasurement("rad", m.PositionValue),
+		},
+	})
 }
 
 type ElectricDriveStatusDynamic struct {
@@ -377,6 +395,24 @@ func (m *ElectricDriveStatusDynamic) SetGearTemperatureValue(v float64) error {
 	}
 	m.GearTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricDriveStatusDynamic) MarshalJSON() ([]byte, error) {
+	type raw ElectricDriveStatusDynamic
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"motorTemperature":    physicalJSONMeasurement("K", m.MotorTemperatureValue),
+			"inverterTemperature": physicalJSONMeasurement("K", m.InverterTemperatureValue),
+			"coolantTemperature":  physicalJSONMeasurement("K", m.CoolantTemperatureValue),
+			"gearTemperature":     physicalJSONMeasurement("K", m.GearTemperatureValue),
+		},
+	})
 }
 
 type ElectricDriveInformation struct {
@@ -893,6 +929,29 @@ func (m *ElectricDriveInformation) SetDriveMotorHoursValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricDriveInformation) MarshalJSON() ([]byte, error) {
+	type raw ElectricDriveInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"motorVoltageRating":                 physicalJSONMeasurement("V", m.MotorVoltageRatingValue),
+			"maximumContinuousMotorPower":        physicalJSONMeasurement("W", m.MaximumContinuousMotorPowerValue),
+			"maximumBoostMotorPower":             physicalJSONMeasurement("W", m.MaximumBoostMotorPowerValue),
+			"maximumMotorTemperatureRating":      physicalJSONMeasurement("K", m.MaximumMotorTemperatureRatingValue),
+			"ratedMotorSpeed":                    physicalJSONMeasurement("rpm", m.RatedMotorSpeedValue),
+			"maximumControllerTemperatureRating": physicalJSONMeasurement("K", m.MaximumControllerTemperatureRatingValue),
+			"motorDcVoltageDeratingThreshold":    physicalJSONMeasurement("V", m.MotorDcVoltageDeratingThresholdValue),
+			"motorDcVoltageCutOffThreshold":      physicalJSONMeasurement("V", m.MotorDcVoltageCutOffThresholdValue),
+			"driveMotorHours":                    physicalJSONMeasurement("s", m.DriveMotorHoursValue),
+		},
+	})
+}
+
 type ElectricDriveStatusRapidUpdate struct {
 	Info                    MessageInfo `json:"info"`
 	InverterMotorController *uint64     `json:"inverterMotorController,omitempty" n2k:"1"`
@@ -1081,6 +1140,23 @@ func (m *ElectricDriveStatusRapidUpdate) SetMotorDcCurrentValue(v float64) error
 	}
 	m.MotorDcCurrent = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElectricDriveStatusRapidUpdate) MarshalJSON() ([]byte, error) {
+	type raw ElectricDriveStatusRapidUpdate
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"rotationalShaftSpeed": physicalJSONMeasurement("rpm", m.RotationalShaftSpeedValue),
+			"motorDcVoltage":       physicalJSONMeasurement("V", m.MotorDcVoltageValue),
+			"motorDcCurrent":       physicalJSONMeasurement("A", m.MotorDcCurrentValue),
+		},
+	})
 }
 
 type ThrusterControlStatus struct {
@@ -1277,6 +1353,23 @@ func (m *ThrusterControlStatus) SetAzimuthControlValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ThrusterControlStatus) MarshalJSON() ([]byte, error) {
+	type raw ThrusterControlStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"speedControl":   physicalJSONMeasurement("%", m.SpeedControlValue),
+			"commandTimeout": physicalJSONMeasurement("s", m.CommandTimeoutValue),
+			"azimuthControl": physicalJSONMeasurement("rad", m.AzimuthControlValue),
+		},
+	})
+}
+
 type ThrusterInformation struct {
 	Info                     MessageInfo `json:"info"`
 	Identifier               *uint64     `json:"identifier,omitempty" n2k:"1"`
@@ -1461,6 +1554,23 @@ func (m *ThrusterInformation) SetMaximumRotationalSpeedValue(v float64) error {
 	}
 	m.MaximumRotationalSpeed = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ThrusterInformation) MarshalJSON() ([]byte, error) {
+	type raw ThrusterInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"powerRating":              physicalJSONMeasurement("W", m.PowerRatingValue),
+			"maximumTemperatureRating": physicalJSONMeasurement("K", m.MaximumTemperatureRatingValue),
+			"maximumRotationalSpeed":   physicalJSONMeasurement("rpm", m.MaximumRotationalSpeedValue),
+		},
+	})
 }
 
 type ThrusterMotorStatus struct {
@@ -1649,4 +1759,21 @@ func (m *ThrusterMotorStatus) SetOperatingTimeValue(v float64) error {
 	}
 	m.OperatingTime = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ThrusterMotorStatus) MarshalJSON() ([]byte, error) {
+	type raw ThrusterMotorStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"current":       physicalJSONMeasurement("A", m.CurrentValue),
+			"temperature":   physicalJSONMeasurement("K", m.TemperatureValue),
+			"operatingTime": physicalJSONMeasurement("s", m.OperatingTimeValue),
+		},
+	})
 }

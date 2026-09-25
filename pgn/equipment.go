@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type FluidLevel struct {
 	Info     MessageInfo `json:"info"`
 	Instance *uint64     `json:"instance,omitempty" n2k:"1"`
@@ -135,6 +137,22 @@ func (m *FluidLevel) SetCapacityValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FluidLevel) MarshalJSON() ([]byte, error) {
+	type raw FluidLevel
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"level":    physicalJSONMeasurement("%", m.LevelValue),
+			"capacity": physicalJSONMeasurement("L", m.CapacityValue),
+		},
+	})
+}
+
 type ElevatorCarStatus struct {
 	Info                                   MessageInfo `json:"info"`
 	Sid                                    *uint64     `json:"sid,omitempty" n2k:"1"`
@@ -263,6 +281,21 @@ func (m *ElevatorCarStatus) SetSpeedOfElevatorCarValue(v float64) error {
 	}
 	m.SpeedOfElevatorCar = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m ElevatorCarStatus) MarshalJSON() ([]byte, error) {
+	type raw ElevatorCarStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"speedOfElevatorCar": physicalJSONMeasurement("m/s", m.SpeedOfElevatorCarValue),
+		},
+	})
 }
 
 type ElevatorMotorControl struct {
@@ -919,4 +952,27 @@ func (m *WatermakerInputSettingAndStatus) SetRunTimeValue(v float64) error {
 	}
 	m.RunTime = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m WatermakerInputSettingAndStatus) MarshalJSON() ([]byte, error) {
+	type raw WatermakerInputSettingAndStatus
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"salinity":                physicalJSONMeasurement("ppm", m.SalinityValue),
+			"productWaterTemperature": physicalJSONMeasurement("K", m.ProductWaterTemperatureValue),
+			"preFilterPressure":       physicalJSONMeasurement("Pa", m.PreFilterPressureValue),
+			"postFilterPressure":      physicalJSONMeasurement("Pa", m.PostFilterPressureValue),
+			"feedPressure":            physicalJSONMeasurement("Pa", m.FeedPressureValue),
+			"systemHighPressure":      physicalJSONMeasurement("Pa", m.SystemHighPressureValue),
+			"productWaterFlow":        physicalJSONMeasurement("L/h", m.ProductWaterFlowValue),
+			"brineWaterFlow":          physicalJSONMeasurement("L/h", m.BrineWaterFlowValue),
+			"runTime":                 physicalJSONMeasurement("s", m.RunTimeValue),
+		},
+	})
 }

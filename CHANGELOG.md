@@ -1,5 +1,21 @@
 ## Change Log for open-ships/n2k
 
+### v1.7.0 — 2026-09-25 — physical measurements in default JSON output
+
+- Generated PGN structs and repeating entries with physical-value accessors now
+  include a `physical` object in default `encoding/json` output. Each measurement
+  contains `value` and its schema `unit`; absent, sentinel, and out-of-range
+  measurements are `null`. Raw fields retain their existing names and values.
+  Both struct values and pointers use the enriched format. Values are computed
+  from the current fields when marshaled, using the existing accessor rules.
+- **Migration:** JSON consumers with strict schemas or snapshot expectations must
+  accept the additional `physical` object, including inside repeating entries.
+  JSON input still uses raw fields; derived `physical` objects are ignored by
+  ordinary `json.Unmarshal` and rejected by `DisallowUnknownFields`. They cannot
+  be used to set a measurement. Go fields, accessors, and wire encoding retain
+  their contracts. This intentionally refines the evolving v1 JSON contract
+  without a new module path.
+
 ### v1.6.0 — 2026-09-10 — validated setters and reliable passive readers
 
 - Physical `Set<Field>Value` methods now return `error`, reject non-finite,

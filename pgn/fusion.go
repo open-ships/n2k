@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type FusionMediaControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -783,6 +785,22 @@ func (m *FusionMedia) SetPositionInTrackValue(v float64) error {
 	}
 	m.PositionInTrack = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FusionMedia) MarshalJSON() ([]byte, error) {
+	type raw FusionMedia
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"length":          physicalJSONMeasurement("s", m.LengthValue),
+			"positionInTrack": physicalJSONMeasurement("s", m.PositionInTrackValue),
+		},
+	})
 }
 
 type FusionMenuItem struct {
@@ -1633,6 +1651,21 @@ func (m *FusionTrackPosition) SetProgressValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FusionTrackPosition) MarshalJSON() ([]byte, error) {
+	type raw FusionTrackPosition
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"progress": physicalJSONMeasurement("s", m.ProgressValue),
+		},
+	})
+}
+
 type FusionTuner struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1718,6 +1751,21 @@ func (m *FusionTuner) SetFrequencyValue(v float64) error {
 	}
 	m.Frequency = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m FusionTuner) MarshalJSON() ([]byte, error) {
+	type raw FusionTuner
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"frequency": physicalJSONMeasurement("Hz", m.FrequencyValue),
+		},
+	})
 }
 
 type FusionUsbRepeatStatus struct {

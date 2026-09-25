@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type LowranceTemperature struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -81,6 +83,21 @@ func (m *LowranceTemperature) SetActualTemperatureValue(v float64) error {
 	}
 	m.ActualTemperature = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m LowranceTemperature) MarshalJSON() ([]byte, error) {
+	type raw LowranceTemperature
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"actualTemperature": physicalJSONMeasurement("K", m.ActualTemperatureValue),
+		},
+	})
 }
 
 type LowranceGpsConfiguration struct {
@@ -215,6 +232,21 @@ func (m *LowranceVesselSetupEngineAndTankConfiguration) SetTotalFuelCapacityValu
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m LowranceVesselSetupEngineAndTankConfiguration) MarshalJSON() ([]byte, error) {
+	type raw LowranceVesselSetupEngineAndTankConfiguration
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"totalFuelCapacity": physicalJSONMeasurement("L", m.TotalFuelCapacityValue),
+		},
+	})
+}
+
 type LowranceVesselSetupEngineAndTankConfigurationBroadcast struct {
 	Info              MessageInfo `json:"info"`
 	ManufacturerCode  *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -303,6 +335,21 @@ func (m *LowranceVesselSetupEngineAndTankConfigurationBroadcast) SetTotalFuelCap
 	}
 	m.TotalFuelCapacity = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m LowranceVesselSetupEngineAndTankConfigurationBroadcast) MarshalJSON() ([]byte, error) {
+	type raw LowranceVesselSetupEngineAndTankConfigurationBroadcast
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"totalFuelCapacity": physicalJSONMeasurement("L", m.TotalFuelCapacityValue),
+		},
+	})
 }
 
 type LowranceProductInformation struct {

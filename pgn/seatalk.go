@@ -3,6 +3,8 @@
 
 package pgn
 
+import "encoding/json"
+
 type SeatalkWirelessKeypadControl struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -235,6 +237,22 @@ func (m *SeatalkPilotWindDatum) SetRollingAverageWindAngleValue(v float64) error
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkPilotWindDatum) MarshalJSON() ([]byte, error) {
+	type raw SeatalkPilotWindDatum
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"windDatum":               physicalJSONMeasurement("rad", m.WindDatumValue),
+			"rollingAverageWindAngle": physicalJSONMeasurement("rad", m.RollingAverageWindAngleValue),
+		},
+	})
+}
+
 type SeatalkPilotHeading struct {
 	Info             MessageInfo `json:"info"`
 	ManufacturerCode *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -367,6 +385,22 @@ func (m *SeatalkPilotHeading) SetHeadingMagneticValue(v float64) error {
 	}
 	m.HeadingMagnetic = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkPilotHeading) MarshalJSON() ([]byte, error) {
+	type raw SeatalkPilotHeading
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"headingTrue":     physicalJSONMeasurement("rad", m.HeadingTrueValue),
+			"headingMagnetic": physicalJSONMeasurement("rad", m.HeadingMagneticValue),
+		},
+	})
 }
 
 type SeatalkPilotLockedHeading struct {
@@ -503,6 +537,22 @@ func (m *SeatalkPilotLockedHeading) SetTargetHeadingMagneticValue(v float64) err
 	}
 	m.TargetHeadingMagnetic = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkPilotLockedHeading) MarshalJSON() ([]byte, error) {
+	type raw SeatalkPilotLockedHeading
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"targetHeadingTrue":     physicalJSONMeasurement("rad", m.TargetHeadingTrueValue),
+			"targetHeadingMagnetic": physicalJSONMeasurement("rad", m.TargetHeadingMagneticValue),
+		},
+	})
 }
 
 type SeatalkSilenceAlarm struct {
@@ -755,6 +805,21 @@ func (m *Seatalk1DisplayBrightness) SetBrightnessValue(v float64) error {
 	}
 	m.Brightness = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m Seatalk1DisplayBrightness) MarshalJSON() ([]byte, error) {
+	type raw Seatalk1DisplayBrightness
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"brightness": physicalJSONMeasurement("%", m.BrightnessValue),
+		},
+	})
 }
 
 type Seatalk1DisplayColor struct {
@@ -1029,6 +1094,21 @@ func (m *SeatalkNodeStatistics) SetNodeVoltageValue(v float64) error {
 	return nil
 }
 
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkNodeStatistics) MarshalJSON() ([]byte, error) {
+	type raw SeatalkNodeStatistics
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"nodeVoltage": physicalJSONMeasurement("V", m.NodeVoltageValue),
+		},
+	})
+}
+
 type SeatalkWaypointInformation struct {
 	Info                      MessageInfo `json:"info"`
 	ManufacturerCode          *uint64     `json:"manufacturerCode,omitempty" n2k:"1"`
@@ -1219,6 +1299,23 @@ func (m *SeatalkWaypointInformation) SetDistanceToWaypointValue(v float64) error
 	}
 	m.DistanceToWaypoint = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkWaypointInformation) MarshalJSON() ([]byte, error) {
+	type raw SeatalkWaypointInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"bearingToWaypointTrue":     physicalJSONMeasurement("rad", m.BearingToWaypointTrueValue),
+			"bearingToWaypointMagnetic": physicalJSONMeasurement("rad", m.BearingToWaypointMagneticValue),
+			"distanceToWaypoint":        physicalJSONMeasurement("m", m.DistanceToWaypointValue),
+		},
+	})
 }
 
 type SeatalkRouteInformation struct {
@@ -1415,4 +1512,21 @@ func (m *SeatalkRouteInformation) SetBearingCurrentWaypointToNextWaypointTrueVal
 	}
 	m.BearingCurrentWaypointToNextWaypointTrue = &raw
 	return nil
+}
+
+// MarshalJSON includes raw fields and derived physical values in schema units.
+// Unavailable measurements are null. Physical values are output-only.
+func (m SeatalkRouteInformation) MarshalJSON() ([]byte, error) {
+	type raw SeatalkRouteInformation
+	return json.Marshal(struct {
+		raw
+		Physical map[string]*physicalJSONValue `json:"physical"`
+	}{
+		raw: raw(m),
+		Physical: map[string]*physicalJSONValue{
+			"distancePositionToNextWaypoint":           physicalJSONMeasurement("m", m.DistancePositionToNextWaypointValue),
+			"bearingPositionToNextWaypointTrue":        physicalJSONMeasurement("rad", m.BearingPositionToNextWaypointTrueValue),
+			"bearingCurrentWaypointToNextWaypointTrue": physicalJSONMeasurement("rad", m.BearingCurrentWaypointToNextWaypointTrueValue),
+		},
+	})
 }
