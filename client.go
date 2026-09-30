@@ -21,8 +21,8 @@ import (
 	"github.com/open-ships/n2k/raw"
 )
 
-// defaultClaimTimeout is the maximum time NewClient blocks waiting for address
-// claiming to complete.
+// defaultClaimTimeout is the maximum time Start waits for address claiming
+// to complete (NewClient calls Start before returning).
 const defaultClaimTimeout = 1500 * time.Millisecond
 
 // defaultReadyTimeout bounds transport opening and readiness negotiation. It
@@ -97,6 +97,10 @@ type Client struct {
 	connectionChanged    chan struct{}
 	rejoining            bool
 	rejoinMu             sync.Mutex
+
+	// startMu serializes Start calls and lets Close join an in-flight startup.
+	startMu        sync.Mutex
+	startAttempted bool
 
 	bus        Bus
 	busDone    chan struct{}
@@ -245,7 +249,29 @@ func validateClientConfig(cfg config) error {
 // NewClient creates a Client that can read and write NMEA 2000 messages.
 // Provide CAN, USB, Serial, TCP, Replay, or WithBus for writable clients;
 // File, EBL, and UDP are read-only sources for Receive/NewScanner.
+// It starts the bus and waits for address claiming before returning. On a busy
+// bus, use NewUnstartedClient and attach a Scanner before calling Start.
 func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
+	c, err := NewUnstartedClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+	if err := c.Start(); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+// NewUnstartedClient prepares a Client without opening the bus or claiming an
+// address. Call Scanner to register a receiver, consume it in a goroutine, then
+// call Start. This lets messages be consumed throughout address claiming instead
+// of accumulating in the bounded startup backlog. Receive registers lazily when
+// iteration begins; merely calling Receive before Start does not subscribe.
+//
+// Call Close even if Start is never called. The context bounds the client's
+// entire lifetime. Replay clients are ready immediately and Start is a no-op.
+// Options and validation are the same as NewClient.
+func NewUnstartedClient(ctx context.Context, opts ...Option) (*Client, error) {
 	cfg := config{}
 	for _, o := range opts {
 		if o == nil {
@@ -354,34 +380,8 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 
 	if hasBus {
 		if err := c.initBus(cfg); err != nil {
-			// cancel() unblocks the protocol goroutines so none issues a new
-			// write; closing the bus releases any write still parked waiting for
-			// an auto-reconnect (e.g. the initial claim against an unreachable
-			// gateway) and stops the read loop, so teardown cannot deadlock.
-			// Marking closed and draining in-flight senders before closing the
-			// channel keeps the teardown symmetric with Close.
-			cancel()
-			c.mu.Lock()
-			c.closed = true
-			c.terminalErr = err
-			c.mu.Unlock()
-			if c.bus != nil {
-				_ = c.bus.Close()
-			}
-			if c.tp != nil {
-				c.tp.Close()
-			}
-			c.writeWg.Wait()
-			if c.wire != nil {
-				<-c.wire.done
-			}
-			if c.busStarted {
-				<-c.busDone
-			}
-			if c.system != nil {
-				<-c.system.done
-			}
-			c.backgroundWg.Wait()
+			c.fail(err)
+			_ = c.Close()
 			return nil, err
 		}
 	} else {
@@ -409,8 +409,8 @@ func NewClient(ctx context.Context, opts ...Option) (*Client, error) {
 	return c, nil
 }
 
-// initBus sets up the bus runtime: bus interface, address claiming, transport
-// protocol, and the internal read/decode pipeline.
+// initBus prepares the bus runtime and idle workers. It does not open the
+// transport or start address claiming; startBus owns those operations.
 func (c *Client) initBus(cfg config) error {
 	// Get or construct the bus.
 	if cfg.bus != nil {
@@ -511,16 +511,6 @@ func (c *Client) initBus(cfg config) error {
 		c.heartbeat.run(c.ctx, c.addrReady)
 	}()
 
-	if lifecycleBus, ok := c.bus.(ConnectionLifecycleBus); ok {
-		lifecycleBus.SetConnectionObserver(c.handleConnectionChange)
-	} else {
-		c.mu.Lock()
-		c.connected = true
-		c.connectionEpoch = 1
-		c.mu.Unlock()
-		c.resetReadEpoch()
-	}
-
 	// Determine claiming mode.
 	mode := claiming.ModeAuto
 	if cfg.sourceAddress != nil {
@@ -548,6 +538,66 @@ func (c *Client) initBus(cfg config) error {
 		},
 		Logger: c.log,
 	})
+
+	return nil
+}
+
+// Start opens the bus and waits for address claiming. Register and consume a
+// Scanner before calling Start to receive traffic during that wait. Application
+// writes fail with ErrNotReady until claiming completes. Startup uses the
+// constructor's context and the configured ready/claim timeouts.
+//
+// Concurrent calls share one startup attempt. A failed startup is terminal,
+// reaches existing readers and Err, and closes the client. Close may interrupt
+// Start; a closed client cannot be started again.
+func (c *Client) Start() (err error) {
+	if c == nil {
+		return ErrClientClosed
+	}
+	c.startMu.Lock()
+	defer func() {
+		c.startMu.Unlock()
+		if err != nil {
+			_ = c.Close()
+		}
+	}()
+	c.mu.Lock()
+	closed := c.closed
+	c.mu.Unlock()
+	if closed {
+		return ErrClientClosed
+	}
+	if c.startAttempted {
+		return c.Err()
+	}
+	c.startAttempted = true
+	err = c.ctx.Err()
+	if err == nil && c.bus != nil {
+		err = c.startBus()
+	}
+	if err != nil {
+		c.fail(err)
+	}
+	return err
+}
+
+// startBus runs only after the read pipeline is fully initialized and callers
+// have had a chance to subscribe. Close cancels I/O before joining startMu.
+func (c *Client) startBus() error {
+	cfg := c.cfg
+	if lifecycleBus, ok := c.bus.(ConnectionLifecycleBus); ok {
+		lifecycleBus.SetConnectionObserver(c.handleConnectionChange)
+	} else {
+		c.mu.Lock()
+		if c.closed {
+			c.mu.Unlock()
+			return ErrClientClosed
+		}
+		c.connected = true
+		c.connectionEpoch = 1
+		c.mu.Unlock()
+		c.resetReadEpoch()
+	}
 
 	// Start the bus read loop goroutine.
 	c.busStarted = true
@@ -1382,8 +1432,9 @@ func (c *Client) Receive() iter.Seq2[pgn.Message, error] {
 }
 
 // Scanner creates a new Scanner that reads from this client. For bus clients
-// it reads from the internal message channel; for replay clients it builds a
-// fresh Scanner over the client's config.
+// it registers a subscription immediately, including before Start. Consume it
+// concurrently with Start to drain traffic during address claiming. For replay
+// clients it builds a fresh Scanner over the client's config.
 func (c *Client) Scanner() *Scanner {
 	if c.msgHub != nil {
 		return &Scanner{ctx: c.ctx, cfg: c.cfg, sub: c.msgHub.subscribe()}
@@ -1454,6 +1505,9 @@ func (c *Client) Close() error {
 	if c.bus != nil {
 		busErr = c.bus.Close()
 	}
+
+	c.startMu.Lock()
+	defer c.startMu.Unlock()
 
 	if c.heartbeat != nil {
 		c.heartbeat.stop()
