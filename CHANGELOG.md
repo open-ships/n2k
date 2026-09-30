@@ -1,5 +1,15 @@
 ## Change Log for open-ships/n2k
 
+### v1.8.1 — 2026-09-30 — macOS builds without CGO
+
+- Fixed macOS builds with `CGO_ENABLED=0` by using basic serial-port discovery
+  when USB metadata enumeration is unavailable. `SerialDevices` returns device
+  names with the other fields left at their zero values in this configuration.
+  Serial communication and the public API are unchanged; detailed discovery
+  remains available on Linux, Windows, and macOS with CGO enabled.
+- Added CGO-disabled builds for amd64 and arm64 to CI on Linux, macOS, and
+  Windows so release build compatibility is checked before merging.
+
 ### v1.8.0 — 2026-09-30 — receive traffic during client startup
 
 - Added `NewUnstartedClient` and `Client.Start` so applications can register a
