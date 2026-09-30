@@ -41,6 +41,14 @@ Each subscriber receives its own deep message clone, including pointer fields,
 repeating fields, diagnostics, and retained wire bookkeeping. Registry ingress
 and snapshots use the same generated clone implementation.
 
+`NewUnstartedClient` prepares the runtime and idle workers without starting bus
+I/O. `Client.Scanner` registers synchronously, allowing consumption during
+`Start`'s transport readiness and address claim waits. `NewClient` composes
+construction and `Start` for compatibility. One startup mutex serializes attempts
+and lets `Close` join startup after canceling and closing physical I/O. Startup
+failures use the same terminal-error and shutdown paths as runtime failures.
+Replay clients are immediately ready and need no bus startup.
+
 Standalone `Receive` and `NewScanner` own their read sources and one pipeline.
 `internal/transport/passive.go` reconstructs ISO BAM and addressed transfers
 before metadata filtering. Its 512-session table is keyed by network (falling

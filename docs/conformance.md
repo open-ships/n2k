@@ -106,7 +106,7 @@ VERSION/tag/release discipline in `AGENTS.md`.
 | FP-01 | Fast-packet limits, assembly, ownership, and malformed input | `internal/adapter`; `internal/framer` suites |
 | BAM-01 / RTS-01 | BAM and RTS/CTS transmit/receive state machines | `internal/transport` suite |
 | MAL-01 | Malformed frames, announcements, checksums, and streams | transport and gateway hostile-input tests |
-| SAT-01 | Bounded application, protocol, subscription, and reassembly state | queue, hub, adapter, and transport tests |
+| SAT-01 | Bounded application, protocol, subscription, and reassembly state | queue, hub, adapter, transport, and `TestUnstartedClient*` startup tests |
 | REC-01 | Reconnect epoch reclaims before protocol restart | `TestTCPClientReconnectReclaimsBeforeRestartingProtocolTraffic` |
 | TIM-01 | Heartbeat cadence, assembly expiry, transport timeout, and bounded startup waits | deterministic clock checks where provided, plus bounded real-time waits |
 | CODEC-01 | Conditional fields, signed widths, ranges, and sentinels | codec and data-stream writer tests |

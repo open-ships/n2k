@@ -1,5 +1,20 @@
 ## Change Log for open-ships/n2k
 
+### v1.8.0 — 2026-09-30 — receive traffic during client startup
+
+- Added `NewUnstartedClient` and `Client.Start` so applications can register a
+  `Client.Scanner` and consume messages before transport readiness and address
+  claiming complete. Busy buses no longer have to accumulate all startup
+  traffic in a bounded backlog while the application waits for a constructor.
+- `NewClient` retains its synchronous startup contract. Existing receive buffer
+  bounds and explicit slow-subscriber overflow behavior are unchanged. A failed
+  `Start` closes the client and reports the error to readers and `Client.Err`;
+  concurrent `Close` interrupts and joins startup.
+- To opt in, replace `NewClient` with `NewUnstartedClient`, create a scanner,
+  consume it concurrently, and call `Start`. Calling `Receive` without iterating
+  does not register a subscriber. Application writes still require a completed
+  address claim. Replay clients remain immediately usable.
+
 ### v1.7.0 — 2026-09-25 — physical measurements in default JSON output
 
 - Generated PGN structs and repeating entries with physical-value accessors now

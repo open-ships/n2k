@@ -256,6 +256,16 @@
           "package": "github.com/open-ships/n2k",
           "pattern": "^TestMessageHubSubscriptionsAreIndependent$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestUnstartedClientReceivesDuring(Startup|AddressClaim)$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestUnstartedClientSlowSubscriberStillOverflows$",
+          "kind": "software"
         }
       ]
     },

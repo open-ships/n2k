@@ -104,7 +104,7 @@ explains the runtime design.
 
 ## Where to make changes
 
-- Public lifecycle and writes: `client.go`, `network_session.go`,
+- Public lifecycle (`NewClient` or `NewUnstartedClient` + `Start`) and writes: `client.go`, `network_session.go`,
   `message_snapshot.go`, `status.go`, `writeresult.go`
 - Read pipeline and fan-out: `pipeline.go`, `scanner.go`, `messagehub.go`,
   `observation.go`, `observationhub.go`, `raw/`

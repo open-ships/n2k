@@ -189,6 +189,47 @@ Generated message pointers implement both. Nil values and read-only
 `pgn.UnknownPGN` values return errors. Outgoing messages are copied at write
 admission; do not mutate a message during the call.
 
+### Receiving during startup
+
+`NewClient` waits for address claiming before returning. On a busy bus, traffic
+can fill the receive buffer during that wait. Use `NewUnstartedClient` to attach
+and drain a scanner before opening the bus:
+
+```go
+client, err := n2k.NewUnstartedClient(ctx, n2k.CAN("can0"))
+if err != nil {
+    return err
+}
+defer client.Close()
+
+scanner := client.Scanner() // Registers immediately, before the bus starts.
+defer scanner.Close()
+received := make(chan error, 1)
+go func() {
+    for scanner.Next() {
+        fmt.Println(scanner.Message().PGNNumber())
+    }
+    received <- scanner.Err()
+}()
+
+if err := client.Start(); err != nil {
+    return err
+}
+return <-received // The constructor's context bounds the client's lifetime.
+```
+
+`Start` uses the existing readiness and claim timeouts. Application writes return
+`ErrNotReady` until claiming completes. `Close` also works before or during
+`Start`; startup failure closes the client and reaches existing readers and
+`Client.Err`. Repeated `Start` calls never open a second connection.
+
+`Client.Receive` subscribes only when iteration begins, so merely obtaining its
+iterator before `Start` does not establish a receiver. A scanner registers at
+creation. It must be consumed concurrently with startup: attaching an unread
+scanner alone cannot prevent overflow. Buffers remain bounded and slow consumers
+still fail with `ErrReceiveOverflow`. Replay clients need no bus startup and
+remain ready immediately.
+
 ### Address Claiming
 
 Every device that transmits on NMEA 2000 must claim a unique bus address (0–251) using the ISO 11783 address claim protocol (PGN 60928). `NewClient` handles this automatically — it broadcasts an address claim, waits for contention, and only returns once a valid address is secured.
