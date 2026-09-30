@@ -45,6 +45,15 @@ jobs:
       - name: Test
         run: go test ./...
 
+      - name: Build without CGO
+        shell: bash
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          for arch in amd64 arm64; do
+            GOARCH="$arch" go build ./...
+          done
+
   race-and-fuzz:
     runs-on: ubuntu-latest
 

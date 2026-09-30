@@ -548,7 +548,7 @@ Repeating-group slice fields (`Repeating1`/`Repeating2`) are not addressable in 
 | `n2k.YachtDevicesUDP(listenAddr)` | Device-aware Yacht Devices RAW UDP broadcast source (read-only) |
 | `n2k.ActisenseSerial(port, ...opts)` | Role-aware Actisense serial source; passive reads, source-authoritative raw `NewClient`; configurable baud/data/parity/stop bits |
 | `n2k.Serial(port, format, ...opts)` | Direct Actisense serial source; binary message, BST-95 raw, CAN ASCII, or N2K ASCII |
-| `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields |
+| `n2k.SerialDevices()` | Enumerate host serial ports with available USB identity fields; macOS builds without CGO return names only |
 | `n2k.File(path, ...opts)` | candump `-L`/`-l` log file source (read-only); `n2k.OriginalTiming()` paces frames by log timestamps |
 | `n2k.EBL(path, ...opts)` | Actisense Enhanced Binary Log source (read-only); supports raw BDTP and BSTRawFrame records |
 | `n2k.NewEBLWriter(w, ...opts)` | SDK-compatible EBL writer used directly or by an `ActisenseEBLTrace` |

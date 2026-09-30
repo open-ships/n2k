@@ -8,7 +8,6 @@ import (
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/gateway"
 	"github.com/open-ships/n2k/raw"
-	"go.bug.st/serial/enumerator"
 )
 
 type serialSource struct {
@@ -91,24 +90,12 @@ type SerialDevice struct {
 }
 
 // SerialDevices enumerates serial ports using the host operating system.
+// On macOS without cgo, only the device Name is populated; USB identity is
+// unavailable. Opening and using serial ports does not require cgo.
 func SerialDevices() ([]SerialDevice, error) {
-	ports, err := enumerator.GetDetailedPortsList()
+	devices, err := serialDevices()
 	if err != nil {
 		return nil, fmt.Errorf("n2k: enumerating serial devices: %w", err)
-	}
-	devices := make([]SerialDevice, 0, len(ports))
-	for _, port := range ports {
-		if port == nil {
-			continue
-		}
-		devices = append(devices, SerialDevice{
-			Name:         port.Name,
-			IsUSB:        port.IsUSB,
-			VID:          port.VID,
-			PID:          port.PID,
-			SerialNumber: port.SerialNumber,
-			Product:      port.Product,
-		})
 	}
 	return devices, nil
 }
