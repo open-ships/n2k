@@ -47,6 +47,7 @@ type SourceFieldDefinition struct {
 	Signed                              bool
 	Unit                                string
 	FieldType                           string
+	Encoding                            string
 	PhysicalQuantity                    string
 	LookupEnumeration                   string
 	LookupBitEnumeration                string
@@ -187,6 +188,7 @@ func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
 		BitOffset:                           bitOffset,
 		BitLengthVariable:                   field.BitLengthVariable || field.BitLength == nil,
 		SourceType:                          field.FieldType,
+		Encoding:                            field.Encoding,
 		BitStart:                            bitStart,
 		PhysicalQuantity:                    field.PhysicalQuantity,
 		LookupEnumeration:                   field.LookupEnumeration,

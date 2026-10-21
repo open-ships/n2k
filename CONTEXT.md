@@ -76,8 +76,10 @@ explains the runtime design.
 10. A reconnect creates a new connection epoch, clears stale topology,
     reclaims the address, waits through contention, then restarts enumeration
     and scheduled transmissions.
-11. Schema-declared conditions, signed widths, ranges, and sentinels are codec
-    semantics, not documentation-only metadata.
+11. Schema-declared conditions, character encodings, signed widths, offsets,
+    ranges, and sentinels are codec semantics, not documentation-only metadata.
+    Signed quantities with a nonzero offset use unsigned wire ticks; only
+    signed fields without an offset use two's-complement wire values.
 12. An Actisense connection is not ready until its operating mode is
     acknowledged; a raw-CAN request never silently falls back to a
     gateway-owned message session.
