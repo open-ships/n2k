@@ -9,6 +9,9 @@ import (
 func FuzzDecodeEncodeMessage(f *testing.F) {
 	f.Add(uint32(127250), []byte{0, 0, 0, 0xFF, 0x7F, 0xFF, 0x7F, 0xFC})
 	f.Add(uint32(126998), []byte{3, 1, 'a', 3, 1, 'b', 3, 1, 'c'})
+	f.Add(uint32(65009), []byte{0, 0x5e, 0xd0, 0xb2, 0, 0x60, 0xfd, 0xff})
+	f.Add(uint32(130944), []byte{0x87, 0x98, 0xfe, 2, 1, 0, 4, 2})
+	f.Add(uint32(130820), []byte{0xa3, 0x99, 0x0b, 0x80, 1, 2, 0xe0, 0x51, 0x68, 6, 0xc7, 8, 'B', 'o', 'h', 'u', 's', 'l', 0x91, 'n'})
 	var known []uint32
 	for number := range PgnInfoLookup {
 		known = append(known, number)

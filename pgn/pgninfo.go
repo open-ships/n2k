@@ -96,6 +96,8 @@ type FieldDescriptor struct {
 	// SourceType is the source field type string (e.g., "NUMBER", "LOOKUP", "STRING_LAU",
 	// "STRING_LZ", "STRING_FIX"). It drives type-specific decoding logic.
 	SourceType string `json:"sourceType"`
+	// Encoding is the declared character repertoire for a string field, when present.
+	Encoding string `json:"encoding,omitempty"`
 	// BitStart is the bit position within the containing byte when the source schema provides it.
 	BitStart uint16 `json:"bitStart"`
 	// PhysicalQuantity is the source schema physical quantity identifier.

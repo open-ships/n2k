@@ -86,7 +86,7 @@ hashes. If hardware is absent, report `not-run`, not pass.
 
 The generated manifest separately records typed coverage, decode/encode
 completeness, known codec limitations, schema revision/checksum, and hardware
-verification. v1.3 includes 599 typed variants over 348 PGNs; 108 variants are
+verification. v1.9 includes 632 typed variants over 348 PGNs; 108 variants are
 marked complete for encode and decode, and none are hardware-verified.
 
 `main` requires the aggregate GitHub Actions `release-gate` status with strict

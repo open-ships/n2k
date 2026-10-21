@@ -74,6 +74,7 @@ type pgnManifestField struct {
 	BitOffset      uint16  `json:"bitOffset"`
 	VariableLength bool    `json:"variableLength"`
 	FieldType      string  `json:"fieldType"`
+	Encoding       string  `json:"encoding,omitempty"`
 	GoType         string  `json:"goType"`
 	Resolution     float64 `json:"resolution"`
 	Signed         bool    `json:"signed"`
@@ -327,6 +328,7 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 			BitOffset:      field.BitOffset,
 			VariableLength: field.BitLengthVariable,
 			FieldType:      field.SourceType,
+			Encoding:       field.Encoding,
 			GoType:         field.GolangType,
 			Resolution:     field.Resolution,
 			Signed:         field.Signed,

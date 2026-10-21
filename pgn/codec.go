@@ -19,7 +19,7 @@ import (
 // Field semantics follow the upstream source schema:
 //   - Numeric fields of 4+ bits treat the maximum representable value as the
 //     null sentinel and decode it to nil. Lookup-family fields and numbers
-//     narrower than 4 bits always keep their raw value.
+//     narrower than 4 bits and ADDRESS fields always keep their raw value.
 //   - Fields carrying a Match value select PGN variants: decoding validates
 //     every Match field at its absolute bit offset before any sequential
 //     read, and a mismatch returns an error so dispatch can try the next
@@ -96,8 +96,10 @@ type planField struct {
 	// bit-exact, so a narrower-than-byte width must not consume extra
 	// padding bits -- or 0 when the width is variable.
 	bitLength uint16
-	// signed marks two's-complement numeric fields.
+	// signed selects *int64 storage, following the schema's physical sign.
 	signed bool
+	// encoding names an optional string character repertoire.
+	encoding string
 	// condition controls whether this field occupies space in the payload.
 	condition fieldCondition
 	// resolution and offset convert raw numeric ticks to physical values for
@@ -483,17 +485,24 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		fieldIndex: -1,
 		bitLength:  desc.BitLength,
 		signed:     desc.Signed,
+		encoding:   desc.Encoding,
 		condition:  condition,
 		resolution: float64(desc.Resolution),
 		rangeMin:   desc.RangeMin,
 		rangeMax:   desc.RangeMax,
 		sentinels:  make(map[int64]struct{}, 3),
 	}
+	if desc.Encoding != "" && (desc.Encoding != "RDS_G0" || desc.SourceType != "STRING_LZ") {
+		return nil, fmt.Errorf("field %d (%s): unsupported encoding %q for %s", order, desc.Name, desc.Encoding, desc.SourceType)
+	}
 	if field.resolution == 0 {
 		field.resolution = 1
 	}
 	if desc.Offset != nil {
 		field.offset = *desc.Offset
+	}
+	if field.signed && field.offset != 0 && field.bitLength >= 64 {
+		return nil, fmt.Errorf("field %d (%s): offset wire ticks do not fit int64 storage", order, desc.Name)
 	}
 	for _, sentinel := range []*int64{desc.OutOfRangeValue, desc.ReservedValue, desc.UnknownValue} {
 		if sentinel != nil {
@@ -505,6 +514,8 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		field.kind = fieldKindReserved
 	case "SPARE":
 		field.kind = fieldKindSpare
+	case "ADDRESS":
+		field.kind = fieldKindRawNumber
 	case "STRING_FIX":
 		field.kind = fieldKindFixedString
 	case "STRING_LZ":
@@ -638,6 +649,9 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 		if err != nil {
 			return err
 		}
+		if field.encoding == "RDS_G0" {
+			value = decodeRDSText(value)
+		}
 		target.Field(field.fieldIndex).SetString(value)
 	case fieldKindControlString:
 		value, err := stream.readStringWithLengthAndControl()
@@ -673,7 +687,7 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 		raws[field.order] = raw
 		setRawNumber(target.Field(field.fieldIndex), raw, field)
 	case fieldKindNullableNumber:
-		if field.signed {
+		if field.twosComplement() {
 			value, err := stream.getSignedNullableNumber(field.bitLength)
 			if err != nil {
 				return err
@@ -687,8 +701,10 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 		}
 		if value != nil {
 			raws[field.order] = *value
+			setRawNumber(target.Field(field.fieldIndex), *value, field)
+		} else {
+			target.Field(field.fieldIndex).SetZero()
 		}
-		setOptional(target.Field(field.fieldIndex), value)
 	}
 	return nil
 }
@@ -815,10 +831,14 @@ func setOptional[T any](field reflect.Value, value *T) {
 }
 
 // setRawNumber stores a raw numeric value into a *uint64 or *int64 struct
-// field, sign-extending when the metadata marks the field as signed.
+// field, sign-extending two's-complement fields. Offset-encoded fields keep
+// unsigned wire ticks even when the physical range and Go storage are signed.
 func setRawNumber(field reflect.Value, raw uint64, planned *planField) {
 	if planned.signed {
-		value := signExtend(raw, planned.bitLength)
+		value := int64(raw)
+		if planned.twosComplement() {
+			value = signExtend(raw, planned.bitLength)
+		}
 		field.Set(reflect.ValueOf(&value))
 		return
 	}
@@ -848,7 +868,16 @@ func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.V
 	case fieldKindFixedString:
 		writer.writeFixedString(source.Field(field.fieldIndex).String(), field.bitLength)
 	case fieldKindLengthString:
-		writer.writeStringWithLength(source.Field(field.fieldIndex).String())
+		value := source.Field(field.fieldIndex).String()
+		if field.encoding == "RDS_G0" {
+			var err error
+			value, err = encodeRDSText(value)
+			if err != nil {
+				writer.setErr(err)
+				return
+			}
+		}
+		writer.writeStringWithLength(value)
 	case fieldKindControlString:
 		writer.writeStringWithLengthAndControl(source.Field(field.fieldIndex).String())
 	case fieldKindFloat:
@@ -884,14 +913,22 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 				writer.setErr(err)
 				return
 			}
-			writer.writeInt64(value, field.bitLength)
+			if field.twosComplement() {
+				writer.writeInt64(value, field.bitLength)
+			} else {
+				writer.setErr(writer.putNumberRaw(uint64(*value), field.bitLength))
+			}
 			return
 		}
 		if field.match != nil {
 			writer.writeLookupField(uint64(*field.match), field.bitLength)
 			return
 		}
-		writer.setErr(writer.putNullSigned(field.bitLength))
+		if field.twosComplement() {
+			writer.setErr(writer.putNullSigned(field.bitLength))
+		} else {
+			writer.setErr(writer.putNullUnsigned(field.bitLength))
+		}
 		return
 	}
 	value, _ := source.Field(field.fieldIndex).Interface().(*uint64)
@@ -997,7 +1034,27 @@ func collectFieldRaw(raws map[int]uint64, field *planField, source reflect.Value
 	}
 }
 
+// Offset-encoded signed quantities use unsigned excess-K wire values;
+// only signed fields without an offset use two's-complement representation.
+func (field *planField) twosComplement() bool {
+	return field.signed && field.offset == 0
+}
+
+func (field *planField) nullValue() uint64 {
+	bits := field.bitLength
+	if field.twosComplement() {
+		bits--
+	}
+	return ^uint64(0) >> (64 - bits)
+}
+
 func (field *planField) validateSigned(value int64) error {
+	if !field.twosComplement() {
+		if value < 0 {
+			return fmt.Errorf("field %d (%s): negative offset wire value %d", field.order, field.name, value)
+		}
+		return field.validateUnsigned(uint64(value))
+	}
 	if field.bitLength == 0 || field.bitLength > 64 {
 		return fmt.Errorf("field %d (%s): invalid signed width %d", field.order, field.name, field.bitLength)
 	}

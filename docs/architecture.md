@@ -208,16 +208,20 @@ it returns a copy of the original payload, retaining reserved bits and trailing
 bytes. If changed, it encodes the current fields. See
 [ADR 0002](adr/0002-wire-fidelity.md).
 
-The schema-semantic codec Module also owns field conditions, signed
-representability, physical ranges, declared sentinel values, and malformed
-versus truncated errors. Unknown condition expressions fail during plan
-compilation instead of silently shifting subsequent fields. Centralizing these
+The schema-semantic codec Module also owns field conditions, character
+encodings, signed and offset wire representations, physical ranges, declared
+sentinel values, and malformed versus truncated errors. Unknown condition
+expressions fail during plan compilation instead of silently shifting subsequent fields. Centralizing these
 rules across all generated PGNs is the primary codec Leverage point.
 Decode uses a fresh value and commits only on success; malformed input cannot
 leave partially updated fields or stale variable-length content. Raw
 canonicalization preserves unchanged invalid measurements without describing
 them as valid physical values. Accessors use float64 scale/offset metadata and
 report unavailable for sentinel or out-of-range ticks.
+For signed physical quantities with an additive offset, the wire count is
+unsigned excess-K, retained in the schema-selected `*int64` field. Sign
+extension and the signed null sentinel apply only without an offset. Typed
+setters and runtime validation use the same wire range before scaling.
 
 ## Conformance lab
 
@@ -237,8 +241,9 @@ hardware test is never represented as a pass.
 ## Generated boundary
 
 Category files under `pgn/`, `pgn/dispatch.go`, metadata, and the manifest are
-generated from the checked-in schema snapshot. Change generator inputs or the
-generator, then run `just pgn-sync`; never repair generated output by hand.
+generated from the checked-in v9.0.0 schema snapshot (schema format 2.8.0).
+Change generator inputs or the generator, then run `just pgn-sync`; never
+repair generated output by hand.
 Generation verifies the snapshot's pinned checksum and needs no network.
 All lookup families produce enums, with type-prefixed constants. Manifest
 provenance, `DecodeComplete`, `EncodeComplete`, `CodecLimitations`, and

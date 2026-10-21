@@ -67,6 +67,7 @@ type sourceField struct {
 	Signed                              bool     `json:"Signed"`
 	Unit                                string   `json:"Unit"`
 	FieldType                           string   `json:"FieldType"`
+	Encoding                            string   `json:"Encoding"`
 	PhysicalQuantity                    string   `json:"PhysicalQuantity"`
 	LookupEnumeration                   string   `json:"LookupEnumeration"`
 	LookupBitEnumeration                string   `json:"LookupBitEnumeration"`
@@ -109,6 +110,19 @@ func TestUpstreamParity(t *testing.T) {
 	if err != nil {
 		t.Fatalf("fetch upstream schema: %v", err)
 	}
+	checkSourceParity(t, raw)
+}
+
+func TestPinnedSourceParity(t *testing.T) {
+	raw, err := os.ReadFile("../cmd/pgngen/schema.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	checkSourceParity(t, raw)
+}
+
+func checkSourceParity(t *testing.T, raw []byte) {
+	t.Helper()
 
 	var upstream sourceFile
 	if err := json.Unmarshal(raw, &upstream); err != nil {
@@ -404,6 +418,9 @@ func compareUpstreamPGN(def sourcePGN, local *PgnInfo) []string {
 		}
 		if localField.SourceType != upstreamField.FieldType {
 			mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", fieldPrefix, localField.SourceType, upstreamField.FieldType))
+		}
+		if localField.Encoding != upstreamField.Encoding {
+			mismatches = append(mismatches, fmt.Sprintf("%s: encoding local=%s upstream=%s", fieldPrefix, localField.Encoding, upstreamField.Encoding))
 		}
 		if upstreamField.Resolution != nil && math.Abs(float64(localField.Resolution)-*upstreamField.Resolution) > 1e-6 {
 			mismatches = append(mismatches, fmt.Sprintf("%s: resolution local=%g upstream=%g", fieldPrefix, localField.Resolution, *upstreamField.Resolution))

@@ -1,5 +1,45 @@
 ## Change Log for open-ships/n2k
 
+### v1.9.0 — 2026-10-21 — PGN database v9.0.0
+
+- Updated the pinned upstream PGN database from v7.1.0 to v9.0.0 (schema
+  2.8.0), including the offline JSON, revision/checksum, all generated PGNs,
+  dispatch, lookup enums, metadata, and manifest. Coverage grows from 599 to
+  632 typed variants over 348 distinct PGNs, adding Airmar, Fusion, Sleipner,
+  Simnet, and Yanmar definitions and correcting layouts and physical scales.
+- Preserved every `ADDRESS` value, including 254 and 255, instead of decoding
+  255 as a missing number. Client address-claim validation remains unchanged.
+  Carried string `Encoding` through metadata and the manifest; Fusion tuner
+  text now decodes Basic RDS G0 into UTF-8, retains valid UTF-8 input, and
+  preserves unchanged wire bytes. New or edited text uses G0 when unambiguous,
+  with UTF-8 for other text, matching the source decoder's precedence.
+- Fixed offset-encoded utility/generator power fields to use the full unsigned
+  wire range while retaining their signed raw Go storage. High-bit values now
+  decode, encode, and scale correctly; only the all-ones value is null, and
+  declared reserved/error values remain unavailable measurements. Corrected
+  utility phase B/C reactive power to 32-bit fields and applied the -1 power
+  factor offset. Adopted corrected signed lower bounds and sentinel metadata.
+- **Migration:** this intentionally refines the evolving v1 PGN API without a
+  new module path. `FusionAuxGain.Gain` and `FusionBalance.Value` now use
+  `*int64`; `FusionZoneName.Number` becomes `Zone`; `FusionMenuLockId` separates
+  the 32-bit `RequestToken` from the 8-bit `LockId` and removes `Flags`.
+  `MaretronAnnunciator`, `FurunoSixDegreesOfFreedomMovement`, and
+  `YanmarEngineDataA` replace formerly unknown fields with decoded fields.
+  `AirmarDeviceInformation.SupplyVoltage` and utility phase B/C `ReactivePower`
+  now use `*int64`. `AirmarPost.TestId`/`TestResult` move into `Repeating1`
+  entries. Lookup constants include corrected names and values; Simnet
+  backlight day/night constants are removed. See the
+  [complete API migration guide](docs/schema-9.0.0-migration.md) for every
+  field replacement, enum rename/value change, and wire/JSON compatibility
+  detail before upgrading.
+- Added offline schema-to-runtime parity checks and independent wire tests
+  for address values, signed Fusion fields, menu locks, 64-bit capabilities,
+  Simnet ZC dispatch, Yanmar engine fields, RDS text, Airmar reset/POST layouts,
+  full signed voltage bounds, and all 24 offset-encoded power fields.
+- Updated the minimum Go version, security tooling, and CI/release toolchain
+  pins to Go 1.26.10 to fix standard-library vulnerabilities reported by the
+  required security gate. Consumers must use Go 1.26.10 or newer.
+
 ### v1.8.1 — 2026-09-30 — macOS builds without CGO
 
 - Fixed macOS builds with `CGO_ENABLED=0` by using basic serial-port discovery

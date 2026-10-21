@@ -125,7 +125,7 @@ func (field *planField) measurementAvailable(value reflect.Value, raw float64) b
 		if _, special := field.sentinels[ticks]; special {
 			return false
 		}
-		if field.kind == fieldKindNullableNumber && uint64(ticks) == (uint64(1)<<(field.bitLength-1))-1 {
+		if field.kind == fieldKindNullableNumber && uint64(ticks) == field.nullValue() {
 			return false
 		}
 	} else {
@@ -133,7 +133,7 @@ func (field *planField) measurementAvailable(value reflect.Value, raw float64) b
 		if _, special := field.sentinels[int64(ticks)]; ticks <= uint64(^uint64(0)>>1) && special {
 			return false
 		}
-		if field.kind == fieldKindNullableNumber && ticks == ^uint64(0)>>(64-field.bitLength) {
+		if field.kind == fieldKindNullableNumber && ticks == field.nullValue() {
 			return false
 		}
 	}

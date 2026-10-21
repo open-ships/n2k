@@ -21,12 +21,12 @@ import (
 const definitionsPath = "pgn/upstream_definitions.go"
 const dispatchPath = "pgn/dispatch.go"
 const schemaPath = "cmd/pgngen/schema.json"
-const upstreamSHA256 = "7cfd3dee4f68b50a4c5d49b1240e9760c7067254e53d8c6d562b24efbc2ed5cb"
+const upstreamSHA256 = "726a222fb7e675a487441c7f9ee917bbaa9716e4bf1b07164d62a44e1a79abd0"
 
 // upstreamRevision pins generation to the schema version represented by the
 // checked-in public API. The separate upstream-parity test intentionally
 // follows the upstream default branch so schema upgrades are explicit.
-const upstreamRevision = "8f737e93ba2a1dd8684d4bc267126c55173c3ee5" // schema 7.1.0
+const upstreamRevision = "5cf36705eef9fd0228ec63d428b182ed968df978" // schema 9.0.0
 
 var upstreamURL = upstreamSchemaURL()
 
@@ -98,6 +98,7 @@ type sourceField struct {
 	Signed                              bool     `json:"Signed"`
 	Unit                                string   `json:"Unit"`
 	FieldType                           string   `json:"FieldType"`
+	Encoding                            string   `json:"Encoding"`
 	PhysicalQuantity                    string   `json:"PhysicalQuantity"`
 	LookupEnumeration                   string   `json:"LookupEnumeration"`
 	LookupBitEnumeration                string   `json:"LookupBitEnumeration"`
@@ -763,7 +764,7 @@ func writePhysicalGetter(b *bytes.Buffer, typeName string, acc physicalAccessor)
 	src := acc.field.Source
 	if src.BitLength != nil && *src.BitLength >= 4 {
 		bits := *src.BitLength
-		if src.Signed {
+		if src.Signed && acc.offset == 0 {
 			bits--
 		}
 		null := ^uint64(0) >> (64 - bits)
@@ -772,7 +773,7 @@ func writePhysicalGetter(b *bytes.Buffer, typeName string, acc physicalAccessor)
 	seenSentinels := make(map[int64]bool)
 	if src.BitLength != nil && *src.BitLength >= 4 && (*src.BitLength < 64 || src.Signed) {
 		bits := *src.BitLength
-		if src.Signed {
+		if src.Signed && acc.offset == 0 {
 			bits--
 		}
 		seenSentinels[int64(^uint64(0)>>(64-bits))] = true
@@ -814,7 +815,9 @@ func writePhysicalSetter(b *bytes.Buffer, typeName string, acc physicalAccessor)
 	if src.BitLength != nil {
 		bits = int(*src.BitLength)
 	}
-	fmt.Fprintf(b, "ticks, err := physicalRawTicks(v, %s, %s, %d, %t)\n", floatLiteral(acc.resolution), floatLiteral(acc.offset), bits, src.Signed)
+	// A signed physical range with an offset uses unsigned excess-K wire
+	// ticks. Keep the schema's Go pointer type, but use the full wire width.
+	fmt.Fprintf(b, "ticks, err := physicalRawTicks(v, %s, %s, %d, %t)\n", floatLiteral(acc.resolution), floatLiteral(acc.offset), bits, src.Signed && acc.offset == 0)
 	fmt.Fprintf(b, "if err != nil { return invalidPhysicalValue(%q, v) }\n", name)
 	castType := "uint64"
 	if acc.field.Type == "*int64" {
@@ -1166,6 +1169,9 @@ func writePGN(b *bytes.Buffer, p sourcePGN, typeName string) {
 func writeField(b *bytes.Buffer, f sourceField) {
 	fmt.Fprintf(b, "{Order:%d, SourceID:%q, Name:%q, Signed:%t, Unit:%q, FieldType:%q",
 		f.Order, f.Id, f.Name, f.Signed, f.Unit, f.FieldType)
+	if f.Encoding != "" {
+		fmt.Fprintf(b, ", Encoding:%q", f.Encoding)
+	}
 	if f.Description != "" {
 		fmt.Fprintf(b, ", Description:%q", string(f.Description))
 	}
