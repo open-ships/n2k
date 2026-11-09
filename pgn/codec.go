@@ -56,6 +56,8 @@ const (
 	fieldKindBinary
 	// fieldKindFloat is an IEEE 754 single-precision float (FLOAT).
 	fieldKindFloat
+	// fieldKindDecimal holds decimal digit pairs as text, retaining leading zeros.
+	fieldKindDecimal
 	// fieldKindMatch is a numeric field with a variant-selecting Match value.
 	fieldKindMatch
 	// fieldKindLookup is an enumeration field: raw values survive decoding
@@ -100,6 +102,9 @@ type planField struct {
 	signed bool
 	// encoding names an optional string character repertoire.
 	encoding string
+	// These select a DECIMAL field whose final zero is significant.
+	trailingZeroIsDigitField *int
+	trailingZeroIsDigitValue *int
 	// condition controls whether this field occupies space in the payload.
 	condition fieldCondition
 	// resolution and offset convert raw numeric ticks to physical values for
@@ -324,7 +329,7 @@ func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 		if !included {
 			continue
 		}
-		encodeField(writer, step.field, source, overrides)
+		encodeField(writer, step.field, source, overrides, raws)
 	}
 	return writer.Bytes(), writer.Err()
 }
@@ -480,17 +485,19 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		return nil, fmt.Errorf("field %d (%s): %w", order, desc.Name, err)
 	}
 	field := &planField{
-		order:      order,
-		name:       desc.Name,
-		fieldIndex: -1,
-		bitLength:  desc.BitLength,
-		signed:     desc.Signed,
-		encoding:   desc.Encoding,
-		condition:  condition,
-		resolution: float64(desc.Resolution),
-		rangeMin:   desc.RangeMin,
-		rangeMax:   desc.RangeMax,
-		sentinels:  make(map[int64]struct{}, 3),
+		order:                    order,
+		name:                     desc.Name,
+		fieldIndex:               -1,
+		bitLength:                desc.BitLength,
+		signed:                   desc.Signed,
+		encoding:                 desc.Encoding,
+		trailingZeroIsDigitField: desc.TrailingZeroIsDigitField,
+		trailingZeroIsDigitValue: desc.TrailingZeroIsDigitValue,
+		condition:                condition,
+		resolution:               float64(desc.Resolution),
+		rangeMin:                 desc.RangeMin,
+		rangeMax:                 desc.RangeMax,
+		sentinels:                make(map[int64]struct{}, 3),
 	}
 	if desc.Encoding != "" && (desc.Encoding != "RDS_G0" || desc.SourceType != "STRING_LZ") {
 		return nil, fmt.Errorf("field %d (%s): unsupported encoding %q for %s", order, desc.Name, desc.Encoding, desc.SourceType)
@@ -533,6 +540,11 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		}
 	case "FLOAT":
 		field.kind = fieldKindFloat
+	case "DECIMAL":
+		field.kind = fieldKindDecimal
+		if desc.BitLength == 0 || desc.BitLength%8 != 0 {
+			return nil, fmt.Errorf("field %d (%s): invalid decimal width %d", order, desc.Name, desc.BitLength)
+		}
 	default:
 		switch {
 		case desc.Match != nil:
@@ -665,6 +677,12 @@ func decodeField(stream *PGNDataStream, field *planField, target reflect.Value, 
 			return err
 		}
 		setOptional(target.Field(field.fieldIndex), value)
+	case fieldKindDecimal:
+		value, err := readDecimal(stream, field.bitLength, field.keepDecimalZero(raws))
+		if err != nil {
+			return err
+		}
+		target.Field(field.fieldIndex).SetString(value)
 	case fieldKindBinary:
 		bits := binaryFieldBits(field, raws, stream)
 		if field.commandedParameter {
@@ -859,7 +877,7 @@ func setGroupSlice(field reflect.Value, slice reflect.Value) {
 // encodeField writes one field from source's struct field to the writer.
 // overrides carries derived values (group counts, binary lengths) keyed by
 // field order that take precedence over the struct field value.
-func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.Value, overrides map[int]uint64) {
+func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.Value, overrides, raws map[int]uint64) {
 	switch field.kind {
 	case fieldKindReserved:
 		writer.writeReservedBits(field.bitLength)
@@ -883,6 +901,8 @@ func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.V
 	case fieldKindFloat:
 		value, _ := source.Field(field.fieldIndex).Interface().(*float32)
 		writer.writeFloat32(value)
+	case fieldKindDecimal:
+		writeDecimal(writer, source.Field(field.fieldIndex).String(), field.bitLength, field.keepDecimalZero(raws))
 	case fieldKindBinary:
 		data := source.Field(field.fieldIndex).Bytes()
 		bits := field.bitLength
@@ -979,7 +999,7 @@ func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.V
 					continue
 				}
 			}
-			encodeField(writer, &group.fields[f], element, overrides)
+			encodeField(writer, &group.fields[f], element, overrides, raws)
 		}
 	}
 }

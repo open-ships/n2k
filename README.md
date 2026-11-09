@@ -18,11 +18,11 @@ any Go program that needs to understand or participate on an N2K bus.
 
 ## Why n2k
 
-- **632 typed PGN message types.** A PGN (Parameter Group Number) is
-  NMEA 2000's message-type identifier; `n2k` decodes 632 of them into Go
+- **640 typed PGN message types.** A PGN (Parameter Group Number) is
+  NMEA 2000's message-type identifier; `n2k` decodes 640 of them into Go
   structs (348 distinct numbers, including manufacturer-proprietary variants),
   generated from the community-maintained
-  [canboat](https://github.com/canboat/canboat) v9.0.0 schema — the reference
+  [canboat](https://github.com/canboat/canboat) v9.2.0 schema — the reference
   database for open NMEA 2000 decoding. Every numeric field with a physical
   interpretation gets a generated accessor in schema units
   (`heading.HeadingValue()` → radians) over raw wire ticks. Generated coverage
@@ -909,7 +909,7 @@ present or not applicable.
 
 | Project | Lang | Go app API | Typed PGNs | Byte-preserving encode | Bus-node behavior | Group functions | Best fit |
 |---------|------|------------|------------|------------------------|-------------------|-----------------|----------|
-| [open-ships/n2k](https://github.com/open-ships/n2k) | Go | ✅ direct top-level API | ✅ 632 generated structs | ✅ tested round trips | ✅ claim, heartbeat, info, requests | ✅ transmit / retime / pause | Go production apps, gateways, loggers, automation |
+| [open-ships/n2k](https://github.com/open-ships/n2k) | Go | ✅ direct top-level API | ✅ 640 generated structs | ✅ tested round trips | ✅ claim, heartbeat, info, requests | ✅ transmit / retime / pause | Go production apps, gateways, loggers, automation |
 | [boatkit-io/n2k](https://github.com/boatkit-io/n2k) | Go | ✅ endpoint/service/node packages | ✅ generated structs | 🟡 documented encode/write | ✅ node claim + heartbeat | ❓ not documented | Go apps built around its service/node architecture |
 | [aldas/go-nmea-client](https://github.com/aldas/go-nmea-client) | Go | 🟡 lower-level reader APIs | ❌ no typed structs | 🟡 raw/message oriented | 🟡 basic node mapping | ❓ not documented | Raw ingestion and format conversion |
 | [canboat/canboat](https://github.com/canboat/canboat) | C | ❌ not Go | ❌ analyzer output only | 🟡 tooling-oriented | ❌ analysis suite | ❌ not a bus-node library | Shell analysis, reverse engineering, schema reference |

@@ -68,6 +68,8 @@ type sourceField struct {
 	Unit                                string   `json:"Unit"`
 	FieldType                           string   `json:"FieldType"`
 	Encoding                            string   `json:"Encoding"`
+	TrailingZeroIsDigitField            *int     `json:"TrailingZeroIsDigitField"`
+	TrailingZeroIsDigitValue            *int     `json:"TrailingZeroIsDigitValue"`
 	PhysicalQuantity                    string   `json:"PhysicalQuantity"`
 	LookupEnumeration                   string   `json:"LookupEnumeration"`
 	LookupBitEnumeration                string   `json:"LookupBitEnumeration"`
@@ -419,6 +421,8 @@ func compareUpstreamPGN(def sourcePGN, local *PgnInfo) []string {
 		if localField.SourceType != upstreamField.FieldType {
 			mismatches = append(mismatches, fmt.Sprintf("%s: type local=%s upstream=%s", fieldPrefix, localField.SourceType, upstreamField.FieldType))
 		}
+		mismatches = append(mismatches, compareIntPtr(fieldPrefix, "trailingZeroIsDigitField", localField.TrailingZeroIsDigitField, upstreamField.TrailingZeroIsDigitField)...)
+		mismatches = append(mismatches, compareIntPtr(fieldPrefix, "trailingZeroIsDigitValue", localField.TrailingZeroIsDigitValue, upstreamField.TrailingZeroIsDigitValue)...)
 		if localField.Encoding != upstreamField.Encoding {
 			mismatches = append(mismatches, fmt.Sprintf("%s: encoding local=%s upstream=%s", fieldPrefix, localField.Encoding, upstreamField.Encoding))
 		}

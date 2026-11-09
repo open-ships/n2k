@@ -68,19 +68,21 @@ type pgnManifestPayloadShape struct {
 }
 
 type pgnManifestField struct {
-	Index          int     `json:"index"`
-	Name           string  `json:"name"`
-	BitLength      uint16  `json:"bitLength"`
-	BitOffset      uint16  `json:"bitOffset"`
-	VariableLength bool    `json:"variableLength"`
-	FieldType      string  `json:"fieldType"`
-	Encoding       string  `json:"encoding,omitempty"`
-	GoType         string  `json:"goType"`
-	Resolution     float64 `json:"resolution"`
-	Signed         bool    `json:"signed"`
-	Unit           string  `json:"unit,omitempty"`
-	BitLookupName  string  `json:"bitLookupName,omitempty"`
-	Match          *int    `json:"match,omitempty"`
+	Index                    int     `json:"index"`
+	Name                     string  `json:"name"`
+	BitLength                uint16  `json:"bitLength"`
+	BitOffset                uint16  `json:"bitOffset"`
+	VariableLength           bool    `json:"variableLength"`
+	FieldType                string  `json:"fieldType"`
+	Encoding                 string  `json:"encoding,omitempty"`
+	TrailingZeroIsDigitField *int    `json:"trailingZeroIsDigitField,omitempty"`
+	TrailingZeroIsDigitValue *int    `json:"trailingZeroIsDigitValue,omitempty"`
+	GoType                   string  `json:"goType"`
+	Resolution               float64 `json:"resolution"`
+	Signed                   bool    `json:"signed"`
+	Unit                     string  `json:"unit,omitempty"`
+	BitLookupName            string  `json:"bitLookupName,omitempty"`
+	Match                    *int    `json:"match,omitempty"`
 }
 
 type pgnManifestStructField struct {
@@ -322,18 +324,20 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 	for _, index := range indexes {
 		field := fields[index]
 		manifestField := pgnManifestField{
-			Index:          index,
-			Name:           field.Name,
-			BitLength:      field.BitLength,
-			BitOffset:      field.BitOffset,
-			VariableLength: field.BitLengthVariable,
-			FieldType:      field.SourceType,
-			Encoding:       field.Encoding,
-			GoType:         field.GolangType,
-			Resolution:     field.Resolution,
-			Signed:         field.Signed,
-			Unit:           field.Unit,
-			BitLookupName:  field.BitLookupName,
+			Index:                    index,
+			Name:                     field.Name,
+			BitLength:                field.BitLength,
+			BitOffset:                field.BitOffset,
+			VariableLength:           field.BitLengthVariable,
+			FieldType:                field.SourceType,
+			Encoding:                 field.Encoding,
+			TrailingZeroIsDigitField: field.TrailingZeroIsDigitField,
+			TrailingZeroIsDigitValue: field.TrailingZeroIsDigitValue,
+			GoType:                   field.GolangType,
+			Resolution:               field.Resolution,
+			Signed:                   field.Signed,
+			Unit:                     field.Unit,
+			BitLookupName:            field.BitLookupName,
 		}
 		if field.Match != nil {
 			match := *field.Match
@@ -390,6 +394,9 @@ func manifestExampleValue(t *testing.T, goType string, jsonName string, pgn uint
 	case "units.Volume":
 		return manifestUnitExample(5)
 	case "string":
+		if jsonName == "dscMessageAddress" || jsonName == "mmsiOfShipInDistress" {
+			return "003456789"
+		}
 		return "example"
 	case "bool":
 		return true

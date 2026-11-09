@@ -21,12 +21,12 @@ import (
 const definitionsPath = "pgn/upstream_definitions.go"
 const dispatchPath = "pgn/dispatch.go"
 const schemaPath = "cmd/pgngen/schema.json"
-const upstreamSHA256 = "726a222fb7e675a487441c7f9ee917bbaa9716e4bf1b07164d62a44e1a79abd0"
+const upstreamSHA256 = "35002ef57b0793654fc39a254df808b84deb8ab51df1b4e43b98bf3f0452bce8"
 
 // upstreamRevision pins generation to the schema version represented by the
 // checked-in public API. The separate upstream-parity test intentionally
 // follows the upstream default branch so schema upgrades are explicit.
-const upstreamRevision = "5cf36705eef9fd0228ec63d428b182ed968df978" // schema 9.0.0
+const upstreamRevision = "5add9cefe5711d3d3ab600ea4b37caa95a17f2f6" // schema 9.2.0
 
 var upstreamURL = upstreamSchemaURL()
 
@@ -99,6 +99,8 @@ type sourceField struct {
 	Unit                                string   `json:"Unit"`
 	FieldType                           string   `json:"FieldType"`
 	Encoding                            string   `json:"Encoding"`
+	TrailingZeroIsDigitField            *int     `json:"TrailingZeroIsDigitField"`
+	TrailingZeroIsDigitValue            *int     `json:"TrailingZeroIsDigitValue"`
 	PhysicalQuantity                    string   `json:"PhysicalQuantity"`
 	LookupEnumeration                   string   `json:"LookupEnumeration"`
 	LookupBitEnumeration                string   `json:"LookupBitEnumeration"`
@@ -350,7 +352,12 @@ func generatePGNDispatch(source sourceFile, pgns []sourcePGN, names []string) ([
 			if left.Fallback != right.Fallback {
 				return !left.Fallback
 			}
-			return matchCount(left) > matchCount(right)
+			if matchCount(left) != matchCount(right) {
+				return matchCount(left) > matchCount(right)
+			}
+			// Earlier selectors take precedence when equally specific variants
+			// overlap: DSC distress format wins over distress category.
+			return firstMatchOffset(left) < firstMatchOffset(right)
 		})
 		fmt.Fprintf(&b, "case %d:\n", pgn)
 		fmt.Fprintf(&b, "return decodePGNCandidates(info, payload,\n")
@@ -387,6 +394,16 @@ func generatePGNDispatch(source sourceFile, pgns []sourcePGN, names []string) ([
 	}
 	fmt.Fprintf(&b, "}\n")
 	return format.Source(b.Bytes())
+}
+
+func firstMatchOffset(pgn sourcePGN) int {
+	first := 1 << 16
+	for _, field := range pgn.Fields {
+		if field.Match != nil && field.BitOffset != nil && int(*field.BitOffset) < first {
+			first = int(*field.BitOffset)
+		}
+	}
+	return first
 }
 
 func matchCount(pgn sourcePGN) int {
@@ -942,7 +959,7 @@ func pgnFieldType(field sourceField) (string, bool) {
 	switch field.FieldType {
 	case "RESERVED", "SPARE":
 		return "", false
-	case "STRING_FIX", "STRING_LZ", "STRING_LAU":
+	case "STRING_FIX", "STRING_LZ", "STRING_LAU", "DECIMAL":
 		return "string", true
 	case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
 		return "[]uint8", true
@@ -1171,6 +1188,12 @@ func writeField(b *bytes.Buffer, f sourceField) {
 		f.Order, f.Id, f.Name, f.Signed, f.Unit, f.FieldType)
 	if f.Encoding != "" {
 		fmt.Fprintf(b, ", Encoding:%q", f.Encoding)
+	}
+	if f.TrailingZeroIsDigitField != nil {
+		fmt.Fprintf(b, ", TrailingZeroIsDigitField:sourceInt(%d)", *f.TrailingZeroIsDigitField)
+	}
+	if f.TrailingZeroIsDigitValue != nil {
+		fmt.Fprintf(b, ", TrailingZeroIsDigitValue:sourceInt(%d)", *f.TrailingZeroIsDigitValue)
 	}
 	if f.Description != "" {
 		fmt.Fprintf(b, ", Description:%q", string(f.Description))

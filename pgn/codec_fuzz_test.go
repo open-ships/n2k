@@ -8,6 +8,10 @@ import (
 
 func FuzzDecodeEncodeMessage(f *testing.F) {
 	f.Add(uint32(127250), []byte{0, 0, 0, 0xFF, 0x7F, 0xFF, 0x7F, 0xFC})
+	f.Add(uint32(127252), []byte{1, 0x85, 0xff, 0xf4, 1, 0xf2, 0xff, 0xff})
+	f.Add(uint32(129808), []byte{112, 112, 0, 34, 56, 78, 90})
+	f.Add(uint32(129808), []byte{102, 100, 0, 34, 56, 78, 90})
+	f.Add(uint32(130817), append([]byte{0x27, 0x99, 1, 2}, bytes.Repeat([]byte{5, 0xf4, 0xa9}, 8)...))
 	f.Add(uint32(126998), []byte{3, 1, 'a', 3, 1, 'b', 3, 1, 'c'})
 	f.Add(uint32(65009), []byte{0, 0x5e, 0xd0, 0xb2, 0, 0x60, 0xfd, 0xff})
 	f.Add(uint32(130944), []byte{0x87, 0x98, 0xfe, 2, 1, 0, 4, 2})

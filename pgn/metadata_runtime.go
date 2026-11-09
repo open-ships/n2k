@@ -47,6 +47,8 @@ type SourceFieldDefinition struct {
 	Signed                              bool
 	Unit                                string
 	FieldType                           string
+	TrailingZeroIsDigitField            *int
+	TrailingZeroIsDigitValue            *int
 	Encoding                            string
 	PhysicalQuantity                    string
 	LookupEnumeration                   string
@@ -189,6 +191,8 @@ func fieldDescriptorFromSource(field SourceFieldDefinition) *FieldDescriptor {
 		BitLengthVariable:                   field.BitLengthVariable || field.BitLength == nil,
 		SourceType:                          field.FieldType,
 		Encoding:                            field.Encoding,
+		TrailingZeroIsDigitField:            field.TrailingZeroIsDigitField,
+		TrailingZeroIsDigitValue:            field.TrailingZeroIsDigitValue,
 		BitStart:                            bitStart,
 		PhysicalQuantity:                    field.PhysicalQuantity,
 		LookupEnumeration:                   field.LookupEnumeration,
@@ -216,7 +220,7 @@ func pgnFieldGoType(field SourceFieldDefinition) string {
 	switch field.FieldType {
 	case "RESERVED", "SPARE":
 		return ""
-	case "STRING_FIX", "STRING_LZ", "STRING_LAU":
+	case "STRING_FIX", "STRING_LZ", "STRING_LAU", "DECIMAL":
 		return "string"
 	case "BINARY", "VARIABLE", "DYNAMIC_FIELD_VALUE":
 		return "[]uint8"
