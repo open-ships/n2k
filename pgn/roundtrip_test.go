@@ -195,6 +195,8 @@ func populateField(field *planField, target reflect.Value, wantDerived bool, ove
 		// No struct field: reserved/spare bits carry no value.
 	case fieldKindFixedString:
 		target.Field(field.fieldIndex).SetString(representativeFixedString(field.bitLength))
+	case fieldKindDecimal:
+		target.Field(field.fieldIndex).SetString(strings.Repeat("1", int(field.bitLength/8)*2))
 	case fieldKindLengthString, fieldKindControlString:
 		// STRING_LZ / STRING_LAU are length-prefixed on the wire, so unlike
 		// STRING_FIX there is no padding to worry about: "AB" round-trips

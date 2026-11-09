@@ -1,5 +1,29 @@
 ## Change Log for open-ships/n2k
 
+### v1.10.0 — 2026-11-09 — PGN database v9.2.0
+
+- Updated the pinned upstream database from v9.0.0 through v9.1.0 to v9.2.0
+  (schema 2.8.0), including the offline source, revision/checksum, generated
+  messages, dispatch, enums, metadata, and manifest. Coverage is 640 typed
+  variants over 348 PGNs, including seven Furuno remote messages and DSC
+  distress acknowledgements/relays. Addresses issues #41 and #42.
+- Corrected DSC dispatch to distinguish distress format from distress category,
+  with format taking precedence. DECIMAL addresses now decode/encode digit
+  pairs as strings, retain leading zeros, omit MMSI padding, and preserve all
+  ten geographical-address digits. Invalid or truncated decimal data is
+  unavailable; unmodified messages still replay their original bytes.
+- Added heave delay/source, BEP display brightness, CZone output status, and
+  Simnet event fields; corrected Furuno satellite azimuth to unsigned and four
+  proprietary payload limits to 223 bytes. Updated B&G key names and values.
+- **Migration:** `DscCallInformation` and `DscDistressCallInformation` fields
+  `DscMessageAddress` and `MmsiOfShipInDistress` change from `*uint64` to `string`
+  (empty means unavailable). `FurunoMultiSatsInViewExtendedRepeating1.Azimuth`
+  changes from `*int64` to `*uint64`. CZone `Records`/`Data` fields become named
+  outputs; BEP 65294 `Data` loses its first brightness byte. Re-decode stored
+  payloads and update Go/JSON consumers and B&G constants using the complete
+  [migration guide](docs/schema-9.2.0-migration.md). This intentionally refines
+  the evolving v1 API without a new module path.
+
 ### v1.9.0 — 2026-10-21 — PGN database v9.0.0
 
 - Updated the pinned upstream PGN database from v7.1.0 to v9.0.0 (schema

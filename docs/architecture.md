@@ -241,7 +241,7 @@ hardware test is never represented as a pass.
 ## Generated boundary
 
 Category files under `pgn/`, `pgn/dispatch.go`, metadata, and the manifest are
-generated from the checked-in v9.0.0 schema snapshot (schema format 2.8.0).
+generated from the checked-in v9.2.0 schema snapshot (schema format 2.8.0).
 Change generator inputs or the generator, then run `just pgn-sync`; never
 repair generated output by hand.
 Generation verifies the snapshot's pinned checksum and needs no network.

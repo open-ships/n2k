@@ -98,6 +98,10 @@ type FieldDescriptor struct {
 	SourceType string `json:"sourceType"`
 	// Encoding is the declared character repertoire for a string field, when present.
 	Encoding string `json:"encoding,omitempty"`
+	// TrailingZeroIsDigitField/Value select DECIMAL addresses whose final zero
+	// is a digit rather than padding (for example a DSC geographical area).
+	TrailingZeroIsDigitField *int `json:"trailingZeroIsDigitField,omitempty"`
+	TrailingZeroIsDigitValue *int `json:"trailingZeroIsDigitValue,omitempty"`
 	// BitStart is the bit position within the containing byte when the source schema provides it.
 	BitStart uint16 `json:"bitStart"`
 	// PhysicalQuantity is the source schema physical quantity identifier.

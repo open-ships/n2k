@@ -15,6 +15,9 @@ explains the runtime design.
   entries supplements raw fields with a derived `physical` object wherever
   physical-value accessors exist. Accessors determine schema units and validity;
   unavailable measurements are null. JSON input and wire encoding use raw fields.
+- **Decimal address**: DSC digit-pair fields use strings to retain leading
+  zeros. A final padding zero is omitted for MMSIs; geographical addresses
+  retain all ten digits, according to the schema's format selector.
 - **Source / destination**: dynamic 8-bit bus addresses. Addresses 0–251 are
   claimable; 252–253 are reserved, 254 means unable to claim, and 255 is
   broadcast/global.

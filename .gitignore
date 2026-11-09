@@ -25,6 +25,7 @@ docs/*
 !docs/architecture.md
 !docs/conformance.md
 !docs/schema-9.0.0-migration.md
+!docs/schema-9.2.0-migration.md
 !docs/adr/
 docs/adr/*
 !docs/adr/*.md
