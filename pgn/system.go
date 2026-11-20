@@ -1383,9 +1383,6 @@ func (m *GarminAutopilotTurnAngleMeasured) TurnAngleMeasuredValue() (float64, bo
 	if m == nil || m.TurnAngleMeasured == nil {
 		return 0, false
 	}
-	if *m.TurnAngleMeasured == 65535 {
-		return 0, false
-	}
 	value := float64(*m.TurnAngleMeasured) * 9.587379924285257e-05
 	if value > 6.28318530717959 && !approximatelyEqual(value, 6.28318530717959) {
 		return 0, false
@@ -1474,9 +1471,6 @@ func (m *GarminAutopilotTurnAngleOrder) Clone() Message {
 // The bool is false for absent, sentinel, or out-of-range measurements.
 func (m *GarminAutopilotTurnAngleOrder) TurnAngleOrderValue() (float64, bool) {
 	if m == nil || m.TurnAngleOrder == nil {
-		return 0, false
-	}
-	if *m.TurnAngleOrder == 65535 {
 		return 0, false
 	}
 	value := float64(*m.TurnAngleOrder) * 9.587379924285257e-05

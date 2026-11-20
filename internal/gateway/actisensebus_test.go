@@ -1,6 +1,7 @@
 package gateway
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -12,6 +13,7 @@ import (
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/actisense"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/raw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -75,19 +77,17 @@ func TestActisenseHandshakeTimeoutAndCloseInterruptInitialWrite(t *testing.T) {
 func TestActisenseEpochRequesterNeverFollowsReconnect(t *testing.T) {
 	gateway := NewActisenseCustomGatewaySession(testLogger(), "epoch", "epoch", nil, nil, actisense.ModeTransferNormal)
 	first := actisense.NewSession(actisense.SessionConfig{})
-	gateway.stream.epoch = &actisenseEpoch{session: first}
-	gateway.stream.epochNum = 1
+	gateway.stream.epoch = &actisenseEpoch{number: 1, session: first}
 	requester, err := gateway.EpochRequester(1)
 	require.NoError(t, err)
 	first.Close(actisense.ErrSessionClosed)
 
-	second := actisense.NewSession(actisense.SessionConfig{Write: func(context.Context, []byte) error {
+	second := actisense.NewSession(actisense.SessionConfig{Write: func(_ context.Context, data []byte) (int, error) {
 		t.Error("old epoch cleanup reached the new connection")
-		return nil
+		return len(data), nil
 	}})
 	defer second.Close(nil)
-	gateway.stream.epoch = &actisenseEpoch{session: second}
-	gateway.stream.epochNum = 2
+	gateway.stream.epoch = &actisenseEpoch{number: 2, session: second}
 	_, err = requester.Request(context.Background(), actisense.BEMTxPGNEnable, nil)
 	require.ErrorIs(t, err, actisense.ErrSessionClosed)
 	_, err = gateway.EpochRequester(1)
@@ -273,9 +273,15 @@ func TestActisenseRawBusReconnectsWithFreshHandshake(t *testing.T) {
 		MaxBackoff:     5 * time.Millisecond,
 	}, actisense.ModeCANPacket, true)
 	bus := &ActisenseRawTCPBus{stream: stream}
-	frames := make(chan can.Frame, 2)
+	frames := make(chan raw.Observation, 2)
 	runErr := make(chan error, 1)
-	go func() { runErr <- bus.Run(context.Background(), func(frame can.Frame) { frames <- frame }) }()
+	go func() {
+		runErr <- bus.RunObservations(context.Background(), func(observation raw.Observation) {
+			if observation.Kind == raw.KindFrame {
+				frames <- observation
+			}
+		})
+	}()
 
 	for epoch := 1; epoch <= 2; epoch++ {
 		select {
@@ -287,8 +293,9 @@ func TestActisenseRawBusReconnectsWithFreshHandshake(t *testing.T) {
 			t.Fatal("timed out waiting for Actisense epoch handshake")
 		}
 		select {
-		case frame := <-frames:
-			id := framer.ParseCANID(frame.ID)
+		case observation := <-frames:
+			assert.Equal(t, uint64(epoch), observation.ConnectionEpoch)
+			id := framer.ParseCANID(observation.Frame.ID)
 			assert.Equal(t, uint8(0x20+epoch), id.Source)
 		case err := <-serveErrors:
 			t.Fatalf("fake gateway failed: %v", err)
@@ -304,4 +311,104 @@ func TestActisenseRawBusReconnectsWithFreshHandshake(t *testing.T) {
 	case <-time.After(time.Second):
 		t.Fatal("Actisense reconnect loop did not stop")
 	}
+}
+
+func TestActisenseRawBusRequiresAcknowledgedFormatWhileCapturePreservesRecords(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		mode   actisense.OperatingMode
+		rawBus bool
+		want   []uint32
+	}{
+		{"binary bus", actisense.ModeCANPacket, true, []uint32{2}},
+		{"binary capture", actisense.ModeCANPacket, false, []uint32{1, 127250, 130900, 2}},
+		{"ASCII bus", actisense.ModeCANPacketASCII, true, []uint32{3}},
+		{"ASCII capture", actisense.ModeCANPacketASCII, false, []uint32{1, 127250, 130900, 2, 3}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			host, peer := net.Pipe()
+			t.Cleanup(func() { _ = peer.Close(); _ = host.Close() })
+			require.NoError(t, peer.SetDeadline(time.Now().Add(3*time.Second)))
+			bus := newActisenseStreamBus(testLogger(), "test", "test", nil, nil, tc.mode, tc.rawBus)
+			var observations []raw.Observation
+			result := make(chan error, 1)
+			go func() {
+				err, _ := bus.runEpoch(context.Background(), host, 42, func(o raw.Observation) {
+					observations = append(observations, o)
+				})
+				result <- err
+			}()
+			get, err := actisense.EncodeBEMRequest(actisense.BEMOperatingMode, nil)
+			require.NoError(t, err)
+			got := make([]byte, len(get))
+			_, err = io.ReadFull(peer, got)
+			require.NoError(t, err)
+			require.Equal(t, get, got)
+			before, err := actisense.EncodeCANFrame(can.Frame{ID: 1}, actisense.DirectionReceived, 0, 0)
+			require.NoError(t, err)
+			after, err := actisense.EncodeCANFrame(can.Frame{ID: 2}, actisense.DirectionReceived, 0, 0)
+			require.NoError(t, err)
+			modeResponse := make([]byte, 12, 14)
+			modeResponse[0] = actisense.BEMOperatingMode
+			modeResponse = append(modeResponse, actisense.OperatingModeSet(tc.mode)...)
+			ack, err := actisense.EncodeDatagram(actisense.BSTBEMResponse, modeResponse)
+			require.NoError(t, err)
+			assembled93 := wrapActisense(cmdN2KReceived, n2kPayload(2, 127250, 255, 42, []byte{1, 2}))
+			assembledD0, err := actisense.EncodeMessageD0(actisense.Message{PGN: 130900, Destination: 255, Source: 42})
+			require.NoError(t, err)
+			asciiFrame, err := FormatActisenseCANASCII(can.Frame{ID: 3}, raw.DirectionReceived, 0)
+			require.NoError(t, err)
+			_, err = peer.Write(bytes.Join([][]byte{before, ack, assembled93, assembledD0, after, asciiFrame}, nil))
+			require.NoError(t, err)
+			select {
+			case <-bus.Ready():
+			case err := <-result:
+				t.Fatalf("epoch stopped during handshake: %v", err)
+			case <-time.After(3 * time.Second):
+				t.Fatal("epoch did not publish acknowledged mode")
+			}
+			require.NoError(t, peer.Close())
+			require.NoError(t, <-result)
+			var networkRecords []uint32
+			for _, o := range observations {
+				require.Equal(t, uint64(42), o.ConnectionEpoch)
+				if o.Kind == raw.KindMessage {
+					networkRecords = append(networkRecords, o.PGN)
+				} else if o.Frame != nil {
+					networkRecords = append(networkRecords, o.Frame.ID)
+				}
+			}
+			assert.Equal(t, tc.want, networkRecords)
+		})
+	}
+}
+
+func TestActisenseWireTraceMatchesPartialPhysicalWrite(t *testing.T) {
+	host, peer := net.Pipe()
+	defer func() { _ = host.Close() }()
+	defer func() { _ = peer.Close() }()
+	peerRead := make(chan []byte, 1)
+	go func() {
+		prefix := make([]byte, 2)
+		n, _ := io.ReadFull(peer, prefix)
+		_ = peer.Close()
+		peerRead <- prefix[:n]
+	}()
+	var traced []byte
+	session := actisense.NewSession(actisense.SessionConfig{
+		Write: func(ctx context.Context, data []byte) (int, error) {
+			return writeActisenseUnitContext(ctx, host, data)
+		},
+		OnWireBytes: func(direction actisense.WireDirection, _ time.Time, data []byte) {
+			require.Equal(t, actisense.WireTransmitted, direction)
+			traced = append(traced, data...)
+		},
+	})
+	defer session.Close(nil)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	require.ErrorIs(t, session.WriteContext(ctx, []byte{0x10, 0x02, 0xA1, 0x01}), io.ErrClosedPipe)
+	require.Equal(t, []byte{0x10, 0x02}, traced)
+	require.Equal(t, <-peerRead, traced)
+	require.Equal(t, uint64(2), session.Metrics().TransportWriteBytes)
 }

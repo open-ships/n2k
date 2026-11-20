@@ -2,6 +2,7 @@ package actisense
 
 import (
 	"context"
+	"encoding/binary"
 	"testing"
 	"time"
 
@@ -109,4 +110,20 @@ func TestCommandSetRejectsNilRequester(t *testing.T) {
 	commands := NewCommandSet(nil, CommandSetConfig{})
 	_, err := commands.RawRequest(context.Background(), BEMEcho, nil)
 	assert.EqualError(t, err, "actisense: command handle is closed")
+}
+
+func TestPGNListGettersRequireRequestedPGN(t *testing.T) {
+	const requested, other = 127250, 127251
+	requester := &scriptedRequester{}
+	commands := NewCommandSet(requester, CommandSetConfig{})
+	data := make([]byte, 14)
+	binary.LittleEndian.PutUint32(data, other)
+	requester.response = responseFor(BEMTxPGNEnable, 1, ModelNGX1, data)
+	tx, err := commands.GetTxPGN(context.Background(), requested)
+	require.ErrorContains(t, err, "requested Tx PGN 127250, got 127251")
+	require.Zero(t, tx)
+	requester.response = responseFor(BEMRxPGNEnable, 1, ModelNGX1, data[:9])
+	rx, err := commands.GetRxPGN(context.Background(), requested)
+	require.ErrorContains(t, err, "requested Rx PGN 127250, got 127251")
+	require.Zero(t, rx)
 }

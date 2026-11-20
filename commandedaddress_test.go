@@ -109,6 +109,17 @@ func TestConformanceCommandedAddressMatchingBAMReclaimsAddress(t *testing.T) {
 		true,
 	))
 
+	sub := c.msgHub.subscribe()
+	defer sub.unsubscribe()
+	foundCommand := false
+	for len(sub.ch) > 0 {
+		if msg := <-sub.ch; msg.PGNNumber() == pgnISOCommandedAddress {
+			foundCommand = true
+			require.Less(t, msg.(infoCarrier).MessageInfo().ClaimEpoch, c.Status().ClaimEpoch)
+		}
+	}
+	require.True(t, foundCommand, "the command that changed our claim must reach subscribers")
+
 	status := c.Status()
 	assert.Equal(t, newAddress, status.Address)
 	assert.True(t, status.AddressClaimed)

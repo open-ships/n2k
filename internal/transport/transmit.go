@@ -67,9 +67,12 @@ func (m *Manager) SendRTSCTSContext(ctx context.Context, pgn uint32, source, des
 		return fmt.Errorf("send RTS/CTS: %w", err)
 	}
 	if err := m.writeSessionFrame(sess, buildRTSFrame(sess.totalSize, sess.numFrames, pgn, source, destination)); err != nil {
-		return m.finishSession(sess, fmt.Errorf("send RTS: %w", err))
+		_ = m.finishSession(sess, fmt.Errorf("send RTS: %w", err))
 	}
 	<-sess.txDone
+	// A concurrent CTS handler may still be returning from its physical DT
+	// write. Once the session is removed, no further writes can be admitted.
+	sess.txWrites.Wait()
 	return sess.txErr
 }
 

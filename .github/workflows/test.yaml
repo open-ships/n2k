@@ -20,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.10
+          go-version: 1.26.11
           check-latest: true
 
       - name: Set up just
@@ -41,6 +41,18 @@ jobs:
           name: software-conformance
           path: conformance-artifacts/local-*
           if-no-files-found: warn
+
+      - name: Configure a virtual CAN peer
+        if: runner.os == 'Linux'
+        run: |
+          if ! sudo modprobe vcan; then
+            sudo apt-get update -qq
+            sudo apt-get install -y "linux-modules-extra-$(uname -r)"
+            sudo modprobe vcan
+          fi
+          sudo ip link add dev n2ktest0 type vcan
+          sudo ip link set dev n2ktest0 up
+          echo "N2K_TEST_VCAN=n2ktest0" >> "$GITHUB_ENV"
 
       - name: Test
         run: go test ./...
@@ -64,7 +76,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.10
+          go-version: 1.26.11
           check-latest: true
 
       - name: Set up just
@@ -107,7 +119,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.10
+          go-version: 1.26.11
           check-latest: true
 
       - name: golangci-lint
@@ -125,19 +137,19 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.10
+          go-version: 1.26.11
           check-latest: true
 
       - name: Run govulncheck
         env:
-          GOTOOLCHAIN: go1.26.10
+          GOTOOLCHAIN: go1.26.11
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
           govulncheck ./...
 
       - name: Run gosec
         env:
-          GOTOOLCHAIN: go1.26.10
+          GOTOOLCHAIN: go1.26.11
         run: |
           go install github.com/securego/gosec/v2/cmd/gosec@v2.27.1
           gosec -exclude-generated -exclude-dir=.claude -exclude=G115 ./...
@@ -154,7 +166,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: 1.26.10
+          go-version: 1.26.11
           check-latest: true
 
       - name: Set up just

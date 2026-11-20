@@ -1,6 +1,7 @@
 package n2k
 
 import (
+	"bytes"
 	"context"
 	"encoding/binary"
 	"os"
@@ -167,5 +168,49 @@ func TestEBLOriginalTimingCanBeCancelled(t *testing.T) {
 	case <-done:
 	case <-time.After(time.Second):
 		t.Fatal("cancellation did not interrupt EBL timing")
+	}
+}
+
+func TestEBLBST93RemainsOneOwnedAssembledMessage(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		number  uint32
+		payload []byte
+	}{
+		{"ISO", 65240, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9}},
+		{"unknown", 130900, bytes.Repeat([]byte{0x41}, 230)},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			record := []byte{6, byte(tc.number), byte(tc.number >> 8), byte(tc.number >> 16), 255, 42, 5, 0, 0, 0, byte(len(tc.payload))}
+			wire, err := actisense.EncodeDatagram(actisense.BSTN2KReceive, append(record, tc.payload...))
+			require.NoError(t, err)
+			path := filepath.Join(t.TempDir(), "records.ebl")
+			require.NoError(t, os.WriteFile(path, append(eblVersionRecord(internalebl.CurrentVersion), eblBSTRaw(t, wire)...), 0o600))
+			var observations []Observation
+			for observation, err := range Observe(context.Background(), EBL(path)) {
+				require.NoError(t, err)
+				observations = append(observations, observation)
+			}
+			require.Len(t, observations, 1)
+			require.Equal(t, ObservationMessage, observations[0].Kind)
+			assert.Nil(t, observations[0].Frame)
+			assert.Equal(t, tc.number, observations[0].PGN)
+			assert.Equal(t, tc.payload, observations[0].Payload)
+			assert.Equal(t, 5*time.Millisecond, observations[0].TransportTimestamp)
+			assert.Equal(t, uint8(42), observations[0].Source)
+			var messages []pgn.Message
+			for message, err := range Receive(context.Background(), EBL(path), IncludeUnknown()) {
+				require.NoError(t, err)
+				messages = append(messages, message)
+			}
+			require.Len(t, messages, 1)
+			if tc.number == 65240 {
+				require.IsType(t, &pgn.IsoCommandedAddress{}, messages[0])
+			} else {
+				unknown, ok := messages[0].(*pgn.UnknownPGN)
+				require.True(t, ok)
+				assert.Equal(t, tc.payload, unknown.Data)
+			}
+		})
 	}
 }

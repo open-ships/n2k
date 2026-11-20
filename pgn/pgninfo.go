@@ -4,6 +4,7 @@ package pgn
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // PgnInfo describes a known NMEA 2000 message type. Entries are generated from
@@ -224,49 +225,40 @@ func GetProprietaryInfo(data []uint8) (ManufacturerCodeConst, IndustryCodeConst,
 //     (pass 0 for standard/non-proprietary PGNs)
 //   - fieldIndex: the 1-based field index matching the source field order
 //
-// For non-proprietary PGNs, the first (and usually only) variant is used.
-// For proprietary PGNs, the variant matching manID is selected. If manID is 0 and
-// multiple variants exist, an error is returned because the correct variant cannot
-// be determined without a manufacturer code.
+// Fallback layouts are considered only if the number has no specific variant.
+// Variants must agree on the requested field when the supplied identifiers
+// cannot distinguish between them.
 //
 // Returns an error if the PGN is unknown, the field index doesn't exist, or the
 // variant cannot be disambiguated.
 func GetFieldDescriptor(pgn uint32, manID ManufacturerCodeConst, fieldIndex uint8) (*FieldDescriptor, error) {
-	var retval *FieldDescriptor
-	var err error
-
-	if pi, piKnown := PgnInfoLookup[pgn]; piKnown {
-		if !IsProprietaryPGN(pgn) {
-			// Standard PGN: use the first variant. In the future, other match fields
-			// (beyond manufacturer code) may need validation here.
-			retval = pi[0].Fields[int(fieldIndex)]
-		} else {
-			if manID != 0 {
-				// Proprietary PGN with a known manufacturer: find the matching variant.
-				for _, p := range pi {
-					if p.ManId == manID {
-						retval = p.Fields[int(fieldIndex)]
-					}
-				}
-			} else {
-				// Proprietary PGN but no manufacturer code provided.
-				if len(pi) == 1 {
-					// Only one variant known, so use it optimistically.
-					retval = pi[0].Fields[int(fieldIndex)]
-				} else {
-					// Multiple variants exist and we can't tell which one to use.
-					err = fmt.Errorf("error: cannot distinguish between variants for pgn: %d", pgn)
-					return nil, err
-				}
-			}
-
-		}
-		if retval == nil {
-			err = fmt.Errorf("error: Field Index: %d, not found for pgn: %d with manufacturer code: %d", fieldIndex, pgn, manID)
-		}
-		return retval, err
+	variants := decodeVariants[pgn]
+	if len(variants) == 0 {
+		return nil, fmt.Errorf("PGN not found")
 	}
-	return nil, fmt.Errorf("PGN not found")
+	proprietary := IsProprietaryPGN(pgn)
+	if proprietary && manID == 0 && len(variants) > 1 {
+		return nil, fmt.Errorf("cannot distinguish between variants for pgn: %d", pgn)
+	}
+	var descriptor *FieldDescriptor
+	matched := false
+	for _, info := range variants {
+		if info.Fallback && !variants[0].Fallback {
+			break
+		}
+		if proprietary && manID != 0 && info.ManId != manID {
+			continue
+		}
+		field := info.Fields[int(fieldIndex)]
+		if matched && !reflect.DeepEqual(descriptor, field) {
+			return nil, fmt.Errorf("field %d is ambiguous across variants of PGN %d for manufacturer %d", fieldIndex, pgn, manID)
+		}
+		descriptor, matched = field, true
+	}
+	if descriptor == nil {
+		return nil, fmt.Errorf("error: Field Index: %d, not found for pgn: %d with manufacturer code: %d", fieldIndex, pgn, manID)
+	}
+	return descriptor, nil
 }
 
 // SearchUnseenList returns true if the given PGN number has incomplete or missing

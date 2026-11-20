@@ -47,7 +47,7 @@ type pendingRequest struct {
 // writer and a bounded BEM correlation table with at most one request per
 // response/BEM key.
 type Session struct {
-	write func(context.Context, []byte) error
+	write func(context.Context, []byte) (int, error)
 
 	writeGate chan struct{}
 	ctx       context.Context
@@ -58,7 +58,7 @@ type Session struct {
 	doneErr   error
 	once      sync.Once
 
-	onDatagram    func(Datagram)
+	onDatagram    func(Datagram, bool)
 	onResponse    func(BEMResponse)
 	onDiagnostic  func(Diagnostic)
 	onDecodeError func(DecodeError)
@@ -75,10 +75,12 @@ const (
 )
 
 type SessionConfig struct {
-	// Write must stop physical I/O when ctx ends. A partial failed write must
+	// Write returns the number of accepted bytes, including on error. It must
+	// stop physical I/O when ctx ends. A partial failed write must
 	// invalidate the connection so a later frame cannot append to its prefix.
-	Write      func(context.Context, []byte) error
-	OnDatagram func(Datagram)
+	Write func(context.Context, []byte) (int, error)
+	// OnDatagram runs after response delivery. matched identifies a solicited BEM reply.
+	OnDatagram func(Datagram, bool)
 	// OnResponse runs before correlation releases a caller. It must not block
 	// or issue requests through this session.
 	OnResponse    func(BEMResponse)
@@ -142,6 +144,7 @@ func (s *Session) Run(reader io.Reader) error {
 }
 
 func (s *Session) handleDatagram(datagram Datagram) {
+	var matched bool
 	s.metrics.datagrams.Add(1)
 	s.metrics.bstFrames[datagram.ID].Add(1)
 	if response, ok, err := DecodeBEMResponse(datagram); ok {
@@ -163,11 +166,11 @@ func (s *Session) handleDatagram(datagram Datagram) {
 				}
 			}
 		} else {
-			s.deliverResponse(response)
+			matched = s.deliverResponse(response)
 		}
 	}
 	if s.onDatagram != nil {
-		s.onDatagram(datagram.Clone())
+		s.onDatagram(datagram.Clone(), matched)
 	}
 }
 
@@ -223,7 +226,7 @@ func (s *Session) handleUnframed(data []byte) {
 	}
 }
 
-func (s *Session) deliverResponse(response BEMResponse) {
+func (s *Session) deliverResponse(response BEMResponse) bool {
 	key := responseKey{bstID: response.BSTID, bemID: response.BEMID, origin: response.Origin}
 	s.mu.Lock()
 	pending := s.pending[key]
@@ -238,7 +241,7 @@ func (s *Session) deliverResponse(response BEMResponse) {
 	s.mu.Unlock()
 	if pending == nil {
 		s.metrics.bemCorrelationMisses.Add(1)
-		return
+		return false
 	}
 	result := responseResult{response: response}
 	if overflow {
@@ -250,6 +253,7 @@ func (s *Session) deliverResponse(response BEMResponse) {
 		result.err = &DeviceError{Command: response.BEMID, Code: response.ErrorCode}
 	}
 	pending.results <- result
+	return true
 }
 
 func (s *Session) finish(err error) {
@@ -321,16 +325,26 @@ func (s *Session) WriteContext(ctx context.Context, buf []byte) error {
 		return errors.New("actisense: session has no writer")
 	}
 	s.metrics.transportWriteCalls.Add(1)
-	if s.onWireBytes != nil {
-		s.onWireBytes(WireTransmitted, time.Now(), append([]byte(nil), buf...))
-	}
 	writeCtx, cancel := context.WithCancel(ctx)
 	stop := context.AfterFunc(s.ctx, cancel)
 	defer func() {
 		stop()
 		cancel()
 	}()
-	err := write(writeCtx, buf)
+	n, err := write(writeCtx, buf)
+	if n < 0 || n > len(buf) {
+		err = fmt.Errorf("actisense: invalid write count %d for %d bytes", n, len(buf))
+	} else {
+		if n > 0 {
+			s.metrics.transportWriteBytes.Add(uint64(n))
+			if s.onWireBytes != nil {
+				s.onWireBytes(WireTransmitted, time.Now(), append([]byte(nil), buf[:n]...))
+			}
+		}
+		if err == nil && n != len(buf) {
+			err = io.ErrShortWrite
+		}
+	}
 	if ctx.Err() != nil {
 		err = ctx.Err()
 	} else if writeCtx.Err() != nil {
@@ -338,8 +352,6 @@ func (s *Session) WriteContext(ctx context.Context, buf []byte) error {
 	}
 	if err != nil {
 		s.metrics.transportWriteErrors.Add(1)
-	} else {
-		s.metrics.transportWriteBytes.Add(uint64(len(buf)))
 	}
 	return err
 }
@@ -525,7 +537,7 @@ func (s *Session) GetTxPGN(ctx context.Context, pgn uint32) (TxPGNState, error) 
 	if err != nil {
 		return TxPGNState{}, err
 	}
-	return DecodeTxPGNState(response)
+	return decodeRequestedTxPGN(response, pgn)
 }
 
 func (s *Session) SetTxPGN(ctx context.Context, pgn uint32, enabled bool) error {

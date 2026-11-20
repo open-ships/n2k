@@ -28,7 +28,7 @@ func TestProprietary(t *testing.T) {
 	}
 	u := p.UnknownPGN()
 	assert.Equal(t, pgn.ManufacturerCodeBG, u.ManufacturerCode)
-	//	assert.Equal(t, uint8(4), p.IndustryCode) Not set--not used for matches, so really don't care
+	assert.Equal(t, pgn.IndustryCodeConst(4), u.IndustryCode)
 }
 
 // TestEmpty verifies that creating an UnknownPGN from an empty/invalid packet still

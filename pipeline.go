@@ -99,7 +99,6 @@ func (p *readPipeline) HandleObservation(observation raw.Observation) {
 		}
 		packet := decoder.NewPacket(info, observation.Payload)
 		packet.Complete = true
-		packet.FilterCandidates()
 		p.decoder.Decode(*packet)
 		return
 	}
@@ -141,7 +140,7 @@ func (p *readPipeline) setObservationOutput(observe func(raw.Observation)) {
 }
 
 // InjectAssembled feeds an already-assembled payload (e.g. an ISO-TP reassembly)
-// through candidate filtering and decode. Replaces the decoder-internals knowledge
+// through variant selection and decode. Replaces the decoder-internals knowledge
 // that previously lived in Client's transport OnComplete closure.
 func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
 	p.mu.Lock()
@@ -152,13 +151,21 @@ func (p *readPipeline) InjectAssembled(info pgn.MessageInfo, data []byte) {
 	p.decodeAssembled(info, data)
 }
 
+// deliverCompletedTransfer receives a transfer already admitted in its original
+// epoch. The command itself can change our address before user delivery. Keep
+// that observation's original identity without reopening partial assemblies.
+func (p *readPipeline) deliverCompletedTransfer(info pgn.MessageInfo, data []byte) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.decodeAssembled(info, data)
+}
+
 func (p *readPipeline) decodeAssembled(info pgn.MessageInfo, data []byte) {
 	if p.filter != nil && !p.filter.evalPre(info) {
 		return
 	}
 	packet := decoder.NewPacket(info, data)
 	packet.Complete = true
-	packet.FilterCandidates()
 	p.Decode(*packet)
 }
 

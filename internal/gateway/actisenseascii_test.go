@@ -97,7 +97,7 @@ func TestActisenseMode6DemuxDivertsBinaryBeforeLineBuffering(t *testing.T) {
 		observations []raw.Observation
 	)
 	session := actisense.NewSession(actisense.SessionConfig{
-		OnDatagram: func(datagram actisense.Datagram) { datagrams = append(datagrams, datagram) },
+		OnDatagram: func(datagram actisense.Datagram, _ bool) { datagrams = append(datagrams, datagram) },
 		OnUnframed: func(data []byte) {
 			lines.feed(data, func(observation raw.Observation) { observations = append(observations, observation) })
 		},

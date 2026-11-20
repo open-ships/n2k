@@ -1,6 +1,7 @@
 package pgn
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -73,6 +74,11 @@ type SourceFieldDefinition struct {
 // decode/encode plan for each PGN struct type.
 var structInfoLookup map[string]*PgnInfo
 
+// decodeVariants orders specific selectors before broader variants and fallbacks.
+var decodeVariants map[uint32][]*PgnInfo
+var variantSelectors map[*PgnInfo][]*FieldDescriptor
+var errVariantMismatch = errors.New("PGN variant selector mismatch")
+
 func init() {
 	initPgnInfoLookup()
 }
@@ -83,12 +89,16 @@ func initPgnInfoLookup() {
 	}
 
 	PgnInfoLookup = make(map[uint32][]*PgnInfo)
+	decodeVariants = make(map[uint32][]*PgnInfo)
+	variantSelectors = make(map[*PgnInfo][]*FieldDescriptor, len(sourceDefinitions))
 	UnseenLookup = make(map[uint32][]*PgnInfo)
 	structInfoLookup = make(map[string]*PgnInfo, len(sourceDefinitions))
 
 	infos := make([]*PgnInfo, 0, len(sourceDefinitions))
 	for _, def := range sourceDefinitions {
-		info := pgnInfoFromSource(def)
+		info, selectors := pgnInfoFromSource(def)
+		decodeVariants[info.PGN] = append(decodeVariants[info.PGN], info)
+		variantSelectors[info] = selectors
 		infos = append(infos, info)
 		structInfoLookup[info.Id] = info
 	}
@@ -106,14 +116,32 @@ func initPgnInfoLookup() {
 			UnseenLookup[info.PGN] = append(UnseenLookup[info.PGN], info)
 		}
 	}
+	for _, variants := range decodeVariants {
+		sort.SliceStable(variants, func(i, j int) bool {
+			a, b := variants[i], variants[j]
+			if a.Fallback != b.Fallback {
+				return !a.Fallback
+			}
+			sa, sb := variantSelectors[a], variantSelectors[b]
+			if len(sa) != len(sb) {
+				return len(sa) > len(sb)
+			}
+			// DSC distress format takes precedence over an overlapping category.
+			return len(sa) > 0 && sa[0].BitOffset < sb[0].BitOffset
+		})
+	}
 }
 
-func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
+func pgnInfoFromSource(def SourceDefinition) (*PgnInfo, []*FieldDescriptor) {
 	fields := make(map[int]*FieldDescriptor, len(def.Fields))
+	selectors := make([]*FieldDescriptor, 0)
 	var manID ManufacturerCodeConst
 	for _, field := range def.Fields {
 		fd := fieldDescriptorFromSource(field)
 		fields[field.Order] = fd
+		if fd.Match != nil {
+			selectors = append(selectors, fd)
+		}
 		if field.Name == "Manufacturer Code" && field.Match != nil {
 			manID = ManufacturerCodeConst(*field.Match)
 		}
@@ -145,7 +173,7 @@ func pgnInfoFromSource(def SourceDefinition) *PgnInfo {
 		Fields:                       fields,
 	}
 	info.DecodeComplete, info.EncodeComplete, info.CodecLimitations = codecSupport(def)
-	return info
+	return info, selectors
 }
 
 func codecSupport(def SourceDefinition) (bool, bool, []string) {
@@ -241,22 +269,28 @@ func (info *PgnInfo) MatchesData(data []uint8) bool {
 	if info == nil {
 		return false
 	}
-	for _, field := range info.Fields {
-		if field.Match == nil {
-			continue
-		}
-		if field.BitLength == 0 {
-			return false
-		}
-		value, err := readRawAt(data, field.BitOffset, field.BitLength)
-		if err != nil {
-			return false
-		}
-		if int(value) != *field.Match {
-			return false
+	return info.matchPayload(data) == nil
+}
+
+func (info *PgnInfo) matchPayload(data []byte) error {
+	selectors, registered := variantSelectors[info]
+	if !registered { // A caller can also construct a standalone descriptor.
+		for _, order := range sortedFieldOrders(info.Fields) {
+			if field := info.Fields[order]; field != nil && field.Match != nil {
+				selectors = append(selectors, field)
+			}
 		}
 	}
-	return true
+	for _, field := range selectors {
+		value, err := readRawAt(data, field.BitOffset, field.BitLength)
+		if err != nil {
+			return err
+		}
+		if field.BitLength == 0 || int(value) != *field.Match {
+			return errVariantMismatch
+		}
+	}
+	return nil
 }
 
 // FilterMatchingPgnInfos returns candidates whose selectors match data. If none

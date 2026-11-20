@@ -115,7 +115,7 @@ func (d *ActisenseRemoteDevice) Diagnostics() iter.Seq2[ActisenseDiagnostic, err
 			if diagnostic.Response.Origin.Path != ActisenseBEMRemote || diagnostic.Response.Origin.Source != d.SourceAddress {
 				continue
 			}
-			if !yield(cloneActisenseDiagnostic(diagnostic), nil) {
+			if !yield(diagnostic, nil) {
 				return
 			}
 		}

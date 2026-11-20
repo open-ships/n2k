@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/gateway"
 	"github.com/open-ships/n2k/raw"
 )
@@ -45,17 +44,10 @@ func (s *serialSource) run(ctx context.Context, log *slog.Logger, handler func(r
 	case FormatActisenseN2KASCII:
 		return gateway.RunPassiveActisenseN2KASCIISerialObservations(ctx, s.port, settings, handler)
 	}
-	bus := s.newBus(log)
-	if bus == nil {
-		return fmt.Errorf("n2k: serial format %d is not supported", s.format)
+	if mode, ok := s.format.actisenseRawMode(); ok {
+		return wrapActisenseModeError(gateway.RunActisenseSerialCapture(ctx, log, s.port, settings, mode, handler))
 	}
-	defer func() { _ = bus.Close() }()
-	if observationBus, ok := bus.(ObservationBus); ok {
-		return wrapActisenseModeError(observationBus.RunObservations(ctx, handler))
-	}
-	return wrapActisenseModeError(bus.Run(ctx, func(frame can.Frame) {
-		handler(frameObservation(frame, "serial:"+s.port, s.port, raw.DirectionReceived))
-	}))
+	return fmt.Errorf("n2k: serial format %d is not supported", s.format)
 }
 
 func (s *serialSource) newBus(log *slog.Logger) Bus {

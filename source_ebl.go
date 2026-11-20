@@ -41,7 +41,6 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 	defer closeSourceOnCancel(ctx, file)()
 
 	bstParser := actisense.NewParser()
-	adapter := gateway.NewActisenseObservationAdapter()
 	var lastTimestamp time.Time
 	emitWithContext := func(event ebl.Event, observation raw.Observation) {
 		if event.HasTimestamp {
@@ -86,12 +85,12 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 			return
 		}
 		handleDatagram := func(datagram actisense.Datagram) {
-			adapter.HandleDatagram(datagram, func(observation raw.Observation) {
+			gateway.ObserveActisenseDatagram(datagram, func(observation raw.Observation) {
 				emitWithContext(event, observation)
 			})
 		}
 		handleDecodeError := func(decodeErr actisense.DecodeError) {
-			adapter.HandleDecodeError(decodeErr, func(observation raw.Observation) {
+			gateway.ObserveActisenseDecodeError(decodeErr, func(observation raw.Observation) {
 				emitWithContext(event, observation)
 			})
 		}
@@ -131,7 +130,7 @@ func (s *eblSource) run(ctx context.Context, _ *slog.Logger, handler func(raw.Ob
 	if ctx.Err() == nil {
 		var trailingUnframed []byte
 		bstParser.EndWithUnframed(func(decodeErr actisense.DecodeError) {
-			adapter.HandleDecodeError(decodeErr, func(observation raw.Observation) {
+			gateway.ObserveActisenseDecodeError(decodeErr, func(observation raw.Observation) {
 				observation.AdapterID = "ebl:" + s.path
 				observation.NetworkID = s.path
 				handler(observation)

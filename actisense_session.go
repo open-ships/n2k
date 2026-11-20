@@ -453,7 +453,7 @@ func (s *ActisenseGatewaySession) Diagnostics() iter.Seq2[ActisenseDiagnostic, e
 		subscription := s.diagnostics.subscribe()
 		defer subscription.unsubscribe()
 		for diagnostic := range subscription.ch {
-			if !yield(cloneActisenseDiagnostic(diagnostic), nil) {
+			if !yield(diagnostic, nil) {
 				return
 			}
 		}
@@ -736,24 +736,7 @@ func newActisenseDiagnosticHub(buffer int) *actisenseDiagnosticHub {
 	return &actisenseDiagnosticHub{buffer: buffer, subscribers: make(map[*actisenseDiagnosticSubscription]struct{})}
 }
 
-func cloneActisenseDiagnostic(value ActisenseDiagnostic) ActisenseDiagnostic {
-	value.Response.Data = append([]byte(nil), value.Response.Data...)
-	if value.ErrorReport != nil {
-		copyReport := *value.ErrorReport
-		copyReport.ContextData = append([]byte(nil), value.ErrorReport.ContextData...)
-		value.ErrorReport = &copyReport
-	}
-	if value.System != nil {
-		copyStatus := *value.System
-		copyStatus.Individual = append([]actisense.IndividualBufferStatus(nil), value.System.Individual...)
-		copyStatus.Unified = append([]actisense.UnifiedBufferStatus(nil), value.System.Unified...)
-		value.System = &copyStatus
-	}
-	return value
-}
-
 func (h *actisenseDiagnosticHub) publish(value actisense.Diagnostic) {
-	value = cloneActisenseDiagnostic(value)
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	if h.closed {
@@ -762,15 +745,15 @@ func (h *actisenseDiagnosticHub) publish(value actisense.Diagnostic) {
 	if len(h.subscribers) == 0 {
 		if len(h.backlog) == h.buffer {
 			copy(h.backlog, h.backlog[1:])
-			h.backlog[len(h.backlog)-1] = value
+			h.backlog[len(h.backlog)-1] = value.Clone()
 		} else {
-			h.backlog = append(h.backlog, value)
+			h.backlog = append(h.backlog, value.Clone())
 		}
 		return
 	}
 	for subscription := range h.subscribers {
 		select {
-		case subscription.ch <- cloneActisenseDiagnostic(value):
+		case subscription.ch <- value.Clone():
 		default:
 			subscription.failLocked(ErrObservationOverflow)
 			delete(h.subscribers, subscription)
@@ -783,7 +766,7 @@ func (h *actisenseDiagnosticHub) subscribe() *actisenseDiagnosticSubscription {
 	defer h.mu.Unlock()
 	subscription := &actisenseDiagnosticSubscription{hub: h, ch: make(chan ActisenseDiagnostic, h.buffer)}
 	for _, value := range h.backlog {
-		subscription.ch <- cloneActisenseDiagnostic(value)
+		subscription.ch <- value
 	}
 	h.backlog = nil
 	if h.closed {

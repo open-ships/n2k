@@ -27,7 +27,8 @@ type PGNDataStreamWriter struct {
 	err error
 	// canonical disables physical-range validation for decoded-state comparison.
 	// Bit-width validation remains enabled in the primitive writer.
-	canonical bool
+	canonical   bool
+	compactText bool // keep decoded text within its original wire budget
 }
 
 // NewPGNDataStreamWriter creates a PGNDataStreamWriter with an empty payload buffer.
@@ -69,6 +70,17 @@ func (w *PGNDataStreamWriter) setErr(err error) {
 //  5. Shift value right by the number of bits written, advance cursor.
 func (w *PGNDataStreamWriter) putNumberRaw(value uint64, bitLength uint16) error {
 	if w.err != nil {
+		return w.err
+	}
+	limit := maxPayloadBytes
+	if w.canonical {
+		// Private comparison bytes can expand when an omitted trailing field
+		// becomes explicit, or text changes encoding. Only real writes must
+		// fit the transport ceiling.
+		limit = 4 * maxPayloadBytes
+	}
+	if int(w.byteOffset)*8+int(w.bitOffset)+int(bitLength) > limit*8 {
+		w.setErr(errPayloadTooLarge)
 		return w.err
 	}
 	if bitLength < 64 {
@@ -177,14 +189,11 @@ func (w *PGNDataStreamWriter) writeSpareBits(bitLength uint16) {
 }
 
 func (w *PGNDataStreamWriter) writeReservedBits(bitLength uint16) {
-	if bitLength == 0 {
-		return
+	for bitLength > 0 && w.err == nil {
+		chunk := min(bitLength, 64)
+		w.setErr(w.putNullUnsigned(chunk))
+		bitLength -= chunk
 	}
-	maxVal := uint64(0xFFFFFFFFFFFFFFFF)
-	if bitLength < 64 {
-		maxVal = (1 << bitLength) - 1
-	}
-	w.setErr(w.putNumberRaw(maxVal, bitLength))
 }
 
 func (w *PGNDataStreamWriter) skipBits(bitLength uint16) {
@@ -313,10 +322,10 @@ func (w *PGNDataStreamWriter) writeFloat32(value *float32) {
 
 func (w *PGNDataStreamWriter) writeBinaryData(data []uint8, bitLength uint16) {
 	idx := 0
-	for i := uint16(0); i < bitLength; i += 64 {
+	for i := 0; i < int(bitLength) && w.err == nil; i += 64 {
 		num := uint16(64)
-		if bitLength-i < 64 {
-			num = bitLength - i
+		if int(bitLength)-i < 64 {
+			num = uint16(int(bitLength) - i)
 		}
 		var value uint64
 		for h := uint16(0); h < num; h += 8 {
@@ -362,16 +371,19 @@ func (w *PGNDataStreamWriter) writeStringWithLength(s string) {
 }
 
 func (w *PGNDataStreamWriter) writeStringWithLengthAndControl(s string) {
-	sBytes := []uint8(s)
-	if len(sBytes) > 253 {
-		w.setErr(fmt.Errorf("STRING_LAU is %d bytes; maximum is 253", len(sBytes)))
+	w.writeSizedControlString(s, 253)
+}
+
+func (w *PGNDataStreamWriter) writeSizedControlString(s string, limit int) {
+	control, data, err := encodeControlText(s, limit, w.compactText)
+	if err != nil {
+		w.setErr(err)
 		return
 	}
-	// totalLength counts itself, the control byte, and the string bytes -- there is no
-	// trailing NUL, matching readStringWithLengthAndControl's inverse expectations.
-	totalLength := uint8(len(sBytes) + 2)
-	controlByte := uint8(1)
-	header := []uint8{totalLength, controlByte}
-	w.writeBinaryData(header, 16)
-	w.writeBinaryData(sBytes, uint16(len(sBytes))*8)
+	w.writeControlText(control, data)
+}
+
+func (w *PGNDataStreamWriter) writeControlText(control byte, data []byte) {
+	w.writeBinaryData([]byte{byte(len(data) + 2), control}, 16)
+	w.writeBinaryData(data, uint16(len(data))*8)
 }

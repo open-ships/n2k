@@ -251,3 +251,29 @@ func TestRegistry_OwnsObservedMessagesAndSnapshotMetadata(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, payload, replayed, "snapshot must preserve untouched decoded payload")
 }
+
+func TestRegistryPreservesOwnerWhileDispatchLags(t *testing.T) {
+	c, _, _ := newCitizenClient(t)
+	const source = 0x42
+	c.handleBusFrame(claimFrame(testDeviceName, source))
+
+	// Hold protocol dispatch across the completed message and the newer
+	// claim, exactly as a backed-up dispatch worker would.
+	func() {
+		c.dispatchMu.Lock()
+		defer c.dispatchMu.Unlock()
+		for _, f := range fastPacketFrames(t, &pgn.ProductInformation{ModelId: "first"}, 6, source, 255) {
+			c.handleBusFrame(f)
+		}
+		owner, ok := c.DeviceAt(source)
+		require.True(t, ok)
+		require.NotNil(t, owner.ProductInfo)
+		require.Equal(t, "first", owner.ProductInfo.ModelId)
+		second := testDeviceName
+		second.IdentityNumber++
+		c.handleBusFrame(claimFrame(second, source))
+	}()
+	owner, ok := c.DeviceAt(source)
+	require.True(t, ok)
+	require.Nil(t, owner.ProductInfo)
+}

@@ -15,11 +15,7 @@ func buildUnknownPGN(p *Packet) *pgn.UnknownPGN {
 	ret.Info = p.Info
 
 	if pgn.IsProprietaryPGN(ret.Info.PGN) {
-		if p.Manufacturer != 0 {
-			ret.ManufacturerCode = p.Manufacturer
-		} else {
-			ret.ManufacturerCode, ret.IndustryCode, _ = pgn.GetProprietaryInfo(p.Data)
-		}
+		ret.ManufacturerCode, ret.IndustryCode, _ = pgn.GetProprietaryInfo(p.Data)
 	}
 
 	ret.WasUnseen = pgn.SearchUnseenList(ret.Info.PGN)

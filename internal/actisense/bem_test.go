@@ -42,12 +42,12 @@ func TestBEMRequestIndependentGoldenVectors(t *testing.T) {
 func TestSessionRequiresExpectedResponseGroup(t *testing.T) {
 	reader, writer := io.Pipe()
 	defer func() { _ = reader.Close() }()
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		if _, err := writer.Write(bemResponseDatagramWithBST(t, 0xA2, BEMOperatingMode, 0, []byte{1, 0})); err != nil {
-			return err
+			return len(buf), err
 		}
 		_, err := writer.Write(bemResponseDatagram(t, BEMOperatingMode, 0, []byte{5, 0}))
-		return err
+		return len(buf), err
 	}})
 	go func() { _ = session.Run(reader) }()
 
@@ -63,13 +63,13 @@ func TestSessionRequiresExpectedResponseGroup(t *testing.T) {
 func TestSessionCollectsBoundedMultiResponseTrain(t *testing.T) {
 	reader, writer := io.Pipe()
 	defer func() { _ = reader.Close() }()
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		for _, data := range [][]byte{{1}, {2}} {
 			if _, err := writer.Write(bemResponseDatagram(t, BEMOperatingMode, 0, data)); err != nil {
-				return err
+				return len(buf), err
 			}
 		}
-		return nil
+		return len(buf), nil
 	}})
 	go func() { _ = session.Run(reader) }()
 
@@ -89,13 +89,13 @@ func TestSessionCollectsBoundedMultiResponseTrain(t *testing.T) {
 func TestSessionResponse257TerminatesWithoutBlockingSoleReader(t *testing.T) {
 	reader, writer := io.Pipe()
 	defer func() { _ = reader.Close() }()
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		for index := 0; index <= maxBEMResponseTrain; index++ {
 			if _, err := writer.Write(bemResponseDatagram(t, BEMProductInfo, 0, []byte{byte(index)})); err != nil {
-				return err
+				return len(buf), err
 			}
 		}
-		return nil
+		return len(buf), nil
 	}})
 	go func() { _ = session.Run(reader) }()
 
@@ -118,11 +118,11 @@ func TestSessionOperatingModeAcknowledged(t *testing.T) {
 	defer func() { _ = writer.Close() }()
 
 	var writeMu sync.Mutex
-	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		writeMu.Lock()
 		defer writeMu.Unlock()
 		_, err := writer.Write(bemResponseDatagram(t, BEMOperatingMode, 0, []byte{5, 0}))
-		return err
+		return len(buf), err
 	}})
 	runErr := make(chan error, 1)
 	go func() { runErr <- session.Run(reader) }()
@@ -136,7 +136,7 @@ func TestSessionOperatingModeAcknowledged(t *testing.T) {
 }
 
 func TestSessionRejectsSameVerbCollision(t *testing.T) {
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error { return nil }})
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) { return len(buf), nil }})
 	ctx, cancel := context.WithCancel(context.Background())
 	first := make(chan error, 1)
 	go func() {
@@ -157,9 +157,9 @@ func TestSessionRejectsSameVerbCollision(t *testing.T) {
 func TestSessionSurfacesDeviceError(t *testing.T) {
 	reader, writer := io.Pipe()
 	defer func() { _ = reader.Close() }()
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		_, err := writer.Write(bemResponseDatagram(t, BEMActivatePGNLists, -1159, nil))
-		return err
+		return len(buf), err
 	}})
 	go func() { _ = session.Run(reader) }()
 
@@ -198,11 +198,11 @@ func TestDecodeDiagnostics(t *testing.T) {
 func TestSessionNegativeAckFailsExactRequest(t *testing.T) {
 	reader, writer := io.Pipe()
 	defer func() { _ = reader.Close() }()
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error {
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) {
 		data := make([]byte, 4)
 		binary.LittleEndian.PutUint32(data, uint32(BEMOperatingMode))
 		_, err := writer.Write(bemResponseDatagram(t, BEMNegativeAck, -1159, data))
-		return err
+		return len(buf), err
 	}})
 	go func() { _ = session.Run(reader) }()
 
@@ -241,7 +241,7 @@ func TestNegativeAckFallbackNeverCrossesResponseGroup(t *testing.T) {
 }
 
 func TestSessionMetricsCountUnframedDecodeAndTimeout(t *testing.T) {
-	session := NewSession(SessionConfig{Write: func(context.Context, []byte) error { return nil }})
+	session := NewSession(SessionConfig{Write: func(_ context.Context, buf []byte) (int, error) { return len(buf), nil }})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Millisecond)
 	defer cancel()
 	_, err := session.Request(ctx, BEMEcho, nil)

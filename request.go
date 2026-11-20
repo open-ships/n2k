@@ -66,7 +66,7 @@ func Request[T pgn.Message](ctx context.Context, c *Client, target uint8) (T, er
 		c.mu.Unlock()
 		return zero, err
 	}
-	w, err := c.correlator.add(pgnNum, target, c.sourceAddr, c.connectionEpoch, c.claimEpoch)
+	w, err := c.correlator.add(pgnNum, target, c.sourceAddr, c.connectionEpoch, c.claimEpoch, structType)
 	requestCtx, stop := c.writeContextLocked(ctx, false)
 	c.mu.Unlock()
 	defer stop()
@@ -84,26 +84,20 @@ func Request[T pgn.Message](ctx context.Context, c *Client, target uint8) (T, er
 		return zero, fmt.Errorf("n2k: sending ISO request for PGN %d: %w", pgnNum, err)
 	}
 
-	for {
+	select {
+	case msg := <-w.ch:
 		select {
-		case msg := <-w.ch:
-			select {
-			case <-w.done:
-				return zero, w.err
-			default:
-			}
-			// The same PGN can decode to several variants; keep waiting
-			// until the requested type shows up.
-			if typed, ok := msg.(T); ok {
-				return typed, nil
-			}
-		case <-requestCtx.Done():
-			return zero, context.Cause(requestCtx)
 		case <-w.done:
 			return zero, w.err
-		case <-c.ctx.Done():
-			return zero, c.operationError()
+		default:
+			return msg.(T), nil
 		}
+	case <-requestCtx.Done():
+		return zero, context.Cause(requestCtx)
+	case <-w.done:
+		return zero, w.err
+	case <-c.ctx.Done():
+		return zero, c.operationError()
 	}
 }
 
@@ -116,6 +110,7 @@ type correlator struct {
 // waiter is one in-flight Request: a PGN, the address the request went to
 // (255 = any responder), and a channel the response is delivered on.
 type waiter struct {
+	responseType    reflect.Type
 	pgn             uint32
 	target          uint8
 	ch              chan pgn.Message
@@ -131,15 +126,15 @@ func newCorrelator() *correlator {
 }
 
 // add registers a waiter for a PGN from target (255 = any source).
-func (co *correlator) add(pgnNum uint32, target, local uint8, connection, claim uint64) (*waiter, error) {
+func (co *correlator) add(pgnNum uint32, target, local uint8, connection, claim uint64, responseType reflect.Type) (*waiter, error) {
 	co.mu.Lock()
 	defer co.mu.Unlock()
 	if len(co.waiters) >= maxPendingRequests {
 		return nil, ErrRequestQueueFull
 	}
-	w := &waiter{pgn: pgnNum, target: target, local: local,
+	w := &waiter{responseType: responseType, pgn: pgnNum, target: target, local: local,
 		connectionEpoch: connection, claimEpoch: claim,
-		ch: make(chan pgn.Message, 4), done: make(chan struct{})}
+		ch: make(chan pgn.Message, 1), done: make(chan struct{})}
 	co.waiters = append(co.waiters, w)
 	return w, nil
 }
@@ -181,7 +176,7 @@ func (co *correlator) observe(msg pgn.Message) {
 		if info.ConnectionEpoch != w.connectionEpoch || info.ClaimEpoch != w.claimEpoch {
 			continue
 		}
-		if w.pgn != info.PGN {
+		if w.pgn != info.PGN || w.responseType != reflect.TypeOf(msg) {
 			continue
 		}
 		if w.target != 255 && w.target != info.SourceId {

@@ -2,18 +2,18 @@ package canbus
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"time"
 
-	"github.com/brutella/can"
 	"golang.org/x/sys/unix"
 )
 
 // Own the descriptor setup: a blocking AF_CAN descriptor cannot reliably be
 // interrupted by Close from another goroutine. Nonblocking mode enrolls the
 // socket in Go's poller, giving reads and writes a real cancellation boundary.
-func newSocketCANBus(name string) (*can.Bus, error) {
+func openSocketCAN(name string) (io.ReadWriteCloser, error) {
 	iface, err := net.InterfaceByName(name)
 	if err != nil {
 		return nil, err
@@ -35,5 +35,5 @@ func newSocketCANBus(name string) (*can.Bus, error) {
 		_ = file.Close()
 		return nil, fmt.Errorf("CAN socket does not support cancellation: %w", err)
 	}
-	return can.NewBus(can.NewReadWriteCloser(file)), nil
+	return file, nil
 }

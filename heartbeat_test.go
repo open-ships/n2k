@@ -3,6 +3,7 @@ package n2k
 import (
 	"context"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/brutella/can"
@@ -110,4 +111,44 @@ func TestHeartbeat_ReplayClientHasNone(t *testing.T) {
 	require.NoError(t, err)
 	defer func() { _ = c.Close() }()
 	assert.Nil(t, c.heartbeat)
+}
+
+func TestHeartbeatFollowsConnectionAndClaimReadiness(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		bus := &startupEpochBus{mockBus: newMockBus()}
+		const interval = 40 * time.Millisecond
+		client, err := NewClient(t.Context(), WithBus(bus), WithName(DeviceName{IdentityNumber: 10}),
+			WithClaimTimeout(20*time.Millisecond), WithHeartbeatInterval(interval))
+		require.NoError(t, err)
+		defer func() { _ = client.Close() }()
+		synctest.Wait()
+		beats := func() []can.Frame { return framesWithPGN(bus.getWritten(), 126993) }
+		require.Len(t, beats(), 1)
+
+		bus.observer(false, 1)
+		synctest.Wait()
+		admitted := client.Status().ProtocolWritesAccepted
+		time.Sleep(3 * interval)
+		synctest.Wait()
+		require.Equal(t, admitted, client.Status().ProtocolWritesAccepted)
+		require.Zero(t, client.Status().ProtocolRequiredQueueDepth)
+
+		bus.observer(true, 2)
+		synctest.Wait()
+		time.Sleep(addressContentionWindow - time.Millisecond)
+		require.Len(t, beats(), 1)
+		time.Sleep(time.Millisecond)
+		synctest.Wait()
+		require.Len(t, beats(), 2)
+
+		bus.inbound <- claimFrame(DeviceName{IdentityNumber: 1}, 251)
+		synctest.Wait()
+		time.Sleep(addressContentionWindow - time.Millisecond)
+		require.Len(t, beats(), 2)
+		require.Zero(t, client.Status().ProtocolRequiredQueueDepth)
+		time.Sleep(time.Millisecond)
+		synctest.Wait()
+		require.Len(t, beats(), 3)
+		require.Equal(t, uint8(250), framer.ParseCANID(beats()[2].ID).Source)
+	})
 }

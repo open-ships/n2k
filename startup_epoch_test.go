@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/brutella/can"
@@ -112,4 +113,113 @@ func TestStartupConnectionWaitIsBounded(t *testing.T) {
 	require.ErrorContains(t, err, "ready timeout")
 	require.Less(t, time.Since(started), time.Second)
 	require.Empty(t, bus.getWritten())
+}
+
+type replacementClaimBus struct {
+	*mockBus
+	hold    uint8
+	release chan struct{}
+}
+
+func (b *replacementClaimBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
+	id := framer.ParseCANID(frame.ID)
+	if id.PGN == framer.PGNISOAddressClaim && id.Source == b.hold {
+		select {
+		case <-b.release:
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+	return b.WriteFrame(frame)
+}
+
+func TestStartupContentionFollowsSuccessfulReplacementClaim(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		bus := &replacementClaimBus{mockBus: newMockBus(), hold: 250, release: make(chan struct{})}
+		client, err := NewUnstartedClient(t.Context(), WithBus(bus), WithName(DeviceName{IdentityNumber: 10}),
+			WithClaimTimeout(time.Second), WithHeartbeatInterval(0))
+		require.NoError(t, err)
+		defer func() { _ = client.Close() }()
+		started := make(chan error, 1)
+		go func() { started <- client.Start() }()
+		synctest.Wait()
+		firstClaims := framesWithPGN(bus.getWritten(), framer.PGNISOAddressClaim)
+		require.Len(t, firstClaims, 1)
+		time.Sleep(150 * time.Millisecond)
+		bus.inbound <- claimFrame(DeviceName{IdentityNumber: 1}, 251)
+		synctest.Wait()
+		require.Equal(t, uint8(250), client.Status().Address)
+		require.ErrorIs(t, client.writeAddressClaim(firstClaims[0]), ErrEpochChanged)
+		time.Sleep(addressContentionWindow)
+		require.False(t, client.Status().Ready, "the replacement claim is still in the writer")
+
+		close(bus.release)
+		synctest.Wait()
+		time.Sleep(addressContentionWindow - time.Millisecond)
+		require.False(t, client.Status().Ready)
+		// A second change invalidates the first replacement's pending timer.
+		bus.inbound <- claimFrame(DeviceName{IdentityNumber: 2}, 250)
+		synctest.Wait()
+		require.Equal(t, uint8(249), client.Status().Address)
+		time.Sleep(addressContentionWindow - time.Millisecond)
+		require.False(t, client.Status().Ready)
+		time.Sleep(time.Millisecond)
+		synctest.Wait()
+		require.NoError(t, <-started)
+		require.True(t, client.Status().Ready)
+	})
+}
+
+func TestSlowInitialClaimObservesPostWriteContention(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		deadline    time.Duration
+		writeDelay  time.Duration
+		observation time.Duration
+		wantErr     error
+	}{
+		{"full contention misses deadline", time.Second, 900 * time.Millisecond, 100 * time.Millisecond, context.DeadlineExceeded},
+		{"short override starts at write", 100 * time.Millisecond, 80 * time.Millisecond, 100 * time.Millisecond, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			synctest.Test(t, func(t *testing.T) {
+				bus := &replacementClaimBus{mockBus: newMockBus(), hold: 251, release: make(chan struct{})}
+				client, err := NewUnstartedClient(t.Context(), WithBus(bus), WithClaimTimeout(tc.deadline),
+					WithHeartbeatInterval(0), WithWriteTimeout(2*time.Second))
+				require.NoError(t, err)
+				defer func() { _ = client.Close() }()
+				started := make(chan error, 1)
+				go func() { started <- client.Start() }()
+				synctest.Wait()
+				time.Sleep(tc.writeDelay)
+				close(bus.release)
+				synctest.Wait()
+				time.Sleep(tc.observation - time.Millisecond)
+				require.False(t, client.Status().Ready)
+				time.Sleep(time.Millisecond)
+				require.ErrorIs(t, <-started, tc.wantErr)
+				require.Equal(t, tc.wantErr == nil, client.Status().Ready)
+			})
+		})
+	}
+}
+
+func TestStartupDeadlineRejectsUnsettledAddress(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		bus := newMockBus()
+		client, err := NewUnstartedClient(t.Context(), WithBus(bus), WithName(DeviceName{IdentityNumber: 10}),
+			WithClaimTimeout(time.Second), WithHeartbeatInterval(0))
+		require.NoError(t, err)
+		defer func() { _ = client.Close() }()
+		started := make(chan error, 1)
+		go func() { started <- client.Start() }()
+		synctest.Wait()
+		time.Sleep(900 * time.Millisecond)
+		bus.inbound <- claimFrame(DeviceName{IdentityNumber: 1}, 251)
+		synctest.Wait()
+		require.Equal(t, uint8(250), client.Status().Address)
+		time.Sleep(100 * time.Millisecond)
+		require.ErrorIs(t, <-started, context.DeadlineExceeded)
+		require.False(t, client.Status().Ready)
+	})
 }

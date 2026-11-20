@@ -310,9 +310,10 @@ func WithPreferredAddress(addr uint8) Option {
 	})
 }
 
-// WithClaimTimeout sets how long NewClient blocks waiting for address claiming
-// to complete on a real CAN bus. Default is 1500ms. This allows time for the
-// initial 250ms claim window plus several rounds of contention renegotiation.
+// WithClaimTimeout sets the initial address-claim deadline (default 1500ms).
+// Each new address must settle for 250ms after its claim is written. Setting
+// d to 250ms or less bounds the first write by d, then observes the original
+// address for d after that write. Replacement addresses always require 250ms.
 func WithClaimTimeout(d time.Duration) Option {
 	return optionFunc(func(c *config) {
 		c.claimTimeout = &d

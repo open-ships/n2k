@@ -25,7 +25,10 @@ func TestActisenseSerialPseudoTerminalCancellation(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
 	defer cancel()
 	done := make(chan error, 1)
-	go func() { done <- writeActisenseUnitContext(ctx, connection, make([]byte, 1<<20)) }()
+	go func() {
+		_, err := writeActisenseUnitContext(ctx, connection, make([]byte, 1<<20))
+		done <- err
+	}()
 	select {
 	case err := <-done:
 		require.ErrorIs(t, err, context.DeadlineExceeded)

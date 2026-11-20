@@ -3,6 +3,7 @@ package n2k
 import (
 	"context"
 	"errors"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -130,10 +131,10 @@ func TestReliabilityRequestInvalidatedPromptly(t *testing.T) {
 func TestReliabilityRequestTableBoundAndDestinationIsolation(t *testing.T) {
 	co := newCorrelator()
 	for range maxPendingRequests {
-		_, err := co.add(126996, 42, 251, 1, 2)
+		_, err := co.add(126996, 42, 251, 1, 2, reflect.TypeFor[*pgn.ProductInformation]())
 		require.NoError(t, err)
 	}
-	_, err := co.add(126996, 42, 251, 1, 2)
+	_, err := co.add(126996, 42, 251, 1, 2, reflect.TypeFor[*pgn.ProductInformation]())
 	require.ErrorIs(t, err, ErrRequestQueueFull)
 	wrong := &pgn.ProductInformation{Info: pgn.MessageInfo{PGN: 126996, SourceId: 42, TargetId: pgn.Target(250), ConnectionEpoch: 1, ClaimEpoch: 2}}
 	co.observe(wrong)
@@ -214,7 +215,9 @@ func TestReliabilityReconnectAfterSupersededContentionGate(t *testing.T) {
 	c.handleConnectionChange(true, 2)
 	// Replace the reconnect gate with a contention gate, then invalidate it
 	// before its timer fires. Only the latest connection may become ready.
-	c.handleAddressChange(address - 1)
+	changed, err := c.claimer.HandleCommandedAddress(c.deviceName, address-1)
+	require.NoError(t, err)
+	require.True(t, changed)
 	c.handleConnectionChange(false, 2)
 	c.handleConnectionChange(true, 3)
 	require.Eventually(t, func() bool { return !c.Status().Rejoining }, 2*time.Second, time.Millisecond)

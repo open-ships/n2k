@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -139,7 +140,7 @@ func TestFastPacket(t *testing.T) {
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
-	assert.Equal(t, 1, len(p.Candidates))
+	assert.True(t, p.Fast)
 	data = []uint8{0x61, 0x86, 0x0A, 0x05, 0x80, 0x00, 0x58, 0xE8}
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
@@ -180,7 +181,7 @@ func TestFastPacket(t *testing.T) {
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
-	assert.Equal(t, 1, len(p.Candidates))
+	assert.True(t, p.Fast)
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
@@ -206,7 +207,7 @@ func TestFastPacket(t *testing.T) {
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
-	assert.Equal(t, 1, len(p.Candidates))
+	assert.True(t, p.Fast)
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
@@ -240,7 +241,7 @@ func TestFastPacket(t *testing.T) {
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
 	assert.False(t, p.Complete)
-	assert.Equal(t, 1, len(p.Candidates))
+	assert.True(t, p.Fast)
 	data = []uint8{0x64, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF}
 	p = decoder.NewPacket(pInfo, data)
 	m.Add(p)
@@ -248,4 +249,27 @@ func TestFastPacket(t *testing.T) {
 	assert.False(t, p.Complete)
 	assert.NotEqual(t, 32, len(p.Data))
 	assert.NotEqual(t, comp, p.Data)
+}
+
+func TestAddressedFastPacketsWithSameSequence(t *testing.T) {
+	builder := NewMultiBuilder()
+	const pgnNumber = 126208
+	frame := func(destination, seq byte, value byte) *decoder.Packet {
+		f := can.Frame{ID: framer.BuildCANID(pgnNumber, 6, 30, destination)}
+		data := []byte{seq, value, value, value}
+		if seq == 0 {
+			data = []byte{0, 9, value, value, value, value, value, value}
+		}
+		p := decoder.NewPacket(NewPacketInfo(&f), data)
+		builder.Add(p)
+		return p
+	}
+	for _, address := range []byte{0, 42, 255} {
+		assert.False(t, frame(address, 0, address).Complete)
+	}
+	for _, address := range []byte{42, 255, 0} {
+		packet := frame(address, 1, address)
+		assert.True(t, packet.Complete)
+		assert.Equal(t, bytes.Repeat([]byte{address}, 9), packet.Data)
+	}
 }

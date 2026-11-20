@@ -42,6 +42,17 @@ func (f StreamFormat) valid() bool {
 	return f >= FormatYDRaw && f <= FormatActisenseN2KASCII
 }
 
+func (f StreamFormat) actisenseRawMode() (ActisenseOperatingMode, bool) {
+	switch f {
+	case FormatActisenseRaw:
+		return ActisenseModeCANPacket, true
+	case FormatActisenseCANASCII:
+		return ActisenseModeCANPacketASCII, true
+	default:
+		return 0, false
+	}
+}
+
 // tcpSource reads gateway traffic from a TCP connection.
 type tcpSource struct {
 	addr      string
@@ -70,15 +81,8 @@ func (s *tcpSource) run(ctx context.Context, log *slog.Logger, handler func(raw.
 	if !s.format.valid() {
 		return fmt.Errorf("n2k: unknown stream format %d", s.format)
 	}
-	if s.format == FormatActisenseRaw || s.format == FormatActisenseCANASCII {
-		var bus Bus
-		if s.format == FormatActisenseRaw {
-			bus = gateway.NewActisenseRawTCPBus(log, s.addr, s.reconnect)
-		} else {
-			bus = gateway.NewActisenseCANASCIITCPBus(log, s.addr, s.reconnect)
-		}
-		defer func() { _ = bus.Close() }()
-		return wrapActisenseModeError(bus.(ObservationBus).RunObservations(ctx, handler))
+	if mode, ok := s.format.actisenseRawMode(); ok {
+		return wrapActisenseModeError(gateway.RunActisenseTCPCapture(ctx, log, s.addr, s.reconnect, mode, handler))
 	}
 
 	var backoff *gateway.Backoff

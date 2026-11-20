@@ -129,10 +129,20 @@ func (c *Client) writeProtocolContext(ctx context.Context, operation string, cla
 	}
 	job.msg = snapshot
 	c.mu.Lock()
-	if c.closed || c.terminalErr != nil {
+	if c.closed || c.terminalErr != nil || c.ctx.Err() != nil {
 		c.mu.Unlock()
 		job.stop()
 		result.complete(c.operationError())
+		return result
+	}
+	stamp := job.ctx.Value(writeStampKey{}).(writeStamp)
+	if err := context.Cause(job.ctx); err != nil || stamp.connection != c.connectionEpoch || stamp.claim != c.claimEpoch {
+		if err == nil {
+			err = ErrEpochChanged
+		}
+		c.mu.Unlock()
+		job.stop()
+		result.complete(err)
 		return result
 	}
 	err := c.protocolTx.admit(job)

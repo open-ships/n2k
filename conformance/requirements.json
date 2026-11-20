@@ -30,6 +30,11 @@
           "package": "github.com/open-ships/n2k/internal/claiming",
           "pattern": "^TestClaimer_RuntimeClaimWriteFailureIsFatal$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestStartupContentionFollowsSuccessfulReplacementClaim$",
+          "kind": "software"
         }
       ]
     },
@@ -57,6 +62,11 @@
           "package": "github.com/open-ships/n2k",
           "pattern": "^TestHeartbeat_SequenceCounterWraps$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestHeartbeatFollowsConnectionAndClaimReadiness$",
+          "kind": "software"
         }
       ]
     },
@@ -78,6 +88,16 @@
         {
           "package": "github.com/open-ships/n2k",
           "pattern": "^TestISORequest_UnsupportedBroadcastIgnored$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestRequestSkipsOtherVariantsBeforeBuffering$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestGatewayTransmitEchoStaysOutOfProtocolIngress$",
           "kind": "software"
         }
       ]
@@ -153,6 +173,11 @@
           "package": "github.com/open-ships/n2k/internal/adapter",
           "pattern": "^TestFastPacketSessionsAreIsolatedByNetwork$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/adapter",
+          "pattern": "^TestAddressedFastPacketsWithSameSequence$",
+          "kind": "software"
         }
       ]
     },
@@ -206,6 +231,11 @@
         {
           "package": "github.com/open-ships/n2k/internal/transport",
           "pattern": "^TestRTSCTSTransmit_RejectsAmbiguousConcurrentSession$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestCanceledRTSCTSJoinsAcceptedDataFrame$",
           "kind": "software"
         }
       ]
@@ -310,6 +340,11 @@
           "package": "github.com/open-ships/n2k",
           "pattern": "^TestStartupConnectionWaitIsBounded$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestSlowInitialClaimObservesPostWriteContention$",
+          "kind": "software"
         }
       ]
     },
@@ -332,6 +367,36 @@
           "package": "github.com/open-ships/n2k/pgn",
           "pattern": "^TestPutSignedNumberRejectsValuesOutsideSignedWidth$",
           "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestCodecPayloadLimit$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestAISPreservesExplicitBitCountAfterEdit$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestSchemaNumericNulls$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestControlTextDecoding$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestSimnetCapturedCompactAlarm$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^TestMetadataFieldLookupUsesSpecificAndUnambiguousVariants$",
+          "kind": "software"
         }
       ]
     },
@@ -353,6 +418,21 @@
         {
           "package": "github.com/open-ships/n2k/internal/gateway",
           "pattern": "^TestParseYDRawObservation_PreservesTransportContext$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestRegistryPreservesOwnerWhileDispatchLags$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestObserveReturnsRootSourceFailure$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/canbus",
+          "pattern": "^TestSocketCANWireFormat$",
           "kind": "software"
         }
       ]
@@ -407,6 +487,11 @@
         {
           "package": "github.com/open-ships/n2k/internal/actisense",
           "pattern": "^TestSessionResponse257TerminatesWithoutBlockingSoleReader$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/actisense",
+          "pattern": "^TestPGNListGettersRequireRequestedPGN$",
           "kind": "software"
         }
       ]
@@ -483,6 +568,16 @@
         {
           "package": "github.com/open-ships/n2k",
           "pattern": "^TestEBLSourceFeedsLargeD0AsAssembledMessage$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k",
+          "pattern": "^TestEBLBST93RemainsOneOwnedAssembledMessage$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/internal/gateway",
+          "pattern": "^TestActisenseWireTraceMatchesPartialPhysicalWrite$",
           "kind": "software"
         }
       ]

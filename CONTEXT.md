@@ -31,11 +31,14 @@ explains the runtime design.
   error layer carrying source/network identity, capture and receipt time, and
   receive/transmit direction.
 - **System router**: protocol-only decode path for claiming, requests, group
-  functions, correlation, and the device registry. User filters never affect it.
+  functions, correlation, and the device registry. Received device information
+  is attached to its NAME before the next address claim. Transmit echoes are
+  visible to subscribers and bypass protocol handling.
 - **Protocol transmission**: the required and advisory priority lanes for
   automatic bus-citizenship traffic. Application writes cannot consume them.
-- **Connection epoch**: one successful gateway connection and its NMEA network
-  readiness cycle. A new epoch must reclaim before ordinary traffic resumes.
+- **Connection epoch**: identifies one physical connection. An Actisense
+  capture can observe its handshake. A writable node can use that connection
+  after mode verification and address claiming.
 - **Claim epoch**: one local address-identity lifetime within a connection.
   Disconnect or address change cancels work registered to the old lifetime.
 - **Write snapshot**: owned encoded payload and header captured before Write
@@ -43,7 +46,9 @@ explains the runtime design.
 - **Wire transmitter**: sole physical writer; selects required protocol records
   between application frames, independently of ISO transfer waits.
 - **Bus**: the extension seam for physical or virtual read/write transports.
-- **Adapter**: converts a transport representation into owned CAN frames.
+- **Adapter**: preserves the transport's record type in an owned Observation.
+  An extended SocketCAN data record carries one frame. A gateway-assembled
+  PGN carries one message.
 - **BST datagram**: one owned Actisense binary record after BDTP framing and checksum validation.
 - **Gateway session**: an Actisense-owned NMEA 2000 identity with a sole-reader
   BEM session, operating-mode readiness, serialized writes, and no virtual
@@ -100,7 +105,8 @@ explains the runtime design.
     follows an uncertain physical transmission.
     Client lifecycle rejection is local to that Client. Standalone multi-source
     readers and replay preserve independent/historical epochs; fast-packet keys
-    include network identity and both epochs, as do passive ISO transport keys.
+    include network identity, both epochs, source, destination, PGN, direction,
+    and sequence. Passive ISO transport keys also include both epochs.
     Passive TCP sources stamp a new epoch on each successful reconnect.
 17. Cancellation interrupts physical I/O, not merely its caller's wait. Close
     joins owned workers. Custom buses must interrupt I/O on Close; scheduled
@@ -132,9 +138,10 @@ explains the runtime design.
 - Fast-packet assembly: `internal/adapter/`
 - ISO transport protocol: `internal/transport/`; passive capture assembly:
   `internal/transport/passive.go`, integrated before filters in `pipeline.go`
-- Wire codec and generated messages: `pgn/`
+- Wire codec, variant selection and generated messages: `pgn/`. Shared
+  schema rules for the generator and runtime: `internal/pgnschema/`
 - Address claiming and Commanded Address: `internal/claiming/`, `client.go`
-- Device discovery: `registry.go`
+- Device discovery: `registry.go` and synchronous system decode in `system.go`
 
 ## Required verification
 

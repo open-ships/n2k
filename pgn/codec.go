@@ -9,6 +9,8 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+
+	"github.com/open-ships/n2k/internal/pgnschema"
 )
 
 // This file implements the metadata-driven PGN codec. Generated PGN structs
@@ -17,9 +19,8 @@ import (
 // type (structInfoLookup) instead of relying on generated per-field code.
 //
 // Field semantics follow the upstream source schema:
-//   - Numeric fields of 4+ bits treat the maximum representable value as the
-//     null sentinel and decode it to nil. Lookup-family fields and numbers
-//     narrower than 4 bits and ADDRESS fields always keep their raw value.
+//   - Numeric fields with a schema-declared unknown value decode it to nil.
+//     Lookup-family fields retain their raw ordinals, including sentinels.
 //   - Fields carrying a Match value select PGN variants: decoding validates
 //     every Match field at its absolute bit offset before any sequential
 //     read, and a mismatch returns an error so dispatch can try the next
@@ -34,8 +35,8 @@ import (
 //     the width in BITS (the upstream fields read "Number of Bits in Binary
 //     Data Field"). A DYNAMIC_FIELD_VALUE without such a reference takes its
 //     width in BYTES from the nearest preceding DYNAMIC_FIELD_LENGTH field.
-//     Encoding writes the data verbatim and derives the referenced length
-//     field from len(data) in the same unit decoding expects.
+//     Encoding retains a declared bit count that fits the data slice and
+//     derives byte-aligned lengths when the slice changes size.
 
 // fieldKind selects the decode/encode strategy for one field descriptor.
 type fieldKind uint8
@@ -63,11 +64,10 @@ const (
 	// fieldKindLookup is an enumeration field: raw values survive decoding
 	// because every bit pattern has a defined meaning.
 	fieldKindLookup
-	// fieldKindNullableNumber is a plain number of 4+ bits with null
+	// fieldKindNullableNumber is a plain number with schema-declared null
 	// sentinel detection.
 	fieldKindNullableNumber
-	// fieldKindRawNumber is a plain number narrower than 4 bits, too small
-	// to reserve a null sentinel.
+	// fieldKindRawNumber is a number with no declared null sentinel.
 	fieldKindRawNumber
 )
 
@@ -121,6 +121,7 @@ type planField struct {
 	// refOrder is the order of the field holding this binary field's width
 	// in bits (metadata BitLengthField), or 0.
 	refOrder int
+	refIndex int // struct index of the bit count in the same field set
 	// dynLenOrder is the order of the preceding DYNAMIC_FIELD_LENGTH field
 	// holding this binary field's width in bytes, or 0.
 	dynLenOrder int
@@ -158,11 +159,8 @@ type planStep struct {
 
 // codecPlan is the compiled decode/encode program for one PGN struct type.
 type codecPlan struct {
-	info *PgnInfo
-	// matches lists every field descriptor carrying a Match value, in field
-	// order, for absolute-offset validation before sequential decoding.
-	matches []*FieldDescriptor
-	steps   []planStep
+	info  *PgnInfo
+	steps []planStep
 }
 
 // codecPlanCache maps reflect struct types to compiled plans. Plans are
@@ -175,6 +173,23 @@ var codecPlanCache sync.Map // reflect.Type -> *codecPlan
 // detection, expands repeating field sets into slice fields, and resolves
 // variable-length binary fields via their length-field references.
 func decodeFields(m PGN, payload []uint8) (err error) {
+	if len(payload) > maxPayloadBytes {
+		return errPayloadTooLarge
+	}
+	plan, err := codecPlanForMessage(m)
+	if err != nil {
+		return err
+	}
+	if err := plan.info.matchPayload(payload); err != nil {
+		if err == errVariantMismatch {
+			return fmt.Errorf("match failed for %s", plan.info.Description)
+		}
+		return err
+	}
+	return decodeSelectedFields(m, payload)
+}
+
+func decodeSelectedFields(m PGN, payload []byte) (err error) {
 	// Decode into fresh state, committing only on success. Optional fields and
 	// repeating groups absent from this payload must never retain old values.
 	original := reflect.ValueOf(m)
@@ -216,25 +231,18 @@ func decodeFields(m PGN, payload []uint8) (err error) {
 	info = m.MessageInfo()
 	info.DecodeIssues = append(info.DecodeIssues, plan.info.CodecLimitations...)
 	m.SetMessageInfo(info)
-	for _, desc := range plan.matches {
-		if desc.BitLength == 0 {
-			return fmt.Errorf("match failed for %s", plan.info.Description)
-		}
-		raw, err := readRawAt(payload, desc.BitOffset, desc.BitLength)
-		if err != nil {
-			return err
-		}
-		if int(raw) != *desc.Match {
-			return fmt.Errorf("match failed for %s", plan.info.Description)
-		}
-	}
-
 	target := reflect.ValueOf(m).Elem()
 	stream := NewPgnDataStream(payload)
 	// raws records the raw value of every non-null unsigned numeric field by
 	// order, so later fields can resolve count and length references.
 	raws := make(map[int]uint64)
-	for _, step := range plan.steps {
+	steps := plan.steps
+	alarm, isAlarm := m.(*SimnetAlarmMessage)
+	compact := isAlarm && compactAlarmRecord(payload)
+	if compact {
+		steps = steps[:4]
+	}
+	for _, step := range steps {
 		if step.group != nil {
 			done, err := decodeGroup(stream, step.group, target, raws)
 			if err != nil {
@@ -259,6 +267,11 @@ func decodeFields(m PGN, payload []uint8) (err error) {
 			// Payloads may legitimately end early; trailing fields stay nil.
 			return nil
 		}
+	}
+	if compact {
+		alarm.B, alarm.C = new(uint64(payload[4])), new(uint64(payload[5]))
+		alarm.Text, err = stream.readStringWithLengthAndControl()
+		return err
 	}
 	return nil
 }
@@ -300,6 +313,7 @@ func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 	source := reflect.ValueOf(m).Elem()
 	writer := NewPGNDataStreamWriter()
 	writer.canonical = !validate
+	writer.compactText = m.MessageInfo().rawPayload != nil
 
 	// Derived fields (group counts, binary length references) override any
 	// user-set value; collect them before writing so a length field that
@@ -316,7 +330,13 @@ func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 	}
 	raws := collectEncodeRaws(plan, source, overrides)
 
-	for _, step := range plan.steps {
+	steps := plan.steps
+	alarm, isAlarm := m.(*SimnetAlarmMessage)
+	compact := isAlarm && compactAlarmEncoding(alarm)
+	if compact {
+		steps = steps[:4]
+	}
+	for _, step := range steps {
 		if step.group != nil {
 			encodeGroup(writer, step.group, source, raws)
 			continue
@@ -331,7 +351,41 @@ func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 		}
 		encodeField(writer, step.field, source, overrides, raws)
 	}
+	if compact {
+		if alarm.C != nil && *alarm.C == 0 {
+			data, err := encodeUTF16LE(alarm.Text)
+			if err != nil {
+				writer.setErr(err)
+			} else {
+				writer.writeControlText(0, data)
+			}
+		} else {
+			writer.writeSizedControlString(alarm.Text, 217)
+		}
+		if len(writer.Bytes()) > 223 {
+			writer.setErr(errors.New("alarm text exceeds fast-packet capacity"))
+		}
+	}
 	return writer.Bytes(), writer.Err()
+}
+
+// The pinned, incomplete alarm schema describes a fixed-width record. The
+// capture also contains a compact STRING_LAU record. Recognize its exact
+// extent and keep the schema layout for legacy fixed-width records.
+func compactAlarmRecord(payload []byte) bool {
+	return len(payload) >= 6 && len(payload) <= 223 && int(payload[4])+4 == len(payload) && payload[5] <= 1
+}
+
+func compactAlarmEncoding(alarm *SimnetAlarmMessage) bool {
+	if wire := alarm.Info.rawPayload; len(wire) != 0 {
+		return compactAlarmRecord(wire)
+	}
+	if alarm.B == nil {
+		return alarm.C == nil || *alarm.C <= 1
+	}
+	// Replacing MessageInfo drops the retained wire. Legacy full-width
+	// records remain distinguishable by their nominal text length.
+	return alarm.C != nil && *alarm.C <= 1 && *alarm.B >= 2 && *alarm.B <= 219 && len(alarm.Text) < 223
 }
 
 // codecPlanForMessage resolves the compiled plan for a PGN message value.
@@ -376,12 +430,6 @@ func compileCodecPlan(t reflect.Type) (*codecPlan, error) {
 
 	plan := &codecPlan{info: info}
 	orders := sortedFieldOrders(info.Fields)
-	for _, order := range orders {
-		if info.Fields[order].Match != nil {
-			plan.matches = append(plan.matches, info.Fields[order])
-		}
-	}
-
 	lastDynLen := 0
 	for i := 0; i < len(orders); {
 		order := orders[i]
@@ -511,7 +559,8 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 	if field.signed && field.offset != 0 && field.bitLength >= 64 {
 		return nil, fmt.Errorf("field %d (%s): offset wire ticks do not fit int64 storage", order, desc.Name)
 	}
-	for _, sentinel := range []*int64{desc.OutOfRangeValue, desc.ReservedValue, desc.UnknownValue} {
+	unknown := pgnschema.UnknownValue(info.Id, order, desc.UnknownValue)
+	for _, sentinel := range []*int64{desc.OutOfRangeValue, desc.ReservedValue, unknown} {
 		if sentinel != nil {
 			field.sentinels[*sentinel] = struct{}{}
 		}
@@ -534,6 +583,11 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		field.commandedParameter = info.PGN == 126208 && desc.SourceType == "VARIABLE"
 		if desc.BitLengthField != nil {
 			field.refOrder = *desc.BitLengthField
+			var ok bool
+			field.refIndex, ok = indexByOrder[field.refOrder]
+			if !ok {
+				return nil, fmt.Errorf("field %d (%s): missing bit length field %d", order, desc.Name, field.refOrder)
+			}
 		} else if desc.SourceType == "DYNAMIC_FIELD_VALUE" && *lastDynLen != 0 {
 			field.dynLenOrder = *lastDynLen
 			*lastDynLen = 0
@@ -553,7 +607,7 @@ func compileCodecField(info *PgnInfo, order int, indexByOrder map[int]int, lastD
 		case desc.LookupEnumeration != "" || desc.LookupBitEnumeration != "" ||
 			desc.LookupIndirectEnumeration != "" || desc.LookupFieldTypeEnumeration != "":
 			field.kind = fieldKindLookup
-		case desc.BitLength >= 4:
+		case unknown != nil:
 			field.kind = fieldKindNullableNumber
 		default:
 			field.kind = fieldKindRawNumber
@@ -906,7 +960,13 @@ func encodeField(writer *PGNDataStreamWriter, field *planField, source reflect.V
 	case fieldKindBinary:
 		data := source.Field(field.fieldIndex).Bytes()
 		bits := field.bitLength
-		if field.refOrder != 0 || field.dynLenOrder != 0 || bits == 0 {
+		if len(data) > maxPayloadBytes {
+			writer.setErr(errPayloadTooLarge)
+			return
+		}
+		if field.refOrder != 0 {
+			bits = uint16(overrides[field.refOrder])
+		} else if field.dynLenOrder != 0 || bits == 0 {
 			bits = uint16(len(data) * 8)
 		}
 		writer.writeBinaryData(data, bits)
@@ -972,7 +1032,7 @@ func encodeNumericField(writer *PGNDataStreamWriter, field *planField, source re
 // derived overrides are computed per element.
 func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.Value, parentRaws map[int]uint64) {
 	slice := source.Field(group.sliceIndex)
-	for i := 0; i < slice.Len(); i++ {
+	for i := 0; i < slice.Len() && writer.Err() == nil; i++ {
 		element := slice.Index(i)
 		overrides := make(map[int]uint64)
 		for f := range group.fields {
@@ -1142,7 +1202,14 @@ func addLengthOverride(overrides map[int]uint64, field *planField, source reflec
 	}
 	length := uint64(source.Field(field.fieldIndex).Len())
 	if field.refOrder != 0 {
-		overrides[field.refOrder] = length * 8
+		bits := length * 8
+		if count := source.Field(field.refIndex); !count.IsNil() {
+			declared := count.Elem().Uint()
+			if declared <= bits && bits-declared < 8 {
+				bits = declared
+			}
+		}
+		overrides[field.refOrder] = bits
 	} else if field.dynLenOrder != 0 {
 		overrides[field.dynLenOrder] = length
 	}

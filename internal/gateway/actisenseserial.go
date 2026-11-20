@@ -49,6 +49,14 @@ func newActisenseSerialStreamBus(log *slog.Logger, port string, settings Actisen
 	return newActisenseStreamBus(log, port, "serial:"+port, open, nil, mode, rawCAN)
 }
 
+// RunActisenseSerialCapture negotiates a raw mode without filtering other
+// observed records from the capture.
+func RunActisenseSerialCapture(ctx context.Context, log *slog.Logger, port string, settings ActisenseSerialSettings, mode actisense.OperatingMode, handler func(raw.Observation)) error {
+	stream := newActisenseSerialStreamBus(log, port, settings, mode, false)
+	defer func() { _ = stream.Close() }()
+	return stream.RunObservations(ctx, handler)
+}
+
 func runPassiveActisenseSerial(ctx context.Context, port string, settings ActisenseSerialSettings, read func(io.Reader, func(raw.Observation)) error, handler func(raw.Observation)) error {
 	connection, err := serialio.Open(port, &serial.Mode{
 		BaudRate: settings.BaudRate,
@@ -74,6 +82,7 @@ func runPassiveActisenseSerial(ctx context.Context, port string, settings Actise
 	err = read(connection, func(observation raw.Observation) {
 		observation.AdapterID = "serial:" + port
 		observation.NetworkID = port
+		observation.ConnectionEpoch = 1
 		if handler != nil {
 			handler(observation)
 		}
