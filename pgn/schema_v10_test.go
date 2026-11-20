@@ -20,8 +20,8 @@ func TestH5000TableCaptures(t *testing.T) {
 	// Values per table in the independent H5000 capture. The last table of
 	// section 15 declares 22 values but the fast packet ends after 19.
 	counts := map[byte][]int{11: {7, 7, 7, 7, 7}, 12: {7, 7, 7}, 13: {7, 7, 7}, 14: {7, 7}, 15: {22, 19}, 18: {7, 7, 7, 7, 7}}
-	for line := range strings.SplitSeq(strings.TrimSpace(string(data)), "\n") {
-		columns := strings.SplitN(line, ",", 7)
+	for line := range strings.Lines(string(data)) {
+		columns := strings.SplitN(strings.TrimSpace(line), ",", 7)
 		require.Len(t, columns, 7)
 		wire, err := hex.DecodeString(strings.ReplaceAll(columns[6], ",", ""))
 		require.NoError(t, err)
