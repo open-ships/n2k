@@ -2,6 +2,7 @@ package n2k
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -184,3 +185,30 @@ type unusedReadBus struct{}
 func (*unusedReadBus) Run(context.Context, func(can.Frame)) error { panic("unexpected Bus.Run") }
 func (*unusedReadBus) WriteFrame(can.Frame) error                 { panic("unexpected Bus.WriteFrame") }
 func (*unusedReadBus) Close() error                               { panic("unexpected Bus.Close") }
+
+type sourceFunc func(context.Context) error
+
+func (f sourceFunc) run(ctx context.Context, _ *slog.Logger, _ func(raw.Observation)) error {
+	return f(ctx)
+}
+
+func TestObserveReturnsRootSourceFailure(t *testing.T) {
+	failure := errors.New("source read failure")
+	ready := make(chan struct{})
+	opts := optionFunc(func(c *config) {
+		c.sources = []source{
+			sourceFunc(func(context.Context) error { <-ready; return failure }),
+			sourceFunc(func(ctx context.Context) error {
+				close(ready)
+				<-ctx.Done()
+				return ctx.Err()
+			}),
+		}
+	})
+	var got []error
+	for _, err := range Observe(t.Context(), opts) {
+		got = append(got, err)
+	}
+	require.Len(t, got, 1)
+	require.ErrorIs(t, got[0], failure)
+}

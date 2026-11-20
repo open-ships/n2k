@@ -279,7 +279,11 @@ func (c *CommandSet) GetRxPGN(ctx context.Context, pgn uint32) (RxPGNState, erro
 	if err != nil {
 		return RxPGNState{}, err
 	}
-	return DecodeRxPGNState(response)
+	state, err := DecodeRxPGNState(response)
+	if err == nil && state.PGN != pgn {
+		return RxPGNState{}, fmt.Errorf("actisense: requested Rx PGN %d, got %d", pgn, state.PGN)
+	}
+	return state, err
 }
 
 // SetRxPGN accepts one of the four documented PGN masks or a default/no-change
@@ -313,7 +317,7 @@ func (c *CommandSet) GetTxPGN(ctx context.Context, pgn uint32) (TxPGNState, erro
 	if err != nil {
 		return TxPGNState{}, err
 	}
-	return DecodeTxPGNState(response)
+	return decodeRequestedTxPGN(response, pgn)
 }
 
 // SetTxPGN uses milliseconds for rates 1-65534 and zero for event-driven data.

@@ -83,14 +83,13 @@ func runSources(ctx context.Context, log *slog.Logger, sources []source, handler
 		return sources[0].run(ctx, log, handler)
 	}
 
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
+	ctx, cancel := context.WithCancelCause(ctx)
+	defer cancel(nil)
 
 	var (
 		mu sync.Mutex
 		wg sync.WaitGroup
 	)
-	errc := make(chan error, len(sources))
 
 	safeHandler := func(observation raw.Observation) {
 		mu.Lock()
@@ -103,19 +102,11 @@ func runSources(ctx context.Context, log *slog.Logger, sources []source, handler
 		go func() {
 			defer wg.Done()
 			if err := src.run(ctx, log, safeHandler); err != nil {
-				cancel()
-				errc <- err
+				cancel(err)
 			}
 		}()
 	}
 
 	wg.Wait()
-	close(errc)
-
-	for err := range errc {
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return context.Cause(ctx)
 }

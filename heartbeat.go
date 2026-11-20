@@ -16,7 +16,7 @@ const defaultHeartbeatInterval = 60 * time.Second
 // are alive. It starts once the client's address claim completes and can be
 // retimed at runtime (group functions command interval changes).
 type heartbeater struct {
-	write func(pgn.Message) *WriteResult
+	write func(context.Context, pgn.Message) *WriteResult
 
 	mu       sync.Mutex
 	interval time.Duration // current cadence; <= 0 means stopped
@@ -32,7 +32,7 @@ type heartbeater struct {
 	stopOnce sync.Once
 }
 
-func newHeartbeater(interval time.Duration, write func(pgn.Message) *WriteResult) *heartbeater {
+func newHeartbeater(interval time.Duration, write func(context.Context, pgn.Message) *WriteResult) *heartbeater {
 	return &heartbeater{
 		write:    write,
 		interval: interval,
@@ -44,22 +44,28 @@ func newHeartbeater(interval time.Duration, write func(pgn.Message) *WriteResult
 
 // run waits for the address claim, then transmits on the configured cadence.
 // A disabled heartbeater (interval <= 0) parks until setInterval re-enables it.
-func (h *heartbeater) run(ctx context.Context, ready <-chan struct{}) {
+func (h *heartbeater) run(ctx context.Context, readiness func() (context.Context, <-chan struct{})) {
 	defer close(h.done)
 
-	select {
-	case <-ready:
-	case <-ctx.Done():
-		return
-	case <-h.quit:
-		return
-	}
-
-	for {
+	for ctx.Err() == nil {
+		epoch, ready := readiness()
+		if ready != nil {
+			select {
+			case <-ready:
+			case <-epoch.Done():
+			case <-ctx.Done():
+				return
+			case <-h.quit:
+				return
+			}
+			continue
+		}
 		iv := h.currentInterval()
 		if iv <= 0 {
 			select {
 			case <-h.changed:
+				continue
+			case <-epoch.Done():
 				continue
 			case <-ctx.Done():
 				return
@@ -68,12 +74,14 @@ func (h *heartbeater) run(ctx context.Context, ready <-chan struct{}) {
 			}
 		}
 
-		h.write(h.message())
+		h.write(epoch, h.message())
 
 		timer := time.NewTimer(iv)
 		select {
 		case <-timer.C:
 		case <-h.changed:
+			timer.Stop()
+		case <-epoch.Done():
 			timer.Stop()
 		case <-ctx.Done():
 			timer.Stop()
@@ -99,7 +107,7 @@ func (h *heartbeater) setInterval(d time.Duration) {
 
 // sendNow transmits a single heartbeat outside the regular cadence.
 func (h *heartbeater) sendNow() {
-	h.write(h.message())
+	h.write(context.Background(), h.message())
 }
 
 // stop terminates the run loop and waits for it to exit. Safe to call more

@@ -95,11 +95,12 @@ type session struct {
 	cancel          context.CancelCauseFunc
 
 	// Transmit-side fields for RTS/CTS
-	txPayload   []byte        // full payload to transmit
-	txSent      [256]bool     // successfully sent DT sequence numbers
-	txSentCount int           // number of unique DT packets sent
-	txDone      chan struct{} // closed when transmit completes
-	txErr       error         // set if transmit fails
+	txPayload   []byte         // full payload to transmit
+	txSent      [256]bool      // successfully sent DT sequence numbers
+	txSentCount int            // number of unique DT packets sent
+	txWrites    sync.WaitGroup // admitted frame writes; Add under m.mu before removal
+	txDone      chan struct{}  // closed when the protocol reaches a terminal state
+	txErr       error          // set if transmit fails
 }
 
 // Manager orchestrates ISO 11783 transport protocol sessions, handling both
@@ -468,6 +469,10 @@ func (m *Manager) finishSession(sess *session, err error) error {
 func (m *Manager) writeSessionFrame(sess *session, frame can.Frame) error {
 	m.mu.Lock()
 	active := m.sessions[sess.key] == sess
+	if active && sess.txDone != nil {
+		sess.txWrites.Add(1)
+		defer sess.txWrites.Done()
+	}
 	err := sess.txErr
 	m.mu.Unlock()
 	if !active {

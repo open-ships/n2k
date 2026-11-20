@@ -11,7 +11,6 @@
 //	  -> NewPacketInfo() extracts PGN, source, priority, destination from CAN ID
 //	  -> NewPacket() creates a Packet with candidate metadata looked up by PGN
 //	  -> For fast packets: MultiBuilder assembles frames into a complete message
-//	  -> FilterCandidates() filters variants by manufacturer/match fields
 //	  -> Complete packet forwarded to PacketHandler
 package adapter
 
@@ -72,7 +71,7 @@ func (c *CANAdapter) SetOutput(ph PacketHandler) {
 //  3. If there are parse errors (e.g., unknown PGN), forward immediately as-is.
 //  4. If the PGN is a fast-packet type, pass to MultiBuilder for assembly.
 //     Otherwise, mark as Complete immediately (single-frame message).
-//  5. Once Complete, filter decoders by manufacturer and forward to the handler.
+//  5. Forward completed packets to the decoder for variant selection.
 //
 // Parameters:
 //   - f: A *can.Frame from the brutella/can library.
@@ -117,9 +116,6 @@ func (c *CANAdapter) HandleMessageWithInfo(f *can.Frame, pInfo pgn.MessageInfo) 
 	}
 
 	if packet.Complete {
-		// Packet is fully assembled. Filter variants by manufacturer code and match
-		// fields, then forward to the downstream handler.
-		packet.FilterCandidates()
 		c.packetReady(packet)
 	}
 }

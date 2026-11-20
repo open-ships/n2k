@@ -1,5 +1,7 @@
 golangci_lint_version := "v2.12.0"
-secure_go_toolchain := "go1.26.10"
+golangci_installer_commit := "7761527a420afc542a699aa5069475785700c2b7"
+golangci_installer_sha256 := "edfa587f31bde70db161d1e5b783e086a1627d7e2f7c91de5f7cca79bcdf8631"
+secure_go_toolchain := "go1.26.11"
 govulncheck_version := "v1.5.0"
 gosec_version := "v2.27.1"
 
@@ -13,7 +15,10 @@ setup:
         echo "golangci-lint {{golangci_lint_version}} already installed"; \
     else \
         echo "Installing golangci-lint {{golangci_lint_version}}..."; \
-        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b "$(go env GOPATH)/bin" {{golangci_lint_version}}; \
+        installer=$(mktemp) || exit 1; trap 'rm -f "$installer"' EXIT; \
+        curl -fsSL https://raw.githubusercontent.com/golangci/golangci-lint/{{golangci_installer_commit}}/install.sh -o "$installer" && \
+        echo "{{golangci_installer_sha256}}  $installer" | shasum -a 256 -c - && \
+        sh "$installer" -b "$(go env GOPATH)/bin" {{golangci_lint_version}}; \
     fi
     @if command -v govulncheck >/dev/null \
         && govulncheck -version 2>&1 | grep -q "govulncheck@{{govulncheck_version}}" \

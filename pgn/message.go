@@ -32,6 +32,39 @@ func DecodeMessage(info MessageInfo, payload []uint8) (PGN, error) {
 	return DecodePayload(info, payload)
 }
 
+// DecodePayload selects a variant by its wire selectors before constructing
+// its typed message. A more general variant can decode when a specific one
+// cannot interpret a payload.
+func DecodePayload(info MessageInfo, payload []byte) (PGN, error) {
+	if len(payload) > maxPayloadBytes {
+		return nil, errPayloadTooLarge
+	}
+	variants := decodeVariants[info.PGN]
+	if len(variants) == 0 {
+		return nil, fmt.Errorf("no PGN struct for %d", info.PGN)
+	}
+	var errs []error
+	for _, variant := range variants {
+		if err := variant.matchPayload(payload); err != nil {
+			if errors.Is(err, ErrUnexpectedPayloadEnd) {
+				errs = append(errs, err)
+			}
+			continue
+		}
+		msg := structTypeRegistry[variant.Id]()
+		msg.SetMessageInfo(info)
+		if err := decodeSelectedFields(msg, payload); err != nil {
+			errs = append(errs, err)
+			continue
+		}
+		return msg, nil
+	}
+	if len(errs) == 0 {
+		return nil, fmt.Errorf("no matching PGN struct for %d", info.PGN)
+	}
+	return nil, fmt.Errorf("no matching PGN struct for %d: %w", info.PGN, errors.Join(errs...))
+}
+
 // EncodeMessage serializes msg by calling its EncodePayload method. The value
 // must implement PGN; nil, typed-nil, and read-only Message implementations
 // (including UnknownPGN) return an error. The returned bytes are caller-owned.
@@ -44,7 +77,11 @@ func EncodeMessage(msg Message) ([]byte, error) {
 	if !ok {
 		return nil, fmt.Errorf("%T does not implement pgn.PGN", msg)
 	}
-	return pgnMsg.EncodePayload()
+	payload, err := pgnMsg.EncodePayload()
+	if err == nil && len(payload) > maxPayloadBytes {
+		return nil, errPayloadTooLarge
+	}
+	return payload, err
 }
 
 func isNilMessage(msg Message) bool {

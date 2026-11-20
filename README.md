@@ -290,7 +290,7 @@ commands for the current address have no effect. Observe moves through
 `client.Status().Address`; user filters and unread subscriptions cannot disable
 this protocol behavior.
 
-**Claim timeout:** `NewClient` blocks for up to 1500ms (the default) to allow the network to respond to the initial claim. On heavily contested buses, increase it:
+**Claim timeout.** The default 1500ms deadline includes the initial write and address contention. Each new address needs 250ms to settle after its claim reaches the writer. If the latest claim cannot settle before the deadline, startup returns an error. An explicit timeout of 250ms or less bounds the first write and then gives the original address that same shorter observation window. Replacement addresses still require 250ms. On heavily contested buses, increase the deadline.
 
 ```go
 client, err := n2k.NewClient(ctx,

@@ -38,7 +38,7 @@ type systemRouter struct {
 
 // newSystemRouter builds the router and its dedicated pipeline. Call run in a
 // goroutine to start dispatching decoded messages to handlers.
-func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
+func newSystemRouter(ctx context.Context, cfg config, devices *registry) (*systemRouter, error) {
 	// The system pipeline must see every protocol message: no user filter,
 	// no unknown-PGN passthrough.
 	sysCfg := cfg
@@ -61,6 +61,9 @@ func newSystemRouter(ctx context.Context, cfg config) (*systemRouter, error) {
 		dispatchMu: &sync.Mutex{},
 	}
 	p.emit = func(msg pgn.Message) {
+		// The next frame may rebind the source address to a different NAME.
+		// Attach completed device information in receive order.
+		devices.observe(msg)
 		select {
 		case ch <- msg:
 		default:

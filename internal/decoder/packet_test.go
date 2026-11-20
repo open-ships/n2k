@@ -16,30 +16,6 @@ func TestValid(t *testing.T) {
 	assert.Equal(t, len(p.ParseErrors), 2)
 }
 
-// TestGetManCode verifies that GetManCode correctly extracts the manufacturer code from
-// a proprietary PGN's data payload. The test uses PGN 130824 (a proprietary PGN) with
-// manufacturer code 381 (B&G) encoded in the first two bytes using the NMEA 2000
-// proprietary encoding scheme:
-//   - Byte 0: lower 8 bits of manufacturer code (381 & 0xFF = 0x7D)
-//   - Byte 1: upper 3 bits of manufacturer code in bits 0-2, industry code in bits 5-7
-//     ((381 >> 8) | (4 << 5) = 0x81)
-func TestGetManCode(t *testing.T) {
-	pri, tgt := uint8(1), uint8(0)
-	pInfo := pgn.MessageInfo{
-		PGN:      130824,
-		SourceId: 7,
-		Priority: &pri,
-		TargetId: &tgt,
-	}
-	p := Packet{
-		Info: pInfo,
-		// Encode manufacturer code 381 and industry code 4 into the first two bytes.
-		Data: []uint8{(381 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF},
-	}
-	p.GetManCode()
-	assert.Equal(t, pgn.ManufacturerCodeConst(381), p.Manufacturer)
-}
-
 // TestGetSeqFrame verifies extraction of the sequence ID and frame number from the first
 // byte of fast-packet data. The test byte 0x62 decodes as:
 //   - Bits 7-5 = 0b011 = 3 (sequence ID)
@@ -59,10 +35,7 @@ func TestGetSeqFrame(t *testing.T) {
 // proprietary PGN (130824). It checks:
 //   - MessageInfo fields are preserved (PGN, SourceId, Priority)
 //   - No parse errors for a valid, known PGN
-//   - Candidates are populated from generated PGN metadata
 //   - Fast flag is set (130824 is classified as a fast-packet PGN)
-//   - GetManCode correctly extracts manufacturer 381 (B&G) after initialization
-//   - FilterCandidates keeps only matching PGN variants
 func TestNewPacket(t *testing.T) {
 	pri, tgt := uint8(1), uint8(0)
 	pInfo := pgn.MessageInfo{
@@ -76,73 +49,7 @@ func TestNewPacket(t *testing.T) {
 	assert.Equal(t, uint8(7), p.Info.SourceId)
 	assert.Equal(t, uint8(1), *p.Info.Priority)
 	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.GreaterOrEqual(t, len(p.Candidates), 2)
 	assert.True(t, p.Fast)
-	p.GetManCode()
-	assert.Equal(t, pgn.ManufacturerCodeConst(381), p.Manufacturer)
-	p.FilterCandidates()
-	assert.Equal(t, 1, len(p.Candidates))
-}
-
-// TestFilterSlow verifies that FilterCandidates correctly filters proprietary PGN candidates
-// by manufacturer code. Two scenarios are tested:
-//
-//  1. Manufacturer 381 (B&G): matches one of the two PGN 130824 candidates, so exactly
-//     one candidate remains with no errors.
-//
-//  2. Manufacturer 380 (not a known manufacturer for PGN 130824): no candidates match,
-//     so the Candidates slice remains empty. The "no matching variant" error is deferred to the
-//     decode stage rather than being added here.
-func TestFilterSlow(t *testing.T) {
-	pri, tgt := uint8(1), uint8(0)
-	pInfo := pgn.MessageInfo{
-		PGN:      130824,
-		SourceId: 7,
-		Priority: &pri,
-		TargetId: &tgt,
-	}
-	p := NewPacket(pInfo, []uint8{(381 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
-	p.FilterCandidates()
-	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 1, len(p.Candidates))
-	pri2, tgt2 := uint8(1), uint8(0)
-	pInfo = pgn.MessageInfo{
-		PGN:      130824,
-		SourceId: 10,
-		Priority: &pri2,
-		TargetId: &tgt2,
-	}
-	// Use manufacturer code 380 (not matching any known PGN 130824 variant) to verify filtering.
-	p = NewPacket(pInfo, []uint8{(380 & 0xFF), (381 >> 8) | (4 << 5), 3, 4, 5, 0xFF, 0xFF, 0xFF})
-	p.FilterCandidates()
-	// Decode now handles the no matching variant error.
-	assert.Equal(t, 0, len(p.Candidates))
-}
-
-// TestFilterFast verifies FilterCandidates for PGN 130820, a fast-packet proprietary PGN with
-// many manufacturer-specific variants. The test simulates a complete fast packet by:
-//   - Stripping the first 2 bytes (sequence/length header) as sequence.complete() would
-//   - Setting Complete = true as the MultiBuilder would
-//   - Extracting the manufacturer code (419 = Maretron) and filtering decoders
-//
-// PGN 130820 has many candidate decoders. After filtering by manufacturer 419 (Maretron)
-// and applying match predicates, one candidate remains for this payload.
-func TestFilterFast(t *testing.T) {
-	pri, tgt := uint8(1), uint8(0)
-	pInfo := pgn.MessageInfo{
-		PGN:      130820,
-		SourceId: 10,
-		Priority: &pri,
-		TargetId: &tgt,
-	}
-	// Data encodes manufacturer code 419 (Maretron) and industry code 4.
-	p := NewPacket(pInfo, []uint8{160, 5, (419 & 0xFF), (419 >> 8) | (4 << 5), 32, 128, 1, 255})
-	p.Data = p.Data[2:] // normally happens in sequence.complete()
-	p.Complete = true   // normally these 2 calls would happen by invoking b.process()
-	p.GetManCode()
-	p.FilterCandidates()
-	assert.Equal(t, 0, len(p.ParseErrors))
-	assert.Equal(t, 1, len(p.Candidates))
 }
 
 // TestBroadcast verifies that NewPacket handles broadcast PGNs (TargetId = 255) correctly.

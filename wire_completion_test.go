@@ -9,11 +9,13 @@ import (
 
 	"github.com/brutella/can"
 	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/internal/transport"
 	"github.com/open-ships/n2k/pgn"
 	"github.com/stretchr/testify/require"
 )
 
 type unwindingWriteBus struct {
+	blockPGN uint32
 	*mockBus
 	entered  chan struct{}
 	canceled chan struct{}
@@ -22,7 +24,7 @@ type unwindingWriteBus struct {
 }
 
 func (b *unwindingWriteBus) WriteFrameContext(ctx context.Context, frame can.Frame) error {
-	if framer.ParseCANID(frame.ID).PGN == 127250 {
+	if framer.ParseCANID(frame.ID).PGN == b.blockPGN {
 		close(b.entered)
 		<-ctx.Done()
 		close(b.canceled)
@@ -39,7 +41,7 @@ func (b *unwindingWriteBus) Close() error {
 }
 
 func TestCanceledWriteJoinsPhysicalCompletion(t *testing.T) {
-	bus := &unwindingWriteBus{mockBus: newMockBus(), entered: make(chan struct{}), canceled: make(chan struct{}), release: make(chan struct{})}
+	bus := &unwindingWriteBus{blockPGN: 127250, mockBus: newMockBus(), entered: make(chan struct{}), canceled: make(chan struct{}), release: make(chan struct{})}
 	client, err := NewClient(context.Background(), WithBus(bus), WithClaimTimeout(20*time.Millisecond), WithHeartbeatInterval(0))
 	require.NoError(t, err)
 	t.Cleanup(func() { require.NoError(t, client.Close()) })
@@ -128,4 +130,36 @@ func TestWriteContextPreservesInheritedEpochStamp(t *testing.T) {
 	require.ErrorIs(t, client.writeProtocolContext(oldContext, "stale fixture", protocolRequired, &pgn.VesselHeading{}).Wait(), ErrEpochChanged)
 	require.Empty(t, framesWithPGN(bus.getWritten(), 127250))
 	require.NoError(t, client.Err())
+}
+
+func TestCanceledRTSCTSJoinsAcceptedDataFrame(t *testing.T) {
+	bus := &unwindingWriteBus{blockPGN: transport.PGNDT, mockBus: newMockBus(), entered: make(chan struct{}), canceled: make(chan struct{}), release: make(chan struct{})}
+	c, err := NewClient(t.Context(), WithBus(bus), WithClaimTimeout(20*time.Millisecond), WithHeartbeatInterval(0))
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, c.Close()) })
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	const number = 126720
+	result := c.WriteContext(ctx, &messageSnapshot{number: number, info: pgn.MessageInfo{TargetId: pgn.Target(42)}, payload: make([]byte, 224)})
+	require.Eventually(t, func() bool { return len(framesWithPGN(bus.getWritten(), transport.PGNCM)) == 1 }, time.Second, time.Millisecond)
+	data := [8]byte{transport.ControlCTS, 1, 1, 0xff, 0xff, number & 255, (number >> 8) & 255, number >> 16}
+	bus.inbound <- can.Frame{ID: framer.BuildCANID(transport.PGNCM, 6, 42, c.Status().Address), Length: 8, Data: data}
+	select {
+	case <-bus.entered:
+	case <-time.After(time.Second):
+		t.Fatal("no DT write")
+	}
+	cancel()
+	<-bus.canceled
+	select {
+	case <-result.Done():
+		t.Fatal("ISO transfer completed while its DT write was still pending")
+	case <-time.After(20 * time.Millisecond):
+	}
+	bus.once.Do(func() { close(bus.release) })
+	err = result.Wait()
+	require.ErrorIs(t, err, context.Canceled)
+	var partial *WriteError
+	require.ErrorAs(t, err, &partial)
+	require.Equal(t, uint64(2), partial.CompletedRecords, "RTS and the accepted DT frame")
 }

@@ -39,7 +39,10 @@ When one subscriber exceeds its configured buffer, only that subscriber ends
 with `ErrReceiveOverflow`.
 Each subscriber receives its own deep message clone, including pointer fields,
 repeating fields, diagnostics, and retained wire bookkeeping. Registry ingress
-and snapshots use the same generated clone implementation.
+and snapshots use the same generated clone implementation. The system decoder
+attaches completed product and configuration messages before the receive loop
+can process another address claim. Transmitted gateway echoes remain visible
+in the read pipeline and bypass protocol ingress.
 
 `NewUnstartedClient` prepares the runtime and idle workers without starting bus
 I/O. `Client.Scanner` registers synchronously, allowing consumption during
@@ -79,8 +82,9 @@ assembled Messages; BST-D0 becomes an assembled Message directly. BEM records
 stay in a control path and surface as typed diagnostics as well as gateway or
 transport-error Observations. The session is the sole reader and serialized
 writer for one connection epoch, so response correlation, mode readiness,
-reset handling, exact wire tracing, and disconnect cancellation retain
-Locality.
+reset handling, wire tracing, and disconnect cancellation share that
+connection's lifetime. Transmit traces record the bytes accepted by each
+physical write, including a partial write that returns an error.
 
 The public `ActisenseTCP` and `ActisenseSerial` Adapters apply role policy at
 the existing source/Bus seam. Their `source.run` Interface passively receives
@@ -144,12 +148,16 @@ messages for a custom MessageWriter) and retains transmission uncertainty;
 neither success nor a count asserts that a remote application accepted the data.
 `WaitContext` cancels only waiting. Use `WriteContext` to cancel the operation.
 An interrupted physical record can leave a partial transfer, so the client does
-not resend it. ISO sessions additionally have an absolute 30-second deadline.
+not resend it. An RTS/CTS result waits for every admitted physical write to
+return, including work a peer's CTS started on the receive goroutine. ISO
+sessions additionally have an absolute 30-second deadline.
 
 Unix serial transports share `internal/serialio`, which combines library line
 configuration with an owned pollable writer. Linux CAN sockets are opened in
-nonblocking mode and owned by Go's poller. Custom legacy buses must make Close
-interrupt blocked I/O; context-aware buses can expose `ContextBus` and
+nonblocking mode and owned by Go's poller. The SocketCAN Adapter translates
+between a bare 29-bit identifier and Linux's native-endian extended data-frame
+record. It filters standard frames, remote requests, and error reports.
+Custom legacy buses must make Close interrupt blocked I/O; context-aware buses can expose `ContextBus` and
 `ContextMessageWriter` without closing an unrelated connection epoch.
 
 ## Connection epochs
@@ -167,19 +175,21 @@ the Client serializes identity transitions with system-message delivery. Each
 address change advances the claim epoch. Disconnect/claim changes immediately
 cancel pending requests and queued/in-progress writes, clear partial fast
 packets and ISO sessions, and reject queued system messages from older epochs.
-Requests are capped at 64 and match source, destination, and both epochs.
+Requests are capped at 64 and match the concrete PGN variant, source,
+destination, and both epochs before buffering a reply.
 Application admission fails with `ErrNotReady` until the current gate opens.
 Historical user observations retain their epochs for diagnostics.
 
 The stale-epoch gate belongs to a live Client, not to every read pipeline.
 Standalone scanners and replay may combine independent networks or historical
 connection epochs in any order. Their bounded fast-packet table includes the
-network and both epochs in each key, so no network is suppressed by another's
-larger epoch and partial packets cannot cross an epoch boundary.
+network, both epochs, source, destination, direction, PGN, and sequence in
+each key. Concurrent addressed transfers can reuse the same sequence ID.
 
-For Actisense, an epoch is published only after the gateway acknowledges the
-requested operating mode. Raw mode fails closed when BEM is rejected or
-stripped. Volatile mode changes are best-effort restored on clean close. PGN
+An Actisense capture assigns its connection number at physical open, including
+records that arrive during the handshake. The raw Client receives frames
+after the gateway acknowledges the requested operating mode. Raw mode fails
+closed when BEM is rejected or stripped. Volatile mode changes are best-effort restored on clean close. PGN
 list changes are explicit serialized transactions with one activation and a
 same-epoch restore. Originals are retained before the first mutation. A failed
 transaction uses a separate command-timeout context for rollback and joins
@@ -213,6 +223,13 @@ encodings, signed and offset wire representations, physical ranges, declared
 sentinel values, and malformed versus truncated errors. Unknown condition
 expressions fail during plan compilation instead of silently shifting subsequent fields. Centralizing these
 rules across all generated PGNs is the primary codec Leverage point.
+The same metadata selectors drive typed dispatch for direct decoding, capture,
+and live traffic. Dispatch constructs a message after its selectors match.
+Bit counts on binary fields retain their sub-byte widths, and STRING_LAU
+decoding reads the encoding control before interpreting the data. The runtime
+and code generator share the three GNSS 64-bit unavailable values omitted by
+the pinned field definitions.
+
 Decode uses a fresh value and commits only on success; malformed input cannot
 leave partially updated fields or stale variable-length content. Raw
 canonicalization preserves unchanged invalid measurements without describing

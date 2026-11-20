@@ -63,6 +63,7 @@ func (e *ActisenseModeSetupError) Error() string {
 func (e *ActisenseModeSetupError) Unwrap() error { return e.Err }
 
 type actisenseEpoch struct {
+	number      uint64
 	connection  actisenseConnection
 	session     *actisense.Session
 	priorMode   actisense.OperatingMode
@@ -92,7 +93,7 @@ type actisenseStreamBus struct {
 	stopErr            error
 	changed            chan struct{}
 	done               chan struct{}
-	epochNum           uint64
+	acknowledgedEpochs uint64
 	observer           func(bool, uint64)
 	diagnosticObserver func(actisense.Diagnostic)
 	wireObserver       func(actisense.WireDirection, time.Time, []byte)
@@ -135,6 +136,14 @@ func newActisenseTCPStreamBus(log *slog.Logger, addr string, reconnect *Reconnec
 	return newActisenseStreamBus(log, addr, "tcp:"+addr, open, reconnect, mode, rawCAN)
 }
 
+// RunActisenseTCPCapture negotiates a raw mode and preserves all observed
+// datagrams, including those received while negotiating.
+func RunActisenseTCPCapture(ctx context.Context, log *slog.Logger, address string, reconnect *ReconnectPolicy, mode actisense.OperatingMode, handler func(raw.Observation)) error {
+	stream := newActisenseTCPStreamBus(log, address, reconnect, mode, false)
+	defer func() { _ = stream.Close() }()
+	return stream.RunObservations(ctx, handler)
+}
+
 func (b *actisenseStreamBus) Ready() <-chan struct{} { return b.ready }
 
 func (b *actisenseStreamBus) SetConnectionObserver(observer func(bool, uint64)) {
@@ -167,7 +176,7 @@ func (b *actisenseStreamBus) SetCommandTimeout(timeout time.Duration) error {
 
 func (b *actisenseStreamBus) Metrics() ActisenseGatewayMetrics {
 	b.mu.Lock()
-	epochs := b.epochNum
+	epochs := b.acknowledgedEpochs
 	resets := b.gatewayResets
 	protocol := cloneActisenseSessionMetrics(b.completedMetrics)
 	if b.epoch != nil {
@@ -206,6 +215,7 @@ func (b *actisenseStreamBus) RunObservations(ctx context.Context, handler func(r
 		backoff = NewBackoff(*b.reconnect)
 	}
 
+	var connectionNumber uint64
 	for {
 		if err, done := b.exitError(ctx); done {
 			return err
@@ -226,7 +236,8 @@ func (b *actisenseStreamBus) RunObservations(ctx context.Context, handler func(r
 			continue
 		}
 
-		epochErr, connected := b.runEpoch(runCtx, connection, handler)
+		connectionNumber++
+		epochErr, connected := b.runEpoch(runCtx, connection, connectionNumber, handler)
 		if connected && backoff != nil {
 			backoff.Reset()
 		}
@@ -248,23 +259,38 @@ func (b *actisenseStreamBus) RunObservations(ctx context.Context, handler func(r
 	}
 }
 
-func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseConnection, handler func(raw.Observation)) (error, bool) {
-	adapter := &actisenseAdapter{}
+func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseConnection, number uint64, handler func(raw.Observation)) (error, bool) {
 	asciiLines := &actisenseCANASCIILines{}
 	var published atomic.Bool
-	epoch := &actisenseEpoch{connection: connection}
+	handshakeFinished := make(chan struct{})
+	epoch := &actisenseEpoch{number: number, connection: connection}
 	emitObservation := func(observation raw.Observation) {
+		if b.rawCAN && (observation.Kind == raw.KindFrame || observation.Kind == raw.KindMessage) {
+			if !published.Load() || actisense.OperatingMode(epoch.mode.Load()) != b.mode || observation.Kind != raw.KindFrame {
+				return
+			}
+			if (b.mode == actisense.ModeCANPacket) != (observation.DatagramID == actisense.BSTCANFrame) {
+				return
+			}
+		}
 		observation.AdapterID = b.adapterID
 		observation.NetworkID = b.endpoint
+		observation.ConnectionEpoch = epoch.number
 		if handler != nil {
 			handler(observation)
 		}
 	}
 	epoch.session = actisense.NewSession(actisense.SessionConfig{
-		Write: func(writeCtx context.Context, buf []byte) error {
+		Write: func(writeCtx context.Context, buf []byte) (int, error) {
 			return writeActisenseUnitContext(writeCtx, connection, buf)
 		},
-		OnDatagram: func(datagram actisense.Datagram) {
+		OnDatagram: func(datagram actisense.Datagram, matched bool) {
+			// A record in the same read as the final mode acknowledgement belongs
+			// to the new epoch. Let the handshake publish it before reading on.
+			if b.rawCAN && matched && !published.Load() && datagram.Payload[0] == actisense.BEMOperatingMode &&
+				actisense.OperatingMode(epoch.mode.Load()) == b.mode {
+				<-handshakeFinished
+			}
 			b.mu.Lock()
 			observer := b.messageObserver
 			b.mu.Unlock()
@@ -273,7 +299,7 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 					observer(message)
 				}
 			}
-			adapter.observeDatagram(datagram, emitObservation)
+			ObserveActisenseDatagram(datagram, emitObservation)
 		},
 		OnResponse: func(response actisense.BEMResponse) {
 			if response.BSTID != actisense.BSTBEMResponse || response.BEMID != actisense.BEMOperatingMode || response.ErrorCode != 0 {
@@ -310,7 +336,7 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 			}
 		},
 		OnDecodeError: func(decodeErr actisense.DecodeError) {
-			adapter.observeDecodeError(decodeErr, emitObservation)
+			ObserveActisenseDecodeError(decodeErr, emitObservation)
 		},
 		OnWireBytes: func(direction actisense.WireDirection, timestamp time.Time, data []byte) {
 			b.mu.Lock()
@@ -359,20 +385,22 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 	}
 	cancel()
 	if err != nil {
+		close(handshakeFinished)
 		_ = connection.Close()
 		epoch.session.Close(err)
 		<-readErr
 		return &ActisenseModeSetupError{RequestedMode: b.mode, Err: err}, false
 	}
 
-	published.Store(true)
 	if !b.publishEpoch(epoch) {
-		published.Store(false)
+		close(handshakeFinished)
 		_ = connection.Close()
 		epoch.session.Close(errBusClosed)
 		<-readErr
 		return errBusClosed, false
 	}
+	published.Store(true)
+	close(handshakeFinished)
 	var readResult error
 	select {
 	case readResult = <-readErr:
@@ -389,43 +417,46 @@ func (b *actisenseStreamBus) runEpoch(ctx context.Context, connection actisenseC
 	return readResult, true
 }
 
-func writeActisenseUnit(writer io.Writer, buf []byte) error {
+func writeActisenseUnit(writer io.Writer, buf []byte) (int, error) {
 	written := 0
 	for written < len(buf) {
 		n, err := writer.Write(buf[written:])
+		if n < 0 || n > len(buf)-written {
+			return written, fmt.Errorf("actisense: invalid write count %d for %d remaining bytes", n, len(buf)-written)
+		}
 		written += n
 		if err != nil {
-			return err
+			return written, err
 		}
 		if n == 0 {
-			return io.ErrShortWrite
+			return written, io.ErrShortWrite
 		}
 	}
-	return nil
+	return written, nil
 }
 
 // Cancellation closes only this connection epoch. A canceled or partial
 // frame cannot safely share its stream with a subsequent write.
-func writeActisenseUnitContext(ctx context.Context, connection actisenseConnection, buf []byte) error {
+func writeActisenseUnitContext(ctx context.Context, connection actisenseConnection, buf []byte) (int, error) {
 	if err := ctx.Err(); err != nil {
-		return err
+		return 0, err
 	}
 	interrupted := make(chan struct{})
 	stop := context.AfterFunc(ctx, func() {
 		_ = connection.Close()
 		close(interrupted)
 	})
-	err := writeActisenseUnit(connection, buf)
+	written, err := writeActisenseUnit(connection, buf)
 	if !stop() {
 		<-interrupted
-	}
-	if ctx.Err() != nil {
-		return ctx.Err()
 	}
 	if err != nil {
 		_ = connection.Close()
 	}
-	return err
+	if cause := ctx.Err(); cause != nil {
+		return written, cause
+	}
+	return written, err
 }
 
 func (b *actisenseStreamBus) publishEpoch(epoch *actisenseEpoch) bool {
@@ -434,13 +465,11 @@ func (b *actisenseStreamBus) publishEpoch(epoch *actisenseEpoch) bool {
 		b.mu.Unlock()
 		return false
 	}
-	b.epochNum++
-	epochNumber := b.epochNum
 	observer := b.observer
 	b.mu.Unlock()
 
 	if observer != nil {
-		observer(true, epochNumber)
+		observer(true, epoch.number)
 	}
 
 	b.mu.Lock()
@@ -449,6 +478,7 @@ func (b *actisenseStreamBus) publishEpoch(epoch *actisenseEpoch) bool {
 		return false
 	}
 	b.epoch = epoch
+	b.acknowledgedEpochs++
 	b.broadcastLocked()
 	b.readyOnce.Do(func() { close(b.ready) })
 	return true
@@ -462,11 +492,10 @@ func (b *actisenseStreamBus) clearEpoch(epoch *actisenseEpoch) {
 	}
 	b.epoch = nil
 	observer := b.observer
-	epochNumber := b.epochNum
 	b.broadcastLocked()
 	b.mu.Unlock()
 	if observer != nil {
-		observer(false, epochNumber)
+		observer(false, epoch.number)
 	}
 }
 
@@ -519,6 +548,9 @@ func (b *actisenseStreamBus) writeFrameContext(ctx context.Context, frame can.Fr
 	epoch, err := b.awaitEpochContext(ctx)
 	if err != nil {
 		return err
+	}
+	if actisense.OperatingMode(epoch.mode.Load()) != b.mode {
+		return fmt.Errorf("actisense: raw CAN bus requires acknowledged operating mode %d", b.mode)
 	}
 	if b.mode == actisense.ModeCANPacketASCII {
 		buf, encodeErr := FormatActisenseCANASCII(frame, raw.DirectionTransmitted, 0)

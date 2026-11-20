@@ -58,24 +58,10 @@ type Packet struct {
 	// length byte; subsequent frames are continuation frames.
 	FrameNum uint8 `json:"frameNum"`
 
-	// Proprietary indicates if the PGN falls in the NMEA 2000 proprietary range.
-	// Proprietary PGNs encode a manufacturer ID and industry code in their first two data
-	// bytes, which is used to select the correct variant.
-	Proprietary bool `json:"proprietary"`
-
 	// Complete is true for single-frame messages and for fast-packet messages when all
 	// frames in the sequence have been received and assembled. Only complete packets are
 	// forwarded downstream for decoding.
 	Complete bool `json:"complete"`
-
-	// Manufacturer is the Manufacturer ID extracted from the first two bytes of proprietary
-	// PGN data.
-	Manufacturer pgn.ManufacturerCodeConst `json:"manufacturer"`
-
-	// Candidates is the list of all possible PGN definitions that match this PGN number.
-	// Multiple candidates exist when different manufacturers define their own proprietary
-	// messages under the same PGN number (e.g., PGN 130820 has many vendor-specific variants).
-	Candidates []*pgn.PgnInfo `json:"candidates"`
 
 	// ParseErrors tracks errors encountered during packet processing. Errors accumulate
 	// as validation fails or assembly issues arise. Decode errors are bundled into the
@@ -84,9 +70,8 @@ type Packet struct {
 }
 
 // NewPacket creates and returns a pointer to an initialized Packet from a MessageInfo and
-// raw data bytes. It performs initial validation, determines if the PGN is proprietary,
-// looks up candidate metadata from the PGN metadata table, and sets the Fast
-// flag based on the first candidate's metadata.
+// raw data bytes. It validates the header and looks up whether the PGN uses
+// fast packets. The payload decoder selects the variant after assembly.
 //
 // Parameters:
 //   - info: MessageInfo containing PGN number, source, priority, destination, and timestamp.
@@ -100,18 +85,12 @@ func NewPacket(info pgn.MessageInfo, data []byte) *Packet {
 	p.Data = data
 	p.Info = info
 	if p.Valid() {
-		// Check if this PGN falls in the NMEA 2000 proprietary range (manufacturer-specific).
-		p.Proprietary = pgn.IsProprietaryPGN(p.Info.PGN)
-
-		// Look up all known PGN definitions that match this PGN number.
-		// For non-proprietary PGNs there is typically one candidate; for proprietary PGNs
-		// there may be many (one per manufacturer that defines messages under this PGN).
-		p.Candidates = pgn.PgnInfoLookup[p.Info.PGN]
-		if len(p.Candidates) == 0 {
+		variants := pgn.PgnInfoLookup[p.Info.PGN]
+		if len(variants) == 0 {
 			// PGN not found in generated metadata -- treat as unknown.
 			p.ParseErrors = append(p.ParseErrors, fmt.Errorf("no data for pgn"))
 		} else {
-			for _, candidate := range p.Candidates {
+			for _, candidate := range variants {
 				if candidate.Fast {
 					p.Fast = true
 					break
@@ -159,32 +138,4 @@ func (p *Packet) GetSeqFrame() {
 // data and accumulated error information for debugging and logging.
 func (p *Packet) UnknownPGN() *pgn.UnknownPGN {
 	return buildUnknownPGN(p)
-}
-
-// FilterCandidates filters the candidate metadata to variants matching the payload.
-func (p *Packet) FilterCandidates() {
-	// Extract manufacturer code from the data payload (only meaningful for proprietary PGNs).
-	p.GetManCode() // sets p.Manufacturer
-	candidates := make([]*pgn.PgnInfo, 0, len(p.Candidates))
-	for _, d := range p.Candidates {
-		// For proprietary PGNs, skip candidates from a different manufacturer.
-		if p.Proprietary && d.ManId != 0 && p.Manufacturer != d.ManId {
-			continue
-		}
-		candidates = append(candidates, d)
-	}
-	p.Candidates = pgn.FilterMatchingPgnInfos(candidates, p.Data)
-}
-
-// GetManCode extracts and sets the Manufacturer code from the packet data.
-// For proprietary PGNs, the first 11 bits of the data payload contain the manufacturer
-// code (little-endian), and bits 13-15 contain the industry code. This method calls
-// pgn.GetProprietaryInfo to perform the extraction and sets p.Manufacturer on success.
-// If the extraction fails (e.g., insufficient data), the Manufacturer field is left at
-// its zero value.
-func (p *Packet) GetManCode() {
-	m, _, err := pgn.GetProprietaryInfo(p.Data)
-	if err == nil {
-		p.Manufacturer = m
-	}
 }

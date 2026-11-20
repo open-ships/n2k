@@ -92,6 +92,9 @@ type Client struct {
 	claimed              bool
 	claimEpoch           uint64
 	txReady              chan struct{}
+	replacementClaim     bool
+	contentionTimer      *time.Timer
+	contentionEndsAt     time.Time
 	connected            bool
 	connectionEpoch      uint64
 	connectionChanged    chan struct{}
@@ -108,7 +111,6 @@ type Client struct {
 	closeErr   error
 	busStarted bool
 	claimer    *claiming.Claimer
-	addrErr    error // set by OnFatalError during address claiming
 
 	// addrReady is closed once address claiming completes (or immediately for replay).
 	addrReady chan struct{}
@@ -450,11 +452,11 @@ func (c *Client) initBus(cfg config) error {
 			if info.TargetId != nil {
 				destination = *info.TargetId
 			}
+			c.system.handleAssembled(info, data)
 			if info.PGN == pgnISOCommandedAddress {
 				c.handleCommandedAddressTransfer(destination, data)
 			}
-			c.system.handleAssembled(info, data)
-			c.pipeline.InjectAssembled(info, data)
+			c.pipeline.deliverCompletedTransfer(info, data)
 		},
 		Logger: c.log,
 	})
@@ -475,17 +477,16 @@ func (c *Client) initBus(cfg config) error {
 	c.pipeline.setObservationOutput(c.publishObservation)
 
 	// Set up the protocol-message router and start its dispatch loop.
-	sys, err := newSystemRouter(c.ctx, cfg)
+	c.registry = newRegistry()
+	sys, err := newSystemRouter(c.ctx, cfg, c.registry)
 	if err != nil {
 		return err
 	}
 	c.system = sys
 	c.correlator = newCorrelator()
 	c.actisenseRemote = newActisenseRemoteManager(c)
-	c.registry = newRegistry()
 	sys.addHandler(c.correlator.observe)
 	sys.addHandler(c.handleGroupFunction)
-	sys.addHandler(c.registry.observe)
 	sys.addObservationHandler(c.actisenseRemote.observe)
 	sys.dispatchMu = &c.dispatchMu
 	sys.current = c.currentMessageEpoch
@@ -497,18 +498,17 @@ func (c *Client) initBus(cfg config) error {
 	go c.deviceInfoLoop()
 	go c.rejoinLoop()
 
-	// Set up the heartbeat (PGN 126993). It waits for addrReady before its
-	// first transmission.
+	// Start the heartbeat worker. Each claim lifetime has its own readiness gate.
 	hbInterval := defaultHeartbeatInterval
 	if cfg.heartbeatInterval != nil {
 		hbInterval = *cfg.heartbeatInterval
 	}
-	c.heartbeat = newHeartbeater(hbInterval, func(msg pgn.Message) *WriteResult {
-		return c.writeProtocol("heartbeat", protocolRequired, msg)
+	c.heartbeat = newHeartbeater(hbInterval, func(ctx context.Context, msg pgn.Message) *WriteResult {
+		return c.writeProtocolContext(ctx, "heartbeat", protocolRequired, msg)
 	})
 	go func() {
 		defer c.recoverGoroutine("heartbeat")
-		c.heartbeat.run(c.ctx, c.addrReady)
+		c.heartbeat.run(c.ctx, c.heartbeatReadiness)
 	}()
 
 	// Determine claiming mode.
@@ -522,19 +522,16 @@ func (c *Client) initBus(cfg config) error {
 		Mode:       mode,
 		Address:    c.sourceAddr,
 		Name:       c.deviceName,
-		WriteFrame: c.writeFrame,
+		WriteFrame: c.writeAddressClaim,
 		OnAddressChange: func(newAddr uint8) {
 			c.handleAddressChange(newAddr)
 		},
 		OnFatalError: func(err error) {
-			c.log.Error("address claiming fatal error", "error", err)
-			c.mu.Lock()
-			c.addrErr = err
-			active := c.claimed
-			c.mu.Unlock()
-			if active {
-				c.fail(fmt.Errorf("n2k: address claiming failed: %w", err))
+			if errors.Is(err, ErrEpochChanged) || c.ctx.Err() != nil {
+				return
 			}
+			c.log.Error("address claiming fatal error", "error", err)
+			c.fail(fmt.Errorf("n2k: address claiming failed: %w", err))
 		},
 		Logger: c.log,
 	})
@@ -654,8 +651,12 @@ func (c *Client) startBus() error {
 	// NewClient rather than hang it forever. Start the deadline only after the
 	// claim goroutine is scheduled: scheduler delay is not gateway delay and can
 	// otherwise consume a short claim window on a loaded machine.
-	startErr := make(chan error, 1)
-	claimStarted := make(chan struct{})
+	type firstClaimResult struct {
+		completedAt time.Time
+		err         error
+	}
+	started := make(chan firstClaimResult, 1)
+	claimStarted := make(chan time.Time, 1)
 	c.backgroundWg.Add(1)
 	go func() {
 		defer c.backgroundWg.Done()
@@ -668,24 +669,39 @@ func (c *Client) startBus() error {
 			if r := recover(); r != nil {
 				c.log.Error("panic during initial address claim",
 					"panic", r, "stack", string(debug.Stack()))
-				startErr <- fmt.Errorf("n2k: panic during address claim: %v", r)
+				started <- firstClaimResult{err: fmt.Errorf("n2k: panic during address claim: %v", r)}
 			}
 		}()
-		close(claimStarted)
-		startErr <- c.claimer.Start()
+		claimStarted <- time.Now()
+		err := c.claimer.Start()
+		started <- firstClaimResult{completedAt: time.Now(), err: err}
 	}()
+	var deadline time.Time
 	select {
-	case <-claimStarted:
+	case begin := <-claimStarted:
+		deadline = begin.Add(claimTimeout)
 	case <-c.ctx.Done():
 		return c.currentTerminalError(c.ctx.Err().Error())
 	}
 
-	timer := time.NewTimer(claimTimeout)
+	timer := time.NewTimer(time.Until(deadline))
 	defer timer.Stop()
+	var initialSettledAt time.Time
 	select {
-	case err := <-startErr:
-		if err != nil {
-			return fmt.Errorf("n2k: starting address claim: %w", err)
+	case result := <-started:
+		if result.err != nil {
+			return fmt.Errorf("n2k: starting address claim: %w", result.err)
+		}
+		if result.completedAt.After(deadline) {
+			return fmt.Errorf("n2k: initial address claim write: %w", context.DeadlineExceeded)
+		}
+		initialSettledAt = result.completedAt.Add(addressContentionWindow)
+		if claimTimeout <= addressContentionWindow {
+			// Short overrides explicitly shorten initial contention. Give this
+			// observation period its full duration after the bounded first write.
+			deadline = result.completedAt.Add(claimTimeout)
+			initialSettledAt = deadline
+			timer.Reset(time.Until(deadline))
 		}
 	case <-timer.C:
 		return errors.New("n2k: gateway unreachable — initial connection not established within claim timeout")
@@ -700,32 +716,9 @@ func (c *Client) startBus() error {
 		return c.currentTerminalError(c.ctx.Err().Error())
 	}
 
-	// Check if a fatal error occurred during the claim window.
-	c.mu.Lock()
-	if c.addrErr != nil {
-		err := c.addrErr
-		c.mu.Unlock()
-		return fmt.Errorf("n2k: address claiming failed: %w", err)
+	if err := c.finishStartupClaim(initialConnectionEpoch, initialSettledAt, deadline); err != nil {
+		return err
 	}
-	c.mu.Unlock()
-
-	// Check if we got a valid address.
-	addr := c.claimer.Address()
-	if addr == 254 {
-		return errors.New("n2k: address claiming failed — all addresses exhausted or contention in explicit mode")
-	}
-
-	// Update sourceAddr with the final claimed address.
-	c.mu.Lock()
-	if !c.connected || c.connectionEpoch != initialConnectionEpoch {
-		c.mu.Unlock()
-		return fmt.Errorf("n2k: connection changed during initial address claim: %w", ErrEpochChanged)
-	}
-	c.sourceAddr = addr
-	c.claimed = true
-	c.mu.Unlock()
-
-	close(c.addrReady)
 
 	// Enumerate the bus: ask every device to (re-)announce its address claim
 	// so the registry fills without waiting for spontaneous traffic.
@@ -763,9 +756,20 @@ func (c *Client) handleBusFrame(frame can.Frame) {
 func (c *Client) handleBusObservation(observation raw.Observation) {
 	observation = normalizeObservation(observation)
 	c.mu.Lock()
+	if _, managed := c.bus.(ConnectionLifecycleBus); managed && observation.ConnectionEpoch != 0 &&
+		(!c.connected || observation.ConnectionEpoch != c.connectionEpoch) {
+		c.mu.Unlock()
+		return
+	}
 	observation.ConnectionEpoch, observation.ClaimEpoch = c.connectionEpoch, c.claimEpoch
 	c.mu.Unlock()
 	c.publishObservation(observation)
+	if observation.Direction == raw.DirectionTransmitted {
+		// A gateway may report our own sends. Subscribers can see them, but
+		// they cannot claim an address, drive ISO transport, or answer a request.
+		c.pipeline.HandleObservation(observation)
+		return
+	}
 	if observation.Frame == nil {
 		if observation.Kind == raw.KindMessage {
 			c.system.handleObservation(observation, observation.PGN)
@@ -891,6 +895,7 @@ func (c *Client) fail(err error) {
 	}
 	c.connected = false
 	c.rejoining = false
+	c.stopContentionTimerLocked()
 	if c.epochCancel != nil {
 		c.epochCancel(err)
 	}
@@ -917,59 +922,35 @@ func (c *Client) handleConnectionChange(connected bool, epoch uint64) {
 	c.dispatchMu.Lock()
 	defer c.dispatchMu.Unlock()
 	c.mu.Lock()
-	if c.closed || c.terminalErr != nil || epoch < c.connectionEpoch {
+	if c.closed || c.terminalErr != nil || epoch < c.connectionEpoch || (c.connected == connected && epoch == c.connectionEpoch) {
 		c.mu.Unlock()
 		return
 	}
-	previousConnectionEpoch := c.connectionEpoch
-	changed := c.connected != connected || c.connectionEpoch != epoch
+	hadConnection := c.connectionEpoch != 0
 	c.connected = connected
 	c.connectionEpoch = epoch
-	if changed && c.connectionChanged != nil {
+	if c.connectionChanged != nil {
 		close(c.connectionChanged)
 		c.connectionChanged = make(chan struct{})
 	}
-	if c.actisenseRemote != nil {
-		// Hold the Client epoch lock through invalidation. Remote request
-		// registration takes the same Client -> manager lock order, so a
-		// request is atomically assigned to either the old or new epoch.
-		c.actisenseRemote.invalidate(ErrActisenseRemoteEpochChanged)
-	}
-	active := c.claimed
-	if !active {
-		if changed && previousConnectionEpoch != 0 {
-			c.invalidateEpochLocked(ErrEpochChanged)
-			if c.registry != nil {
-				c.registry.reset()
-			}
-		}
-		c.mu.Unlock()
-		if changed {
-			c.resetReadEpoch()
-		}
-		return
-	}
-	if !connected {
+	if hadConnection {
 		c.invalidateEpochLocked(ErrEpochChanged)
-		c.txReady = make(chan struct{})
-		c.rejoining = true
 		if c.registry != nil {
 			c.registry.reset()
 		}
-		c.mu.Unlock()
-		c.resetReadEpoch()
-		return
 	}
-	if !c.rejoining {
-		c.invalidateEpochLocked(ErrEpochChanged)
+	started := c.claimed
+	if started {
 		c.txReady = make(chan struct{})
+		c.rejoining = true
 	}
 	ready := c.txReady
-	c.rejoining = true
 	c.mu.Unlock()
 
 	c.resetReadEpoch()
-	c.queueRejoin(rejoinRequest{epoch: epoch, ready: ready})
+	if started && connected {
+		c.queueRejoin(rejoinRequest{epoch: epoch, ready: ready})
+	}
 }
 
 func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
@@ -991,31 +972,21 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 		return
 	}
 
-	timer := time.NewTimer(250 * time.Millisecond)
-	select {
-	case <-timer.C:
-	case <-c.ctx.Done():
-		timer.Stop()
-		return
+	c.mu.Lock()
+	if c.connectionEpoch == epoch && c.txReady == reconnectReady {
+		c.startContentionTimerLocked(time.Now())
 	}
-
-	// Contention can replace a readiness gate within this connection. Never
-	// park on an obsolete gate: its epoch cancellation wakes us to recheck.
+	c.mu.Unlock()
+	// Contention can replace a readiness gate within this connection. Its
+	// epoch cancellation wakes us to follow the successful replacement claim.
 	for {
 		c.mu.Lock()
-		if c.closed || c.terminalErr != nil || !c.connected || c.connectionEpoch != epoch {
+		if c.ctx.Err() != nil || c.closed || c.terminalErr != nil || !c.connected || c.connectionEpoch != epoch {
 			c.mu.Unlock()
 			return
 		}
 		ready := c.txReady
 		epochCtx = c.epochCtx
-		if ready == reconnectReady {
-			select {
-			case <-ready:
-			default:
-				close(ready)
-			}
-		}
 		c.mu.Unlock()
 		select {
 		case <-ready:
@@ -1035,9 +1006,6 @@ func (c *Client) rejoinNetwork(epoch uint64, reconnectReady chan struct{}) {
 
 	enumerate := uint64(framer.PGNISOAddressClaim)
 	c.retryAdvisoryProtocolContext(epochCtx, "post-reconnect bus enumeration", &pgn.IsoRequest{Pgn: &enumerate})
-	if c.heartbeat != nil && c.heartbeat.currentInterval() > 0 {
-		c.heartbeat.sendNow()
-	}
 }
 
 // handleAddressChange moves application writes behind a fresh contention
@@ -1047,32 +1015,11 @@ func (c *Client) handleAddressChange(newAddr uint8) {
 	defer c.dispatchMu.Unlock()
 	c.mu.Lock()
 	c.sourceAddr = newAddr
-	if c.actisenseRemote != nil {
-		c.actisenseRemote.invalidate(ErrActisenseRemoteEpochChanged)
-	}
-	if !c.claimed {
-		c.mu.Unlock()
-		return
-	}
-	if newAddr == 254 {
-		c.mu.Unlock()
-		c.fail(errors.New("n2k: address claiming failed: no address available"))
-		return
-	}
 	c.invalidateEpochLocked(ErrEpochChanged)
-	epoch := c.claimEpoch
-	ready := make(chan struct{})
-	c.txReady = ready
+	c.txReady = make(chan struct{})
+	c.replacementClaim = true
 	c.mu.Unlock()
 	c.resetReadEpoch()
-
-	time.AfterFunc(250*time.Millisecond, func() {
-		c.mu.Lock()
-		defer c.mu.Unlock()
-		if !c.closed && c.claimEpoch == epoch && c.txReady == ready {
-			close(ready)
-		}
-	})
 }
 
 // handleCommandedAddressTransfer validates the transfer-level requirements
@@ -1087,7 +1034,9 @@ func (c *Client) handleCommandedAddressTransfer(destination uint8, data []byte) 
 	commandedName := binary.LittleEndian.Uint64(data[:8])
 	changed, err := c.claimer.HandleCommandedAddress(commandedName, data[8])
 	if err != nil {
-		c.fail(fmt.Errorf("n2k: commanded address failed: %w", err))
+		if !errors.Is(err, ErrEpochChanged) && c.ctx.Err() == nil {
+			c.fail(fmt.Errorf("n2k: commanded address failed: %w", err))
+		}
 		return
 	}
 	if changed {
@@ -1486,6 +1435,7 @@ func (c *Client) Close() error {
 	c.closed = true
 	c.connected = false
 	c.rejoining = false
+	c.stopContentionTimerLocked()
 	if c.epochCancel != nil {
 		c.epochCancel(ErrClientClosed)
 	}

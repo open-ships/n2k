@@ -57,7 +57,7 @@ func NewActisenseCustomGatewaySession(log *slog.Logger, endpoint, adapterID stri
 }
 
 func (s *ActisenseGatewaySession) Run(ctx context.Context, handler func(can.Frame)) error {
-	return s.stream.Run(ctx, handler)
+	return s.RunObservations(ctx, actisenseFrameHandler(handler))
 }
 
 func (s *ActisenseGatewaySession) RunObservations(ctx context.Context, handler func(raw.Observation)) error {
@@ -100,7 +100,7 @@ func (s *ActisenseGatewaySession) currentEpoch(number uint64) (*actisenseEpoch, 
 	if s.stream.closed {
 		return nil, actisense.ErrSessionClosed
 	}
-	if s.stream.epoch == nil || (number != 0 && s.stream.epochNum != number) {
+	if s.stream.epoch == nil || (number != 0 && s.stream.epoch.number != number) {
 		return nil, ErrActisenseNotReady
 	}
 	return s.stream.epoch, nil
@@ -111,7 +111,7 @@ func (s *ActisenseGatewaySession) currentEpoch(number uint64) (*actisenseEpoch, 
 func (s *ActisenseGatewaySession) EpochRequester(epoch uint64) (actisense.Requester, error) {
 	s.stream.mu.Lock()
 	defer s.stream.mu.Unlock()
-	if s.stream.closed || s.stream.epoch == nil || s.stream.epochNum != epoch {
+	if s.stream.closed || s.stream.epoch == nil || s.stream.epoch.number != epoch {
 		return nil, fmt.Errorf("actisense: connection epoch %d is no longer ready", epoch)
 	}
 	return s.stream.epoch.session, nil

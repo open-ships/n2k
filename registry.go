@@ -114,7 +114,7 @@ func (r *registry) handleClaim(source uint8, rawName uint64, now time.Time) (fir
 	}
 	r.byAddr[source] = entry
 	entry.addr = source
-	entry.lastSeen = now
+	entry.lastSeen = laterTime(entry.lastSeen, now)
 
 	if entry.infoRequested {
 		return false
@@ -124,27 +124,29 @@ func (r *registry) handleClaim(source uint8, rawName uint64, now time.Time) (fir
 }
 
 // observe attaches product and configuration info to the device currently
-// holding the message's source address. Registered as a system handler.
+// holding the message's source address at decode time.
 func (r *registry) observe(msg pgn.Message) {
-	carrier, ok := msg.(infoCarrier)
-	if !ok {
-		return
-	}
-	info := carrier.MessageInfo()
-
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	entry, ok := r.byAddr[info.SourceId]
-	if !ok {
-		return
-	}
 	switch m := msg.(type) {
 	case *pgn.ProductInformation:
-		entry.product = m.Clone().(*pgn.ProductInformation)
+		if entry := r.byAddr[m.Info.SourceId]; entry != nil {
+			entry.product = m.Clone().(*pgn.ProductInformation)
+			entry.lastSeen = laterTime(entry.lastSeen, m.Info.Timestamp)
+		}
 	case *pgn.ConfigurationInformation:
-		entry.config = m.Clone().(*pgn.ConfigurationInformation)
+		if entry := r.byAddr[m.Info.SourceId]; entry != nil {
+			entry.config = m.Clone().(*pgn.ConfigurationInformation)
+			entry.lastSeen = laterTime(entry.lastSeen, m.Info.Timestamp)
+		}
 	}
-	entry.lastSeen = info.Timestamp
+}
+
+func laterTime(previous, observed time.Time) time.Time {
+	if previous.After(observed) {
+		return previous
+	}
+	return observed
 }
 
 // touch advances LastSeen for the device holding an address.
@@ -152,7 +154,7 @@ func (r *registry) touch(source uint8, now time.Time) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if entry, ok := r.byAddr[source]; ok {
-		entry.lastSeen = now
+		entry.lastSeen = laterTime(entry.lastSeen, now)
 	}
 }
 

@@ -2,26 +2,22 @@ package canbus
 
 import (
 	"context"
-	"errors"
 	"io"
 	"log/slog"
+	"net"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/brutella/can"
 	"github.com/stretchr/testify/require"
 	"go.bug.st/serial"
 )
 
 func TestSocketCANRunStopsOnContextCancellation(t *testing.T) {
-	rwc := newBlockingCANReadWriteCloser()
-	ch := newSocketCANChannel(testLogger(), socketCANChannelOptions{
-		InterfaceName: "test",
-		newBus: func(string) (*can.Bus, error) {
-			return can.NewBus(rwc), nil
-		},
-	})
+	local, peer := net.Pipe()
+	defer func() { _ = peer.Close() }()
+	ch := NewSocketCAN(testLogger(), "test")
+	ch.open = func(string) (io.ReadWriteCloser, error) { return local, nil }
 
 	assertRunStopsOnCancel(t, func(ctx context.Context) error {
 		return ch.Run(ctx, nil)
@@ -62,32 +58,6 @@ func assertRunStopsOnCancel(t *testing.T, run func(context.Context) error) {
 
 func testLogger() *slog.Logger {
 	return slog.New(slog.NewTextHandler(io.Discard, nil))
-}
-
-type blockingCANReadWriteCloser struct {
-	closed chan struct{}
-	once   sync.Once
-}
-
-func newBlockingCANReadWriteCloser() *blockingCANReadWriteCloser {
-	return &blockingCANReadWriteCloser{closed: make(chan struct{})}
-}
-
-func (r *blockingCANReadWriteCloser) Read([]byte) (int, error) {
-	<-r.closed
-	return 0, errors.New("closed")
-}
-
-func (r *blockingCANReadWriteCloser) ReadFrame(*can.Frame) error {
-	<-r.closed
-	return errors.New("closed")
-}
-
-func (r *blockingCANReadWriteCloser) Write(p []byte) (int, error) { return len(p), nil }
-func (r *blockingCANReadWriteCloser) WriteFrame(can.Frame) error  { return nil }
-func (r *blockingCANReadWriteCloser) Close() error {
-	r.once.Do(func() { close(r.closed) })
-	return nil
 }
 
 type blockingSerialPort struct {

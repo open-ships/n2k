@@ -1,8 +1,11 @@
 package pgn
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"strings"
+	"unicode/utf16"
 	"unicode/utf8"
 )
 
@@ -78,4 +81,92 @@ func encodeRDSText(value string) (string, error) {
 		return value, nil
 	}
 	return wire, nil
+}
+
+// A length includes any padding, so strip it in units of the selected encoding.
+func decodeControlText(control byte, data []byte) (string, error) {
+	if control != 0 {
+		for len(data) != 0 && (data[len(data)-1] == 0xff || data[len(data)-1] == 0) {
+			data = data[:len(data)-1]
+		}
+		if utf8.Valid(data) {
+			return string(data), nil
+		}
+		var dst strings.Builder
+		for _, b := range data {
+			dst.WriteRune(rune(b))
+		}
+		return dst.String(), nil
+	}
+	if len(data)%2 != 0 {
+		return "", fmt.Errorf("odd UTF-16 byte length %d", len(data))
+	}
+	var order binary.ByteOrder = binary.LittleEndian
+	if bytes.HasPrefix(data, []byte{0xfe, 0xff}) {
+		order = binary.BigEndian
+		data = data[2:]
+	} else if bytes.HasPrefix(data, []byte{0xff, 0xfe}) {
+		data = data[2:]
+	}
+	var units []uint16
+	for len(data) != 0 {
+		units = append(units, order.Uint16(data))
+		data = data[2:]
+	}
+	for len(units) != 0 && (units[len(units)-1] == 0 || units[len(units)-1] == 0xffff) {
+		units = units[:len(units)-1]
+	}
+	return string(utf16.Decode(units)), nil
+}
+
+// Newly authored text uses the existing control-one UTF-8 representation.
+// Long text decoded from a more compact wire encoding must remain encodable.
+func encodeControlText(s string, limit int, compact bool) (byte, []byte, error) {
+	// No representable body can expand to more than three UTF-8 bytes per wire byte.
+	if len(s) > 3*limit {
+		return 0, nil, fmt.Errorf("STRING_LAU text exceeds %d encoded bytes", limit)
+	}
+	best, control := []byte(s), byte(1)
+	if len(best) <= limit && (!compact || utf8.RuneCountInString(s) == len(s)) {
+		return control, best, nil
+	}
+	if utf8.ValidString(s) {
+		var latin []byte
+		for _, r := range s {
+			if r > 255 {
+				latin = nil
+				break
+			}
+			latin = append(latin, byte(r))
+		}
+		if len(latin) > 0 && len(latin) < len(best) {
+			if decoded, _ := decodeControlText(1, latin); decoded == s {
+				best = latin
+			}
+		}
+		if data, err := encodeUTF16LE(s); err == nil && len(data) < len(best) {
+			if decoded, _ := decodeControlText(0, data); decoded == s {
+				best, control = data, 0
+			}
+		}
+	}
+	if len(best) <= limit {
+		return control, best, nil
+	}
+	return 0, nil, fmt.Errorf("STRING_LAU text exceeds %d encoded bytes", limit)
+}
+
+func encodeUTF16LE(s string) ([]byte, error) {
+	if len(s) > 3*126 || !utf8.ValidString(s) {
+		return nil, fmt.Errorf("invalid or overlong UTF-16 text")
+	}
+	units := utf16.Encode([]rune(s))
+	if len(units) > 126 {
+		return nil, fmt.Errorf("STRING_LAU text exceeds 126 UTF-16 code units")
+	}
+	data := make([]byte, 0, 2*len(units))
+	for _, u := range units {
+		data = binary.LittleEndian.AppendUint16(data, u)
+	}
+	return data, nil
 }

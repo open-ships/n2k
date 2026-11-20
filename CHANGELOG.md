@@ -1,5 +1,41 @@
 ## Change Log for open-ships/n2k
 
+### v1.11.0 — 2026-11-20 — Network readiness, gateway capture, and PGN fidelity
+
+- Address claiming ties readiness to the physical claim and its contention
+  window. Heartbeats pause during address changes and disconnects, and resume
+  on the settled address. The command that changes an address remains visible
+  to subscribers with its original claim epoch.
+- SocketCAN sends extended 29-bit frames and filters standard, remote-request,
+  and error frames on receive. Addressed fast packets can reuse a sequence
+  across destinations. An interrupted ISO RTS/CTS write reports every accepted
+  physical record, including a data frame already in progress.
+- Gateway transmit echoes bypass address claiming, ISO responses, discovery,
+  and request correlation. Device information follows the NAME that owned the
+  source address at receipt. Typed requests reserve their response slot for the
+  requested variant. Multi-source readers report the originating failure.
+- Actisense captures identify each physical connection, including handshake
+  traffic. Diagnostic subscribers receive independent copies. Tx/Rx PGN
+  readbacks validate the requested PGN. EBL traces retain the accepted
+  prefix of a partial write.
+- **Migration.** Raw observation consumers of Actisense BST-93 should handle
+  `ObservationMessage` and read `Payload`. Gateway-assembled messages now
+  retain their whole payload, including ISO and unknown proprietary PGNs.
+  `ObservationFrame` continues to represent actual raw CAN records.
+- Direct and live decoding now use the same variant selectors. When several
+  variants define a different field at the requested index,
+  `pgn.GetFieldDescriptor` returns an ambiguity error. Use the selected
+  variant's field metadata when its type is known.
+- PGN encoding and decoding enforce the 1,785-byte limit. Binary payloads
+  retain declared sub-byte lengths, STRING_LAU honors the wire character
+  encoding, and numeric fields respect their declared value domains. NaN
+  floating-point fields decode as unavailable and preserve their original
+  wire bytes on unmodified replay. Added
+  support for the compact Simnet alarm text present in the sample capture.
+- Updated the minimum Go version and CI, release, and security checks to
+  Go 1.26.11 to address [GO-2026-6859](https://pkg.go.dev/vuln/GO-2026-6859).
+  The lint installer is pinned to an immutable revision and verified by SHA-256.
+
 ### v1.10.0 — 2026-11-09 — PGN database v9.2.0
 
 - Updated the pinned upstream database from v9.0.0 through v9.1.0 to v9.2.0

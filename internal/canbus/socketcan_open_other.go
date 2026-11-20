@@ -4,10 +4,9 @@ package canbus
 
 import (
 	"errors"
-
-	"github.com/brutella/can"
+	"io"
 )
 
-func newSocketCANBus(string) (*can.Bus, error) {
+func openSocketCAN(string) (io.ReadWriteCloser, error) {
 	return nil, errors.New("SocketCAN is only available on Linux")
 }

@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/open-ships/n2k/internal/decoder"
+	"github.com/open-ships/n2k/internal/framer"
+	"github.com/open-ships/n2k/raw"
 )
 
 const (
@@ -17,11 +19,11 @@ const (
 // as a series of CAN frames that must be reassembled.
 //
 // MultiBuilder keys in-progress sequences by network identity, connection and
-// claim epoch, source address, PGN, and sequence ID. Network identity is essential when several physical
+// claim epoch, source, destination, direction, PGN, and sequence ID. Network identity is essential when several physical
 // networks are merged into one read pipeline because their dynamic source
 // addresses and three-bit sequence IDs can overlap.
 //
-// Each unique (source, PGN, seqId) tuple maps to a sequence that accumulates frames
+// Each unique key maps to a sequence that accumulates frames
 // until the message is complete. Once complete, the sequence is deleted to free memory.
 //
 // This structure is instantiated by CANAdapter and delegates frame-level assembly to
@@ -38,6 +40,8 @@ type fastPacketKey struct {
 	connectionEpoch uint64
 	claimEpoch      uint64
 	source          uint8
+	destination     uint8
+	direction       raw.Direction
 	pgn             uint32
 	seqID           uint8
 }
@@ -120,9 +124,13 @@ func keyForPacket(packet *decoder.Packet) fastPacketKey {
 	if network == "" {
 		network = packet.Info.AdapterID
 	}
+	destination := uint8(framer.BroadcastAddr)
+	if packet.Info.TargetId != nil {
+		destination = *packet.Info.TargetId
+	}
 	return fastPacketKey{
 		network: network, connectionEpoch: packet.Info.ConnectionEpoch, claimEpoch: packet.Info.ClaimEpoch,
-		source: packet.Info.SourceId, pgn: packet.Info.PGN, seqID: packet.SeqId,
+		source: packet.Info.SourceId, destination: destination, direction: packet.Info.Direction, pgn: packet.Info.PGN, seqID: packet.SeqId,
 	}
 }
 

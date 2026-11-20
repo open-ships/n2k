@@ -10,31 +10,10 @@ import (
 	"github.com/open-ships/n2k/raw"
 )
 
-// actisenseAdapter converts owned BST datagrams into the library's transport
-// Observation model. Its fast-packet sequence is scoped to one connection
-// epoch.
-type actisenseAdapter struct {
-	sequence uint8
-}
-
-// ActisenseObservationAdapter exposes the transport-neutral BST-to-Observation
-// Adapter to capture readers without exporting protocol state from this
-// internal package.
-type ActisenseObservationAdapter struct{ adapter actisenseAdapter }
-
-func NewActisenseObservationAdapter() *ActisenseObservationAdapter {
-	return &ActisenseObservationAdapter{}
-}
-
-func (a *ActisenseObservationAdapter) HandleDatagram(datagram actisense.Datagram, handler func(raw.Observation)) {
-	a.adapter.observeDatagram(datagram, handler)
-}
-
-func (a *ActisenseObservationAdapter) HandleDecodeError(err actisense.DecodeError, handler func(raw.Observation)) {
-	a.adapter.observeDecodeError(err, handler)
-}
-
-func (a *actisenseAdapter) observeDatagram(datagram actisense.Datagram, handler func(raw.Observation)) {
+// ObserveActisenseDatagram delivers an owned observation at the layer the
+// gateway actually supplied: BST-95 carries a frame, while BST-93/94/D0
+// carry complete messages.
+func ObserveActisenseDatagram(datagram actisense.Datagram, handler func(raw.Observation)) {
 	if handler == nil {
 		return
 	}
@@ -64,31 +43,6 @@ func (a *actisenseAdapter) observeDatagram(datagram actisense.Datagram, handler 
 			handler(actisenseTransportError(now, datagram.ID, err))
 			return
 		}
-		if datagram.ID == actisense.BSTN2KReceive {
-			frames, frameErr := Reframe(message, a.sequence)
-			if frameErr != nil {
-				handler(actisenseTransportError(now, datagram.ID, frameErr))
-				return
-			}
-			a.sequence = (a.sequence + 1) % 8
-			for _, frame := range frames {
-				frameCopy := frame
-				handler(raw.Observation{
-					Kind:                  raw.KindFrame,
-					Timestamp:             now,
-					ReceivedAt:            now,
-					TransportTimestamp:    message.Timestamp,
-					HasTransportTimestamp: message.HasTimestamp,
-					AdapterID:             "actisense",
-					Direction:             raw.DirectionReceived,
-					Frame:                 &frameCopy,
-					Protocol:              "actisense-bst",
-					DatagramID:            uint16(datagram.ID),
-				})
-			}
-			return
-		}
-
 		destination := message.Destination
 		handler(raw.Observation{
 			Kind:                  raw.KindMessage,
@@ -148,7 +102,8 @@ func (a *actisenseAdapter) observeDatagram(datagram actisense.Datagram, handler 
 	})
 }
 
-func (a *actisenseAdapter) observeDecodeError(err actisense.DecodeError, handler func(raw.Observation)) {
+// ObserveActisenseDecodeError delivers a transport error to the observation reader.
+func ObserveActisenseDecodeError(err actisense.DecodeError, handler func(raw.Observation)) {
 	if handler != nil {
 		handler(actisenseTransportError(time.Now(), err.ID, err))
 	}
@@ -178,28 +133,49 @@ func actisenseDirection(direction actisense.Direction) raw.Direction {
 // Message-level D0 records and gateway diagnostics require the Observation
 // Interface and are intentionally omitted by this compatibility helper.
 func ReadActisense(r io.Reader, handler func(can.Frame)) error {
-	return ReadActisenseObservations(r, func(observation raw.Observation) {
-		if handler != nil && observation.Frame != nil {
+	return ReadActisenseObservations(r, actisenseFrameHandler(handler))
+}
+
+// Only legacy frame-only readers synthesize CAN frames from BST-93.
+func actisenseFrameHandler(handler func(can.Frame)) func(raw.Observation) {
+	if handler == nil {
+		return nil
+	}
+	reframe := ReframeEmitter(handler)
+	var epoch uint64
+	return func(observation raw.Observation) {
+		if observation.Frame != nil {
 			handler(*observation.Frame)
+			return
 		}
-	})
+		if observation.Kind != raw.KindMessage || observation.DatagramID != actisense.BSTN2KReceive {
+			return
+		}
+		if epoch != observation.ConnectionEpoch {
+			epoch = observation.ConnectionEpoch
+			reframe = ReframeEmitter(handler)
+		}
+		reframe(N2KMessage{
+			PGN: observation.PGN, Priority: observation.Priority, Destination: *observation.Destination,
+			Source: observation.Source, Data: observation.Payload,
+		})
+	}
 }
 
 // ReadActisenseObservations decodes all supported BDTP/BST datagrams until EOF.
 func ReadActisenseObservations(r io.Reader, handler func(raw.Observation)) error {
 	parser := actisense.NewParser()
-	adapter := &actisenseAdapter{}
 	buf := make([]byte, 4096)
 	for {
 		n, err := r.Read(buf)
 		if n > 0 {
 			parser.Feed(buf[:n],
-				func(datagram actisense.Datagram) { adapter.observeDatagram(datagram, handler) },
-				func(decodeErr actisense.DecodeError) { adapter.observeDecodeError(decodeErr, handler) },
+				func(datagram actisense.Datagram) { ObserveActisenseDatagram(datagram, handler) },
+				func(decodeErr actisense.DecodeError) { ObserveActisenseDecodeError(decodeErr, handler) },
 			)
 		}
 		if err != nil {
-			parser.End(func(decodeErr actisense.DecodeError) { adapter.observeDecodeError(decodeErr, handler) })
+			parser.End(func(decodeErr actisense.DecodeError) { ObserveActisenseDecodeError(decodeErr, handler) })
 			if errors.Is(err, io.EOF) {
 				return nil
 			}

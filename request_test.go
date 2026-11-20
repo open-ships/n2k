@@ -3,6 +3,7 @@ package n2k
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 	"time"
 
@@ -142,4 +143,54 @@ func TestRequest_ReplayClientRejected(t *testing.T) {
 	_, err = Request[*pgn.ProductInformation](context.Background(), c, 0x23)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "bus")
+}
+
+func TestRequestSkipsOtherVariantsBeforeBuffering(t *testing.T) {
+	co := newCorrelator()
+	info := pgn.MessageInfo{PGN: 126208, SourceId: 42, TargetId: pgn.Target(251)}
+	waiter, err := co.add(info.PGN, 42, 251, 0, 0, reflect.TypeFor[*pgn.NmeaAcknowledgeGroupFunction]())
+	require.NoError(t, err)
+	for range 8 {
+		co.observe(&pgn.NmeaRequestGroupFunction{Info: info})
+	}
+	co.observe(&pgn.NmeaAcknowledgeGroupFunction{Info: info})
+	require.Len(t, waiter.ch, 1)
+	require.IsType(t, &pgn.NmeaAcknowledgeGroupFunction{}, <-waiter.ch)
+}
+
+func TestGatewayTransmitEchoStaysOutOfProtocolIngress(t *testing.T) {
+	c, mb, local := newCitizenClient(t, WithProductInfo(ProductInfo{ModelID: "local"}))
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	reply := make(chan *pgn.ProductInformation, 1)
+	go func() { msg, _ := Request[*pgn.ProductInformation](ctx, c, 255); reply <- msg }()
+	require.Eventually(t, func() bool { return infoRequestsTo(mb, 126996, 255) > 0 }, time.Second, time.Millisecond)
+	c.handleBusObservation(frameObservation(claimFrame(testDeviceName, 42), "test", "bus", DirectionTransmitted))
+	_, claimed := c.DeviceAt(42)
+	require.False(t, claimed)
+	c.handleBusObservation(frameObservation(isoRequestFrame(126996, local, 255), "test", "bus", DirectionTransmitted))
+
+	payload, err := pgn.EncodeMessage(&pgn.ProductInformation{ModelId: "local"})
+	require.NoError(t, err)
+	c.handleBusObservation(Observation{Kind: ObservationMessage, PGN: 126996, Source: local, Direction: DirectionTransmitted, Payload: payload})
+	sub := c.msgHub.subscribe()
+	defer sub.unsubscribe()
+	foundEcho := false
+	for len(sub.ch) > 0 {
+		if product, ok := (<-sub.ch).(*pgn.ProductInformation); ok && product.ModelId == "local" && product.Info.Direction == DirectionTransmitted {
+			foundEcho = true
+		}
+	}
+	require.True(t, foundEcho)
+	for _, f := range fastPacketFrames(t, &pgn.ProductInformation{ModelId: "remote"}, 6, 42, 255) {
+		c.handleBusFrame(f)
+	}
+	select {
+	case got := <-reply:
+		require.NotNil(t, got)
+		require.Equal(t, "remote", got.ModelId)
+	case <-ctx.Done():
+		t.Fatal("timed out waiting for the received reply")
+	}
+	require.Empty(t, framesWithPGN(mb.getWritten(), 126996))
 }

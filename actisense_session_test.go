@@ -293,3 +293,44 @@ func TestGatewaySessionCloseBoundsStalledTransmitListRestoration(t *testing.T) {
 		t.Fatal("Close waited indefinitely for Tx-list restoration")
 	}
 }
+
+func TestActisenseDiagnosticSubscribersOwnNestedValues(t *testing.T) {
+	hub := newActisenseDiagnosticHub(1)
+	first, second := hub.subscribe(), hub.subscribe()
+	defer first.unsubscribe()
+	defer second.unsubscribe()
+	event := actisense.Diagnostic{
+		Response:    actisense.BEMResponse{Data: []byte{1}},
+		Startup:     &actisense.StartupStatus{StartupMode: 2},
+		NegativeAck: &actisense.NegativeAck{UniqueCommandID: 3},
+		ErrorReport: &actisense.ErrorReport{Timestamp: new(uint32(4)), ContextData: []byte{5}},
+		System: &actisense.SystemStatus{
+			Individual:    []actisense.IndividualBufferStatus{{ReceiveLoading: 6}},
+			Unified:       []actisense.UnifiedBufferStatus{{Loading: 7}},
+			CAN:           &actisense.CANStatus{Flags: 8},
+			OperatingMode: new(actisense.ModeCANPacket),
+		},
+	}
+	hub.publish(event)
+	one, two := <-first.ch, <-second.ch
+	event.Startup.StartupMode = 99
+	require.Equal(t, uint16(2), one.Startup.StartupMode)
+	one.Response.Data[0] = 99
+	one.Startup.StartupMode = 99
+	one.NegativeAck.UniqueCommandID = 99
+	*one.ErrorReport.Timestamp = 99
+	one.ErrorReport.ContextData[0] = 99
+	one.System.Individual[0].ReceiveLoading = 99
+	one.System.Unified[0].Loading = 99
+	one.System.CAN.Flags = 99
+	*one.System.OperatingMode = 99
+	assert.Equal(t, byte(1), two.Response.Data[0])
+	assert.Equal(t, uint16(2), two.Startup.StartupMode)
+	assert.Equal(t, uint32(3), two.NegativeAck.UniqueCommandID)
+	assert.Equal(t, uint32(4), *two.ErrorReport.Timestamp)
+	assert.Equal(t, byte(5), two.ErrorReport.ContextData[0])
+	assert.Equal(t, byte(6), two.System.Individual[0].ReceiveLoading)
+	assert.Equal(t, byte(7), two.System.Unified[0].Loading)
+	assert.Equal(t, byte(8), two.System.CAN.Flags)
+	assert.Equal(t, actisense.ModeCANPacket, *two.System.OperatingMode)
+}

@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const maxPayloadBytes = 1785 // ISO transport: 255 data packets of seven bytes each
+
+var errPayloadTooLarge = errors.New("PGN payload exceeds 1785 bytes")
+
 // ErrUnexpectedPayloadEnd identifies a field read that extends beyond the
 // available PGN payload.
 var ErrUnexpectedPayloadEnd = errors.New("unexpected end of PGN payload")
@@ -316,6 +320,9 @@ func (s *PGNDataStream) readFloat32() (*float32, error) {
 		return nil, nil
 	}
 	vo := math.Float32frombits(*v)
+	if math.IsNaN(float64(vo)) {
+		return nil, nil
+	}
 	return &vo, nil
 }
 
@@ -327,15 +334,18 @@ func (s *PGNDataStream) readFloat32() (*float32, error) {
 // Internally it reads up to 64 bits at a time via getNumberRaw and splits the result
 // into individual bytes in little-endian order, which matches the NMEA 2000 wire format.
 func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
-	numBytes := uint16(math.Ceil(float64(bitLength) / 8))
+	if bitLength > maxPayloadBytes*8 {
+		return nil, errPayloadTooLarge
+	}
+	numBytes := (int(bitLength) + 7) / 8
 	arr := make([]uint8, numBytes)
 
 	idx := 0
-	for i := uint16(0); i < bitLength; i += 64 {
+	for i := 0; i < int(bitLength); i += 64 {
 		// Determine how many bits to grab in this iteration (up to 64).
 		num := uint16(64)
-		if bitLength-i < 64 {
-			num = bitLength - i
+		if int(bitLength)-i < 64 {
+			num = uint16(int(bitLength) - i)
 		}
 		v, err := s.getNumberRaw(num)
 		if err != nil {
@@ -352,40 +362,22 @@ func (s *PGNDataStream) readBinaryData(bitLength uint16) ([]uint8, error) {
 	return arr, nil
 }
 
-// readStringWithLengthAndControl reads a source "STRING_LAU" encoded string.
-// Wire format:
-//   - Byte 0: total length in bytes (includes this byte and the control byte)
-//   - Byte 1: control/encoding byte (0 = UNICODE/UTF-16, 1 = ASCII) -- currently ignored
-//   - Bytes 2..N: the string character data, optionally padded/terminated with
-//     trailing 0x00 and/or 0xFF filler bytes that are not part of the string
-//
-// The NMEA 2000 spec is ambiguous about encoding: one source says "0 = UNICODE, 1 = ASCII",
-// another says "0 = ASCII, nonzero = UTF-8". In practice only ASCII has been observed on
-// real networks. The control byte is read but not acted upon. Trailing 0x00/0xFF bytes
-// are stripped so the decoded string is the exact inverse of writeStringWithLengthAndControl.
+// readStringWithLengthAndControl reads a STRING_LAU. The size includes
+// both header bytes. Control zero selects UTF-16. Devices using control one
+// (and legacy vendor values) send UTF-8 or single-byte Latin-1.
 func (s *PGNDataStream) readStringWithLengthAndControl() (string, error) {
-	// Read the 2-byte header: length byte and control byte.
-	lc, err := s.readBinaryData(16)
+	header, err := s.readBinaryData(16)
 	if err != nil {
 		return "", err
 	}
-	if lc[0] < 2 {
-		return "", fmt.Errorf("invalid STRING_LAU length %d", lc[0])
+	if header[0] < 2 {
+		return "", fmt.Errorf("invalid STRING_LAU length %d", header[0])
 	}
-	// Subtract 2 from the length to exclude the length and control bytes themselves,
-	// then convert to bits for readBinaryData.
-	dataLen := (uint16(lc[0]) - 2) * 8
-	// control := lc[1]  // reserved for future encoding support
-	arr, err := s.readBinaryData(dataLen)
+	data, err := s.readBinaryData(uint16(header[0]-2) * 8)
 	if err != nil {
 		return "", err
 	}
-	// Strip trailing NUL (0x00) and null-sentinel (0xFF) filler bytes.
-	end := len(arr)
-	for end > 0 && (arr[end-1] == 0x00 || arr[end-1] == 0xFF) {
-		end--
-	}
-	return string(arr[:end]), nil
+	return decodeControlText(header[1], data)
 }
 
 // readStringWithLength reads a source "STRING_LZ" encoded string.

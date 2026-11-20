@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"slices"
 )
 
 const (
@@ -200,6 +201,14 @@ func DecodeTxPGNState(response BEMResponse) (TxPGNState, error) {
 	}, nil
 }
 
+func decodeRequestedTxPGN(response BEMResponse, pgn uint32) (TxPGNState, error) {
+	state, err := DecodeTxPGNState(response)
+	if err == nil && state.PGN != pgn {
+		return TxPGNState{}, fmt.Errorf("actisense: requested Tx PGN %d, got %d", pgn, state.PGN)
+	}
+	return state, err
+}
+
 // DiagnosticKind identifies an unsolicited local BEM event.
 type DiagnosticKind string
 
@@ -265,6 +274,35 @@ type Diagnostic struct {
 	ErrorReport *ErrorReport
 	System      *SystemStatus
 	NegativeAck *NegativeAck
+}
+
+// Clone gives the recipient ownership of the response data and typed diagnostic.
+func (d Diagnostic) Clone() Diagnostic {
+	d.Response.Data = slices.Clone(d.Response.Data)
+	d.Startup = clonePointer(d.Startup)
+	d.NegativeAck = clonePointer(d.NegativeAck)
+	if d.ErrorReport != nil {
+		report := *d.ErrorReport
+		report.Timestamp = clonePointer(report.Timestamp)
+		report.ContextData = slices.Clone(report.ContextData)
+		d.ErrorReport = &report
+	}
+	if d.System != nil {
+		status := *d.System
+		status.Individual = slices.Clone(status.Individual)
+		status.Unified = slices.Clone(status.Unified)
+		status.CAN = clonePointer(status.CAN)
+		status.OperatingMode = clonePointer(status.OperatingMode)
+		d.System = &status
+	}
+	return d
+}
+
+func clonePointer[T any](value *T) *T {
+	if value == nil {
+		return nil
+	}
+	return new(*value)
 }
 
 // DecodeDiagnostic decodes F0/F1/F2/F4. ok is false for ordinary solicited

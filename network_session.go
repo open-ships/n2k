@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/brutella/can"
+	"github.com/open-ships/n2k/internal/framer"
 	"github.com/open-ships/n2k/pgn"
 )
 
@@ -116,9 +119,116 @@ func (c *Client) currentMessageEpoch(info pgn.MessageInfo) bool {
 	return !c.closed && c.terminalErr == nil && info.ConnectionEpoch == c.connectionEpoch && info.ClaimEpoch == c.claimEpoch
 }
 
+const addressContentionWindow = 250 * time.Millisecond
+
+// finishStartupClaim publishes the address installed by the claimer's change
+// callback if it has settled by the caller's deadline. Checking the current
+// gate and publishing under one lock prevents a superseded claim from winning.
+func (c *Client) finishStartupClaim(connection uint64, settledAt, deadline time.Time) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.terminalErr != nil {
+		return c.terminalErr
+	}
+	if c.closed {
+		return ErrClientClosed
+	}
+	if err := c.ctx.Err(); err != nil {
+		return err
+	}
+	if !c.connected || c.connectionEpoch != connection {
+		return fmt.Errorf("n2k: connection changed during initial address claim: %w", ErrEpochChanged)
+	}
+	if c.txReady != c.addrReady {
+		settledAt = c.contentionEndsAt
+	}
+	if settledAt.IsZero() || settledAt.After(deadline) {
+		return fmt.Errorf("n2k: address claim did not settle within claim timeout: %w", context.DeadlineExceeded)
+	}
+	if c.contentionTimer != nil {
+		// The deadline and contention timers may become runnable together.
+		c.stopContentionTimerLocked()
+		close(c.txReady)
+	}
+	c.claimed = true
+	close(c.addrReady)
+	return nil
+}
+
+// writeAddressClaim starts a replacement address's contention window only
+// after the wire writer has accepted its claim, within the same lifetime.
+func (c *Client) writeAddressClaim(frame can.Frame) error {
+	address := framer.ParseCANID(frame.ID).Source
+	c.mu.Lock()
+	if address != c.sourceAddr || !c.connected {
+		c.mu.Unlock()
+		return ErrEpochChanged
+	}
+	ctx, stop := c.writeContextLocked(c.ctx, true)
+	gate := c.txReady
+	c.mu.Unlock()
+	defer stop()
+	if err := c.writeFrameContext(ctx, frame); err != nil {
+		return err
+	}
+	acceptedAt := time.Now()
+	c.mu.Lock()
+	if c.replacementClaim && gate == c.txReady && c.sourceAddr == address {
+		if c.sourceAddr == 254 {
+			c.mu.Unlock()
+			c.fail(errors.New("n2k: address claiming failed: no address available"))
+			return nil
+		}
+		c.startContentionTimerLocked(acceptedAt)
+	}
+	c.mu.Unlock()
+	return nil
+}
+
+func (c *Client) startContentionTimerLocked(acceptedAt time.Time) {
+	if c.closed || c.terminalErr != nil || !c.connected || c.contentionTimer != nil {
+		return
+	}
+	c.replacementClaim = false
+	ready := c.txReady
+	c.contentionEndsAt = acceptedAt.Add(addressContentionWindow)
+	c.contentionTimer = time.AfterFunc(time.Until(c.contentionEndsAt), func() {
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if c.txReady == ready && c.contentionTimer != nil {
+			close(ready)
+			c.contentionTimer = nil
+		}
+	})
+}
+
+func (c *Client) stopContentionTimerLocked() {
+	c.replacementClaim = false
+	c.contentionEndsAt = time.Time{}
+	if c.contentionTimer != nil {
+		c.contentionTimer.Stop()
+		c.contentionTimer = nil
+	}
+}
+
+// heartbeatReadiness returns the lifetime that invalidates a scheduled tick
+// and a gate to wait on when the claim is not ready. A nil gate means ready.
+func (c *Client) heartbeatReadiness() (context.Context, <-chan struct{}) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if !c.claimed {
+		return c.epochCtx, c.addrReady
+	}
+	if c.readyErrorLocked() != nil {
+		return c.epochCtx, c.txReady
+	}
+	return c.epochCtx, nil
+}
+
 // invalidateEpochLocked owns pending operation lifetimes. Protocol parsers are
 // reset after releasing c.mu, avoiding callback/Client lock inversions.
 func (c *Client) invalidateEpochLocked(err error) {
+	c.stopContentionTimerLocked()
 	if c.epochCancel != nil {
 		c.epochCancel(err)
 	}
