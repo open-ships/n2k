@@ -63,8 +63,9 @@ type pgnManifestEntry struct {
 }
 
 type pgnManifestPayloadShape struct {
-	FieldCount int                `json:"fieldCount"`
-	Fields     []pgnManifestField `json:"fields"`
+	RepeatingFieldSet2Parent *int               `json:"repeatingFieldSet2Parent,omitempty"`
+	FieldCount               int                `json:"fieldCount"`
+	Fields                   []pgnManifestField `json:"fields"`
 }
 
 type pgnManifestField struct {
@@ -264,7 +265,7 @@ func manifestEntry(t *testing.T, info *PgnInfo) pgnManifestEntry {
 		ManufacturerID:   int(info.ManId),
 		Proprietary:      IsProprietaryPGN(info.PGN),
 		SourceFile:       sourceFile,
-		PayloadShape:     manifestPayloadShape(info.Fields),
+		PayloadShape:     manifestPayloadShape(info),
 		Example:          manifestExample(t, info),
 	}
 }
@@ -313,7 +314,8 @@ func manifestCategoryName(categoryID string) string {
 	}
 }
 
-func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadShape {
+func manifestPayloadShape(info *PgnInfo) pgnManifestPayloadShape {
+	fields := info.Fields
 	indexes := make([]int, 0, len(fields))
 	for index := range fields {
 		indexes = append(indexes, index)
@@ -347,8 +349,9 @@ func manifestPayloadShape(fields map[int]*FieldDescriptor) pgnManifestPayloadSha
 	}
 
 	return pgnManifestPayloadShape{
-		FieldCount: len(manifestFields),
-		Fields:     manifestFields,
+		RepeatingFieldSet2Parent: info.RepeatingFieldSet2Parent,
+		FieldCount:               len(manifestFields),
+		Fields:                   manifestFields,
 	}
 }
 

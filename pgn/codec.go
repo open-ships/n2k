@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"maps"
 	"math"
 	"reflect"
 	"sort"
@@ -26,7 +27,7 @@ import (
 //     read, and a mismatch returns an error so dispatch can try the next
 //     candidate struct.
 //   - Repeating field sets decode into Repeating1/Repeating2 slice fields.
-//     The set's count field (always a fixed field preceding the set) supplies
+//     The count field belongs to the enclosing message or table and supplies
 //     the iteration count; a null or absent count means read until the
 //     payload is exhausted. Encoding derives the count field from the slice
 //     length, overriding any user-set value.
@@ -143,12 +144,11 @@ type planGroup struct {
 	sliceIndex int
 	// elemType is the slice element struct type.
 	elemType reflect.Type
-	// countOrder is the order of the fixed field that carries the group
+	// countOrder is the order of the enclosing field that carries the group
 	// count, or 0 when the group repeats until the payload is exhausted.
 	countOrder int
-	// fields are the group's member fields in order, with fieldIndex values
-	// resolved against elemType.
-	fields []planField
+	// steps follow wire order within one element, including any nested set.
+	steps []planStep
 }
 
 // planStep is one decode/encode step: exactly one of field or group is set.
@@ -318,17 +318,7 @@ func encodeCurrentFieldsMode(m PGN, validate bool) ([]uint8, error) {
 	// Derived fields (group counts, binary length references) override any
 	// user-set value; collect them before writing so a length field that
 	// precedes its data field encodes the derived value.
-	overrides := make(map[int]uint64)
-	for _, step := range plan.steps {
-		if step.group != nil {
-			if step.group.countOrder != 0 {
-				overrides[step.group.countOrder] = uint64(source.Field(step.group.sliceIndex).Len())
-			}
-			continue
-		}
-		addLengthOverride(overrides, step.field, source)
-	}
-	raws := collectEncodeRaws(plan, source, overrides)
+	overrides, raws := encodingValues(plan.steps, source, nil)
 
 	steps := plan.steps
 	alarm, isAlarm := m.(*SimnetAlarmMessage)
@@ -418,108 +408,78 @@ func compileCodecPlan(t reflect.Type) (*codecPlan, error) {
 	if info == nil {
 		return nil, fmt.Errorf("no PGN metadata registered for struct %s", t.Name())
 	}
-	indexByOrder, sliceIndexes, err := codecStructIndexes(t)
+	sets := [2]repeatSpec{
+		{start: info.RepeatingFieldSet1StartField, size: info.RepeatingFieldSet1Size, count: info.RepeatingFieldSet1CountField},
+		{start: info.RepeatingFieldSet2StartField, size: info.RepeatingFieldSet2Size, count: info.RepeatingFieldSet2CountField},
+	}
+	if parent := info.RepeatingFieldSet2Parent; parent != nil {
+		if *parent != 1 {
+			return nil, fmt.Errorf("PGN struct %s has unknown repeating set parent %d", t.Name(), *parent)
+		}
+		sets[1].parent = *parent
+	}
+	steps, err := compileSteps(t, info, sortedFieldOrders(info.Fields), sets, 0)
 	if err != nil {
 		return nil, fmt.Errorf("PGN struct %s: %w", t.Name(), err)
 	}
+	return &codecPlan{info: info, steps: steps}, nil
+}
 
-	groups, groupBounds, err := compileCodecGroups(t, info, sliceIndexes)
+type repeatSpec struct {
+	start, size, count *int
+	parent             int // 0 for a message, 1 for a record of the first set
+}
+
+// compileSteps resolves field indexes against the struct that owns the fields.
+// A group's orders are compiled once in its element scope and skipped in its parent.
+func compileSteps(t reflect.Type, info *PgnInfo, orders []int, sets [2]repeatSpec, owner int) ([]planStep, error) {
+	indexes, slices, err := codecStructIndexes(t)
 	if err != nil {
 		return nil, err
 	}
-
-	plan := &codecPlan{info: info}
-	orders := sortedFieldOrders(info.Fields)
+	var steps []planStep
 	lastDynLen := 0
 	for i := 0; i < len(orders); {
 		order := orders[i]
-		grouped := false
-		for g, group := range groups {
-			if group == nil || order != groupBounds[g][0] {
+		var group *planGroup
+		for g, spec := range sets {
+			if spec.parent != owner || spec.start == nil || *spec.start != order || slices[g] < 0 {
 				continue
 			}
-			plan.steps = append(plan.steps, planStep{group: group})
-			for i < len(orders) && orders[i] < groupBounds[g][1] {
-				i++
+			if spec.size == nil || *spec.size <= 0 || *spec.size > len(orders)-i || orders[i+*spec.size-1] != order+*spec.size-1 {
+				return nil, fmt.Errorf("invalid field range for repeating set %d", g+1)
 			}
-			grouped = true
+			slice := t.Field(slices[g]).Type
+			if slice.Kind() != reflect.Slice || slice.Elem().Kind() != reflect.Struct {
+				return nil, fmt.Errorf("repeating set %d must be a slice of structs", g+1)
+			}
+			end := i + *spec.size
+			members, err := compileSteps(slice.Elem(), info, orders[i:end], sets, g+1)
+			if err != nil {
+				return nil, err
+			}
+			group = &planGroup{sliceIndex: slices[g], elemType: slice.Elem(), steps: members}
+			if spec.count != nil {
+				group.countOrder = *spec.count
+			}
+			i = end
 			break
 		}
-		if grouped {
+		if group != nil {
+			steps = append(steps, planStep{group: group})
 			continue
 		}
-		field, err := compileCodecField(info, order, indexByOrder, &lastDynLen)
+		field, err := compileCodecField(info, order, indexes, &lastDynLen)
 		if err != nil {
-			return nil, fmt.Errorf("PGN struct %s: %w", t.Name(), err)
+			return nil, err
 		}
-		if i == len(orders)-1 && field.kind == fieldKindBinary && field.bitLength == 0 && field.refOrder == 0 && field.dynLenOrder == 0 {
+		if owner == 0 && i == len(orders)-1 && field.kind == fieldKindBinary && field.bitLength == 0 && field.refOrder == 0 && field.dynLenOrder == 0 {
 			field.trailingBinary = true
 		}
-		plan.steps = append(plan.steps, planStep{field: field})
+		steps = append(steps, planStep{field: field})
 		i++
 	}
-	return plan, nil
-}
-
-// compileCodecGroups compiles the (up to two) repeating field sets described
-// by info against the struct's RepeatingN slice fields. The returned bounds
-// hold each compiled group's [start, end) order range. A metadata group whose
-// members are all reserved/spare needs no slice field and stays uncompiled,
-// leaving its members to decode once as fixed fields.
-func compileCodecGroups(t reflect.Type, info *PgnInfo, sliceIndexes [2]int) ([2]*planGroup, [2][2]int, error) {
-	var groups [2]*planGroup
-	var bounds [2][2]int
-	specs := [2]struct{ start, count, size *int }{
-		{info.RepeatingFieldSet1StartField, info.RepeatingFieldSet1CountField, info.RepeatingFieldSet1Size},
-		{info.RepeatingFieldSet2StartField, info.RepeatingFieldSet2CountField, info.RepeatingFieldSet2Size},
-	}
-	for g, spec := range specs {
-		if spec.start == nil || spec.size == nil || *spec.size <= 0 {
-			continue
-		}
-		start, end := *spec.start, *spec.start+*spec.size
-		if sliceIndexes[g] < 0 {
-			for order := start; order < end; order++ {
-				if desc := info.Fields[order]; desc != nil && desc.GolangType != "" {
-					return groups, bounds, fmt.Errorf(
-						"PGN struct %s has no repeating slice for field set %d", t.Name(), g+1)
-				}
-			}
-			continue
-		}
-		sliceType := t.Field(sliceIndexes[g]).Type
-		if sliceType.Kind() != reflect.Slice || sliceType.Elem().Kind() != reflect.Struct {
-			return groups, bounds, fmt.Errorf(
-				"PGN struct %s repeating field set %d must be a slice of structs", t.Name(), g+1)
-		}
-		elemType := sliceType.Elem()
-		elemIndexByOrder, _, err := codecStructIndexes(elemType)
-		if err != nil {
-			return groups, bounds, fmt.Errorf("PGN struct %s: %w", elemType.Name(), err)
-		}
-		group := &planGroup{
-			sliceIndex: sliceIndexes[g],
-			elemType:   elemType,
-		}
-		if spec.count != nil {
-			group.countOrder = *spec.count
-		}
-		lastDynLen := 0
-		for order := start; order < end; order++ {
-			if info.Fields[order] == nil {
-				return groups, bounds, fmt.Errorf(
-					"PGN struct %s repeating field set %d references missing order %d", t.Name(), g+1, order)
-			}
-			field, err := compileCodecField(info, order, elemIndexByOrder, &lastDynLen)
-			if err != nil {
-				return groups, bounds, fmt.Errorf("PGN struct %s: %w", t.Name(), err)
-			}
-			group.fields = append(group.fields, *field)
-		}
-		groups[g] = group
-		bounds[g] = [2]int{start, end}
-	}
-	return groups, bounds, nil
+	return steps, nil
 }
 
 // compileCodecField classifies one metadata field into a planField and
@@ -802,39 +762,52 @@ func decodeGroup(stream *PGNDataStream, group *planGroup, target reflect.Value, 
 			break
 		}
 		element := reflect.New(group.elemType).Elem()
-		elementRaws := make(map[int]uint64, len(raws)+len(group.fields))
-		for order, raw := range raws {
-			elementRaws[order] = raw
-		}
-		complete := true
-		for f := range group.fields {
-			included, err := conditionSatisfied(group.fields[f].condition, elementRaws)
+		elementRaws := maps.Clone(raws)
+		start := stream.getBitOffset()
+		done := false
+		for j, step := range group.steps {
+			if step.group != nil {
+				var err error
+				done, err = decodeGroup(stream, step.group, element, elementRaws)
+				if err != nil {
+					setGroupSlice(sliceField, slice)
+					return false, err
+				}
+				if done && j+1 < len(group.steps) {
+					setGroupSlice(sliceField, slice)
+					return true, nil
+				}
+				continue
+			}
+			field := step.field
+			included, err := conditionSatisfied(field.condition, elementRaws)
 			if err != nil {
-				return false, fmt.Errorf("repeating group field %d (%s): %w", group.fields[f].order, group.fields[f].name, err)
+				return false, fmt.Errorf("repeating group field %d (%s): %w", field.order, field.name, err)
 			}
 			if !included {
 				continue
 			}
-			if err := decodeField(stream, &group.fields[f], element, elementRaws); err != nil {
-				if !errors.Is(err, ErrUnexpectedPayloadEnd) {
-					setGroupSlice(sliceField, slice)
-					return false, fmt.Errorf("decode repeating group field %d: %w", group.fields[f].order, err)
-				}
-				// Truncated payloads may legitimately end inside a final
-				// repeating element; discard only that partial element.
-				complete = false
-				break
+			// At EOF an explicitly empty dynamic value still completes its record.
+			if length, known := elementRaws[field.dynLenOrder]; stream.isEOF() && (!known || length != 0) {
+				setGroupSlice(sliceField, slice)
+				return true, nil
 			}
-			if stream.isEOF() && f < len(group.fields)-1 {
-				complete = false
-				break
+			if err := decodeField(stream, field, element, elementRaws); err != nil {
+				setGroupSlice(sliceField, slice)
+				if errors.Is(err, ErrUnexpectedPayloadEnd) {
+					return true, nil
+				}
+				return false, fmt.Errorf("decode repeating group field %d: %w", field.order, err)
 			}
 		}
-		if !complete {
+		if stream.getBitOffset() == start {
+			return false, fmt.Errorf("repeating set %s consumed no data", group.elemType.Name())
+		}
+		slice = reflect.Append(slice, element)
+		if done {
 			setGroupSlice(sliceField, slice)
 			return true, nil
 		}
-		slice = reflect.Append(slice, element)
 	}
 	setGroupSlice(sliceField, slice)
 	return stream.isEOF(), nil
@@ -1034,61 +1007,58 @@ func encodeGroup(writer *PGNDataStreamWriter, group *planGroup, source reflect.V
 	slice := source.Field(group.sliceIndex)
 	for i := 0; i < slice.Len() && writer.Err() == nil; i++ {
 		element := slice.Index(i)
-		overrides := make(map[int]uint64)
-		for f := range group.fields {
-			addLengthOverride(overrides, &group.fields[f], element)
-		}
-		raws := collectFieldRaws(group.fields, element, overrides, parentRaws)
-		for f := range group.fields {
-			included, err := conditionSatisfied(group.fields[f].condition, raws)
+		overrides, raws := encodingValues(group.steps, element, parentRaws)
+		for _, step := range group.steps {
+			if step.group != nil {
+				encodeGroup(writer, step.group, element, raws)
+				continue
+			}
+			field := step.field
+			included, err := conditionSatisfied(field.condition, raws)
 			if err != nil {
-				writer.setErr(fmt.Errorf("repeating group field %d (%s): %w", group.fields[f].order, group.fields[f].name, err))
+				writer.setErr(fmt.Errorf("repeating group field %d (%s): %w", field.order, field.name, err))
 				continue
 			}
 			if !included {
 				continue
 			}
-			if group.fields[f].commandedParameter && !writer.canonical {
-				bits, err := commandedParameterBits(raws, group.fields[f].order)
+			if field.commandedParameter && !writer.canonical {
+				bits, err := commandedParameterBits(raws, field.order)
 				if err != nil {
 					writer.setErr(err)
 					continue
 				}
-				if size := element.Field(group.fields[f].fieldIndex).Len(); size != int(bits/8) {
-					writer.setErr(fmt.Errorf("field %d (%s): parameter value has %d bytes, want %d", group.fields[f].order, group.fields[f].name, size, bits/8))
+				if size := element.Field(field.fieldIndex).Len(); size != int(bits/8) {
+					writer.setErr(fmt.Errorf("field %d (%s): parameter value has %d bytes, want %d", field.order, field.name, size, bits/8))
 					continue
 				}
 			}
-			encodeField(writer, &group.fields[f], element, overrides, raws)
+			encodeField(writer, field, element, overrides, raws)
 		}
 	}
 }
 
-func collectEncodeRaws(plan *codecPlan, source reflect.Value, overrides map[int]uint64) map[int]uint64 {
-	raws := make(map[int]uint64, len(overrides)+len(plan.steps))
-	for order, raw := range overrides {
-		raws[order] = raw
+// encodingValues derives counts and lengths from the slices in this record.
+// Each invocation has its own overrides so sibling tables can have different counts.
+func encodingValues(steps []planStep, source reflect.Value, parent map[int]uint64) (map[int]uint64, map[int]uint64) {
+	overrides := make(map[int]uint64)
+	for _, step := range steps {
+		if group := step.group; group != nil {
+			if group.countOrder != 0 {
+				overrides[group.countOrder] = uint64(source.Field(group.sliceIndex).Len())
+			}
+			continue
+		}
+		addLengthOverride(overrides, step.field, source)
 	}
-	for _, step := range plan.steps {
+	raws := make(map[int]uint64, len(parent)+len(steps))
+	maps.Copy(raws, parent)
+	for _, step := range steps {
 		if step.field != nil {
 			collectFieldRaw(raws, step.field, source, overrides)
 		}
 	}
-	return raws
-}
-
-func collectFieldRaws(fields []planField, source reflect.Value, overrides, parent map[int]uint64) map[int]uint64 {
-	raws := make(map[int]uint64, len(parent)+len(overrides)+len(fields))
-	for order, raw := range parent {
-		raws[order] = raw
-	}
-	for order, raw := range overrides {
-		raws[order] = raw
-	}
-	for i := range fields {
-		collectFieldRaw(raws, &fields[i], source, overrides)
-	}
-	return raws
+	return overrides, raws
 }
 
 func collectFieldRaw(raws map[int]uint64, field *planField, source reflect.Value, overrides map[int]uint64) {

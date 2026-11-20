@@ -64,6 +64,7 @@ type PgnInfo struct {
 	RepeatingFieldSet2StartField *int `json:"repeatingFieldSet2StartField,omitempty"`
 	RepeatingFieldSet2CountField *int `json:"repeatingFieldSet2CountField,omitempty"`
 	RepeatingFieldSet2Size       *int `json:"repeatingFieldSet2Size,omitempty"`
+	RepeatingFieldSet2Parent     *int `json:"repeatingFieldSet2Parent,omitempty"`
 	// ManId is the manufacturer code for proprietary PGNs. It is zero for standard
 	// (non-proprietary) PGNs. Used to select the correct variant when multiple
 	// manufacturers define different payloads for the same proprietary PGN number.

@@ -58,7 +58,13 @@ func writeEnumeration(b *bytes.Buffer, enumeration sourceEnumeration, values []s
 			break
 		}
 	}
-	fmt.Fprintf(b, "type %s %s\n\nconst (\n", typeName, goType)
+	fmt.Fprintf(b, "type %s %s\n\n", typeName, goType)
+	if len(values) == 0 {
+		fmt.Fprintf(b, "func (e %s) GoString() string { return e.String() }\n", typeName)
+		fmt.Fprintf(b, "func (e %s) String() string { return fmt.Sprintf(%q, uint64(e)) }\n\n", typeName, typeName+"(%d)")
+		return
+	}
+	fmt.Fprintln(b, "const (")
 	names := make(map[string]int)
 	for _, value := range values {
 		raw := enumValue(value, bits, indirect)

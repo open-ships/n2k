@@ -50,6 +50,7 @@ type sourcePGN struct {
 	RepeatingFieldSet2StartField *int          `json:"RepeatingFieldSet2StartField"`
 	RepeatingFieldSet2CountField *int          `json:"RepeatingFieldSet2CountField"`
 	RepeatingFieldSet2Size       *int          `json:"RepeatingFieldSet2Size"`
+	RepeatingFieldSet2Parent     *int          `json:"RepeatingFieldSet2Parent"`
 	Fields                       []sourceField `json:"Fields"`
 }
 
@@ -150,7 +151,7 @@ func checkSourceParity(t *testing.T, raw []byte) {
 	upstreamFieldTypes := make(map[string]struct{})
 
 	for _, def := range upstream.PGNs {
-		key := upstreamKey(def.PGN, def.Description)
+		key := upstreamKey(def.PGN, def.Id)
 		upstreamKeys[key] = def
 		for _, field := range def.Fields {
 			upstreamFieldTypes[field.FieldType] = struct{}{}
@@ -191,7 +192,7 @@ func checkSourceParity(t *testing.T, raw []byte) {
 			len(missingKnown), sampleLines(missingKnown, 25))
 	}
 	if len(staleMetadata) > 0 {
-		t.Errorf("generated PGNs not present in current upstream source by PGN+description (%d):\n%s",
+		t.Errorf("generated PGNs not present in current upstream source by PGN and source ID (%d):\n%s",
 			len(staleMetadata), sampleLines(staleMetadata, 25))
 	}
 	if len(fieldMismatches) > 0 {
@@ -309,14 +310,14 @@ func metadataEntries(lookup map[uint32][]*PgnInfo) map[string]*PgnInfo {
 	entries := make(map[string]*PgnInfo)
 	for _, infos := range lookup {
 		for _, info := range infos {
-			entries[upstreamKey(info.PGN, info.Description)] = info
+			entries[upstreamKey(info.PGN, info.SourceID)] = info
 		}
 	}
 	return entries
 }
 
-func upstreamKey(pgn uint32, description string) string {
-	return fmt.Sprintf("%d\x00%s", pgn, description)
+func upstreamKey(pgn uint32, sourceID string) string {
+	return fmt.Sprintf("%d\x00%s", pgn, sourceID)
 }
 
 func formatUpstreamPGN(def sourcePGN) string {
@@ -348,8 +349,8 @@ func missingFieldTypes(upstream map[string]struct{}, local map[string]struct{}) 
 func compareUpstreamPGN(def sourcePGN, local *PgnInfo) []string {
 	mismatches := make([]string, 0)
 	prefix := fmt.Sprintf("%d %s", def.PGN, def.Description)
-	if local.SourceID != def.Id {
-		mismatches = append(mismatches, fmt.Sprintf("%s: id local=%s upstream=%s", prefix, local.SourceID, def.Id))
+	if local.Description != def.Description {
+		mismatches = append(mismatches, fmt.Sprintf("%s: description local=%q upstream=%q", prefix, local.Description, def.Description))
 	}
 	if local.Explanation != def.Explanation {
 		mismatches = append(mismatches, fmt.Sprintf("%s: explanation mismatch", prefix))
@@ -380,6 +381,7 @@ func compareUpstreamPGN(def sourcePGN, local *PgnInfo) []string {
 	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2StartField", local.RepeatingFieldSet2StartField, def.RepeatingFieldSet2StartField)...)
 	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2CountField", local.RepeatingFieldSet2CountField, def.RepeatingFieldSet2CountField)...)
 	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2Size", local.RepeatingFieldSet2Size, def.RepeatingFieldSet2Size)...)
+	mismatches = append(mismatches, compareIntPtr(prefix, "repeatingFieldSet2Parent", local.RepeatingFieldSet2Parent, def.RepeatingFieldSet2Parent)...)
 
 	if local.Id == "" {
 		mismatches = append(mismatches, fmt.Sprintf("%s: struct id is empty", prefix))

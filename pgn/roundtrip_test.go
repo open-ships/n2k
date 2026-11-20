@@ -2,6 +2,7 @@ package pgn
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"reflect"
 	"sort"
@@ -135,7 +136,7 @@ func populateMessage(t *testing.T, m PGN, wantDerived bool) {
 
 	var overrides map[int]uint64
 	if wantDerived {
-		overrides = computeExpectedOverrides(plan)
+		overrides = computeExpectedOverrides(plan.steps)
 	}
 
 	target := reflect.ValueOf(m).Elem()
@@ -160,8 +161,9 @@ func populateMessage(t *testing.T, m PGN, wantDerived bool) {
 			}
 			slice := target.Field(step.group.sliceIndex)
 			for i := 0; i < slice.Len(); i++ {
-				for _, field := range step.group.fields {
-					if !field.commandedParameter {
+				for _, member := range step.group.steps {
+					field := member.field
+					if field == nil || !field.commandedParameter {
 						continue
 					}
 					parameter := uint64(2)
@@ -180,8 +182,12 @@ func populateGroup(group *planGroup, target reflect.Value, wantDerived bool, ove
 	slice := reflect.MakeSlice(target.Field(group.sliceIndex).Type(), valueRoundTripGroupElements, valueRoundTripGroupElements)
 	for i := 0; i < valueRoundTripGroupElements; i++ {
 		element := slice.Index(i)
-		for f := range group.fields {
-			populateField(&group.fields[f], element, wantDerived, overrides)
+		for _, member := range group.steps {
+			if member.group != nil {
+				populateGroup(member.group, element, wantDerived, overrides)
+				continue
+			}
+			populateField(member.field, element, wantDerived, overrides)
 		}
 	}
 	target.Field(group.sliceIndex).Set(slice)
@@ -319,16 +325,14 @@ func setNumericPointer(field reflect.Value, signed bool, raw uint64) {
 // representative binary payload's length is already known ahead of
 // population. Every entry keyed by field order here takes precedence over
 // the naive representative value when building the "expected" struct.
-func computeExpectedOverrides(plan *codecPlan) map[int]uint64 {
+func computeExpectedOverrides(steps []planStep) map[int]uint64 {
 	overrides := make(map[int]uint64)
-	for _, step := range plan.steps {
+	for _, step := range steps {
 		if step.group != nil {
 			if step.group.countOrder != 0 {
 				overrides[step.group.countOrder] = valueRoundTripGroupElements
 			}
-			for f := range step.group.fields {
-				addExpectedLengthOverride(&step.group.fields[f], overrides)
-			}
+			maps.Copy(overrides, computeExpectedOverrides(step.group.steps))
 			continue
 		}
 		addExpectedLengthOverride(step.field, overrides)
@@ -402,8 +406,12 @@ func compareGroup(t *testing.T, structName string, group *planGroup, d, e reflec
 		path := fmt.Sprintf(".%s[%d]", sliceName, i)
 		de := dSlice.Index(i)
 		ee := eSlice.Index(i)
-		for f := range group.fields {
-			compareField(t, structName, path, &group.fields[f], de, ee)
+		for _, member := range group.steps {
+			if member.group != nil {
+				compareGroup(t, structName+path, member.group, de, ee)
+				continue
+			}
+			compareField(t, structName, path, member.field, de, ee)
 		}
 	}
 }

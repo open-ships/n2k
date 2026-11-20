@@ -85,14 +85,17 @@ func PhysicalValue(msg PGN, fieldOrder int) (float64, string, bool, error) {
 		return 0, "", false, fmt.Errorf("PhysicalValue: %s has no field with order %d", plan.info.Id, fieldOrder)
 	}
 
-	field, insideGroup := findPlanField(plan, fieldOrder)
-	if field == nil {
-		if insideGroup {
-			return 0, "", false, fmt.Errorf(
-				"PhysicalValue: %s field %d (%s) is inside a repeating group and is not addressable by source order alone",
-				plan.info.Id, fieldOrder, desc.Name)
+	var field *planField
+	for _, step := range plan.steps {
+		if step.field != nil && step.field.order == fieldOrder {
+			field = step.field
+			break
 		}
-		return 0, "", false, fmt.Errorf("PhysicalValue: %s has no field with order %d", plan.info.Id, fieldOrder)
+	}
+	if field == nil {
+		return 0, "", false, fmt.Errorf(
+			"PhysicalValue: %s field %d (%s) is inside a repeating group and is not addressable by source order alone",
+			plan.info.Id, fieldOrder, desc.Name)
 	}
 
 	switch field.kind {
@@ -140,29 +143,6 @@ func (field *planField) measurementAvailable(value reflect.Value, raw float64) b
 	physical := raw*field.resolution + field.offset
 	return (field.rangeMin == nil || physical >= *field.rangeMin || approximatelyEqual(physical, *field.rangeMin)) &&
 		(field.rangeMax == nil || physical <= *field.rangeMax || approximatelyEqual(physical, *field.rangeMax))
-}
-
-// findPlanField locates the top-level planField for a metadata source order.
-// It returns a nil field for orders that exist only inside a repeating group
-// (insideGroup=true) or not at all (insideGroup=false); the caller has
-// already confirmed the order exists in the metadata, so the latter case
-// indicates an internal inconsistency between metadata and the compiled plan
-// rather than a genuinely unknown order.
-func findPlanField(plan *codecPlan, order int) (field *planField, insideGroup bool) {
-	for _, step := range plan.steps {
-		if step.field != nil {
-			if step.field.order == order {
-				return step.field, false
-			}
-			continue
-		}
-		for i := range step.group.fields {
-			if step.group.fields[i].order == order {
-				return nil, true
-			}
-		}
-	}
-	return nil, false
 }
 
 // numericFieldRaw reads a *uint64 or *int64 struct field's value as a

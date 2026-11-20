@@ -1,5 +1,33 @@
 ## Change Log for open-ships/n2k
 
+### v1.12.0 — 2026-11-20 — H5000 settings and calibration tables, signed rudder readings
+
+- B&G H5000 owners can now read settings and calibration tables from PGN
+  130822. Section 10 exposes each setting’s bytes in record order. Sections
+  11–15 and 18 expose each table separately, with its own count and float
+  values. A capture that ends mid-table retains every complete value received.
+  Code that switches on `NavicoUdbDatabaseObjectDump` should handle the seven
+  new types for these sections.
+- Furuno NavPilot rudder angles now decode on both sides of zero.
+  `FurunoNavpilotStatus.RudderAngle` changes to `*int64`. Its accessor
+  returns radians. SeaTalk1 rudder position (`Seatalk1PilotMode.PilotModeData`)
+  changes from bytes to `*int64`, with an accessor in degrees.
+- SeaTalk alarm priority and pilot sub-mode, windlass speed control, and
+  Mercury helm and sub-helm now decode as unsigned numbers. Two CZone status
+  masks and Mercury engine capabilities also change from byte slices to
+  `*uint64`. JSON readers of these fields should accept numbers. The Mercury
+  capability mask names the beacon and cruise-control bits.
+- Five lookup constants have new names that distinguish formerly identical
+  labels. Their wire codes stay the same. The database also adds H5000
+  calibration keys and six Victron AC phase-current register identifiers.
+- Authored Furuno sensor setup and Fusion version and track-position messages
+  now include the trailing spare bytes specified by the database. Furuno air
+  pressure offset accepts its full range in 10 Pa steps. Converter Status
+  metadata now records a 1.5-second transmission interval.
+- The v10.0.0 database brings coverage to 647 typed variants over 348 PGNs.
+  The migration guide lists each field and constant replacement, JSON changes,
+  and examples for reading nested tables. [Migration guide](docs/schema-10.0.0-migration.md)
+
 ### v1.11.0 — 2026-11-20 — Network readiness, gateway capture, and PGN fidelity
 
 - Address claiming ties readiness to the physical claim and its contention

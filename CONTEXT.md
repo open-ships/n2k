@@ -15,6 +15,8 @@ explains the runtime design.
   entries supplements raw fields with a derived `physical` object wherever
   physical-value accessors exist. Accessors determine schema units and validity;
   unavailable measurements are null. JSON input and wire encoding use raw fields.
+- **Nested repeating set**: each outer record owns its inner slice and count.
+  Encoding derives that count from the record’s own slice.
 - **Decimal address**: DSC digit-pair fields use strings to retain leading
   zeros. A final padding zero is omitted for MMSIs; geographical addresses
   retain all ten digits, according to the schema's format selector.

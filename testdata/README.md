@@ -11,3 +11,8 @@ Frames whose PGNs carry vessel position, routes, or identity (GNSS position,
 AIS, DSC, waypoint data) were removed for privacy, along with a few
 high-rate proprietary PGNs that add volume without adding variety. Everything
 else is byte-for-byte as it appeared on the wire.
+
+`h5000-tables.raw` contains six assembled PGN 130822 messages from a B&G H5000
+CPU. They come from `analyzer/tests/nested-repeating.in` at upstream revision
+`17a4eb3436a7903c8e5cfc52b16a9822dd9b62e6`. Section 15 reaches the 223-byte
+fast-packet limit during its second table.
