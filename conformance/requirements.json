@@ -860,6 +860,11 @@
       "evidence": [
         {
           "package": "github.com/open-ships/n2k/pgn",
+          "pattern": "^Test(H5000TableCaptures|NestedTableOwnershipAndCounts|NavicoSettingsDumpLengths|SchemaV10SignedReadingsAndMasks|SchemaV10TrailingSpares)$",
+          "kind": "software"
+        },
+        {
+          "package": "github.com/open-ships/n2k/pgn",
           "pattern": "^TestLengthStringIndependentBoundaries$",
           "kind": "software"
         },

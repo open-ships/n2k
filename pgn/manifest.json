@@ -2,8 +2,8 @@
   "schemaVersion": 4,
   "package": "github.com/open-ships/n2k/pgn",
   "source": "PGN structs and PgnInfoLookup metadata",
-  "sourceRevision": "5add9cefe5711d3d3ab600ea4b37caa95a17f2f6",
-  "sourceSHA256": "35002ef57b0793654fc39a254df808b84deb8ab51df1b4e43b98bf3f0452bce8",
+  "sourceRevision": "17a4eb3436a7903c8e5cfc52b16a9822dd9b62e6",
+  "sourceSHA256": "396888a761aaf47743a387f616bddbe5e2ec1717068fb837ff41adf458b7592b",
   "description": "NMEA 2000 PGN variants decoded and encoded by this package.",
   "notes": [
     "Each entry corresponds to one PGN struct with PGNNumber, MessageInfo, SetMessageInfo, DecodePayload, and EncodePayload methods.",
@@ -16,9 +16,9 @@
   ],
   "counts": {
     "categories": 35,
-    "supportedVariants": 640,
+    "supportedVariants": 647,
     "uniqueSupportedPgns": 348,
-    "typedVariants": 640,
+    "typedVariants": 647,
     "uniqueTypedPgns": 348
   },
   "categories": [
@@ -6808,16 +6808,10 @@
           "pgn": 127750,
           "description": "Converter Status",
           "implementation": "typed",
-          "complete": false,
-          "decodeComplete": false,
-          "encodeComplete": false,
-          "codecLimitations": [
-            "source schema is incomplete"
-          ],
+          "complete": true,
+          "decodeComplete": true,
+          "encodeComplete": true,
           "hardwareVerified": false,
-          "missing": [
-            "Interval"
-          ],
           "fastPacket": false,
           "manufacturerId": 0,
           "proprietary": false,
@@ -9294,7 +9288,7 @@
           "proprietary": true,
           "sourceFile": "furuno.go",
           "payloadShape": {
-            "fieldCount": 15,
+            "fieldCount": 16,
             "fields": [
               {
                 "index": 1,
@@ -9471,6 +9465,17 @@
                 "resolution": 0.1,
                 "signed": true,
                 "unit": "K"
+              },
+              {
+                "index": 16,
+                "name": "Spare",
+                "bitLength": 16,
+                "bitOffset": 224,
+                "variableLength": false,
+                "fieldType": "SPARE",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
               }
             ]
           },
@@ -10079,9 +10084,9 @@
                 "bitOffset": 24,
                 "variableLength": false,
                 "fieldType": "NUMBER",
-                "goType": "*uint64",
+                "goType": "*int64",
                 "resolution": 0.0001,
-                "signed": false,
+                "signed": true,
                 "unit": "rad"
               },
               {
@@ -11546,8 +11551,8 @@
                 "bitLength": 16,
                 "bitOffset": 48,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               }
@@ -11556,11 +11561,7 @@
           "example": {
             "alarmGroup": 1,
             "alarmId": 1,
-            "alarmPriority": [
-              1,
-              2,
-              3
-            ],
+            "alarmPriority": 1,
             "alarmStatus": 1,
             "industryCode": 1,
             "info": {
@@ -12407,8 +12408,8 @@
                 "bitLength": 16,
                 "bitOffset": 32,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               },
@@ -12452,11 +12453,7 @@
               2,
               3
             ],
-            "subMode": [
-              1,
-              2,
-              3
-            ]
+            "subMode": 1
           }
         },
         {
@@ -13376,14 +13373,15 @@
               },
               {
                 "index": 10,
-                "name": "Pilot Mode Data",
+                "name": "Rudder Position",
                 "bitLength": 8,
                 "bitOffset": 80,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*int64",
                 "resolution": 1,
-                "signed": false
+                "signed": true,
+                "unit": "deg"
               },
               {
                 "index": 11,
@@ -13410,11 +13408,7 @@
             },
             "manufacturerCode": 1,
             "pilotMode": 1,
-            "pilotModeData": [
-              1,
-              2,
-              3
-            ],
+            "pilotModeData": 1,
             "proprietaryId": 1,
             "seatalk1Command": 1,
             "subMode": 1,
@@ -29603,19 +29597,15 @@
                 "bitLength": 32,
                 "bitOffset": 32,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "BITLOOKUP",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               }
             ]
           },
           "example": {
-            "bitmap": [
-              1,
-              2,
-              3
-            ],
+            "bitmap": 1,
             "dipswitch": 1,
             "industryCode": 1,
             "info": {
@@ -30513,8 +30503,8 @@
                 "bitLength": 32,
                 "bitOffset": 32,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "BITLOOKUP",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               }
@@ -30533,11 +30523,7 @@
               "timestamp": "2026-01-01T00:00:00Z"
             },
             "manufacturerCode": 1,
-            "statusBitmap": [
-              1,
-              2,
-              3
-            ]
+            "statusBitmap": 1
           }
         },
         {
@@ -39481,8 +39467,8 @@
                 "bitLength": 4,
                 "bitOffset": 24,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               },
@@ -39492,8 +39478,8 @@
                 "bitLength": 4,
                 "bitOffset": 28,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               },
@@ -39503,29 +39489,21 @@
                 "bitLength": 8,
                 "bitOffset": 32,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "BITLOOKUP",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               }
             ]
           },
           "example": {
-            "capabilities": [
-              1,
-              2,
-              3
-            ],
+            "capabilities": 1,
             "fieldA": [
               1,
               2,
               3
             ],
-            "helm": [
-              1,
-              2,
-              3
-            ],
+            "helm": 1,
             "industryCode": 1,
             "info": {
               "pgn": 130829,
@@ -39535,11 +39513,7 @@
               "timestamp": "2026-01-01T00:00:00Z"
             },
             "manufacturerCode": 1,
-            "subHelm": [
-              1,
-              2,
-              3
-            ]
+            "subHelm": 1
           }
         }
       ]
@@ -41442,6 +41416,249 @@
           }
         },
         {
+          "id": "NavicoUdbDatabaseSettingsDump",
+          "sourceId": "navicoUdbDatabaseSettingsDump",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Settings Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "fieldCount": 16,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 10
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Flag",
+                "bitLength": 8,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Reserved",
+                "bitLength": 8,
+                "bitOffset": 120,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "DYNAMIC_FIELD_LENGTH",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 16,
+                "name": "Value",
+                "bitLength": 0,
+                "bitOffset": 136,
+                "variableLength": true,
+                "fieldType": "DYNAMIC_FIELD_VALUE",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "flag": 1,
+                "length": 1,
+                "value": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
           "id": "NavicoUdbDatabaseShortReport5",
           "sourceId": "navicoUdbDatabaseShortReport5",
           "pgn": 130822,
@@ -41983,6 +42200,1404 @@
             "objectValue": 1,
             "sourceSelectionMaster": 1,
             "sourceSettingId": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump11",
+          "sourceId": "navicoUdbDatabaseTableDump11",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 11
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump12",
+          "sourceId": "navicoUdbDatabaseTableDump12",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 12
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump13",
+          "sourceId": "navicoUdbDatabaseTableDump13",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 13
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump14",
+          "sourceId": "navicoUdbDatabaseTableDump14",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 14
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump15",
+          "sourceId": "navicoUdbDatabaseTableDump15",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 15
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
+            "sub": [
+              1,
+              2,
+              3
+            ],
+            "token": 1
+          }
+        },
+        {
+          "id": "NavicoUdbDatabaseTableDump18",
+          "sourceId": "navicoUdbDatabaseTableDump18",
+          "pgn": 130822,
+          "description": "Navico: UDB Database, Table Dump",
+          "implementation": "typed",
+          "complete": false,
+          "decodeComplete": false,
+          "encodeComplete": false,
+          "codecLimitations": [
+            "source schema is incomplete"
+          ],
+          "hardwareVerified": false,
+          "missing": [
+            "Fields",
+            "FieldLengths",
+            "Resolution",
+            "Interval"
+          ],
+          "fastPacket": true,
+          "manufacturerId": 275,
+          "proprietary": true,
+          "sourceFile": "navico.go",
+          "payloadShape": {
+            "repeatingFieldSet2Parent": 1,
+            "fieldCount": 15,
+            "fields": [
+              {
+                "index": 1,
+                "name": "Manufacturer Code",
+                "bitLength": 11,
+                "bitOffset": 0,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 275
+              },
+              {
+                "index": 2,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 11,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 3,
+                "name": "Industry Code",
+                "bitLength": 3,
+                "bitOffset": 13,
+                "variableLength": false,
+                "fieldType": "LOOKUP",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 4
+              },
+              {
+                "index": 4,
+                "name": "Marker",
+                "bitLength": 8,
+                "bitOffset": 16,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 5,
+                "name": "Command",
+                "bitLength": 6,
+                "bitOffset": 24,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 6
+              },
+              {
+                "index": 6,
+                "name": "Reserved",
+                "bitLength": 2,
+                "bitOffset": 30,
+                "variableLength": false,
+                "fieldType": "RESERVED",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 7,
+                "name": "Address",
+                "bitLength": 8,
+                "bitOffset": 32,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 8,
+                "name": "Section",
+                "bitLength": 8,
+                "bitOffset": 40,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false,
+                "match": 18
+              },
+              {
+                "index": 9,
+                "name": "Item",
+                "bitLength": 8,
+                "bitOffset": 48,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Object Value",
+                "bitLength": 16,
+                "bitOffset": 56,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 11,
+                "name": "Sub",
+                "bitLength": 24,
+                "bitOffset": 72,
+                "variableLength": false,
+                "fieldType": "BINARY",
+                "goType": "[]uint8",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 12,
+                "name": "Token",
+                "bitLength": 16,
+                "bitOffset": 96,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 13,
+                "name": "Count",
+                "bitLength": 16,
+                "bitOffset": 112,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 14,
+                "name": "Length",
+                "bitLength": 8,
+                "bitOffset": 128,
+                "variableLength": false,
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 15,
+                "name": "Value",
+                "bitLength": 32,
+                "bitOffset": 136,
+                "variableLength": false,
+                "fieldType": "FLOAT",
+                "goType": "*float32",
+                "resolution": 1,
+                "signed": true
+              }
+            ]
+          },
+          "example": {
+            "address": 1,
+            "command": 1,
+            "industryCode": 1,
+            "info": {
+              "pgn": 130822,
+              "priority": 6,
+              "sourceId": 1,
+              "targetId": 255,
+              "timestamp": "2026-01-01T00:00:00Z"
+            },
+            "item": 1,
+            "manufacturerCode": 1,
+            "marker": 1,
+            "objectValue": 1,
+            "repeating1": [
+              {
+                "count": 1,
+                "repeating2": [
+                  {
+                    "length": 1,
+                    "value": 1.23
+                  }
+                ]
+              }
+            ],
+            "section": 1,
             "sub": [
               1,
               2,
@@ -59958,7 +61573,7 @@
           "proprietary": true,
           "sourceFile": "fusion.go",
           "payloadShape": {
-            "fieldCount": 6,
+            "fieldCount": 7,
             "fields": [
               {
                 "index": 1,
@@ -60029,6 +61644,17 @@
                 "resolution": 0.001,
                 "signed": false,
                 "unit": "s"
+              },
+              {
+                "index": 7,
+                "name": "Spare",
+                "bitLength": 8,
+                "bitOffset": 64,
+                "variableLength": false,
+                "fieldType": "SPARE",
+                "goType": "",
+                "resolution": 1,
+                "signed": false
               }
             ]
           },
@@ -60325,7 +61951,7 @@
           "proprietary": true,
           "sourceFile": "fusion.go",
           "payloadShape": {
-            "fieldCount": 9,
+            "fieldCount": 10,
             "fields": [
               {
                 "index": 1,
@@ -60426,6 +62052,17 @@
                 "variableLength": false,
                 "fieldType": "NUMBER",
                 "goType": "*uint64",
+                "resolution": 1,
+                "signed": false
+              },
+              {
+                "index": 10,
+                "name": "Spare",
+                "bitLength": 8,
+                "bitOffset": 88,
+                "variableLength": false,
+                "fieldType": "SPARE",
+                "goType": "",
                 "resolution": 1,
                 "signed": false
               }
@@ -70913,8 +72550,8 @@
                 "bitLength": 8,
                 "bitOffset": 24,
                 "variableLength": false,
-                "fieldType": "BINARY",
-                "goType": "[]uint8",
+                "fieldType": "NUMBER",
+                "goType": "*uint64",
                 "resolution": 1,
                 "signed": false
               },
@@ -71013,11 +72650,7 @@
             "mechanicalLock": 1,
             "powerEnable": 1,
             "sid": 1,
-            "speedControl": [
-              1,
-              2,
-              3
-            ],
+            "speedControl": 1,
             "speedControlType": 1,
             "windlassControlEvents": 1,
             "windlassDirectionControl": 1,

@@ -258,9 +258,15 @@ hardware test is never represented as a pass.
 ## Generated boundary
 
 Category files under `pgn/`, `pgn/dispatch.go`, metadata, and the manifest are
-generated from the checked-in v9.2.0 schema snapshot (schema format 2.8.0).
+generated from the checked-in v10.0.0 schema snapshot (schema format 2.9.0).
 Change generator inputs or the generator, then run `just pgn-sync`; never
 repair generated output by hand.
+A repeating set belongs to the message or to one record of its parent set.
+The generator puts each slice on its owner. The codec resolves counts, lengths,
+and field indexes in that same scope. For a truncated nested table it retains
+the declared count and every fully received value. Encoding an edited message
+derives each count from the corresponding slice.
+
 Generation verifies the snapshot's pinned checksum and needs no network.
 All lookup families produce enums, with type-prefixed constants. Manifest
 provenance, `DecodeComplete`, `EncodeComplete`, `CodecLimitations`, and

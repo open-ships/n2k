@@ -23,12 +23,12 @@ import (
 const definitionsPath = "pgn/upstream_definitions.go"
 const dispatchPath = "pgn/dispatch.go"
 const schemaPath = "cmd/pgngen/schema.json"
-const upstreamSHA256 = "35002ef57b0793654fc39a254df808b84deb8ab51df1b4e43b98bf3f0452bce8"
+const upstreamSHA256 = "396888a761aaf47743a387f616bddbe5e2ec1717068fb837ff41adf458b7592b"
 
 // upstreamRevision pins generation to the schema version represented by the
 // checked-in public API. The separate upstream-parity test intentionally
 // follows the upstream default branch so schema upgrades are explicit.
-const upstreamRevision = "5add9cefe5711d3d3ab600ea4b37caa95a17f2f6" // schema 9.2.0
+const upstreamRevision = "17a4eb3436a7903c8e5cfc52b16a9822dd9b62e6" // schema 10.0.0
 
 var upstreamURL = upstreamSchemaURL()
 
@@ -83,6 +83,7 @@ type sourcePGN struct {
 	RepeatingFieldSet2StartField *int          `json:"RepeatingFieldSet2StartField"`
 	RepeatingFieldSet2CountField *int          `json:"RepeatingFieldSet2CountField"`
 	RepeatingFieldSet2Size       *int          `json:"RepeatingFieldSet2Size"`
+	RepeatingFieldSet2Parent     *int          `json:"RepeatingFieldSet2Parent"`
 	Fields                       []sourceField `json:"Fields"`
 }
 
@@ -508,32 +509,36 @@ func pgnStructTypeName(value string) string {
 func writePGNStruct(b *bytes.Buffer, p sourcePGN, typeName string) bool {
 	fixed, groups := partitionPGNStructFields(p)
 
-	fmt.Fprintf(b, "type %s struct {\n", typeName)
-	fmt.Fprintf(b, "Info MessageInfo `json:\"info\"`\n")
-	for _, field := range fixed {
-		fmt.Fprintf(b, "%s %s `json:\"%s,omitempty\" n2k:\"%d\"`\n",
-			field.Name, field.Type, sourceJSONFieldName(field.Source), field.Source.Order)
-	}
-	for setIndex, group := range groups {
-		if len(group) == 0 {
+	nested := p.RepeatingFieldSet2Parent != nil && *p.RepeatingFieldSet2Parent == 1
+	for owner, fields := range [][]pgnStructField{fixed, groups[0], groups[1]} {
+		if owner != 0 && len(fields) == 0 {
 			continue
 		}
-		set := setIndex + 1
-		fmt.Fprintf(b, "Repeating%d []%sRepeating%d `json:\"repeating%d,omitempty\" n2k:\"rep%d\"`\n",
-			set, typeName, set, set, set)
-	}
-	fmt.Fprintf(b, "}\n\n")
-
-	for setIndex, group := range groups {
-		if len(group) == 0 {
-			continue
+		name := typeName
+		if owner != 0 {
+			name = fmt.Sprintf("%sRepeating%d", typeName, owner)
 		}
-		fmt.Fprintf(b, "type %sRepeating%d struct {\n", typeName, setIndex+1)
-		for _, field := range group {
+		fmt.Fprintf(b, "type %s struct {\n", name)
+		if owner == 0 {
+			fmt.Fprintln(b, "Info MessageInfo `json:\"info\"`")
+		}
+		for _, field := range fields {
 			fmt.Fprintf(b, "%s %s `json:\"%s,omitempty\" n2k:\"%d\"`\n",
 				field.Name, field.Type, sourceJSONFieldName(field.Source), field.Source.Order)
 		}
-		fmt.Fprintf(b, "}\n\n")
+		for i, group := range groups {
+			parent := 0
+			if nested && i == 1 {
+				parent = 1
+			}
+			if len(group) != 0 && owner == parent {
+				set := i + 1
+				fmt.Fprintf(b, "Repeating%d []%sRepeating%d `json:\"repeating%d,omitempty\" n2k:\"rep%d\"`\n",
+					set, typeName, set, set, set)
+			}
+		}
+		fmt.Fprintln(b, "}")
+		fmt.Fprintln(b)
 	}
 
 	fmt.Fprintf(b, "func (m *%s) PGNNumber() uint32 { return %d }\n", typeName, p.PGN)
@@ -541,7 +546,7 @@ func writePGNStruct(b *bytes.Buffer, p sourcePGN, typeName string) bool {
 	fmt.Fprintf(b, "func (m *%s) SetMessageInfo(info MessageInfo) { m.Info = info }\n", typeName)
 	fmt.Fprintf(b, "func (m *%s) DecodePayload(payload []uint8) error { return decodeFields(m, payload) }\n", typeName)
 	fmt.Fprintf(b, "func (m *%s) EncodePayload() ([]uint8, error) { return encodeFields(m) }\n\n", typeName)
-	writePGNClone(b, typeName, fixed, groups)
+	writePGNClone(b, typeName, fixed, groups, nested)
 
 	wroteAccessors := writePhysicalAccessors(b, typeName, fixed, groups)
 
@@ -557,17 +562,23 @@ func writePGNStruct(b *bytes.Buffer, p sourcePGN, typeName string) bool {
 	return wroteAccessors
 }
 
-func writePGNClone(b *bytes.Buffer, typeName string, fixed []pgnStructField, groups [2][]pgnStructField) {
+func writePGNClone(b *bytes.Buffer, typeName string, fixed []pgnStructField, groups [2][]pgnStructField, nested bool) {
 	fmt.Fprintf(b, "// Clone returns a message owning every mutable field and retained wire byte.\n")
 	fmt.Fprintf(b, "func (m *%s) Clone() Message {\nif m == nil { return (*%s)(nil) }; copy := *m\ncopy.Info = m.Info.Clone()\n", typeName, typeName)
 	writeCloneFields(b, fixed, "copy", "m")
 	for i, group := range groups {
-		if len(group) == 0 {
+		if len(group) == 0 || (i == 1 && nested) {
 			continue
 		}
 		name := fmt.Sprintf("Repeating%d", i+1)
 		fmt.Fprintf(b, "copy.%s = cloneSlice(m.%s)\nfor i := range copy.%s {\n", name, name, name)
 		writeCloneFields(b, group, "copy."+name+"[i]", "m."+name+"[i]")
+		if nested {
+			const dst, src = "copy.Repeating1[i].Repeating2", "m.Repeating1[i].Repeating2"
+			fmt.Fprintf(b, "%s = cloneSlice(%s)\nfor j := range %s {\n", dst, src, dst)
+			writeCloneFields(b, groups[1], dst+"[j]", src+"[j]")
+			fmt.Fprintln(b, "}")
+		}
 		fmt.Fprintln(b, "}")
 	}
 	fmt.Fprintln(b, "return &copy\n}")
@@ -812,7 +823,9 @@ func partitionPGNStructFields(p sourcePGN) ([]pgnStructField, [2][]pgnStructFiel
 			continue
 		}
 		assigned := false
-		for i, r := range ranges {
+		// The inner set owns fields where nested ranges overlap.
+		for i := len(ranges) - 1; i >= 0; i-- {
+			r := ranges[i]
 			if r[1] > r[0] && field.Order >= r[0] && field.Order < r[1] {
 				groupSources[i] = append(groupSources[i], field)
 				assigned = true
@@ -1086,6 +1099,7 @@ func writePGN(b *bytes.Buffer, p sourcePGN, typeName string) {
 	writeOptionalInt(b, "RepeatingFieldSet2StartField", p.RepeatingFieldSet2StartField)
 	writeOptionalInt(b, "RepeatingFieldSet2CountField", p.RepeatingFieldSet2CountField)
 	writeOptionalInt(b, "RepeatingFieldSet2Size", p.RepeatingFieldSet2Size)
+	writeOptionalInt(b, "RepeatingFieldSet2Parent", p.RepeatingFieldSet2Parent)
 	if len(p.Fields) > 0 {
 		fmt.Fprintf(b, ", Fields:[]SourceFieldDefinition{\n")
 		for _, field := range p.Fields {

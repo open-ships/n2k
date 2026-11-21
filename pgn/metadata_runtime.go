@@ -30,6 +30,7 @@ type SourceDefinition struct {
 	RepeatingFieldSet2StartField *int
 	RepeatingFieldSet2CountField *int
 	RepeatingFieldSet2Size       *int
+	RepeatingFieldSet2Parent     *int
 	Fields                       []SourceFieldDefinition
 }
 
@@ -169,6 +170,7 @@ func pgnInfoFromSource(def SourceDefinition) (*PgnInfo, []*FieldDescriptor) {
 		RepeatingFieldSet2StartField: def.RepeatingFieldSet2StartField,
 		RepeatingFieldSet2CountField: def.RepeatingFieldSet2CountField,
 		RepeatingFieldSet2Size:       def.RepeatingFieldSet2Size,
+		RepeatingFieldSet2Parent:     def.RepeatingFieldSet2Parent,
 		ManId:                        manID,
 		Fields:                       fields,
 	}
